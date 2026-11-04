@@ -1133,7 +1133,7 @@ runGameMessage msg g = case msg of
   -- a player who may engage an additional enemy, as Halbarad lets, is asked again once
   (optionalEngagement -> Just (pid, first)) -> do
     again <- (first &&) . elem OptionallyEngagesAdditionalEnemy <$> getModifiers (PlayerTarget pid)
-    staged <- select EnemyInStagingArea
+    staged <- engageableFromStaging
     -- some enemies may only be engaged once they are alone in the staging area
     barredBy <- (\ms -> [m | CannotBeOptionallyEngagedBy m <- ms]) <$> getModifiers GameTarget
     resources <- getResourcesOfSphere pid Neutral
@@ -1166,7 +1166,7 @@ runGameMessage msg g = case msg of
     order <- getPlayerOrder
     let next = seatAfter order pid
     threat <- getThreat pid
-    candidates <- traverse (\eid -> (eid,) <$> getEngagementCost eid) =<< select EnemyInStagingArea
+    candidates <- traverse (\eid -> (eid,) <$> getEngagementCost eid) =<< engageableFromStaging
     -- an enemy can be spared engagement checks against it, as a trap does
     checked <- filterM (fmap (\ms -> NoEngagementChecks `notElem` ms && CannotEngagePlayer pid `notElem` ms) . getModifiers . fst) candidates
     -- its cost against this player, as Hunting Pack's is lowered by his damaged characters
@@ -3550,6 +3550,11 @@ attacksOf :: PlayerId -> GameT [EnemyId]
 attacksOf pid = byCost . ordNub =<< (<>) <$> select (EnemyEngagedWith $ PlayerWithId pid) <*> attacksAsIfEngaged pid
 
 -- | The enemies in the staging area that attack the player as if engaged, as Snow-Giant.
+-- | The enemies the players may engage from the staging area: those there, not one only
+-- considered to be, as Tide-runner engaged or in the Stormcaller's area.
+engageableFromStaging :: GameT [EnemyId]
+engageableFromStaging = filterM (fmap ((== StagingArea) . (.placement)) . getEnemy) =<< select EnemyInStagingArea
+
 attacksAsIfEngaged :: PlayerId -> GameT [EnemyId]
 attacksAsIfEngaged pid = filterM asIf =<< select EnemyInStagingArea
  where

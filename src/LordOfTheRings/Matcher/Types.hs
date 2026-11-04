@@ -161,6 +161,8 @@ data AttachMatcher
 data EnemyMatcher
   = EnemyWithId EnemyId
   | EnemyInStagingArea
+  | -- | an enemy in the Stormcaller's area, or considered to be (Flight of the Stormcaller)
+    EnemyInStormcallerArea
   | EnemyWithTrait Trait
   | EnemyWithCardCode CardCode
   | EnemyEngagedWith PlayerMatcher

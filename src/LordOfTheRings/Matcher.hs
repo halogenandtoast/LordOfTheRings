@@ -197,10 +197,17 @@ instance Query EnemyMatcher where
       AttachedTo _ -> True
       _ -> False
 
+-- | Whether the enemy is there, or considered to be, as Tide-runner off-course.
+enemyIn :: HasGame m => Placement -> Enemy -> m Bool
+enemyIn p enemy
+  | enemy.placement == p = pure True
+  | otherwise = elem (ConsideredIn p) . map modifierType . Map.findWithDefault [] (toTarget enemy) <$> getsGame gameModifiers
+
 matchEnemy :: HasGame m => EnemyMatcher -> Enemy -> m Bool
 matchEnemy matcher enemy = case matcher of
   EnemyWithId eid -> pure $ enemy.id == eid
-  EnemyInStagingArea -> pure $ enemy.placement == StagingArea
+  EnemyInStagingArea -> enemyIn StagingArea enemy
+  EnemyInStormcallerArea -> enemyIn StormcallerArea enemy
   EnemyWithTrait trait -> hasTrait trait (toTarget enemy) (toCardDef enemy)
   EnemyWithCardCode code -> pure $ toCardCode enemy == code
   EnemyWithFacedownShadow -> pure $ any ((`notElem` (toAttrs enemy).enemyShadowRevealed) . (.id)) enemy.shadowCards
