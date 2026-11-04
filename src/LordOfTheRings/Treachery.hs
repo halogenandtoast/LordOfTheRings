@@ -327,6 +327,7 @@ import LordOfTheRings.Treachery.Cards.BlackMare
 import LordOfTheRings.Treachery.Cards.PowerBeyondDeath
 import LordOfTheRings.Treachery.Cards.DaechanarsCurse
 import LordOfTheRings.Treachery.Cards.AllIsLost
+import LordOfTheRings.Treachery.Cards.NowhereToHide
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -681,5 +682,6 @@ allTreacherys =
         , SomeTreacheryCard powerBeyondDeath
         , SomeTreacheryCard daechanarsCurse
         , SomeTreacheryCard allIsLost
+        , SomeTreacheryCard nowhereToHide
         ]
     ]

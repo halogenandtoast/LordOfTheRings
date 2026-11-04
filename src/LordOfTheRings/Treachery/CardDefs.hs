@@ -337,6 +337,7 @@ allTreacheryCards =
       , powerBeyondDeath
       , daechanarsCurse
       , allIsLost
+      , nowhereToHide
       ]
 
 deepDeepDark :: CardDef
@@ -2173,3 +2174,10 @@ allIsLost =
     { cdCardTraits = setFromList [Sorcery]
     , cdShadowEffect = True
     }
+
+-- * The Sands of Harad: the shared encounter sets (Harad Soldiers, Harad Territory, Desert
+-- Sands, Jungle Forest, Mordor Orcs). Easy mode copy counts from Hall of Beorn's scenario
+-- pages.
+
+nowhereToHide :: CardDef
+nowhereToHide = (treachery "16044" "Nowhere to Hide" HaradSoldiers 3) {cdShadowEffect = True, cdEasyModeQuantity = Just 2}

@@ -397,6 +397,9 @@ allEnemyCards =
       , thaurdirsElite
       , silentGuardian
       , necromancerOfCarnDum
+      , southronCaptain
+      , southronSoldier
+      , southronArcher
       ]
 
 namelessThing :: CardDef
@@ -3223,4 +3226,26 @@ necromancerOfCarnDum :: CardDef
 necromancerOfCarnDum =
   (enemy "the-dread-realm-nightmare-the-dread-realm-003" "Necromancer of Carn Dûm" TheDreadRealmNightmare 3 28 2 0 3 3)
     { cdCardTraits = setFromList [Sorcerer]
+    }
+
+-- * The Sands of Harad: the shared encounter sets (Harad Soldiers, Desert Creatures, Mordor
+-- Orcs). Easy mode copy counts from Hall of Beorn's scenario pages.
+
+southronCaptain :: CardDef
+southronCaptain = unique (enemy "16041" "Southron Captain" HaradSoldiers 1 40 2 5 3 6) {cdCardTraits = setFromList [Harad]}
+
+southronSoldier :: CardDef
+southronSoldier =
+  (enemy "16042" "Southron Soldier" HaradSoldiers 3 32 3 3 2 5)
+    { cdCardTraits = setFromList [Harad]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 2
+    }
+
+southronArcher :: CardDef
+southronArcher =
+  (enemy "16043" "Southron Archer" HaradSoldiers 4 36 2 4 3 4)
+    { cdCardTraits = setFromList [Harad]
+    , cdKeywords = setFromList [Archery 2]
+    , cdEasyModeQuantity = Just 3
     }

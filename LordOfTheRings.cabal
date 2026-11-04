@@ -717,12 +717,15 @@ library
       LordOfTheRings.Enemy.Cards.SnowWarg
       LordOfTheRings.Enemy.Cards.SoldierOfAngmar
       LordOfTheRings.Enemy.Cards.SoullessCadaver
+      LordOfTheRings.Enemy.Cards.SouthronArcher
+      LordOfTheRings.Enemy.Cards.SouthronCaptain
       LordOfTheRings.Enemy.Cards.SouthronCommander
       LordOfTheRings.Enemy.Cards.SouthronCompany
       LordOfTheRings.Enemy.Cards.SouthronMercenaries
       LordOfTheRings.Enemy.Cards.SouthronMountedArcher
       LordOfTheRings.Enemy.Cards.SouthronPhalanx
       LordOfTheRings.Enemy.Cards.SouthronSailor
+      LordOfTheRings.Enemy.Cards.SouthronSoldier
       LordOfTheRings.Enemy.Cards.SpiderOfDolGuldur
       LordOfTheRings.Enemy.Cards.SpidersOfMirkwood
       LordOfTheRings.Enemy.Cards.SpiritOfTheWild
@@ -1722,6 +1725,7 @@ library
       LordOfTheRings.Quest.Cards.ShadowTheWarParty
       LordOfTheRings.Quest.Cards.SiftThroughTheDebris
       LordOfTheRings.Quest.Cards.Snowdrifts
+      LordOfTheRings.Quest.Cards.SouthronChampion
       LordOfTheRings.Quest.Cards.SouthronCounterAttack
       LordOfTheRings.Quest.Cards.StopTheExecutioners
       LordOfTheRings.Quest.Cards.StopTheWarParty
@@ -2082,6 +2086,7 @@ library
       LordOfTheRings.Treachery.Cards.NewDevilry
       LordOfTheRings.Treachery.Cards.Nightfall
       LordOfTheRings.Treachery.Cards.NoRest
+      LordOfTheRings.Treachery.Cards.NowhereToHide
       LordOfTheRings.Treachery.Cards.NoxiousFumes
       LordOfTheRings.Treachery.Cards.NoxiousSupplies
       LordOfTheRings.Treachery.Cards.ObsidianArrows

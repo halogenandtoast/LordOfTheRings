@@ -270,6 +270,7 @@ allQuestCards =
       , rallyTheFighters
       , severTheHead
       , theWitchKingsGift
+      , southronChampion
       ]
 
 theDrippingWalls :: CardDef
@@ -1117,4 +1118,13 @@ theWitchKingsGift :: CardDef
 theWitchKingsGift =
   (encounterSideQuest "the-dread-realm-nightmare-the-dread-realm-009" "The Witch-king's Gift" TheDreadRealmNightmare 8)
     { cdKeywords = setFromList [Time 5]
+    }
+
+-- * The Sands of Harad: the shared encounter sets' side quests
+
+southronChampion :: CardDef
+southronChampion =
+  (encounterSideQuest "16040" "Southron Champion" HaradSoldiers 4)
+    { cdVictoryPoints = Just 10
+    , cdWhenRevealed = True
     }
