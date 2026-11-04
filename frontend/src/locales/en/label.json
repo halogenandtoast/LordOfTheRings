@@ -3206,5 +3206,30 @@
   },
   "theTowerOfCirithUngol": {
     "setAsideBoon": "The Tower of Cirith Ungol: choose an Item boon to set aside"
+  },
+  "bigUruk": {
+    "choose": "Big Uruk: raise your threat by 4, or it makes an immediate attack against you",
+    "raiseThreat": "Raise your threat by 4",
+    "attack": "Big Uruk makes an immediate attack against you"
+  },
+  "littleSnufflerMountDoom": {
+    "choose": "Little Snuffler: raise your threat by 1 for each ally you control, or discard an ally you control",
+    "raiseThreat": "Raise your threat by {count}",
+    "discardAlly": "Discard an ally you control"
+  },
+  "heavyAndTired": {
+    "attach": "Heavy and Tired: choose a hero with the most attachments to attach it to"
+  },
+  "theLandOfMordor": {
+    "addLocation": "The Land of Mordor: choose a location, different from those the players have added, to add to the staging area"
+  },
+  "theRoadToIsenmouthe": {
+    "travel": "The Road to Isenmouthe: choose the Mordor Road to travel to"
+  },
+  "mountDoom": {
+    "resolution": "Mount Doom: the Ring-bearer stands at the Crack of Doom. Keep The One Ring, or destroy it?",
+    "keep": "Keep The One Ring and succumb to the power of Sauron: the players lose the campaign",
+    "destroy": "Destroy The One Ring and defeat the power of Sauron: the players win the campaign",
+    "ignoreEyes": "Gollum: choose an encounter card discarded for this test to ignore its Eye icons"
   }
 }
