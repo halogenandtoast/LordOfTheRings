@@ -17,6 +17,6 @@ instance RunMessage BrashCorsair where
   runMessage msg (BrashCorsair attrs) = case msg of
     CheckWindows ws | EngagedWith pid <- attrs.placement -> do
       ships <- map toTarget <$> shipObjectivesOf pid
-      when (notNull [() | Window After (Exhausted t) <- ws, t `elem` ships]) $ immediateAttack pid attrs.id
+      when (notNull [() | Window When (Exhausted t) <- ws, t `elem` ships]) $ immediateAttack pid attrs.id
       BrashCorsair <$> runMessage msg attrs
     _ -> BrashCorsair <$> runMessage msg attrs

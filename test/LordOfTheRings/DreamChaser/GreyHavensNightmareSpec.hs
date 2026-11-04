@@ -10,7 +10,7 @@ import LordOfTheRings.Helpers.Modifiers (getModifiers, preloadModifiers)
 import LordOfTheRings.Helpers.Staging (getEngagementCost, getLocationThreat)
 import LordOfTheRings.Location (LocationAttrs (..))
 import LordOfTheRings.Location.CardDefs qualified as Locations
-import LordOfTheRings.Matcher (HeroMatcher (AttackingHero), selectAny)
+import LordOfTheRings.Matcher (AllyMatcher (ExhaustedAlly), HeroMatcher (AttackingHero), selectAny)
 import LordOfTheRings.Modifier (ModifierType (..))
 import LordOfTheRings.Objective.CardDefs qualified as Objectives
 import LordOfTheRings.Outcome (Outcome (Won))
@@ -172,12 +172,13 @@ spec = describe "The Grey Havens Nightmare Decks" do
       _ <- stagedLocation Locations.openWaters
       getEngagementCost scout `shouldReturn` 30
 
-    it "Brash Corsair attacks as the engaged player exhausts a Ship objective" . nightmare voyageAcrossBelegaer $ \pid -> do
+    it "Brash Corsair attacks when the engaged player exhausts a Ship objective, before it exhausts" . nightmare voyageAcrossBelegaer $ \pid -> do
       dreamChaser <- ship pid Objectives.dreamChaser
       corsair <- stagedEnemy Enemies.brashCorsair
       run $ PlaceEnemy corsair (EngagedWith pid)
       run $ Exhaust dreamChaser
       getQuestion pid >>= (`shouldSatisfy` isJust)
+      selectAny ExhaustedAlly `shouldReturn` False
 
     it "Dreams of Númenor may set the heading to the worst setting" . nightmare voyageAcrossBelegaer $ \pid -> do
       setHeading Sunny
