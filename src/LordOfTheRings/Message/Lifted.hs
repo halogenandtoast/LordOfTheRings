@@ -454,6 +454,15 @@ removeFromDiscard pid cid = push $ RemoveFromDiscard pid cid
 placeEnemy :: ReverseQueue m => EnemyId -> Placement -> m ()
 placeEnemy eid placement = push $ PlaceEnemy eid placement
 
+-- | The enemy card, taken from where it was, comes into play placed there, as Gollum in the
+-- riddle area (Dungeons Deep and Caverns Dim).
+createEnemyAt :: ReverseQueue m => EncounterCard -> Placement -> m EnemyId
+createEnemyAt card placement = do
+  eid <- getRandom
+  push $ CreateEnemy eid card
+  placeEnemy eid placement
+  pure eid
+
 -- | "Return all engaged enemies to the staging area."
 returnEngagedEnemiesToStaging :: ReverseQueue m => m ()
 returnEngagedEnemiesToStaging = do
