@@ -1586,8 +1586,10 @@
   "anduinTrollSpawn": {
     "engage": "Choose the player engaged with a Hill Troll for Anduin Troll Spawn to engage"
   },
-  "gladdenMarshlands": {
-    "damage": "Deal 1 damage to a hero you control to lower Gladden Marshlands' threat by 1"
+  "elvenWaveRunner": {
+    "respond": "Elven Wave-runner is in the victory display: each player may draw 1 card",
+    "draw": "Each player draws 1 card",
+    "decline": "Decline"
   },
   "pursuitOnTheShore": {
     "return": "Choose the enemy to return to the staging area"
@@ -1719,6 +1721,7 @@
     "attack": "The attacking enemy makes an additional attack"
   },
   "infiltration": {
+    "extra": "Infiltration: choose a Raider enemy to take 1 of the resources left over",
     "shadow": "Choose the Aflame location this attack's damage is dealt to"
   },
   "burningTower": {
