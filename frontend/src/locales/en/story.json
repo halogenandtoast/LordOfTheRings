@@ -2859,5 +2859,25 @@
       "The knight knew he wouldn’t be able to make it to the ships in time. So, he decided on another course of action. Running back into the chamber where the black chest first lay, he placed the key upon the pedestal and prayed to the Valar with all of his heart: “Let none discover this key save for one of the Faithful, of true Númenorean blood. Let its whereabouts be forever shrouded from the servants of Morgoth.”",
       "Hoping the Valar would hear his plea, he sealed the entrance to the chamber and watched as Elendil’s ships sailed to safety in the east."
     ]
+  },
+  "escape-from-umbar": {
+    "intro": [
+      "The heroes stood atop the high sea-wall of Umbar looking down at the waves that crashed below. Their ship had been wrecked in the bay, and they survived by swimming to shore.",
+      "“Thus ends the voyage of the Dream-chaser and Lord Calphon’s quest,” said one of the heroes. Looking up towards the city he said, “Come! We must leave this place, and swiftly. All of Umbar will soon be astir.”",
+      "“Where can we go?” said another, his eyes still downcast. He leaned heavily on his battle-axe as he spoke, “Even if we escape the city, this land is a barren desert and we will find no help.”",
+      "The first hero, their leader, placed his hand on his friend’s shoulder and replied, “Then we must help each other.”",
+      "The downcast hero lifted his eyes to meet his leader’s and a fire was rekindled in his spirit. “Yes,” he said. “If these Southrons want our lives, they will pay a steep price.”",
+      "A bell rang from a high watchtower, and in the streets below it was echoed by the harsh shouts of Haradrim warriors.",
+      "“They are coming!” shouted a third hero. She bent her bow to fit a new string and said, “There are too many to fight. We must flee.”",
+      "“We will not escape this city without a fight,” said the leader grimly. “But let us speak no more of selling our lives. Let us find a way out of this trap!”",
+      "With that, the party lifted their weapons and started to run."
+    ],
+    "setup": [
+      "“Escape from Umbar” is played with an encounter deck built with all the cards from the following encounter sets: Escape from Umbar, Harad Soldiers, and Harad Territory."
+    ],
+    "resolution": [
+      "The people of Umbar were no friends to the West, and they chased the heroes through the streets. The companions ran like hunted animals. Arrows whistled past them and rattled off the stones they raced on. When they reached the city gate, the guards scattered in panic, so fierce were the heroes in their desperation to escape.",
+      "The harsh cries of the Haradrim chased them into the desert, yet their pursuers did not. Too weary and afraid to wonder at this, the heroes ran up and down the rolling dunes well into the night."
+    ]
   }
 }
