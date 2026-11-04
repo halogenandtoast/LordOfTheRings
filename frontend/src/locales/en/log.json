@@ -99,6 +99,8 @@
   "grappled": "Grappled enemy",
   "takenPrisoner": "{hero} is taken prisoner",
   "rescued": "{hero} is rescued",
+  "heroToStagingArea": "{hero} is moved to the staging area",
+  "takesControlOfHero": "{player} takes control of {hero}",
   "claims": "{target} claims {card}",
 
   "enemyAttacks": "{enemy} attacks {player} ({attack})",

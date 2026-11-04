@@ -2008,6 +2008,10 @@ runGameMessage msg g = case msg of
     thisHero <- newHero pid card
     push $ CheckWindows [mkAfter $ EntersPlay $ toTarget thisHero]
     pure $ g & entitiesL . heroesL %~ insertEntity thisHero
+  PutObjectiveHeroIntoPlayUnder pid card -> do
+    thisHero <- lookupHero (toCardCode card) card.id <$> getRandom <*> pure pid
+    push $ CheckWindows [mkAfter $ EntersPlay $ toTarget thisHero]
+    pure $ g & entitiesL . heroesL %~ insertEntity thisHero
   CheckWindows windows -> do
     abilities <- getWindowAbilities windows
     let forcedAbilities = filter isForcedAbility abilities

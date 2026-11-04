@@ -97,7 +97,9 @@ matchHero :: HasGame m => HeroMatcher -> Hero -> m Bool
 matchHero matcher hero = case matcher of
   HeroWithId hid -> pure $ hero.id == hid
   -- a prisoner is face down: no one controls it until it is rescued
-  HeroControlledBy pm -> if heroPrisoner (toAttrs hero) then pure False else elem hero.owner <$> select pm
+  -- and one in the staging area is under no player's control (The Long Arm of Mordor)
+  HeroControlledBy pm -> if heroPrisoner (toAttrs hero) || heroInStagingArea (toAttrs hero) then pure False else elem hero.owner <$> select pm
+  HeroInStagingArea -> pure $ heroInStagingArea (toAttrs hero)
   HeroWithTitle name -> pure $ hero.name == name
   HeroWithTrait trait -> hasTrait trait (toTarget hero) (toCardDef hero)
   -- a hero belongs to the sphere of each resource icon it gains too, as Song of Wisdom's
@@ -602,7 +604,7 @@ attackDestroyedAllies = fmap (filter \d -> case d.target of AllyTarget _ -> True
 -- | The player who controls the character, if it is one.
 characterController :: HasGame m => Target -> m (Maybe PlayerId)
 characterController = \case
-  HeroTarget hid -> Just . (.owner) <$> getHero hid
+  HeroTarget hid -> (\h -> guard (not $ heroInStagingArea $ toAttrs h) $> h.owner) <$> getHero hid
   AllyTarget aid -> placementController . (.placement) <$> getAlly aid
   _ -> pure Nothing
 

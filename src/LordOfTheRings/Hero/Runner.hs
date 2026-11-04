@@ -21,7 +21,7 @@ instance RunMessage HeroAttrs where
     DoPhase ResourcePhase -> do
       mods <- getModifiers attrs
       let collected = 1 + sum [n | CollectsAdditionalResources n <- mods]
-      unless (attrs.heroPrisoner || CannotCollectResources `elem` mods) $ push $ PlaceTokens GameSource (toTarget attrs) Resource collected
+      unless (attrs.heroPrisoner || attrs.heroInStagingArea || CannotCollectResources `elem` mods) $ push $ PlaceTokens GameSource (toTarget attrs) Resource collected
       pure attrs
     TakePrisoner hid | hid == attrs.heroId -> pure $ attrs & prisonerL .~ True
     RescuePrisoner hid | hid == attrs.heroId -> do
@@ -30,6 +30,8 @@ instance RunMessage HeroAttrs where
     PlaceTokens _ (isTarget attrs -> True) Damage _ | attrs.heroPrisoner -> pure attrs
     GuardCharacter (isTarget attrs -> True) cid -> pure $ attrs & guardedByL ?~ cid & committedL .~ False & attackingL .~ False
     RescueCharacter (isTarget attrs -> True) -> pure $ attrs & guardedByL .~ Nothing & exhaustedL .~ True
+    MoveHeroToStagingArea hid | hid == attrs.heroId -> pure $ attrs & inStagingAreaL .~ True & committedL .~ False & attackingL .~ False
+    TakeControlOfHero hid | hid == attrs.heroId -> pure $ attrs & inStagingAreaL .~ False & exhaustedL .~ True
     -- the resource phase's resources come from the game, not a card effect
     PlaceTokens source (isTarget attrs -> True) Resource n | source /= GameSource -> do
       mods <- getModifiers attrs

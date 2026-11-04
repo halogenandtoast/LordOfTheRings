@@ -39,6 +39,10 @@ export interface Entity {
   shadowRevealed?: string[]
   /** The encounter card guarding an objective. */
   guard?: string | null
+  /** The encounter card holding a hero captive. */
+  guardedBy?: string | null
+  /** A hero in the staging area, under no player's control. */
+  inStagingArea?: boolean
   /** A location's facedown side, as an Uncharted location hides it: sent only to the players who have looked at it. */
   otherSide?: string | null
   /** A location's place on the Island Map (Temple of the Deceived). */

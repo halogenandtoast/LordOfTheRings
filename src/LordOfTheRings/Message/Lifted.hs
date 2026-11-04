@@ -1248,6 +1248,19 @@ guardCharacterWith c captor = push $ GuardCharacter (toTarget c) (toCard captor)
 rescueCharacter :: (ReverseQueue m, Targetable character) => character -> m ()
 rescueCharacter (toTarget -> c) = pushAll [RescueCharacter c, CheckWindows [Window After $ CharacterRescued c]]
 
+-- | The hero goes to the staging area, in play under no player's control (The Long Arm of
+-- Mordor).
+moveHeroToStagingArea :: ReverseQueue m => HeroId -> m ()
+moveHeroToStagingArea = push . MoveHeroToStagingArea
+
+-- | The hero in the staging area returns to its owner's control, exhausted.
+takeControlOfHero :: ReverseQueue m => HeroId -> m ()
+takeControlOfHero = push . TakeControlOfHero
+
+-- | The objective-hero comes into play under the player's control.
+putObjectiveHeroIntoPlayUnder :: ReverseQueue m => PlayerId -> EncounterCard -> m ()
+putObjectiveHeroIntoPlayUnder pid = push . PutObjectiveHeroIntoPlayUnder pid
+
 -- | Place the ally elsewhere, as Captured! puts Faramir under itself.
 placeAlly :: ReverseQueue m => AllyId -> Placement -> m ()
 placeAlly aid = push . PlaceAlly aid

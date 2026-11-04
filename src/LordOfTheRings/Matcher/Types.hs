@@ -59,6 +59,8 @@ data HeroMatcher
   | -- | a hero defending the attack being resolved
     DefendingHero
   | PrisonerHero
+  | -- | in play in the staging area, under no player's control (The Long Arm of Mordor)
+    HeroInStagingArea
   | -- | a hero with an attachment, objective or condition of the trait attached
     HeroWithAttached Trait
   | -- | a hero with a ready attachment of the trait attached

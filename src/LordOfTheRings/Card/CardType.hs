@@ -14,6 +14,9 @@ data CardType
   | QuestType
   | ObjectiveType
   | ObjectiveAllyType
+  | -- | both an objective and a neutral hero, as The Long Arm of Mordor's Haradrim: it has
+    -- no threat cost and does not count toward the hero limit
+    ObjectiveHeroType
   | CampaignType
   | -- | a Nightmare Deck's setup card, kept flipped beside the quest deck
     NightmareType

@@ -281,6 +281,13 @@ data Message
     GuardCharacter Target CardId
   | -- | the guarded character is free of encounters: its owner takes control of it, exhausted
     RescueCharacter Target
+  | -- | the hero goes to the staging area, in play under no player's control (The Long Arm
+    -- of Mordor)
+    MoveHeroToStagingArea HeroId
+  | -- | the hero in the staging area returns to its owner's control, exhausted
+    TakeControlOfHero HeroId
+  | -- | an objective-hero comes into play under the player's control
+    PutObjectiveHeroIntoPlayUnder PlayerId EncounterCard
   | SetAside EncounterCard
   | -- | a stage whose condition may have just been met checks whether it is defeated
     CheckStage QuestId

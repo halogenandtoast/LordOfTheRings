@@ -14,6 +14,8 @@ const cardTypes: Record<string, string> = {
   QuestType: 'Quest',
   ObjectiveType: 'Objective',
   ObjectiveAllyType: 'Objective Ally',
+  // an objective-hero is a hero on the board (The Long Arm of Mordor)
+  ObjectiveHeroType: 'Hero',
   CampaignType: 'Campaign',
   PlayerSideQuestType: 'Player Side Quest',
   EncounterSideQuestType: 'Encounter Side Quest',
@@ -154,7 +156,7 @@ export const toView = (data: GameData, defs: Record<string, CardDef>, previous: 
       otherSide: e.otherSide ?? undefined,
       facedown: (e.prisoner ?? false) || e.cardCode === 'OrcGuard' || e.cardCode === 'ReanimatedDead' ? 'player' : grappled(e, kind) ? 'encounter' : undefined,
       ...(grappled(e, kind) ? { name: ikey('log.grappled') } : {}),
-      attachedTo: e.placement?.tag === 'AttachedTo' ? targetCardId(e.placement.contents as Target) : guardInPlay(e.guard),
+      attachedTo: e.placement?.tag === 'AttachedTo' ? targetCardId(e.placement.contents as Target) : guardInPlay(e.guard ?? e.guardedBy),
       counting: [...(e.committed ? ['willpower'] : []), ...(threatening.has(e.cardId) ? ['threat'] : [])],
     })
   }
@@ -194,7 +196,7 @@ export const toView = (data: GameData, defs: Record<string, CardDef>, previous: 
     // claimed objectives, condition treacheries and enemies attached as Grasping Tentacle is sit on their hosts like attachments
     // and allies under a quest card, as Captured! holds Faramir, and guarded locations on their guards (Across the Ettenmoors)
     return [
-      ...[...placed('attachments', () => true), ...placed('objectives', () => true), ...placed('treacheries', () => true), ...placed('enemies', () => true), ...placed('allies', () => true), ...placed('locations', isAt('AttachedTo'))].filter(
+      ...[...placed('attachments', () => true), ...placed('objectives', () => true), ...placed('treacheries', () => true), ...placed('enemies', () => true), ...placed('allies', () => true), ...placed('heroes', (h) => !!h.guardedBy), ...placed('locations', isAt('AttachedTo'))].filter(
         (a) => a.attachedTo !== null && ids.has(a.attachedTo),
       ),
       ...cards.flatMap(stackUnder),
@@ -210,7 +212,8 @@ export const toView = (data: GameData, defs: Record<string, CardDef>, previous: 
     const p = game.players[pid]
     const onPlayer = (e: Entity) => e.placement?.tag === 'AttachedTo' && (e.placement.contents as Target)?.tag === 'PlayerTarget' && (e.placement.contents as Target).contents === pid
     const characters = [
-      ...placed('heroes', (h) => h.owner === pid),
+      // a hero in the staging area, or a captive, is under no one's control
+      ...placed('heroes', (h) => h.owner === pid && !h.inStagingArea && !h.guardedBy),
       ...placed('allies', isAt('InPlayArea', pid)),
       // and the locations they control, as Osgiliath's
       ...placed('locations', isAt('InPlayArea', pid)),
@@ -273,6 +276,8 @@ export const toView = (data: GameData, defs: Record<string, CardDef>, previous: 
     ...placed('treacheries', (e) => isAt('Unplaced')(e) || isAt('StagingArea')(e)),
     // a side quest waits in staging until it is defeated
     ...placed('quests', isSideQuest),
+    // and heroes under no player's control (The Long Arm of Mordor)
+    ...placed('heroes', (h) => !!h.inStagingArea),
   ]
   const staging = allStaging.filter(inFocus)
 

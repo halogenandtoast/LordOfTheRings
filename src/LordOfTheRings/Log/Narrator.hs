@@ -290,6 +290,15 @@ narrationFor = \case
   RescuePrisoner hid -> Just $ whenRef (toTarget hid) \h -> one $ toned Good $ mechanic [ikeyPart "log.rescued" ["hero" ~> h]]
   GuardCharacter c cid -> Just $ attached c (CardIdTarget cid)
   RescueCharacter c -> Just $ whenRef c \h -> one $ toned Good $ mechanic [ikeyPart "log.rescued" ["hero" ~> h]]
+  MoveHeroToStagingArea hid -> Just $ whenRef (toTarget hid) \h -> one $ toned Bad $ mechanic [ikeyPart "log.heroToStagingArea" ["hero" ~> h]]
+  TakeControlOfHero hid -> Just $ whenRef (toTarget hid) \h -> do
+    owner <- getsGame (fmap (.owner) . Map.lookup hid . entitiesHeroes . gameEntities)
+    flip (maybe (pure [])) owner \pid -> do
+      who <- playerRefFor pid
+      one $ toned Good $ mechanic [ikeyPart "log.takesControlOfHero" ["player" ~> who, "hero" ~> h]]
+  PutObjectiveHeroIntoPlayUnder pid card -> Just do
+    who <- playerRefFor pid
+    one $ mechanic [ikeyPart "log.takesControlOfHero" ["player" ~> who, "hero" ~> EncounterCard card]]
   -- an enemy taking an objective, as Alcaron's Scroll goes to the enemy that damaged its hero
   ClaimObjective oid target@(EnemyTarget _) -> Just $ attached (toTarget oid) target
   ClaimObjective oid target -> Just $ whenRef (toTarget oid) \o -> whenRef target \t ->
