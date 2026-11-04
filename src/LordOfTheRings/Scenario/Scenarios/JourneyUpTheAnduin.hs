@@ -18,6 +18,11 @@ Wilderland, Lost in Wilderland, Journey Along the Anduin and Wilderlands. Wilder
 enemies, shuffled, are the Evil Creatures deck, and its locations and treacheries are
 removed from the game (MEC65 rules); Woodmen Village and The Old Ford are set aside, as
 stage 1A's setup reads.
+In easy mode the cards with the difficulty indicator are removed as the encounter sets are
+gathered, "when building the encounter deck" (Easy Mode rules), before the Evil Creatures
+deck is taken from them: it is built from the Wilderlands cards the scenario uses, so it
+loses a Hill Troll and the Marsh Adder as Wilderlands does in any scenario. No ruling
+speaks to it.
 -}
 instance RunMessage JourneyUpTheAnduin where
   runMessage msg (JourneyUpTheAnduin attrs) = case msg of
