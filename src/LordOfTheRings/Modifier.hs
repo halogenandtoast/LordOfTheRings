@@ -403,6 +403,9 @@ data ModifierType
     CannotGainResourcesFromPlayerCardEffects
   | -- | on a player: he played a card this round, from wherever, as A Forgotten Land counts
     PlayedACardThisRound
+  | -- | on a player: he played a card of the type this round, from wherever, as The Storm
+    -- Comes reads "the first ally played by each player each round"
+    PlayedCardTypeThisRound CardType
   | -- | on a player: they draw this many more cards in the resource phase, in the same
     -- draw, as Bilbo Baggins reads
     AdditionalResourcePhaseDraws Int

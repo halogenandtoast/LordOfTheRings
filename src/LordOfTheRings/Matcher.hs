@@ -247,6 +247,10 @@ matchLocation matcher location = case matcher of
     _ -> pure False
   LocationWithIdBelow lid -> pure $ location.id < lid
   UniqueLocation -> pure $ cdUnique (toCardDef location)
+  LocationWithActiveLocationTitle -> do
+    let title l = case cdName (toCardDef l) of Name t _ -> t
+    active <- getsGame (filter ((== ActiveLocation) . (.placement)) . toList . entitiesLocations . gameEntities)
+    pure $ any ((== title location) . title) active
   LocationDiscardableByPlayerCards -> notElem CannotBeDiscardedByPlayerCards . map modifierType . Map.findWithDefault [] (toTarget location) <$> getsGame gameModifiers
 
 -- | Not considered out of play, as Saruman's chosen card is.
@@ -727,6 +731,16 @@ getMainQuests = getsGame (map toTarget . filter (not . isSideQuest) . toList . e
 -- tokens on the main quest" reads.
 getMainQuestProgress :: HasGame m => m Int
 getMainQuestProgress = getsGame (sum . map (.progress) . filter (not . isSideQuest) . toList . entitiesQuests . gameEntities)
+
+-- | The card is in the victory display, as a player side quest's "while this quest is in
+-- the victory display" reads: built from its card there, it gives its modifiers.
+inVictoryDisplay :: HasGame m => CardId -> m Bool
+inVictoryDisplay cid = getsGame (any ((== cid) . (.id)) . (.victoryDisplay) . toAttrs . gameScenario)
+
+-- | The side quests in the victory display, as "X is the number of side quests in the
+-- victory display" reads.
+getSideQuestsInVictoryDisplay :: HasGame m => m Int
+getSideQuestsInVictoryDisplay = getsGame (length . filter (cardMatches sideQuestCard) . (.victoryDisplay) . toAttrs . gameScenario)
 
 -- | The objectives in play no hero has claimed: those in the staging area.
 unclaimedObjectives :: HasGame m => m Int
