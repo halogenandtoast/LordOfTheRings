@@ -2184,6 +2184,7 @@ library
       LordOfTheRings.Quest.Cards.ApproachingRivendell
       LordOfTheRings.Quest.Cards.APresenceInTheDark
       LordOfTheRings.Quest.Cards.AssaultOnDolRhugar
+      LordOfTheRings.Quest.Cards.AWarmWelcome
       LordOfTheRings.Quest.Cards.AWayUp
       LordOfTheRings.Quest.Cards.AWellLaidTrap
       LordOfTheRings.Quest.Cards.AWrongTurn
@@ -2292,6 +2293,7 @@ library
       LordOfTheRings.Quest.Cards.HuntingTheBeast
       LordOfTheRings.Quest.Cards.ImminentPursuit
       LordOfTheRings.Quest.Cards.InEnemyTerritory
+      LordOfTheRings.Quest.Cards.InsideInformation
       LordOfTheRings.Quest.Cards.InsideTheWalls
       LordOfTheRings.Quest.Cards.IntoMirkwood
       LordOfTheRings.Quest.Cards.IntoTheEttenmoors
@@ -2408,6 +2410,7 @@ library
       LordOfTheRings.Quest.Cards.TheAngryForest
       LordOfTheRings.Quest.Cards.TheAntleredCrownTheThreeTrials
       LordOfTheRings.Quest.Cards.TheBetrayal
+      LordOfTheRings.Quest.Cards.TheBurglarsTurnTheLonelyMountain
       LordOfTheRings.Quest.Cards.TheCapeOfAndrast
       LordOfTheRings.Quest.Cards.TheCapture
       LordOfTheRings.Quest.Cards.TheCatacombsOfCarnDum
@@ -2490,6 +2493,7 @@ library
       LordOfTheRings.Quest.Cards.TheWitchKingsGift
       LordOfTheRings.Quest.Cards.TheWizardsPrize
       LordOfTheRings.Quest.Cards.TheWoundedEagle
+      LordOfTheRings.Quest.Cards.ThievesFireMurder
       LordOfTheRings.Quest.Cards.ThroughTheCaverns
       LordOfTheRings.Quest.Cards.ThroughTheForest
       LordOfTheRings.Quest.Cards.ThroughTheMarshAForgottenLand
@@ -2640,6 +2644,7 @@ library
       LordOfTheRings.Scenario.Scenarios.TheKingsQuest.Helpers
       LordOfTheRings.Scenario.Scenarios.TheLandOfSorrow
       LordOfTheRings.Scenario.Scenarios.TheLandOfSorrow.Helpers
+      LordOfTheRings.Scenario.Scenarios.TheLonelyMountain
       LordOfTheRings.Scenario.Scenarios.TheLonelyMountain.Helpers
       LordOfTheRings.Scenario.Scenarios.TheLongArmOfMordor
       LordOfTheRings.Scenario.Scenarios.TheLongArmOfMordor.Helpers

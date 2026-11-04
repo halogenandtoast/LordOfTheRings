@@ -366,6 +366,10 @@ import LordOfTheRings.Quest.Cards.IntoMirkwood
 import LordOfTheRings.Quest.Cards.LostInTheDarkFliesAndSpiders
 import LordOfTheRings.Quest.Cards.CapturedBySpiders
 import LordOfTheRings.Quest.Cards.BattleWithTheSpiders
+import LordOfTheRings.Quest.Cards.AWarmWelcome (aWarmWelcome)
+import LordOfTheRings.Quest.Cards.TheBurglarsTurnTheLonelyMountain (theBurglarsTurnTheLonelyMountain)
+import LordOfTheRings.Quest.Cards.InsideInformation (insideInformation)
+import LordOfTheRings.Quest.Cards.ThievesFireMurder (thievesFireMurder)
 import LordOfTheRings.Quest.Runner ()
 import LordOfTheRings.Quest.Types as X
 import LordOfTheRings.Id
@@ -764,5 +768,9 @@ allQuests =
         , SomeQuestCard lostInTheDarkFliesAndSpiders
         , SomeQuestCard capturedBySpiders
         , SomeQuestCard battleWithTheSpiders
+        , SomeQuestCard aWarmWelcome
+        , SomeQuestCard theBurglarsTurnTheLonelyMountain
+        , SomeQuestCard insideInformation
+        , SomeQuestCard thievesFireMurder
         ]
     ]
