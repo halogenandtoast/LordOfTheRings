@@ -191,6 +191,14 @@ threatOf = \case ThreatModifier n -> Just n; _ -> Nothing
 engagementCostOf = \case EngagementCostModifier n -> Just n; _ -> Nothing
 questPointsOf = \case QuestPointModifier n -> Just n; _ -> Nothing
 
+-- | A location's or quest's quest points with the target's modifiers applied: raised or
+-- lowered, then reduced to a value one sets.
+modifiedQuestPoints :: (HasGame m, Targetable a) => a -> Int -> m Int
+modifiedQuestPoints a base = do
+  points <- modifiedValue questPointsOf a base
+  mods <- getModifiers a
+  pure $ foldr min points [n | QuestPointsReducedTo n <- mods]
+
 -- | Whether the card something is attached to is still in play.
 hostInPlay :: Entities -> Placement -> Bool
 hostInPlay es = \case

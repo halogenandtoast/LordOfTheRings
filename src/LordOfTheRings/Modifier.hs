@@ -56,6 +56,9 @@ data ModifierType
     NoProgressFromPlayerCards
   | -- | on a location: its quest points are raised by this much, as an X reads
     QuestPointModifier Int
+  | -- | on a location: its quest points are at most this, after the others, as Woodmen's
+    -- Path reduces them to 1
+    QuestPointsReducedTo Int
   | -- | on an enemy, or a character; on a player, none of their characters may attack,
     -- as Hobbit-sense reads
     CannotAttack
