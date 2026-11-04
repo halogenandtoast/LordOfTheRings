@@ -3251,6 +3251,7 @@ test-suite LordOfTheRings-test
       LordOfTheRings.EredMithrin.TheWitheredHeathPlayerCardsSpec
       LordOfTheRings.EredMithrin.TheWitheredHeathSpec
       LordOfTheRings.EredMithrinEngineSpec
+      LordOfTheRings.FlameOfTheWest.ThePassingOfTheGreyCompanySpec
       LordOfTheRings.Haradrim.BeneathTheSandsPlayerCardsSpec
       LordOfTheRings.Haradrim.BeneathTheSandsSpec
       LordOfTheRings.Haradrim.DesertCrossingSpec
