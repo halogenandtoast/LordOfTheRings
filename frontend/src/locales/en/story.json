@@ -4017,5 +4017,27 @@
         "text": "Army of the Dead has an enemy side and an objective-ally side. The enemy enters the staging area at stage 3A. In campaign mode, defeating it earns its objective-ally side as a boon."
       }
     ]
+  },
+  "the-battle-of-the-pelennor-fields": {
+    "intro": [
+      "The host of Minas Morgul falls upon Minas Tirith while darkness covers the sky. The defenders of the White City must hold the walls until the Riders of Rohan arrive, and Aragorn sails up the Anduin with the captured Corsair fleet."
+    ],
+    "setup": [
+      "The encounter deck is built from The Battle of the Pelennor Fields encounter set. The first player takes control of the Fellowship sphere Aragorn."
+    ],
+    "rules": [
+      {
+        "title": "Minas Tirith",
+        "text": "Minas Tirith is an objective that enters play at stage 3A. If it has damage equal to its hit points at the end of a round, the players lose. An effect that targets Minas Tirith while it is not in play is resolved as fully as possible."
+      },
+      {
+        "title": "Assault",
+        "text": "While stage 3B is in play, progress cannot be placed on it by player card effects or by questing successfully, though the active location still takes progress. When the players quest unsuccessfully, they deal the difference to Minas Tirith once, as a group, instead of raising their threat."
+      },
+      {
+        "title": "Triggered effects",
+        "text": "Many effects in this scenario trigger at the beginning of the quest phase or at the end of the round: Minas Tirith, The Witch-king, Grond, Wraith on Wings and, in campaign mode, The Corsair Fleet."
+      }
+    ]
   }
 }
