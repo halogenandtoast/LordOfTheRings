@@ -3410,6 +3410,7 @@ test-suite LordOfTheRings-test
       LordOfTheRings.LostRealm.TheWeatherHillsSpec
       LordOfTheRings.LostRealmEngineSpec
       LordOfTheRings.ModifierSpec
+      LordOfTheRings.MountainOfFire.MountDoomSpec
       LordOfTheRings.MountainOfFire.TheTowerOfCirithUngolSpec
       LordOfTheRings.PlanningPhaseSpec
       LordOfTheRings.PlayerCardTextSpec
