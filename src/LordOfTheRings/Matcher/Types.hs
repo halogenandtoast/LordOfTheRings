@@ -218,6 +218,9 @@ data LocationMatcher
     -- stands for them all, as an ability that does not stack is triggered by one
     LocationWithIdBelow LocationId
   | UniqueLocation
+  | -- | a location with the same title as the active location, the active one among them,
+    -- as Explore Secret Ways reads
+    LocationWithActiveLocationTitle
   | -- | a location player card effects may discard from play
     LocationDiscardableByPlayerCards
   deriving stock (Show, Eq, Generic)
@@ -269,6 +272,10 @@ instance Semigroup CardMatcher where
 
 instance Monoid CardMatcher where
   mempty = AnyCard
+
+-- | A side quest, the players' or the encounter deck's.
+sideQuestCard :: CardMatcher
+sideQuestCard = CardMatchAny [CardWithType PlayerSideQuestType, CardWithType EncounterSideQuestType]
 
 cardIs :: CardDef -> CardMatcher
 cardIs = CardWithCode . cdCardCode

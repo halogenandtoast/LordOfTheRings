@@ -27,6 +27,9 @@ export const useGame = (gameId: string, spectate = false) => {
   const { t } = useI18n()
   let closed = false
   const error = ref<string | null>(null)
+  // a debug message or an undo the server held back, as it would take the deal out of
+  // public statistics: sent again with confirm once the player agrees
+  const leavingPublic = ref<{ path: string; body: unknown } | null>(null)
   const data = shallowRef<GameData | null>(null)
   const game = shallowRef<GameView | null>(null)
   const log = shallowRef<LogEntry[]>([])
@@ -140,6 +143,11 @@ export const useGame = (gameId: string, spectate = false) => {
       error.value = null
       return refresh()
     }
+    if (response?.status === 409 && failed === 'leaves public scoring') {
+      error.value = null
+      leavingPublic.value = { path, body }
+      return
+    }
     error.value = failed
   }
 
@@ -197,6 +205,13 @@ export const useGame = (gameId: string, spectate = false) => {
     table: computed(() => data.value?.table ?? null),
     outcome: computed(() => game.value?.outcome ?? null),
     campaignId: computed(() => data.value?.campaignId ?? null),
+    leavingPublic: computed(() => leavingPublic.value !== null),
+    confirmLeavingPublic: () => {
+      const held = leavingPublic.value
+      leavingPublic.value = null
+      if (held) return post(`${held.path}${held.path.includes('?') ? '&' : '?'}confirm`, held.body)
+    },
+    cancelLeavingPublic: () => (leavingPublic.value = null),
     undo: (to?: 'phase' | 'round') => post(to ? `/undo?to=${to}` : '/undo'),
     // back to just before a log entry
     undoTo: (step: number) => post(`/undo?to=step&step=${step}`),

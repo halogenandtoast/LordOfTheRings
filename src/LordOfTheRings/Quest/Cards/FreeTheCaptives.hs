@@ -2,7 +2,6 @@ module LordOfTheRings.Quest.Cards.FreeTheCaptives (freeTheCaptives) where
 
 import LordOfTheRings.Card (CardType (EnemyType), toCard)
 import LordOfTheRings.Classes.HasGame (getsGame)
-import LordOfTheRings.Hero.Types (heroGuardedBy)
 import LordOfTheRings.Quest.CardDefs qualified as Cards
 import LordOfTheRings.Quest.Import.Lifted
 import LordOfTheRings.Trait (Trait (Orc))
@@ -23,8 +22,7 @@ play (see 'guardCharacterWith').
 -}
 instance HasModifiersFor FreeTheCaptives where
   getModifiersFor (FreeTheCaptives a) = when a.flipped do
-    guards <- getsGame (mapMaybe (heroGuardedBy . toAttrs) . toList . (.entities.heroes))
-    enemies <- getsGame (filter ((`elem` guards) . (.id) . toCard) . toList . (.entities.enemies))
+    enemies <- filterM (fmap notNull . charactersGuardedBy . (.id) . toCard) =<< getsGame (toList . (.entities.enemies))
     for_ enemies \e -> modified a e [ThreatModifier 1, AttackModifier 1, DefenseModifier 1, ImmuneToPlayerCardEffects]
     unless (null enemies) $ modifySelf a [CannotBeDefeated]
 

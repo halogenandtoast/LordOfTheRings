@@ -346,6 +346,19 @@ allTreacheryCards =
       , fearOfMordor
       , savageAttack
       , overrunByOrcs
+      , forcedOffTrackBeneathTheSands
+      , grabbedBySpiders
+      , mirage
+      , unbearableHeat
+      , scorchingSun
+      , enemyPursuit
+      , pursuersFromMordor
+      , howlingAtTheirHeels
+      , boldAndGrim
+      , noQuarter
+      , chaosInTheNight
+      , takenPrisoner
+      , tormentedByOrcs
       ]
 
 deepDeepDark :: CardDef
@@ -2218,3 +2231,65 @@ savageAttack = (treachery "16038" "Savage Attack" TheLongArmOfMordor 2) {cdShado
 
 overrunByOrcs :: CardDef
 overrunByOrcs = (treachery "16039" "Overrun by Orcs" TheLongArmOfMordor 3) {cdShadowEffect = True}
+-- * Beneath the Sands
+
+forcedOffTrackBeneathTheSands :: CardDef
+forcedOffTrackBeneathTheSands = (treachery "17073" "Forced Off Track" BeneathTheSands 3) {cdShadowEffect = True}
+
+grabbedBySpiders :: CardDef
+grabbedBySpiders = (treachery "17074" "Grabbed by Spiders" BeneathTheSands 3) {cdKeywords = setFromList [Surge, Doomed 1]}
+
+-- * Desert Crossing (The Sands of Harad). Easy mode copy counts from Hall of Beorn's
+-- scenario page.
+
+mirage :: CardDef
+mirage = (treachery "16028" "Mirage" DesertCrossing 2) {cdCardTraits = setFromList [Weather]}
+
+unbearableHeat :: CardDef
+unbearableHeat = (treachery "16029" "Unbearable Heat" DesertCrossing 2) {cdCardTraits = setFromList [Weather], cdShadowEffect = True}
+
+scorchingSun :: CardDef
+scorchingSun =
+  (treachery "16030" "Scorching Sun" DesertCrossing 2)
+    { cdCardTraits = setFromList [Weather]
+    , cdKeywords = setFromList [Surge]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
+    }
+
+-- * Escape from Umbar
+
+enemyPursuit :: CardDef
+enemyPursuit = (treachery "16021" "Enemy Pursuit" EscapeFromUmbar 2) {cdShadowEffect = True}
+
+-- * Race Across Harad
+
+pursuersFromMordor :: CardDef
+pursuersFromMordor = (treachery "17045" "Pursuers from Mordor" RaceAcrossHarad 2) {cdKeywords = setFromList [Doomed 2], cdShadowEffect = True}
+
+howlingAtTheirHeels :: CardDef
+howlingAtTheirHeels = (treachery "17046" "Howling at their Heels" RaceAcrossHarad 3) {cdShadowEffect = True}
+
+-- * The Black Serpent. Easy mode copy counts from Hall of Beorn's scenario page.
+
+boldAndGrim :: CardDef
+boldAndGrim =
+  (treachery "17101" "Bold and Grim" TheBlackSerpent 3)
+    { cdKeywords = setFromList [Surge, Doomed 1]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 2
+    }
+
+noQuarter :: CardDef
+noQuarter = (treachery "17102" "No Quarter" TheBlackSerpent 2) {cdShadowEffect = True, cdEasyModeQuantity = Just 1}
+
+chaosInTheNight :: CardDef
+chaosInTheNight = (treachery "17103" "Chaos in the Night" TheBlackSerpent 2) {cdShadowEffect = True}
+
+-- The Dungeons of Cirith Gurat (17129-17130)
+
+takenPrisoner :: CardDef
+takenPrisoner = (treachery "17129" "Taken Prisoner" TheDungeonsOfCirithGurat 2) {cdShadowEffect = True, cdEasyModeQuantity = Just 1}
+
+tormentedByOrcs :: CardDef
+tormentedByOrcs = (treachery "17130" "Tormented by Orcs" TheDungeonsOfCirithGurat 3) {cdShadowEffect = True}

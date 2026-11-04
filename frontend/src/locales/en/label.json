@@ -547,6 +547,7 @@
   "chooseEnemy": "Choose an enemy",
   "returnFromDiscard": "Choose a card to return from your discard pile to your hand",
   "chooseHeroToReady": "Choose a hero to ready",
+  "chooseLocation": "Choose a location",
   "chooseEnemyToAttack": "Choose an enemy to attack",
   "treebeard": {
     "ready": "Ready an Ent character"
@@ -2255,13 +2256,13 @@
   "freeTheCaptives": {
     "guard": "Free the Captives: choose the Orc enemy that guards this hero"
   },
-  "kahliel": {
+  "kahlielObjective": {
     "resource": "Kahliel: choose the hero to add 1 resource to"
   },
-  "yazan": {
+  "yazanObjective": {
     "damage": "Yazan: choose the non-unique enemy to deal 1 damage to"
   },
-  "jubayr": {
+  "jubayrObjective": {
     "discard": "Jubayr: choose the non-unique enemy to discard a facedown shadow card from"
   },
   "savageAttack": {
@@ -2269,5 +2270,118 @@
     "discardAlly": "Discard the highest cost ally you control",
     "chooseAlly": "Choose the ally to discard",
     "reveal": "Reveal an encounter card"
+  },
+  "offTrack": {
+    "choose": "Off Track: return the topmost location in the encounter discard pile to the staging area, or raise each player's threat",
+    "raiseThreat": "Raise each player's threat by 1 for each resource on Off Track"
+  },
+  "onTrack": {
+    "add": "On Track: choose the card with On Track to add to the staging area"
+  },
+  "forcedOffTrack": {
+    "choose": "Forced Off Track: flip the Search objective to Off Track, or deal 1 damage to each questing character",
+    "flip": "Flip the Search objective to Off Track",
+    "damage": "Deal 1 damage to each questing character"
+  },
+  "carrionBird": {
+    "discard": "Carrion Bird: choose a damaged character you control to discard"
+  },
+  "scorchingSun": {
+    "choose": "Scorching Sun: choose one",
+    "temperature": "Raise the temperature by 2",
+    "return": "Return the attacking enemy to the staging area after this attack"
+  },
+  "theDesertOfHarad": {
+    "choose": "The Desert of Harad: exhaust the ally or deal 1 damage to it",
+    "exhaust": "Exhaust it",
+    "damage": "Deal 1 damage to it"
+  },
+  "umbarSentry": {
+    "choose": "Umbar Sentry: choose one",
+    "attack": "Umbar Sentry gets +2 attack for this attack"
+  },
+  "narrowAlleyway": {
+    "choose": "Narrow Alleyway: choose a non-unique engaged enemy to place under it"
+  },
+  "enemyPursuit": {
+    "choose": "Enemy Pursuit: choose one",
+    "removeProgress": "Remove all progress from the main quest",
+    "damage": "Assign 1 damage among characters in play for each progress on the main quest"
+  },
+  "racingNorth": {
+    "choose": "Racing North: choose where Uruk Warg-rider goes",
+    "staging": "The staging area",
+    "orcsArea": "The Orcs' area"
+  },
+  "racingWarg": {
+    "attach": "Racing Warg: choose the Orc enemy to attach it to"
+  },
+  "theBlackSerpent": {
+    "choose": "The Black Serpent: choose one",
+    "attack": "The Black Serpent makes an immediate attack against the first player"
+  },
+  "serpentGuard": {
+    "choose": "Serpent Guard: choose one",
+    "noDamage": "Enemies engaged with you cannot take damage until the end of the round",
+    "attackerNoDamage": "The attacking enemy cannot take damage this round"
+  },
+  "theSerpentsRedoubt": {
+    "choose": "The Serpent's Redoubt: choose one",
+    "exhaust": "Exhaust that ally"
+  },
+  "rooflessTower": {
+    "choose": "Roofless Tower: choose one",
+    "cancel": "Cancel the effects of that event",
+    "exhaustHero": "Roofless Tower: exhaust a hero to travel here"
+  },
+  "brokenCourtyard": {
+    "choose": "Broken Courtyard: choose one",
+    "return": "Return the attacking enemy to the staging area after this attack"
+  },
+  "boldAndGrim": {
+    "choose": "Bold and Grim: attach a Harad objective you control to the attacking enemy, or",
+    "attack": "The attacking enemy makes an additional attack after this one"
+  },
+  "noQuarter": {
+    "choose": "No Quarter: reveal 2 encounter cards, or choose a Harad objective to detach from its hero and reveal",
+    "reveal": "Reveal 2 encounter cards",
+    "objective": "No Quarter: choose a Harad objective you control",
+    "host": "No Quarter: choose a non-unique encounter card in the staging area to attach it to"
+  },
+  "chaosInTheNight": {
+    "choose": "Chaos in the Night: choose one",
+    "threat": "Raise each player's threat by 3",
+    "noProgress": "Progress cannot be placed on quest cards until the end of the round"
+  },
+  "theSerpentsGarb": {
+    "enemy": "The Serpent's Garb: choose a Harad enemy in the staging area"
+  },
+  "theDungeonsOfCirithGurat": {
+    "attachCaptive": "Choose the encounter card to attach it to as a captive"
+  },
+  "abaan": {
+    "choose": "Abaan: choose a Harad character to get +1 willpower, +1 attack and +1 defense"
+  },
+  "jailerOfCirithGurat": {
+    "attach": "Jailer of Cirith Gurat: choose an ally to attach to it"
+  },
+  "dungeonWarg": {
+    "attack": "Dungeon Warg: choose the player it attacks"
+  },
+  "gateOfIron": {
+    "choose": "Gate of Iron: discard a card from your hand with a higher cost, or raise each player's threat by 3",
+    "raiseThreat": "Raise each player's threat by 3"
+  },
+  "takenPrisoner": {
+    "ally": "Taken Prisoner: choose an ally to attach"
+  },
+  "capturedCirithGurat": {
+    "ally": "Captured!: choose an ally to attach to this stage"
+  },
+  "rescueThePrisoners": {
+    "searchOrc": "Rescue the Prisoners: choose a different Orc enemy to add to the staging area"
+  },
+  "fightYourWayOut": {
+    "hero": "Fight Your Way Out: choose a hero to attach as a captive"
   }
 }

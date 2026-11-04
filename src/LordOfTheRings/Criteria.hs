@@ -53,6 +53,8 @@ data Criterion
     FewerInVictoryDisplay Int CardMatcher
   | -- | a matching card is in the player's discard pile
     CardInDiscard PlayerId CardMatcher
+  | -- | the main quest has no keywords, printed or gained, as Backtrack reads
+    MainQuestWithoutKeywords
   | Criteria [Criterion]
   | AnyCriteria [Criterion]
   | -- | at least this many enemies match

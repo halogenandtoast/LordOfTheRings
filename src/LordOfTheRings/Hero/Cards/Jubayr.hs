@@ -29,7 +29,7 @@ instance RunMessage Jubayr where
       let facedown e = [c | c <- enemyShadowCards e, c.id `notElem` (enemyShadowRevealed e <> enemyShadowFaceUp e)]
           shadowed = [(enemyId e, c) | e <- enemies, c : _ <- [facedown e]]
       chooseOrRunOneM pid do
-        questionLabeled "jubayr.discard"
+        questionLabeled "jubayrObjective.discard"
         causedBy attrs
         for_ shadowed \(eid, c) -> targeting eid $ discardShadowCard eid c
       pure h

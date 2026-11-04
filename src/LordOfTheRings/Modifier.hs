@@ -329,6 +329,9 @@ data ModifierType
     ResourcePhaseDraws Int
   | -- | on a player: their threat cannot be reduced, as The Empty Mug reads
     CannotReduceThreat
+  | -- | on a player: a player card reduces their threat by at most this much, as Mines of
+    -- Cirith Gurat's "reduce that amount to 1" reads
+    PlayerCardThreatReductionLimit Int
   | -- | on a player: the threat at which they are eliminated, 50, moves by this much, as
     -- Double Dealings lowers it by 10
     EliminationThreatModifier Int
@@ -399,7 +402,8 @@ data ModifierType
   | -- | on a location in the staging area: nothing moves it out, to be active, to a deck or
     -- out of the game, as The Crossing at Tharbad reads; explored, it still leaves play. On
     -- an enemy there: it is not engaged, moved or discarded, as The Black Serpent reads;
-    -- give it 'CannotBeOptionallyEngagedBy' too, for the players not to be offered it
+    -- give it 'CannotBeOptionallyEngagedBy' too, for the players not to be offered it.
+    -- On a card in the Orcs' area, the same holds of that area (Race Across Harad)
     CannotLeaveStagingArea
   | -- | on a hero: player card effects cannot give it resources, as No End in Sight reads;
     -- encounter card effects still may
@@ -409,6 +413,9 @@ data ModifierType
   | -- | on a player: he played a card this phase, as "the first card each player plays each
     -- phase" counts (The Long Arm of Mordor)
     PlayedACardThisPhase
+  | -- | on a player: he played a card of the type this round, from wherever, as The Storm
+    -- Comes reads "the first ally played by each player each round"
+    PlayedCardTypeThisRound CardType
   | -- | on a player: they draw this many more cards in the resource phase, in the same
     -- draw, as Bilbo Baggins reads
     AdditionalResourcePhaseDraws Int
@@ -545,6 +552,10 @@ data ModifierType
   | -- | on a player: he cannot have more than this many cards in hand, discarding down to
     -- it at once, as In Enemy Territory reads
     HandSizeLimit Int
+  | -- | on an objective: the first player claims it as soon as nothing guards it, attaching
+    -- it to a hero he controls, as The Black Serpent's stages read of each Harad objective
+    -- that is not attached
+    FirstPlayerClaimsWhenFree
   | -- | on the game, or a character: player card effects cannot ready it, as Find Water
     -- reads; the refresh phase still does
     CannotBeReadiedByPlayerCards

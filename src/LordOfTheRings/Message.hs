@@ -259,6 +259,9 @@ data Message
     staging area to guard it, any other card is revealed
     -}
     GuardObjective ObjectiveId
+  | -- | the first player claims the objective, which nothing guards (see
+    -- 'FirstPlayerClaimsWhenFree')
+    ClaimFreeObjective ObjectiveId
   | -- | a guarded location revealed, as Across the Ettenmoors' objective-locations: the next
     -- encounter card is revealed guarding it, the location attached to that card until it
     -- leaves play
@@ -288,6 +291,9 @@ data Message
     TakeControlOfHero HeroId
   | -- | an objective-hero comes into play under the player's control
     PutObjectiveHeroIntoPlayUnder PlayerId EncounterCard
+  | -- | a card out of play, an ally card from its owner's discard pile or an objective ally,
+    -- comes into play as the captive of the encounter card with this id (see 'GuardCharacter')
+    GuardCard Card CardId
   | SetAside EncounterCard
   | -- | a stage whose condition may have just been met checks whether it is defeated
     CheckStage QuestId

@@ -1,35 +1,49 @@
 module LordOfTheRings.Hero.Cards.Kahliel (kahliel) where
 
+import LordOfTheRings.Card (CardType (AllyType))
+import LordOfTheRings.Hero.CardDefs qualified as Cards
 import LordOfTheRings.Hero.Import.Lifted
-import LordOfTheRings.Objective.CardDefs qualified as Cards
-import LordOfTheRings.Phase (Phase (PlanningPhase))
-import LordOfTheRings.Scenario.Scenarios.TheLongArmOfMordor.Helpers (eliminatedIfLeavesPlay)
+import LordOfTheRings.Sphere (Sphere (..))
+import LordOfTheRings.Trait (Trait (Harad))
 
 newtype Kahliel = Kahliel HeroAttrs
-  deriving anyclass (IsHero, HasModifiersFor)
+  deriving anyclass IsHero
   deriving newtype (Show, Eq, ToJSON, Entity)
 
--- | Objective-hero.
 kahliel :: HeroCard Kahliel
 kahliel = hero Kahliel Cards.kahliel
 
--- | Response: At the beginning of the planning phase, add 1 resource to a hero's resource
--- pool.
-instance HasAbilities Kahliel where
-  getAbilities (Kahliel a) = [mkAbility a 1 $ response $ PhaseBeginsWindow After PlanningPhase]
+haradAlly :: CardMatcher
+haradAlly = CardWithType AllyType <> CardWithTrait Harad
 
--- | If Kahliel leaves play, you are eliminated from the game.
--- A hero in the staging area is under no one's control and immune to player card
--- effects: the resource goes to a hero a player controls.
+-- | You may use resources from Kahliel's resource pool to pay for Harad ally cards of any
+-- sphere.
+instance HasModifiersFor Kahliel where
+  getModifiersFor (Kahliel a) = modifySelf a [GainResourceIconFor haradAlly s | s <- [Leadership, Tactics, Spirit, Lore]]
+
+-- | Action: Discard a Harad ally card from your hand to ready a Harad character in play.
+-- (Limit once per phase.)
+instance HasAbilities Kahliel where
+  getAbilities (Kahliel a) =
+    [ limited (GroupLimit PerPhase 1)
+        $ restricted a 1 (CardInHandMatching a.owner haradAlly <> CharactersAtLeast 1 (ExhaustedHero <> HeroWithTrait Harad) (ExhaustedAlly <> AllyWithTrait Harad))
+        $ ActionAbility Free
+    ]
+
 instance RunMessage Kahliel where
   runMessage msg h@(Kahliel attrs) = case msg of
     UseCardAbility pid (isSource attrs -> True) 1 _ -> do
-      heroes <- select (HeroControlledBy AnyPlayer)
+      hand <- (.hand) <$> getPlayer pid
+      let allies = filter (cardMatches haradAlly) hand
+      exhausted <- selectCharacters (ExhaustedHero <> HeroWithTrait Harad) (ExhaustedAlly <> AllyWithTrait Harad)
       chooseOrRunOneM pid do
-        questionLabeled "kahliel.resource"
+        questionLabeled "chooseCardToDiscardFromHand"
         causedBy attrs
-        targets heroes \hid -> placeResources attrs hid 1
+        targets allies \card -> do
+          discardFromHand pid card
+          chooseOrRunOneM pid do
+            questionLabeled "chooseCharacter"
+            causedBy attrs
+            targets exhausted ready
       pure h
-    _ -> do
-      eliminatedIfLeavesPlay attrs msg
-      Kahliel <$> runMessage msg attrs
+    _ -> Kahliel <$> runMessage msg attrs

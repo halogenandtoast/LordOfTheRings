@@ -400,6 +400,19 @@ import LordOfTheRings.Enemy.Cards.UrukOfMordor
 import LordOfTheRings.Enemy.Cards.UrukWargRider
 import LordOfTheRings.Enemy.Cards.MordorWarg
 import LordOfTheRings.Enemy.Cards.SauronsEnforcers
+import LordOfTheRings.Enemy.Cards.BroodMother
+import LordOfTheRings.Enemy.Cards.HiveGuardian
+import LordOfTheRings.Enemy.Cards.SpiderBroodling
+import LordOfTheRings.Enemy.Cards.WereWorm
+import LordOfTheRings.Enemy.Cards.CarrionBird
+import LordOfTheRings.Enemy.Cards.UmbarSentry
+import LordOfTheRings.Enemy.Cards.UrukPursuer
+import LordOfTheRings.Enemy.Cards.RacingWarg
+import LordOfTheRings.Enemy.Cards.TheBlackSerpent
+import LordOfTheRings.Enemy.Cards.SerpentGuard
+import LordOfTheRings.Enemy.Cards.JailerOfCirithGurat
+import LordOfTheRings.Enemy.Cards.PrisonGuardCirithGurat
+import LordOfTheRings.Enemy.Cards.DungeonWarg
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -826,5 +839,18 @@ allEnemys =
         , SomeEnemyCard urukWargRider
         , SomeEnemyCard mordorWarg
         , SomeEnemyCard sauronsEnforcers
+        , SomeEnemyCard broodMother
+        , SomeEnemyCard hiveGuardian
+        , SomeEnemyCard spiderBroodling
+        , SomeEnemyCard wereWorm
+        , SomeEnemyCard carrionBird
+        , SomeEnemyCard umbarSentry
+        , SomeEnemyCard urukPursuer
+        , SomeEnemyCard racingWarg
+        , SomeEnemyCard theBlackSerpent
+        , SomeEnemyCard serpentGuard
+        , SomeEnemyCard jailerOfCirithGurat
+        , SomeEnemyCard prisonGuardCirithGurat
+        , SomeEnemyCard dungeonWarg
         ]
     ]

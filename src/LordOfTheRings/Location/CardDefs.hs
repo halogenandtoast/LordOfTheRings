@@ -421,6 +421,33 @@ allLocationCards =
       , denseJungle
       , southronBoma
       , villageHut
+      , spiderBurrow
+      , pitchBlackTunnel
+      , nestOfVermin
+      , cobwebbedCavern
+      , blockedPassage
+      , burntSands
+      , scorchedHamada
+      , parchedWadi
+      , narrowAlleyway
+      , umbarStreet
+      , umbarSquare
+      , portOfHarad
+      , haradrimEstate
+      , riverHarnen
+      , expanseOfHarad
+      , blisteringErg
+      , haradRoad
+      , theSerpentsRedoubt
+      , rooflessTower
+      , desertBastion
+      , southronCamp
+      , brokenCourtyard
+      , gateOfIron
+      , dungeonCell
+      , urukGuardroom
+      , minesOfCirithGurat
+      , tortureRoom
       ]
 
 drownedTreasury :: CardDef
@@ -3216,3 +3243,165 @@ southronBoma =
 
 villageHut :: CardDef
 villageHut = (location "16037" "Village Hut" TheLongArmOfMordor 2 2 2) {cdCardTraits = setFromList [Forest, Village]}
+-- * Beneath the Sands
+
+spiderBurrow :: CardDef
+spiderBurrow = (location "17068" "Spider Burrow" BeneathTheSands 2 3 2) {cdCardTraits = setFromList [Underground]}
+
+-- | X threat, from its own modifiers. On Track printed in its lower right corner.
+pitchBlackTunnel :: CardDef
+pitchBlackTunnel =
+  (location "17069" "Pitch Black Tunnel" BeneathTheSands 2 0 5)
+    { cdCardTraits = setFromList [Underground]
+    , cdKeywords = setFromList [Track 4]
+    }
+
+-- | On Track printed in its lower right corner.
+nestOfVermin :: CardDef
+nestOfVermin =
+  (location "17070" "Nest of Vermin" BeneathTheSands 2 3 4)
+    { cdCardTraits = setFromList [Underground]
+    , cdKeywords = setFromList [Track 3]
+    }
+
+cobwebbedCavern :: CardDef
+cobwebbedCavern =
+  (location "17071" "Cobwebbed Cavern" BeneathTheSands 3 2 3)
+    { cdCardTraits = setFromList [Underground]
+    , cdKeywords = setFromList [Track 2]
+    , cdShadowEffect = True
+    }
+
+-- | On Track printed in its lower right corner.
+blockedPassage :: CardDef
+blockedPassage =
+  (location "17072" "Blocked Passage" BeneathTheSands 3 2 6)
+    { cdCardTraits = setFromList [Underground]
+    , cdKeywords = setFromList [Track 2]
+    , cdShadowEffect = True
+    }
+
+-- * Desert Crossing (The Sands of Harad). Easy mode copy counts from Hall of Beorn's
+-- scenario page.
+
+burntSands :: CardDef
+burntSands = (location "16025" "Burnt Sands" DesertCrossing 4 2 3) {cdCardTraits = setFromList [Desert]}
+
+scorchedHamada :: CardDef
+scorchedHamada =
+  (location "16026" "Scorched Hamada" DesertCrossing 2 0 4)
+    { cdCardTraits = setFromList [Desert]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
+    }
+
+parchedWadi :: CardDef
+parchedWadi = (location "16027" "Parched Wadi" DesertCrossing 2 3 3) {cdCardTraits = setFromList [Desert]}
+
+-- * Escape from Umbar. Easy mode copy counts from Hall of Beorn's scenario page.
+
+narrowAlleyway :: CardDef
+narrowAlleyway = (location "16016" "Narrow Alleyway" EscapeFromUmbar 2 2 2) {cdCardTraits = setFromList [City]}
+
+umbarStreet :: CardDef
+umbarStreet =
+  (location "16017" "Umbar Street" EscapeFromUmbar 2 3 3)
+    { cdCardTraits = setFromList [City]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
+    }
+
+umbarSquare :: CardDef
+umbarSquare = (location "16018" "Umbar Square" EscapeFromUmbar 3 2 3) {cdCardTraits = setFromList [City]}
+
+-- | Its threat is X, the number of engaged enemies.
+portOfHarad :: CardDef
+portOfHarad = (location "16019" "Port of Harad" EscapeFromUmbar 2 0 4) {cdCardTraits = setFromList [City]}
+
+haradrimEstate :: CardDef
+haradrimEstate = (location "16020" "Haradrim Estate" EscapeFromUmbar 2 3 1) {cdCardTraits = setFromList [City]}
+
+-- * Race Across Harad
+
+riverHarnen :: CardDef
+riverHarnen =
+  unique
+    (location "17039" "River Harnen" RaceAcrossHarad 1 4 10)
+      { cdCardTraits = setFromList [Desert, River]
+      , cdVictoryPoints = Just 4
+      }
+
+expanseOfHarad :: CardDef
+expanseOfHarad = (location "17040" "Expanse of Harad" RaceAcrossHarad 2 2 5) {cdCardTraits = setFromList [Desert]}
+
+blisteringErg :: CardDef
+blisteringErg = (location "17041" "Blistering Erg" RaceAcrossHarad 3 0 4) {cdCardTraits = setFromList [Desert]}
+
+haradRoad :: CardDef
+haradRoad =
+  (location "17042" "Harad Road" RaceAcrossHarad 2 5 5)
+    { cdCardTraits = setFromList [Desert, Road]
+    , cdWhenRevealed = True
+    , cdShadowEffect = True
+    }
+
+-- * The Black Serpent. Easy mode copy counts from Hall of Beorn's scenario page.
+
+theSerpentsRedoubt :: CardDef
+theSerpentsRedoubt =
+  (location "17096" "The Serpent's Redoubt" TheBlackSerpent 2 4 4)
+    { cdCardTraits = setFromList [Desert, Ruins]
+    , cdEasyModeQuantity = Just 1
+    }
+
+rooflessTower :: CardDef
+rooflessTower =
+  (location "17097" "Roofless Tower" TheBlackSerpent 2 2 4)
+    { cdCardTraits = setFromList [Desert, Ruins]
+    , cdEasyModeQuantity = Just 1
+    }
+
+desertBastion :: CardDef
+desertBastion =
+  (location "17098" "Desert Bastion" TheBlackSerpent 3 1 5)
+    { cdCardTraits = setFromList [Desert, Ruins]
+    , cdShadowEffect = True
+    }
+
+southronCamp :: CardDef
+southronCamp = (location "17099" "Southron Camp" TheBlackSerpent 3 3 3) {cdCardTraits = setFromList [Desert, Ruins]}
+
+brokenCourtyard :: CardDef
+brokenCourtyard =
+  (location "17100" "Broken Courtyard" TheBlackSerpent 3 1 3)
+    { cdCardTraits = setFromList [Desert, Ruins]
+    , cdKeywords = setFromList [Surge]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 2
+    }
+
+-- The Dungeons of Cirith Gurat (17124-17128)
+
+gateOfIron :: CardDef
+gateOfIron = (location "17124" "Gate of Iron" TheDungeonsOfCirithGurat 3 3 2) {cdCardTraits = setFromList [Dungeon]}
+
+dungeonCell :: CardDef
+dungeonCell =
+  (location "17125" "Dungeon Cell" TheDungeonsOfCirithGurat 3 1 5)
+    { cdCardTraits = setFromList [Dungeon]
+    , cdKeywords = setFromList [Surge]
+    , cdEasyModeQuantity = Just 2
+    }
+
+urukGuardroom :: CardDef
+urukGuardroom = (location "17126" "Uruk Guardroom" TheDungeonsOfCirithGurat 2 4 4) {cdCardTraits = setFromList [Dungeon]}
+
+minesOfCirithGurat :: CardDef
+minesOfCirithGurat = (location "17127" "Mines of Cirith Gurat" TheDungeonsOfCirithGurat 3 2 3) {cdCardTraits = setFromList [Dungeon]}
+
+tortureRoom :: CardDef
+tortureRoom =
+  (location "17128" "Torture Room" TheDungeonsOfCirithGurat 2 3 4)
+    { cdCardTraits = setFromList [Dungeon]
+    , cdWhenRevealed = True
+    }

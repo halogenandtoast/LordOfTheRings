@@ -24,7 +24,7 @@ instance RunMessage Yazan where
     UseCardAbility pid (isSource attrs -> True) 1 _ -> do
       enemies <- select (not_ UniqueEnemy)
       chooseOrRunOneM pid do
-        questionLabeled "yazan.damage"
+        questionLabeled "yazanObjective.damage"
         causedBy attrs
         targets enemies \e -> dealDamage attrs e 1
       pure h

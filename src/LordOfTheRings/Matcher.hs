@@ -249,6 +249,10 @@ matchLocation matcher location = case matcher of
     _ -> pure False
   LocationWithIdBelow lid -> pure $ location.id < lid
   UniqueLocation -> pure $ cdUnique (toCardDef location)
+  LocationWithActiveLocationTitle -> do
+    let title l = case cdName (toCardDef l) of Name t _ -> t
+    active <- getsGame (filter ((== ActiveLocation) . (.placement)) . toList . entitiesLocations . gameEntities)
+    pure $ any ((== title location) . title) active
   LocationDiscardableByPlayerCards -> notElem CannotBeDiscardedByPlayerCards . map modifierType . Map.findWithDefault [] (toTarget location) <$> getsGame gameModifiers
 
 -- | Not considered out of play, as Saruman's chosen card is.
@@ -736,6 +740,16 @@ getMainQuests = getsGame (map toTarget . filter (not . isSideQuest) . toList . e
 getMainQuestProgress :: HasGame m => m Int
 getMainQuestProgress = getsGame (sum . map (.progress) . filter (not . isSideQuest) . toList . entitiesQuests . gameEntities)
 
+-- | The card is in the victory display, as a player side quest's "while this quest is in
+-- the victory display" reads: built from its card there, it gives its modifiers.
+inVictoryDisplay :: HasGame m => CardId -> m Bool
+inVictoryDisplay cid = getsGame (any ((== cid) . (.id)) . (.victoryDisplay) . toAttrs . gameScenario)
+
+-- | The side quests in the victory display, as "X is the number of side quests in the
+-- victory display" reads.
+getSideQuestsInVictoryDisplay :: HasGame m => m Int
+getSideQuestsInVictoryDisplay = getsGame (length . filter (cardMatches sideQuestCard) . (.victoryDisplay) . toAttrs . gameScenario)
+
 -- | The objectives in play no hero has claimed: those in the staging area.
 unclaimedObjectives :: HasGame m => m Int
 unclaimedObjectives = getsGame (length . filter ((== StagingArea) . (.placement)) . toList . entitiesObjectives . gameEntities)
@@ -792,6 +806,10 @@ getEncounterDiscard :: HasGame m => m [EncounterCard]
 getEncounterDiscard = getsGame ((.encounterDiscard) . toAttrs . gameScenario)
 
 -- | The top card of the encounter deck, if there is one.
+-- | The top N cards of the encounter deck, as "search the top 5 cards" reads.
+getTopOfEncounterDeckN :: HasGame m => Int -> m [EncounterCard]
+getTopOfEncounterDeckN n = getsGame (take n . (.encounterDeck) . toAttrs . gameScenario)
+
 getTopOfEncounterDeck :: HasGame m => m (Maybe EncounterCard)
 getTopOfEncounterDeck = getsGame (headMay . (.encounterDeck) . toAttrs . gameScenario)
 
@@ -885,3 +903,19 @@ charactersGuardedBy cid = do
   pure
     $ [toTarget h | h <- toList (entitiesHeroes es), heroGuardedBy (toAttrs h) == Just cid]
     <> [toTarget a | a <- toList (entitiesAllies es), a.placement == AttachedTo (CardIdTarget cid)]
+
+-- | Every captive an encounter card guards, with the player who owns it: none for an
+-- objective ally, an encounter card (see 'GuardCharacter').
+guardedCharacters :: HasGame m => m [(Target, Maybe PlayerId)]
+guardedCharacters = do
+  es <- getsGame gameEntities
+  pure
+    $ [(toTarget h, Just h.owner) | h <- toList (entitiesHeroes es), isJust (heroGuardedBy (toAttrs h))]
+    <> [ (toTarget a, owner (toCard a))
+       | a <- toList (entitiesAllies es)
+       , AttachedTo (CardIdTarget _) <- [a.placement]
+       ]
+ where
+  owner = \case
+    PlayerCard pc -> pc.owner
+    EncounterCard _ -> Nothing
