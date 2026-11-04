@@ -3472,5 +3472,53 @@
     "advance": "The players may advance to stage 3",
     "advanceToStage3": "Advance to stage 3",
     "stay": "Stay at stage 2"
+  },
+  "hideTest": "Commit characters to the Hide test",
+  "doneCommittingToHide": "Done committing: discard the cards",
+  "bamfurlong": {
+    "ready": "Bamfurlong: you may ready a hero you control"
+  },
+  "theMarish": {
+    "shuffle": "The Marish: choose a Nazgûl enemy to shuffle into the encounter deck"
+  },
+  "huntingForTheRing": {
+    "choose": "Hunting for the Ring: return a Nazgûl enemy engaged with you to the staging area, or make a Hide 2 test",
+    "hide": "Make a Hide 2 test"
+  },
+  "haveYouSeenBaggins": {
+    "attach": "Choose a hero to attach Have You Seen Baggins? to"
+  },
+  "paleBlade": {
+    "attach": "Choose a Nazgûl enemy to attach Pale Blade to"
+  },
+  "blackSteed": {
+    "attach": "Choose a Nazgûl enemy to attach Black Steed to"
+  },
+  "piercingCry": {
+    "search": "Piercing Cry: choose a Nazgûl enemy",
+    "place": "Piercing Cry: where does the Nazgûl enemy go?",
+    "staging": "Add it to the staging area",
+    "engaged": "Put it into play engaged with the first player"
+  },
+  "lureOfTheRing": {
+    "choose": "Lure of the Ring: choose one",
+    "exhaust": "Exhaust The One Ring",
+    "raiseThreat": "Raise your threat by 3"
+  },
+  "gildorInglorionObjective": {
+    "choose": "Gildor Inglorion is discarded at the end of the round",
+    "cancel": "Spend 1 Fellowship resource to cancel it",
+    "discard": "Discard Gildor Inglorion"
+  },
+  "escapeToBuckland": {
+    "progress": "Escape to Buckland: choose a non-unique location to place progress on"
+  },
+  "aShadowOfThePast": {
+    "chooseBurden": "A Shadow of the Past: choose a burden to add to the Campaign Pool",
+    "gandalfsDelay": "Gandalf's Delay",
+    "theRingDrawsThem": "The Ring Draws Them",
+    "chooseBoon": "A Shadow of the Past: choose a boon to add to the Campaign Pool",
+    "gildorInglorion": "Gildor Inglorion",
+    "mrUnderhill": "Mr. Underhill, recorded on the Ring-bearer"
   }
 }

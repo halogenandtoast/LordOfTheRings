@@ -567,6 +567,15 @@ import LordOfTheRings.Location.Cards.GreatHall (greatHall)
 import LordOfTheRings.Location.Cards.SecretEntrance (secretEntrance)
 import LordOfTheRings.Location.Cards.DesolationOfSmaug (desolationOfSmaug)
 import LordOfTheRings.Location.Cards.WesternSlopes (westernSlopes)
+import LordOfTheRings.Location.Cards.BagEnd
+import LordOfTheRings.Location.Cards.WoodyEnd
+import LordOfTheRings.Location.Cards.StockBrook
+import LordOfTheRings.Location.Cards.Bamfurlong
+import LordOfTheRings.Location.Cards.BuckleburyFerry
+import LordOfTheRings.Location.Cards.GreenHillCountry
+import LordOfTheRings.Location.Cards.StockRoad
+import LordOfTheRings.Location.Cards.TheMarish
+import LordOfTheRings.Location.Cards.PathlessCountryHunted
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -1180,5 +1189,14 @@ allLocations =
         , SomeLocationCard secretEntrance
         , SomeLocationCard desolationOfSmaug
         , SomeLocationCard westernSlopes
+        , SomeLocationCard bagEnd
+        , SomeLocationCard woodyEnd
+        , SomeLocationCard stockBrook
+        , SomeLocationCard bamfurlong
+        , SomeLocationCard buckleburyFerry
+        , SomeLocationCard greenHillCountry
+        , SomeLocationCard stockRoad
+        , SomeLocationCard theMarish
+        , SomeLocationCard pathlessCountryHunted
         ]
     ]

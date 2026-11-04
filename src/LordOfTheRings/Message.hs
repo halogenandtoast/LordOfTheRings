@@ -71,6 +71,21 @@ data EscapeTest = EscapeTest
 instance FromJSON EscapeTest where
   parseJSON = genericParseJSON defaultOptions . withDefaults [("escapeParty", toJSON ([] :: [PlayerId]))]
 
+{- | A Hide test (The Black Riders rules insert, "Hide X"): the player commits characters
+by exhausting them, then discards the top X cards of the encounter deck, and fails the
+test if their threat comes to more than the committed characters' willpower.
+-}
+data HideTest = HideTest
+  { hidePlayer :: PlayerId
+  , hideSource :: Source
+  , hideValue :: Int
+  -- ^ the printed X: what modifies it is read as the cards are discarded
+  , hideCommitted :: [Target]
+  , hideDiscarded :: [EncounterCard]
+  }
+  deriving stock (Show, Eq, Generic)
+  deriving anyclass (ToJSON, FromJSON)
+
 data Message
   = Setup
   | BeginPhase Phase
@@ -260,6 +275,8 @@ data Message
   | -- | the lasting effects of that duration end, as the round's do once the round's end
     -- has resolved
     EndEffects EffectDuration
+  | -- | the lasting effects the source created end, as one held while a card resolves
+    EndEffectsFrom Source
   | AttachCard AttachmentId Target
   | -- | the character's restricted cards are counted again, after one is discarded
     CheckRestricted Target
@@ -523,6 +540,15 @@ data Message
   | -- | the player commits characters to the escape test, one at a time
     MakeEscapeTest EscapeTest
   | ResolveEscapeTest EscapeTest
+  | -- | the player commits characters to the Hide test, one at a time
+    MakeHideTest HideTest
+  | -- | the top X cards of the encounter deck are discarded for the test, then the players
+    -- may act before it resolves
+    DiscardForHideTest HideTest
+  | ResolveHideTest HideTest
+  | -- | the player has failed a Hide test: what happens as he does, before the Forced
+    -- effects after it, as each Nazgûl in the staging area engaging him at stage 1B
+    FailHideTest PlayerId
   | {- | a locate test (The Long Dark): the top card of the encounter deck is discarded, and
     the test is passed if it carries the pass icon; the messages for a fail, then a pass
     -}

@@ -387,6 +387,9 @@ import LordOfTheRings.Quest.Cards.AWarmWelcome (aWarmWelcome)
 import LordOfTheRings.Quest.Cards.TheBurglarsTurnTheLonelyMountain (theBurglarsTurnTheLonelyMountain)
 import LordOfTheRings.Quest.Cards.InsideInformation (insideInformation)
 import LordOfTheRings.Quest.Cards.ThievesFireMurder (thievesFireMurder)
+import LordOfTheRings.Quest.Cards.ThreeIsCompany
+import LordOfTheRings.Quest.Cards.AShortcutToMushrooms
+import LordOfTheRings.Quest.Cards.EscapeToBuckland
 import LordOfTheRings.Quest.Runner ()
 import LordOfTheRings.Quest.Types as X
 import LordOfTheRings.Id
@@ -806,5 +809,8 @@ allQuests =
         , SomeQuestCard theBurglarsTurnTheLonelyMountain
         , SomeQuestCard insideInformation
         , SomeQuestCard thievesFireMurder
+        , SomeQuestCard threeIsCompany
+        , SomeQuestCard aShortcutToMushrooms
+        , SomeQuestCard escapeToBuckland
         ]
     ]

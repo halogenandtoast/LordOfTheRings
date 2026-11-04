@@ -552,6 +552,10 @@ allEnemyCards =
       , smaugTheGolden
       , smaugTheMagnificent
       , croakingCrows
+      , blackRider
+      , evilCrowAShadowOfThePast
+      , theWitchKing
+      , ringwraith
       ]
 
 namelessThing :: CardDef
@@ -4527,4 +4531,30 @@ croakingCrows =
   (enemy "132042" "Croaking Crows" TheLonelyMountain 3 33 1 1 1 2)
     { cdCardTraits = setFromList [Creature]
     , cdKeywords = setFromList [Surge]
+    }
+
+-- * A Shadow of the Past
+
+blackRider :: CardDef
+blackRider =
+  (enemy "141039" "Black Rider" AShadowOfThePast 5 35 4 5 4 6)
+    { cdCardTraits = setFromList [Nazgul]
+    , cdKeywords = setFromList [Hide 2]
+    , cdEasyModeQuantity = Just 3
+    }
+
+evilCrowAShadowOfThePast :: CardDef
+evilCrowAShadowOfThePast = (enemy "141040" "Evil Crow" AShadowOfThePast 3 25 2 0 1 2) {cdCardTraits = setFromList [Creature], cdShadowEffect = True}
+
+-- * The Nazgûl
+
+theWitchKing :: CardDef
+theWitchKing = unique (enemy "141068" "The Witch-king" TheNazgul 1 45 5 6 5 9) {cdCardTraits = setFromList [Nazgul]}
+
+ringwraith :: CardDef
+ringwraith =
+  (enemy "141069" "Ringwraith" TheNazgul 4 35 3 5 4 5)
+    { cdCardTraits = setFromList [Nazgul]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 2
     }

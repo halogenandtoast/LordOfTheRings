@@ -101,16 +101,18 @@ runPlayer msg player = case msg of
           ]
       -- a card a hero's Setup put in hand stays there, as Thurindir's side quest (Caleb's
       -- ruling: it is searched for before the setup hand, and kept through a mulligan)
-      let (hand, deck) = splitAt startingHandSize player.deck
+      size <- getStartingHandSize
+      let (hand, deck) = splitAt size player.deck
       pure $ player & handL <>~ hand & deckL .~ deck
     DiscardEventsFromHand pid | pid == player.id -> do
       let (events, rest) = partition ((== EventType) . (.cardType)) player.hand
       pure $ player & handL .~ rest & discardL %~ (events <>)
     Mulligan pid | pid == player.id -> do
       -- only the setup hand, the last cards in hand, goes back
-      let (kept, drawn) = splitAt (length player.hand - startingHandSize) player.hand
+      size <- getStartingHandSize
+      let (kept, drawn) = splitAt (length player.hand - size) player.hand
       send $ ShuffleIntoDeck $ map (.id) drawn
-      (hand, deck) <- splitAt startingHandSize <$> shuffleM (drawn <> player.deck)
+      (hand, deck) <- splitAt size <$> shuffleM (drawn <> player.deck)
       pure $ player & handL .~ kept <> hand & deckL .~ deck
     -- a raise opens a window before it, as Harbor Thug's Forced effect answers
     RaiseThreat pid n | pid == player.id, n > 0 -> do
@@ -744,3 +746,7 @@ noMatchNeeded c = elem NoResourceMatchNeeded <$> getModifiers (CardIdTarget c.id
 
 startingHandSize :: Int
 startingHandSize = 6
+
+-- | The starting hand, with what changes it, as Gandalf's Delay has each player draw 1 less.
+getStartingHandSize :: HasGame m => m Int
+getStartingHandSize = (\ms -> max 0 $ startingHandSize + sum [n | StartingHandSize n <- ms]) <$> getModifiers GameTarget

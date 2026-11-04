@@ -543,6 +543,10 @@ import LordOfTheRings.Enemy.Cards.WildWargs
 import LordOfTheRings.Enemy.Cards.SmaugTheGolden (smaugTheGolden)
 import LordOfTheRings.Enemy.Cards.SmaugTheMagnificent (smaugTheMagnificent)
 import LordOfTheRings.Enemy.Cards.CroakingCrows (croakingCrows)
+import LordOfTheRings.Enemy.Cards.BlackRider
+import LordOfTheRings.Enemy.Cards.EvilCrowAShadowOfThePast
+import LordOfTheRings.Enemy.Cards.TheWitchKing
+import LordOfTheRings.Enemy.Cards.Ringwraith
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -1115,5 +1119,9 @@ allEnemys =
         , SomeEnemyCard smaugTheGolden
         , SomeEnemyCard smaugTheMagnificent
         , SomeEnemyCard croakingCrows
+        , SomeEnemyCard blackRider
+        , SomeEnemyCard evilCrowAShadowOfThePast
+        , SomeEnemyCard theWitchKing
+        , SomeEnemyCard ringwraith
         ]
     ]

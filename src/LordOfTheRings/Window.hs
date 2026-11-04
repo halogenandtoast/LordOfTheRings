@@ -194,6 +194,10 @@ data WindowType
     QuestBypassed Target
   | -- | the character was committed to an escape test, as Things in the Pools answers
     CommittedToEscapeTest Target
+  | -- | the player failed a Hide test (The Black Riders rules insert, "Hide X")
+    FailedHideTest PlayerId
+  | -- | the player made a successful Hide test
+    PassedHideTest PlayerId
   | -- | the guarded character went free of encounters, back under its owner's control
     CharacterRescued Target
   | -- | the hidden card was turned faceup: the enemy it put into play (The Blood of Gondor)

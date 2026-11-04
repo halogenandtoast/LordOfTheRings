@@ -587,6 +587,9 @@ data ModifierType
   | -- | on an enemy: as the quest phase ends, it engages the player with the highest threat,
     -- as Guffawing of Giants has its Stone-giant do
     EngagesHighestThreatAtEndOfQuestPhase
+  | -- | on the game: as the phase ends, each enemy in the staging area engages the first
+    -- player, as The Ring Draws Them reads
+    StagingEnemiesEngageFirstPlayerAtEndOfPhase
   | -- | on an enemy: each hero its attack damages but does not destroy is taken prisoner, as
     -- Torture Master's shadow reads
     AttackDamageTakesPrisoner
@@ -860,6 +863,23 @@ data ModifierType
   | -- | on a player: he commits no more than this many characters to each escape test,
     -- as Ill-fated Guard reads
     EscapeTestCommitLimit Int
+  | -- | on the game, or a player for his own tests: each Hide X value is this much more, as
+    -- Woody End lowers it and Evil Crow raises it
+    HideValue Int
+  | -- | on the game, or a player for his own tests: the discarded cards of each Hide test come
+    -- to this much more threat, as Stock Road adds 2
+    HideTestThreat Int
+  | -- | on the game: each character committed to a Hide test gets this much more
+    -- willpower for it, as Green Hill Country gives
+    HideTestWillpower Int
+  | -- | on a player: he has failed a Hide test this phase, as Crawling Towards Him reads
+    FailedHideTestThisPhase
+  | -- | on a player: he has failed a Hide test this round, as Green Hill Country's shadow
+    -- reads
+    FailedHideTestThisRound
+  | -- | on the game: each player draws this many more cards in his starting hand, as
+    -- Gandalf's Delay has each draw 1 less
+    StartingHandSize Int
   | -- | on the game: the players cannot win, a win waiting until nothing gives this, as
     -- The Blood of Gondor's Nightmare setup card reads
     PlayersCannotWin

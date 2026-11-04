@@ -314,6 +314,7 @@ import LordOfTheRings.Ally.Cards.BofurTactics
 import LordOfTheRings.Ally.Cards.GandalfHobbit
 import LordOfTheRings.Ally.Cards.Bifur
 import LordOfTheRings.Ally.Cards.Dwalin
+import LordOfTheRings.Ally.Cards.GildorInglorionObjective
 import LordOfTheRings.Ally.Runner ()
 import LordOfTheRings.Ally.Types as X
 import LordOfTheRings.Id
@@ -660,5 +661,6 @@ allAllies =
         , SomeAllyCard gandalfHobbit
         , SomeAllyCard bifur
         , SomeAllyCard dwalin
+        , SomeAllyCard gildorInglorionObjective
         ]
     ]

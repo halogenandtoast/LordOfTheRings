@@ -462,6 +462,16 @@ import LordOfTheRings.Treachery.Cards.PretendingToSleep (pretendingToSleep)
 import LordOfTheRings.Treachery.Cards.KnownToAnOunce (knownToAnOunce)
 import LordOfTheRings.Treachery.Cards.BelchingFire (belchingFire)
 import LordOfTheRings.Treachery.Cards.DragonSpell (dragonSpell)
+import LordOfTheRings.Treachery.Cards.CrawlingTowardsHim
+import LordOfTheRings.Treachery.Cards.HuntingForTheRing
+import LordOfTheRings.Treachery.Cards.HaveYouSeenBaggins
+import LordOfTheRings.Treachery.Cards.PaleBlade
+import LordOfTheRings.Treachery.Cards.PowerInTheirTerror
+import LordOfTheRings.Treachery.Cards.PiercingCry
+import LordOfTheRings.Treachery.Cards.BlackSteed
+import LordOfTheRings.Treachery.Cards.RodeLikeAGale
+import LordOfTheRings.Treachery.Cards.LureOfTheRing
+import LordOfTheRings.Treachery.Cards.TheRingDrawsThem
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -951,5 +961,15 @@ allTreacherys =
         , SomeTreacheryCard knownToAnOunce
         , SomeTreacheryCard belchingFire
         , SomeTreacheryCard dragonSpell
+        , SomeTreacheryCard crawlingTowardsHim
+        , SomeTreacheryCard huntingForTheRing
+        , SomeTreacheryCard haveYouSeenBaggins
+        , SomeTreacheryCard paleBlade
+        , SomeTreacheryCard powerInTheirTerror
+        , SomeTreacheryCard piercingCry
+        , SomeTreacheryCard blackSteed
+        , SomeTreacheryCard rodeLikeAGale
+        , SomeTreacheryCard lureOfTheRing
+        , SomeTreacheryCard theRingDrawsThem
         ]
     ]

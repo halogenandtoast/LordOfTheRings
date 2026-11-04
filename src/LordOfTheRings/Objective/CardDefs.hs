@@ -172,6 +172,8 @@ allObjectiveCards =
       , aWornSack
       , bilbosMagicRing
       , aBarePatch
+      , gildorInglorionObjective
+      , gandalfsDelay
       ]
 
 durinsAxe :: CardDef
@@ -1193,3 +1195,28 @@ bilbosMagicRing = unique (objective "131079" "Bilbo's Magic Ring" DungeonsDeepAn
 -- | Set aside by stage 1A, until stage 3A adds it to the staging area.
 aBarePatch :: CardDef
 aBarePatch = (objective "132039" "A Bare Patch" TheLonelyMountain 1) {cdCardTraits = setFromList [Information]}
+
+-- * A Shadow of the Past
+
+-- | A boon with an encounter card back: earned, it is shuffled into the encounter deck
+-- (The Black Riders rules insert, "Boons & Burdens").
+gildorInglorionObjective :: CardDef
+gildorInglorionObjective =
+  ((objective "141077" "Gildor Inglorion" AShadowOfThePast 1)
+      { cdCardType = ObjectiveAllyType, cdWillpower = Just 3, cdAttack = Just 2, cdDefense = Just 3, cdHitPoints = Just 3 })
+    { cdUnique = True
+    , cdEncounterSet = Nothing
+    , cdSetIcon = Just AShadowOfThePast
+    , cdCardTraits = setFromList [Noldor, Boon]
+    , cdKeywords = setFromList [FirstPlayerGainsControl]
+    }
+
+-- | A burden: "Setup: Add Gandalf's Delay to the staging area."
+gandalfsDelay :: CardDef
+gandalfsDelay =
+  (objective "141078" "Gandalf's Delay" AShadowOfThePast 1)
+    { cdEncounterSet = Nothing
+    , cdSetIcon = Just AShadowOfThePast
+    , cdCardTraits = setFromList [Burden]
+    }
+

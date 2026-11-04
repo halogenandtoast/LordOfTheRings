@@ -17,7 +17,7 @@ import LordOfTheRings.Campaign
 import LordOfTheRings.Game.Base (allPlayers, gameEntities, gamePhase, gamePlayerOrder, gamePlayers, gameRound)
 import LordOfTheRings.Entities (entitiesHeroes, entitiesObjectives)
 import LordOfTheRings.Helpers.Modifiers (getModifiers)
-import LordOfTheRings.Modifier (ModifierType (EncounterDeckDoesNotReset, EncounterDeckResetsWheneverEmpty, RecordedIfWon, ReturnBeforeEncounterDeckResets, ShadowCardsDealt))
+import LordOfTheRings.Modifier (ModifierType (EncounterDeckDoesNotReset, EncounterDeckResetsWheneverEmpty, HideValue, RecordedIfWon, ReturnBeforeEncounterDeckResets, ShadowCardsDealt))
 import LordOfTheRings.Outcome
 import LordOfTheRings.Phase (Phase (QuestPhase))
 import LordOfTheRings.Placement (GuardRelease (..), Placement (AttachedTo))
@@ -201,20 +201,20 @@ instance RunMessage ScenarioAttrs where
           ]
       pure $ attrs & encounterDeckL .~ rest
     PutOnBottomOfEncounterDeck cards -> pure $ attrs & encounterDeckL %~ (<> cards)
-    -- the deck reset as it empties partway, the rest are discarded from it (ruling, Collateral
-    -- Damage)
     DiscardTopOfEncounterDeck source target n -> do
-      let discardFrom k a acc = do
-            let (top, rest) = splitAt k a.encounterDeck
-                a' = a & encounterDeckL .~ rest & encounterDiscardL %~ (top <>)
-                left = k - length top
-            a'' <- resetEmptyEncounterDeck a'
-            if left > 0 && notNull a''.encounterDeck
-              then discardFrom left a'' (acc <> top)
-              else pure (a'', acc <> top)
       (attrs', discarded) <- discardFrom n attrs []
       push $ DiscardedTopOfEncounterDeck source target discarded
       pushWhen (notNull discarded) $ CheckWindows [mkAfter $ DiscardedFromEncounterDeck c.id | c <- discarded]
+      pure attrs'
+    -- the Hide X value as modified now, as Woody End lowers it; once the cards are
+    -- discarded the players may act before the test resolves (The Black Riders rules
+    -- insert, "Player Actions During Hide Tests")
+    DiscardForHideTest t -> do
+      mods <- (<>) <$> getModifiers GameTarget <*> getModifiers t.hidePlayer
+      (attrs', discarded) <- discardFrom (max 0 $ t.hideValue + sum [n | HideValue n <- mods]) attrs []
+      order <- getsGame gamePlayerOrder
+      pushWhen (notNull discarded) $ CheckWindows [mkAfter $ DiscardedFromEncounterDeck c.id | c <- discarded]
+      pushAll $ map OptionalActionWindow order <> [ResolveHideTest t {hideDiscarded = discarded}]
       pure attrs'
     ResetToStage _ rest -> pure $ attrs & questDeckL .~ rest
     MoveTopOfEncounterDeckToBottom -> case attrs.encounterDeck of
@@ -474,6 +474,16 @@ instance RunMessage ScenarioAttrs where
     EliminatePlayer pid -> pure $ attrs & hiddenCardsL %~ Map.delete pid & encounterDiscardL %~ (hiddenOf pid <>)
     _ -> runSailing msg attrs
    where
+    -- the deck reset as it empties partway, the rest are discarded from it (ruling, Collateral
+    -- Damage)
+    discardFrom k a acc = do
+      let (top, rest) = splitAt k a.encounterDeck
+          a' = a & encounterDeckL .~ rest & encounterDiscardL %~ (top <>)
+          left = k - length top
+      a'' <- resetEmptyEncounterDeck a'
+      if left > 0 && notNull a''.encounterDeck
+        then discardFrom left a'' (acc <> top)
+        else pure (a'', acc <> top)
     -- "If the encounter deck is ever empty during the quest phase, the encounter discard
     -- pile is shuffled and reset back into the encounter deck."
     resetEmptyEncounterDeck a = do
