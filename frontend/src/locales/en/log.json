@@ -65,6 +65,7 @@
   "shuffledIntoEncounterDeck": "{target} is shuffled into the encounter deck",
   "returnedToTopOfEncounterDeck": "{target} goes back on top of the encounter deck",
   "removedFromQuest": "{target} is removed from the quest",
+  "addedToVictoryDisplay": "{target} is added to the victory display",
   "returnedToBottomOfEncounterDeck": "{target} goes to the bottom of the encounter deck",
 
   "revealed": "Revealed {card}",

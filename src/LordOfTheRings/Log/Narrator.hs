@@ -203,6 +203,10 @@ narrationFor = \case
   ShuffleIntoEncounterDeck target -> Just $ simply "log.shuffledIntoEncounterDeck" target
   ReturnToTopOfEncounterDeck target -> Just $ simply "log.returnedToTopOfEncounterDeck" target
   RemoveFromQuest target -> Just $ simply "log.removedFromQuest" target
+  -- an enemy or objective a card adds to the victory display, as a Capture objective takes a
+  -- Wild Mûmak with it (a destroyed enemy goes there without this message)
+  AddToVictoryDisplay target@(EnemyTarget _) -> Just $ simply "log.addedToVictoryDisplay" target
+  AddToVictoryDisplay target@(ObjectiveTarget _) -> Just $ simply "log.addedToVictoryDisplay" target
   ReturnToBottomOfEncounterDeck target -> Just $ simply "log.returnedToBottomOfEncounterDeck" target
   -- \* The encounter deck
   AddToStaging card -> Just $ one $ mechanic [ikeyPart "log.addedToStaging" ["card" ~> EncounterCard card]]
