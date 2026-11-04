@@ -1,6 +1,6 @@
 module LordOfTheRings.Treachery.Cards.ClosingIn (closingIn) where
 
-import LordOfTheRings.Card (Card (EncounterCard), EncounterCard (MkEncounterCard), toCardCode)
+import LordOfTheRings.Card (toCard)
 import LordOfTheRings.Scenario.Scenarios.CelebrimborsSecret.Helpers (cardsUnderOrcsSearch, placeUnderOrcsSearch)
 import LordOfTheRings.Treachery.CardDefs qualified as Cards
 import LordOfTheRings.Treachery.Import.Lifted
@@ -15,12 +15,10 @@ closingIn = treachery ClosingIn Cards.closingIn
 -- | Surge.
 -- When Revealed: Place Closing In facedown underneath The Orcs' Search.
 -- Shadow: Attacking enemy gets +1 attack for each card underneath The Orcs' Search.
---
 instance RunMessage ClosingIn where
   runMessage msg t@(ClosingIn attrs) = case msg of
     WhenRevealed (isTarget attrs -> True) -> do
-      removeFromGame attrs
-      placeUnderOrcsSearch $ EncounterCard $ MkEncounterCard attrs.cardId (toCardCode attrs)
+      placeUnderOrcsSearch $ toCard attrs
       pure t
     ResolveShadowEffect cid eid _ _ | cid == attrs.cardId -> do
       n <- cardsUnderOrcsSearch

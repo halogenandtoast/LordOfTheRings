@@ -5,15 +5,11 @@ import LordOfTheRings.Enemy.Import.Lifted
 import LordOfTheRings.Placement (Placement (StagingArea))
 
 newtype KingsKnight = KingsKnight EnemyAttrs
-  deriving anyclass IsEnemy
+  deriving anyclass (IsEnemy, HasModifiersFor)
   deriving newtype (Show, Eq, ToJSON, Entity)
 
 kingsKnight :: EnemyCard KingsKnight
 kingsKnight = enemy KingsKnight Cards.kingsKnight
-
--- | Its attacks that deal damage mark it so, for its Forced effect to read.
-instance HasModifiersFor KingsKnight where
-  getModifiersFor (KingsKnight a) = modifySelf a [AttackDamageModifiesUntilEndOfRound (toTarget a) DealtAttackDamage]
 
 -- | Forced: After King's Knight attacks, if no damage was dealt by its attack, return it to
 -- the staging area.
@@ -28,7 +24,6 @@ instance RunMessage KingsKnight where
       push $ IfAttackDealtNoDamage attrs.id [PlaceEnemy attrs.id StagingArea]
       pure e
     ResolveShadowEffect cid eid _ _ | cid == attrs.cardId -> do
-      attackModifier attrs eid (AttackDamageModifiesUntilEndOfRound (EnemyTarget eid) DealtAttackDamage)
       afterAttack eid [IfAttackDealtNoDamage eid [PlaceEnemy eid StagingArea]]
       pure e
     _ -> KingsKnight <$> runMessage msg attrs

@@ -40,8 +40,7 @@ import LordOfTheRings.Location hiding (location)
 import LordOfTheRings.Location.Grid (adjacentPositions)
 import LordOfTheRings.Log.Block
 import LordOfTheRings.Log.Narrator
-import LordOfTheRings.Log.Refs (findCard, sendLogInOpenBlock)
-import LordOfTheRings.Name (Name (..))
+import LordOfTheRings.Log.Refs (cardTitle, sendLogInOpenBlock, sourceCardTitle)
 import LordOfTheRings.Matcher
 import LordOfTheRings.Matcher.Window (windowMatches)
 import LordOfTheRings.Message
@@ -93,6 +92,7 @@ newTableIn gameScenario seats@((player, _) :| _) =
     , gameLeftPlay = mempty
     , gameLeftPlayLocations = mempty
     , gameAttackDestroyed = []
+    , gameDamageDealt = []
     , gameSeparation = Nothing
     }
 
@@ -292,7 +292,7 @@ instance FromJSON Entities where
 instance FromJSON Game where
   parseJSON =
     genericParseJSON (aesonOptions $ Just "game")
-      . withDefaults [("logBlocks", toJSON ([] :: [Value])), ("leftPlay", object []), ("leftPlayLocations", object []), ("attackDestroyed", toJSON ([] :: [Value])), ("separation", Null)]
+      . withDefaults [("logBlocks", toJSON ([] :: [Value])), ("leftPlay", object []), ("leftPlayLocations", object []), ("attackDestroyed", toJSON ([] :: [Value])), ("damageDealt", toJSON ([] :: [Value])), ("separation", Null)]
 
 instance FromJSON Separation where
   parseJSON = genericParseJSON (aesonOptions $ Just "separation")
@@ -665,12 +665,14 @@ runGameMessage msg g = case msg of
     pure g
   -- the refresh phase's readying is over once the character has readied
   Ready t -> pure $ g & effectsL %~ filter (\e -> not (effectTarget e == t && effectModifiers e == [ReadiedByRefresh]))
+  -- read off the damage its last attack dealt (see 'attackDamaged')
   IfAttackDamaged eid targets msgs -> do
-    let damaged e = effectTarget e `elem` targets && DamagedByAttackOf eid `elem` effectModifiers e
-    when (any damaged $ gameEffects g) $ pushAll msgs
+    damaged <- attackDamaged eid
+    when (any (\(t, n) -> n > 0 && t `elem` targets) damaged) $ pushAll msgs
     pure g
   IfAttackDealtNoDamage eid msgs -> do
-    unlessM (elem DealtAttackDamage <$> getModifiers (EnemyTarget eid)) $ pushAll msgs
+    dealt <- sum . map snd <$> attackDamaged eid
+    when (dealt == 0) $ pushAll msgs
     pure g
   OpenLogBlock block -> pure $ g & logBlocksL %~ (<> [block])
   -- an ally that has just left play answers its own leaving
@@ -943,10 +945,10 @@ runGameMessage msg g = case msg of
           , q.progress > 0
           ]
     defending <- elem Defending <$> getModifiers target
+    let recorded = damageDealtL %~ (<> [(source, target, n)])
     pushAll
       $ [CreateEffect $ Effect GameSource target [DamagedWhileDefending] UntilEndOfAttack | defending]
       -- kept until the enemy attacks again, as what its attack destroyed is
-      <> [CreateEffect $ Effect GameSource target [DamagedByAttackOf eid] UntilEndOfRound | EnemyAttackSource eid <- [source], n > 0]
       <> [ PlaceTokens source target Damage n
          , CheckWindows $ mkAfter (DealtDamage target n) : [mkAfter $ DamagedByEnemyAttack target eid | EnemyAttackSource eid <- [source]]
          , CheckDefeated source target
@@ -961,27 +963,14 @@ runGameMessage msg g = case msg of
       <> [DiscardRandomFromHand pid n | AttackDamageDiscardsRandomFrom pid <- attackMods]
       <> [HealDamage source t n | AttackDamageHeals t <- attackMods]
       <> [CreateEffect $ Effect source t [m] UntilEndOfRound | n > 0, AttackDamageModifiesUntilEndOfRound t m <- attackMods]
-    pure g
+    pure $ recorded g
   HealDamage source target n | n > 0 -> do
     damage <- getDamage target
     mods <- getModifiers target
     -- a card is named by its title (rules reference), so "other than Athelas" spares the
     -- player attachment Athelas too
-    let es = g.entities
-        sourceCode = \case
-          AbilitySource s _ -> sourceCode s
-          HeroSource i -> toCardCode <$> Map.lookup i es.heroes
-          AllySource i -> toCardCode <$> Map.lookup i es.allies
-          AttachmentSource i -> toCardCode <$> Map.lookup i es.attachments
-          ObjectiveSource i -> toCardCode <$> Map.lookup i es.objectives
-          LocationSource i -> toCardCode <$> Map.lookup i es.locations
-          TreacherySource i -> toCardCode <$> Map.lookup i es.treacheries
-          QuestSource i -> toCardCode <$> Map.lookup i es.quests
-          CardIdSource cid -> toCardCode <$> findCard cid g
-          CardCodeSource code -> Just code
-          _ -> Nothing
-        title code = (\(Name t _) -> t) . cdName <$> lookupCardDef code
-        from = title =<< sourceCode source
+    let from = sourceCardTitle g source
+        title code = cardTitle <$> lookupCardDef code
         healed = foldr min (min n damage) $ [k | HealLimit k <- mods] <> [k | HealLimitExceptFrom k code <- mods, from /= title code]
     when (healed > 0 && CannotBeHealed `notElem` mods)
       $ pushAll [RemoveTokens source target Damage healed, CheckWindows [mkAfter $ Healed target source]]
@@ -1186,9 +1175,12 @@ runGameMessage msg g = case msg of
   AmbushEngagementCheck eid | Just enemy <- Map.lookup eid g.entities.enemies, enemy.placement == StagingArea -> do
     ambush <- hasKeyword Ambush (toTarget eid) (toCardDef enemy)
     gameMods <- getModifiers GameTarget
+    pushWhen (ambush && IgnoreAmbush `notElem` gameMods) $ EnemyEngagementChecks eid
+    pure g
+  EnemyEngagementChecks eid | Just enemy <- Map.lookup eid g.entities.enemies, enemy.placement == StagingArea -> do
+    gameMods <- getModifiers GameTarget
     mods <- getModifiers eid
-    let checked = ambush && IgnoreAmbush `notElem` gameMods && NoEngagementChecks `notElem` (gameMods <> mods)
-    when checked do
+    when (NoEngagementChecks `notElem` (gameMods <> mods)) do
       cost <- getEngagementCost eid
       -- its cost against each player, as for an engagement check, as Captive Villager's
       -- controller is considered to have more threat
@@ -1297,12 +1289,12 @@ runGameMessage msg g = case msg of
       =<< inLogBlock
         (EnemyAttackBlock pid eid)
         (CheckWindows [mkWhen $ EnemyAttacking eid pid] : windows <> [DeclareDefenders pid eid []])
+    push $ CreateEffect $ Effect GameSource (EnemyTarget eid) [AttackedThisPhase] UntilEndOfPhase
     -- what its last attack destroyed or damaged is forgotten as it makes a new one
-    let lastDamage e = effectTarget e == EnemyTarget eid && DealtAttackDamage `elem` effectModifiers e
     pure
       $ g
       & attackDestroyedL %~ filter ((/= EnemyAttackSource eid) . attackDestroyedBy)
-      & effectsL %~ filter (\e -> not (lastDamage e) && effectModifiers e /= [DamagedByAttackOf eid])
+      & damageDealtL %~ filter (\(s, _, _) -> s /= EnemyAttackSource eid)
   DefendWith pid eid defender -> do
     windows <- actionWindows
     pushAll
@@ -1676,7 +1668,7 @@ runGameMessage msg g = case msg of
               : if gained || cdShadowEffect (toCardDef card)
                 then
                   [ CheckWindows $ mkWhen (ShadowEffectTriggered (ecId card) eid)
-                      : [mkWhen $ ShadowEffectAgainst d | d <- defenders]
+                      : [mkWhen $ ShadowEffectAgainst (ecId card) d | d <- defenders]
                   , ResolveShadowCard (ecId card) eid pid defenders
                   ]
                 else []
@@ -1845,12 +1837,25 @@ runGameMessage msg g = case msg of
   AttackEndedUnresolved _ -> pure $ g & effectsL %~ filter ((/= UntilEndOfAttack) . effectDuration)
   DamageAnotherCharacter source pid damaged -> do
     others <- filter (/= damaged) <$> charactersControlledBy pid
+    -- each it damages is exhausted, as Terrible Strength reads: checked once the damage is
+    -- dealt, against what the character had before
+    exhausting <- case source of
+      EnemyAttackSource eid -> elem ExhaustsCharactersDamagedByExcess <$> getModifiers eid
+      _ -> pure False
+    damage <- for others \c -> (c,) <$> getDamage c
+    let deal c =
+          DealDamage source c 1
+            : [DoStep before (DamageAnotherCharacter source pid c) | exhausting, Just before <- [lookup c damage]]
     push $ case others of
       [] -> Run []
-      [c] -> DealDamage source c 1
+      [c] -> Run (deal c)
       _ ->
         questionLabelWith (ikey "label.damageAnotherCharacter") (sourceTarget source) [] pid
-          $ [targetLabel c [DealDamage source c 1] | c <- others]
+          $ [targetLabel c (deal c) | c <- others]
+    pure g
+  DoStep before (DamageAnotherCharacter _ _ c) -> do
+    damaged <- if inPlay g c then (> before) <$> getDamage c else pure False
+    pushWhen damaged $ Exhaust c
     pure g
   ChooseAndDiscard source pid targets -> do
     unless (null targets)
@@ -2149,7 +2154,11 @@ runGameMessage msg g = case msg of
             g
         passToken s = s {separationFirstPlayer = fromMaybe s.separationFirstPlayer $ headMay $ drop 1 $ seatsFrom s.separationFirstPlayer g.playerOrder}
     pushEnd step
-    pure $ g' & effectsL %~ filter ((`notElem` [UntilEndOfPhase, UntilEndOfPhaseOf phase]) . effectDuration) & leftPlayLocationsL .~ mempty
+    pure
+      $ g'
+      & effectsL %~ filter ((`notElem` [UntilEndOfPhase, UntilEndOfPhaseOf phase]) . effectDuration)
+      & leftPlayLocationsL .~ mempty
+      & damageDealtL %~ filter (\(s, _, _) -> case s of EnemyAttackSource _ -> True; _ -> False)
   PlayAlly pid card -> do
     thisAlly <- entering =<< newAlly pid card
     limited' <- elem OneAllyPerRound <$> getModifiers GameTarget
@@ -2468,7 +2477,8 @@ runGameMessage msg g = case msg of
     pushAll $ discardAttached g target
     pure $ g & entitiesL . locationsL %~ Map.delete lid
   -- a location placed underneath a card leaves play, its tokens and attachments discarded;
-  -- so does a character or an attachment captured from play (Escape from Mount Gram)
+  -- so does a character or an attachment captured from play (Escape from Mount Gram), and
+  -- a treachery placed there as it resolves, as Closing In
   PlaceUnderneath _ cards -> do
     let under :: IsCard a => a -> Bool
         under c = (toCard c).id `elem` map (.id) cards
@@ -2495,6 +2505,7 @@ runGameMessage msg g = case msg of
       & entitiesL . heroesL %~ Map.filter (not . under)
       & entitiesL . alliesL %~ Map.filter (not . under)
       & entitiesL . attachmentsL %~ Map.filter (not . under)
+      & entitiesL . treacheriesL %~ Map.filter (not . under)
   PutObjectiveIntoPlay card -> do
     thisObjective <- newObjective card
     let guarded = \case

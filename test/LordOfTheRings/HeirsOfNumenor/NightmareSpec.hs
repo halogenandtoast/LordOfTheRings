@@ -8,7 +8,8 @@ import LordOfTheRings.Event.CardDefs qualified as Events
 import LordOfTheRings.Helpers.Modifiers (getModifiers)
 import LordOfTheRings.Helpers.Staging (getEnemyAttack, getEnemyDefense, getStagingThreat)
 import LordOfTheRings.Location.CardDefs qualified as Locations
-import LordOfTheRings.Matcher (getArcheryTotal, getEnemy)
+import LordOfTheRings.Keyword (Keyword (Battle))
+import LordOfTheRings.Matcher (currentQuestKeywords, getArcheryTotal, getEnemy)
 import LordOfTheRings.Modifier (ModifierType (..))
 import LordOfTheRings.Objective.CardDefs qualified as Objectives
 import LordOfTheRings.Outcome (Outcome (Lost))
@@ -183,6 +184,12 @@ spec = describe "Heirs of Númenor nightmare decks" do
       -- under battle: +2 threat
       getStagingThreat `shouldReturn` 4
       getEnemyAttack eid `shouldReturn` 2
+
+    it "Savage Fray switches another keyword to the one the first player picks" . nightmare intoIthilien $ \pid -> do
+      _ <- putQuestStage Quests.searchingForMugash
+      reveal Treacheries.savageFray []
+      chooseLabel "$label.savageFray.battle" pid
+      currentQuestKeywords `shouldReturn` [Battle]
 
     it "Savage Fray surges with no keyword on the quest" . nightmare intoIthilien $ \_ -> do
       _ <- putQuestStage Quests.theHiddenWay

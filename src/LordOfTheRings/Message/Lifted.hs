@@ -666,6 +666,16 @@ afterAttack eid msgs = lift $ insertAfterMatching msgs \case
   CheckWindows ws -> any (\case Window After (EnemyAttacking eid' _) -> eid == eid'; _ -> False) ws
   _ -> False
 
+{- | Messages resolved with the enemy's attack's damage, right after it is dealt, as Troll
+Attack's "resolve this attack against each player" deals its damage to the others.
+-}
+withAttackDamage :: (MonadTrans t, HasQueue Message m) => EnemyId -> [Message] -> t m ()
+withAttackDamage eid msgs = lift $ insertAfterMatching msgs \case
+  AttackDamage eid' _ -> eid == eid'
+  DefendedByMany _ eid' _ -> eid == eid'
+  UndefendedDamage _ eid' -> eid == eid'
+  _ -> False
+
 {- | Messages to run once the characters' attack on the enemy has resolved, as "after this
 attack" reads for an enemy defending: after what the attack's damage step pushes.
 -}
@@ -1408,6 +1418,11 @@ shuffleDiscardIntoDeck :: ReverseQueue m => PlayerId -> m ()
 shuffleDiscardIntoDeck = push . ShuffleDiscardIntoDeck
 
 -- | The players make engagement checks, from the first player, as in the encounter phase.
+-- | The enemy in the staging area makes engagement checks against each player, as "it
+-- makes engagement checks against each player" reads.
+enemyMakesEngagementChecks :: ReverseQueue m => EnemyId -> m ()
+enemyMakesEngagementChecks = push . EnemyEngagementChecks
+
 makeEngagementChecks :: ReverseQueue m => m ()
 makeEngagementChecks = getLead >>= \lead -> push (EngagementCheck lead 0)
 

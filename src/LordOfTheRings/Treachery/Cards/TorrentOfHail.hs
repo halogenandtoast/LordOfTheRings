@@ -17,10 +17,16 @@ torrentOfHail = treachery TorrentOfHail Cards.torrentOfHail
 instance RunMessage TorrentOfHail where
   runMessage msg t@(TorrentOfHail attrs) = case msg of
     WhenRevealed (isTarget attrs -> True) -> do
-      night <- isNight
       questing <- selectCharacters CommittedHero CommittedAlly
       for_ questing \c -> dealDamage attrs c 1
-      when night $ for_ questing \c -> do
+      doStep 1 msg
+      pure t
+    -- each character the damage reached, and still in play
+    DoStep 1 (WhenRevealed (isTarget attrs -> True)) -> do
+      night <- isNight
+      inPlay <- selectCharacters AnyHero AnyAlly
+      damaged <- filter (`elem` inPlay) . ordNub . map fst . filter ((> 0) . snd) <$> damageDealtBy attrs
+      when night $ for_ damaged \c -> do
         attachments <- getAttachmentsOn c
         controller <- characterController c
         for_ controller \p -> chooseAndDiscard attrs p attachments

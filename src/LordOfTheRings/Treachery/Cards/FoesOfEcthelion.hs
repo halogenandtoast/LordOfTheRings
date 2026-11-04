@@ -1,6 +1,5 @@
 module LordOfTheRings.Treachery.Cards.FoesOfEcthelion (foesOfEcthelion) where
 
-import LordOfTheRings.Enemy.Types (EnemyAttrs (enemyTokens))
 import LordOfTheRings.Trait (Trait (Raider))
 import LordOfTheRings.Treachery.CardDefs qualified as Cards
 import LordOfTheRings.Treachery.Import.Lifted
@@ -31,8 +30,7 @@ instance RunMessage FoesOfEcthelion where
       pure t
     DoStep 1 (WhenRevealed (isTarget attrs -> True)) -> do
       raiders <- select (EnemyWithTrait Raider <> EnemyInStagingArea)
-      for_ raiders \r -> do
-        n <- countTokens Resource . enemyTokens . toAttrs <$> getEnemy r
-        when (n > 0) $ phaseModifier attrs r (ThreatModifier n)
+      -- counted as its resources change during the phase (FAQ 1.55)
+      for_ raiders \r -> phaseModifier attrs r (ThreatPerToken Resource)
       pure t
     _ -> FoesOfEcthelion <$> runMessage msg attrs

@@ -16,6 +16,9 @@ sulfurCloud = treachery SulfurCloud Cards.sulfurCloud
 -- player's threat by that number. No more than X progress may be placed on Underwater
 -- locations this phase, where X is twice the chosen number. If the active location is not
 -- Underwater, Sulfur Cloud gains surge.
+-- The first player chooses the number, up to what would raise the lowest threat to 50: a
+-- larger one would eliminate every player. The limit holds on every Underwater location
+-- together for the phase, one that turns Underwater later too.
 instance RunMessage SulfurCloud where
   runMessage msg t@(SulfurCloud attrs) = case msg of
     WhenRevealed (isTarget attrs -> True) -> do
@@ -23,10 +26,11 @@ instance RunMessage SulfurCloud where
       if underwater
         then do
           lead <- getLead
-          locations <- select (LocationWithTrait Underwater)
-          chooseAmountM lead "sulfurCloud.number" attrs 0 10 \n -> do
+          threats <- traverse (fmap (.threat) . getPlayer) =<< getRemainingPlayers
+          let most = maybe 0 (\lowest -> max 0 (50 - lowest)) (minimumMay threats)
+          chooseAmountM lead "sulfurCloud.number" attrs 0 most \n -> do
             eachPlayer \p -> encounterRaisesThreat p n
-            for_ locations \l -> phaseModifier attrs l (ProgressLimit (2 * n))
+            phaseModifier attrs GameTarget (PhaseProgressLimitOnTrait Underwater (2 * n))
         else revealEncounterCard
       pure t
     _ -> SulfurCloud <$> runMessage msg attrs

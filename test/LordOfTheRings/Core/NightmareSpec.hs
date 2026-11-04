@@ -3,7 +3,9 @@ module LordOfTheRings.Core.NightmareSpec (spec) where
 import Data.Aeson (Result (..))
 import Data.Aeson.KeyMap qualified as KeyMap
 import LordOfTheRings.Ally.CardDefs qualified as Allies
+import LordOfTheRings.Effect (Effect (..), EffectDuration (UntilEndOfPhase))
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
+import LordOfTheRings.Matcher (getEnemy)
 import LordOfTheRings.Helpers.Modifiers (getModifiers)
 import LordOfTheRings.Helpers.Staging (getEnemyAttack, getStagingThreat)
 import LordOfTheRings.Location.CardDefs qualified as Locations
@@ -181,6 +183,49 @@ spec = describe "Nightmare mode" do
       was <- threat pid
       reveal Treacheries.smokingBlood []
       threat pid `shouldReturn` was + 3
+
+    it "Smoking Blood's shadow, undefended, moves the enemy's damage to the hero the attack damaged" . nightmare journeyAlongTheAnduin $ \pid -> do
+      reveal Enemies.hillTroll []
+      eid <- theEnemy
+      run $ EngageEnemy pid eid
+      run $ DealDamage GameSource (toTarget eid) 3
+      hero <- getsGame (toTarget . fromJustNote "no hero" . headMay . toList . (.entities.heroes))
+      run $ CreateEffect $ Effect GameSource hero [HitPointModifier 20] UntilEndOfPhase
+      attack <- getEnemyAttack eid
+      _ <- setEncounterDeck [Treacheries.smokingBlood]
+      run $ DealShadowCard eid
+      run $ EnemyAttack pid eid
+      passActions pid
+      chooseLabel "$label.takeAttackUndefended" pid
+      passActions pid
+      chooseTarget pid hero
+      passActions pid
+      getCharacterDamage hero `shouldReturn` attack + 3
+      (.damage) <$> getEnemy eid `shouldReturn` 0
+
+    it "Troll Attack's shadow deals a Troll's attack to each other player, undefended, with its damage" $ twoPlayerTest testDeck \one two -> do
+      run . PutEnemyIntoPlayEngaged one =<< genEncounterCard Enemies.hillTroll
+      troll <- theEnemy
+      attack <- getEnemyAttack troll
+      theirs <- getsGame (map toTarget . filter ((== two) . (.owner)) . toList . (.entities.heroes))
+      for_ theirs \h -> run $ CreateEffect $ Effect GameSource h [HitPointModifier 20] UntilEndOfPhase
+      _ <- setEncounterDeck [Treacheries.trollAttack]
+      run $ DealShadowCard troll
+      run $ EnemyAttack one troll
+      let answer = do
+            for_ [one, two] passActions
+            q1 <- getQuestion one
+            q2 <- getQuestion two
+            case (q1, q2) of
+              (Just (QuestionLabel l _ _ _), _) | "$label.declareDefender" `isPrefixOf` l -> chooseLabel "$label.takeAttackUndefended" one >> answer
+              (_, Just (QuestionLabel "$label.defendWithSentinel" _ _ _)) -> chooseLabel "$label.doNotDefend" two >> answer
+              (Just (QuestionLabel "$label.undefendedDamage" _ _ _), _) -> chooseOptionMatching "damage" one (const True) >> answer
+              (_, Just (QuestionLabel "$label.undefendedDamage" _ _ _)) -> chooseOptionMatching "damage" two (const True) >> answer
+              (Just (QuestionLabel "$label.takeAction" _ _ _), _) -> passActions one >> answer
+              (_, Just (QuestionLabel "$label.takeAction" _ _ _)) -> passActions two >> answer
+              _ -> pure ()
+      answer
+      sum <$> traverse getCharacterDamage theirs `shouldReturn` attack
 
   describe "Escape from Dol Guldur" do
     it "builds the nightmare deck" . nightmare escapeFromDolGuldur $ \_ -> do

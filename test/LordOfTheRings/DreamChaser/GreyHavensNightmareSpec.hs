@@ -1,5 +1,6 @@
 module LordOfTheRings.DreamChaser.GreyHavensNightmareSpec (spec) where
 
+import Data.Map.Strict qualified as Map
 import LordOfTheRings.Card (cdEncounterSet, toCardDef)
 import LordOfTheRings.EncounterSet qualified as EncounterSet
 import LordOfTheRings.Enemy (EnemyAttrs (..))
@@ -316,3 +317,14 @@ spec = describe "The Grey Havens Nightmare Decks" do
       raider <- stagedEnemy Enemies.umbarRaider
       reveal Treacheries.infiltration
       resourcesOn raider `shouldReturn` 3
+
+    it "Infiltration shares the resources with a set-aside Raider, the first player placing the odd one" . nightmare raidOnTheGreyHavens $ \pid -> do
+      heroes <- getsGame (map toTarget . toList . (.entities.heroes))
+      for_ heroes \h -> run $ PlaceTokens GameSource h Resource 1
+      sahir <- genEncounterCard Enemies.captainSahir
+      getGame >>= putGame . (scenarioL %~ overAttrs (setAsideL .~ [sahir]))
+      raider <- stagedEnemy Enemies.umbarRaider
+      reveal Treacheries.infiltration
+      chooseTarget pid (CardIdTarget sahir.id)
+      resourcesOn raider `shouldReturn` 1
+      getsGame (Map.lookup sahir.id . scenarioOutOfPlayResources . toAttrs . (.scenario)) `shouldReturn` Just 2

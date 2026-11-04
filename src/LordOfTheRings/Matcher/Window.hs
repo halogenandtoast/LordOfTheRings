@@ -376,7 +376,7 @@ windowMatches matcher (Window timing wType) = case (matcher, wType) of
   (DefendedAttackAgainstWindow t eid, DefendedAttack _ eid') -> t == timing && eid == eid'
   (PlayedFromHandWindow t target, PlayedFromHand target') -> t == timing && target == target'
   (LocationRevealedWindow t, Revealed (LocationTarget _)) -> t == timing
-  (ShadowEffectAgainstWindow t target, ShadowEffectAgainst target') -> t == timing && target == target'
+  (ShadowEffectAgainstWindow t target, ShadowEffectAgainst _ target') -> t == timing && target == target'
   (AnyEnemyAttacksWindow t, EnemyAttacking _ _) -> t == timing
   (CharacterLeftPlayWindow t m, CharacterLeftPlay c) -> t == timing && cardMatches m c
   (AttackedWindow t target, AttackedEnemy target' _) -> t == timing && target == target'

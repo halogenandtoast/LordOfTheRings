@@ -28,14 +28,23 @@ instance RunMessage SmokingBlood where
       when (null enemies) revealEncounterCard
       pure t
     ResolveShadowEffect cid eid pid defenders | cid == attrs.cardId -> do
-      damage <- (.damage) <$> getEnemy eid
-      when (damage > 0) do
-        targets' <- if null defenders then map toTarget <$> select (HeroControlledBy $ PlayerWithId pid) else pure defenders
-        chooseOrRunOneM pid do
-          questionLabeled "smokingBlood.moveDamage"
-          causedBy attrs
-          targets targets' \c -> do
-            healDamage attrs eid damage
-            dealDamage (EnemySource eid) c damage
+      -- undefended, the hero is the one the attack's damage goes to, known once it is dealt
+      if null defenders
+        then afterAttack eid [DoStep 1 msg]
+        else moveOnto eid pid defenders
+      pure t
+    DoStep 1 (ResolveShadowEffect cid eid pid _) | cid == attrs.cardId -> do
+      damaged <- attackDamaged eid
+      heroes <- filterM (\h -> selectAny (HeroWithId h)) (ordNub [h | (HeroTarget h, n) <- damaged, n > 0])
+      moveOnto eid pid (map toTarget heroes)
       pure t
     _ -> SmokingBlood <$> runMessage msg attrs
+   where
+    -- moved, not dealt: nothing answers it as damage dealt
+    moveOnto eid pid characters = do
+      present <- selectAny (EnemyWithId eid)
+      damage <- if present then (.damage) <$> getEnemy eid else pure 0
+      when (damage > 0) $ chooseOrRunOneM pid do
+        questionLabeled "smokingBlood.moveDamage"
+        causedBy attrs
+        targets characters \c -> moveDamage attrs eid c damage

@@ -3,7 +3,7 @@ module LordOfTheRings.Modifier (module LordOfTheRings.Modifier) where
 import LordOfTheRings.Campaign (CampaignLogKey)
 import LordOfTheRings.Card.CardType (CardType)
 import LordOfTheRings.Card.Code (CardCode)
-import LordOfTheRings.Id (EnemyId, PlayerId)
+import LordOfTheRings.Id (PlayerId)
 import LordOfTheRings.Keyword (Keyword)
 import LordOfTheRings.Matcher.Types (CardMatcher, EnemyMatcher, LocationMatcher, PlayerMatcher)
 import LordOfTheRings.Outcome (Outcome)
@@ -11,6 +11,7 @@ import LordOfTheRings.Prelude
 import LordOfTheRings.Source
 import LordOfTheRings.Sphere
 import LordOfTheRings.Target (Target)
+import LordOfTheRings.Token (Token)
 import LordOfTheRings.Trait
 
 data ModifierType
@@ -133,6 +134,29 @@ data ModifierType
     CannotBeDefeated
   | -- | on a character committed to the quest: its willpower does not count toward it
     DoesNotCountWillpower
+  | -- | on a character: its willpower is reduced to 0, whatever else modifies it, as A Fell
+    -- Dread reads; one whose willpower cannot be reduced keeps it
+    WillpowerReducedToZero
+  | -- | on an enemy: it gets +1 threat for each token of the kind on it, counted as they
+    -- change, as Foes of Ecthelion reads for resources
+    ThreatPerToken Token
+  | -- | on the game: the total threat in the staging area is raised by 1 for each token of
+    -- the kind on the card, counted as they change, as The Tower Beckons reads
+    StagingThreatPerToken Target Token
+  | -- | on the game: each ally in play takes the modifier, one that enters play later too,
+    -- for as long as the effect lasts, as Pit into the Depths reads
+    EachAlly ModifierType
+  | -- | on an enemy: it has attacked this phase, as Howling of Wargs reads
+    AttackedThisPhase
+  | -- | on the game: no more than this much progress may be placed on locations with the
+    -- trait this phase, all of them together, as Sulfur Cloud reads for Underwater
+    PhaseProgressLimitOnTrait Trait Int
+  | -- | on the game, by an effect until the end of the phase: this much progress was placed
+    -- on locations with the trait (see 'PhaseProgressLimitOnTrait')
+    ProgressPlacedOnTraitThisPhase Trait Int
+  | -- | on an enemy: each character its excess damage goes to, as
+    -- 'ExcessDamageToOtherCharacters' sends it, is exhausted, as Terrible Strength reads
+    ExhaustsCharactersDamagedByExcess
   | -- | on a character: it is discarded from play once its willpower is 0, as The
     -- Mountains' Peaks reads
     DiscardedAtNoWillpower
@@ -652,7 +676,8 @@ data ModifierType
   | -- | on the game: no player card may cancel a When Revealed effect, as Decrepit City
     -- reads
     CannotCancelWhenRevealedEffects
-  | -- | on the game: no player card may cancel a shadow effect, as Stronghold Tower reads
+  | -- | on the game: no player card may cancel a shadow effect, as Stronghold Tower and
+    -- Dark and Stormy read
     CannotCancelShadowEffects
   | -- | on a player: he has played an event this round
     PlayedEventThisRound
@@ -663,8 +688,6 @@ data ModifierType
     ActiveLocationsAddThreat LocationMatcher
   | -- | on the game: a treachery card has been revealed this round
     TreacheryRevealedThisRound
-  | -- | on a character: the enemy's attack, its last, dealt it damage
-    DamagedByAttackOf EnemyId
   | -- | on the game: as an additional cost to bypass a quest card, each player raises his
     -- threat by this much, as Shadowed Corridor reads
     BypassCostRaisesThreat Int
@@ -700,9 +723,6 @@ data ModifierType
   | -- | on an enemy, by an effect until the end of the round: a character was declared as
     -- an attacker against it, for 'AttackersPerRoundLimit' to count
     DeclaredAttackerThisRound
-  | -- | on an enemy, until its next attack: its attack dealt damage, as King's Knight reads,
-    -- given it by 'AttackDamageModifiesUntilEndOfRound'
-    DealtAttackDamage
   | -- | on an enemy: if its attack deals damage, the target gets the modifier until the end
     -- of the round, as Giant Scorpion's shadow bars the defender from readying
     AttackDamageModifiesUntilEndOfRound Target ModifierType

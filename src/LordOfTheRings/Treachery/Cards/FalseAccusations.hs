@@ -32,7 +32,7 @@ instance RunMessage FalseAccusations where
       returnToStagingAfterAttack eid
       afterAttack eid [DoStep 1 msg]
       pure t
-    DoStep 1 (ResolveShadowEffect cid _ _ _) | cid == attrs.cardId -> do
-      makeEngagementChecks
+    DoStep 1 (ResolveShadowEffect cid eid _ _) | cid == attrs.cardId -> do
+      enemyMakesEngagementChecks eid
       pure t
     _ -> FalseAccusations <$> runMessage msg attrs

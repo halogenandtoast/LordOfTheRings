@@ -17,6 +17,6 @@ terribleStrength = treachery TerribleStrength Cards.terribleStrength
 instance RunMessage TerribleStrength where
   runMessage msg t@(TerribleStrength attrs) = case msg of
     ResolveShadowEffect cid eid _ _ | cid == attrs.cardId -> do
-      attackModifier attrs eid ExcessDamageToOtherCharacters
+      createEffect attrs eid [ExcessDamageToOtherCharacters, ExhaustsCharactersDamagedByExcess] UntilEndOfAttack
       pure t
     _ -> TerribleStrength <$> runMessage msg attrs
