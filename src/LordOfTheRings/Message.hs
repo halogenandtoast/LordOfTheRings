@@ -250,6 +250,10 @@ data Message
     AllyBecomesHero AllyId
   | -- | the hero an ally became goes back to being an ally
     HeroBecomesAlly HeroId
+  | -- | the ally loses the ally card type and becomes an attachment on the host, as Wild
+    -- Stallion attaches itself as a Mount: its card's attachment builder, under the same
+    -- code, gives it its attachment text
+    AllyBecomesAttachment AllyId Target
   | ChooseAndExhaust Source PlayerId Int
   | ChooseAndExhaustHero Source PlayerId
   | -- | the player exhausts a hero the matcher picks out to pay a cost; the ability then

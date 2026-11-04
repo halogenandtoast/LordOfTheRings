@@ -2830,6 +2830,14 @@ runGameMessage msg g = case msg of
             )
             $ lookupAlly (toCardCode h) attrs.heroCardId aid attrs.heroOwner
     pure $ retargetCharacter (toTarget h) (toTarget new) $ g & entitiesL . heroesL %~ Map.delete hid & entitiesL . alliesL %~ insertEntity new
+  -- it does not leave play: it keeps its id, and whether it is exhausted, as the card it is
+  AllyBecomesAttachment aid host | Just a <- Map.lookup aid g.entities.allies -> do
+    let attrs = toAttrs a
+        new =
+          overAttrs (\x -> x {attachmentExhausted = allyExhausted attrs})
+            $ lookupAttachment (toCardCode a) attrs.allyCardId (AttachmentId $ unAllyId aid) attrs.allyOwner
+    pushAll $ discardAttached g (toTarget a) <> [AttachCard (toId new) host, CheckRestricted host]
+    pure $ g & entitiesL . alliesL %~ Map.delete aid & entitiesL . attachmentsL %~ insertEntity new
   PutQuestIntoPlay card -> do
     thisQuest <- newQuest card
     pure $ g & entitiesL . questsL %~ insertEntity thisQuest
@@ -3508,8 +3516,10 @@ checkRestricted g host = do
   let slots :: HasCardDef a => a -> Int
       slots = cdRestrictedSlots . toCardDef
       restrictedOn =
-        [(toTarget x, slots x) | x <- toList g.entities.attachments, x.placement == AttachedTo host, isRestricted x]
+        [(toTarget x, slots x) | x <- toList g.entities.attachments, x.placement == AttachedTo host, isRestricted x || gainsRestricted x]
           <> [(toTarget o, slots o) | o <- toList g.entities.objectives, o.placement == AttachedTo host, isRestricted o]
+      -- an attachment given Restricted with its text, as Wild Stallion's Mount text
+      gainsRestricted x = GainKeyword Restricted `elem` map modifierType (Map.findWithDefault [] (toTarget x) (gameModifiers g))
   controller <- characterController host
   for_ controller \pid ->
     when (sum (map snd restrictedOn) > 2)
