@@ -118,6 +118,8 @@ data AllyMatcher
   | -- | an ally with a ready attachment of the trait attached, as Swift and Strong
     -- exhausts a Weapon; any attachment without one, as Wiglaf exhausts one
     AllyWithReadyAttached (Maybe Trait)
+  | -- | an ally with an attachment of the card code attached, as "Limit 1 per ally" reads
+    AllyWithAttachment CardCode
   | AnyAlly
   | NotAlly AllyMatcher
   | AllyMatchAll [AllyMatcher]

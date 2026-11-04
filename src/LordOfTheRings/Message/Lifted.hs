@@ -1124,6 +1124,11 @@ from hand.
 playFromHandAtNoCost :: ReverseQueue m => PlayerId -> CardId -> m ()
 playFromHandAtNoCost pid cid = push $ PlayFromHandAtNoCost pid cid
 
+-- | The ally becomes an attachment on the host, as Wild Stallion attaches itself as a
+-- Mount.
+attachAllyTo :: (ReverseQueue m, HasField "id" ally AllyId, Targetable host) => ally -> host -> m ()
+attachAllyTo a host = push $ AllyBecomesAttachment a.id (toTarget host)
+
 -- | Play an attachment from the player's hand on the host without paying its cost, as
 -- Wiglaf plays an Item attachment on himself.
 playOnFromHandAtNoCost :: (ReverseQueue m, HasField "id" card CardId, Targetable host) => PlayerId -> card -> host -> m ()

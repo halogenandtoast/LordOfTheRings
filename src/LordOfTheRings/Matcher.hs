@@ -185,6 +185,8 @@ matchAlly matcher ally = case matcher of
           . gameEffects
       )
   AllyWithAttached trait -> notNull <$> attachedWithTrait trait (toTarget ally)
+  AllyWithAttachment code ->
+    getsGame (any (\a -> a.placement == AttachedTo (toTarget ally) && toCardCode a == code) . entitiesAttachments . gameEntities)
   AllyWithReadyAttached trait ->
     getsGame
       ( any
