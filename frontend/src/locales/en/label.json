@@ -1069,7 +1069,9 @@
     "returnLocation": "Return the active location to the staging area"
   },
   "offTrack": {
-    "attach": "Attach Off Track to a location"
+    "attach": "Attach Off Track to a location",
+    "choose": "Off Track: return the topmost location in the encounter discard pile to the staging area, or raise each player's threat",
+    "raiseThreat": "Raise each player's threat by 1 for each resource on Off Track"
   },
   "inNeedOfRest": {
     "attach": "Remove a hero from the quest and attach In Need of Rest to it"
@@ -2057,7 +2059,10 @@
     "discard": "Choose an attachment to discard for Torrent of Hail"
   },
   "forcedOffTrack": {
-    "discard": "Choose a Warg enemy in the staging area to discard"
+    "discard": "Choose a Warg enemy in the staging area to discard",
+    "choose": "Forced Off Track: flip the Search objective to Off Track, or deal 1 damage to each questing character",
+    "flip": "Flip the Search objective to Off Track",
+    "damage": "Deal 1 damage to each questing character"
   },
   "goblinPatrolNightmare": {
     "capture": "Goblin Patrol: capture random cards from your hand underneath the current quest",
@@ -2247,17 +2252,8 @@
   "mordorWarg": {
     "attach": "Mordor Warg: choose the Orc enemy to attach it to"
   },
-  "offTrack": {
-    "choose": "Off Track: return the topmost location in the encounter discard pile to the staging area, or raise each player's threat",
-    "raiseThreat": "Raise each player's threat by 1 for each resource on Off Track"
-  },
   "onTrack": {
     "add": "On Track: choose the card with On Track to add to the staging area"
-  },
-  "forcedOffTrack": {
-    "choose": "Forced Off Track: flip the Search objective to Off Track, or deal 1 damage to each questing character",
-    "flip": "Flip the Search objective to Off Track",
-    "damage": "Deal 1 damage to each questing character"
   },
   "carrionBird": {
     "discard": "Carrion Bird: choose a damaged character you control to discard"
