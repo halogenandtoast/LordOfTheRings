@@ -334,6 +334,7 @@ import LordOfTheRings.Treachery.Cards.Sandstorm
 import LordOfTheRings.Treachery.Cards.HeatExhaustion
 import LordOfTheRings.Treachery.Cards.Overgrown
 import LordOfTheRings.Treachery.Cards.FearOfMordor
+import LordOfTheRings.Treachery.Cards.EnemyPursuit
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -695,5 +696,6 @@ allTreacherys =
         , SomeTreacheryCard heatExhaustion
         , SomeTreacheryCard overgrown
         , SomeTreacheryCard fearOfMordor
+        , SomeTreacheryCard enemyPursuit
         ]
     ]

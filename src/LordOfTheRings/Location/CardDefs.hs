@@ -419,6 +419,11 @@ allLocationCards =
       , jungleTrail
       , forestClearing
       , denseJungle
+      , narrowAlleyway
+      , umbarStreet
+      , umbarSquare
+      , portOfHarad
+      , haradrimEstate
       ]
 
 drownedTreasury :: CardDef
@@ -3203,3 +3208,26 @@ denseJungle =
     { cdCardTraits = setFromList [Forest]
     , cdShadowEffect = True
     }
+
+-- * Escape from Umbar. Easy mode copy counts from Hall of Beorn's scenario page.
+
+narrowAlleyway :: CardDef
+narrowAlleyway = (location "16016" "Narrow Alleyway" EscapeFromUmbar 2 2 2) {cdCardTraits = setFromList [City]}
+
+umbarStreet :: CardDef
+umbarStreet =
+  (location "16017" "Umbar Street" EscapeFromUmbar 2 3 3)
+    { cdCardTraits = setFromList [City]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
+    }
+
+umbarSquare :: CardDef
+umbarSquare = (location "16018" "Umbar Square" EscapeFromUmbar 3 2 3) {cdCardTraits = setFromList [City]}
+
+-- | Its threat is X, the number of engaged enemies.
+portOfHarad :: CardDef
+portOfHarad = (location "16019" "Port of Harad" EscapeFromUmbar 2 0 4) {cdCardTraits = setFromList [City]}
+
+haradrimEstate :: CardDef
+haradrimEstate = (location "16020" "Haradrim Estate" EscapeFromUmbar 2 3 1) {cdCardTraits = setFromList [City]}

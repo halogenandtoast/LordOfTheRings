@@ -275,6 +275,8 @@ allQuestCards =
       , findWater
       , craftRemedy
       , uruksOfTheEye
+      , strandedInUmbar
+      , fleeTheCity
       ]
 
 theDrippingWalls :: CardDef
@@ -1152,3 +1154,11 @@ uruksOfTheEye =
     { cdVictoryPoints = Just 10
     , cdKeywords = setFromList [Surge]
     }
+
+-- * Escape from Umbar
+
+strandedInUmbar :: CardDef
+strandedInUmbar = quest "16066" "Stranded in Umbar" EscapeFromUmbar 1 15
+
+fleeTheCity :: CardDef
+fleeTheCity = quest "16067" "Flee the City" EscapeFromUmbar 2 15

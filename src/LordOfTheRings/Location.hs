@@ -402,6 +402,11 @@ import LordOfTheRings.Location.Cards.DesertOasis
 import LordOfTheRings.Location.Cards.JungleTrail
 import LordOfTheRings.Location.Cards.ForestClearing
 import LordOfTheRings.Location.Cards.DenseJungle
+import LordOfTheRings.Location.Cards.NarrowAlleyway
+import LordOfTheRings.Location.Cards.UmbarStreet
+import LordOfTheRings.Location.Cards.UmbarSquare
+import LordOfTheRings.Location.Cards.PortOfHarad
+import LordOfTheRings.Location.Cards.HaradrimEstate
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -850,5 +855,10 @@ allLocations =
         , SomeLocationCard jungleTrail
         , SomeLocationCard forestClearing
         , SomeLocationCard denseJungle
+        , SomeLocationCard narrowAlleyway
+        , SomeLocationCard umbarStreet
+        , SomeLocationCard umbarSquare
+        , SomeLocationCard portOfHarad
+        , SomeLocationCard haradrimEstate
         ]
     ]

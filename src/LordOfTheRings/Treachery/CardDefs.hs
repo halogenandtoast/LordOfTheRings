@@ -344,6 +344,7 @@ allTreacheryCards =
       , heatExhaustion
       , overgrown
       , fearOfMordor
+      , enemyPursuit
       ]
 
 deepDeepDark :: CardDef
@@ -2210,3 +2211,8 @@ overgrown = (treachery "16059" "Overgrown" JungleForest 2) {cdKeywords = setFrom
 
 fearOfMordor :: CardDef
 fearOfMordor = (treachery "16065" "Fear of Mordor" MordorOrcs 2) {cdShadowEffect = True, cdEasyModeQuantity = Just 1}
+
+-- * Escape from Umbar
+
+enemyPursuit :: CardDef
+enemyPursuit = (treachery "16021" "Enemy Pursuit" EscapeFromUmbar 2) {cdShadowEffect = True}

@@ -406,6 +406,7 @@ allEnemyCards =
       , urukOfMordor
       , urukWargRider
       , mordorWarg
+      , umbarSentry
       ]
 
 namelessThing :: CardDef
@@ -3299,4 +3300,14 @@ mordorWarg =
   (enemy "16064" "Mordor Warg" MordorOrcs 2 20 2 2 2 2)
     { cdCardTraits = setFromList [Creature]
     , cdWhenRevealed = True
+    }
+
+-- * Escape from Umbar. Easy mode copy counts from Hall of Beorn's scenario page.
+
+umbarSentry :: CardDef
+umbarSentry =
+  (enemy "16015" "Umbar Sentry" EscapeFromUmbar 5 28 1 2 1 3)
+    { cdCardTraits = setFromList [Harad]
+    , cdKeywords = setFromList [Surge, Archery 1]
+    , cdEasyModeQuantity = Just 4
     }

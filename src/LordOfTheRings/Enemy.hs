@@ -399,6 +399,7 @@ import LordOfTheRings.Enemy.Cards.UrukChieftain
 import LordOfTheRings.Enemy.Cards.UrukOfMordor
 import LordOfTheRings.Enemy.Cards.UrukWargRider
 import LordOfTheRings.Enemy.Cards.MordorWarg
+import LordOfTheRings.Enemy.Cards.UmbarSentry
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -824,5 +825,6 @@ allEnemys =
         , SomeEnemyCard urukOfMordor
         , SomeEnemyCard urukWargRider
         , SomeEnemyCard mordorWarg
+        , SomeEnemyCard umbarSentry
         ]
     ]

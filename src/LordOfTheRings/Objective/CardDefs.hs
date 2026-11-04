@@ -107,6 +107,7 @@ allObjectiveCards =
       , riseToPower
       , assassination
       , theCabalsChampion
+      , seizeThem
       ]
 
 durinsAxe :: CardDef
@@ -719,3 +720,8 @@ theCabalsChampion =
     { cdCardTraits = setFromList [Title]
     , cdKeywords = setFromList [Surge, Doomed 1]
     }
+
+-- * Escape from Umbar
+
+seizeThem :: CardDef
+seizeThem = objective "16014" "Seize Them!" EscapeFromUmbar 1
