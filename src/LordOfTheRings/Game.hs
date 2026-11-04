@@ -157,6 +157,7 @@ runNext =
       checkUnblockedQuests g
       discardAtNoWillpower
       discardDownToHandLimit
+      claimFreeObjectives
       endWaitingGame
       pure True
 
@@ -211,6 +212,35 @@ discardDownToHandLimit = do
         $ push
         $ ChooseAndDiscardFromHand p.id GameSource excess
 
+{- | An objective the first player claims once nothing guards it ('FirstPlayerClaimsWhenFree'):
+one in the staging area whose guard has left play, or that never found one, unless it is
+still being guarded, or claimed, by what is queued.
+-}
+claimFreeObjectives :: GameT ()
+claimFreeObjectives = do
+  g <- getGame
+  unless (isJust g.outcome) do
+    queued <- peekQueue
+    let guards = map ((.id) . toCard) (toList g.entities.enemies) <> map ((.id) . toCard) (toList g.entities.locations)
+        free o = o.placement == StagingArea && maybe True (`notElem` guards) (objectiveGuard $ toAttrs o)
+        claiming = flip any queued \case
+          ClaimFreeObjective _ -> True
+          ClaimObjective {} -> True
+          Ask _ (QuestionLabel l _ _ _) -> l == ikey "label.claimObjective"
+          _ -> False
+        guarding oid = flip any queued \case
+          GuardObjective o -> o == oid
+          SetObjectiveGuard o _ -> o == oid
+          DiscardTopOfEncounterDeck s _ _ -> s == ObjectiveSource oid
+          DiscardedTopOfEncounterDeck s _ _ -> s == ObjectiveSource oid
+          _ -> False
+    candidates <- flip filterM (filter free $ toList g.entities.objectives) \o ->
+      if guarding (toId o) then pure False else elem FirstPlayerClaimsWhenFree <$> getModifiers (toTarget o)
+    unless (claiming || null candidates) do
+      lead <- getLead
+      hasHero <- selectAny (HeroControlledBy $ PlayerWithId lead)
+      when hasHero $ for_ (take 1 candidates) $ push . ClaimFreeObjective . toId
+
 {- | Characters that are discarded once their willpower is 0, as The Mountains' Peaks
 reads, are discarded as soon as it is, unless their discard is already on its way.
 -}
@@ -224,13 +254,19 @@ discardAtNoWillpower = do
     pushAll [Discard c | c <- doomed, Discard c `notElem` queued, LeavePlay (Discard c) `notElem` queued]
 
 {- | The modifiers cards in hand give themselves, as what they cost to play: each ally and
-event in a hand, or being paid for, is built from its card to be asked.
+event in a hand, or being paid for, is built from its card to be asked. A player side quest
+in the victory display is built from its card too, for what it gives while there, as The
+Storm Comes reads "while this quest is in the victory display" (see 'inVictoryDisplay').
 -}
 withHandModifiers :: Game -> GameT Game
 withHandModifiers g = do
   MonoidalMap fromHands <- execWriterT do
     for_ g.players \player -> for_ player.hand (handCardModifiers player.id)
     for_ (gameActiveCosts g) \ac -> handCardModifiers ac.activeCostPlayer ac.activeCostCard
+    for_ (toAttrs g.scenario).victoryDisplay \case
+      PlayerCard pc | cdCardType (toCardDef pc) == PlayerSideQuestType, Just owner <- pc.owner ->
+        getModifiersFor $ overAttrs (\a -> a {questOwner = Just owner}) $ lookupQuest (toCardCode pc) pc.id (QuestId UUID.nil)
+      _ -> pure ()
   pure
     $ if null fromHands then g else g {gameModifiers = Map.unionWith (<>) (gameModifiers g) fromHands}
 
@@ -481,30 +517,30 @@ runGame'' msg g = case removedEnemy msg of
     mods <- getModifiers (EnemyTarget eid)
     if CannotLeavePlay `elem` mods || stuckInStaging eid mods then pure g else runGame' msg g
   -- nor is such an enemy engaged or moved out of it
-  Nothing | Just eid <- movedEnemy msg -> do
+  Nothing | Just eid <- movedEnemy g msg -> do
     mods <- getModifiers (EnemyTarget eid)
     if stuckInStaging eid mods then pure g else runGame' msg g
-  Nothing -> case movedLocation msg of
+  Nothing -> case movedLocation g msg of
     -- a location that cannot leave the staging area, as The Crossing at Tharbad, stays
-    Just lid | Just l <- Map.lookup lid g.entities.locations, l.placement == StagingArea -> do
+    Just lid | Just l <- Map.lookup lid g.entities.locations, l.placement `elem` [StagingArea, OrcsArea] -> do
       stays <- elem CannotLeaveStagingArea <$> getModifiers (LocationTarget lid)
       if stays then pure g else runGame' msg g
     _ -> runGame' msg g
  where
   stuckInStaging eid mods =
-    CannotLeaveStagingArea `elem` mods && maybe False ((== StagingArea) . (.placement)) (Map.lookup eid g.entities.enemies)
+    CannotLeaveStagingArea `elem` mods && maybe False ((`elem` [StagingArea, OrcsArea]) . (.placement)) (Map.lookup eid g.entities.enemies)
 
 -- | The enemy a message moves out of where it is, without taking it out of play.
-movedEnemy :: Message -> Maybe EnemyId
-movedEnemy = \case
+movedEnemy :: Game -> Message -> Maybe EnemyId
+movedEnemy g = \case
   EngageEnemy _ eid -> Just eid
-  PlaceEnemy eid p | p /= StagingArea -> Just eid
+  PlaceEnemy eid p | maybe False ((/= p) . (.placement)) (Map.lookup eid g.entities.enemies) -> Just eid
   _ -> Nothing
 
 -- | The location a message moves out of where it is, other than by exploring it.
-movedLocation :: Message -> Maybe LocationId
-movedLocation = \case
-  PlaceLocation lid p | p /= StagingArea -> Just lid
+movedLocation :: Game -> Message -> Maybe LocationId
+movedLocation g = \case
+  PlaceLocation lid p | maybe False ((/= p) . (.placement)) (Map.lookup lid g.entities.locations) -> Just lid
   ReturnToTopOfEncounterDeck (LocationTarget lid) -> Just lid
   ReturnToBottomOfEncounterDeck (LocationTarget lid) -> Just lid
   ShuffleIntoEncounterDeck (LocationTarget lid) -> Just lid
@@ -825,7 +861,7 @@ runGameMessage msg g = case msg of
     pushAll
       $ [CreateEffect $ Effect GameSource target [DamagedWhileDefending] UntilEndOfAttack | defending]
       <> [ PlaceTokens source target Damage n
-         , CheckWindows [mkAfter $ DealtDamage target n]
+         , CheckWindows $ mkAfter (DealtDamage target n) : [mkAfter $ DamagedByEnemyAttack target eid | EnemyAttackSource eid <- [source]]
          , CheckDefeated source target
          ]
       -- a hero it leaves standing is taken prisoner, as Torture Master's shadow reads
@@ -2262,7 +2298,7 @@ runGameMessage msg g = case msg of
   -- an enemy leaves play for good, as Captain Sahír after his betrayal: what is on it is
   -- discarded
   RemoveFromGame target@(EnemyTarget eid) | Map.member eid g.entities.enemies -> do
-    pushAll $ discardAttached g target <> discardShadowsOf g target <> freeGuarded g target
+    pushAll $ discardAttached g target
     pure $ g & entitiesL . enemiesL %~ Map.delete eid
   -- a side quest removed from the game, as Stop the Executioners! removes itself
   RemoveFromGame target@(QuestTarget qid) | Just q <- Map.lookup qid g.entities.quests, isSideQuest q -> do
@@ -2299,7 +2335,7 @@ runGameMessage msg g = case msg of
       <> concatMap (discardAttached g) characters
       <> [CheckEliminations | notNull heroes]
       -- an enemy placed underneath a location leaves play, as Murderous Turncoat
-      <> concat [discardAttached g t <> discardShadowsOf g t <> freeGuarded g t | t <- map toTarget enemies]
+      <> concatMap (discardAttached g . toTarget) enemies
     pure
       $ g'
       & entitiesL . locationsL %~ (\ls -> foldr (Map.delete . toId) ls gone)
@@ -2309,7 +2345,11 @@ runGameMessage msg g = case msg of
       & entitiesL . attachmentsL %~ Map.filter (not . under)
   PutObjectiveIntoPlay card -> do
     thisObjective <- newObjective card
-    pushWhen (Guarded `member` cdKeywords (toCardDef card)) $ GuardObjective (toId thisObjective)
+    let guarded = \case
+          Guarded -> True
+          GuardedBy _ -> True
+          _ -> False
+    pushWhen (any guarded $ cdKeywords (toCardDef card)) $ GuardObjective (toId thisObjective)
     push $ CheckWindows [mkAfter $ EntersStagingArea (toTarget thisObjective)]
     -- an objective's When Revealed, as Durin's Greaves attaching itself, after the window
     -- that can cancel it, as an enemy's
@@ -2330,7 +2370,14 @@ runGameMessage msg g = case msg of
     pure $ g & effectsL %~ ((chosen <>) . filter ((CurrentQuest `notElem`) . effectModifiers))
   CompleteQuest qid | Just q <- Map.lookup qid g.entities.quests, isSideQuest q -> do
     pushAll $ CheckWindows [mkAfter $ QuestDefeated (QuestTarget qid)] : discardAttachedToQuest g qid
-    pure $ g & entitiesL . questsL %~ Map.delete qid & scenarioL %~ overAttrs (victoryDisplayL %~ (toCard q :))
+    -- "Limit 1 copy in the victory display": a copy defeated while one is there goes to its
+    -- owner's discard pile (The Sands of Harad rules)
+    let shown = any ((== toCardCode q) . toCardCode) (toAttrs g.scenario).victoryDisplay
+    case toCard q of
+      PlayerCard pc | shown && cdLimitOneInVictoryDisplay (toCardDef q) -> do
+        push $ PutInDiscard pc
+        pure $ g & entitiesL . questsL %~ Map.delete qid
+      card -> pure $ g & entitiesL . questsL %~ Map.delete qid & scenarioL %~ overAttrs (victoryDisplayL %~ (card :))
   CompleteQuest qid -> do
     pushAll $ CheckWindows [mkAfter $ QuestDefeated (QuestTarget qid)] : discardAttachedToQuest g qid <> [AdvanceQuest]
     -- a stage with victory points goes to the victory display, as Search for an Exit's
@@ -2708,6 +2755,22 @@ runGameMessage msg g = case msg of
       . objectivesL
       . traverse
       %~ (\o -> if guarding o then overAttrs (\a -> a {objectiveGuard = Nothing}) o else o)
+  -- a card out of play comes into play as a captive: see 'GuardCard'
+  -- an ally card no longer in its owner's discard pile, taken already, stays where it is
+  GuardCard card cid -> do
+    aid <- getRandom
+    lead <- getLead
+    let (owner, available) = case card of
+          PlayerCard pc -> case pc.owner of
+            Just o -> (o, maybe False (any ((== pc.id) . (.id)) . (.discard)) (Map.lookup o g.players))
+            Nothing -> (lead, False)
+          EncounterCard _ -> (lead, True)
+        captive = overAttrs (\a -> a {allyPlacement = AttachedTo (CardIdTarget cid)}) $ lookupAlly (toCardCode card) card.id aid owner
+    if available
+      then do
+        pushAll [RemoveFromDiscard owner card.id | PlayerCard _ <- [card]]
+        pure $ g & entitiesL . alliesL %~ insertEntity captive
+      else pure g
   -- as a Ship objective of the fleet comes into play (Dream-chaser rules)
   PutObjectiveAllyIntoPlayUnder pid card -> do
     aid <- getRandom
@@ -3073,15 +3136,18 @@ freeGuarded g target =
   , l <- toList g.entities.locations
   , l.placement == AttachedTo (CardIdTarget cid)
   ]
-    -- and the characters it guards as captives are rescued
-    <> concat
-      [ [RescueCharacter c, CheckWindows [mkAfter $ CharacterRescued c]]
-      | Just cid <- [guardCard]
-      , c <-
-          [toTarget h | h <- toList g.entities.heroes, heroGuardedBy (toAttrs h) == Just cid]
-            <> [toTarget a | a <- toList g.entities.allies, a.placement == AttachedTo (CardIdTarget cid)]
-      ]
+    -- and the characters it guards as captives are rescued, in one window, as "after any
+    -- number of characters are rescued" reads (Rescue the Prisoners)
+    <> map RescueCharacter captives
+    <> [CheckWindows [mkAfter $ CharacterRescued c | c <- captives] | notNull captives]
  where
+  captives =
+    [ c
+    | Just cid <- [guardCard]
+    , c <-
+        [toTarget h | h <- toList g.entities.heroes, heroGuardedBy (toAttrs h) == Just cid]
+          <> [toTarget a | a <- toList g.entities.allies, a.placement == AttachedTo (CardIdTarget cid)]
+    ]
   cardIdIn :: IsCard v => Ord k => Map k v -> k -> Maybe CardId
   cardIdIn m k = (.id) . toCard <$> Map.lookup k m
   guardCard = case target of

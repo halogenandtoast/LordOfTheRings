@@ -32,6 +32,8 @@ const creating = ref(false)
 const allowSpectators = ref(currentUser.value?.allowSpectatorsByDefault === true)
 const differsFromDefault = computed(() => allowSpectators.value !== (currentUser.value?.allowSpectatorsByDefault === true))
 const savedDefault = ref(false)
+// counted toward everyone's statistics until a debug message or an undo past something revealed
+const publicScoring = ref(true)
 watch(allowSpectators, () => (savedDefault.value = false))
 const makeDefault = async () => {
   await updateSettings({ allowSpectatorsByDefault: allowSpectators.value })
@@ -111,6 +113,7 @@ const create = async () => {
           allowSpectators: allowSpectators.value,
           easyMode: mode.value === 'easy',
           nightmare: mode.value === 'nightmare',
+          publicScoring: publicScoring.value,
         })
       : await createGame({
       name: gameName.value.trim() || defaultName.value,
@@ -120,6 +123,7 @@ const create = async () => {
       allowSpectators: allowSpectators.value,
       easyMode: mode.value === 'easy',
       nightmare: mode.value === 'nightmare',
+      publicScoring: publicScoring.value,
     })
     await router.push(`/games/${id}`)
   } catch (e) {
@@ -239,6 +243,14 @@ const create = async () => {
               <button v-if="differsFromDefault" type="button" class="make-default" @click="makeDefault">{{ $t('newGame.makeDefault') }}</button>
               <span v-else-if="savedDefault" class="saved">{{ $t('newGame.defaultSaved') }}</span>
               <p class="hint">{{ $t('newGame.allowSpectatorsHint') }}</p>
+            </div>
+            <div class="toggle-row">
+              <label class="switch">
+                <input v-model="publicScoring" type="checkbox" role="switch" />
+                <span class="track" aria-hidden="true" />
+                {{ $t('newGame.publicScoring') }}
+              </label>
+              <p class="hint">{{ $t('newGame.publicScoringHint') }}</p>
             </div>
           </div>
         </section>

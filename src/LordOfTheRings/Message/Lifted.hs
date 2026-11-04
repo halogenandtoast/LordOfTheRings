@@ -185,8 +185,10 @@ lowerThreat pid n = do
 it does reduce it: The Empty Mug answers a player card's.
 -}
 lowerThreatBy :: (ReverseQueue m, Sourceable source) => source -> PlayerId -> Int -> m ()
-lowerThreatBy source pid n = do
-  barred <- elem CannotReduceThreat <$> getModifiers (PlayerTarget pid)
+lowerThreatBy source pid n' = do
+  mods <- getModifiers (PlayerTarget pid)
+  let barred = CannotReduceThreat `elem` mods
+      n = if isPlayerCardSource (toSource source) then foldr min n' [k | PlayerCardThreatReductionLimit k <- mods] else n'
   threat <- (.threat) <$> getPlayer pid
   unless (barred || n <= 0 || threat <= 0) do
     push $ LowerThreat pid n
@@ -566,9 +568,26 @@ discardTopOfEncounterDeckFor source target n = push $ DiscardTopOfEncounterDeck 
 the source reads them back from 'DiscardedTopOfEncounterDeck'.
 -}
 discardEncounterCardsUntil :: (ReverseQueue m, Sourceable a, Targetable a) => a -> CardMatcher -> m ()
-discardEncounterCardsUntil a matcher = do
+discardEncounterCardsUntil a = discardEncounterCardsUntilCount a 1
+
+{- | As 'discardEncounterCardsUntil', until N matching cards are, as "discard cards from the
+top of the encounter deck until X locations are discarded" reads. The deck is read now: a
+card that shuffles it first reads it back in a later step.
+-}
+discardEncounterCardsUntilCount :: (ReverseQueue m, Sourceable a, Targetable a) => a -> Int -> CardMatcher -> m ()
+discardEncounterCardsUntilCount a n matcher = when (n > 0) do
   deck <- getsGame ((.encounterDeck) . toAttrs . (.scenario))
-  discardTopOfEncounterDeck a $ maybe (length deck) (+ 1) (findIndex (cardMatches matcher) deck)
+  let matching = [i | (i, c) <- zip [0 ..] deck, cardMatches matcher c]
+  discardTopOfEncounterDeck a $ maybe (length deck) (+ 1) (headMay $ drop (n - 1) matching)
+
+{- | As 'discardEncounterCardsUntil', read back on behalf of the target, as "each player
+discards cards ... until he discards an enemy" reads with each player (Flee the City).
+-}
+discardEncounterCardsUntilFor
+  :: (ReverseQueue m, Sourceable source, Targetable target) => source -> target -> CardMatcher -> m ()
+discardEncounterCardsUntilFor source target matcher = do
+  deck <- getsGame ((.encounterDeck) . toAttrs . (.scenario))
+  discardTopOfEncounterDeckFor source target $ maybe (length deck) (+ 1) (findIndex (cardMatches matcher) deck)
 
 -- | An encounter card, taken from where it was, becomes the active location, as a setup puts one.
 putIntoPlayAsActiveLocation :: ReverseQueue m => EncounterCard -> m ()
@@ -1059,6 +1078,11 @@ immediateAttack pid eid = do
   phase <- getsGame gamePhase
   when (phase /= CombatPhase) $ push $ DiscardShadowCards eid
 
+-- | The enemy makes an immediate attack against the player, dealt no shadow card for it,
+-- as "it makes an immediate attack (do not deal it a shadow card)" reads.
+immediateAttackWithoutShadow :: ReverseQueue m => PlayerId -> EnemyId -> m ()
+immediateAttackWithoutShadow pid eid = push $ EnemyAttack pid eid
+
 {- | The enemy engages the player with the highest threat and makes an immediate attack,
 the first player choosing among players tied for it, as Prowling Orc's Scour and Jailor
 Gornákh read.
@@ -1243,6 +1267,14 @@ it had on it stays: discard its tokens and attachments first where the card says
 -}
 guardCharacterWith :: (ReverseQueue m, Targetable character, IsCard captor) => character -> captor -> m ()
 guardCharacterWith c captor = push $ GuardCharacter (toTarget c) (toCard captor).id
+
+{- | A card out of play becomes a captive guarded by the encounter card, as Torture Room's
+"discards cards from the top of his deck until he discards an ally. Attach that ally to
+Torture Room" reads: an ally card is taken from its owner's discard pile, an objective
+ally comes under the first player. Rescued, it is in play as 'guardCharacterWith's are.
+-}
+guardCardWith :: (ReverseQueue m, IsCard captor) => Card -> captor -> m ()
+guardCardWith card captor = push $ GuardCard card (toCard captor).id
 
 -- | The guarded character is rescued now, as the card guarding it would leave play.
 rescueCharacter :: (ReverseQueue m, Targetable character) => character -> m ()

@@ -139,6 +139,10 @@ data WindowMatcher
   | ChangedControlWindow Timing Target
   | -- | any player plays an event
     EventPlayedWindow Timing
+  | -- | the player plays an event, as Steward of Orthanc answers "when you play an event"
+    PlayerPlayingEventWindow Timing PlayerId
+  | -- | an enemy's attack dealt the card damage, as Dwarven Shield's attached hero
+    DamagedByEnemyAttackWindow Timing Target
   | -- | an attack with a character of the trait among its attackers dealt damage
     AttackDealtDamageWithTraitWindow Timing Trait
   | -- | a location entered play, in the staging area
@@ -233,6 +237,9 @@ data WindowMatcher
     RevealedTitleInVictoryDisplayWindow Timing
   | -- | it became Day or Night, as "when it becomes Night" reads
     BecomesWindow TimeOfDay
+  | -- | a card turned over to the side with this code, as "after the Search objective is
+    -- flipped to Off Track" reads
+    FlippedToWindow Timing CardCode
   | -- | any captured cards rescued (Escape from Mount Gram)
     CapturedCardsRescuedWindow Timing
   | -- | the player drew cards at the beginning of the resource phase, as Círdan the
@@ -362,6 +369,8 @@ windowMatches matcher (Window timing wType) = case (matcher, wType) of
   (OtherPlayerEngagedEnemyWindow t pid, EnemyEngaged _ pid') -> t == timing && pid /= pid'
   (ChangedControlWindow t target, ChangedControl target') -> t == timing && target == target'
   (EventPlayedWindow t, PlayingEvent _ _) -> t == timing
+  (PlayerPlayingEventWindow t pid, PlayingEvent pid' _) -> t == timing && pid == pid'
+  (DamagedByEnemyAttackWindow t target, DamagedByEnemyAttack target' _) -> t == timing && target == target'
   (LocationEntersPlayWindow t, EntersStagingArea (LocationTarget _)) -> t == timing
   (CardPlayedWindow t m, PlayedCard _ code) -> t == timing && cardMatches m code
   (EnemyOptionallyEngagedWindow t eid, OptionallyEngaged eid' _) -> t == timing && eid == eid'
@@ -392,6 +401,7 @@ windowMatches matcher (Window timing wType) = case (matcher, wType) of
   (DiscardedFromHandWindow t pid, DiscardedFromHand pid' _) -> t == timing && pid == pid'
   (BecameReadyWindow t target, BecameReady target') -> t == timing && target == target'
   (BecomesWindow time, Became time') -> time == time'
+  (FlippedToWindow t code, FlippedTo _ code') -> t == timing && code == code'
   (TreacheryWhenRevealedCanceledWindow t, WhenRevealedCanceled (TreacheryTarget _)) -> t == timing
   (CapturedCardsRescuedWindow t, CapturedCardsRescued {}) -> t == timing
   (DrewForResourcePhaseWindow t pid, DrewForResourcePhase pid' _) -> t == timing && pid == pid'

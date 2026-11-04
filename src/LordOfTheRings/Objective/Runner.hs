@@ -2,12 +2,18 @@
 
 module LordOfTheRings.Objective.Runner (module X) where
 
+import LordOfTheRings.Card (cdCardType, cdKeywords, toCardDef)
 import LordOfTheRings.Classes.HasQueue (push, pushWhen)
 import LordOfTheRings.Classes.RunMessage
+import LordOfTheRings.Keyword (Keyword (GuardedBy))
+import LordOfTheRings.Matcher (getLead)
 import LordOfTheRings.Message
+import LordOfTheRings.Message.Lifted (addToStagingFromDiscard, guardObjectiveWith)
+import LordOfTheRings.Objective.Claim (claimObjective)
 import LordOfTheRings.Objective.Types as X
 import LordOfTheRings.Placement (Placement (AttachedTo, StagingArea))
 import LordOfTheRings.Prelude
+import LordOfTheRings.Source (isSource)
 import LordOfTheRings.Target
 import LordOfTheRings.Token
 import LordOfTheRings.Window (WindowType (EntersStagingArea, Exhausted), mkAfter)
@@ -20,6 +26,18 @@ instance RunMessage ObjectiveAttrs where
         $ CheckWindows [mkAfter $ EntersStagingArea (toTarget attrs)]
       pure $ attrs & placementL .~ placement & guardL .~ Nothing
     SetObjectiveGuard oid cid | oid == attrs.objectiveId -> pure $ attrs & guardL ?~ cid
+    -- Guarded (X): the first card of its types discarded goes to the staging area, guarding
+    -- it (MEC59 rules)
+    DiscardedTopOfEncounterDeck (isSource attrs -> True) _ cards -> do
+      let types = [t | GuardedBy ts <- toList (cdKeywords $ toCardDef attrs), t <- ts]
+      for_ (find ((`elem` types) . cdCardType . toCardDef) cards) \card -> do
+        addToStagingFromDiscard card
+        guardObjectiveWith attrs.id card.id
+      pure attrs
+    ClaimFreeObjective oid | oid == attrs.objectiveId -> do
+      lead <- getLead
+      claimObjective lead attrs
+      pure attrs
     Exhaust (isTarget attrs -> True) | not attrs.exhausted -> do
       push $ CheckWindows [mkAfter $ Exhausted (toTarget attrs)]
       pure $ attrs & exhaustedL .~ True
