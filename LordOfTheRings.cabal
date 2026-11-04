@@ -160,6 +160,7 @@ library
       LordOfTheRings.Ally.Cards.KahlielsTribesman
       LordOfTheRings.Ally.Cards.KeenEyedTook
       LordOfTheRings.Ally.Cards.Kili
+      LordOfTheRings.Ally.Cards.KnightOfBelfalas
       LordOfTheRings.Ally.Cards.KnightOfDale
       LordOfTheRings.Ally.Cards.KnightOfMinasTirith
       LordOfTheRings.Ally.Cards.KnightOfTheWhiteTower
@@ -276,6 +277,7 @@ library
       LordOfTheRings.Ally.Cards.Wilyador
       LordOfTheRings.Ally.Cards.WingedGuardian
       LordOfTheRings.Ally.Cards.WoodlandCourier
+      LordOfTheRings.Ally.Cards.WoodlandSentry
       LordOfTheRings.Ally.Cards.Yazan
       LordOfTheRings.Ally.Cards.ZigilMiner
       LordOfTheRings.Ally.Fleet
@@ -369,6 +371,7 @@ library
       LordOfTheRings.Attachment.Cards.InServiceOfTheSteward
       LordOfTheRings.Attachment.Cards.IthilienPit
       LordOfTheRings.Attachment.Cards.KahlielsHeaddress
+      LordOfTheRings.Attachment.Cards.KeenLongbow
       LordOfTheRings.Attachment.Cards.KeepingCount
       LordOfTheRings.Attachment.Cards.KeysOfOrthanc
       LordOfTheRings.Attachment.Cards.KingOfDale
@@ -3073,6 +3076,7 @@ test-suite LordOfTheRings-test
       LordOfTheRings.VengeanceOfMordor.AShadowInTheEastPlayerCardsSpec
       LordOfTheRings.VengeanceOfMordor.PowerOfMordorSpec
       LordOfTheRings.VengeanceOfMordor.SmeagolSpec
+      LordOfTheRings.VengeanceOfMordor.TheCityOfUlfastPlayerCardsSpec
       LordOfTheRings.VengeanceOfMordor.TheOneRingSpec
       LordOfTheRings.VengeanceOfMordor.WrathAndRuinPlayerCardsSpec
       LordOfTheRings.VoiceOfIsengard.IntoFangornSpec

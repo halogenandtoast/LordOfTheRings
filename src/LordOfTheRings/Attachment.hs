@@ -213,6 +213,7 @@ import LordOfTheRings.Attachment.Cards.RingOfThror
 import LordOfTheRings.Attachment.Cards.PutOffPursuit
 import LordOfTheRings.Attachment.Cards.DurinsAxeTactics
 import LordOfTheRings.Attachment.Cards.SilverCirclet
+import LordOfTheRings.Attachment.Cards.KeenLongbow
 import LordOfTheRings.Attachment.Runner ()
 import LordOfTheRings.Attachment.Types as X
 import LordOfTheRings.Id
@@ -463,5 +464,6 @@ allAttachments =
         , SomeAttachmentCard putOffPursuit
         , SomeAttachmentCard durinsAxeTactics
         , SomeAttachmentCard silverCirclet
+        , SomeAttachmentCard keenLongbow
         ]
     ]

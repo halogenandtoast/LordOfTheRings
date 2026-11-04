@@ -267,6 +267,8 @@ import LordOfTheRings.Ally.Cards.FaramirLore
 import LordOfTheRings.Ally.Cards.Derufin
 import LordOfTheRings.Ally.Cards.CautiousHalfling
 import LordOfTheRings.Ally.Cards.TomBombadil
+import LordOfTheRings.Ally.Cards.WoodlandSentry
+import LordOfTheRings.Ally.Cards.KnightOfBelfalas
 import LordOfTheRings.Ally.Runner ()
 import LordOfTheRings.Ally.Types as X
 import LordOfTheRings.Id
@@ -566,5 +568,7 @@ allAllies =
         , SomeAllyCard derufin
         , SomeAllyCard cautiousHalfling
         , SomeAllyCard tomBombadil
+        , SomeAllyCard woodlandSentry
+        , SomeAllyCard knightOfBelfalas
         ]
     ]

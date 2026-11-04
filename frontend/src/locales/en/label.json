@@ -2795,5 +2795,14 @@
   },
   "putOffPursuit": {
     "shuffle": "Put Off Pursuit: choose a non-unique enemy in the staging area to shuffle into the encounter deck"
+  },
+  "woodlandSentry": {
+    "discard": "Woodland Sentry: choose an enemy or location with a copy in the victory display to discard"
+  },
+  "keenLongbow": {
+    "discard": "Keen Longbow: discard a card from your hand to deal 1 damage to the enemy"
+  },
+  "knightOfBelfalas": {
+    "return": "Knight of Belfalas: choose a Gondor ally in your discard pile to return to your hand"
   }
 }

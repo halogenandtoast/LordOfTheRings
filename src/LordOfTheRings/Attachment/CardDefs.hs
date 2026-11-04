@@ -231,6 +231,7 @@ allAttachmentCards =
       , putOffPursuit
       , durinsAxeTactics
       , silverCirclet
+      , keenLongbow
       ]
 
 -- | A boon of the Revised Core campaign: Permanent, limit 1 per hero.
@@ -1608,6 +1609,14 @@ silverCirclet :: CardDef
 silverCirclet =
   (attachment "22008" "Silver Circlet" Spirit (StaticCost 2))
     { cdCardTraits = setFromList [Item]
+    , cdKeywords = setFromList [Restricted]
+    , cdLimitOnePerHost = True
+    }
+
+keenLongbow :: CardDef
+keenLongbow =
+  (attachment "22031" "Keen Longbow" Lore (StaticCost 2))
+    { cdCardTraits = setFromList [Item, Weapon]
     , cdKeywords = setFromList [Restricted]
     , cdLimitOnePerHost = True
     }

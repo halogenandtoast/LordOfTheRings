@@ -239,6 +239,8 @@ allAllyCards =
       , derufin
       , cautiousHalfling
       , tomBombadil
+      , woodlandSentry
+      , knightOfBelfalas
       ]
 
 guardOfTheCitadel :: CardDef
@@ -1693,3 +1695,15 @@ tomBombadil =
       , cdKeywords = setFromList [Encounter]
       , cdWhenRevealed = True
       }
+
+woodlandSentry :: CardDef
+woodlandSentry =
+  (ally "22030" "Woodland Sentry" Lore (StaticCost 3) 1 1 1 2)
+    { cdCardTraits = setFromList [Silvan]
+    }
+
+knightOfBelfalas :: CardDef
+knightOfBelfalas =
+  (ally "22034" "Knight of Belfalas" Spirit (StaticCost 2) 1 2 0 2)
+    { cdCardTraits = setFromList [Gondor, Warrior]
+    }
