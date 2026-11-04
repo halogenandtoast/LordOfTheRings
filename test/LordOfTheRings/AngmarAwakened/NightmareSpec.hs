@@ -306,6 +306,22 @@ spec = describe "Angmar Awakened Nightmare mode" do
       resolveForced pid
       getCharacterDamage eowyn `shouldReturn` 2
 
+    it "Hoarwell River Serpent engaged with a lone player bars travel to safe locations" . nightmare acrossTheEttenmoors $ \pid -> do
+      cave <- stagedLocation Locations.secludedCave
+      serpent <- staged Enemies.hoarwellRiverSerpent
+      run $ EngageEnemy pid serpent
+      resolveForced pid
+      getModifiers (toTarget cave) >>= (`shouldSatisfy` elem CannotBeTraveledTo)
+
+    it "Giant Beetle attacks before the safe location traveled to becomes active" . nightmare acrossTheEttenmoors $ \pid -> do
+      cave <- stagedLocation Locations.secludedCave
+      beetle <- staged Enemies.giantBeetle
+      run $ EngageEnemy pid beetle
+      run $ TravelTo cave
+      passActions pid
+      getQuestion pid >>= (`shouldSatisfy` \case Just (QuestionLabel l _ _ _) -> "$label.declareDefender" `isPrefixOf` l; _ -> False)
+      (.placement) <$> getLocation cave `shouldReturn` StagingArea
+
     it "Rocky Foothills must be traveled to, with 2 quest points per quest" . nightmare acrossTheEttenmoors $ \_ -> do
       _ <- putQuestStage Quests.aMiserableJourney
       foothills <- stagedLocation Locations.rockyFoothills
