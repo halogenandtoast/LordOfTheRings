@@ -42,6 +42,17 @@ data Keyword
     LastPlayerGainsControl
   | -- | on an enemy: damage never destroys it, as Durin's Bane
     Indestructible
+  | -- | on an encounter card: the player who reveals it resolves its staging on his own,
+    -- the other players taking no actions and triggering no responses meanwhile (The Black
+    -- Riders rules insert)
+    Peril
+  | -- | on a boon or burden: earned, it is attached to a hero the campaign log records. It
+    -- cannot be discarded from that hero while the hero is in play, and is removed from the
+    -- game as the hero leaves play (The Black Riders rules insert)
+    Permanent
+  | -- | on an enemy: each time it is assigned damage, it takes this much less (The Road
+    -- Darkens rules insert)
+    Toughness Int
   | -- | as the card is revealed from the encounter deck, the players as a group discard
     -- this many resources from their heroes' pools, as many as they can
     Prowl Int

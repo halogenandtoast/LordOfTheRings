@@ -95,6 +95,17 @@ data CardDef = CardDef
   -- ^ a player card with the Encounter keyword that goes to its owner's discard pile, not
   -- the encounter discard pile, as Ranger of the North (The Lost Realm rules); one without
   -- is treated as an encounter card there (MEC61, MEC67 rules)
+  , cdSetIcon :: Maybe EncounterSet
+  -- ^ a saga boon, burden or treasure's set icon, in place of an encounter set: it is never
+  -- gathered with one. The Lord of the Rings' campaign cards remove the burdens of the sets
+  -- they name; a Hobbit scenario lets in the treasures of the sets its setup lists
+  , cdTreasure :: Bool
+  , cdSetupAttach :: Bool
+  -- ^ a player card reading "Setup: Attach to a hero in play", as The Road Darkens' Gift
+  -- boons: in its owner's deck as the game is set up, it is attached before the setup hand
+  -- is drawn (The Black Riders rules insert, "New Setup Instructions")
+  -- ^ a Hobbit saga treasure: a player card discovered in one scenario and added to its
+  -- player's deck in a later one (The Hobbit: Over Hill and Under Hill rules insert)
   }
   deriving stock (Show, Eq, Generic)
 
@@ -154,6 +165,9 @@ emptyCardDef cCode name cType =
     , cdAdditionalCost = Nothing
     , cdRestrictedSlots = 1
     , cdEncounterToOwnersDiscard = False
+    , cdSetIcon = Nothing
+    , cdTreasure = False
+    , cdSetupAttach = False
     }
 
 unique :: CardDef -> CardDef
