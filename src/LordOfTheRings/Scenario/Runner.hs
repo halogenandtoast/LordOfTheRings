@@ -335,6 +335,9 @@ instance RunMessage ScenarioAttrs where
     -- a set-aside enemy put into play engaged, as No Way Out puts Chief Turch
     PutEnemyIntoPlayEngaged _ card -> pure $ attrs & setAsideL %~ filter (/= card)
     PutObjectiveIntoPlayAttached card _ -> pure $ attrs & setAsideL %~ filter (/= card)
+    -- a set-aside objective put into play free of encounters, as a stage 2A of Roam Across
+    -- Rhovanion puts Durin's Key with no Deep Ravine to guard it
+    PutObjectiveIntoPlay card -> pure $ attrs & setAsideL %~ filter (/= card)
     -- a set-aside Ship objective put into play, as The Beacon gives a Dol Amroth Warship
     PutObjectiveAllyIntoPlayUnder _ card -> pure $ attrs & setAsideL %~ filter (/= card)
     PutObjectiveHeroIntoPlayUnder _ card -> pure $ attrs & setAsideL %~ filter (/= card)
