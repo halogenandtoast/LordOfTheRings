@@ -568,6 +568,7 @@ library
       LordOfTheRings.Enemy.Cards.AngryHuorn
       LordOfTheRings.Enemy.Cards.ApostateOfAngmar
       LordOfTheRings.Enemy.Cards.AshMountainWerewolf
+      LordOfTheRings.Enemy.Cards.ASuspiciousCrow
       LordOfTheRings.Enemy.Cards.AttercopAttercop
       LordOfTheRings.Enemy.Cards.BalefulShade
       LordOfTheRings.Enemy.Cards.BatteringRam
@@ -577,6 +578,7 @@ library
       LordOfTheRings.Enemy.Cards.BellachsMarauder
       LordOfTheRings.Enemy.Cards.BellachsScout
       LordOfTheRings.Enemy.Cards.BellachTroubleInTharbad
+      LordOfTheRings.Enemy.Cards.Bert
       LordOfTheRings.Enemy.Cards.BlackBats
       LordOfTheRings.Enemy.Cards.BlackForestBats
       LordOfTheRings.Enemy.Cards.BlackForestBatsRhosgobel
@@ -710,10 +712,14 @@ library
       LordOfTheRings.Enemy.Cards.GiantSpider
       LordOfTheRings.Enemy.Cards.GiantSwampAdder
       LordOfTheRings.Enemy.Cards.GoblinArcher
+      LordOfTheRings.Enemy.Cards.GoblinAxeman
+      LordOfTheRings.Enemy.Cards.GoblinDriver
       LordOfTheRings.Enemy.Cards.GoblinEagleHunter
       LordOfTheRings.Enemy.Cards.GoblinFollower
       LordOfTheRings.Enemy.Cards.GoblinLurker
+      LordOfTheRings.Enemy.Cards.GoblinMiners
       LordOfTheRings.Enemy.Cards.GoblinPursuer
+      LordOfTheRings.Enemy.Cards.GoblinRunners
       LordOfTheRings.Enemy.Cards.GoblinScout
       LordOfTheRings.Enemy.Cards.GoblinSkirmisher
       LordOfTheRings.Enemy.Cards.GoblinSneak
@@ -980,6 +986,7 @@ library
       LordOfTheRings.Enemy.Cards.Thunderstruck
       LordOfTheRings.Enemy.Cards.TideRunner
       LordOfTheRings.Enemy.Cards.TinyEnemy
+      LordOfTheRings.Enemy.Cards.Tom
       LordOfTheRings.Enemy.Cards.TorechGorgorPatrol
       LordOfTheRings.Enemy.Cards.TortureMaster
       LordOfTheRings.Enemy.Cards.TraitorousWight
@@ -1040,6 +1047,7 @@ library
       LordOfTheRings.Enemy.Cards.WildBear
       LordOfTheRings.Enemy.Cards.WilderlandBear
       LordOfTheRings.Enemy.Cards.WildMumak
+      LordOfTheRings.Enemy.Cards.William
       LordOfTheRings.Enemy.Cards.WitchOfAngmar
       LordOfTheRings.Enemy.Cards.WolfOfAngmar
       LordOfTheRings.Enemy.Cards.WolfpeltGoblin

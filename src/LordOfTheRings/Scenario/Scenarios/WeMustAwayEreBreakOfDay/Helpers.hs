@@ -12,6 +12,8 @@ module LordOfTheRings.Scenario.Scenarios.WeMustAwayEreBreakOfDay.Helpers (
   runTrollTreasure,
   attachToATroll,
   bilboHas,
+  trollAbilities,
+  runTroll,
 ) where
 
 import LordOfTheRings.Ability
@@ -19,6 +21,7 @@ import LordOfTheRings.Card (CardDef (cdName), toCardCode)
 import LordOfTheRings.Classes.HasGame
 import LordOfTheRings.Classes.HasModifiersFor
 import LordOfTheRings.Classes.RunMessage
+import LordOfTheRings.Enemy.Runner (EnemyAttrs)
 import LordOfTheRings.GameT (GameT)
 import LordOfTheRings.Helpers.Character (characterCardDef)
 import LordOfTheRings.Helpers.Modifiers (getModifiers)
@@ -28,12 +31,13 @@ import LordOfTheRings.Message.Lifted
 import LordOfTheRings.Modifier
 import LordOfTheRings.Name (Name (..))
 import LordOfTheRings.Objective.Runner
-import LordOfTheRings.Placement (Placement (AttachedTo, StagingArea))
+import LordOfTheRings.Phase (Phase (CombatPhase))
+import LordOfTheRings.Placement (Placement (AttachedTo, EngagedWith, StagingArea))
 import LordOfTheRings.Prelude
 import LordOfTheRings.Queue
 import LordOfTheRings.Source (isSource)
 import LordOfTheRings.Target
-import LordOfTheRings.Timing (Timing (After))
+import LordOfTheRings.Timing (Timing (After, When))
 import LordOfTheRings.Trait (Trait (Sack, Troll))
 
 -- | "Attached character cannot ready, attack, defend, commit to quests, or trigger
@@ -123,3 +127,29 @@ runTrollTreasure msg a = case msg of
 -- and the Troll Purse.
 bilboHas :: HasGame m => CardDef -> m Bool
 bilboHas def = selectAny (HeroWithTitle "Bilbo Baggins" <> HeroWithAttachment (toCardCode def))
+
+{- | A Troll's Forced effects: "After this enemy engages a player, sack N." (1) and "Return
+this enemy to the staging area at the end of the combat phase. The engaged player may raise
+his threat by 1 to cancel this effect." (2)
+-}
+trollAbilities :: EnemyAttrs -> [Ability]
+trollAbilities a =
+  [ mkAbility a 1 $ forced $ EnemyEngagedWindow After a.id
+  , restricted a 2 (exists $ EnemyWithId a.id <> EnemyEngagedWith AnyPlayer) $ forced $ PhaseEndsWindow When CombatPhase
+  ]
+
+runTroll :: Int -> Message -> EnemyAttrs -> QueueT Message GameT EnemyAttrs
+runTroll n msg a = case msg of
+  UseCardAbility _ (isSource a -> True) 1 _ -> do
+    sack n
+    pure a
+  UseCardAbility _ (isSource a -> True) 2 _ -> do
+    case a.placement of
+      EngagedWith pid -> chooseOneM pid do
+        questionLabeled "troll.returnToStaging"
+        causedBy a
+        labeled "troll.raiseThreat" $ raiseThreat pid 1
+        labeled "troll.return" $ placeEnemy a.id StagingArea
+      _ -> pure ()
+    pure a
+  _ -> runMessage msg a
