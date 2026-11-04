@@ -231,6 +231,9 @@ data WindowMatcher
     RevealedTitleInVictoryDisplayWindow Timing
   | -- | it became Day or Night, as "when it becomes Night" reads
     BecomesWindow TimeOfDay
+  | -- | a card turned over to the side with this code, as "after the Search objective is
+    -- flipped to Off Track" reads
+    FlippedToWindow Timing CardCode
   | -- | any captured cards rescued (Escape from Mount Gram)
     CapturedCardsRescuedWindow Timing
   | -- | the player drew cards at the beginning of the resource phase, as Círdan the
@@ -389,6 +392,7 @@ windowMatches matcher (Window timing wType) = case (matcher, wType) of
   (DiscardedFromHandWindow t pid, DiscardedFromHand pid' _) -> t == timing && pid == pid'
   (BecameReadyWindow t target, BecameReady target') -> t == timing && target == target'
   (BecomesWindow time, Became time') -> time == time'
+  (FlippedToWindow t code, FlippedTo _ code') -> t == timing && code == code'
   (TreacheryWhenRevealedCanceledWindow t, WhenRevealedCanceled (TreacheryTarget _)) -> t == timing
   (CapturedCardsRescuedWindow t, CapturedCardsRescued {}) -> t == timing
   (DrewForResourcePhaseWindow t pid, DrewForResourcePhase pid' _) -> t == timing && pid == pid'
