@@ -614,6 +614,7 @@ library
       LordOfTheRings.Enemy.Cards.HillTroll
       LordOfTheRings.Enemy.Cards.HiveGuardian
       LordOfTheRings.Enemy.Cards.HoarwellRiverSerpent
+      LordOfTheRings.Enemy.Cards.Hobgoblin
       LordOfTheRings.Enemy.Cards.Hummerhorns
       LordOfTheRings.Enemy.Cards.HuntersFromMordor
       LordOfTheRings.Enemy.Cards.HuntingPack
@@ -784,6 +785,7 @@ library
       LordOfTheRings.Enemy.Cards.SpidersOfMirkwood
       LordOfTheRings.Enemy.Cards.SpiritOfTheWild
       LordOfTheRings.Enemy.Cards.SpyFromMordor
+      LordOfTheRings.Enemy.Cards.StoneTroll
       LordOfTheRings.Enemy.Cards.Stormcaller
       LordOfTheRings.Enemy.Cards.StormcallerTheCityOfCorsairs
       LordOfTheRings.Enemy.Cards.StranglingPython

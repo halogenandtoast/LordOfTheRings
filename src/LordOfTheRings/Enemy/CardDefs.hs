@@ -434,6 +434,8 @@ allEnemyCards =
       , goblinTroop
       , strayGoblinGreyMountains
       , packOfWargs
+      , stoneTroll
+      , hobgoblin
       ]
 
 namelessThing :: CardDef
@@ -3550,5 +3552,21 @@ packOfWargs =
   (enemy "18022" "Pack of Wargs" HillsOfWilderland 2 40 4 4 3 5)
     { cdCardTraits = setFromList [Creature, Warg]
     , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
+    }
+
+-- | Printed "Stone-troll", as The Withered Heath's Snow-troll (Hall of Beorn).
+stoneTroll :: CardDef
+stoneTroll =
+  (enemy "18049" "Stone-troll" FellBeasts 2 36 3 6 3 9)
+    { cdCardTraits = setFromList [Troll]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
+    }
+
+hobgoblin :: CardDef
+hobgoblin =
+  (enemy "18050" "Hobgoblin" FellBeasts 2 38 1 1 1 5)
+    { cdCardTraits = setFromList [Orc]
     , cdEasyModeQuantity = Just 1
     }
