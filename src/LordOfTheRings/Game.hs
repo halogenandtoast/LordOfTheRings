@@ -2533,6 +2533,13 @@ runGameMessage msg g = case msg of
           & entitiesL
           . attachmentsL
           %~ insertEntity (overAttrs (\a -> a {attachmentPlacement = StagingArea}) attachment)
+      PlayIntoPlayArea -> do
+        push entered
+        pure
+          $ g
+          & entitiesL
+          . attachmentsL
+          %~ insertEntity (overAttrs (\a -> a {attachmentPlacement = InPlayArea pid}) attachment)
       _ -> do
         hosts <- cardHosts (toCardCode card)
         push $ case hosts of
@@ -3201,10 +3208,6 @@ defendingEffect eid d = CreateEffect $ Effect (EnemyAttackSource eid) d [Defendi
 
 gainedTraits :: Target -> GameT (Set Trait)
 gainedTraits target = setFromList . mapMaybe (\case GainTrait t -> Just t; _ -> Nothing) <$> getModifiers target
-
--- | A character's traits, printed and gained.
-characterTraits :: Target -> GameT (Set Trait)
-characterTraits target = (<>) . cdCardTraits <$> characterCardDef target <*> gainedTraits target
 
 -- | The characters with the keyword, printed or gained.
 withKeyword :: Keyword -> [Target] -> GameT [Target]

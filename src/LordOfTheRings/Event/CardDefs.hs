@@ -202,6 +202,16 @@ allEventCards =
       , dourHanded
       , proudHunters
       , backtrack
+      , huntingParty
+      , theFreePeoples
+      , burstIntoSong
+      , oldToby
+      , fierceDefense
+      , heirsOfEarendil
+      , openTheArmory
+      , bulwarkOfTheWest
+      , flightToTheSea
+      , theDamBursts
       ]
 
 everVigilant :: CardDef
@@ -804,3 +814,36 @@ proudHunters = event "17032" "Proud Hunters" Tactics (StaticCost 0)
 
 backtrack :: CardDef
 backtrack = event "17034" "Backtrack" Spirit (StaticCost 1)
+
+huntingParty :: CardDef
+huntingParty = event "17057" "Hunting Party" Leadership (StaticCost 1)
+
+theFreePeoples :: CardDef
+theFreePeoples = event "17064" "The Free Peoples" Neutral (StaticCost 5)
+
+burstIntoSong :: CardDef
+burstIntoSong = event "17083" "Burst into Song" Leadership (StaticCost 2)
+
+oldToby :: CardDef
+oldToby =
+  (event "17089" "Old Toby" Lore (StaticCost 2))
+    { cdCardTraits = setFromList [Pipeweed]
+    }
+
+fierceDefense :: CardDef
+fierceDefense = event "17113" "Fierce Defense" Tactics (StaticCost 3)
+
+heirsOfEarendil :: CardDef
+heirsOfEarendil = event "17115" "Heirs of Eärendil" Spirit (StaticCost 1)
+
+openTheArmory :: CardDef
+openTheArmory = event "17118" "Open the Armory" Neutral (StaticCost 1)
+
+bulwarkOfTheWest :: CardDef
+bulwarkOfTheWest = event "17137" "Bulwark of the West" Leadership (StaticCost 0)
+
+flightToTheSea :: CardDef
+flightToTheSea = event "17140" "Flight to the Sea" Spirit (StaticCost 2)
+
+theDamBursts :: CardDef
+theDamBursts = event "17142" "The Dam Bursts" Lore (StaticCost 2)

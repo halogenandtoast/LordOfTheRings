@@ -200,6 +200,15 @@ allAllyCards =
       , dunedainPathfinder
       , erynGalenSettler
       , stewardOfOrthanc
+      , riderOfRohan
+      , dunedainLookout
+      , defenderOfCairAndros
+      , southronRefugee
+      , knightOfDale
+      , eregionSurvivor
+      , leaflock
+      , halfastGamgee
+      , beorningGuardian
       ]
 
 guardOfTheCitadel :: CardDef
@@ -1393,4 +1402,60 @@ stewardOfOrthanc :: CardDef
 stewardOfOrthanc =
   (ally "17037" "Steward of Orthanc" Neutral (StaticCost 3) 2 0 0 2)
     { cdCardTraits = setFromList [Isengard]
+    }
+
+riderOfRohan :: CardDef
+riderOfRohan =
+  (ally "17060" "Rider of Rohan" Spirit (StaticCost 3) 2 2 0 2)
+    { cdCardTraits = setFromList [Rohan, Scout]
+    }
+
+dunedainLookout :: CardDef
+dunedainLookout =
+  (ally "17062" "Dúnedain Lookout" Lore (StaticCost 2) 1 1 1 2)
+    { cdCardTraits = setFromList [Dunedain]
+    }
+
+defenderOfCairAndros :: CardDef
+defenderOfCairAndros =
+  (ally "17084" "Defender of Cair Andros" Tactics (StaticCost 4) 1 1 0 3)
+    { cdCardTraits = setFromList [Gondor, Warrior]
+    }
+
+southronRefugee :: CardDef
+southronRefugee =
+  (ally "17090" "Southron Refugee" Neutral (StaticCost 2) 1 1 0 2)
+    { cdCardTraits = setFromList [Harad]
+    }
+
+knightOfDale :: CardDef
+knightOfDale =
+  (ally "17110" "Knight of Dale" Leadership (StaticCost 4) 2 2 1 3)
+    { cdCardTraits = setFromList [Dale, Warrior]
+    }
+
+eregionSurvivor :: CardDef
+eregionSurvivor =
+  (ally "17114" "Eregion Survivor" Spirit (StaticCost 2) 1 1 1 3)
+    { cdCardTraits = setFromList [Noldor]
+    }
+
+leaflock :: CardDef
+leaflock =
+  unique
+    (ally "17116" "Leaflock" Lore (StaticCost 3) 0 2 2 3)
+      { cdCardTraits = setFromList [Ent]
+      }
+
+halfastGamgee :: CardDef
+halfastGamgee =
+  unique
+    (ally "17136" "Halfast Gamgee" Leadership (StaticCost 3) 2 1 0 2)
+      { cdCardTraits = setFromList [Hobbit]
+      }
+
+beorningGuardian :: CardDef
+beorningGuardian =
+  (ally "17138" "Beorning Guardian" Tactics (StaticCost 3) 0 3 1 3)
+    { cdCardTraits = setFromList [Beorning]
     }

@@ -170,6 +170,15 @@ import LordOfTheRings.Attachment.Cards.TheRoadGoesEverOn
 import LordOfTheRings.Attachment.Cards.KahlielsHeaddress
 import LordOfTheRings.Attachment.Cards.SteedOfTheNorth
 import LordOfTheRings.Attachment.Cards.MightyWarrior
+import LordOfTheRings.Attachment.Cards.HaradrimSpear
+import LordOfTheRings.Attachment.Cards.FiresideSong
+import LordOfTheRings.Attachment.Cards.DoughtyRanger
+import LordOfTheRings.Attachment.Cards.SongOfHope
+import LordOfTheRings.Attachment.Cards.FearlessScout
+import LordOfTheRings.Attachment.Cards.DunedainPipe
+import LordOfTheRings.Attachment.Cards.DiligentNoble
+import LordOfTheRings.Attachment.Cards.LegacyBlade
+import LordOfTheRings.Attachment.Cards.Followed
 import LordOfTheRings.Attachment.Runner ()
 import LordOfTheRings.Attachment.Types as X
 import LordOfTheRings.Id
@@ -377,5 +386,14 @@ allAttachments =
         , SomeAttachmentCard kahlielsHeaddress
         , SomeAttachmentCard steedOfTheNorth
         , SomeAttachmentCard mightyWarrior
+        , SomeAttachmentCard haradrimSpear
+        , SomeAttachmentCard firesideSong
+        , SomeAttachmentCard doughtyRanger
+        , SomeAttachmentCard songOfHope
+        , SomeAttachmentCard fearlessScout
+        , SomeAttachmentCard dunedainPipe
+        , SomeAttachmentCard diligentNoble
+        , SomeAttachmentCard legacyBlade
+        , SomeAttachmentCard followed
         ]
     ]

@@ -224,6 +224,15 @@ import LordOfTheRings.Ally.Cards.ErynGalenSettler
 import LordOfTheRings.Ally.Cards.StewardOfOrthanc
 import LordOfTheRings.Ally.Cards.TamedMumak
 import LordOfTheRings.Ally.Cards.Abaan
+import LordOfTheRings.Ally.Cards.RiderOfRohan
+import LordOfTheRings.Ally.Cards.DunedainLookout
+import LordOfTheRings.Ally.Cards.DefenderOfCairAndros
+import LordOfTheRings.Ally.Cards.SouthronRefugee
+import LordOfTheRings.Ally.Cards.KnightOfDale
+import LordOfTheRings.Ally.Cards.EregionSurvivor
+import LordOfTheRings.Ally.Cards.Leaflock
+import LordOfTheRings.Ally.Cards.HalfastGamgee
+import LordOfTheRings.Ally.Cards.BeorningGuardian
 import LordOfTheRings.Ally.Runner ()
 import LordOfTheRings.Ally.Types as X
 import LordOfTheRings.Id
@@ -480,5 +489,14 @@ allAllies =
         , SomeAllyCard stewardOfOrthanc
         , SomeAllyCard tamedMumak
         , SomeAllyCard abaan
+        , SomeAllyCard riderOfRohan
+        , SomeAllyCard dunedainLookout
+        , SomeAllyCard defenderOfCairAndros
+        , SomeAllyCard southronRefugee
+        , SomeAllyCard knightOfDale
+        , SomeAllyCard eregionSurvivor
+        , SomeAllyCard leaflock
+        , SomeAllyCard halfastGamgee
+        , SomeAllyCard beorningGuardian
         ]
     ]

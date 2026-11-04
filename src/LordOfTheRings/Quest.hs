@@ -250,6 +250,8 @@ import LordOfTheRings.Quest.Cards.CapturedCirithGurat
 import LordOfTheRings.Quest.Cards.RescueThePrisoners
 import LordOfTheRings.Quest.Cards.SneakPastTheGuards
 import LordOfTheRings.Quest.Cards.FightYourWayOut
+import LordOfTheRings.Quest.Cards.KeepWatch
+import LordOfTheRings.Quest.Cards.RallyTheWest
 import LordOfTheRings.Quest.Runner ()
 import LordOfTheRings.Quest.Types as X
 import LordOfTheRings.Id
@@ -532,5 +534,7 @@ allQuests =
         , SomeQuestCard rescueThePrisoners
         , SomeQuestCard sneakPastTheGuards
         , SomeQuestCard fightYourWayOut
+        , SomeQuestCard keepWatch
+        , SomeQuestCard rallyTheWest
         ]
     ]

@@ -301,6 +301,17 @@ hasTrait trait target def = do
   -- one it lost, as Shot from the Sky takes the Eagle trait, it no longer has
   pure $ LoseTrait trait `notElem` mods && (trait `member` cdCardTraits def || GainTrait trait `elem` mods)
 
+-- | The character's traits: its printed ones and those a modifier grants, less those it
+-- lost.
+characterTraits :: HasGame m => Target -> m (Set Trait)
+characterTraits target = do
+  printed <- case target of
+    HeroTarget hid -> cdCardTraits . toCardDef <$> getHero hid
+    AllyTarget aid -> cdCardTraits . toCardDef <$> getAlly aid
+    _ -> pure mempty
+  mods <- map modifierType . Map.findWithDefault [] target <$> getsGame gameModifiers
+  pure $ (printed <> setFromList [t | GainTrait t <- mods]) `difference` setFromList [t | LoseTrait t <- mods]
+
 {- | Whether the hero's resources can pay for a card or cost of the sphere: its own
 sphere's, one a gained resource icon gives it, or any while the game lets resources be
 spent as that sphere's.
