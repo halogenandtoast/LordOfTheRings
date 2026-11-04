@@ -45,6 +45,8 @@ asAlly h =
           , allyCommitted = h.heroCommitted
           , allyAttacking = h.heroAttacking
           , allyFacedown = h.heroFacedown
+          , allyPoison = h.heroPoison
+          , allyUnconscious = h.heroUnconscious
           , allyAsHero = True
           }
     )

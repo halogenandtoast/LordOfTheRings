@@ -565,6 +565,10 @@ allLocationCards =
       , foothillsOfEphelDuath
       , ithilienWoods
       , hillsOfIthilien
+      , theSpidersGlade
+      , giantWeb
+      , forestStream
+      , hiddenPath
       ]
 
 drownedTreasury :: CardDef
@@ -4073,6 +4077,7 @@ redhornFoothills = (location "142033" "Redhorn Foothills" TheRingGoesSouth 3 4 5
 
 eregion :: CardDef
 eregion = (location "142034" "Eregion" TheRingGoesSouth 3 3 4) {cdCardTraits = setFromList [Hills], cdShadowEffect = True, cdEasyModeQuantity = Just 2}
+
 -- * The Passage of the Marshes
 
 marsh :: CardCode -> Name -> Int -> Int -> Int -> Int -> Int -> CardDef
@@ -4141,3 +4146,19 @@ hillsOfIthilien =
     { cdCardTraits = setFromList [Forest, Hills]
     , cdShadowEffect = True
     }
+-- * Flies and Spiders
+
+-- | Set aside by stage 1A, until stage 4A adds it to the staging area.
+theSpidersGlade :: CardDef
+theSpidersGlade = unique $ (location "132025" "The Spider's Glade" FliesAndSpiders 1 1 9) {cdCardTraits = setFromList [Forest]}
+
+giantWeb :: CardDef
+giantWeb = (location "132026" "Giant Web" FliesAndSpiders 4 3 3) {cdCardTraits = setFromList [Forest], cdEasyModeQuantity = Just 3}
+
+forestStream :: CardDef
+forestStream = (location "132027" "Forest Stream" FliesAndSpiders 2 2 4) {cdCardTraits = setFromList [Forest, River]}
+
+-- * Wilderland
+
+hiddenPath :: CardDef
+hiddenPath = (location "132035" "Hidden Path" Wilderland 3 3 1) {cdCardTraits = setFromList [Forest, Mountain]}

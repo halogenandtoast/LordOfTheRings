@@ -449,6 +449,10 @@ allTreacheryCards =
       , marchingUpTheRoad
       , fierceSouthrons
       , arrowsThickInTheAir
+      , caughtInWebs
+      , poisonedBySpiders
+      , fightingAmongFriends
+      , weighedDownWilderland
       ]
 
 deepDeepDark :: CardDef
@@ -2848,3 +2852,18 @@ fierceSouthrons = (treachery "144038" "Fierce Southrons" JourneyToTheCrossRoads 
 
 arrowsThickInTheAir :: CardDef
 arrowsThickInTheAir = (treachery "144039" "Arrows Thick in the Air" JourneyToTheCrossRoads 3) {cdShadowEffect = True}
+-- * Flies and Spiders
+
+caughtInWebs :: CardDef
+caughtInWebs = treachery "132033" "Caught in Webs" FliesAndSpiders 2
+
+poisonedBySpiders :: CardDef
+poisonedBySpiders = (treachery "132034" "Poisoned by Spiders" FliesAndSpiders 2) {cdShadowEffect = True, cdEasyModeQuantity = Just 0}
+
+-- * Wilderland
+
+fightingAmongFriends :: CardDef
+fightingAmongFriends = (treachery "132037" "Fighting Among Friends" Wilderland 2) {cdShadowEffect = True, cdEasyModeQuantity = Just 0}
+
+weighedDownWilderland :: CardDef
+weighedDownWilderland = (treachery "132038" "Weighed Down" Wilderland 2) {cdShadowEffect = True, cdEasyModeQuantity = Just 1}

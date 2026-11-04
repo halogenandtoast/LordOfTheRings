@@ -4061,5 +4061,13 @@
     "setup": [
       "Build the encounter deck from the Journey to the Cross-roads and Men of Harad encounter sets."
     ]
+  },
+  "flies-and-spiders": {
+    "intro": [
+      "Rested after their stay with Beorn, Bilbo and the dwarves press on toward the Lonely Mountain. Their road leads through the dark eaves of Mirkwood, where giant spiders lie in wait for any traveler who strays from the path."
+    ],
+    "setup": [
+      "Flies and Spiders is played with an encounter deck built from the Flies and Spiders and Wilderland encounter sets. Players may add previously discovered treasures from the scenarios of Over Hill and Under Hill."
+    ]
   }
 }

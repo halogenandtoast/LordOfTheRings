@@ -547,6 +547,10 @@ import LordOfTheRings.Location.Cards.SouthwardRoad
 import LordOfTheRings.Location.Cards.FoothillsOfEphelDuath
 import LordOfTheRings.Location.Cards.IthilienWoods
 import LordOfTheRings.Location.Cards.HillsOfIthilien
+import LordOfTheRings.Location.Cards.TheSpidersGlade
+import LordOfTheRings.Location.Cards.GiantWeb
+import LordOfTheRings.Location.Cards.ForestStream
+import LordOfTheRings.Location.Cards.HiddenPath
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -1140,5 +1144,9 @@ allLocations =
         , SomeLocationCard foothillsOfEphelDuath
         , SomeLocationCard ithilienWoods
         , SomeLocationCard hillsOfIthilien
+        , SomeLocationCard theSpidersGlade
+        , SomeLocationCard giantWeb
+        , SomeLocationCard forestStream
+        , SomeLocationCard hiddenPath
         ]
     ]

@@ -994,6 +994,11 @@ attachFromEncounterDiscard card = push . AttachFromEncounterDiscard card . toTar
 attachShadowTreachery :: (ReverseQueue m, Targetable host) => EnemyId -> CardId -> host -> m ()
 attachShadowTreachery eid cid = push . PutShadowTreacheryIntoPlay eid cid . AttachedTo . toTarget
 
+-- | An enemy card dealt as a shadow card comes into play attached to the host, as Dark
+-- Bats' shadow attaches it to the defending character.
+attachShadowEnemy :: (ReverseQueue m, Targetable host) => EnemyId -> CardId -> host -> m ()
+attachShadowEnemy eid cid = push . PutShadowTreacheryIntoPlay eid cid . AttachedTo . toTarget
+
 {- | The top matching card of the encounter discard pile attaches to the host, as Warrior of
 Rhûn's "attach the top Easterling treachery in the discard pile to it" reads; nothing,
 with none there.
@@ -1213,6 +1218,26 @@ resolveGuarded = push . GuardObjective
 -- | The card goes facedown under the ally, or the Nameless enemy.
 attachFacedown :: (ReverseQueue m, Targetable target) => target -> PlayerCard -> m ()
 attachFacedown target = push . AttachFacedown (toTarget target)
+
+{- | The character's controller gives it this much poison: the top cards of his deck,
+attached to it facedown (The Hobbit: On the Doorstep rules insert, "Venom, Poison, and
+Poisoned"). One that cannot be poisoned, as an unconscious character, or has left play,
+gets none.
+-}
+givePoison :: (ReverseQueue m, Targetable target) => target -> Int -> m ()
+givePoison target n = when (n > 0) $ push $ GivePoison (toTarget target) n
+
+-- | This much of the character's poison goes to its owner's discard pile.
+discardPoison :: (ReverseQueue m, Targetable target) => target -> Int -> m ()
+discardPoison target n = when (n > 0) $ push $ DiscardPoison (toTarget target) n
+
+-- | The character is made unconscious, its poison discarded.
+makeUnconscious :: (ReverseQueue m, Targetable target) => target -> m ()
+makeUnconscious = push . MakeUnconscious . toTarget
+
+-- | Ready an unconscious character: it is ready and no longer unconscious.
+readyUnconscious :: (ReverseQueue m, Targetable target) => target -> m ()
+readyUnconscious = push . ReadyUnconscious . toTarget
 
 -- | The card facedown on the character goes to its owner's hand.
 returnFacedownToHand :: (ReverseQueue m, Targetable target) => target -> PlayerCard -> m ()

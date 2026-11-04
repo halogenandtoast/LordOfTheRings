@@ -3316,5 +3316,42 @@
     "setup": "Journey to the Cross-roads: choose one",
     "resources": "Add 1 resource to each of your heroes' pools",
     "braceOfConeys": "Shuffle 1 copy of Brace of Coneys into your deck"
+  },
+  "fliesAndSpiders": {
+    "givePoison": "Choose a character you control to give the poison to",
+    "readyUnconscious": "Choose an unconscious character you control to ready"
+  },
+  "oldTomnoddy": {
+    "poison": "Old Tomnoddy: choose a hero you control to give 1 poison to"
+  },
+  "crazyCob": {
+    "attack": "Crazy Cob: choose the character with the most poison for it to attack"
+  },
+  "darkBats": {
+    "attach": "Dark Bats: choose the defending character to attach it to"
+  },
+  "giantWeb": {
+    "ready": "Giant Web: choose an unconscious character to ready"
+  },
+  "forestStream": {
+    "discardPoison": "Forest Stream: choose a character to discard 1 poison from"
+  },
+  "caughtInWebs": {
+    "hero": "Caught in Webs: choose a hero to remove from the quest and make unconscious"
+  },
+  "poisonedBySpiders": {
+    "discard": "Poisoned by Spiders: choose an unconscious character you control to discard"
+  },
+  "fightingAmongFriends": {
+    "nameSphere": "Fighting Among Friends: name a sphere",
+    "leadership": "Leadership",
+    "lore": "Lore",
+    "spirit": "Spirit",
+    "tactics": "Tactics"
+  },
+  "intoMirkwood": {
+    "magicRing": "Shuffle 1 copy of Bilbo's Magic Ring into your deck?",
+    "shuffleIn": "Shuffle it in",
+    "leaveOut": "Leave it out"
   }
 }

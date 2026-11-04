@@ -450,6 +450,10 @@ allQuestCards =
       , acrossTheMarshes
       , dontLookAtTheLights
       , ambushTheMenOfHarad
+      , intoMirkwood
+      , lostInTheDarkFliesAndSpiders
+      , capturedBySpiders
+      , battleWithTheSpiders
       ]
 
 theDrippingWalls :: CardDef
@@ -1862,6 +1866,7 @@ theHuntIsUp = quest "142022" "The Hunt is Up!" TheRingGoesSouth 3 12
 -- | No quest points: the players win as Doors of Durin is explored.
 theGatesOfMoria :: CardDef
 theGatesOfMoria = quest "142023" "The Gates of Moria" TheRingGoesSouth 4 0
+
 -- * The Passage of the Marshes
 
 theTamingOfSmeagol :: CardDef
@@ -1878,3 +1883,17 @@ dontLookAtTheLights = quest "144066" "Don't Look at the Lights!" ThePassageOfThe
 
 ambushTheMenOfHarad :: CardDef
 ambushTheMenOfHarad = quest "144068" "Ambush the Men of Harad" JourneyToTheCrossRoads 1 20
+-- * Flies and Spiders
+
+intoMirkwood :: CardDef
+intoMirkwood = quest "132067" "Into Mirkwood" FliesAndSpiders 1 9
+
+-- | No quest points: its When Revealed moves the players on at once.
+lostInTheDarkFliesAndSpiders :: CardDef
+lostInTheDarkFliesAndSpiders = quest "132068" "Lost in the Dark" FliesAndSpiders 2 0
+
+capturedBySpiders :: CardDef
+capturedBySpiders = quest "132069" "Captured by Spiders" FliesAndSpiders 3 11
+
+battleWithTheSpiders :: CardDef
+battleWithTheSpiders = quest "132070" "Battle with the Spiders" FliesAndSpiders 4 3

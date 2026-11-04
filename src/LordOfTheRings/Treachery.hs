@@ -439,6 +439,10 @@ import LordOfTheRings.Treachery.Cards.TheDarkLordsSummons
 import LordOfTheRings.Treachery.Cards.MarchingUpTheRoad
 import LordOfTheRings.Treachery.Cards.FierceSouthrons
 import LordOfTheRings.Treachery.Cards.ArrowsThickInTheAir
+import LordOfTheRings.Treachery.Cards.CaughtInWebs
+import LordOfTheRings.Treachery.Cards.PoisonedBySpiders
+import LordOfTheRings.Treachery.Cards.FightingAmongFriends
+import LordOfTheRings.Treachery.Cards.WeighedDownWilderland
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -905,5 +909,9 @@ allTreacherys =
         , SomeTreacheryCard marchingUpTheRoad
         , SomeTreacheryCard fierceSouthrons
         , SomeTreacheryCard arrowsThickInTheAir
+        , SomeTreacheryCard caughtInWebs
+        , SomeTreacheryCard poisonedBySpiders
+        , SomeTreacheryCard fightingAmongFriends
+        , SomeTreacheryCard weighedDownWilderland
         ]
     ]

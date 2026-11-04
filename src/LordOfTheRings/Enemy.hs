@@ -518,6 +518,12 @@ import LordOfTheRings.Enemy.Cards.CaptainOfHarad
 import LordOfTheRings.Enemy.Cards.Oliphaunt
 import LordOfTheRings.Enemy.Cards.HaradrimSoldier
 import LordOfTheRings.Enemy.Cards.HaradrimArcher
+import LordOfTheRings.Enemy.Cards.OldTomnoddy
+import LordOfTheRings.Enemy.Cards.CrazyCob
+import LordOfTheRings.Enemy.Cards.LazyLob
+import LordOfTheRings.Enemy.Cards.FatSpider
+import LordOfTheRings.Enemy.Cards.WickedSpider
+import LordOfTheRings.Enemy.Cards.DarkBats
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -1065,5 +1071,11 @@ allEnemys =
         , SomeEnemyCard oliphaunt
         , SomeEnemyCard haradrimSoldier
         , SomeEnemyCard haradrimArcher
+        , SomeEnemyCard oldTomnoddy
+        , SomeEnemyCard crazyCob
+        , SomeEnemyCard lazyLob
+        , SomeEnemyCard fatSpider
+        , SomeEnemyCard wickedSpider
+        , SomeEnemyCard darkBats
         ]
     ]

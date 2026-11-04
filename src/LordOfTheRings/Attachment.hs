@@ -265,6 +265,7 @@ import LordOfTheRings.Attachment.Cards.Forewarned
 import LordOfTheRings.Attachment.Cards.LeaderOfMen
 import LordOfTheRings.Attachment.Cards.BeyondAllHope
 import LordOfTheRings.Attachment.Cards.PalantirOfOrthanc
+import LordOfTheRings.Attachment.Cards.BilbosMagicRing
 import LordOfTheRings.Attachment.Runner ()
 import LordOfTheRings.Attachment.Types as X
 import LordOfTheRings.Id
@@ -567,5 +568,6 @@ allAttachments =
         , SomeAttachmentCard leaderOfMen
         , SomeAttachmentCard beyondAllHope
         , SomeAttachmentCard palantirOfOrthanc
+        , SomeAttachmentCard bilbosMagicRing
         ]
     ]
