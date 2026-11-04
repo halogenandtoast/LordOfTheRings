@@ -379,6 +379,16 @@ data WindowMatcher
   | -- | an attack made by characters a matching player controls dealt a matching enemy
     -- damage, as Extra Vigil's "after you attack and damage City Guard" answers
     PlayerAttackDealtDamageToWindow Timing PlayerMatcher EnemyMatcher
+  | -- | a card with the trait the player controls was attached to an enemy, as Damrod
+    -- answers a Trap
+    AttachedToEnemyWindow Timing PlayerId Trait
+  | -- | an ally with the trait the player controlled was discarded from play, destroyed or
+    -- by a card effect, its card now in a discard pile, as Gamling answers
+    AllyWithTraitDiscardedFromPlayWindow Timing PlayerId Trait
+  | -- | a matching enemy engaged the player, as Orc Disguise answers an Orc
+    PlayerEngagedMatchingEnemyWindow Timing PlayerId EnemyMatcher
+  | -- | the player optionally engaged a matching enemy, as Elladan answers an Orc
+    PlayerOptionallyEngagedMatchingWindow Timing PlayerId EnemyMatcher
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
@@ -566,6 +576,10 @@ windowMatches matcher (Window timing wType) = case (matcher, wType) of
   (CharacterAttackerDeclaredWindow {}, _) -> False
   (MatchingEnemyAttackResolvedWindow {}, _) -> False
   (PlayerAttackDealtDamageToWindow {}, _) -> False
+  (AttachedToEnemyWindow {}, _) -> False
+  (AllyWithTraitDiscardedFromPlayWindow {}, _) -> False
+  (PlayerEngagedMatchingEnemyWindow {}, _) -> False
+  (PlayerOptionallyEngagedMatchingWindow {}, _) -> False
   (MatchingEnemyDefeatedWindow {}, _) -> False
   (MatchingAttackersDeclaredWindow {}, _) -> False
   (QuestBypassedWindow t, QuestBypassed _) -> t == timing

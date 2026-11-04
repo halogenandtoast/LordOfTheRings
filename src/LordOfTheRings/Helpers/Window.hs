@@ -5,7 +5,7 @@ import Data.Map.Strict qualified as Map
 import LordOfTheRings.Ability
 import LordOfTheRings.Ally.Types (allyTokens)
 import LordOfTheRings.Attachment.Types
-import LordOfTheRings.Card (cdCardTraits, cdHitPoints, cdKeywords, cdName, cdShadowCannotBeCanceled, cdVictoryPoints, cdWhenRevealed, ecId, toCardCode, toCardDef)
+import LordOfTheRings.Card (cdCardTraits, cdHitPoints, cdKeywords, cdName, cdShadowCannotBeCanceled, cdVictoryPoints, cdWhenRevealed, ecId, toCard, toCardCode, toCardDef)
 import LordOfTheRings.Effect (Effect (..))
 import LordOfTheRings.Classes.Entity
 import LordOfTheRings.Classes.HasGame
@@ -243,6 +243,20 @@ windowMatchesM matcher w@(Window timing wType) = case (matcher, wType) of
     players <- select pm
     andM [selectAny (EnemyWithId eid <> m), anyM (fmap (maybe False (`elem` players)) . characterController) attackers]
   (MatchingAttackersDeclaredWindow t m, AttackersDeclared eid) | t == timing -> selectAny (EnemyWithId eid <> m)
+  (AttachedToEnemyWindow t pid trait, Attached (AttachmentTarget aid) (EnemyTarget _) traits) | t == timing && trait `member` traits ->
+    maybe False ((== pid) . (.controller) . toAttrs) . Map.lookup aid . (.attachments) <$> getsGame gameEntities
+  -- the ally is kept aside as the window opens; its card has gone to its owner's discard
+  -- pile if it was discarded, not returned to hand or deck
+  (AllyWithTraitDiscardedFromPlayWindow t pid trait, LeftPlay (AllyTarget aid) pid' traits) | t == timing && pid == pid' && trait `member` traits -> do
+    departed <- getsGame (Map.lookup aid . gameLeftPlay)
+    case departed of
+      Just a -> do
+        let card = toCard a
+        discards <- getsGame (concatMap (.discard) . toList . gamePlayers)
+        pure $ any ((== card.id) . (.id)) discards
+      Nothing -> pure False
+  (PlayerEngagedMatchingEnemyWindow t pid m, EnemyEngaged eid pid') | t == timing && pid == pid' -> selectAny (EnemyWithId eid <> m)
+  (PlayerOptionallyEngagedMatchingWindow t pid m, OptionallyEngaged eid pid') | t == timing && pid == pid' -> selectAny (EnemyWithId eid <> m)
   (ErrataWindow pid errata printed, _) -> do
     followsErrata <- selectAny (PlayerWithId pid <> PlayerUsingErrata)
     windowMatchesM (if followsErrata then errata else printed) w
