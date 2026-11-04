@@ -143,11 +143,11 @@ matchHero matcher hero = case matcher of
     getsGame \g ->
       any (\a -> a.placement == AttachedTo (toTarget hero) && toCardCode a == code) (entitiesAttachments $ gameEntities g)
         || any (\o -> o.placement == AttachedTo (toTarget hero) && toCardCode o == code) (entitiesObjectives $ gameEntities g)
+  -- an objective too, as a saga's The One Ring is
   HeroWithReadyAttachment code ->
-    getsGame
-      $ any (\a -> a.placement == AttachedTo (toTarget hero) && toCardCode a == code && not (attachmentExhausted $ toAttrs a))
-      . entitiesAttachments
-      . gameEntities
+    getsGame \g ->
+      any (\a -> a.placement == AttachedTo (toTarget hero) && toCardCode a == code && not (attachmentExhausted $ toAttrs a)) (entitiesAttachments $ gameEntities g)
+        || any (\o -> o.placement == AttachedTo (toTarget hero) && toCardCode o == code && not o.exhausted) (entitiesObjectives $ gameEntities g)
   HeroWithResources -> pure $ hero.resources > 0
   HeroWithPrintedSphere sphere -> pure $ hero.sphere == sphere
   HeroWithResourcesAtLeast n -> pure $ hero.resources >= n
