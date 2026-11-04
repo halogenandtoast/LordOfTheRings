@@ -82,6 +82,7 @@ import LordOfTheRings.Hero.Cards.FolcoBoffin
 import LordOfTheRings.Hero.Cards.Quickbeam
 import LordOfTheRings.Hero.Cards.BrandSonOfBainLeadership
 import LordOfTheRings.Hero.Cards.BardSonOfBrand
+import LordOfTheRings.Hero.Cards.GrimbeornTheOld
 import LordOfTheRings.Hero.AllyHero (allyHero)
 import LordOfTheRings.Hero.Runner ()
 import LordOfTheRings.Hero.Types as X
@@ -193,5 +194,6 @@ allHeroes =
         , SomeHeroCard quickbeam
         , SomeHeroCard brandSonOfBainLeadership
         , SomeHeroCard bardSonOfBrand
+        , SomeHeroCard grimbeornTheOld
         ]
     ]

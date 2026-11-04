@@ -213,6 +213,9 @@ allAllyCards =
       , northRealmLookout
       , warriorOfDale
       , longLakeTrader
+      , guardianOfEsgaroth
+      , beorningSkinChanger
+      , longLakeFisherman
       ]
 
 guardOfTheCitadel :: CardDef
@@ -1485,5 +1488,23 @@ warriorOfDale =
 longLakeTrader :: CardDef
 longLakeTrader =
   (ally "18006" "Long Lake Trader" Lore (StaticCost 2) 1 1 0 2)
+    { cdCardTraits = setFromList [Dale]
+    }
+
+guardianOfEsgaroth :: CardDef
+guardianOfEsgaroth =
+  (ally "19002" "Guardian of Esgaroth" Leadership (StaticCost 2) 1 1 1 1)
+    { cdCardTraits = setFromList [Dale]
+    }
+
+beorningSkinChanger :: CardDef
+beorningSkinChanger =
+  (ally "19004" "Beorning Skin-changer" Tactics (StaticCost 2) 1 1 1 3)
+    { cdCardTraits = setFromList [Beorning]
+    }
+
+longLakeFisherman :: CardDef
+longLakeFisherman =
+  (ally "19008" "Long Lake Fisherman" Spirit (StaticCost 2) 1 1 0 2)
     { cdCardTraits = setFromList [Dale]
     }

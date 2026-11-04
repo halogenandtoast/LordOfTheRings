@@ -85,6 +85,7 @@ allHeroCards =
       , quickbeam
       , brandSonOfBainLeadership
       , bardSonOfBrand
+      , grimbeornTheOld
       ]
 
 aragorn :: CardDef
@@ -533,4 +534,11 @@ bardSonOfBrand :: CardDef
 bardSonOfBrand =
   (hero "18002" "Bard son of Brand" Spirit 9 2 2 2 3)
     { cdCardTraits = setFromList [Dale, Noble]
+    }
+
+grimbeornTheOld :: CardDef
+grimbeornTheOld =
+  (hero "19001" "Grimbeorn the Old" Tactics 11 0 3 3 5)
+    { cdCardTraits = setFromList [Beorning, Warrior]
+    , cdKeywords = setFromList [Sentinel]
     }

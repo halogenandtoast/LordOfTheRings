@@ -237,6 +237,9 @@ import LordOfTheRings.Ally.Cards.RedwaterSentry
 import LordOfTheRings.Ally.Cards.NorthRealmLookout
 import LordOfTheRings.Ally.Cards.WarriorOfDale
 import LordOfTheRings.Ally.Cards.LongLakeTrader
+import LordOfTheRings.Ally.Cards.GuardianOfEsgaroth
+import LordOfTheRings.Ally.Cards.BeorningSkinChanger
+import LordOfTheRings.Ally.Cards.LongLakeFisherman
 import LordOfTheRings.Ally.Cards.PorosGarrison
 import LordOfTheRings.Ally.Runner ()
 import LordOfTheRings.Ally.Types as X
@@ -507,6 +510,9 @@ allAllies =
         , SomeAllyCard northRealmLookout
         , SomeAllyCard warriorOfDale
         , SomeAllyCard longLakeTrader
+        , SomeAllyCard guardianOfEsgaroth
+        , SomeAllyCard beorningSkinChanger
+        , SomeAllyCard longLakeFisherman
         , SomeAllyCard porosGarrison
         ]
     ]

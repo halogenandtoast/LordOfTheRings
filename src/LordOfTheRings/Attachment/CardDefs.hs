@@ -204,6 +204,10 @@ allAttachmentCards =
       , bowOfYew
       , mapOfRhovanion
       , necklaceOfGirion
+      , squiresHelm
+      , woodmensClearing
+      , greyCloak
+      , theArkenstone
       ]
 
 -- | A boon of the Revised Core campaign: Permanent, limit 1 per hero.
@@ -1381,6 +1385,36 @@ necklaceOfGirion :: CardDef
 necklaceOfGirion =
   unique
     (attachment "18011" "Necklace of Girion" Neutral (StaticCost 1))
+      { cdCardTraits = setFromList [Artifact, Item]
+      , cdKeywords = setFromList [GuardedBy [EnemyType, LocationType]]
+      }
+
+squiresHelm :: CardDef
+squiresHelm =
+  (attachment "19003" "Squire's Helm" Leadership (StaticCost 1))
+    { cdCardTraits = setFromList [Item, Armor]
+    , cdKeywords = setFromList [Restricted]
+    , cdLimitOnePerHost = True
+    }
+
+woodmensClearing :: CardDef
+woodmensClearing =
+  (attachment "19006" "Woodmen's Clearing" Lore (StaticCost 0))
+    { cdCardTraits = setFromList [Condition]
+    , cdLimitOnePerHost = True
+    }
+
+greyCloak :: CardDef
+greyCloak =
+  (attachment "19009" "Grey Cloak" Spirit (StaticCost 0))
+    { cdCardTraits = setFromList [Item]
+    , cdLimitOnePerHost = True
+    }
+
+theArkenstone :: CardDef
+theArkenstone =
+  unique
+    (attachment "19010" "The Arkenstone" Neutral (StaticCost 1))
       { cdCardTraits = setFromList [Artifact, Item]
       , cdKeywords = setFromList [GuardedBy [EnemyType, LocationType]]
       }
