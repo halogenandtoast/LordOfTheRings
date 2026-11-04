@@ -27,7 +27,7 @@ import LordOfTheRings.Hero.Types (HeroAttrs (heroPoison))
 import LordOfTheRings.Location.Types (LocationAttrs (locationCardId, locationUnderneath), isUncharted)
 import LordOfTheRings.Log.Refs (sourceRefFor)
 import LordOfTheRings.Matcher
-import LordOfTheRings.Modifier (Modifier (..))
+import LordOfTheRings.Modifier (Modifier (..), ModifierType (TopOfDeckFaceup))
 import LordOfTheRings.Contract.Types (ContractAttrs (..))
 import LordOfTheRings.Objective.Types (ObjectiveAttrs (..))
 import LordOfTheRings.Quest.Types (QuestAttrs (..))
@@ -79,6 +79,7 @@ hiddenCards g = Set.fromList hidden `Set.difference` Set.fromList shown
   s = toAttrs g.scenario
   hidden =
     concatMap (map (.id) . (.deck)) (toList merged.players)
+      `except` map (.id) (toList $ deckTops g)
       <> map (.id) (s.encounterDeck <> s.questDeck <> fromMaybe [] s.scenarioCorsairDeck <> fromMaybe [] s.evilCreaturesDeck <> s.scenarioUnchartedDeck <> s.scenarioGrottoDeck <> concat (toList s.scenarioHiddenCards))
       <> concat
         [ [c.id | c <- a.shadowCards, c.id `notElem` a.enemyShadowRevealed] <> map (.id) a.enemyFacedown
@@ -91,6 +92,18 @@ hiddenCards g = Set.fromList hidden `Set.difference` Set.fromList shown
       -- the loot deck facedown under The Burglar's Turn
       <> [c.id | k <- toList merged.entities.contracts, c <- (toAttrs k).contractUnderneath]
   shown = map (.id) $ concatMap searchedCards (toList g.question)
+  except xs ys = filter (`notElem` ys) xs
+
+-- | The top card of each deck played faceup, as Gandalf (The Road Darkens) has his
+-- player's.
+deckTops :: Game -> Map PlayerId Card
+deckTops g =
+  Map.fromList
+    [ (pid, top)
+    | (pid, p) <- Map.toList (allPlayers g)
+    , TopOfDeckFaceup `elem` map modifierType (Map.findWithDefault [] (PlayerTarget pid) (gameModifiers g))
+    , top <- take 1 p.deck
+    ]
 
 {- | The answer that took the game from one to the other brought something hidden into
 view, so an undo back past it would let the players play on knowing it.
@@ -146,6 +159,7 @@ publicGameFor seesHand g = hideDecks $ toJSON merged
         $ KeyMap.insert "underneath" (toJSON underneath)
         $ KeyMap.insert "underneathPlayer" (toJSON underneathPlayer)
         $ KeyMap.insert "searchZones" (toJSON $ searchZones g)
+        $ KeyMap.insert "deckTops" (toJSON $ deckTops g)
         $ KeyMap.insert "captured" (toJSON $ fmap length (fromMeta "captured" :: Map CardId [Value]))
         $ KeyMap.insert "capturedDecks" (toJSON $ fmap length (fromMeta "capturedDecks" :: Map PlayerId [Value]))
         -- the Stormcaller's quest stage and its progress (Flight of the Stormcaller)
