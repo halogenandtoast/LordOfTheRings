@@ -38,6 +38,9 @@ data WindowType
   | -- | an attack destroyed an enemy engaged with the player: the characters that attacked
     EngagedEnemyDestroyedByAttack PlayerId [Target]
   | CharacterDestroyed Target Card
+  | -- | the character destroyed was under the player's control, opened with
+    -- 'CharacterDestroyed'
+    CharacterDestroyedUnder PlayerId Target
   | -- | an encounter card revealed from the encounter deck
     Revealed Target
   | -- | a location about to leave play as an explored location

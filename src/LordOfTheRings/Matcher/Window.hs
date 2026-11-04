@@ -1,6 +1,5 @@
 module LordOfTheRings.Matcher.Window (module LordOfTheRings.Matcher.Window) where
 
-import LordOfTheRings.Card (Card (PlayerCard))
 import LordOfTheRings.Card.Code (CardCode)
 import LordOfTheRings.Id
 import LordOfTheRings.Matcher.Types (AllyMatcher, CardMatcher, EnemyMatcher, HeroMatcher, LocationMatcher, PlayerMatcher, cardMatches)
@@ -207,8 +206,11 @@ data WindowMatcher
     QuestDefeatedWindow Timing Target
   | -- | any quest card was defeated, as Mendor reads
     AnyQuestDefeatedWindow Timing
-  | -- | a character the player owns was destroyed, as Scarred reads "you control"
+  | -- | a character the player controlled was destroyed
     OwnCharacterDestroyedWindow Timing PlayerId
+  | -- | a character the controller of the host (a hero) controlled was destroyed, as
+    -- Scarred reads "you control" of the hero it is attached to
+    HostControllersCharacterDestroyedWindow Timing Target
   | -- | a card effect discarded an ally with the trait from play, as Éothain reads
     AllyWithTraitDiscardedByCardEffectWindow Timing Trait
   | -- | an attack the character took part in destroyed an enemy with at least this many
@@ -380,7 +382,7 @@ windowMatches matcher (Window timing wType) = case (matcher, wType) of
   (EliminatedByThreatWindow t pid, EliminatedByThreat pid') -> t == timing && pid == pid'
   (QuestDefeatedWindow t target, QuestDefeated target') -> t == timing && target == target'
   (AnyQuestDefeatedWindow t, QuestDefeated _) -> t == timing
-  (OwnCharacterDestroyedWindow t pid, CharacterDestroyed _ (PlayerCard pc)) -> t == timing && pc.owner == Just pid
+  (OwnCharacterDestroyedWindow t pid, CharacterDestroyedUnder pid' _) -> t == timing && pid == pid'
   (AllyWithTraitDiscardedByCardEffectWindow t trait, AllyDiscardedByCardEffect _ traits) -> t == timing && trait `member` traits
   (EnemyDestroyedWindow t m, EnemyDestroyed card) -> t == timing && cardMatches m card
   (DiscardedFromHandWindow t pid, DiscardedFromHand pid' _) -> t == timing && pid == pid'

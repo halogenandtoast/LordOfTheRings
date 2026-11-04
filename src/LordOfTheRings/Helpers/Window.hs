@@ -85,6 +85,8 @@ getWindowAbilities windows = do
 -- | Whether the window matches, reading the game for the matchers that need it.
 windowMatchesM :: HasGame m => WindowMatcher -> Window -> m Bool
 windowMatchesM matcher w@(Window timing wType) = case (matcher, wType) of
+  (HostControllersCharacterDestroyedWindow t (HeroTarget hid), CharacterDestroyedUnder pid _) | t == timing ->
+    maybe False ((== pid) . (.owner)) . Map.lookup hid . (.heroes) <$> getsGame gameEntities
   (LeftPlaySharingTraitWindow t host, LeftPlay _ _ traits) | t == timing -> do
     def <- hostDef host
     anyM (\trait -> hasTrait trait host def) (toList traits)

@@ -872,12 +872,14 @@ runGameMessage msg g = case msg of
         -- one an enemy's attack destroyed with its damage, as "if this attack destroys a
         -- character" reads: not one its shadow card's damage destroyed (see 'attackDestroyed')
         byAttack = [(eid, c, pid) | EnemyAttackSource eid <- [source], Just c <- [card], Just pid <- [controller]]
+        under = [CharacterDestroyedUnder pid target | Just pid <- [controller]]
     pushAll
-      $ [CheckWindows [mkWhen $ CharacterDestroyed target c] | Just c <- [card]]
+      $ [CheckWindows $ map mkWhen (CharacterDestroyed target c : under) | Just c <- [card]]
       <> [Discard target, CheckEliminations]
       <> [ CheckWindows
              $ mkAfter (CharacterDestroyed target c)
-             : [mkAfter $ CharacterDestroyedByAttack eid target pid | (eid, _, pid) <- byAttack]
+             : map mkAfter under
+             <> [mkAfter $ CharacterDestroyedByAttack eid target pid | (eid, _, pid) <- byAttack]
          | Just c <- [card]
          ]
     pure $ g & attackDestroyedL %~ (<> [AttackDestroyed (EnemyAttackSource eid) target (Just pid) c | (eid, c, pid) <- byAttack])
