@@ -11,7 +11,7 @@ import LordOfTheRings.Json
 import LordOfTheRings.Message
 import LordOfTheRings.Prelude
 import LordOfTheRings.Effect (Effect (..), EffectDuration (UntilEndOfRound))
-import LordOfTheRings.Modifier (ModifierType (PlayedACardThisRound))
+import LordOfTheRings.Modifier (ModifierType (PlayedACardThisRound, PlayedEventThisRound))
 import LordOfTheRings.Source (Source (GameSource, PlayerSource))
 import LordOfTheRings.Target (Target (PlayerTarget), toTarget)
 import LordOfTheRings.Token (Token (Resource))
@@ -116,6 +116,11 @@ playCard pid card windows = case cdCardType (toCardDef card) of
   AllyType -> [PlayAlly pid card]
   AttachmentType -> [PlayAttachment pid card]
   -- the When window comes first, for an effect that cancels it, as Counter-Spell's
-  EventType -> [CheckWindows [mkWhen $ PlayingEvent pid card.id], PlayEvent pid card windows]
+  -- the player's events this round are counted, as Silent Guardian's "the first time"
+  EventType ->
+    [ CheckWindows [mkWhen $ PlayingEvent pid card.id]
+    , CreateEffect $ Effect GameSource (PlayerTarget pid) [PlayedEventThisRound] UntilEndOfRound
+    , PlayEvent pid card windows
+    ]
   PlayerSideQuestType -> [PutSideQuestIntoPlay pid card]
   _ -> []

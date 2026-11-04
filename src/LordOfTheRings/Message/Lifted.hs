@@ -1400,6 +1400,15 @@ putShipIntoPlayUnder pid = push . PutObjectiveAllyIntoPlayUnder pid
 revealFromCorsairDeck :: (ReverseQueue m, Sourceable source) => source -> PlayerId -> m ()
 revealFromCorsairDeck source pid = push $ RevealFromCorsairDeck (toSource source) pid
 
+-- | As 'revealFromCorsairDeck', the enemy put into play dealt a shadow card.
+revealFromCorsairDeckWithShadow :: (ReverseQueue m, Sourceable source) => source -> PlayerId -> m ()
+revealFromCorsairDeckWithShadow source pid = push $ RevealFromCorsairDeckWithShadow (toSource source) pid
+
+-- | The enemy goes to the staging area the player shares, his area's while the players are
+-- separated.
+placeInStagingAreaOf :: ReverseQueue m => PlayerId -> EnemyId -> m ()
+placeInStagingAreaOf pid eid = push $ PlaceInStagingAreaOf pid eid
+
 -- | The player moves 1 resource from one of his heroes' pools to the card, as Umbar Raider
 -- takes it; nothing, with no resources to move.
 takeResourceFromAHero :: (ReverseQueue m, Sourceable a, Targetable a) => a -> PlayerId -> m ()

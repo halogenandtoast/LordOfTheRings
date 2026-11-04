@@ -7,8 +7,9 @@ import LordOfTheRings.Classes.HasQueue (HasQueue, push, pushAll, pushWhen)
 import LordOfTheRings.Classes.RunMessage
 import LordOfTheRings.Helpers.Modifiers (doesNotExhaustToCommit, getModifiers)
 import LordOfTheRings.Message
-import LordOfTheRings.Modifier (ModifierType (CannotExhaust, CannotReady, DoesNotExhaustToAttack))
+import LordOfTheRings.Modifier (ModifierType (CannotExhaust, CannotReady, ControlledCardsCannotReady, DoesNotExhaustToAttack))
 import LordOfTheRings.Phase
+import LordOfTheRings.Placement (placementController)
 import LordOfTheRings.Prelude
 import LordOfTheRings.Target
 import LordOfTheRings.Token
@@ -33,7 +34,9 @@ instance RunMessage AllyAttrs where
       pushWhen attrs.allyCommitted $ CheckWindows [mkAfter $ RemovedFromQuest (toTarget attrs)]
       pure $ attrs & committedL .~ False
     Ready (isTarget attrs -> True) -> do
-      blocked <- elem CannotReady <$> getModifiers attrs
+      -- or its controller's cards, as Ungoliant's Brood's
+      held <- maybe (pure False) (fmap (elem ControlledCardsCannotReady) . getModifiers . PlayerTarget) (placementController attrs.placement)
+      blocked <- (|| held) . elem CannotReady <$> getModifiers attrs
       when (attrs.allyExhausted && not blocked) $ push $ CheckWindows [mkAfter $ BecameReady (toTarget attrs)]
       pure $ attrs & exhaustedL %~ (&& blocked)
     AttachFacedown (isTarget attrs -> True) card -> pure $ attrs & facedownL %~ (card :)

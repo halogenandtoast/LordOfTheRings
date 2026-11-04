@@ -593,6 +593,33 @@ data ModifierType
   | -- | on a player: card effects draw him no cards, the resource phase's draw still does, as
     -- Isolated reads
     CannotDrawCardsFromCardEffects
+  | -- | on a card in play: player card effects cannot damage it, as The Watcher's in the
+    -- staging area; its other effects still reach it
+    CannotBeDamagedByPlayerCardEffects
+  | -- | on an enemy: the player's card effects cannot damage it, as Marshland Outlaws bars
+    -- them from other enemies
+    CannotBeDamagedByEffectsOf PlayerId
+  | -- | on an enemy: the damage its attacks deal goes to one of these instead, as Orc
+    -- Saboteur's goes to a Battleground location
+    AttackDamageRedirectedTo Target
+  | -- | on a card in play: no player attachment can be attached to it; encounter cards
+    -- still may, as Stuart's Trolls
+    CannotHavePlayerAttachments
+  | -- | on an enemy in the staging area: it attacks matching players during the combat
+    -- phase, as if engaged with them, without counting as engaged, as Snow-Giant
+    AttacksAsIfEngagedWith PlayerMatcher
+  | -- | on a player: no card he controls can ready, as Ungoliant's Brood reads
+    ControlledCardsCannotReady
+  | -- | on an enemy: no more than this many characters can attack it each round, as Graxar
+    AttackersPerRoundLimit Int
+  | -- | on an enemy, by an effect until the end of the round: a character was declared as
+    -- an attacker against it, for 'AttackersPerRoundLimit' to count
+    DeclaredAttackerThisRound
+  | -- | on an enemy, until its next attack: its attack dealt damage, as King's Knight reads
+    DealtAttackDamage
+  | -- | on a player, by an effect until the end of the round: he played an event this
+    -- round, one for each event, as Silent Guardian counts
+    PlayedEventThisRound
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
