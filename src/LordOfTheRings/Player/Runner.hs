@@ -118,7 +118,11 @@ runPlayer msg player = case msg of
       push CheckEliminations
       pure $ player & threatL %~ max 0 . (+ n)
     DoRaiseThreat pid n | pid == player.id -> do
-      pushAll [CheckEliminations, CheckWindows [mkAfter $ ThreatRaised pid]]
+      pushAll
+        [ CreateEffect $ Effect GameSource (PlayerTarget pid) [RaisedThreatThisRound] UntilEndOfRound
+        , CheckEliminations
+        , CheckWindows [mkAfter $ ThreatRaised pid]
+        ]
       pure $ player & threatL %~ max 0 . (+ n)
     EliminatePlayer pid | pid == player.id -> do
       level <- getEliminationLevel pid
