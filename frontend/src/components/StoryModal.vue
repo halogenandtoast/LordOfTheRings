@@ -6,6 +6,7 @@
  */
 import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { showModal } from '../composables/useViewTransition'
 import PrimaryButton from './PrimaryButton.vue'
 
 export type StoryPart = 'intro' | 'resolution'
@@ -64,7 +65,7 @@ watch(
   (p) => {
     const el = dialog.value
     if (!el) return
-    if (p && !el.open) el.showModal()
+    if (p && !el.open) showModal(el)
     else if (!p && el.open) el.close()
   },
   { flush: 'post' },

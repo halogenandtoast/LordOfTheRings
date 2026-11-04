@@ -7,6 +7,7 @@
 import { ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { fileBug } from '../api'
+import { showModal } from '../composables/useViewTransition'
 import PrimaryButton from './PrimaryButton.vue'
 
 const { open, gameId, description: initialDescription = '' } = defineProps<{
@@ -31,7 +32,7 @@ watch(
     if (isOpen && !el.open) {
       description.value = initialDescription
       failed.value = false
-      el.showModal()
+      showModal(el)
     } else if (!isOpen && el.open) el.close()
   },
   { flush: 'post' },
