@@ -338,7 +338,6 @@ passesCriteria = \case
   TargetLacksModifier t m -> notElem m <$> getModifiers t
   ModifierFrom source m ->
     getsGame (any (any \x -> modifierSource x == source && modifierType x == m) . toList . gameModifiers)
-  ProgressPlacedThisPhaseOn t -> (> 0) <$> progressPlacedThisPhase t
   CardPlayedThisRound code -> any (\(_, c, _) -> c == code) <$> cardsPlayedThisRound
   CharactersAtLeast n heroes allies -> (>= n) . length <$> selectCharacters heroes allies
   DistinctCharacters characterPairs -> distinct [] <$> traverse (uncurry selectCharacters) characterPairs

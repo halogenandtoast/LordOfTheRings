@@ -57,9 +57,6 @@ data Criterion
   | TargetLacksModifier Target ModifierType
   | -- | a card in play has the modifier from the source, as the enemy Bilbo Baggins chose
     ModifierFrom Source ModifierType
-  | -- | progress was placed on the quest card this phase, as The Lower Depths' "after
-    -- placing progress here from questing successfully" needs
-    ProgressPlacedThisPhaseOn Target
   | -- | at least this many characters match: heroes and allies
     CharactersAtLeast Int HeroMatcher AllyMatcher
   | -- | a different character for each pair of matchers, heroes and allies: "a Rohan

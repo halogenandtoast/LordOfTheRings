@@ -2163,10 +2163,14 @@ runGameMessage msg g = case msg of
                 onto = filter (inPlay g) [t | ProgressBeyondActiveTo t <- gameMods]
                 canceledBy q = find ((== Just q) . sourceTarget) [s | QuestProgressCanceledBy s <- gameMods]
                 onQuests k =
-                  [ maybe (PlaceTokens GameSource q Progress k) (`ProgressCanceled` k) (canceledBy q)
-                  | q <- quests
-                  , k > 0
-                  ]
+                  concat
+                    [ maybe
+                        [CreateEffect $ Effect GameSource q [ProgressFromQuestingThisPhase] UntilEndOfPhase, PlaceTokens GameSource q Progress k]
+                        (\s -> [ProgressCanceled s k])
+                        (canceledBy q)
+                    | q <- quests
+                    , k > 0
+                    ]
             -- a location in the staging area may take it before the quest, as Explorer's
             -- Almanac's, the first player choosing
             almanacs <- if overflow > 0 && null instead then mayTakeQuestingProgress else pure []

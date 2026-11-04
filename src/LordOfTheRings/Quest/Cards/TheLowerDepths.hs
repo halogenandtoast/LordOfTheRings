@@ -22,13 +22,14 @@ instance HasModifiersFor TheLowerDepths where
 
 {- | Response: After placing progress here from questing successfully, remove 5 progress
 from this stage to look at the top 2 cards of the Caves deck. Put one on top of the Caves
-deck and put the other on the bottom. Progress was placed here from questing if this
-stage took progress this quest phase; with fewer than 5 on it the cost cannot be paid.
+deck and put the other on the bottom. Only after the progress from questing successfully
+lands on this stage, not on the active location; with fewer than 5 on it the cost cannot
+be paid.
 Forced: After Dragon Hoard becomes the active location, advance to stage 3A.
 -}
 instance HasAbilities TheLowerDepths where
   getAbilities (TheLowerDepths a) =
-    [ restricted a 1 (ProgressPlacedThisPhaseOn $ toTarget a) $ response $ PlacedProgressFromQuestingWindow After
+    [ restricted a 1 (TargetHasModifier (toTarget a) ProgressFromQuestingThisPhase) $ response $ PlacedProgressFromQuestingWindow After
     | a.flipped
     , a.progress >= 5
     ]

@@ -190,6 +190,15 @@ spec = describe "The King's Quest" do
       run $ CheckWindows [mkAfter PlacedProgressFromQuesting]
       offersAbilityOf pid q `shouldReturn` False
 
+    it "does not offer the Caves deck when the progress from questing all lands on the active location" . kqTest $ \pid -> do
+      q <- flippedStage Quests.theLowerDepths
+      _ <- setCavesDeck [Locations.lostArmory, Locations.ancientTreasury]
+      run $ PlaceTokens GameSource q Progress 6
+      _ <- activeLocation Locations.frightfulDen
+      run $ PlaceProgressOnQuest 1
+      run $ CheckWindows [mkAfter PlacedProgressFromQuesting]
+      offersAbilityOf pid q `shouldReturn` False
+
     it "advances to stage 3A as Dragon Hoard becomes the active location" . kqTest $ \_ -> do
       _ <- flippedStage Quests.theLowerDepths
       setQuestDeck [Quests.theFireWorm]

@@ -376,6 +376,10 @@ data ModifierType
   | -- | on a quest card, by an effect until the end of the phase: this much progress was
     -- placed on it this phase (see 'progressPlacedThisPhase')
     ProgressPlacedThisPhase Int
+  | -- | on a quest card, by an effect until the end of the phase: progress from questing
+    -- successfully was placed on it, as The Lower Depths' "after placing progress here
+    -- from questing successfully" reads
+    ProgressFromQuestingThisPhase
   | -- | on the game: the next enemy to enter the staging area takes the modifier instead,
     -- for as long as the effect lasts
     NextEnemyInStaging ModifierType
