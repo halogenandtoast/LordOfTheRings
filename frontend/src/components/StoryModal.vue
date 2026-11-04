@@ -103,21 +103,8 @@ watch(
 </template>
 
 <style scoped>
-/* the dialog is its own scrim, for the reason FileBug.vue gives */
-.story {
-  position: fixed;
-  inset: 0;
-  width: auto;
-  height: auto;
-  max-width: none;
-  max-height: none;
-  margin: 0;
-  padding: 0;
-  border: 0;
-  background: rgb(0 0 0 / 0.6);
-  view-transition-name: story;
-}
-.story[open] { display: grid; place-items: center; }
+.story { max-width: none; max-height: none; padding: 0; border: 0; background: none; overflow: visible; }
+.story::backdrop { background: rgb(0 0 0 / 0.6); }
 
 article {
   display: flex;

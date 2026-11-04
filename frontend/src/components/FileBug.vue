@@ -85,26 +85,8 @@ const submit = async () => {
 </template>
 
 <style scoped>
-/* The dialog is the scrim itself, instead of a styled `::backdrop`. A card being dealt
-   carries a `view-transition-name` (see composables/dealing.ts), which lifts it into the
-   view-transition layer, and that layer paints above the top layer this dialog sits in --
-   so cards dealt behind the window came out in front of it, lit up against the dim board.
-   A `::backdrop` cannot carry a name, so the dim has to belong to the element that can;
-   `::view-transition-group(file-bug)` in style.css then puts the pair back on top. */
-.file-bug {
-  position: fixed;
-  inset: 0;
-  width: auto;
-  height: auto;
-  max-width: none;
-  max-height: none;
-  margin: 0;
-  padding: 0;
-  border: 0;
-  background: rgb(0 0 0 / 0.6);
-  view-transition-name: file-bug;
-}
-.file-bug[open] { display: grid; place-items: center; }
+.file-bug { max-width: none; max-height: none; padding: 0; border: 0; background: none; overflow: visible; }
+.file-bug::backdrop { background: rgb(0 0 0 / 0.6); }
 
 form {
   display: flex;
