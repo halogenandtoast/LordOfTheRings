@@ -284,6 +284,13 @@ data Message
     GuardCharacter Target CardId
   | -- | the guarded character is free of encounters: its owner takes control of it, exhausted
     RescueCharacter Target
+  | -- | the hero goes to the staging area, in play under no player's control (The Long Arm
+    -- of Mordor)
+    MoveHeroToStagingArea HeroId
+  | -- | the hero in the staging area returns to its owner's control, exhausted
+    TakeControlOfHero HeroId
+  | -- | an objective-hero comes into play under the player's control
+    PutObjectiveHeroIntoPlayUnder PlayerId EncounterCard
   | -- | a card out of play, an ally card from its owner's discard pile or an objective ally,
     -- comes into play as the captive of the encounter card with this id (see 'GuardCharacter')
     GuardCard Card CardId

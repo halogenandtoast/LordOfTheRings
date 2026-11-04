@@ -402,6 +402,8 @@ import LordOfTheRings.Location.Cards.DesertOasis
 import LordOfTheRings.Location.Cards.JungleTrail
 import LordOfTheRings.Location.Cards.ForestClearing
 import LordOfTheRings.Location.Cards.DenseJungle
+import LordOfTheRings.Location.Cards.SouthronBoma
+import LordOfTheRings.Location.Cards.VillageHut
 import LordOfTheRings.Location.Cards.SpiderBurrow
 import LordOfTheRings.Location.Cards.PitchBlackTunnel
 import LordOfTheRings.Location.Cards.NestOfVermin
@@ -882,6 +884,8 @@ allLocations =
         , SomeLocationCard jungleTrail
         , SomeLocationCard forestClearing
         , SomeLocationCard denseJungle
+        , SomeLocationCard southronBoma
+        , SomeLocationCard villageHut
         , SomeLocationCard spiderBurrow
         , SomeLocationCard pitchBlackTunnel
         , SomeLocationCard nestOfVermin

@@ -1812,6 +1812,7 @@ runGameMessage msg g = case msg of
             [ CreateEffect $ Effect GameSource GameTarget [QuestedSuccessfullyThisPhase] UntilEndOfPhase
             , CheckWindows [mkAfter QuestedSuccessfully]
             , PlaceProgressOnQuest (willpower - threat)
+            , CheckWindows [mkAfter PlacedProgressFromQuesting]
             ]
       | threat > willpower ->
           -- responses before the threat is raised may stop it, as Ever Onward's: see
@@ -2042,6 +2043,10 @@ runGameMessage msg g = case msg of
     pure $ g & entitiesL . questsL %~ insertEntity sideQuest
   PutHeroIntoPlay pid card -> do
     thisHero <- newHero pid card
+    push $ CheckWindows [mkAfter $ EntersPlay $ toTarget thisHero]
+    pure $ g & entitiesL . heroesL %~ insertEntity thisHero
+  PutObjectiveHeroIntoPlayUnder pid card -> do
+    thisHero <- lookupHero (toCardCode card) card.id <$> getRandom <*> pure pid
     push $ CheckWindows [mkAfter $ EntersPlay $ toTarget thisHero]
     pure $ g & entitiesL . heroesL %~ insertEntity thisHero
   CheckWindows windows -> do

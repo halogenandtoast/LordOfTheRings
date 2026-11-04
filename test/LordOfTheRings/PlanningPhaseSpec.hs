@@ -6,7 +6,7 @@ import LordOfTheRings.Effect (Effect (..), EffectDuration (..))
 import LordOfTheRings.Keyword (Keyword (Doomed))
 import LordOfTheRings.Matcher (CardMatcher (AnyCard, CardWithSphere), HeroMatcher (HeroControlledBy), PlayerMatcher (PlayerWithId), select)
 import LordOfTheRings.Card (CardType (AllyType))
-import LordOfTheRings.Modifier (ModifierType (GainKeyword, GainResourceIconFor, LowerNextCostOf, NextCardGainsDoomed, PlayedACardThisRound, PlayedCardTypeThisRound))
+import LordOfTheRings.Modifier (ModifierType (GainKeyword, GainResourceIconFor, LowerNextCostOf, NextCardGainsDoomed, PlayedACardThisPhase, PlayedACardThisRound, PlayedCardTypeThisRound))
 import LordOfTheRings.Phase
 import LordOfTheRings.Sphere (Sphere (Tactics))
 import TestImport
@@ -78,4 +78,4 @@ spec = describe "Planning phase" do
       _ <- playWith pid "01002" 1 Allies.guardOfTheCitadel
       threat pid `shouldReturn` was + 1
       -- the spent effect is gone; what is left marks the card played
-      getsGame (map effectModifiers . filter ((== PlayerTarget pid) . effectTarget) . gameEffects) `shouldReturn` [[PlayedACardThisRound, PlayedCardTypeThisRound AllyType]]
+      getsGame (map effectModifiers . filter ((== PlayerTarget pid) . effectTarget) . gameEffects) `shouldReturn` [[PlayedACardThisPhase], [PlayedACardThisRound, PlayedCardTypeThisRound AllyType]]

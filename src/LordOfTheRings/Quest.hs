@@ -225,6 +225,10 @@ import LordOfTheRings.Quest.Cards.InEnemyTerritory
 import LordOfTheRings.Quest.Cards.FindWater
 import LordOfTheRings.Quest.Cards.CraftRemedy
 import LordOfTheRings.Quest.Cards.UruksOfTheEye
+import LordOfTheRings.Quest.Cards.SurpriseAttack
+import LordOfTheRings.Quest.Cards.FindTheOthers
+import LordOfTheRings.Quest.Cards.FreeTheCaptives
+import LordOfTheRings.Quest.Cards.EscapeIntoTheJungle
 import LordOfTheRings.Quest.Cards.TheStormComes
 import LordOfTheRings.Quest.Cards.PrepareForBattle
 import LordOfTheRings.Quest.Cards.ExploreSecretWays
@@ -523,6 +527,10 @@ allQuests =
         , SomeQuestCard findWater
         , SomeQuestCard craftRemedy
         , SomeQuestCard uruksOfTheEye
+        , SomeQuestCard surpriseAttack
+        , SomeQuestCard findTheOthers
+        , SomeQuestCard freeTheCaptives
+        , SomeQuestCard escapeIntoTheJungle
         , SomeQuestCard lostUnderground
         , SomeQuestCard searchingTheCaves
         , SomeQuestCard gettingCloser

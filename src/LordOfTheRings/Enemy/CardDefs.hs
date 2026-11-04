@@ -406,6 +406,7 @@ allEnemyCards =
       , urukOfMordor
       , urukWargRider
       , mordorWarg
+      , sauronsEnforcers
       , broodMother
       , hiveGuardian
       , spiderBroodling
@@ -3323,6 +3324,12 @@ mordorWarg =
     , cdWhenRevealed = True
     }
 
+-- | X attack, defense and threat, X the main quest's stage number: its card gives them.
+sauronsEnforcers :: CardDef
+sauronsEnforcers =
+  (enemy "16035" "Sauron's Enforcers" TheLongArmOfMordor 4 30 0 0 0 3)
+    { cdCardTraits = setFromList [Orc, Uruk]
+    }
 -- * Beneath the Sands
 
 broodMother :: CardDef

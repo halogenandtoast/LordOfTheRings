@@ -338,6 +338,8 @@ import LordOfTheRings.Treachery.Cards.TheSavageSouth
 import LordOfTheRings.Treachery.Cards.TerribleFever
 import LordOfTheRings.Treachery.Cards.BitingInsects
 import LordOfTheRings.Treachery.Cards.FearOfMordor
+import LordOfTheRings.Treachery.Cards.SavageAttack
+import LordOfTheRings.Treachery.Cards.OverrunByOrcs
 import LordOfTheRings.Treachery.Cards.ForcedOffTrackBeneathTheSands
 import LordOfTheRings.Treachery.Cards.GrabbedBySpiders
 import LordOfTheRings.Treachery.Cards.Mirage
@@ -718,6 +720,8 @@ allTreacherys =
         , SomeTreacheryCard terribleFever
         , SomeTreacheryCard bitingInsects
         , SomeTreacheryCard fearOfMordor
+        , SomeTreacheryCard savageAttack
+        , SomeTreacheryCard overrunByOrcs
         , SomeTreacheryCard forcedOffTrackBeneathTheSands
         , SomeTreacheryCard grabbedBySpiders
         , SomeTreacheryCard mirage

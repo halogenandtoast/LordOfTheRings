@@ -310,6 +310,10 @@ allQuestCards =
       , findWater
       , craftRemedy
       , uruksOfTheEye
+      , surpriseAttack
+      , findTheOthers
+      , freeTheCaptives
+      , escapeIntoTheJungle
       , lostUnderground
       , searchingTheCaves
       , gettingCloser
@@ -1225,6 +1229,20 @@ uruksOfTheEye =
     , cdKeywords = setFromList [Surge]
     }
 
+-- * The Long Arm of Mordor
+
+-- | No quest points: its Forced effect advances after questing successfully.
+surpriseAttack :: CardDef
+surpriseAttack = (quest "16071" "Surprise Attack" TheLongArmOfMordor 1 0) {cdQuestPoints = Nothing}
+
+findTheOthers :: CardDef
+findTheOthers = quest "16072" "Find the Others" TheLongArmOfMordor 2 5
+
+freeTheCaptives :: CardDef
+freeTheCaptives = quest "16073" "Free the Captives" TheLongArmOfMordor 3 10
+
+escapeIntoTheJungle :: CardDef
+escapeIntoTheJungle = quest "16074" "Escape into the Jungle" TheLongArmOfMordor 4 15
 -- * Beneath the Sands
 
 lostUnderground :: CardDef

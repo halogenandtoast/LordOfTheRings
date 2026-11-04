@@ -73,6 +73,8 @@ data WindowMatcher
   | -- | a guarded character, or the given one, was rescued (see 'GuardCharacter')
     CharacterRescuedWindow Timing (Maybe Target)
   | QuestedSuccessfullyWindow Timing
+  | -- | after the progress from questing successfully is placed, as Surprise Attack reads
+    PlacedProgressFromQuestingWindow Timing
   | -- | after an attack the character, or any character, defended
     DefendedAttackWindow Timing (Maybe Target)
   | -- | after an attack by the enemy was defended, as Noose of Vines reads
@@ -341,6 +343,7 @@ windowMatches matcher (Window timing wType) = case (matcher, wType) of
   (QuestedUnsuccessfullyWindow t, QuestedUnsuccessfully) -> t == timing
   (CharacterRescuedWindow t mt, CharacterRescued c) -> t == timing && maybe True (== c) mt
   (QuestedSuccessfullyWindow t, QuestedSuccessfully) -> t == timing
+  (PlacedProgressFromQuestingWindow t, PlacedProgressFromQuesting) -> t == timing
   (DefendedAttackWindow t who, DefendedAttack target _) -> t == timing && maybe True (== target) who
   (DefendedAttackAgainstWindow t eid, DefendedAttack _ eid') -> t == timing && eid == eid'
   (PlayedFromHandWindow t target, PlayedFromHand target') -> t == timing && target == target'

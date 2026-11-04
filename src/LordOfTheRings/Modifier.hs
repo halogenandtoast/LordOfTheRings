@@ -411,6 +411,9 @@ data ModifierType
     CannotGainResourcesFromPlayerCardEffects
   | -- | on a player: he played a card this round, from wherever, as A Forgotten Land counts
     PlayedACardThisRound
+  | -- | on a player: he played a card this phase, as "the first card each player plays each
+    -- phase" counts (The Long Arm of Mordor)
+    PlayedACardThisPhase
   | -- | on a player: he played a card of the type this round, from wherever, as The Storm
     -- Comes reads "the first ally played by each player each round"
     PlayedCardTypeThisRound CardType

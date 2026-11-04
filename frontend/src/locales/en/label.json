@@ -2252,6 +2252,30 @@
   "mordorWarg": {
     "attach": "Mordor Warg: choose the Orc enemy to attach it to"
   },
+  "theLongArmOfMordor": {
+    "takeControl": "Choose a hero you own in the staging area to take control of"
+  },
+  "surpriseAttack": {
+    "objectiveHero": "Surprise Attack: choose the objective-hero you take control of"
+  },
+  "freeTheCaptives": {
+    "guard": "Free the Captives: choose the Orc enemy that guards this hero"
+  },
+  "kahlielObjective": {
+    "resource": "Kahliel: choose the hero to add 1 resource to"
+  },
+  "yazanObjective": {
+    "damage": "Yazan: choose the non-unique enemy to deal 1 damage to"
+  },
+  "jubayrObjective": {
+    "discard": "Jubayr: choose the non-unique enemy to discard a facedown shadow card from"
+  },
+  "savageAttack": {
+    "choose": "Savage Attack: choose one",
+    "discardAlly": "Discard the highest cost ally you control",
+    "chooseAlly": "Choose the ally to discard",
+    "reveal": "Reveal an encounter card"
+  },
   "onTrack": {
     "add": "On Track: choose the card with On Track to add to the staging area"
   },

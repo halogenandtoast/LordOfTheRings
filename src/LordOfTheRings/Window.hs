@@ -52,6 +52,8 @@ data WindowType
   | ProgressPlaced Target Int
   | QuestedUnsuccessfully
   | QuestedSuccessfully
+  | -- | the progress from questing successfully has been placed
+    PlacedProgressFromQuesting
   | -- | an attack the character made has resolved
     AttackedEnemy Target EnemyId
   | -- | an attack the character defended has resolved

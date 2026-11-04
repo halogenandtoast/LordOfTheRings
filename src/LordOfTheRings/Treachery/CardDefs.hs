@@ -344,6 +344,8 @@ allTreacheryCards =
       , heatExhaustion
       , overgrown
       , fearOfMordor
+      , savageAttack
+      , overrunByOrcs
       , forcedOffTrackBeneathTheSands
       , grabbedBySpiders
       , mirage
@@ -2230,6 +2232,11 @@ overgrown = (treachery "16059" "Overgrown" JungleForest 2) {cdKeywords = setFrom
 fearOfMordor :: CardDef
 fearOfMordor = (treachery "16065" "Fear of Mordor" MordorOrcs 2) {cdShadowEffect = True, cdEasyModeQuantity = Just 1}
 
+savageAttack :: CardDef
+savageAttack = (treachery "16038" "Savage Attack" TheLongArmOfMordor 2) {cdShadowEffect = True, cdEasyModeQuantity = Just 1}
+
+overrunByOrcs :: CardDef
+overrunByOrcs = (treachery "16039" "Overrun by Orcs" TheLongArmOfMordor 3) {cdShadowEffect = True}
 -- * Beneath the Sands
 
 forcedOffTrackBeneathTheSands :: CardDef
