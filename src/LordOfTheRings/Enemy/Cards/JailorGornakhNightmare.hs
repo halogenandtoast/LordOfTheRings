@@ -22,6 +22,8 @@ instance HasAbilities JailorGornakhNightmare where
     , mkAbility a 2 $ forced $ CapturedCardsRescuedWindow After
     ]
 
+-- | Captured cards are rescued by their owners (Escape from Mount Gram rules), so the
+-- players attacked are the owners of the cards rescued.
 instance RunMessage JailorGornakhNightmare where
   runMessage msg e@(JailorGornakhNightmare attrs) = case msg of
     UseCardAbility _ (isSource attrs -> True) 1 _ -> do
