@@ -144,6 +144,10 @@ allObjectiveCards =
       , theArmiesOfMordor
       , coveredInDarkness
       , easterlingPursuit
+      , bribes
+      , submitOrDie
+      , sauronWorship
+      , evidenceOfTheCult
       ]
 
 durinsAxe :: CardDef
@@ -998,3 +1002,21 @@ coveredInDarkness = (objective "21070" "Covered in Darkness" ThePowerOfMordor 1)
 -- | Added to the staging area as stage 1A is set up.
 easterlingPursuit :: CardDef
 easterlingPursuit = objective "21012" "Easterling Pursuit" TheRiverRunning 1
+-- * Danger in Dorwinion
+
+bribes :: CardDef
+bribes = (objective "21033" "Bribes" DangerInDorwinion 1) {cdCardTraits = setFromList [Plot]}
+
+submitOrDie :: CardDef
+submitOrDie = (objective "21034" "Submit or Die" DangerInDorwinion 1) {cdCardTraits = setFromList [Plot]}
+
+sauronWorship :: CardDef
+sauronWorship = (objective "21035" "Sauron Worship" DangerInDorwinion 1) {cdCardTraits = setFromList [Plot]}
+
+evidenceOfTheCult :: CardDef
+evidenceOfTheCult =
+  (objective "21036" "Evidence of the Cult" DangerInDorwinion 3)
+    { cdCardTraits = setFromList [Clue]
+    , cdKeywords = setFromList [GuardedBy [EnemyType]]
+    , cdVictoryPoints = Just 1
+    }

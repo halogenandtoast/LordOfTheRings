@@ -202,6 +202,8 @@ data WindowMatcher
     CharacterDealtDamageWindow Timing
   | -- | the enemy's attack, or any enemy's, destroyed a character
     CharacterDestroyedByAttackWindow Timing (Maybe EnemyId)
+  | -- | the enemy's attack destroyed an ally, as Priest of Sauron reads
+    AllyDestroyedByAttackWindow Timing EnemyId
   | -- | a character with the trait was dealt damage, as Gondorian Discipline reads
     CharacterWithTraitDealtDamageWindow Timing Trait
   | -- | an attack the character was among dealt the enemy damage
@@ -471,6 +473,7 @@ windowMatches matcher (Window timing wType) = case (matcher, wType) of
   (CharacterDealtDamageWindow t, DealtDamage (HeroTarget _) _) -> t == timing
   (CharacterDealtDamageWindow t, DealtDamage (AllyTarget _) _) -> t == timing
   (CharacterDestroyedByAttackWindow t who, CharacterDestroyedByAttack eid _ _) -> t == timing && maybe True (== eid) who
+  (AllyDestroyedByAttackWindow t who, CharacterDestroyedByAttack eid (AllyTarget _) _) -> t == timing && who == eid
   (TimeCountersRemovedWindow t who, TimeCountersRemoved target _) -> t == timing && maybe True (== target) who
   (TimeCountersRemovedFromQuestWindow t, TimeCountersRemoved (QuestTarget _) _) -> t == timing
   (LastTimeCounterRemovedWindow t target, LastTimeCounterRemoved target') -> t == timing && target == target'

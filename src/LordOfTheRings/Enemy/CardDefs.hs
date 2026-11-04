@@ -486,6 +486,9 @@ allEnemyCards =
       , ashMountainWerewolf
       , spawnOfShelob
       , torechGorgorPatrol
+      , priestOfSauron
+      , theGovernor
+      , blackNumenoreanASitE
       ]
 
 namelessThing :: CardDef
@@ -3978,3 +3981,28 @@ spawnOfShelob =
 -- | X threat, X 1 more than the number of quest cards in play: given by its own modifiers.
 torechGorgorPatrol :: CardDef
 torechGorgorPatrol = (enemy "22099" "Torech Gorgor Patrol" UnderTheAshMountains 2 45 0 5 4 9) {cdCardTraits = setFromList [Orc, Uruk], cdEasyModeQuantity = Just 1}
+-- * Danger in Dorwinion
+
+priestOfSauron :: CardDef
+priestOfSauron =
+  unique
+    (enemy "21030" "Priest of Sauron" DangerInDorwinion 1 38 3 6 2 8)
+      { cdCardTraits = setFromList [Cultist]
+      , cdVictoryPoints = Just 6
+      }
+
+theGovernor :: CardDef
+theGovernor =
+  unique
+    (enemy "21031" "The Governor" DangerInDorwinion 1 44 3 4 3 8)
+      { cdCardTraits = setFromList [Cultist]
+      , cdVictoryPoints = Just 6
+      }
+
+blackNumenoreanASitE :: CardDef
+blackNumenoreanASitE =
+  unique
+    (enemy "21032" "Black Númenórean" DangerInDorwinion 1 40 3 5 1 9)
+      { cdCardTraits = setFromList [Cultist]
+      , cdVictoryPoints = Just 6
+      }

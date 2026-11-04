@@ -87,6 +87,7 @@
   "shuffledIntoGrottoDeck": "{location} is shuffled back into the Grotto deck",
   "islandMapPrepared": "The Island Map is laid out: {count} Uncharted locations, Lost Island and Temple sides faceup",
   "allyFlips": "{ally} flips to its enemy side",
+  "allyBecomesEnemy": "{ally} turns on its owner, now an enemy",
   "heroFlips": "{hero} leaves play, flipped to its enemy side: {card}",
   "powerOfMordorDeckCreated": "The Power of Mordor deck is built",
   "powerOfMordorReveals": "The top card of the Power of Mordor deck is revealed",

@@ -298,8 +298,9 @@ data ModifierType
     -- dealt, as The City of Ulfast's stages read of City Guard
     MaxDamage Int
   | -- | on an enemy: it cannot take more than this much damage each round, counted against
-    -- 'DamageTakenThisRound', so the limit ends with the card that gives it, as A Haunt for
-    -- Beasts reads
+    -- 'DamageTakenThisRound' and read as the damage is placed, so the limit ends with the card
+    -- that gives it, as A Haunt for Beasts reads, and follows the board, as Leader of the
+    -- Cult's "X is the printed quest points of the active location"
     DamageLimitEachRound Int
   | -- | on an objective ally in the staging area: it is committed to the current quest, as
     -- Celador reads

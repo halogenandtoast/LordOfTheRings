@@ -416,6 +416,8 @@ allTreacheryCards =
       , ransackedSupplies
       , burningReek
       , writhingShadows
+      , disappearances
+      , secretCultist
       ]
 
 deepDeepDark :: CardDef
@@ -2629,3 +2631,10 @@ burningReek =
 
 writhingShadows :: CardDef
 writhingShadows = (treachery "22105" "Writhing Shadows" UnderTheAshMountains 2) {cdShadowEffect = True, cdEasyModeQuantity = Just 1}
+-- * Danger in Dorwinion
+
+disappearances :: CardDef
+disappearances = (treachery "21038" "Disappearances" DangerInDorwinion 2) {cdShadowEffect = True, cdEasyModeQuantity = Just 1}
+
+secretCultist :: CardDef
+secretCultist = (treachery "21039" "Secret Cultist" DangerInDorwinion 2) {cdEasyModeQuantity = Just 1}

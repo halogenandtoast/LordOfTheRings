@@ -419,6 +419,9 @@ allQuestCards =
       , overwhelmingDarkness
       , passageIntoMordor
       , anEvilPlace
+      , aCityInTurmoil
+      , theShadowOfMordor
+      , leaderOfTheCult
       ]
 
 theDrippingWalls :: CardDef
@@ -1707,3 +1710,13 @@ passageIntoMordor = quest "22106" "Passage into Mordor" UnderTheAshMountains 1 2
 
 anEvilPlace :: CardDef
 anEvilPlace = (quest "22107" "An Evil Place" UnderTheAshMountains 2 25) {cdWhenRevealed = True}
+-- * Danger in Dorwinion
+
+aCityInTurmoil :: CardDef
+aCityInTurmoil = quest "21077" "A City in Turmoil" DangerInDorwinion 1 5
+
+theShadowOfMordor :: CardDef
+theShadowOfMordor = quest "21078" "The Shadow of Mordor" DangerInDorwinion 2 0
+
+leaderOfTheCult :: CardDef
+leaderOfTheCult = (quest "21079" "Leader of the Cult" DangerInDorwinion 3 0) {cdQuestPoints = Nothing}

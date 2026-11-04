@@ -526,6 +526,7 @@ allLocationCards =
       , fieryChasm
       , hideousDeeps
       , orcPassage
+      , hillsideManor
       ]
 
 drownedTreasury :: CardDef
@@ -3894,3 +3895,7 @@ hideousDeeps = (location "22101" "Hideous Deeps" UnderTheAshMountains 2 3 6) {cd
 
 orcPassage :: CardDef
 orcPassage = (location "22102" "Orc Passage" UnderTheAshMountains 2 4 4) {cdCardTraits = setFromList [Underground], cdEasyModeQuantity = Just 1}
+-- * Danger in Dorwinion
+
+hillsideManor :: CardDef
+hillsideManor = (location "21037" "Hillside Manor" DangerInDorwinion 3 2 4) {cdCardTraits = setFromList [City]}

@@ -477,6 +477,10 @@ import LordOfTheRings.Enemy.Cards.MordorCaveTroll
 import LordOfTheRings.Enemy.Cards.AshMountainWerewolf
 import LordOfTheRings.Enemy.Cards.SpawnOfShelob
 import LordOfTheRings.Enemy.Cards.TorechGorgorPatrol
+import LordOfTheRings.Enemy.Cards.TurnedAlly
+import LordOfTheRings.Enemy.Cards.PriestOfSauron
+import LordOfTheRings.Enemy.Cards.TheGovernor
+import LordOfTheRings.Enemy.Cards.BlackNumenoreanASitE
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -497,6 +501,8 @@ createEnemy card = lookupEnemy (toCardCode card) (ecId card)
 lookupEnemy :: (HasCallStack) => CardCode -> CardId -> EnemyId -> Enemy
 lookupEnemy cardCode cardId ident = case Map.lookup cardCode allEnemys of
   Just (SomeEnemyCard builder) -> Enemy $ cbCardBuilder builder cardId ident
+  -- an ally turned enemy, as Secret Cultist turns it
+  Nothing | cdCardType (toCardDef cardCode) == AllyType -> Enemy $ cbCardBuilder (turnedAlly cardCode) cardId ident
   Nothing -> error $ "Unknown enemy: " <> show cardCode
 
 newEnemy :: (MonadRandom m) => EncounterCard -> m Enemy
@@ -982,5 +988,8 @@ allEnemys =
         , SomeEnemyCard ashMountainWerewolf
         , SomeEnemyCard spawnOfShelob
         , SomeEnemyCard torechGorgorPatrol
+        , SomeEnemyCard priestOfSauron
+        , SomeEnemyCard theGovernor
+        , SomeEnemyCard blackNumenoreanASitE
         ]
     ]

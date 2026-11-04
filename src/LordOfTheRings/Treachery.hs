@@ -406,6 +406,8 @@ import LordOfTheRings.Treachery.Cards.PatrollingTheStreets
 import LordOfTheRings.Treachery.Cards.RansackedSupplies
 import LordOfTheRings.Treachery.Cards.BurningReek
 import LordOfTheRings.Treachery.Cards.WrithingShadows
+import LordOfTheRings.Treachery.Cards.Disappearances
+import LordOfTheRings.Treachery.Cards.SecretCultist
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -839,5 +841,7 @@ allTreacherys =
         , SomeTreacheryCard ransackedSupplies
         , SomeTreacheryCard burningReek
         , SomeTreacheryCard writhingShadows
+        , SomeTreacheryCard disappearances
+        , SomeTreacheryCard secretCultist
         ]
     ]

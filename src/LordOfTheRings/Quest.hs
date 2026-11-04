@@ -286,6 +286,9 @@ import LordOfTheRings.Quest.Cards.SouthronPursuit
 import LordOfTheRings.Quest.Cards.OrcPatrols
 import LordOfTheRings.Quest.Cards.BattleAtTheCrossings
 import LordOfTheRings.Quest.Cards.UrdugsAssault
+import LordOfTheRings.Quest.Cards.ACityInTurmoil
+import LordOfTheRings.Quest.Cards.TheShadowOfMordor
+import LordOfTheRings.Quest.Cards.LeaderOfTheCult
 import LordOfTheRings.Quest.Cards.Outflanked
 import LordOfTheRings.Quest.Cards.TheFinalPush
 import LordOfTheRings.Quest.Cards.DrawHerFire
@@ -653,6 +656,9 @@ allQuests =
         , SomeQuestCard orcPatrols
         , SomeQuestCard battleAtTheCrossings
         , SomeQuestCard urdugsAssault
+        , SomeQuestCard aCityInTurmoil
+        , SomeQuestCard theShadowOfMordor
+        , SomeQuestCard leaderOfTheCult
         , SomeQuestCard outflanked
         , SomeQuestCard theFinalPush
         , SomeQuestCard drawHerFire

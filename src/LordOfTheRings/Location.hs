@@ -508,6 +508,7 @@ import LordOfTheRings.Location.Cards.StreetsOfUlfast
 import LordOfTheRings.Location.Cards.FieryChasm
 import LordOfTheRings.Location.Cards.HideousDeeps
 import LordOfTheRings.Location.Cards.OrcPassage
+import LordOfTheRings.Location.Cards.HillsideManor
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -1062,5 +1063,6 @@ allLocations =
         , SomeLocationCard fieryChasm
         , SomeLocationCard hideousDeeps
         , SomeLocationCard orcPassage
+        , SomeLocationCard hillsideManor
         ]
     ]

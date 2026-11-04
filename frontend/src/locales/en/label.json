@@ -2953,5 +2953,8 @@
     "choose": "Burning Reek: choose one",
     "discard": "Discard the top 2 cards of your deck",
     "return": "Return the attacking enemy to the staging area after this attack"
+  },
+  "secretCultist": {
+    "ally": "Secret Cultist: choose the ally with the highest attack to turn into an enemy"
   }
 }

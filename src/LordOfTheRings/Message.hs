@@ -272,6 +272,10 @@ data Message
     -- Stallion attaches itself as a Mount: its card's attachment builder, under the same
     -- code, gives it its attachment text
     AllyBecomesAttachment AllyId Target
+  | -- | the ally loses the ally card type and gains the enemy card type, its text box
+    -- blank, and engages its owner, as Secret Cultist turns it: its owner's card still,
+    -- keeping its id and its damage
+    AllyBecomesEnemy AllyId
   | ChooseAndExhaust Source PlayerId Int
   | ChooseAndExhaustHero Source PlayerId
   | -- | the player exhausts a hero the matcher picks out to pay a cost; the ability then
