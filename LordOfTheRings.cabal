@@ -2036,6 +2036,7 @@ library
       LordOfTheRings.Quest.Cards.CaptureTheOliphaunts
       LordOfTheRings.Quest.Cards.CarriedAway
       LordOfTheRings.Quest.Cards.ChangeOfPlans
+      LordOfTheRings.Quest.Cards.ChasedByEasterlings
       LordOfTheRings.Quest.Cards.Conspiracy
       LordOfTheRings.Quest.Cards.ContinuingEastward
       LordOfTheRings.Quest.Cards.CorneredAnimals
@@ -2223,6 +2224,7 @@ library
       LordOfTheRings.Quest.Cards.TheColdDrakeAttacks
       LordOfTheRings.Quest.Cards.TheConfrontation
       LordOfTheRings.Quest.Cards.TheCorsairsAssault
+      LordOfTheRings.Quest.Cards.TheCrossingOfAraw
       LordOfTheRings.Quest.Cards.TheCrossroadsFort
       LordOfTheRings.Quest.Cards.TheCursedShade
       LordOfTheRings.Quest.Cards.TheDefense
@@ -2424,6 +2426,7 @@ library
       LordOfTheRings.Scenario.Scenarios.TheNinInEilph
       LordOfTheRings.Scenario.Scenarios.TheNinInEilph.Helpers
       LordOfTheRings.Scenario.Scenarios.TheRedhornGate
+      LordOfTheRings.Scenario.Scenarios.TheRiverRunning
       LordOfTheRings.Scenario.Scenarios.TheRiverRunning.Helpers
       LordOfTheRings.Scenario.Scenarios.TheSeventhLevel
       LordOfTheRings.Scenario.Scenarios.TheSeventhLevel.Helpers
