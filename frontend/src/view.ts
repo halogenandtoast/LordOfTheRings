@@ -184,10 +184,13 @@ export const toView = (data: GameData, defs: Record<string, CardDef>, previous: 
   // cards under a location (The Steward's Fear) and those under The Orcs' Search
   const stackUnder = (host: CardView) => {
     const count = game.underneath?.[host.id] ?? 0
+    // the player cards under it, as the hands Truly Lost places under locations
+    const players = game.underneathPlayer?.[host.id] ?? 0
     // and the player cards captured under it (Escape from Mount Gram)
     const captured = game.captured?.[host.id] ?? 0
     return [
       ...(count ? [card('', `underneath-${host.id}`, { facedown: 'encounter', name: ikey('log.cardsUnderneath', { count }), attachedTo: host.id })] : []),
+      ...(players ? [card('', `underneath-player-${host.id}`, { facedown: 'player', name: ikey('log.cardsUnderneath', { count: players }), attachedTo: host.id })] : []),
       ...(captured ? [card('', `captured-${host.id}`, { facedown: 'player', name: ikey('log.capturedUnderneath', { count: captured }), attachedTo: host.id })] : []),
     ]
   }

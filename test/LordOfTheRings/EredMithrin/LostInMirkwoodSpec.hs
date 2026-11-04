@@ -1,5 +1,6 @@
 module LordOfTheRings.EredMithrin.LostInMirkwoodSpec (spec) where
 
+import Data.Aeson.Types (parseMaybe)
 import LordOfTheRings.Card (cdEncounterSet, toCardDef)
 import LordOfTheRings.EncounterSet (EncounterSet (DolGuldurOrcs, SpidersOfMirkwood))
 import LordOfTheRings.Entities (questsL)
@@ -18,6 +19,7 @@ import LordOfTheRings.Scenario (lookupScenario, lostInMirkwood)
 import LordOfTheRings.Scenario.Types (ScenarioAttrs (..), encounterDiscardL, questDeckL, setAsideL)
 import LordOfTheRings.Treachery.CardDefs qualified as Treacheries
 import LordOfTheRings.Window (WindowType (PhaseEnds, RoundEnds), mkAfter, mkWhen)
+import LordOfTheRings.Game.Public (publicGameFor)
 import TestImport
 
 mirkwoodTest :: (PlayerId -> GameT ()) -> IO ()
@@ -90,6 +92,10 @@ laterStages =
 
 threatOf :: PlayerId -> GameT Int
 threatOf pid = (.threat) <$> getPlayer pid
+
+-- | What the board is sent under this key.
+shown :: FromJSON a => PlayerId -> Key -> GameT (Maybe a)
+shown pid k = getsGame (parseMaybe (withObject "game" (.: k)) . publicGameFor (== pid))
 
 spec :: Spec
 spec = describe "Lost in Mirkwood" do
@@ -305,6 +311,10 @@ spec = describe "Lost in Mirkwood" do
       (.hand) <$> getPlayer pid `shouldReturn` []
       length . (.underneath) . toAttrs <$> getLocation woods `shouldReturn` length hand
       getModifiers woods >>= (`shouldSatisfy` elem (QuestPointModifier (length hand)))
+      -- the board shows them with a player card back
+      woodsCard <- (.cardId) . toAttrs <$> getLocation woods
+      shown pid "underneathPlayer" `shouldReturn` Just (mapFromList [(woodsCard, length hand)] :: Map CardId Int)
+      shown pid "underneath" `shouldReturn` Just (mempty :: Map CardId Int)
       run $ PlaceLocation woods ActiveLocation
       run $ PlaceTokens GameSource (toTarget woods) Progress (3 + length hand)
       map (.id) . (.hand) <$> getPlayer pid `shouldReturn` map (.id) hand

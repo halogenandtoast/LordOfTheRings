@@ -152,6 +152,8 @@ export interface ServerGame {
   attackAdding?: Record<string, number>
   /** How many cards lie facedown under each card, by its card id, as underworld cards under a location. */
   underneath?: Record<string, number>
+  /** How many player cards lie facedown under each card, by its card id, as the hands Truly Lost places under locations. */
+  underneathPlayer?: Record<string, number>
   /** How many captured cards lie under each card, by its card id (Escape from Mount Gram). */
   captured?: Record<string, number>
   /** How many cards are in each player's captured deck, by player id (Escape from Mount Gram). */
