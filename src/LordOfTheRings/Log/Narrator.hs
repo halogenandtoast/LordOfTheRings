@@ -389,6 +389,14 @@ narrationFor = \case
   -- Havens Burn
   PlaceUnderneath target [card] | cdCardType (toCardDef card) == LocationType -> Just $ whenRef target \t ->
     one $ toned Bad $ mechanic [ikeyPart "log.locationPlacedUnderneath" ["location" ~> card, "target" ~> t]]
+  -- an enemy leaving play for underneath a card, as Narrow Alleyway hides one; one from
+  -- out of play goes facedown unnamed, as The Steward's Fear's underworld cards
+  PlaceUnderneath target [card] | cdCardType (toCardDef card) == EnemyType -> Just $ whenRef target \t -> do
+    inPlay <- getsGame (any ((== card.id) . (.id) . toCard) . entitiesEnemies . gameEntities)
+    one
+      $ if inPlay
+        then mechanic [ikeyPart "log.enemyPlacedUnderneath" ["enemy" ~> card, "target" ~> t]]
+        else toned Bad $ mechanic [ikeyPart "log.placedUnderneath" ["target" ~> t, "count" ~> (1 :: Int)]]
   PlaceUnderneath target cards | notNull cards -> Just $ whenRef target \t ->
     one $ toned Bad $ mechanic [ikeyPart "log.placedUnderneath" ["target" ~> t, "count" ~> length cards]]
   _ -> Nothing

@@ -113,6 +113,7 @@ publicGameFor seesHand g = hideDecks $ toJSON merged
         $ KeyMap.insert "stormcallerStage" (metaValue "stormcallerStage")
         $ KeyMap.insert "stormcallerProgress" (metaValue "stormcallerProgress")
         $ adjust (inside "objectives" $ overValues $ inside "underneath" $ const $ Array mempty) "entities"
+        $ adjust (inside "locations" $ overValues $ inside "underneath" $ const $ Array mempty) "entities"
         $ adjust (inside "locations" $ overValues hideOtherSide) "entities"
         $ adjust (overEntries \pid -> if seesHand pid then id else hideSearch) "question"
         $ adjust (overEntries \pid -> if seesHand pid then hidePlayer else hideHand . hidePlayer) "players"

@@ -146,6 +146,7 @@
   "damagePlaced": "{count} damage is placed on {target}",
   "damageRemoved": "{count} damage is removed from {target}",
   "locationPlacedUnderneath": "{location} is placed facedown underneath {target}",
+  "enemyPlacedUnderneath": "{enemy} is placed underneath {target}",
   "scour": "Scour: {target}'s Scour effect triggers",
   "separated": "The players are separated, each with a staging area of their own",
   "joins": "{player} joins {other}",
