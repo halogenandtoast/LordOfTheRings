@@ -58,7 +58,7 @@ import LordOfTheRings.Quest
 import LordOfTheRings.Question
 import LordOfTheRings.Scenario
 import LordOfTheRings.Scenario.Sailing (discardEncounterCard)
-import LordOfTheRings.Saga (revealsIndividually)
+import LordOfTheRings.Saga (campaignResolvesOn, revealsIndividually)
 import LordOfTheRings.Source
 import LordOfTheRings.Target
 import LordOfTheRings.Token
@@ -988,7 +988,7 @@ runGameMessage msg g = case msg of
       else do
         -- won in campaign mode, the campaign card's resolution is recorded in the log
         g' <-
-          if outcome == Won && isJust (toAttrs g.scenario).campaign
+          if campaignResolvesOn (scenarioId $ toAttrs g.scenario) outcome && isJust (toAttrs g.scenario).campaign
             then traverseOf scenarioL (runEach ResolveCampaign) g
             else pure g
         clearQueue
