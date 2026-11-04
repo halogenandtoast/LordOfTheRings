@@ -57,10 +57,13 @@ test('Space passes an action window with another choice', async ({ page, game })
   await game.debug({
     tag: 'Ask', contents: [game.playerId, {
       tag: 'QuestionLabel', label: '$label.takeAction', source: null, targets: [],
-      question: { tag: 'ChooseOne', choices: [
-        { tag: 'Label', label: 'Another action', messages: [] },
-        { tag: 'Label', label: '$label.pass', messages: [] },
-      ] },
+      question: {
+        tag: 'PlayerWindow', rebuild: { tag: 'OptionalActionWindow', contents: game.playerId },
+        question: { tag: 'ChooseOne', choices: [
+          { tag: 'Label', label: '$label.pass', messages: [] },
+          { tag: 'Label', label: 'Another action', messages: [] },
+        ] },
+      },
     }],
   })
   const pass = page.locator('.seat .question').getByRole('button', { name: 'Pass', exact: true })
@@ -69,7 +72,7 @@ test('Space passes an action window with another choice', async ({ page, game })
   await page.locator('body').click({ position: { x: 1, y: 1 } })
   const answer = page.waitForRequest(request => request.method() === 'POST' && request.url().endsWith(`/api/games/${game.id}`))
   await page.keyboard.press('Space')
-  expect((await answer).postDataJSON()).toEqual({ choice: 1, questionVersion: before, player: game.playerId })
+  expect((await answer).postDataJSON()).toEqual({ choice: 0, questionVersion: before, player: game.playerId })
 })
 
 /** Keep, for each view transition, the animations it runs on cards and decks, e.g. "::view-transition-new(card-…) deal-turn-up @90". */
