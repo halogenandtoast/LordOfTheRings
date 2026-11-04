@@ -3600,5 +3600,46 @@
       "One of the heroes clasped hands with the Woodman and said, “Thank you for your help. You are a brave man, Haldan. I wish you safe travel on your return journey.”",
       "With that, the heroes climbed aboard the Bardings’ boat and sailed north as Haldan waved goodbye from the shore."
     ]
+  },
+  "the-temple-of-doom": {
+    "intro": [
+      "It took the heroes several days to reach the Hills of Rhûn, and several more before they found a narrow path that wound between the ridges and gorges of the hills. On the path were the unmistakable signs of captives being led upwards, so the heroes followed the trail with redoubled speed and vigil until at last they found what they sought: A mighty temple carved directly into a sheer rockface.",
+      "The entrance to the temple was like the gaping maw of a ravenous beast, and the jagged pillars that flanked either side left no doubt in the heroes’ minds: this was a temple built to Sauron during the dark years of His reign over Middle-earth when the Elves and Númenóreans abandoned the lands east of the Anduin to His rule. Rumors of dark rituals and dreadful sacrifices came to the West out of those years, but never any witnesses. When the Dark Lord was overthrown by the Last Alliance of Elves and Men, those who worshipped Sauron fled the wrath of the West, and they hid themselves in dark places where the High-elves and Sea-kings did not go.",
+      "But when the power of Mordor arose once more, those who still worshipped the dark were drawn back to the land of shadow; and there Sauron filled them with terrible malice and vengeance against the West. He sent them abroad to lands such as Dorwinion to plant fear and sow dissent in the hearts of those who might oppose Him. They went here and there whispering shade in the ears of the unwise. Some they won to their cause with promises of power; others they subdued with threats of violence. In time, they had won nearly all the lands of Rhûn to their Master’s will.",
+      "All the while, they met in secret to worship their Dark Lord and offer up sacrifices to hasten the day of His wrath. So it was that the heroes found the entrance to the temple guarded. A foul reek issued from it.",
+      "“We cannot enter this way undetected,” whispered one hero to another. “If we charge the guards, they will surely alert those inside, and the captives’ lives will be forfeit.”",
+      "“Agreed,” said the other. “We must search about for another way in and enter secretly. A temple this size must have more than one opening.”",
+      "Just then a horrible scream echoed out from the temple’s black gate.",
+      "“We must move quickly, or the Dorwinions will die regardless,” urged the first hero. “See how the sky darkens above? Evil things take place within.”",
+      "“It is the work of Mordor,” agreed the second. “Come, we must search for another entrance.”",
+      "They withdrew from the main gate and climbed down the side of the hill that sloped out of the guards’ view. There they found a low cave that led to a deeper tunnel. They lit torches and followed the tunnel as it wound its way beneath the temple of Sauron."
+    ],
+    "setup": [
+      "“The Temple of Doom” is played with an encounter deck built with all the cards from the following encounter sets: The Temple of Doom, Ulchor’s Guard, Twisted Tunnels, Easterling Raiders, and The Power of Mordor."
+    ],
+    "rules": [
+      {
+        "title": "The Power of Mordor Deck",
+        "text": "The Power of Mordor deck represents Sauron’s expanding influence over Middle-earth. To build The Power of Mordor deck when setting up The Temple of Doom, take each card from “The Power of Mordor” encounter set and shuffle them together. This is The Power of Mordor deck."
+      },
+      {
+        "title": "Quest Stages vs. Side Quests",
+        "text": "Some cards in The Temple of Doom reference the number of quest stages in the victory display. Quest stage refers only to the double-sided quest cards that come from the quest deck. Therefore, when calculating the number of quest stages in the victory display count each individual double-sided quest card found there, but do not count side quests in the victory display."
+      }
+    ],
+    "resolution": [
+      "The heroes fought their way past savage Easterling warriors to reach the stone altar just in time to stop a dark figure from plunging his dagger into the heart of a helpless Dorwinion man. The man with the dagger recoiled and hissed at the heroes, “Curse you! Not again!”",
+      "His face was scarred and twisted into a hideous fit of rage. The heroes froze when they saw it clearly for the first time.",
+      "“Alcaron!”",
+      "The man laughed, and the noise of it was mocking and cruel. “Yes, I was Alcaron,” he said, “until you left me for dead in the Morgul Vale. I should have died, but the Nazgûl would not let me. By their craft, I have been restored. No longer do I hide behind the mantle of Alcaron. You face Ulchor, Thane of Nurn and servant of Sauron. I will have my vengeance upon you!”",
+      "Ulchor raised his hand as if to strike, but instead there was a rush of wind and every torch in the room blew out. Smoke and darkness consumed the temple chamber. The heroes circled with their backs to one another in order to ward off any attack, but no blow was struck.",
+      "After a few tense moments, one of the heroes spoke: “He has fled.”",
+      "“Shall we give chase?” asked another.",
+      "“No,” replied the first. “The Dorwinions here need our help. We must see to their safe return before we give thought to Thane Ulchor.”",
+      "“Very well,” he replied. “Let us start with this poor fellow on the altar. Can someone light a torch?”",
+      "Several torches were lit. The heroes gathered together all the survivors and led them out of the hideous temple. The man they rescued from the altar turned out to be none other than Niena’s husband, Torwald. When he heard that his wife was safe and anxiously awaiting his return, he wept and thanked the heroes many times.",
+      "There were more joyful tears and heartfelt thanks when the heroes arrived in Dorwinion a week later with their rescued captives. Doors and windows were flung open, and the people rushed out to be reunited with their loved ones. As husbands, wives, parents and children embraced again for the first time in months, the dark clouds over Dorwinion were dispersed and the sun shone clear again. But in the hearts of the heroes there lingered a shadow of doom: Ulchor had escaped after swearing vengeance upon them, and he had displayed new powers of sorcery in the temple. He was too dangerous to be allowed to roam freely. The heroes would have to seek him out in order to finish the job they started years ago.",
+      "To be continued in “Wrath and Ruin,” the first Adventure Pack in “The Vengeance of Mordor” cycle."
+    ]
   }
 }
