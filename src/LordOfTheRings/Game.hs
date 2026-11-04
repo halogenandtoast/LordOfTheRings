@@ -2429,7 +2429,17 @@ runGameMessage msg g = case msg of
             (if phase == RefreshPhase then passToken else id)
             (if phase == QuestPhase then Run [JoinAreas, FocusArea (maybe g.firstPlayer separationFirstPlayer $ gameSeparation g), following] else following)
             g
-        passToken s = s {separationFirstPlayer = fromMaybe s.separationFirstPlayer $ headMay $ drop 1 $ seatsFrom s.separationFirstPlayer g.playerOrder}
+        passToken s
+          | keepsToken s = s
+          | otherwise = s {separationFirstPlayer = fromMaybe s.separationFirstPlayer $ headMay $ drop 1 $ seatsFrom s.separationFirstPlayer g.playerOrder}
+        -- unless he keeps it, as Captured by Spiders has the first player in his own area
+        keepsToken s =
+          or
+            [ CannotLoseFirstPlayerToken `elem` map modifierType (Map.findWithDefault [] (PlayerTarget s.separationFirstPlayer) mods)
+            | a <- separationAreas s
+            , s.separationFirstPlayer `elem` areaPlayers a
+            , let mods = if isFocusedArea g a then gameModifiers g else areaHeldModifiers a
+            ]
     pushEnd step
     pure
       $ g'
