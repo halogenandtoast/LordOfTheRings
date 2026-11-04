@@ -210,6 +210,9 @@ import LordOfTheRings.Attachment.Cards.Outmatched
 import LordOfTheRings.Attachment.Cards.WarriorSword
 import LordOfTheRings.Attachment.Cards.ValiantDetermination
 import LordOfTheRings.Attachment.Cards.RingOfThror
+import LordOfTheRings.Attachment.Cards.RedBookOfWestmarch
+import LordOfTheRings.Attachment.Cards.SongOfHealing
+import LordOfTheRings.Attachment.Cards.SparePipe
 import LordOfTheRings.Attachment.Runner ()
 import LordOfTheRings.Attachment.Types as X
 import LordOfTheRings.Id
@@ -457,5 +460,8 @@ allAttachments =
         , SomeAttachmentCard warriorSword
         , SomeAttachmentCard valiantDetermination
         , SomeAttachmentCard ringOfThror
+        , SomeAttachmentCard redBookOfWestmarch
+        , SomeAttachmentCard songOfHealing
+        , SomeAttachmentCard sparePipe
         ]
     ]

@@ -2783,5 +2783,9 @@
   },
   "trulyLost": {
     "location": "Truly Lost: choose the location to place your hand facedown under"
+  },
+  "bilbosPlan": {
+    "location": "Bilbo's Plan: add the enemy to the staging area to discard a location",
+    "skip": "Leave the enemy in the discard pile"
   }
 }

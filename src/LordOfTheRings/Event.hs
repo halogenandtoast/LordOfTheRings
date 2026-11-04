@@ -218,6 +218,8 @@ import LordOfTheRings.Event.Cards.QuickerThanSight
 import LordOfTheRings.Event.Cards.ManTheWalls
 import LordOfTheRings.Event.Cards.FamiliarLands
 import LordOfTheRings.Event.Cards.SwiftAndStrong
+import LordOfTheRings.Event.Cards.BilbosPlan
+import LordOfTheRings.Event.Cards.SmokeAndThink
 import LordOfTheRings.Event.Types as X
 import LordOfTheRings.Id
 import LordOfTheRings.Prelude
@@ -455,5 +457,7 @@ allEvents =
         , SomeEventCard manTheWalls
         , SomeEventCard familiarLands
         , SomeEventCard swiftAndStrong
+        , SomeEventCard bilbosPlan
+        , SomeEventCard smokeAndThink
         ]
     ]

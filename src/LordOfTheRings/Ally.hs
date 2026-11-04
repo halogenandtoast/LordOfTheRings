@@ -261,6 +261,10 @@ import LordOfTheRings.Ally.Cards.Thalion
 import LordOfTheRings.Ally.Cards.SoldierOfErebor
 import LordOfTheRings.Ally.Cards.MirkwoodHunter
 import LordOfTheRings.Ally.Cards.DescendantOfGirion
+import LordOfTheRings.Ally.Cards.HobbitArcher
+import LordOfTheRings.Ally.Cards.DaleMessenger
+import LordOfTheRings.Ally.Cards.EagleEmissary
+import LordOfTheRings.Ally.Cards.WilyadorTheLandOfSorrow
 import LordOfTheRings.Ally.Runner ()
 import LordOfTheRings.Ally.Types as X
 import LordOfTheRings.Id
@@ -554,5 +558,9 @@ allAllies =
         , SomeAllyCard soldierOfErebor
         , SomeAllyCard mirkwoodHunter
         , SomeAllyCard descendantOfGirion
+        , SomeAllyCard hobbitArcher
+        , SomeAllyCard daleMessenger
+        , SomeAllyCard eagleEmissary
+        , SomeAllyCard wilyadorTheLandOfSorrow
         ]
     ]

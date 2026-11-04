@@ -228,6 +228,9 @@ allAttachmentCards =
       , warriorSword
       , valiantDetermination
       , ringOfThror
+      , redBookOfWestmarch
+      , songOfHealing
+      , sparePipe
       ]
 
 -- | A boon of the Revised Core campaign: Permanent, limit 1 per hero.
@@ -1585,3 +1588,24 @@ ringOfThror =
       { cdCardTraits = setFromList [Artifact, Ring]
       , cdKeywords = setFromList [GuardedBy [EnemyType, LocationType]]
       }
+
+redBookOfWestmarch :: CardDef
+redBookOfWestmarch =
+  unique
+    (attachment "22110" "Red Book of Westmarch" Leadership (StaticCost 3))
+      { cdCardTraits = setFromList [Artifact, Item]
+      , cdKeywords = setFromList [Restricted]
+      }
+
+songOfHealing :: CardDef
+songOfHealing =
+  (attachment "22112" "Song of Healing" Lore (StaticCost 0))
+    { cdCardTraits = setFromList [Song]
+    , cdLimitOnePerHost = True
+    }
+
+sparePipe :: CardDef
+sparePipe =
+  (attachment "22115" "Spare Pipe" Spirit (StaticCost 1))
+    { cdCardTraits = setFromList [Item, Pipe]
+    }

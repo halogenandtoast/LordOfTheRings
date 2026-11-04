@@ -233,6 +233,10 @@ allAllyCards =
       , soldierOfErebor
       , mirkwoodHunter
       , descendantOfGirion
+      , hobbitArcher
+      , daleMessenger
+      , eagleEmissary
+      , wilyadorTheLandOfSorrow
       ]
 
 guardOfTheCitadel :: CardDef
@@ -1641,3 +1645,30 @@ descendantOfGirion =
   (ally "19091" "Descendant of Girion" Spirit (StaticCost 4) 2 2 2 2)
     { cdCardTraits = setFromList [Dale]
     }
+
+hobbitArcher :: CardDef
+hobbitArcher =
+  (ally "22109" "Hobbit Archer" Leadership (StaticCost 2) 1 1 0 2)
+    { cdCardTraits = setFromList [Hobbit, Archer]
+    , cdKeywords = setFromList [Ranged]
+    }
+
+daleMessenger :: CardDef
+daleMessenger =
+  (ally "22111" "Dale Messenger" Lore (StaticCost 2) 1 1 1 2)
+    { cdCardTraits = setFromList [Dale]
+    }
+
+eagleEmissary :: CardDef
+eagleEmissary =
+  (ally "22113" "Eagle Emissary" Tactics (StaticCost 2) 2 1 0 2)
+    { cdCardTraits = setFromList [Creature, Eagle]
+    }
+
+wilyadorTheLandOfSorrow :: CardDef
+wilyadorTheLandOfSorrow =
+  unique
+    (ally "22117" "Wilyador" Neutral (StaticCost 1) 1 3 2 3)
+      { cdCardTraits = setFromList [Creature, Eagle]
+      , cdKeywords = setFromList [Ranged, Sentinel]
+      }

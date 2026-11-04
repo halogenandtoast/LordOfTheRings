@@ -235,6 +235,8 @@ allEventCards =
       , manTheWalls
       , familiarLands
       , swiftAndStrong
+      , bilbosPlan
+      , smokeAndThink
       ]
 
 everVigilant :: CardDef
@@ -952,3 +954,11 @@ swiftAndStrong =
   (event "19090" "Swift and Strong" Tactics (StaticCost 1))
     { cdCardTraits = setFromList [Song]
     }
+
+bilbosPlan :: CardDef
+bilbosPlan =
+  event "22114" "Bilbo's Plan" Tactics (StaticCost 0)
+
+smokeAndThink :: CardDef
+smokeAndThink =
+  event "22116" "Smoke and Think" Spirit (StaticCost 0)
