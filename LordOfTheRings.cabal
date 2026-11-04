@@ -498,6 +498,18 @@ library
       LordOfTheRings.Classes.HasQueue
       LordOfTheRings.Classes.Query
       LordOfTheRings.Classes.RunMessage
+      LordOfTheRings.Contract
+      LordOfTheRings.Contract.CardDefs
+      LordOfTheRings.Contract.Cards.BondOfFriendship
+      LordOfTheRings.Contract.Cards.CouncilOfTheWise
+      LordOfTheRings.Contract.Cards.Fellowship
+      LordOfTheRings.Contract.Cards.ForthTheThreeHunters
+      LordOfTheRings.Contract.Cards.MessengerOfTheKing
+      LordOfTheRings.Contract.Cards.TheBurglarsTurn
+      LordOfTheRings.Contract.Cards.TheGreyWanderer
+      LordOfTheRings.Contract.Import.Lifted
+      LordOfTheRings.Contract.Runner
+      LordOfTheRings.Contract.Types
       LordOfTheRings.Criteria
       LordOfTheRings.Decklist
       LordOfTheRings.Effect
@@ -3040,6 +3052,7 @@ test-suite LordOfTheRings-test
       LordOfTheRings.Starter.RidersOfRohanSpec
       LordOfTheRings.StarterDeckSpec
       LordOfTheRings.TravelPhaseSpec
+      LordOfTheRings.VengeanceOfMordor.ContractsSpec
       LordOfTheRings.VoiceOfIsengard.IntoFangornSpec
       LordOfTheRings.VoiceOfIsengard.NightmareSpec
       LordOfTheRings.VoiceOfIsengard.PlayerCardsSpec

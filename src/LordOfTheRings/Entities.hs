@@ -4,6 +4,7 @@ module LordOfTheRings.Entities (module LordOfTheRings.Entities) where
 
 import LordOfTheRings.Ally.Types
 import LordOfTheRings.Attachment.Types
+import LordOfTheRings.Contract.Types
 import LordOfTheRings.Enemy.Types
 import LordOfTheRings.Hero.Types
 import LordOfTheRings.Id
@@ -23,6 +24,7 @@ data Entities = Entities
   , entitiesQuests :: Map QuestId Quest
   , entitiesAttachments :: Map AttachmentId Attachment
   , entitiesObjectives :: Map ObjectiveId Objective
+  , entitiesContracts :: Map ContractId Contract
   }
   deriving stock (Show, Generic)
 
@@ -32,11 +34,11 @@ instance ToJSON Entities where
   toJSON = genericToJSON (aesonOptions $ Just "entities")
 
 instance Semigroup Entities where
-  Entities h1 a1 e1 l1 t1 q1 x1 o1 <> Entities h2 a2 e2 l2 t2 q2 x2 o2 =
-    Entities (h1 <> h2) (a1 <> a2) (e1 <> e2) (l1 <> l2) (t1 <> t2) (q1 <> q2) (x1 <> x2) (o1 <> o2)
+  Entities h1 a1 e1 l1 t1 q1 x1 o1 c1 <> Entities h2 a2 e2 l2 t2 q2 x2 o2 c2 =
+    Entities (h1 <> h2) (a1 <> a2) (e1 <> e2) (l1 <> l2) (t1 <> t2) (q1 <> q2) (x1 <> x2) (o1 <> o2) (c1 <> c2)
 
 instance Monoid Entities where
-  mempty = Entities mempty mempty mempty mempty mempty mempty mempty mempty
+  mempty = Entities mempty mempty mempty mempty mempty mempty mempty mempty mempty
 
 instance HasField "heroes" Entities (Map HeroId Hero) where
   getField = entitiesHeroes
@@ -61,3 +63,6 @@ instance HasField "attachments" Entities (Map AttachmentId Attachment) where
 
 instance HasField "objectives" Entities (Map ObjectiveId Objective) where
   getField = entitiesObjectives
+
+instance HasField "contracts" Entities (Map ContractId Contract) where
+  getField = entitiesContracts

@@ -41,6 +41,8 @@ targetRefFor target = do
     AttachmentTarget k -> pure $ ref RefAttachment es.attachments k
     TreacheryTarget k -> pure $ ref RefTreachery es.treacheries k
     ObjectiveTarget k -> pure $ ref RefObjective es.objectives k
+    -- drawn on the side it shows
+    ContractTarget k -> pure $ (\c -> (entityRef RefContract k c) {logRefFaceDown = c.flipped}) <$> Map.lookup k es.contracts
     QuestTarget k -> pure $ (\q -> (entityRef RefQuest k q) {logRefFaceDown = q.flipped}) <$> Map.lookup k es.quests
     PlayerTarget pid -> Just <$> playerRefFor pid
     CardIdTarget cid -> pure $ cardRef <$> findCard cid g
@@ -77,6 +79,7 @@ sourceCardTitle g = fmap cardTitle . (lookupCardDef <=< code)
     AllySource i -> toCardCode <$> Map.lookup i es.allies
     AttachmentSource i -> toCardCode <$> Map.lookup i es.attachments
     ObjectiveSource i -> toCardCode <$> Map.lookup i es.objectives
+    ContractSource i -> toCardCode <$> Map.lookup i es.contracts
     LocationSource i -> toCardCode <$> Map.lookup i es.locations
     TreacherySource i -> toCardCode <$> Map.lookup i es.treacheries
     QuestSource i -> toCardCode <$> Map.lookup i es.quests

@@ -43,6 +43,7 @@ preloadModifiers g = do
       -- a card whose host has just left play is about to follow it, and adds nothing
       unless blank $ traverse_ getModifiersFor (filter (hostInPlay es . (.placement)) $ toList es.attachments)
       traverse_ getModifiersFor (filter (hostInPlay es . (.placement)) $ toList es.objectives)
+      traverse_ getModifiersFor es.contracts
       -- the scenario's own, as a nightmare setup card's lasting effect
       getModifiersFor (gameScenario g)
   let -- what is out of play only while its source is in play, as Saruman's chosen card,

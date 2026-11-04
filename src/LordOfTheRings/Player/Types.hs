@@ -31,6 +31,8 @@ data Player = Player
   North: one Ranger Summons shuffles into the encounter deck stays here, known as the
   player's, until it is revealed
   -}
+  , playerContract :: Maybe PlayerCard
+  -- ^ the contract the player chose with his deck, put into play with his heroes
   }
   deriving stock (Show, Eq, Generic)
 
@@ -40,7 +42,7 @@ instance ToJSON Player where
   toJSON = genericToJSON (aesonOptions $ Just "player")
 
 instance FromJSON Player where
-  parseJSON = genericParseJSON (aesonOptions $ Just "player") . withDefaults [("usedAbilities", toJSON ([] :: [UsedAbility])), ("startingThreat", toJSON (0 :: Int)), ("errata", toJSON True), ("startingHeroes", toJSON ([] :: [CardCode])), ("setAsideCards", toJSON ([] :: [Card]))]
+  parseJSON = genericParseJSON (aesonOptions $ Just "player") . withDefaults [("usedAbilities", toJSON ([] :: [UsedAbility])), ("startingThreat", toJSON (0 :: Int)), ("errata", toJSON True), ("startingHeroes", toJSON ([] :: [CardCode])), ("setAsideCards", toJSON ([] :: [Card])), ("contract", Null)]
 
 newPlayer :: PlayerId -> Text -> [Card] -> Player
 newPlayer pid name deck =
@@ -57,6 +59,7 @@ newPlayer pid name deck =
     , playerErrata = True
     , playerStartingHeroes = []
     , playerSetAsideCards = []
+    , playerContract = Nothing
     }
 
 instance Entity Player where
@@ -107,6 +110,9 @@ instance HasField "startingHeroes" Player [CardCode] where
 
 instance HasField "setAsideCards" Player [Card] where
   getField = playerSetAsideCards
+
+instance HasField "contract" Player (Maybe PlayerCard) where
+  getField = playerContract
 
 {- | The cards in the player's hand that can leave it: an encounter card drawn into it, as
 Ill Tidings, cannot.

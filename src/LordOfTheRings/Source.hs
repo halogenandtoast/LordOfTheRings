@@ -17,6 +17,7 @@ data Source
   | AttachmentSource AttachmentId
   | TreacherySource TreacheryId
   | ObjectiveSource ObjectiveId
+  | ContractSource ContractId
   | QuestSource QuestId
   | PlayerSource PlayerId
   | -- | the damage the player's attack on an enemy deals
@@ -38,6 +39,7 @@ isPlayerCardSource = \case
   AllySource _ -> True
   AttachmentSource _ -> True
   CardIdSource _ -> True
+  ContractSource _ -> True
   _ -> False
 
 -- | Whether the source is a quest card, as "non-quest effects" reads.
@@ -66,6 +68,7 @@ sourceTarget = \case
   AttachmentSource i -> Just $ AttachmentTarget i
   TreacherySource i -> Just $ TreacheryTarget i
   ObjectiveSource i -> Just $ ObjectiveTarget i
+  ContractSource i -> Just $ ContractTarget i
   QuestSource i -> Just $ QuestTarget i
   CardIdSource i -> Just $ CardIdTarget i
   PlayerSource _ -> Nothing

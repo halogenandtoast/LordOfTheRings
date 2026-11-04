@@ -47,6 +47,7 @@ import LordOfTheRings.Message
 import LordOfTheRings.Message.Lifted (choosePlayerM, drawCards, raiseThreatFromDoomed, shuffleIntoDeck)
 import LordOfTheRings.Modifier
 import LordOfTheRings.Objective
+import LordOfTheRings.Contract
 import LordOfTheRings.Outcome
 import LordOfTheRings.Phase
 import LordOfTheRings.Placement (Placement (..), placementController)
@@ -77,7 +78,12 @@ newTableIn gameScenario seats@((player, _) :| _) =
     , gamePlayerOrder = [p.id | (p, _) <- toList seats]
     , gameActivePlayer = player.id
     , gameFirstPlayer = player.id
-    , gameEntities = mempty {entitiesHeroes = Map.fromList [(h.id, h) | (_, hs) <- toList seats, h <- hs]}
+    , gameEntities =
+        mempty
+          { entitiesHeroes = Map.fromList [(h.id, h) | (_, hs) <- toList seats, h <- hs]
+          , -- each player's contract is put into play with his heroes (MEC77 rules)
+            entitiesContracts = Map.fromList [(toId c, c) | (p, _) <- toList seats, Just card <- [p.contract], let c = createContract p.id card]
+          }
     , gameScenario
     , gamePhase = ResourcePhase
     , gameRound = 0
@@ -291,7 +297,7 @@ getPlayers :: HasGame m => m [Player]
 getPlayers = toList <$> getsGame gamePlayers
 
 instance FromJSON Entities where
-  parseJSON = genericParseJSON (aesonOptions $ Just "entities") . withDefaults [("objectives", object [])]
+  parseJSON = genericParseJSON (aesonOptions $ Just "entities") . withDefaults [("objectives", object []), ("contracts", object [])]
 
 instance FromJSON Game where
   parseJSON =
@@ -338,6 +344,7 @@ separate groups g
             , entitiesQuests = Map.filterWithKey (\k _ -> inGroup (toTarget k)) es.quests
             , entitiesAttachments = Map.filterWithKey (\k _ -> inGroup (toTarget k)) es.attachments
             , entitiesObjectives = Map.filterWithKey (\k _ -> inGroup (toTarget k)) es.objectives
+            , entitiesContracts = Map.filterWithKey (\k _ -> inGroup (toTarget k)) es.contracts
             }
       , areaHeldEffects = filter (\e -> maybe True (== i) (effectGroup e)) (gameEffects g)
       , areaHeldModifiers = gameModifiers g
@@ -361,6 +368,7 @@ separate groups g
     LocationTarget k -> placed . (.placement) =<< Map.lookup k es.locations
     TreacheryTarget k -> placed . (.placement) =<< Map.lookup k es.treacheries
     ObjectiveTarget k -> placed . (.placement) =<< Map.lookup k es.objectives
+    ContractTarget k -> (.owner) <$> Map.lookup k es.contracts
     -- a Trap in the staging area follows its owner (ALeP 3.382)
     AttachmentTarget k -> Map.lookup k es.attachments <&> \a -> fromMaybe (attachmentOwner $ toAttrs a) (placed a.placement)
     QuestTarget k -> questOwner . toAttrs =<< Map.lookup k es.quests
@@ -401,6 +409,7 @@ runEntities msg entities =
     >>= traverseOf (questsL . traverse) (runEach msg)
     >>= traverseOf (attachmentsL . traverse) (runEach msg)
     >>= traverseOf (objectivesL . traverse) (runEach msg)
+    >>= traverseOf (contractsL . traverse) (runEach msg)
 
 runGame :: Message -> Game -> GameT Game
 runGame msg g = case msg of
@@ -489,6 +498,16 @@ runGame msg g = case msg of
   -- no ally enters play once one has this round, as Corsair Waters reads: one to be put
   -- into play stays where it is, or goes to its owner's discard pile if it has left it
   PutAllyIntoPlay {} | allyEntryBarred g -> pure g
+  -- nor one its controller cannot put into play, as Fellowship bars non-unique allies
+  PutAllyIntoPlay pid cid
+    | Just card <- find ((== cid) . (.id)) . (.hand) =<< Map.lookup pid g.players
+    , barredFromPlay g pid card ->
+        pure g
+  PutAllyIntoPlayUnder pid card | barredFromPlay g pid (PlayerCard card) -> do
+    let owner = card.owner >>= (`Map.lookup` g.players)
+        held = maybe False (\p -> any ((== card.id) . (.id)) (p.hand <> p.deck <> p.discard)) owner
+    pushWhen (not held) $ PutInDiscard card
+    pure g
   PutAllyIntoPlayUnder _ card | allyEntryBarred g -> do
     let owner = card.owner >>= (`Map.lookup` g.players)
         held = maybe False (\p -> any ((== card.id) . (.id)) (p.hand <> p.deck <> p.discard)) owner
@@ -799,6 +818,7 @@ runGameMessage msg g = case msg of
       <> [RefreshUpTo pid n cs | (pid, n, cs) <- limited]
       <> [Ready (toTarget a) | a <- toList g.entities.attachments, attachmentExhausted (toAttrs a)]
       <> [Ready (toTarget o) | o <- toList g.entities.objectives, o.exhausted]
+      <> [Ready (toTarget c) | c <- toList g.entities.contracts, c.exhausted]
       <> [RaiseThreat pid n | (pid, n) <- raises, n > 0]
       <> passToken
       -- the phase ends with an action window, for Refresh Actions as Escape from Darkness gives
@@ -2614,6 +2634,7 @@ runGameMessage msg g = case msg of
     thisObjective <- newObjective card
     pure $ g & entitiesL . objectivesL %~ insertEntity (overAttrs (\a -> a {objectivePlacement = AttachedTo host}) thisObjective)
   RemoveFromGame (ObjectiveTarget oid) -> pure $ g & entitiesL . objectivesL %~ Map.delete oid
+  RemoveFromGame (ContractTarget cid) -> pure $ g & entitiesL . contractsL %~ Map.delete cid
   -- a treachery attached as a condition leaves play for good, as Daechanar removes a Sorcery card
   RemoveFromGame (TreacheryTarget tid) -> pure $ g & entitiesL . treacheriesL %~ Map.delete tid
   -- an enemy leaves play for good, as Change of Plans removes the Corsair Raiders
@@ -3638,7 +3659,8 @@ isRestricted :: HasCardDef a => a -> Bool
 isRestricted = member Restricted . cdKeywords . toCardDef
 
 {- | With more than 2 restricted cards on the character, its controller discards one of
-them, and again until 2 are left; a card may count as 2, as Raiment of War.
+them, and again until 2 are left; a card may count as 2, as Raiment of War. A character
+may be allowed more, as Forth, The Three Hunters! allows each hero 1 more.
 -}
 checkRestricted :: Game -> Target -> GameT ()
 checkRestricted g host = do
@@ -3650,8 +3672,9 @@ checkRestricted g host = do
       -- an attachment given Restricted with its text, as Wild Stallion's Mount text
       gainsRestricted x = GainKeyword Restricted `elem` map modifierType (Map.findWithDefault [] (toTarget x) (gameModifiers g))
   controller <- characterController host
+  extra <- sum . (\ms -> [n | AdditionalRestrictedSlots n <- ms]) <$> getModifiers host
   for_ controller \pid ->
-    when (sum (map snd restrictedOn) > 2)
+    when (sum (map snd restrictedOn) > 2 + extra)
       $ push
       $ questionLabelWith
         (ikey "label.discardRestricted")
@@ -4043,6 +4066,7 @@ retargetCharacter old new g =
     & entitiesL . attachmentsL . traverse %~ (\a -> if a.placement == AttachedTo old then overAttrs (\x -> x {attachmentPlacement = AttachedTo new}) a else a)
     & entitiesL . treacheriesL . traverse %~ (\t -> if t.placement == AttachedTo old then overAttrs (\x -> x {treacheryPlacement = AttachedTo new}) t else t)
     & entitiesL . objectivesL . traverse %~ (\o -> if o.placement == AttachedTo old then overAttrs (\x -> x {objectivePlacement = AttachedTo new}) o else o)
+    & entitiesL . contractsL . traverse %~ (\c -> if c.placement == AttachedTo old then overAttrs (\x -> x {contractPlacement = AttachedTo new}) c else c)
     & effectsL . traverse %~ (\e -> if effectTarget e == old then e {effectTarget = new} else e)
 
 -- | Whether the source is a player's attack on an enemy, its damage.
