@@ -1863,12 +1863,15 @@ putObjectiveAllyIntoPlayUnder pid = push . PutObjectiveAllyIntoPlayUnder pid
 updateCampaignLog :: ReverseQueue m => CampaignLogUpdate -> m ()
 updateCampaignLog = push . UpdateCampaignLog
 
--- | The player card, from out of play, is shuffled into its owner's deck, as Iârion's
--- Pendant once the players choose it.
-shuffleIntoDeck :: ReverseQueue m => PlayerId -> PlayerCard -> m ()
-shuffleIntoDeck pid card = do
-  putInHand card
-  push $ ShuffleFromHandIntoOwnersDeck pid card.id
+-- | The card, from out of play, is shuffled into the player's deck, as Iârion's Pendant
+-- once the players choose it, or Recurring Nightmare.
+shuffleIntoDeck :: (ReverseQueue m, IsCard card) => PlayerId -> card -> m ()
+shuffleIntoDeck pid = push . ShuffleCardIntoDeck pid . toCard
+
+-- | The card leaves the player's hand for out of play, as Recurring Nightmare does for
+-- the staging area.
+removeFromHand :: (ReverseQueue m, HasField "id" card CardId) => PlayerId -> card -> m ()
+removeFromHand pid card = push $ RemoveFromHand pid card.id
 -- | The shadow card dealt to the enemy is shuffled into the encounter deck, as "Shadow:
 -- Shuffle Shadow Dweller back into the encounter deck" reads.
 shuffleShadowCardIntoEncounterDeck :: ReverseQueue m => EnemyId -> EncounterCard -> m ()
