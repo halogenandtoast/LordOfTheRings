@@ -5,6 +5,7 @@ import LordOfTheRings.Card.CardType
 import LordOfTheRings.Card.Code
 import LordOfTheRings.Id
 import LordOfTheRings.Keyword (Keyword (Doomed))
+import LordOfTheRings.Location.Grid (Pos)
 import LordOfTheRings.Name
 import LordOfTheRings.Prelude
 import LordOfTheRings.Sphere (Sphere)
@@ -225,6 +226,8 @@ data LocationMatcher
     LocationWithActiveLocationTitle
   | -- | a location player card effects may discard from play
     LocationDiscardableByPlayerCards
+  | -- | the location lying there on the Island Map (Temple of the Deceived)
+    LocationAtPosition Pos
   | -- | a location that can enter the staging area, as Shrine to Morgoth cannot
     LocationCanEnterStagingArea
   deriving stock (Show, Eq, Generic)

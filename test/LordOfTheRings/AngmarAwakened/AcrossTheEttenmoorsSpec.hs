@@ -10,6 +10,7 @@ import LordOfTheRings.Modifier (ModifierType (..))
 import LordOfTheRings.Objective.CardDefs qualified as Objectives
 import LordOfTheRings.Outcome (Outcome (Lost))
 import LordOfTheRings.Phase (Phase (QuestPhase))
+import LordOfTheRings.Sphere (Sphere (Neutral))
 import LordOfTheRings.Quest.CardDefs qualified as Quests
 import LordOfTheRings.Quest.Types (isSideQuest)
 import LordOfTheRings.Scenario (acrossTheEttenmoors, lookupScenario)
@@ -203,6 +204,18 @@ spec = describe "Across the Ettenmoors" do
       run $ PlaceTokens GameSource b Resource 2
       run $ RemoveTokens (PlayerSource pid) b Resource 2
       getDamage b `shouldReturn` 1
+
+    it "Forage for Food deals 1 damage once for a payment taking 2 resources from a hero one at a time" . ettenTest $ \pid -> do
+      run . AddToStaging =<< genEncounterCard Quests.forageForFood
+      b <- beravor
+      e <- eowyn
+      run $ PlaceTokens GameSource b Resource 2
+      run $ PlaceTokens GameSource e Resource 1
+      run $ SpendResources pid Neutral 2
+      chooseTarget pid b
+      chooseTarget pid b
+      getDamage b `shouldReturn` 1
+      getDamage e `shouldReturn` 0
 
   describe "Encounter cards" do
     it "Savage Trollspawn gets +1 attack for each damaged character the engaged player controls" . ettenTest $ \pid -> do

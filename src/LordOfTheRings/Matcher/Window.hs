@@ -1,6 +1,5 @@
 module LordOfTheRings.Matcher.Window (module LordOfTheRings.Matcher.Window) where
 
-import LordOfTheRings.Card (Card (PlayerCard))
 import LordOfTheRings.Card.Code (CardCode)
 import LordOfTheRings.Id
 import LordOfTheRings.Matcher.Types (AllyMatcher, CardMatcher, EnemyMatcher, HeroMatcher, LocationMatcher, PlayerMatcher, cardMatches)
@@ -103,6 +102,8 @@ data WindowMatcher
   | -- | a shadow card dealt to an enemy engaged with the player
     ShadowCardDealtWindow Timing PlayerId
   | EnemyAttacksWindow Timing EnemyId
+  | -- | the enemy's attack dealt excess damage, as The Cursed Sword reads
+    EnemyDealtExcessDamageWindow Timing EnemyId
   | -- | characters attack the enemy, as "when it is attacked" reads
     EnemyAttackedWindow Timing EnemyId
   | -- | an encounter card revealed from the encounter deck with a When Revealed effect
@@ -231,8 +232,11 @@ data WindowMatcher
     QuestDefeatedWindow Timing Target
   | -- | any quest card was defeated, as Mendor reads
     AnyQuestDefeatedWindow Timing
-  | -- | a character the player owns was destroyed, as Scarred reads "you control"
+  | -- | a character the player controlled was destroyed
     OwnCharacterDestroyedWindow Timing PlayerId
+  | -- | a character the controller of the host (a hero) controlled was destroyed, as
+    -- Scarred reads "you control" of the hero it is attached to
+    HostControllersCharacterDestroyedWindow Timing Target
   | -- | a card effect discarded an ally with the trait from play, as Éothain reads
     AllyWithTraitDiscardedByCardEffectWindow Timing Trait
   | -- | an attack the character took part in destroyed an enemy with at least this many
@@ -383,6 +387,7 @@ windowMatches matcher (Window timing wType) = case (matcher, wType) of
   (ShadowEffectResolvedWindow t eid, ShadowEffectResolved _ eid') -> t == timing && eid == eid'
   (ShadowCardDealtWindow t pid, ShadowCardDealt _ _ pid') -> t == timing && pid == pid'
   (EnemyAttacksWindow t eid, EnemyAttacking eid' _) -> t == timing && eid == eid'
+  (EnemyDealtExcessDamageWindow t eid, AttackDealtExcessDamage eid' _ _) -> t == timing && eid == eid'
   (EnemyAttackedWindow t eid, EnemyAttacked eid') -> t == timing && eid == eid'
   (AllyLeftPlayWindow t, LeftPlay (AllyTarget _) _ _) -> t == timing
   (AttackerDeclaredWindow t who, DeclaredAsAttacker target _) -> t == timing && maybe True (== target) who
@@ -428,7 +433,7 @@ windowMatches matcher (Window timing wType) = case (matcher, wType) of
   (EliminatedByThreatWindow t pid, EliminatedByThreat pid') -> t == timing && pid == pid'
   (QuestDefeatedWindow t target, QuestDefeated target') -> t == timing && target == target'
   (AnyQuestDefeatedWindow t, QuestDefeated _) -> t == timing
-  (OwnCharacterDestroyedWindow t pid, CharacterDestroyed _ (PlayerCard pc)) -> t == timing && pc.owner == Just pid
+  (OwnCharacterDestroyedWindow t pid, CharacterDestroyedUnder pid' _) -> t == timing && pid == pid'
   (AllyWithTraitDiscardedByCardEffectWindow t trait, AllyDiscardedByCardEffect _ traits) -> t == timing && trait `member` traits
   (EnemyDestroyedWindow t m, EnemyDestroyed card) -> t == timing && cardMatches m card
   (DiscardedFromHandWindow t pid, DiscardedFromHand pid' _) -> t == timing && pid == pid'
@@ -476,6 +481,8 @@ windowMatches matcher (Window timing wType) = case (matcher, wType) of
   (AttackDealtDamageByWindow {}, _) -> False
   (MatchingEnemyAttacksWindow {}, _) -> False
   (EnemyWithPrintedHitPointsDestroyedByAttackWindow {}, _) -> False
+  -- after it left play, read from its card
+  (ExploredMatchingWindow t m, ExploredCard c) -> t == timing && cardMatches m c
   (ExploredMatchingWindow {}, _) -> False
   (HeroDeclaredAsDefenderWindow {}, _) -> False
   (RevealedTitleInVictoryDisplayWindow {}, _) -> False

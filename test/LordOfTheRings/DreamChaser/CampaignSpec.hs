@@ -16,6 +16,11 @@ import LordOfTheRings.Scenario.Types (GameMode (NightmareMode), scenarioCampaign
 import LordOfTheRings.Window (WindowType (..), mkAfter)
 import Data.Aeson.Types (parseMaybe)
 import LordOfTheRings.Treachery.CardDefs qualified as Treacheries
+import LordOfTheRings.Ally.CardDefs qualified as Allies
+import LordOfTheRings.Helpers.Window (getActionAbilities)
+import LordOfTheRings.Location.CardDefs qualified as Locations
+import LordOfTheRings.Location.Grid (Pos (..))
+import LordOfTheRings.Phase (Phase (TravelPhase))
 import TestImport
 
 dc :: CampaignLog
@@ -65,6 +70,14 @@ spec = describe "Dream-chaser campaign" do
     pureIt "spends no XP it does not have, nor past a card's checkboxes" do
       spendXp "DCC172" dc `shouldBe` Nothing
       (spendXp "DCC172" <=< spendXp "DCC172" <=< spendXp "DCC172") dc {campaignLogXp = 5} `shouldBe` Nothing
+
+    pureIt "has the Campaign Log sheet's checkboxes by each title" do
+      let boxes code = xpBoxes <$> find ((== code) . xpCard) (xpCards dc)
+      map boxes ["DCC201", "DCC184", "DCC211", "DCC212", "DCC213", "DCC214"] `shouldBe` map Just [4, 5, 3, 2, 4, 3]
+
+    pureIt "levels a scalable card from 0, one level for each box marked" do
+      level "DCC184" dc `shouldBe` 0
+      level "DCC184" dc {campaignLogMarked = mapFromList [("DCC184", 2)]} `shouldBe` 2
 
     pureIt "offers Gavin once A Storm on Cobas Haven is won" do
       map xpCard (xpCards dc) `shouldSatisfy` notElem "DCC210"
@@ -168,6 +181,38 @@ spec = describe "Dream-chaser campaign" do
       hand <- map toCardCode . (.hand) <$> getPlayer pid
       hand `shouldSatisfy` elem (toCardCode Events.comeTogether)
       recorded ChosenDuringSetup <$> getCampaignLog `shouldReturn` [toCardCode Events.comeTogether]
+
+  describe "Temple of the Deceived" do
+    let secrets = record Secrets [toCardCode Allies.starla, toCardCode Enemies.recurringNightmare, toCardCode Enemies.recurringNightmare] seated
+        templeAt r = do
+          run . PrepareIslandMap . pure . (Pos 4 r,) =<< genEncounterCard Locations.theGrottosEntrance
+          getsGame (fromJustNote "no temple" . fmap toId . find ((== Just (Pos 4 r)) . (.position)) . toList . (.entities.locations))
+        scenarioActions pid = filter ((== ScenarioSource) . (.abilitySource)) <$> getActionAbilities pid
+    it "flips the secret at the active location as a Travel Action, Starla joining the player" . campaignTestIn templeOfTheDeceived secrets starterDeck $ \pid -> do
+      temple <- templeAt 0
+      run $ PlaceLocation temple ActiveLocation
+      scenarioActions pid >>= (`shouldSatisfy` null)
+      putGame . (phaseL .~ TravelPhase) =<< getGame
+      length <$> scenarioActions pid `shouldReturn` 1
+      run $ UseCardAbility pid ScenarioSource 1 []
+      getsGame (map (\a -> (toCardCode a, a.placement)) . toList . (.entities.allies)) >>= (`shouldSatisfy` elem (toCardCode Allies.starla, InPlayArea pid))
+      l <- getCampaignLog
+      recorded Secrets l `shouldBe` ["", toCardCode Enemies.recurringNightmare, toCardCode Enemies.recurringNightmare]
+      recorded RevealedSecrets l `shouldBe` [toCardCode Allies.starla]
+      scenarioActions pid >>= (`shouldSatisfy` null)
+
+    it "lets the upgraded Gate Key look at a secret, showing it to that player only" . campaignTestIn templeOfTheDeceived secrets starterDeck $ \pid -> do
+      temple <- templeAt 0
+      hero <- getHeroWithCode "01001"
+      run . AddToStaging =<< genEncounterCard Objectives.gateKeyUpgraded
+      key <- getsGame (fromJustNote "no Gate Key" . fmap toId . find ((== toCardCode Objectives.gateKeyUpgraded) . toCardCode) . toList . (.entities.objectives))
+      run $ ClaimObjective key (toTarget hero)
+      run $ UseCardAbility pid (ObjectiveSource key) 2 []
+      chooseTarget pid (LocationTarget temple)
+      -- still Uncharted, the location offers its facedown side too
+      chooseLabel "$label.gateKey.secret" pid
+      q <- fromJustNote "no secret shown" <$> getQuestion pid
+      map toCardCode (searchedCards q) `shouldBe` [toCardCode Allies.starla]
 
   describe "The City of Corsairs" do
     it "attaches Black Key (burden) and The Black Sword, with 3 resources, as Captain Sahír enters play" . campaignTestIn theCityOfCorsairs seated starterDeck $ \_ -> do

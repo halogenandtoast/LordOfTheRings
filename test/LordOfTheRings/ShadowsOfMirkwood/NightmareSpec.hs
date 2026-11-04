@@ -106,6 +106,13 @@ spec = describe "Shadows of Mirkwood nightmare mode" do
       getsGame (fmap (.placement) . lookup eid . map (\e -> (toId e, toAttrs e)) . toList . (.entities.enemies))
         `shouldReturn` Just (EngagedWith pid)
 
+    it "Ravenous Hawk engages the player who looks at it among several cards" . nightmare theHuntForGollum $ \pid -> do
+      _ <- setEncounterDeck [Enemies.mistyMountainGoblins, Enemies.ravenousHawk]
+      run $ RevealOneOfTopEncounterCards pid GameSource 2 False
+      eid <- getsGame (fromJustNote "no hawk" . fmap toId . find ((== toCardCode Enemies.ravenousHawk) . toCardCode) . toList . (.entities.enemies))
+      getsGame (fmap (.placement) . lookup eid . map (\e -> (toId e, toAttrs e)) . toList . (.entities.enemies))
+        `shouldReturn` Just (EngagedWith pid)
+
   describe "Conflict at the Carrock" do
     it "builds the nightmare deck, its own Trolls in place of the standard ones" . nightmare conflictAtTheCarrock $ \_ -> do
       run $ DoStep 1 Setup
@@ -118,6 +125,16 @@ spec = describe "Shadows of Mirkwood nightmare mode" do
       _ <- putQuestStage Quests.grimbeornsQuest
       run $ CheckWindows [mkWhen $ PhaseEnds QuestPhase]
       (.progress) <$> getActiveQuest `shouldReturn` 1
+
+    it "has each Troll refuse player attachments only while Stuart is in the victory display" . nightmare conflictAtTheCarrock $ \_ -> do
+      reveal Enemies.stuartNightmare []
+      stuart <- theEnemy
+      run $ AddToVictoryDisplay (toTarget stuart)
+      reveal Enemies.savageHillTroll []
+      troll <- theEnemy
+      mods <- getModifiers troll
+      mods `shouldSatisfy` elem CannotHavePlayerAttachments
+      mods `shouldSatisfy` notElem CannotHaveAttachments
 
     it "gives each Troll +1 attack while Morris is in the victory display" . nightmare conflictAtTheCarrock $ \_ -> do
       reveal Enemies.morrisNightmare []

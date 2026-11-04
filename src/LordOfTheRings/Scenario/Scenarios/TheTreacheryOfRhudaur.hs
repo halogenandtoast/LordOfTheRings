@@ -3,7 +3,7 @@ module LordOfTheRings.Scenario.Scenarios.TheTreacheryOfRhudaur (theTreacheryOfRh
 import Data.List (elemIndex)
 import Data.Map.Strict qualified as Map
 import LordOfTheRings.Attachment.CardDefs qualified as Attachments
-import LordOfTheRings.Campaign (PoolCard (..), addToPool)
+import LordOfTheRings.Campaign (CampaignLogKey (BooksEarned), recordCount)
 import LordOfTheRings.Classes.HasGame (getsGame)
 import LordOfTheRings.EncounterSet qualified as EncounterSet
 import LordOfTheRings.Entities (entitiesAllies, entitiesHeroes, entitiesObjectives)
@@ -17,7 +17,7 @@ import LordOfTheRings.Matcher.Types (CardMatcher (AnyCard))
 import LordOfTheRings.Quest.CardDefs qualified as Quests
 import LordOfTheRings.Scenario.CardDefs qualified as Nightmare
 import LordOfTheRings.Scenario.Import.Lifted
-import LordOfTheRings.Scenario.Scenarios.AngmarAwakened (angmarSetup, thaurdirsBurdens)
+import LordOfTheRings.Scenario.Scenarios.AngmarAwakened (angmarSetup, thaurdirsBurdens, thaurdirsBurdensAtSetup)
 import LordOfTheRings.Treachery.CardDefs qualified as Treacheries
 import LordOfTheRings.Window (Window (..), WindowType (AdvancedToStage))
 
@@ -82,13 +82,15 @@ instance RunMessage TheTreacheryOfRhudaur where
     -- Campaign: what the pool brings, Thaurdir's burden on Thaurdir among it
     DoStep 9 Setup | isJust attrs.campaign -> do
       angmarSetup attrs
-      thaurdirsBurdens attrs False
+      thaurdirsBurdensAtSetup attrs
       TheTreacheryOfRhudaur <$> runMessage msg attrs
     CheckWindows _ | isJust attrs.campaign -> do
       thaurdirsBurdens attrs False
       TheTreacheryOfRhudaur <$> runMessage msg attrs
     -- Resolution: For each Clue a player controls, that player may add the book with the
     -- same name to the Campaign Pool and their deck.
+    -- The game is over as this resolves, so the books are offered as the next scenario is
+    -- set up ('angmarSetup').
     ResolveCampaign | Just l <- attrs.campaign -> do
       objectives <- getsGame (toList . entitiesObjectives . gameEntities)
       heroes <- getsGame (entitiesHeroes . gameEntities)
@@ -104,11 +106,12 @@ instance RunMessage TheTreacheryOfRhudaur where
             AttachedTo (AllyTarget a) -> placementController . (.placement) =<< Map.lookup a allies
             _ -> Nothing
           earned =
-            [ PoolCard (toCardCode book) (elemIndex pid order) Nothing
+            [ (toCardCode book, seat)
             | o <- objectives
             , (clue, book) <- books
             , toCardCode o == toCardCode clue
             , Just pid <- [controllerOf o.placement]
+            , Just seat <- [elemIndex pid order]
             ]
-      TheTreacheryOfRhudaur <$> runMessage msg (attrs {scenarioCampaign = Just $ foldl' (flip addToPool) l earned})
+      TheTreacheryOfRhudaur <$> runMessage msg (attrs {scenarioCampaign = Just $ foldl' (\l' (code, seat) -> recordCount BooksEarned code seat l') l earned})
     _ -> TheTreacheryOfRhudaur <$> runMessage msg attrs

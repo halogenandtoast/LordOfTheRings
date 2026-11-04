@@ -1504,7 +1504,11 @@
   },
   "gateKey": {
     "claim": "Gate Key: choose a hero to exhaust to claim Gate Key and attach it to that hero",
-    "look": "Gate Key: choose a Temple of the Deceived to look at its facedown side"
+    "look": "Gate Key: choose a Temple of the Deceived to look at its facedown side, or the location a secret lies under",
+    "lookAt": "Gate Key: look at",
+    "facedownSide": "Its facedown side",
+    "secret": "The secret under it",
+    "secretIs": "Gate Key: the secret is"
   },
   "junglePath": {
     "exhaust": "Jungle Path: exhaust a character with at least 2 attack"
@@ -1599,6 +1603,8 @@
   },
   "campaign": {
     "attachTo": "Choose a hero to attach it to",
+    "addBook": "The Treachery of Rhudaur: you may add this book, for your Clue, to the Campaign Pool and your deck",
+    "addBookToDeck": "Add it",
     "pendantOrCourage": "Deadmen's Dike: choose Iârion's Pendant or Amarthiúl's Courage for the Campaign Pool",
     "iarionsPendant": "Iârion's Pendant, for a player's deck",
     "amarthiulsCourage": "Amarthiúl's Courage, attached to Amarthiúl",
@@ -1634,6 +1640,10 @@
   },
   "mysteriousOmens": {
     "chooseBoon": "Mysterious Omens: you may choose a boon to attach to a hero you control"
+  },
+  "sendForAid": {
+    "search": "Send for Aid: you may search the top 10 cards of your deck for an ally to put into play",
+    "searchDeck": "Search"
   },
   "lootTheDungeons": {
     "chooseBoon": "Loot the Dungeons: you may choose a boon to add to your hand"

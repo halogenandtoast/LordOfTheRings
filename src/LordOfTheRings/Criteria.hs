@@ -1,5 +1,6 @@
 module LordOfTheRings.Criteria (module LordOfTheRings.Criteria) where
 
+import LordOfTheRings.Campaign (CampaignLogKey)
 import LordOfTheRings.Card.CardType
 import LordOfTheRings.Heading (HeadingMatcher)
 import LordOfTheRings.Id
@@ -69,6 +70,8 @@ data Criterion
     HeadingMatches HeadingMatcher
   | -- | the game is dealt in nightmare mode, as a setup card changes a stage's ability
     InNightmareMode
+  | -- | in campaign mode, the log holds a card under the key, as a secret yet unflipped
+    CampaignRecorded CampaignLogKey
   | -- | the characters the player controls have at least this many different traits
     -- between them, as The Free Peoples reads
     DifferentTraitsAtLeast PlayerId Int

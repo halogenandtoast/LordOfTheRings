@@ -2,7 +2,7 @@
 
 module LordOfTheRings.Location.Runner (module X) where
 
-import LordOfTheRings.Card (CardDef (..), toCardDef)
+import LordOfTheRings.Card (CardDef (..), toCard, toCardDef)
 import LordOfTheRings.Classes.HasQueue
 import LordOfTheRings.Classes.RunMessage
 import LordOfTheRings.Helpers.Modifiers (getModifiers, immuneToSource, modifiedValue, questPointsOf)
@@ -68,9 +68,9 @@ instance RunMessage LocationAttrs where
             if isJust (cdVictoryPoints $ toCardDef attrs)
               then AddToVictoryDisplay (toTarget attrs)
               else Discard (toTarget attrs)
-          , -- after it is explored, as Idraen answers; whether it was the active location
-            -- is told now, as it is gone by then
-            CheckWindows $ map mkAfter explored
+          , -- after it is explored, as Idraen answers; whether it was the active location,
+            -- and its card, are told now, as it is gone by then
+            CheckWindows $ map mkAfter (explored <> [ExploredCard (toCard attrs)])
           ]
       pure attrs'
     explored = Explored attrs.id : [ActiveLocationExplored attrs.id | attrs.placement == ActiveLocation]

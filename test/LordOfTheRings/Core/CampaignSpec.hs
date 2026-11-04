@@ -76,6 +76,16 @@ spec = describe "Campaign mode" do
       attachedTo Attachments.valor `shouldReturn` [theodred]
       attachedTo Objectives.scarred `shouldReturn` [gloin]
 
+  describe "Scarred" do
+    it "raises the threat of the hero's controller for a character they control destroyed, an objective-ally too" . campaignTestIn passageThroughMirkwood seated starterDeck $ \pid -> do
+      gloin <- getHeroWithCode "01003"
+      run . (`PutObjectiveIntoPlayAttached` toTarget gloin) =<< genEncounterCard Objectives.scarred
+      run . PutObjectiveAllyIntoPlayUnder pid =<< genEncounterCard Objectives.calaerion
+      calaerion <- getsGame (fromJustNote "no Calaerion" . headMay . toList . (.entities.allies))
+      threat <- (.threat) <$> getPlayer pid
+      run $ Destroy GameSource (toTarget calaerion.id)
+      (.threat) <$> getPlayer pid `shouldReturn` threat + 1
+
   describe "Passage Through Mirkwood" do
     it "puts Mendor into play under the first player" . campaignTestIn passageThroughMirkwood seated starterDeck $ \pid -> do
       run $ DoStep 4 Setup

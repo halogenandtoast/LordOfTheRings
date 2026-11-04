@@ -422,18 +422,14 @@ runPlayer msg player = case msg of
     SpendResources pid sphere n | pid == player.id && n > 0 -> do
       heroes <- traverse getHero =<< select (HeroControlledBy $ PlayerWithId player.id)
       payers <- filterM (paysFor sphere) heroes
-      case filter ((> 0) . (.resources)) payers of
-        [x] -> push $ RemoveTokens (toSource player) (toTarget x) Resource n
-        xs ->
-          push
-            $ questionLabel
-              (ikeyWith "label.payMore" [intVar "count" n])
-              pid
-              [ targetLabel
-                  x
-                  [RemoveTokens (toSource player) (toTarget x) Resource 1, SpendResources pid sphere (n - 1)]
-              | x <- xs
-              ]
+      push $ case filter ((> 0) . (.resources)) payers of
+        [x] -> RemoveTokens (toSource player) (toTarget x) Resource n
+        _ -> SpendResourcesChosen pid False sphere n []
+      pure player
+    SpendResourcesChosen pid False sphere n chosen | pid == player.id -> do
+      heroes <- traverse getHero =<< select (HeroControlledBy $ PlayerWithId player.id)
+      payers <- filterM (paysFor sphere) heroes
+      push $ spendChosen (toSource player) pid False sphere n chosen [(h.id, h.resources) | h <- payers]
       pure player
     _ -> pure player
    where

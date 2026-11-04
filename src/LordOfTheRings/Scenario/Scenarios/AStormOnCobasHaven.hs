@@ -4,7 +4,7 @@ import LordOfTheRings.Classes.HasGame (getsGame)
 import LordOfTheRings.EncounterSet qualified as EncounterSet
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Location.CardDefs qualified as Locations
-import LordOfTheRings.Matcher (EnemyMatcher (EnemyEngagedWith), PlayerMatcher (AnyPlayer), cardIs, cardMatches, getCurrentQuest, getLead, selectAny)
+import LordOfTheRings.Matcher (AllyMatcher (AllyWithId), EnemyMatcher (EnemyEngagedWith), PlayerMatcher (AnyPlayer), cardIs, cardMatches, getCurrentQuest, getLead, selectAny, shipObjective)
 import LordOfTheRings.Modifier (ModifierType (ProgressPerRoundLimit))
 import LordOfTheRings.Objective.CardDefs qualified as Objectives
 import LordOfTheRings.Placement (Placement (AttachedTo))
@@ -78,8 +78,25 @@ instance RunMessage AStormOnCobasHaven where
         & setAsideL .~ warships
     -- Broken Rudder: "During sailing tests, for each success symbol found, cancel it unless
     -- you deal 1 damage to attached objective." The first player keeps as many as he deals
-    -- damage for.
-    SailingTestResult top found canceled | attrs.nightmare, found > canceled -> do
+    -- damage for, each Broken Rudder attached asking in turn for what the last left.
+    SailingTestResult top found canceled | attrs.nightmare -> rudderAsks 0 top found canceled
+    DoStep i (SailingTestResult top found canceled) | attrs.nightmare -> rudderAsks i top found canceled
+    DoStep _ inner@(SailingTestResult {}) -> AStormOnCobasHaven <$> runMessage inner attrs
+    -- Broken Rudder: "*Forced: After this Sailing test ends, attach Broken Rudder to a Ship
+    -- objective committed to that test." The first player picks which, if several are.
+    SailingTestEnded top committed | attrs.nightmare -> do
+      ships <- filterM (\case AllyTarget aid -> selectAny (AllyWithId aid <> shipObjective); _ -> pure False) committed
+      lead <- getLead
+      for_ [c | c <- top, cardMatches (cardIs Treacheries.brokenRudder) c, c `elem` attrs.encounterDiscard] \c ->
+        chooseOrRunOneM lead do
+          questionLabeled "brokenRudder.attach"
+          targets ships \s -> attachFromEncounterDiscard c s
+      AStormOnCobasHaven <$> runMessage msg attrs
+    -- Campaign: the Dream-chaser campaign card's setup, Forced effects and resolution
+    _ | isJust attrs.campaign -> AStormOnCobasHaven <$> runDreamChaserCampaign msg attrs
+    _ -> AStormOnCobasHaven <$> runMessage msg attrs
+   where
+    rudderAsks i top found canceled = do
       rudders <-
         getsGame \g ->
           [ aid
@@ -87,20 +104,11 @@ instance RunMessage AStormOnCobasHaven where
           , toCardCode t == toCardCode Treacheries.brokenRudder
           , AttachedTo (AllyTarget aid) <- [t.placement]
           ]
-      case rudders of
-        ship : _ -> do
+      case drop i rudders of
+        ship : _ | found > canceled -> do
           lead <- getLead
           chooseAmountM lead "brokenRudder.keep" (AllyTarget ship) 0 (found - canceled) \k -> do
             dealDamage ScenarioSource (AllyTarget ship) k
-            push $ DoStep 1 (SailingTestResult top found (found - k))
+            push $ DoStep (i + 1) (SailingTestResult top found (found - k))
           pure $ AStormOnCobasHaven attrs
-        [] -> AStormOnCobasHaven <$> runMessage msg attrs
-    DoStep 1 inner@(SailingTestResult {}) -> AStormOnCobasHaven <$> runMessage inner attrs
-    -- Broken Rudder: "*Forced: After this Sailing test ends, attach Broken Rudder to a Ship
-    -- objective committed to that test."
-    SailingTestEnded top _ | attrs.nightmare -> do
-      for_ [c | c <- top, cardMatches (cardIs Treacheries.brokenRudder) c, c `elem` attrs.encounterDiscard] revealFromEncounterDiscard
-      AStormOnCobasHaven <$> runMessage msg attrs
-    -- Campaign: the Dream-chaser campaign card's setup, Forced effects and resolution
-    _ | isJust attrs.campaign -> AStormOnCobasHaven <$> runDreamChaserCampaign msg attrs
-    _ -> AStormOnCobasHaven <$> runMessage msg attrs
+        _ -> AStormOnCobasHaven <$> runMessage (SailingTestResult top found canceled) attrs

@@ -5,6 +5,7 @@ import LordOfTheRings.Campaign (CampaignLogUpdate)
 import LordOfTheRings.Card
 import LordOfTheRings.Effect
 import LordOfTheRings.Heading (HeadingShift)
+import LordOfTheRings.I18n (ikeyWith, intVar)
 import LordOfTheRings.Id
 import LordOfTheRings.Json (withDefaults)
 import LordOfTheRings.Location.Grid (Pos)
@@ -326,6 +327,9 @@ data Message
     attaching itself where its placement says
     -}
     PutShadowTreacheryIntoPlay EnemyId CardId Placement
+  | -- | the treachery leaves the encounter discard pile attached to the target, its When
+    -- Revealed effect not resolved, as Broken Rudder's *Forced effect attaches it
+    AttachFromEncounterDiscard EncounterCard Target
   | ShufflePlayerDeck PlayerId
   | {- | the player takes matching cards from those searched in their deck into hand, any
     number of them or only 1 as the flag says, then shuffles their deck
@@ -465,6 +469,11 @@ data Message
   | DefendedByMany PlayerId EnemyId [Target]
   | -- | the players as a group spend resources of a sphere, from any of their heroes
     SpendGroupResources PlayerId Sphere Int
+  | {- | as 'SpendResources' (or 'SpendGroupResources' when the flag is set), the heroes
+    chosen so far to pay 1 each, once per resource: each hero's are spent at once when
+    the last is chosen, a single spend from that hero's pool as Forage for Food reads it
+    -}
+    SpendResourcesChosen PlayerId Bool Sphere Int [HeroId]
   | -- | the players as a group discard resources from any of their heroes' pools, as
     -- many as they can up to the number, as prowl reads: not spent, so any hero's go
     DiscardGroupResources PlayerId Int
@@ -579,6 +588,9 @@ data Message
     SearchEncounterDeckAndDiscardToEngage PlayerId Target CardMatcher
   | -- | as 'SearchEncounterDeckAndDiscard', the card found revealed, as Forecastle Deck reads
     SearchEncounterDeckAndDiscardToReveal PlayerId Target CardMatcher
+  | -- | as 'SearchEncounterDeckAndDiscard', the victory display searched too, as Corsair
+    -- Confrontation reads
+    SearchEncounterCardsAndVictoryDisplay PlayerId Target CardMatcher
   | {- | the cards go facedown underneath the target, out of play, as The Orcs' Search takes
     them: from a player's hand, deck or discard pile, or a location in play
     -}
@@ -719,6 +731,21 @@ uiToRun = \case
 chooseOne :: HasCallStack => PlayerId -> [UI Message] -> Message
 chooseOne _ [] = error "chooseOne: no choices"
 chooseOne pid choices = Ask pid $ ChooseOne choices
+
+{- | The next resource of a payment made 1 at a time: the player picks a hero with one left
+of those paying, or, once all are picked (or none is left to pick), each hero's resources
+are spent at once.
+-}
+spendChosen :: Source -> PlayerId -> Bool -> Sphere -> Int -> [HeroId] -> [(HeroId, Int)] -> Message
+spendChosen source pid isGroup sphere n chosen payers = case [h | (h, k) <- payers, k > paid h] of
+  -- the last hero left to pay pays the rest, unasked, as a player's own spend does
+  [h] | n > 0, not isGroup -> SpendResourcesChosen pid isGroup sphere (n - 1) (h : chosen)
+  hs@(_ : _) | n > 0 ->
+    questionLabel (ikeyWith "label.payMore" [intVar "count" n]) pid
+      [targetLabel h [SpendResourcesChosen pid isGroup sphere (n - 1) (h : chosen)] | h <- hs]
+  _ -> Run [RemoveTokens source (HeroTarget h) Resource (paid h) | h <- ordNub (reverse chosen)]
+ where
+  paid h = length (filter (== h) chosen)
 
 -- | Ask a question with a prompt explaining what is being chosen.
 questionLabel :: HasCallStack => Text -> PlayerId -> [UI Message] -> Message

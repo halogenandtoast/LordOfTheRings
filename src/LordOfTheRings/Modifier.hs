@@ -267,6 +267,8 @@ data ModifierType
   | -- | on an encounter card: its When Revealed effect cannot be canceled; on the game:
     -- no encounter card's can be
     WhenRevealedCannotBeCanceled
+  | -- | on a shadow card: its shadow effect cannot be canceled
+    ShadowCannotBeCanceled
   | -- | on the game: matching cards cost this much more to play from hand
     IncreaseCost CardMatcher Int
   | -- | on a player: matching cards they play from hand cost this much less
@@ -310,6 +312,9 @@ data ModifierType
   | -- | on a quest card, by an effect until the end of the round: this much progress was
     -- placed on it this round (see 'progressPlacedThisRound')
     ProgressPlacedThisRound Int
+  | -- | on a quest card, by an effect until the end of the phase: this much progress was
+    -- placed on it this phase (see 'progressPlacedThisPhase')
+    ProgressPlacedThisPhase Int
   | -- | on the game: the next enemy to enter the staging area takes the modifier instead,
     -- for as long as the effect lasts
     NextEnemyInStaging ModifierType

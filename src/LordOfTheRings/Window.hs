@@ -38,10 +38,16 @@ data WindowType
   | -- | an attack destroyed an enemy engaged with the player: the characters that attacked
     EngagedEnemyDestroyedByAttack PlayerId [Target]
   | CharacterDestroyed Target Card
+  | -- | the character destroyed was under the player's control, opened with
+    -- 'CharacterDestroyed'
+    CharacterDestroyedUnder PlayerId Target
   | -- | an encounter card revealed from the encounter deck
     Revealed Target
   | -- | a location about to leave play as an explored location
     Explored LocationId
+  | -- | the card of the location just explored, opened with 'Explored' after it left play,
+    -- for what is read of it then, as its printed quest points
+    ExploredCard Card
   | -- | a location has left play, however it did
     LocationLeftPlay LocationId
   | -- | an enemy entered play, however it did: revealed, put into play or turned faceup
@@ -103,6 +109,8 @@ data WindowType
     PlayingEvent PlayerId CardId
   | -- | an attack the characters made dealt the enemy this much damage
     AttackDealtDamage EnemyId [Target] Int
+  | -- | the enemy's attack dealt the character this much damage past what destroys it
+    AttackDealtExcessDamage EnemyId Target Int
   | -- | the enemy's attack dealt the card damage, as Dwarven Shield answers
     DamagedByEnemyAttack Target EnemyId
   | -- | the player let the enemy's attack go undefended
