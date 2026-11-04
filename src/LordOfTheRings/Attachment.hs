@@ -223,6 +223,10 @@ import LordOfTheRings.Attachment.Cards.SparePipe
 import LordOfTheRings.Attachment.Cards.ShiningShield
 import LordOfTheRings.Attachment.Cards.TirelessThoroughbred
 import LordOfTheRings.Attachment.Cards.Thorongil
+import LordOfTheRings.Attachment.Cards.Anduril (anduril)
+import LordOfTheRings.Attachment.Cards.BannerOfElendil (bannerOfElendil)
+import LordOfTheRings.Attachment.Cards.EsquireOfRohan (esquireOfRohan)
+import LordOfTheRings.Attachment.Cards.EsquireOfGondor (esquireOfGondor)
 import LordOfTheRings.Attachment.Runner ()
 import LordOfTheRings.Attachment.Types as X
 import LordOfTheRings.Id
@@ -483,5 +487,9 @@ allAttachments =
         , SomeAttachmentCard shiningShield
         , SomeAttachmentCard tirelessThoroughbred
         , SomeAttachmentCard thorongil
+        , SomeAttachmentCard anduril
+        , SomeAttachmentCard bannerOfElendil
+        , SomeAttachmentCard esquireOfRohan
+        , SomeAttachmentCard esquireOfGondor
         ]
     ]

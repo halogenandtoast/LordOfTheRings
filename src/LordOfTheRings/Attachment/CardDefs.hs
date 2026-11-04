@@ -241,6 +241,10 @@ allAttachmentCards =
       , shiningShield
       , tirelessThoroughbred
       , thorongil
+      , anduril
+      , bannerOfElendil
+      , esquireOfRohan
+      , esquireOfGondor
       ]
 
 -- | A boon of the Revised Core campaign: Permanent, limit 1 per hero.
@@ -1693,4 +1697,38 @@ thorongil =
   unique
     (attachment "22146" "Thorongil" Neutral (StaticCost 3))
       { cdCardTraits = setFromList [Title]
+      }
+
+-- * The Lord of the Rings saga: The Battle of the Pelennor Fields' attachments
+
+-- | A boon of The Road Darkens: its stats and keywords only, the player cards' own version
+-- giving its text. The Battle of the Pelennor Fields' campaign card attaches it to Aragorn.
+anduril :: CardDef
+anduril =
+  unique
+    (attachment "142014" "Andúril" Neutral (StaticCost 3))
+      { cdCardTraits = setFromList [Artifact, Item, Weapon, Boon]
+      , cdKeywords = setFromList [Restricted]
+      }
+
+-- | Its stats and traits only, the player cards' own version giving its text. The Battle
+-- of the Pelennor Fields' campaign card attaches it to Aragorn.
+bannerOfElendil :: CardDef
+bannerOfElendil = unique (attachment "145013" "Banner of Elendil" Fellowship (StaticCost 3)) {cdCardTraits = setFromList [Artifact, Item]}
+
+-- | A boon The Garrison of Gondor lets the players attach: its traits and keyword only, the
+-- player cards' own version giving its text.
+esquireOfRohan :: CardDef
+esquireOfRohan = esquire "145014" "Esquire of Rohan"
+
+-- | As 'esquireOfRohan'.
+esquireOfGondor :: CardDef
+esquireOfGondor = esquire "145015" "Esquire of Gondor"
+
+esquire :: CardCode -> Name -> CardDef
+esquire code name =
+  unique
+    (attachment code name Neutral (StaticCost 0))
+      { cdCardTraits = setFromList [Title, Boon]
+      , cdKeywords = setFromList [Permanent]
       }
