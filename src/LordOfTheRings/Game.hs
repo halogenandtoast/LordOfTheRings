@@ -2016,7 +2016,7 @@ runGameMessage msg g = case msg of
     pushEnd step
     pure $ g' & effectsL %~ filter ((`notElem` [UntilEndOfPhase, UntilEndOfPhaseOf phase]) . effectDuration)
   PlayAlly pid card -> do
-    thisAlly <- newAlly pid card
+    thisAlly <- entering =<< newAlly pid card
     limited' <- elem OneAllyPerRound <$> getModifiers GameTarget
     pushWhen limited'
       $ CreateEffect
@@ -2029,7 +2029,7 @@ runGameMessage msg g = case msg of
       . alliesL
       %~ insertEntity (overAttrs (\a -> a {allyPlacement = InPlayArea pid}) thisAlly)
   PutAllyIntoPlayUnder pid card -> do
-    thisAlly <- newAlly (fromMaybe pid card.owner) card
+    thisAlly <- entering =<< newAlly (fromMaybe pid card.owner) card
     runQueueT $ raiseThreatFromDoomed $ printedDoomed card
     push $ enteredPlayThisRound thisAlly
     push $ allyEntersPlay pid thisAlly
@@ -2706,7 +2706,7 @@ runGameMessage msg g = case msg of
       AllyType | Just owner <- find (any ((== card.id) . (.id)) . (.setAsideCards)) (toList g.players) -> do
         lead <- getLead
         aid <- getRandom
-        let thisAlly = overAttrs (\a -> a {allyPlacement = InPlayArea lead}) $ lookupAlly (toCardCode card) card.id aid owner.id
+        thisAlly <- entering $ overAttrs (\a -> a {allyPlacement = InPlayArea lead}) $ lookupAlly (toCardCode card) card.id aid owner.id
         pushAll . (enteredPlayThisRound thisAlly :) . (<> [WhileInPlay (toTarget thisAlly) [ResolveSurge (toTarget thisAlly) card]])
           =<< revealing (toTarget thisAlly)
         pure $ g & entitiesL . alliesL %~ insertEntity thisAlly & playersL . ix owner.id . setAsideCardsL %~ filter ((/= card.id) . (.id))
@@ -2801,7 +2801,7 @@ runGameMessage msg g = case msg of
   -- as a Ship objective of the fleet comes into play (Dream-chaser rules)
   PutObjectiveAllyIntoPlayUnder pid card -> do
     aid <- getRandom
-    let thisAlly = overAttrs (\a -> a {allyPlacement = InPlayArea pid}) $ lookupAlly (toCardCode card) card.id aid pid
+    thisAlly <- entering $ overAttrs (\a -> a {allyPlacement = InPlayArea pid}) $ lookupAlly (toCardCode card) card.id aid pid
     push $ enteredPlayThisRound thisAlly
     push $ CheckWindows [mkAfter $ EntersPlay $ toTarget thisAlly]
     pure $ g & entitiesL . alliesL %~ insertEntity thisAlly
@@ -2896,10 +2896,11 @@ runGameMessage msg g = case msg of
         )
     pure $ g & entitiesL . locationsL %~ \ls -> foldr (\(lid, p) -> Map.adjust (overAttrs (\a -> a {locationPlacement = p})) lid) ls placements
   PutObjectiveAllyIntoPlay oid pid | Just o <- Map.lookup oid g.entities.objectives -> do
-    let thisAlly =
-          -- the damage it took in the staging area stays on it, as Celador's
-          overAttrs (\a -> a {allyPlacement = InPlayArea pid, allyTokens = addTokens Damage (countTokens Damage $ objectiveTokens $ toAttrs o) mempty})
-            $ lookupAlly (toCardCode o) (toCard o).id (AllyId $ unObjectiveId oid) pid
+    thisAlly <-
+      entering
+        -- the damage it took in the staging area stays on it, as Celador's
+        $ overAttrs (\a -> a {allyPlacement = InPlayArea pid, allyTokens = addTokens Damage (countTokens Damage $ objectiveTokens $ toAttrs o) mempty})
+        $ lookupAlly (toCardCode o) (toCard o).id (AllyId $ unObjectiveId oid) pid
     push $ enteredPlayThisRound thisAlly
     push $ CheckWindows [mkAfter $ EntersPlay $ toTarget thisAlly]
     pure $ g & entitiesL . objectivesL %~ Map.delete oid & entitiesL . alliesL %~ insertEntity thisAlly
@@ -3257,6 +3258,13 @@ checkRestricted g host = do
         []
         pid
         [targetLabel x [Discard x, CheckRestricted host] | (x, _) <- restrictedOn]
+
+-- | The ally as it enters play: exhausted while allies enter play so, as Flight to Gondor
+-- has them.
+entering :: Ally -> GameT Ally
+entering a = do
+  exhausted <- elem AlliesEnterPlayExhausted <$> getModifiers GameTarget
+  pure $ if exhausted then overAttrs (\x -> x {allyExhausted = True}) a else a
 
 -- | Mark the ally as having entered play this round.
 enteredPlayThisRound :: Ally -> Message

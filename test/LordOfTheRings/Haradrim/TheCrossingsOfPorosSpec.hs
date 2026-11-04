@@ -124,6 +124,12 @@ spec = describe "The Crossings of Poros" do
     _ <- putAllyIntoPlay pid Allies.guardOfTheCitadel
     fmap allyExhausted <$> allyOf Allies.guardOfTheCitadel `shouldReturn` Just True
 
+  it "has an ally enter play on stage 1B exhausted already, before its entering windows open" . porosTest $ \pid -> do
+    flipFirstQuest pid
+    card <- genPlayerCard Allies.guardOfTheCitadel (Just pid)
+    runOnly $ PutAllyIntoPlayUnder pid card
+    fmap allyExhausted <$> allyOf Allies.guardOfTheCitadel `shouldReturn` Just True
+
   it "advances to a random stage 2 at the end of the planning phase, which shuffles in its set and removes the other" . porosTest $ \pid -> do
     flipFirstQuest pid
     run $ CheckWindows [mkWhen $ PhaseEnds PlanningPhase]
