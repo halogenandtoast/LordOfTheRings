@@ -3520,5 +3520,25 @@
     "chooseBoon": "A Shadow of the Past: choose a boon to add to the Campaign Pool",
     "gildorInglorion": "Gildor Inglorion",
     "mrUnderhill": "Mr. Underhill, recorded on the Ring-bearer"
+  },
+  "fellRider": {
+    "choose": "Fell Rider: reduce the Ring-bearer's life by 1, or engage Fell Rider",
+    "reduceLife": "Reduce the Ring-bearer's life by 1",
+    "engage": "Engage Fell Rider"
+  },
+  "strickenDumb": {
+    "choose": "Stricken Dumb: choose one",
+    "burden": "Shuffle the top card of the Burden deck into the encounter deck and reveal an additional encounter card",
+    "threat": "Raise each player's threat by 3 and end the quest phase without resolving the quest"
+  },
+  "weightOfTheRing": {
+    "choose": "Weight of the Ring: choose one",
+    "exhaust": "Exhaust The One Ring",
+    "reveal": "Reveal an additional encounter card this phase"
+  },
+  "fearOfDiscovery": {
+    "choose": "Fear of Discovery: choose one",
+    "exhaust": "Exhaust the Ring-bearer",
+    "reveal": "Reveal an additional encounter card"
   }
 }

@@ -576,6 +576,11 @@ import LordOfTheRings.Location.Cards.GreenHillCountry
 import LordOfTheRings.Location.Cards.StockRoad
 import LordOfTheRings.Location.Cards.TheMarish
 import LordOfTheRings.Location.Cards.PathlessCountryHunted
+import LordOfTheRings.Location.Cards.TheLastBridge
+import LordOfTheRings.Location.Cards.FordOfBruinen
+import LordOfTheRings.Location.Cards.TheTrollsCamp
+import LordOfTheRings.Location.Cards.Ettenmoors
+import LordOfTheRings.Location.Cards.TheOldRoad
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -1198,5 +1203,10 @@ allLocations =
         , SomeLocationCard stockRoad
         , SomeLocationCard theMarish
         , SomeLocationCard pathlessCountryHunted
+        , SomeLocationCard theLastBridge
+        , SomeLocationCard fordOfBruinen
+        , SomeLocationCard theTrollsCamp
+        , SomeLocationCard ettenmoors
+        , SomeLocationCard theOldRoad
         ]
     ]

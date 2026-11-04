@@ -483,6 +483,15 @@ allTreacheryCards =
       , rodeLikeAGale
       , lureOfTheRing
       , theRingDrawsThem
+      , strickenDumb
+      , theEnemyIsUponUs
+      , painAssailedHim
+      , theNineAreAbroad
+      , weightOfTheRing
+      , fearOfDiscovery
+      , eatenAlive
+      , panickedFlightToTheFord
+      , overcomeByTerror
       ]
 
 deepDeepDark :: CardDef
@@ -2974,6 +2983,10 @@ belchingFire = treachery "132050" "Belching Fire" TheLonelyMountain 4
 dragonSpell :: CardDef
 dragonSpell = (treachery "132051" "Dragon-Spell" TheLonelyMountain 2) {cdCardTraits = setFromList [Enchantment]}
 
+-- * The Passing of the Grey Company
+
+-- * The Ring Goes South
+
 -- * A Shadow of the Past
 
 crawlingTowardsHim :: CardDef
@@ -3041,3 +3054,49 @@ rodeLikeAGale = (treachery "141075" "Rode Like a Gale" TheBlackRiders 2) {cdShad
 
 lureOfTheRing :: CardDef
 lureOfTheRing = (treachery "141076" "Lure of the Ring" TheRing 3) {cdKeywords = setFromList [Surge], cdShadowEffect = True}
+
+-- * Flight to the Ford
+
+strickenDumb :: CardDef
+strickenDumb = (treachery "141064" "Stricken Dumb" FlightToTheFord 3) {cdKeywords = setFromList [Peril]}
+
+theEnemyIsUponUs :: CardDef
+theEnemyIsUponUs = (treachery "141065" "The Enemy is Upon Us!" FlightToTheFord 2) {cdShadowEffect = True}
+
+painAssailedHim :: CardDef
+painAssailedHim = (treachery "141066" "Pain Assailed Him" FlightToTheFord 3) {cdShadowEffect = True}
+
+theNineAreAbroad :: CardDef
+theNineAreAbroad =
+  (treachery "141067" "The Nine are Abroad" FlightToTheFord 2)
+    { cdKeywords = setFromList [Peril]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
+    }
+
+-- | A burden of the Flight to the Ford burden set, shuffled into the Burden deck by stage
+-- 1A; it joins the encounter deck from there, or once earned.
+flightToTheFordBurden :: CardCode -> Name -> CardDef
+flightToTheFordBurden code name =
+  (treachery code name FlightToTheFord 1)
+    { cdEncounterSet = Nothing
+    , cdEncounterSetQuantity = Nothing
+    , cdSetIcon = Just FlightToTheFord
+    , cdCardTraits = setFromList [Burden]
+    , cdKeywords = setFromList [Surge]
+    }
+
+weightOfTheRing :: CardDef
+weightOfTheRing = flightToTheFordBurden "141080" "Weight of the Ring"
+
+fearOfDiscovery :: CardDef
+fearOfDiscovery = (flightToTheFordBurden "141081" "Fear of Discovery") {cdShadowEffect = True}
+
+eatenAlive :: CardDef
+eatenAlive = (flightToTheFordBurden "141082" "Eaten Alive!") {cdShadowEffect = True}
+
+panickedFlightToTheFord :: CardDef
+panickedFlightToTheFord = (flightToTheFordBurden "141083" "Panicked") {cdShadowEffect = True}
+
+overcomeByTerror :: CardDef
+overcomeByTerror = (flightToTheFordBurden "141084" "Overcome by Terror") {cdShadowEffect = True}

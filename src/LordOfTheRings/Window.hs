@@ -57,6 +57,9 @@ data WindowType
   | -- | the player turned 1 or more hidden cards faceup, at once (The Blood of Gondor)
     TurnedHiddenCardsFaceup PlayerId
   | EnemyAttacking EnemyId PlayerId
+  | -- | the enemy is declared as an attacker against the player, its attack begun, as
+    -- Flight to the Ford's campaign card answers
+    EnemyDeclaredAsAttacker EnemyId PlayerId
   | PhaseEnds Phase
   | RoundEnds
   | -- | the round begins, before its resource phase, as Well Preserved reads

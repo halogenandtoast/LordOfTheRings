@@ -126,6 +126,8 @@ export interface ScenarioView {
   evilCreaturesDeck: number | null
   powerOfMordorDeck: number
   sackDeck: number
+  /** The Burden deck's size (Flight to the Ford). */
+  burdenDeck: number
   evilCreaturesDiscard: CardView[]
   /** The Stormcaller's quest stage, with its progress, and the cards in its area (Flight of the Stormcaller). */
   /** In campaign mode, the campaign card next to the quest deck. */
@@ -134,6 +136,8 @@ export interface ScenarioView {
   stormcallerArea: CardView[]
   /** The heat tracker's temperature (Desert Crossing). */
   temperature?: number | null
+  /** The Ring-bearer's life on the life tracker (Flight to the Ford). */
+  ringBearersLife?: number | null
   /** The Orcs' quest stage, with its progress, and the cards in their area (Race Across Harad). */
   orcsStage: CardView | null
   orcsArea: CardView[]

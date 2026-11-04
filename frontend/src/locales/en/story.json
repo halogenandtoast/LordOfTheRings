@@ -4155,5 +4155,23 @@
         "text": "Each player, starting with the first player, reveals and resolves his own encounter card in the staging step. “You” on an encounter card is the player who revealed it, and a surge card's extra reveal is his."
       }
     ]
+  },
+  "flight-to-the-ford": {
+    "intro": [
+      "Wounded by a Morgul blade on Weathertop, Frodo grows weaker by the day. Strider leads the hobbits through the wild towards Rivendell with the Nazgûl close behind, and only the Ford of Bruinen lies between them and safety."
+    ],
+    "setup": [
+      "The encounter deck is built from the Flight to the Ford, Hunted, The Black Riders and The Nazgûl encounter sets. The first player takes control of Frodo Baggins, the Ring-bearer, with The One Ring attached. Stage 1A builds the Burden deck from the Flight to the Ford burden set, attaches An Evil Wound to the Ring-bearer and sets his life at 15."
+    ],
+    "rules": [
+      {
+        "title": "The Burden Deck",
+        "text": "The Burden deck is made of the burden cards with the Flight to the Ford burden set icon, shuffled and set next to the quest deck. A burden card discarded from play goes to the encounter discard pile. Once the players defeat the scenario, the burden cards in the encounter deck and its discard pile are added to their Campaign Pool."
+      },
+      {
+        "title": "The Ring-bearer's Life",
+        "text": "A threat tracker by the quest deck tracks the Ring-bearer's life, starting at 15. Effects that reduce his life lower it; cards that remove damage cannot raise it. If the Ring-bearer's life reaches 0, the players lose the game."
+      }
+    ]
   }
 }

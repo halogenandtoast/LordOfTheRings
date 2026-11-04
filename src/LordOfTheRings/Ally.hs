@@ -298,6 +298,7 @@ import LordOfTheRings.Ally.Cards.RosieCotton
 import LordOfTheRings.Ally.Cards.ElfhelmTactics
 import LordOfTheRings.Ally.Cards.ElladanLore
 import LordOfTheRings.Ally.Cards.ElrohirSpirit
+import LordOfTheRings.Ally.Cards.GildorInglorionObjective
 import LordOfTheRings.Ally.Cards.BillThePony
 import LordOfTheRings.Ally.Cards.BarlimanButterbur
 import LordOfTheRings.Ally.Cards.FarmerMaggot
@@ -314,7 +315,6 @@ import LordOfTheRings.Ally.Cards.BofurTactics
 import LordOfTheRings.Ally.Cards.GandalfHobbit
 import LordOfTheRings.Ally.Cards.Bifur
 import LordOfTheRings.Ally.Cards.Dwalin
-import LordOfTheRings.Ally.Cards.GildorInglorionObjective
 import LordOfTheRings.Ally.Runner ()
 import LordOfTheRings.Ally.Types as X
 import LordOfTheRings.Id
@@ -645,6 +645,7 @@ allAllies =
         , SomeAllyCard elfhelmTactics
         , SomeAllyCard elladanLore
         , SomeAllyCard elrohirSpirit
+        , SomeAllyCard gildorInglorionObjective
         , SomeAllyCard billThePony
         , SomeAllyCard barlimanButterbur
         , SomeAllyCard farmerMaggot
@@ -661,6 +662,5 @@ allAllies =
         , SomeAllyCard gandalfHobbit
         , SomeAllyCard bifur
         , SomeAllyCard dwalin
-        , SomeAllyCard gildorInglorionObjective
         ]
     ]

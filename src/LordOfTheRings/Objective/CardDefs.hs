@@ -174,6 +174,7 @@ allObjectiveCards =
       , aBarePatch
       , gildorInglorionObjective
       , gandalfsDelay
+      , anEvilWound
       ]
 
 durinsAxe :: CardDef
@@ -1220,3 +1221,11 @@ gandalfsDelay =
     , cdCardTraits = setFromList [Burden]
     }
 
+
+-- * A Shadow of the Past
+
+-- * Flight to the Ford
+
+-- | Attach to the Ring-bearer: stage 1A's setup attaches it.
+anEvilWound :: CardDef
+anEvilWound = (objective "141057" "An Evil Wound" FlightToTheFord 1) {cdCardTraits = setFromList [Morgul]}

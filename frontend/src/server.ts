@@ -127,6 +127,8 @@ export interface ServerGame {
     evilCreaturesDeckSize?: number
     powerOfMordorDeckSize?: number
     sackDeckSize?: number
+    /** The Burden deck's size (Flight to the Ford). */
+    burdenDeckSize?: number
     evilCreaturesDiscard?: Card[]
     /** The player cards each encounter card, by its card id, guards: a Guarded (X) attachment, or Hobgoblin's card. */
     guardedPlayerCards?: Record<string, [string, Card][]>
@@ -180,6 +182,8 @@ export interface ServerGame {
   stormcallerProgress?: number | null
   /** The heat tracker's temperature (Desert Crossing). */
   temperature?: number | null
+  /** The Ring-bearer's life on the life tracker (Flight to the Ford). */
+  ringBearersLife?: number | null
   /** The side quest deck's size (Fire in the Night). */
   sideQuestDeck?: number
   /** The damage each set-aside card keeps, by its card id, as Cold-Drake set aside by The Withered Heath's stage 3A. */

@@ -472,6 +472,15 @@ import LordOfTheRings.Treachery.Cards.BlackSteed
 import LordOfTheRings.Treachery.Cards.RodeLikeAGale
 import LordOfTheRings.Treachery.Cards.LureOfTheRing
 import LordOfTheRings.Treachery.Cards.TheRingDrawsThem
+import LordOfTheRings.Treachery.Cards.StrickenDumb
+import LordOfTheRings.Treachery.Cards.TheEnemyIsUponUs
+import LordOfTheRings.Treachery.Cards.PainAssailedHim
+import LordOfTheRings.Treachery.Cards.TheNineAreAbroad
+import LordOfTheRings.Treachery.Cards.WeightOfTheRing
+import LordOfTheRings.Treachery.Cards.FearOfDiscovery
+import LordOfTheRings.Treachery.Cards.EatenAlive
+import LordOfTheRings.Treachery.Cards.PanickedFlightToTheFord
+import LordOfTheRings.Treachery.Cards.OvercomeByTerror
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -971,5 +980,14 @@ allTreacherys =
         , SomeTreacheryCard rodeLikeAGale
         , SomeTreacheryCard lureOfTheRing
         , SomeTreacheryCard theRingDrawsThem
+        , SomeTreacheryCard strickenDumb
+        , SomeTreacheryCard theEnemyIsUponUs
+        , SomeTreacheryCard painAssailedHim
+        , SomeTreacheryCard theNineAreAbroad
+        , SomeTreacheryCard weightOfTheRing
+        , SomeTreacheryCard fearOfDiscovery
+        , SomeTreacheryCard eatenAlive
+        , SomeTreacheryCard panickedFlightToTheFord
+        , SomeTreacheryCard overcomeByTerror
         ]
     ]

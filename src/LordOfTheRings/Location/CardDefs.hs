@@ -594,6 +594,11 @@ allLocationCards =
       , stockRoad
       , theMarish
       , pathlessCountryHunted
+      , theLastBridge
+      , fordOfBruinen
+      , theTrollsCamp
+      , ettenmoors
+      , theOldRoad
       ]
 
 drownedTreasury :: CardDef
@@ -4302,3 +4307,26 @@ theMarish =
 
 pathlessCountryHunted :: CardDef
 pathlessCountryHunted = (location "141072" "Pathless Country" Hunted 3 2 3) {cdCardTraits = setFromList [Forest], cdShadowEffect = True}
+-- * A Shadow of the Past
+
+-- * Hunted
+
+-- * Flight to the Ford
+
+-- | X threat, the number of players: its card gives it. Immune to player card effects.
+theLastBridge :: CardDef
+theLastBridge = unique (location "141058" "The Last Bridge" FlightToTheFord 1 0 4) {cdCardTraits = setFromList [Bridge, River], cdVictoryPoints = Just 3}
+
+-- | Set aside by stage 1A, added to the staging area by stage 2B. Immune to player card
+-- effects.
+fordOfBruinen :: CardDef
+fordOfBruinen = unique (location "141059" "Ford of Bruinen" FlightToTheFord 1 2 6) {cdCardTraits = setFromList [River], cdVictoryPoints = Just 5}
+
+theTrollsCamp :: CardDef
+theTrollsCamp = unique (location "141060" "The Troll's Camp" FlightToTheFord 1 1 2) {cdCardTraits = setFromList [Forest], cdVictoryPoints = Just 1}
+
+ettenmoors :: CardDef
+ettenmoors = (location "141061" "Ettenmoors" FlightToTheFord 3 2 3) {cdCardTraits = setFromList [Forest]}
+
+theOldRoad :: CardDef
+theOldRoad = (location "141062" "The Old Road" FlightToTheFord 3 3 4) {cdCardTraits = setFromList [Road]}

@@ -1522,7 +1522,7 @@ runGameMessage msg g = case msg of
     pushAll
       =<< inLogBlock
         (EnemyAttackBlock pid eid)
-        (CheckWindows [mkWhen $ EnemyAttacking eid pid] : windows <> [DeclareDefenders pid eid []])
+        (CheckWindows [mkWhen $ EnemyAttacking eid pid] : CheckWindows [mkAfter $ EnemyDeclaredAsAttacker eid pid] : windows <> [DeclareDefenders pid eid []])
     push $ CreateEffect $ Effect GameSource (EnemyTarget eid) [AttackedThisPhase] UntilEndOfPhase
     -- what its last attack destroyed or damaged is forgotten as it makes a new one
     pure

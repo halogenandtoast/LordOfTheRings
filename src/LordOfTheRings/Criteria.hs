@@ -92,6 +92,10 @@ data Criterion
     HeadingMatches HeadingMatcher
   | -- | the game is dealt in nightmare mode, as a setup card changes a stage's ability
     InNightmareMode
+  | -- | the game is played in campaign mode, as The Old Road's action may only be used
+    InCampaignMode
+  | -- | the Burden deck holds a card, for a cost that takes its top card
+    BurdenDeckNotEmpty
   | -- | in campaign mode, the log holds a card under the key, as a secret yet unflipped
     CampaignRecorded CampaignLogKey
   | -- | the characters the player controls have at least this many different traits

@@ -33,6 +33,7 @@ import LordOfTheRings.Modifier (
  )
 import LordOfTheRings.Phase (Phase (QuestPhase))
 import LordOfTheRings.Placement
+import LordOfTheRings.Scenario.Types (scenarioBurdenDeck)
 import LordOfTheRings.Prelude
 import LordOfTheRings.Source
 import LordOfTheRings.Target
@@ -386,6 +387,8 @@ passesCriteria = \case
   EnemiesAtLeast n m -> (>= n) . length <$> select m
   HeadingMatches m -> headingMatches m
   InNightmareMode -> inNightmareMode
+  InCampaignMode -> isJust <$> getCampaignLog
+  BurdenDeckNotEmpty -> getsGame (notNull . scenarioBurdenDeck . toAttrs . gameScenario)
   CampaignRecorded key -> maybe False (any (/= "") . recorded key) <$> getCampaignLog
   MainQuestWithoutKeywords -> do
     mains <- getMainQuests

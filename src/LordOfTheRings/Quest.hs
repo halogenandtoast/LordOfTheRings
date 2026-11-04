@@ -390,6 +390,8 @@ import LordOfTheRings.Quest.Cards.ThievesFireMurder (thievesFireMurder)
 import LordOfTheRings.Quest.Cards.ThreeIsCompany
 import LordOfTheRings.Quest.Cards.AShortcutToMushrooms
 import LordOfTheRings.Quest.Cards.EscapeToBuckland
+import LordOfTheRings.Quest.Cards.PursuedByTheEnemy
+import LordOfTheRings.Quest.Cards.RaceToRivendell
 import LordOfTheRings.Quest.Runner ()
 import LordOfTheRings.Quest.Types as X
 import LordOfTheRings.Id
@@ -812,5 +814,7 @@ allQuests =
         , SomeQuestCard threeIsCompany
         , SomeQuestCard aShortcutToMushrooms
         , SomeQuestCard escapeToBuckland
+        , SomeQuestCard pursuedByTheEnemy
+        , SomeQuestCard raceToRivendell
         ]
     ]

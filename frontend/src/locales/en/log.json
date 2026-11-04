@@ -239,5 +239,12 @@
   "burgleAttempt": "{player} makes a burgle attempt",
   "burgleReveals": "The burgle attempt reveals {card}",
   "burgleSucceeds": "The burgle attempt succeeds",
-  "burgleFails": "The burgle attempt fails"
+  "burgleFails": "The burgle attempt fails",
+  "burdenDeckCreated": "The Burden deck is built",
+  "burdenDeckReveals": "The top card of the Burden deck is revealed",
+  "burdenShuffledIntoEncounterDeck": "The top card of the Burden deck is shuffled into the encounter deck",
+  "burdenPlacedOnEncounterDeck": "The top card of the Burden deck is placed on the encounter deck",
+  "ringBearersLifeSet": "The Ring-bearer's life is set at {life}",
+  "ringBearersLifeReduced": "The Ring-bearer's life is reduced by {count} to {life}",
+  "burdenDeck": "Burden deck: {count} cards"
 }
