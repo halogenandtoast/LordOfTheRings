@@ -2445,6 +2445,11 @@ runGameMessage msg g = case msg of
       & entitiesL
       . alliesL
       %~ insertEntity (overAttrs (\a -> a {allyPlacement = InPlayArea pid}) thisAlly)
+  -- an ally in the staging area is under no player's control (Retreat from Osgiliath)
+  PutAllyIntoStagingArea aid card -> do
+    let thisAlly = overAttrs (\a -> a {allyPlacement = StagingArea}) $ createAlly card aid (fromMaybe g.firstPlayer card.owner)
+    push $ CheckWindows [mkAfter $ EntersPlay $ toTarget thisAlly]
+    pure $ g & entitiesL . alliesL %~ insertEntity thisAlly
   PutAllyIntoPlayUnder pid card -> do
     thisAlly <- entering =<< newAlly (fromMaybe pid card.owner) card
     runQueueT $ raiseThreatFromDoomed $ printedDoomed card

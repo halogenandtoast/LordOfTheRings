@@ -102,6 +102,7 @@
   "takenPrisoner": "{hero} is taken prisoner",
   "rescued": "{hero} is rescued",
   "heroToStagingArea": "{hero} is moved to the staging area",
+  "allyToStagingArea": "{card} enters play in the staging area, under no player's control",
   "takesControlOfHero": "{player} takes control of {hero}",
   "claims": "{target} claims {card}",
   "enemyAttacks": "{enemy} attacks {player} ({attack})",
