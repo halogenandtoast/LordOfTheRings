@@ -520,6 +520,9 @@ import LordOfTheRings.Enemy.Cards.Shagrat
 import LordOfTheRings.Enemy.Cards.Gorbag
 import LordOfTheRings.Enemy.Cards.WoundedUruk
 import LordOfTheRings.Enemy.Cards.TheTwoWatchersEnemy
+import LordOfTheRings.Enemy.Cards.Shelob
+import LordOfTheRings.Enemy.Cards.MorgulOrc
+import LordOfTheRings.Enemy.Cards.OrcOfCirithUngol
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -1069,5 +1072,8 @@ allEnemys =
         , SomeEnemyCard orcOfMordor
         , SomeEnemyCard snagaArcher
         , SomeEnemyCard urukSoldierOrcsOfMordor
+        , SomeEnemyCard shelob
+        , SomeEnemyCard morgulOrc
+        , SomeEnemyCard orcOfCirithUngol
         ]
     ]

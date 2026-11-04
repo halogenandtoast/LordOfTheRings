@@ -439,6 +439,11 @@ import LordOfTheRings.Treachery.Cards.DrawnToTheRing
 import LordOfTheRings.Treachery.Cards.DeepShadows
 import LordOfTheRings.Treachery.Cards.EvilVigilance
 import LordOfTheRings.Treachery.Cards.OrcishHowls
+import LordOfTheRings.Treachery.Cards.ExhalationOfDecay
+import LordOfTheRings.Treachery.Cards.ManyOpenings
+import LordOfTheRings.Treachery.Cards.ShelobsPoison
+import LordOfTheRings.Treachery.Cards.LurkingMalice
+import LordOfTheRings.Treachery.Cards.RageAndHunger
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -905,5 +910,10 @@ allTreacherys =
         , SomeTreacheryCard drawnToTheRing
         , SomeTreacheryCard deepShadows
         , SomeTreacheryCard evilVigilance
+        , SomeTreacheryCard exhalationOfDecay
+        , SomeTreacheryCard manyOpenings
+        , SomeTreacheryCard shelobsPoison
+        , SomeTreacheryCard lurkingMalice
+        , SomeTreacheryCard rageAndHunger
         ]
     ]

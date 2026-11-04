@@ -547,6 +547,14 @@ import LordOfTheRings.Location.Cards.BloodiedCourtyard
 import LordOfTheRings.Location.Cards.WindingStairs
 import LordOfTheRings.Location.Cards.TorchLitHall
 import LordOfTheRings.Location.Cards.TheTwoWatchers
+import LordOfTheRings.Location.Cards.MorgulValeShelobsLair
+import LordOfTheRings.Location.Cards.SmeagolsSecretWay
+import LordOfTheRings.Location.Cards.CleftOfCirithUngol
+import LordOfTheRings.Location.Cards.TheSpidersLair
+import LordOfTheRings.Location.Cards.TheUnderWay
+import LordOfTheRings.Location.Cards.DeepDarkPassage
+import LordOfTheRings.Location.Cards.DenOfNight
+import LordOfTheRings.Location.Cards.BlockedTunnel
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -1140,5 +1148,13 @@ allLocations =
         , SomeLocationCard windingStairs
         , SomeLocationCard torchLitHall
         , SomeLocationCard theTwoWatchers
+        , SomeLocationCard morgulValeShelobsLair
+        , SomeLocationCard smeagolsSecretWay
+        , SomeLocationCard cleftOfCirithUngol
+        , SomeLocationCard theSpidersLair
+        , SomeLocationCard theUnderWay
+        , SomeLocationCard deepDarkPassage
+        , SomeLocationCard denOfNight
+        , SomeLocationCard blockedTunnel
         ]
     ]
