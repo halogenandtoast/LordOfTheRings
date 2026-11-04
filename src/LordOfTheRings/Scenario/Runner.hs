@@ -9,7 +9,7 @@ import LordOfTheRings.Classes.HasQueue
 import LordOfTheRings.Classes.RunMessage
 import LordOfTheRings.EncounterSet (EncounterSet (ThePowerOfMordor))
 import LordOfTheRings.I18n
-import LordOfTheRings.Keyword (Keyword (Encounter, Guarded, GuardedBy))
+import LordOfTheRings.Keyword (Keyword (Encounter, Guarded, GuardedBy, LastPlayerGainsControl))
 import LordOfTheRings.Matcher
 import LordOfTheRings.Message
 import LordOfTheRings.Message.Lifted (chooseOneM, placeResources, questionLabeled, removeFromDeck, showing, shuffleIntoDeck, targets)
@@ -49,6 +49,12 @@ gatherEncounterSet attrs encounterSet =
 keptBurden :: ScenarioAttrs -> CardDef -> Bool
 keptBurden attrs def = maybe True (`notElem` removedBurdenSets attrs.scenarioId) (cdSetIcon def)
 
+-- | An objective of the Campaign Pool comes into play as the scenario is set up rather than
+-- being shuffled into a deck: each objective, and a saga objective-ally boon (with a set
+-- icon), as Army of the Dead.
+entersPlayAtSetup :: CardDef -> Bool
+entersPlayAtSetup def = cdCardType def == ObjectiveType || (cdCardType def == ObjectiveAllyType && isJust (cdSetIcon def))
+
 -- | The scenario's encounter deck from its encounter sets. In nightmare mode the
 -- nightmare deck's removals come out and its nightmare set goes in.
 gatherEncounterSets :: MonadRandom m => ScenarioAttrs -> [EncounterSet] -> m [EncounterCard]
@@ -71,7 +77,7 @@ instance RunMessage ScenarioAttrs where
     -- in campaign mode the encounter cards of the Campaign Pool are shuffled in with it
     DoStep 2 Setup -> do
       -- (an objective, as Arnor Ravaged, comes into play as its own Setup text says)
-      earned <- traverse genEncounterCard [def | p <- foldMap (.pool) attrs.campaign, isNothing p.attachedTo, isNothing p.seat, let def = toCardDef p.code, not (isPlayerCardDef def), cdCardType def /= ObjectiveType, keptBurden attrs def]
+      earned <- traverse genEncounterCard [def | p <- foldMap (.pool) attrs.campaign, isNothing p.attachedTo, isNothing p.seat, let def = toCardDef p.code, not (isPlayerCardDef def), not (entersPlayAtSetup def), keptBurden attrs def]
       encounterDeck <- shuffleM (earned <> attrs.encounterDeck)
       pure $ attrs & encounterDeckL .~ encounterDeck
     -- once the starting hands are drawn, an encounter card of the pool with a seat goes
@@ -79,7 +85,7 @@ instance RunMessage ScenarioAttrs where
     -- Nightmare shuffled in
     DoStep 6 Setup -> do
       order <- getsGame gamePlayerOrder
-      for_ [(pid, def) | p <- foldMap (.pool) attrs.campaign, isNothing p.attachedTo, Just pid <- [atMay order =<< p.seat], let def = toCardDef p.code, not (isPlayerCardDef def), cdCardType def /= ObjectiveType, keptBurden attrs def] \(pid, def) ->
+      for_ [(pid, def) | p <- foldMap (.pool) attrs.campaign, isNothing p.attachedTo, Just pid <- [atMay order =<< p.seat], let def = toCardDef p.code, not (isPlayerCardDef def), not (entersPlayAtSetup def), keptBurden attrs def] \(pid, def) ->
         shuffleIntoDeck pid =<< genEncounterCard def
       pure attrs
     DoStep 4 Setup -> do
@@ -98,13 +104,19 @@ instance RunMessage ScenarioAttrs where
               push $ PutObjectiveIntoPlayAttached card (toTarget hero.id)
       -- a saga burden objective of the pool comes into play as its Setup reads: to the
       -- staging area, as Gandalf's Delay, or onto the threat dial of the player the log
-      -- records it for, as Overcome by Fear
+      -- records it for, as Overcome by Fear; a saga objective-ally boon under the control
+      -- its text gives, as Army of the Dead's "Setup: The first player takes control"
       order <- getsGame gamePlayerOrder
-      for_ [p | p <- foldMap (.pool) attrs.campaign, isNothing p.attachedTo, let def = toCardDef p.code, isJust (cdSetIcon def), cdCardType def == ObjectiveType, keptBurden attrs def] \p -> do
+      for_ [p | p <- foldMap (.pool) attrs.campaign, isNothing p.attachedTo, let def = toCardDef p.code, isJust (cdSetIcon def), entersPlayAtSetup def, keptBurden attrs def] \p -> do
         card <- genEncounterCard (toCardDef p.code)
-        case atMay order =<< p.seat of
-          Just pid -> push $ PutObjectiveIntoPlayAttached card (PlayerTarget pid)
-          Nothing -> push $ AddToStaging card
+        let def = toCardDef p.code
+        if cdCardType def == ObjectiveAllyType
+          then do
+            controller <- if LastPlayerGainsControl `member` cdKeywords def then getLastPlayer else getLead
+            push $ PutObjectiveAllyIntoPlayUnder controller card
+          else case atMay order =<< p.seat of
+            Just pid -> push $ PutObjectiveIntoPlayAttached card (PlayerTarget pid)
+            Nothing -> push $ AddToStaging card
       -- a card of a player's deck reading "Setup: Attach to a hero in play" is attached to
       -- the hero its owner chooses
       for_ order \pid -> do
