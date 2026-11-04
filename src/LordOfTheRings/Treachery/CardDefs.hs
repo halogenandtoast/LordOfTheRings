@@ -361,6 +361,8 @@ allTreacheryCards =
       , theSavageSouth
       , terribleFever
       , bitingInsects
+      , dangerCloseBehind
+      , mountainsOfShadow
       ]
 
 deepDeepDark :: CardDef
@@ -2310,3 +2312,17 @@ terribleFever =
 
 bitingInsects :: CardDef
 bitingInsects = (treachery "17024" "Biting Insects" TheMumakil 2) {cdShadowEffect = True, cdEasyModeQuantity = Just 1}
+
+-- * The Crossings of Poros: its two encounter sets, The Crossings of Poros and Mountains of
+-- Shadow. Easy mode copy counts from Hall of Beorn's scenario page.
+
+dangerCloseBehind :: CardDef
+dangerCloseBehind =
+  (treachery "17152" "Danger Close Behind" TheCrossingsOfPoros 2)
+    { cdKeywords = setFromList [Doomed 1]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
+    }
+
+mountainsOfShadow :: CardDef
+mountainsOfShadow = (treachery "17155" "Mountains of Shadow" MountainsOfShadow 2) {cdShadowEffect = True, cdEasyModeQuantity = Just 1}

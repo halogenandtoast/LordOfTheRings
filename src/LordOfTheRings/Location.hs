@@ -430,6 +430,10 @@ import LordOfTheRings.Location.Cards.UrukGuardroom
 import LordOfTheRings.Location.Cards.MinesOfCirithGurat
 import LordOfTheRings.Location.Cards.TortureRoom
 import LordOfTheRings.Location.Cards.MumakTrail
+import LordOfTheRings.Location.Cards.DesolateLand
+import LordOfTheRings.Location.Cards.HarondorWaste
+import LordOfTheRings.Location.Cards.FoothillsOfMordor
+import LordOfTheRings.Location.Cards.ShadowyVale
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -906,5 +910,9 @@ allLocations =
         , SomeLocationCard minesOfCirithGurat
         , SomeLocationCard tortureRoom
         , SomeLocationCard mumakTrail
+        , SomeLocationCard desolateLand
+        , SomeLocationCard harondorWaste
+        , SomeLocationCard foothillsOfMordor
+        , SomeLocationCard shadowyVale
         ]
     ]

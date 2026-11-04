@@ -120,6 +120,7 @@ allObjectiveCards =
       , poisonedSpear
       , pitTrap
       , nooseOfVines
+      , porosGarrison
       ]
 
 durinsAxe :: CardDef
@@ -811,3 +812,15 @@ pitTrap = captureObjective "17013" "Pit Trap"
 
 nooseOfVines :: CardDef
 nooseOfVines = captureObjective "17014" "Noose of Vines"
+
+-- * The Crossings of Poros: its two encounter sets, The Crossings of Poros and Mountains of
+-- Shadow. Easy mode copy counts from Hall of Beorn's scenario page.
+
+porosGarrison :: CardDef
+porosGarrison =
+  ((objective "17145" "Poros Garrison" TheCrossingsOfPoros 1)
+      { cdCardType = ObjectiveAllyType, cdWillpower = Just 3, cdAttack = Just 4, cdDefense = Just 3, cdHitPoints = Just 6 })
+    { cdUnique = True
+    , cdCardTraits = setFromList [Gondor]
+    , cdKeywords = setFromList [FirstPlayerGainsControl]
+    }

@@ -233,6 +233,7 @@ import LordOfTheRings.Ally.Cards.EregionSurvivor
 import LordOfTheRings.Ally.Cards.Leaflock
 import LordOfTheRings.Ally.Cards.HalfastGamgee
 import LordOfTheRings.Ally.Cards.BeorningGuardian
+import LordOfTheRings.Ally.Cards.PorosGarrison
 import LordOfTheRings.Ally.Runner ()
 import LordOfTheRings.Ally.Types as X
 import LordOfTheRings.Id
@@ -498,5 +499,6 @@ allAllies =
         , SomeAllyCard leaflock
         , SomeAllyCard halfastGamgee
         , SomeAllyCard beorningGuardian
+        , SomeAllyCard porosGarrison
         ]
     ]

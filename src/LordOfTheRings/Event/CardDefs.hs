@@ -212,6 +212,7 @@ allEventCards =
       , bulwarkOfTheWest
       , flightToTheSea
       , theDamBursts
+      , windFromTheSea
       ]
 
 everVigilant :: CardDef
@@ -847,3 +848,15 @@ flightToTheSea = event "17140" "Flight to the Sea" Spirit (StaticCost 2)
 
 theDamBursts :: CardDef
 theDamBursts = event "17142" "The Dam Bursts" Lore (StaticCost 2)
+
+-- * The Crossings of Poros
+
+-- | Encounter: an encounter card back and no cost. Set aside out of play at setup, it is
+-- never in a player's deck.
+windFromTheSea :: CardDef
+windFromTheSea =
+  (event "17144" "Wind from the Sea" Neutral (StaticCost 0))
+    { cdCost = Nothing
+    , cdKeywords = setFromList [Encounter]
+    , cdShadowEffect = True
+    }

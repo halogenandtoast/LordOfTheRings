@@ -195,6 +195,7 @@ import LordOfTheRings.Event.Cards.OpenTheArmory
 import LordOfTheRings.Event.Cards.BulwarkOfTheWest
 import LordOfTheRings.Event.Cards.FlightToTheSea
 import LordOfTheRings.Event.Cards.TheDamBursts
+import LordOfTheRings.Event.Cards.WindFromTheSea
 import LordOfTheRings.Event.Types as X
 import LordOfTheRings.Id
 import LordOfTheRings.Prelude
@@ -409,5 +410,6 @@ allEvents =
         , SomeEventCard bulwarkOfTheWest
         , SomeEventCard flightToTheSea
         , SomeEventCard theDamBursts
+        , SomeEventCard windFromTheSea
         ]
     ]

@@ -2700,6 +2700,11 @@ runGameMessage msg g = case msg of
         pushAll . (enteredPlayThisRound thisAlly :) . (<> [WhileInPlay (toTarget thisAlly) [ResolveSurge (toTarget thisAlly) card]])
           =<< revealing (toTarget thisAlly)
         pure $ g & entitiesL . alliesL %~ insertEntity thisAlly & playersL . ix owner.id . setAsideCardsL %~ filter ((/= card.id) . (.id))
+      -- a player event with the Encounter keyword, as Wind from the Sea: its When Revealed,
+      -- which cannot be canceled (MEC61 rules), is resolved by the event, built from its card
+      EventType | any (any ((== card.id) . (.id)) . (.setAsideCards)) (toList g.players) -> do
+        pushAll =<< revealing (CardIdTarget card.id)
+        pure g
       t | t `elem` [ObjectiveType, ObjectiveAllyType] -> do
         pushAll . (<> surge) =<< inLogBlock (RevealBlock card) [PutObjectiveIntoPlay card]
         pure g
@@ -2732,6 +2737,11 @@ runGameMessage msg g = case msg of
         pushAll =<< whenRevealed (toTarget location)
         pure $ g & entitiesL . locationsL %~ insertEntity (overAttrs (\a -> a {locationPlacement = StagingArea}) location)
       _ -> pure $ g & scenarioL %~ overAttrs (encounterDiscardL %~ (card :))
+  -- a set-aside player event with the Encounter keyword, revealed: it leaves play once
+  -- resolved, and so is removed from the game (MEC61 rules)
+  WhenRevealed (CardIdTarget cid) | Just owner <- find (any ((== cid) . (.id)) . (.setAsideCards)) (toList g.players) -> do
+    for_ [c | c <- owner.setAsideCards, c.id == cid] \c -> for_ (lookupEvent (toCardCode c) cid owner.id) $ void . runEach msg
+    pure $ g & playersL . ix owner.id . setAsideCardsL %~ filter ((/= cid) . (.id))
   -- an enemy destroyed as it was revealed resolves no more of its revelation (FAQ)
   AskToResolveWhenRevealed t _ | not (inPlay g t) -> pure g
   AskToResolveWhenRevealed t card -> do
@@ -3387,6 +3397,8 @@ resolveShadowEffect card msg = case cdCardType (toCardDef card) of
   LocationType -> void . runEach msg . createLocation card =<< getRandom
   TreacheryType -> void . runEach msg . createTreachery card =<< getRandom
   t | t `elem` [ObjectiveType, ObjectiveAllyType] -> void . runEach msg . createObjective card =<< getRandom
+  -- a player event with the Encounter keyword, as Wind from the Sea, built for its owner
+  EventType -> setAsideOwner card.id >>= traverse_ \owner -> for_ (lookupEvent (toCardCode card) card.id owner) $ void . runEach msg
   _ -> pure ()
 
 {- | The damage an enemy's attack deals to a character, and, for an enemy whose excess

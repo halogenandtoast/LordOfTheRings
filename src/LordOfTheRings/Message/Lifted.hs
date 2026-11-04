@@ -1144,6 +1144,21 @@ revealSetAsideMatching matcher = do
   setAside' <- getsGame ((.scenarioSetAside) . toAttrs . (.scenario))
   traverse_ (push . RevealCard) $ filter (cardMatches matcher) setAside'
 
+-- | The set-aside card is revealed as if it were the top card of the encounter deck, as
+-- Danger Close Behind reveals a random one.
+revealSetAsideCard :: ReverseQueue m => EncounterCard -> m ()
+revealSetAsideCard = push . RevealCard
+
+-- | The set-aside cards go to the encounter discard pile, part of the encounter deck from
+-- then on, as Harondor Waste places a random one there.
+discardSetAside :: ReverseQueue m => [EncounterCard] -> m ()
+discardSetAside = push . AddToEncounterDiscard
+
+-- | The set-aside cards are removed from the game, as an encounter set the scenario stops
+-- using (The Crossings of Poros' stage 2A).
+removeSetAsideFromGame :: ReverseQueue m => [EncounterCard] -> m ()
+removeSetAsideFromGame = push . RemoveSetAsideFromGame
+
 {- | Take the first matching card from the encounter deck, discard pile or victory display,
 then shuffle the encounter deck, as "search the encounter deck, discard pile and victory
 display for Rescue Iârion" reads: what is found is handed on, to be revealed or staged.

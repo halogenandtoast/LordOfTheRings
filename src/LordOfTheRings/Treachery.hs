@@ -351,6 +351,8 @@ import LordOfTheRings.Treachery.Cards.NoQuarter
 import LordOfTheRings.Treachery.Cards.ChaosInTheNight
 import LordOfTheRings.Treachery.Cards.TakenPrisoner
 import LordOfTheRings.Treachery.Cards.TormentedByOrcs
+import LordOfTheRings.Treachery.Cards.DangerCloseBehind
+import LordOfTheRings.Treachery.Cards.MountainsOfShadow
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -729,5 +731,7 @@ allTreacherys =
         , SomeTreacheryCard chaosInTheNight
         , SomeTreacheryCard takenPrisoner
         , SomeTreacheryCard tormentedByOrcs
+        , SomeTreacheryCard dangerCloseBehind
+        , SomeTreacheryCard mountainsOfShadow
         ]
     ]

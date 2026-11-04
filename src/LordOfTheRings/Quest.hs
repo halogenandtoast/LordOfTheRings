@@ -255,6 +255,14 @@ import LordOfTheRings.Quest.Cards.RallyTheWest
 import LordOfTheRings.Quest.Cards.GuardiansOfTheJungle
 import LordOfTheRings.Quest.Cards.WelcomeToTheJungle
 import LordOfTheRings.Quest.Cards.CaptureTheOliphaunts
+import LordOfTheRings.Quest.Cards.FindAWayDown
+import LordOfTheRings.Quest.Cards.FlightToGondor
+import LordOfTheRings.Quest.Cards.TheDesertPath
+import LordOfTheRings.Quest.Cards.TheEphelDuath
+import LordOfTheRings.Quest.Cards.DeadlyCreatures
+import LordOfTheRings.Quest.Cards.SouthronPursuit
+import LordOfTheRings.Quest.Cards.OrcPatrols
+import LordOfTheRings.Quest.Cards.BattleAtTheCrossings
 import LordOfTheRings.Quest.Runner ()
 import LordOfTheRings.Quest.Types as X
 import LordOfTheRings.Id
@@ -542,5 +550,13 @@ allQuests =
         , SomeQuestCard guardiansOfTheJungle
         , SomeQuestCard welcomeToTheJungle
         , SomeQuestCard captureTheOliphaunts
+        , SomeQuestCard findAWayDown
+        , SomeQuestCard flightToGondor
+        , SomeQuestCard theDesertPath
+        , SomeQuestCard theEphelDuath
+        , SomeQuestCard deadlyCreatures
+        , SomeQuestCard southronPursuit
+        , SomeQuestCard orcPatrols
+        , SomeQuestCard battleAtTheCrossings
         ]
     ]

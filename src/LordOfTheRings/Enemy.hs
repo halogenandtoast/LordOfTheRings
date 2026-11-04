@@ -417,6 +417,10 @@ import LordOfTheRings.Enemy.Cards.HaradTiger
 import LordOfTheRings.Enemy.Cards.TerritorialApe
 import LordOfTheRings.Enemy.Cards.StranglingPython
 import LordOfTheRings.Enemy.Cards.GiantCentipede
+import LordOfTheRings.Enemy.Cards.TheBlackSerpentCrossingsOfPoros
+import LordOfTheRings.Enemy.Cards.SouthronOutrider
+import LordOfTheRings.Enemy.Cards.UrukProwler
+import LordOfTheRings.Enemy.Cards.DesertWarg
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -860,5 +864,9 @@ allEnemys =
         , SomeEnemyCard territorialApe
         , SomeEnemyCard stranglingPython
         , SomeEnemyCard giantCentipede
+        , SomeEnemyCard theBlackSerpentCrossingsOfPoros
+        , SomeEnemyCard southronOutrider
+        , SomeEnemyCard urukProwler
+        , SomeEnemyCard desertWarg
         ]
     ]

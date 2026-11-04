@@ -339,6 +339,14 @@ allQuestCards =
       , guardiansOfTheJungle
       , welcomeToTheJungle
       , captureTheOliphaunts
+      , findAWayDown
+      , flightToGondor
+      , theDesertPath
+      , theEphelDuath
+      , deadlyCreatures
+      , southronPursuit
+      , orcPatrols
+      , battleAtTheCrossings
       ]
 
 theDrippingWalls :: CardDef
@@ -1332,3 +1340,35 @@ welcomeToTheJungle = quest "17026" "Welcome to the Jungle" TheMumakil 1 12
 
 captureTheOliphaunts :: CardDef
 captureTheOliphaunts = quest "17027" "Capture the Oliphaunts" TheMumakil 2 8
+
+-- * The Crossings of Poros: its two encounter sets, The Crossings of Poros and Mountains of
+-- Shadow. Easy mode copy counts from Hall of Beorn's scenario page.
+
+findAWayDown :: CardDef
+findAWayDown =
+  (encounterSideQuest "17156" "Find a Way Down" MountainsOfShadow 6)
+    { cdVictoryPoints = Just 10
+    , cdKeywords = setFromList [Surge]
+    }
+
+-- | No quest points: the players advance at the end of the planning phase.
+flightToGondor :: CardDef
+flightToGondor = (quest "17157" "Flight to Gondor" TheCrossingsOfPoros 1 0) {cdQuestPoints = Nothing}
+
+theDesertPath :: CardDef
+theDesertPath = quest "17158" "The Desert Path" TheCrossingsOfPoros 2 10
+
+theEphelDuath :: CardDef
+theEphelDuath = quest "17159" "The Ephel Dúath" TheCrossingsOfPoros 2 10
+
+deadlyCreatures :: CardDef
+deadlyCreatures = quest "17160" "Deadly Creatures" TheCrossingsOfPoros 3 15
+
+southronPursuit :: CardDef
+southronPursuit = quest "17161" "Southron Pursuit" TheCrossingsOfPoros 3 15
+
+orcPatrols :: CardDef
+orcPatrols = quest "17162" "Orc Patrols" TheCrossingsOfPoros 3 15
+
+battleAtTheCrossings :: CardDef
+battleAtTheCrossings = quest "17163" "Battle at the Crossings" TheCrossingsOfPoros 4 20

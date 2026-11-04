@@ -2396,5 +2396,34 @@
   },
   "captureTheOliphaunts": {
     "attach": "Capture the Oliphaunts: choose the Wild Mûmak to attach this Capture objective to"
+  },
+  "theBlackSerpentCrossingsOfPoros": {
+    "choose": "The Black Serpent: choose one",
+    "attack": "The Black Serpent attacks the first player"
+  },
+  "southronOutrider": {
+    "choose": "Southron Outrider: choose one",
+    "discard": "Place a random set-aside Harad Soldiers enemy in the encounter discard pile",
+    "attack": "Southron Outrider gets +3 attack this round"
+  },
+  "urukProwler": {
+    "choose": "Uruk Prowler: choose one",
+    "discard": "Place a random set-aside Mordor Orcs enemy in the encounter discard pile",
+    "attack": "Uruk Prowler makes an immediate attack against the first player"
+  },
+  "desertWarg": {
+    "choose": "Desert Warg: choose one",
+    "discard": "Place a random set-aside Desert Creatures enemy in the encounter discard pile",
+    "surge": "Desert Warg gains surge"
+  },
+  "theDesertPath": {
+    "choose": "The Desert Path: choose one for the ally you played",
+    "exhaust": "Exhaust the ally",
+    "damage": "Deal 1 damage to the ally"
+  },
+  "theEphelDuath": {
+    "choose": "The Ephel Dúath: choose one for the ally you played",
+    "exhaust": "Exhaust the ally",
+    "threat": "Raise your threat by 1"
   }
 }

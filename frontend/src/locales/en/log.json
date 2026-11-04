@@ -54,6 +54,7 @@
   "destroyed": "{target} is destroyed",
   "discarded": "{target} is discarded",
   "removedFromGame": "{target} is removed from the game",
+  "setAsideRemovedFromGame": "{cards} removed from the game, unused",
   "becomesActive": "{location} becomes the active location",
   "discardedFromEncounterDeck": "{cards} discarded from the encounter deck",
   "shuffledIntoQuestDeck": "{card} is shuffled into the quest deck",
