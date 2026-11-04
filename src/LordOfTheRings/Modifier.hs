@@ -372,6 +372,9 @@ data ModifierType
     IgnoresDefenseWhenAttackingAlone
   | -- | on a player: an enemy engaged them this round
     EngagedAnEnemyThisRound
+  | -- | on a player: his threat was raised this round, by anything, as Darkness in the
+    -- East's shadow reads "if you raised your threat this round"
+    RaisedThreatThisRound
   | -- | on an enemy: it engaged a player this round, as Nowhere to Hide's shadow reads
     EngagedThisRound
   | -- | on a player: they played a copy of the card this phase

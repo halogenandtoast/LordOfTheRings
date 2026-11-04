@@ -269,7 +269,8 @@ publicGameFor seesHand g = hideDecks $ toJSON merged
       | not (any seesHand (fromMaybe [] $ parseMaybe parseJSON =<< KeyMap.lookup "lookedAt" o :: [PlayerId])) ->
           Object $ KeyMap.delete "otherSide" o
     v -> v
-  hidePlayer = withSize "deck" "deckSize"
+  -- the cards under a threat dial are facedown too, as Lost in the Dark places them
+  hidePlayer = withSize "underThreatDial" "underThreatDialSize" . withSize "deck" "deckSize"
   hideHand = \case
     Object o | Just (Array cards) <- KeyMap.lookup "hand" o ->
       Object $ KeyMap.insert "handSize" (toJSON $ length cards) $ KeyMap.insert "hand" (Array mempty) o

@@ -397,6 +397,17 @@ allTreacheryCards =
       , unseenDanger
       , vastnessOfMirkwood
       , stinker
+      , easterlingHorse
+      , swordOfRhun
+      , recurveBow
+      , wearyLands
+      , painfulFatigue
+      , overwhelmed
+      , darknessInTheEast
+      , underGuard
+      , ulchorsRage
+      , fanaticism
+      , fearfulShadows
       ]
 
 deepDeepDark :: CardDef
@@ -2517,4 +2528,64 @@ stinker =
     { cdCardTraits = setFromList [Gollum]
     , cdKeywords = setFromList [Surge]
     , cdShadowEffect = True
+    }
+
+-- * A Shadow in the East's shared encounter sets
+
+easterlingHorse :: CardDef
+easterlingHorse = (treachery "21019" "Easterling Horse" RidersOfRhun 3) {cdCardTraits = setFromList [Easterling]}
+
+swordOfRhun :: CardDef
+swordOfRhun =
+  (treachery "21022" "Sword of Rhûn" EasterlingRaiders 2)
+    { cdCardTraits = setFromList [Easterling]
+    , cdKeywords = setFromList [Surge]
+    , cdEasyModeQuantity = Just 1
+    }
+
+recurveBow :: CardDef
+recurveBow =
+  (treachery "21023" "Recurve Bow" EasterlingRaiders 2)
+    { cdCardTraits = setFromList [Easterling]
+    , cdKeywords = setFromList [Surge]
+    , cdEasyModeQuantity = Just 1
+    }
+
+wearyLands :: CardDef
+wearyLands =
+  (treachery "21027" "Weary Lands" RollingPlains 2)
+    { cdKeywords = setFromList [Doomed 1]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
+    }
+
+painfulFatigue :: CardDef
+painfulFatigue = (treachery "21028" "Painful Fatigue" RollingPlains 2) {cdShadowEffect = True}
+
+overwhelmed :: CardDef
+overwhelmed =
+  (treachery "21042" "Overwhelmed" ServantsOfSauron 2)
+    { cdKeywords = setFromList [Doomed 1]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
+    }
+
+darknessInTheEast :: CardDef
+darknessInTheEast = (treachery "21048" "Darkness in the East" CityOfRhun 2) {cdShadowEffect = True}
+
+underGuard :: CardDef
+underGuard = (treachery "21051" "Under Guard" UnderGuard 3) {cdShadowEffect = True, cdEasyModeQuantity = Just 2}
+
+ulchorsRage :: CardDef
+ulchorsRage = (treachery "21059" "Ulchor's Rage" UlchorsGuard 3) {cdShadowEffect = True, cdEasyModeQuantity = Just 1}
+
+fanaticism :: CardDef
+fanaticism = (treachery "21060" "Fanaticism" UlchorsGuard 2) {cdCardTraits = setFromList [Easterling]}
+
+fearfulShadows :: CardDef
+fearfulShadows =
+  (treachery "21064" "Fearful Shadows" TwistedTunnels 2)
+    { cdKeywords = setFromList [Doomed 1]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
     }

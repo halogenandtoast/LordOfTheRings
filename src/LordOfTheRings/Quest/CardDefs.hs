@@ -396,6 +396,11 @@ allQuestCards =
       , retrieveUrdugsHorn
       , findDurinsKey
       , urdugsGambit
+      , warriorsOfTheEast
+      , anArduousJourney
+      , shadowOfFearASitE
+      , unwelcomeTravelers
+      , lostInTheDark
       ]
 
 theDrippingWalls :: CardDef
@@ -1594,3 +1599,33 @@ findDurinsKey = quest "19050" "Find Durin's Key" RoamAcrossRhovanion 2 5
 
 urdugsGambit :: CardDef
 urdugsGambit = quest "19051" "Urdug's Gambit" RoamAcrossRhovanion 3 5
+
+-- * A Shadow in the East's shared encounter sets
+
+warriorsOfTheEast :: CardDef
+warriorsOfTheEast =
+  (encounterSideQuest "21024" "Warriors of the East" EasterlingRaiders 8)
+    { cdKeywords = setFromList [Surge]
+    , cdVictoryPoints = Just 10
+    }
+
+anArduousJourney :: CardDef
+anArduousJourney = (encounterSideQuest "21029" "An Arduous Journey" RollingPlains 6) {cdVictoryPoints = Just 10}
+
+-- | A Shadow in the East's side quest, not Flight from Moria's treachery.
+shadowOfFearASitE :: CardDef
+shadowOfFearASitE =
+  (encounterSideQuest "21043" "Shadow of Fear" ServantsOfSauron 6)
+    { cdKeywords = setFromList [Surge]
+    , cdVictoryPoints = Just 10
+    }
+
+unwelcomeTravelers :: CardDef
+unwelcomeTravelers = (encounterSideQuest "21052" "Unwelcome Travelers" UnderGuard 5) {cdVictoryPoints = Just 10}
+
+lostInTheDark :: CardDef
+lostInTheDark =
+  (encounterSideQuest "21065" "Lost in the Dark" TwistedTunnels 8)
+    { cdVictoryPoints = Just 10
+    , cdWhenRevealed = True
+    }

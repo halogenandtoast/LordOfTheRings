@@ -506,6 +506,15 @@ allLocationCards =
       , forestClearingLostInMirkwood
       , twilightHall
       , theTowerOfBaradDur
+      , rollingPlains
+      , rockyOutcrop
+      , cityForum
+      , seedyTavern
+      , sideStreet
+      , catacombs
+      , twistedTunnel
+      , narrowOpening
+      , crumblingPassage
       ]
 
 drownedTreasury :: CardDef
@@ -3781,3 +3790,47 @@ theTowerOfBaradDur =
       { cdCardTraits = setFromList [Mordor]
       , cdQuestPoints = Nothing
       }
+
+-- * A Shadow in the East's shared encounter sets
+
+rollingPlains :: CardDef
+rollingPlains =
+  (location "21025" "Rolling Plains" RollingPlains 4 2 4)
+    { cdCardTraits = setFromList [Plains]
+    , cdWhenRevealed = True
+    , cdEasyModeQuantity = Just 3
+    }
+
+rockyOutcrop :: CardDef
+rockyOutcrop = (location "21026" "Rocky Outcrop" RollingPlains 2 3 3) {cdCardTraits = setFromList [Plains], cdEasyModeQuantity = Just 1}
+
+cityForum :: CardDef
+cityForum = (location "21046" "City Forum" CityOfRhun 2 1 5) {cdCardTraits = setFromList [City]}
+
+seedyTavern :: CardDef
+seedyTavern = (location "21047" "Seedy Tavern" CityOfRhun 2 2 5) {cdCardTraits = setFromList [City], cdVictoryPoints = Just 2}
+
+sideStreet :: CardDef
+sideStreet = (location "21049" "Side Street" UnderGuard 2 3 3) {cdCardTraits = setFromList [City], cdEasyModeQuantity = Just 1}
+
+catacombs :: CardDef
+catacombs = (location "21050" "Catacombs" UnderGuard 2 4 4) {cdCardTraits = setFromList [City], cdEasyModeQuantity = Just 1}
+
+twistedTunnel :: CardDef
+twistedTunnel =
+  (location "21061" "Twisted Tunnel" TwistedTunnels 2 2 2)
+    { cdCardTraits = setFromList [Underground]
+    , cdWhenRevealed = True
+    , cdShadowEffect = True
+    }
+
+narrowOpening :: CardDef
+narrowOpening = (location "21062" "Narrow Opening" TwistedTunnels 2 3 3) {cdCardTraits = setFromList [Underground]}
+
+crumblingPassage :: CardDef
+crumblingPassage =
+  (location "21063" "Crumbling Passage" TwistedTunnels 2 5 3)
+    { cdCardTraits = setFromList [Underground]
+    , cdWhenRevealed = True
+    , cdEasyModeQuantity = Just 1
+    }

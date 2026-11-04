@@ -238,6 +238,7 @@ export const toView = (data: GameData, defs: Record<string, CardDef>, previous: 
       eliminated: p.eliminated,
       handSize: p.handSize ?? p.hand.length,
       deckSize: p.deckSize,
+      underThreatDialSize: p.underThreatDialSize ?? 0,
       capturedDeckSize: game.capturedDecks?.[pid] ?? 0,
       discardSize: p.discard.length,
       hand: keepOrder(previous?.players.find((v) => v.playerId === pid)?.hand, [

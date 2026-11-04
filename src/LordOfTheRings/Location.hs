@@ -488,6 +488,15 @@ import LordOfTheRings.Location.Cards.GreyMoorland
 import LordOfTheRings.Location.Cards.DeepRavine
 import LordOfTheRings.Location.Cards.SlopesOfEredMithrin
 import LordOfTheRings.Location.Cards.TheTowerOfBaradDur
+import LordOfTheRings.Location.Cards.RollingPlains
+import LordOfTheRings.Location.Cards.RockyOutcrop
+import LordOfTheRings.Location.Cards.CityForum
+import LordOfTheRings.Location.Cards.SeedyTavern
+import LordOfTheRings.Location.Cards.SideStreet
+import LordOfTheRings.Location.Cards.Catacombs
+import LordOfTheRings.Location.Cards.TwistedTunnel
+import LordOfTheRings.Location.Cards.NarrowOpening
+import LordOfTheRings.Location.Cards.CrumblingPassage
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -1022,5 +1031,14 @@ allLocations =
         , SomeLocationCard deepRavine
         , SomeLocationCard slopesOfEredMithrin
         , SomeLocationCard theTowerOfBaradDur
+        , SomeLocationCard rollingPlains
+        , SomeLocationCard rockyOutcrop
+        , SomeLocationCard cityForum
+        , SomeLocationCard seedyTavern
+        , SomeLocationCard sideStreet
+        , SomeLocationCard catacombs
+        , SomeLocationCard twistedTunnel
+        , SomeLocationCard narrowOpening
+        , SomeLocationCard crumblingPassage
         ]
     ]

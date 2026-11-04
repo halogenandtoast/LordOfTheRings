@@ -192,6 +192,9 @@ data EnemyMatcher
     EnemyInStormcallerArea
   | EnemyWithTrait Trait
   | EnemyWithCardCode CardCode
+  | -- | an enemy of the title, whatever its subtitle or version, as "Thane Ulchor" reads of
+    -- the scenario's own copy
+    EnemyWithTitle Text
   | -- | the enemy whose card this is, as a card taken from a deck is found once in play
     EnemyWithCardId CardId
   | EnemyEngagedWith PlayerMatcher
@@ -229,6 +232,11 @@ data EnemyMatcher
     EnemyWithNoHitPointsRemaining
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
+
+-- | Thane Ulchor, whichever of his versions the scenario uses (A Shadow in the East's
+-- Ulchor's Guard set reads him by title).
+thaneUlchor :: EnemyMatcher
+thaneUlchor = EnemyWithTitle "Thane Ulchor"
 
 instance Semigroup EnemyMatcher where
   AnyEnemy <> x = x
@@ -341,6 +349,12 @@ instance Semigroup CardMatcher where
 
 instance Monoid CardMatcher where
   mempty = AnyCard
+
+-- | An Easterling treachery, as Warrior of Rhûn attaches the top one in the encounter
+-- discard pile: one that counts as an attachment once on an enemy, an Easterling
+-- attachment ('attachedWithTrait' Easterling).
+easterlingTreachery :: CardMatcher
+easterlingTreachery = CardWithType TreacheryType <> CardWithTrait Easterling
 
 -- | A side quest, the players' or the encounter deck's.
 sideQuestCard :: CardMatcher

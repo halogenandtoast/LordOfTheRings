@@ -466,6 +466,15 @@ allEnemyCards =
       , ravenousSpider
       , gollumASitE
       , khamulTheEasterling
+      , easterlingCaptain
+      , riderOfRhun
+      , easterlingRaider
+      , warriorOfRhun
+      , messengerFromMordor
+      , servantOfSauron
+      , rhunBackstabber
+      , treacherousEasterling
+      , ulchorsGuard
       ]
 
 namelessThing :: CardDef
@@ -3815,3 +3824,68 @@ khamulTheEasterling =
     (enemy "21066" "Khamûl the Easterling" ThePowerOfMordor 1 49 4 6 4 9)
       { cdCardTraits = setFromList [Nazgul, Easterling, Mordor]
       }
+
+-- * A Shadow in the East's shared encounter sets
+
+easterlingCaptain :: CardDef
+easterlingCaptain =
+  unique
+    (enemy "21017" "Easterling Captain" RidersOfRhun 1 36 3 6 3 6)
+      { cdCardTraits = setFromList [Easterling]
+      , cdVictoryPoints = Just 6
+      }
+
+riderOfRhun :: CardDef
+riderOfRhun =
+  (enemy "21018" "Rider of Rhûn" RidersOfRhun 2 40 2 5 2 5)
+    { cdCardTraits = setFromList [Easterling]
+    , cdKeywords = setFromList [Archery 2]
+    , cdWhenRevealed = True
+    , cdEasyModeQuantity = Just 1
+    }
+
+easterlingRaider :: CardDef
+easterlingRaider =
+  (enemy "21020" "Easterling Raider" EasterlingRaiders 3 28 2 2 2 3)
+    { cdCardTraits = setFromList [Easterling]
+    , cdKeywords = setFromList [Archery 1]
+    , cdShadowEffect = True
+    }
+
+warriorOfRhun :: CardDef
+warriorOfRhun =
+  (enemy "21021" "Warrior of Rhûn" EasterlingRaiders 3 34 3 3 3 4)
+    { cdCardTraits = setFromList [Easterling]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 2
+    }
+
+messengerFromMordor :: CardDef
+messengerFromMordor =
+  (enemy "21040" "Messenger from Mordor" ServantsOfSauron 3 34 2 4 2 4)
+    { cdCardTraits = setFromList [Mordor]
+    , cdWhenRevealed = True
+    , cdShadowEffect = True
+    }
+
+servantOfSauron :: CardDef
+servantOfSauron =
+  (enemy "21041" "Servant of Sauron" ServantsOfSauron 2 36 1 2 1 3)
+    { cdCardTraits = setFromList [Mordor]
+    , cdKeywords = setFromList [Surge]
+    , cdEasyModeQuantity = Just 1
+    }
+
+rhunBackstabber :: CardDef
+rhunBackstabber = (enemy "21044" "Rhûn Backstabber" CityOfRhun 2 28 2 3 2 3) {cdCardTraits = setFromList [Easterling], cdShadowEffect = True}
+
+treacherousEasterling :: CardDef
+treacherousEasterling = (enemy "21045" "Treacherous Easterling" CityOfRhun 2 32 3 3 1 5) {cdCardTraits = setFromList [Easterling], cdEasyModeQuantity = Just 1}
+
+ulchorsGuard :: CardDef
+ulchorsGuard =
+  (enemy "21058" "Ulchor's Guard" UlchorsGuard 4 25 2 4 1 5)
+    { cdCardTraits = setFromList [Easterling]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 3
+    }

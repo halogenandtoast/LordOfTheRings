@@ -2828,5 +2828,40 @@
     "loot": "The Burglar's Turn: put this guarded attachment into play at no cost, or add it to your hand",
     "intoPlay": "Put it into play",
     "toHand": "Add it to your hand"
+  },
+  "attachToEnemy": "Choose a tied enemy to attach the card to",
+  "easterlingCaptain": {
+    "discard": "Easterling Captain: choose an Easterling attachment to discard from him"
+  },
+  "warriorsOfTheEast": {
+    "attack": "Warriors of the East: choose a tied enemy to attack the first player"
+  },
+  "painfulFatigue": {
+    "exhaust": "Painful Fatigue: choose a character to exhaust and deal 1 damage to",
+    "choose": "Painful Fatigue: choose one",
+    "exhaustCharacter": "Exhaust a character you control",
+    "return": "Return the attacking enemy to the staging area after this attack"
+  },
+  "anArduousJourney": {
+    "ready": "An Arduous Journey: you may ready a hero you control"
+  },
+  "messengerFromMordor": {
+    "choose": "Messenger from Mordor: choose one",
+    "raiseThreat": "Raise each player's threat by {n}",
+    "attack": "Messenger from Mordor attacks the first player"
+  },
+  "overwhelmed": {
+    "choose": "Overwhelmed: choose one",
+    "raiseThreat": "Raise your threat by 2",
+    "noDamage": "The attacking enemy cannot take damage this round"
+  },
+  "rhunBackstabber": {
+    "choose": "Rhûn Backstabber: choose one",
+    "raiseThreat": "Raise your threat by 2",
+    "discardAlly": "Discard an ally you control with printed cost 2 or higher",
+    "ally": "Choose an ally with printed cost 2 or higher to discard"
+  },
+  "seedyTavern": {
+    "placeUnderneath": "Seedy Tavern: choose a card to put facedown under it; the rest are shuffled back"
   }
 }

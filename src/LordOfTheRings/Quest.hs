@@ -312,6 +312,11 @@ import LordOfTheRings.Quest.Cards.RescueTiny
 import LordOfTheRings.Quest.Cards.RetrieveUrdugsHorn
 import LordOfTheRings.Quest.Cards.FindDurinsKey
 import LordOfTheRings.Quest.Cards.UrdugsGambit
+import LordOfTheRings.Quest.Cards.WarriorsOfTheEast
+import LordOfTheRings.Quest.Cards.AnArduousJourney
+import LordOfTheRings.Quest.Cards.ShadowOfFearASitE
+import LordOfTheRings.Quest.Cards.UnwelcomeTravelers
+import LordOfTheRings.Quest.Cards.LostInTheDark
 import LordOfTheRings.Quest.Runner ()
 import LordOfTheRings.Quest.Types as X
 import LordOfTheRings.Id
@@ -656,5 +661,10 @@ allQuests =
         , SomeQuestCard retrieveUrdugsHorn
         , SomeQuestCard findDurinsKey
         , SomeQuestCard urdugsGambit
+        , SomeQuestCard warriorsOfTheEast
+        , SomeQuestCard anArduousJourney
+        , SomeQuestCard shadowOfFearASitE
+        , SomeQuestCard unwelcomeTravelers
+        , SomeQuestCard lostInTheDark
         ]
     ]

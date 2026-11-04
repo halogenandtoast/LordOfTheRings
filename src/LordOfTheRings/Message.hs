@@ -164,6 +164,13 @@ data Message
   | -- | a player side quest, played, goes to the staging area
     PutSideQuestIntoPlay PlayerId PlayerCard
   | ShuffleDiscardIntoDeck PlayerId
+  | -- | the top cards of the player's deck go facedown under his threat dial, out of play,
+    -- as Lost in the Dark places 10
+    PlaceUnderThreatDial PlayerId Int
+  | -- | the top card under the player's threat dial goes to his discard pile
+    DiscardFromUnderThreatDial PlayerId
+  | -- | the cards under the player's threat dial are shuffled back into his deck
+    ShuffleUnderThreatDialIntoDeck PlayerId
   | -- | a card from the player's deck goes to their hand
     TakeFromDeck PlayerId CardId
   | -- | debug mode: the player looks through their deck and takes any card into hand
@@ -513,6 +520,9 @@ data Message
   | QuestResolution
   | PlaceProgressOnQuest Int
   | TravelTo LocationId
+  | -- | the location's Travel effect resolves without the players traveling there, as
+    -- Under Guard resolves the active location's: its card reads it as 'TravelTo'
+    ResolveTravelEffect LocationId
   | OptionalEngagement PlayerId
   | EngagementCheck PlayerId Int
   | -- | an enemy with ambush entering play: the first player in turn order whose threat

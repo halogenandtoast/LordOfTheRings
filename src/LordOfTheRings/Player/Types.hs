@@ -33,6 +33,9 @@ data Player = Player
   -}
   , playerContract :: Maybe PlayerCard
   -- ^ the contract the player chose with his deck, put into play with his heroes
+  , playerUnderThreatDial :: [Card]
+  -- ^ the cards facedown under the player's threat dial, out of play, top first, as Lost
+  -- in the Dark places them
   }
   deriving stock (Show, Eq, Generic)
 
@@ -42,7 +45,7 @@ instance ToJSON Player where
   toJSON = genericToJSON (aesonOptions $ Just "player")
 
 instance FromJSON Player where
-  parseJSON = genericParseJSON (aesonOptions $ Just "player") . withDefaults [("usedAbilities", toJSON ([] :: [UsedAbility])), ("startingThreat", toJSON (0 :: Int)), ("errata", toJSON True), ("startingHeroes", toJSON ([] :: [CardCode])), ("setAsideCards", toJSON ([] :: [Card])), ("contract", Null)]
+  parseJSON = genericParseJSON (aesonOptions $ Just "player") . withDefaults [("usedAbilities", toJSON ([] :: [UsedAbility])), ("startingThreat", toJSON (0 :: Int)), ("errata", toJSON True), ("startingHeroes", toJSON ([] :: [CardCode])), ("setAsideCards", toJSON ([] :: [Card])), ("contract", Null), ("underThreatDial", toJSON ([] :: [Card]))]
 
 newPlayer :: PlayerId -> Text -> [Card] -> Player
 newPlayer pid name deck =
@@ -60,6 +63,7 @@ newPlayer pid name deck =
     , playerStartingHeroes = []
     , playerSetAsideCards = []
     , playerContract = Nothing
+    , playerUnderThreatDial = []
     }
 
 instance Entity Player where
@@ -107,6 +111,9 @@ instance HasField "eliminated" Player Bool where
 
 instance HasField "startingHeroes" Player [CardCode] where
   getField = playerStartingHeroes
+
+instance HasField "underThreatDial" Player [Card] where
+  getField = playerUnderThreatDial
 
 instance HasField "setAsideCards" Player [Card] where
   getField = playerSetAsideCards
