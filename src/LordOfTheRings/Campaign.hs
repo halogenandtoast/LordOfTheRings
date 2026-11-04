@@ -91,6 +91,9 @@ data CampaignLogKey
     -- add for a Clue they control, by the seat of that player ('counted'), offered as the
     -- next scenario is set up
     BooksEarned
+  | -- | The Lord of the Rings: the resources on The Corsair Fleet at the end of The Siege of
+    -- Gondor ('counted'), placed on it as The Battle of the Pelennor Fields is set up
+    CorsairFleetResources
   deriving stock (Show, Eq, Ord, Generic, Enum, Bounded)
   deriving anyclass (ToJSON, FromJSON)
 

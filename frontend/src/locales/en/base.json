@@ -190,6 +190,7 @@
       "Determined": "Determined: {cards}",
       "LostInMountGram": "Left captured in Mount Gram, barred from every deck for the rest of the campaign: {cards}",
       "HeroDamage": "Damage on each hero at the end of The Battle of Carn Dûm, each beginning The Dread Realm with as much: {cards}",
+      "CorsairFleetResources": "Resources on The Corsair Fleet at the end of The Siege of Gondor, placed on it as The Battle of the Pelennor Fields is set up: {cards}",
       "ChoosePendantOrCourage": "Choose Iârion's Pendant or Amarthiúl's Courage for the Campaign Pool as The Wastes of Eriador is set up.",
       "GraxarDefeated": "Graxar was defeated: choose Parrying Cutlass or Throwing Axe, and its hero, as the next scenario is set up.",
       "ChosenDuringSetup": "Chosen during setup: {cards}",
