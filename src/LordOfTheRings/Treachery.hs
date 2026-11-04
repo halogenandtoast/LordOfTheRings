@@ -381,6 +381,9 @@ import LordOfTheRings.Treachery.Cards.TerribleShadows
 import LordOfTheRings.Treachery.Cards.SlammedShut
 import LordOfTheRings.Treachery.Cards.HeavySnow
 import LordOfTheRings.Treachery.Cards.DeadlyCold
+import LordOfTheRings.Treachery.Cards.SneakingOff
+import LordOfTheRings.Treachery.Cards.HarshWeather
+import LordOfTheRings.Treachery.Cards.WildCreatures
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -789,5 +792,8 @@ allTreacherys =
         , SomeTreacheryCard slammedShut
         , SomeTreacheryCard heavySnow
         , SomeTreacheryCard deadlyCold
+        , SomeTreacheryCard sneakingOff
+        , SomeTreacheryCard harshWeather
+        , SomeTreacheryCard wildCreatures
         ]
     ]

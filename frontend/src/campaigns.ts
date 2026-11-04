@@ -118,6 +118,7 @@ const implemented: Record<string, Gateable & { nightmare?: boolean }> = {
   'the-ghost-of-framsburg': { beta: true },
   'mount-gundabad': { beta: true },
   'the-withered-heath': { beta: true },
+  'roam-across-rhovanion': { beta: true },
 }
 
 const campaign = (id: string, name: string, code: string, scenarios: ScenarioOption[]): Campaign => ({

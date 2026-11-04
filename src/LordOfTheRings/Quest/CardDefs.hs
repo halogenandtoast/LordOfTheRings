@@ -384,6 +384,11 @@ allQuestCards =
       , theColdDrakeAttacks
       , huntingTheBeast
       , aCorneredDragon
+      , theGoblinsTask
+      , rescueTiny
+      , retrieveUrdugsHorn
+      , findDurinsKey
+      , urdugsGambit
       ]
 
 theDrippingWalls :: CardDef
@@ -1541,3 +1546,20 @@ huntingTheBeast = quest "19024" "Hunting the Beast" TheWitheredHeath 3 9
 -- | No progress defeats it: the players win as Cold-Drake is defeated.
 aCorneredDragon :: CardDef
 aCorneredDragon = quest "19025" "A Cornered Dragon" TheWitheredHeath 4 0
+-- * Roam Across Rhovanion
+
+-- | No quest points: the players advance as the active location is explored.
+theGoblinsTask :: CardDef
+theGoblinsTask = (quest "19047" "The Goblin's Task" RoamAcrossRhovanion 1 0) {cdQuestPoints = Nothing}
+
+rescueTiny :: CardDef
+rescueTiny = quest "19048" "Rescue Tiny" RoamAcrossRhovanion 2 5
+
+retrieveUrdugsHorn :: CardDef
+retrieveUrdugsHorn = quest "19049" "Retrieve Urdug's Horn" RoamAcrossRhovanion 2 5
+
+findDurinsKey :: CardDef
+findDurinsKey = quest "19050" "Find Durin's Key" RoamAcrossRhovanion 2 5
+
+urdugsGambit :: CardDef
+urdugsGambit = quest "19051" "Urdug's Gambit" RoamAcrossRhovanion 3 5

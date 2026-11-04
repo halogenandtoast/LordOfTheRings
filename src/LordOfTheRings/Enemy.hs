@@ -448,6 +448,11 @@ import LordOfTheRings.Enemy.Cards.EvilSpectre
 import LordOfTheRings.Enemy.Cards.ColdDrake
 import LordOfTheRings.Enemy.Cards.SnowTroll
 import LordOfTheRings.Enemy.Cards.DragonHatchling
+import LordOfTheRings.Enemy.Cards.GreyMountainGiant
+import LordOfTheRings.Enemy.Cards.HuntingEagle
+import LordOfTheRings.Enemy.Cards.WilderlandBear
+import LordOfTheRings.Enemy.Cards.UrdugEnemy
+import LordOfTheRings.Enemy.Cards.TinyEnemy
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -924,5 +929,10 @@ allEnemys =
         , SomeEnemyCard coldDrake
         , SomeEnemyCard snowTroll
         , SomeEnemyCard dragonHatchling
+        , SomeEnemyCard greyMountainGiant
+        , SomeEnemyCard huntingEagle
+        , SomeEnemyCard wilderlandBear
+        , SomeEnemyCard urdugEnemy
+        , SomeEnemyCard tinyEnemy
         ]
     ]

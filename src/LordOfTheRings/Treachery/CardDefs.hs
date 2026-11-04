@@ -391,6 +391,9 @@ allTreacheryCards =
       , suffocatingShadows
       , heavySnow
       , deadlyCold
+      , sneakingOff
+      , harshWeather
+      , wildCreatures
       ]
 
 deepDeepDark :: CardDef
@@ -2484,3 +2487,19 @@ heavySnow =
 
 deadlyCold :: CardDef
 deadlyCold = (treachery "19021" "Deadly Cold" TheWitheredHeath 3) {cdCardTraits = setFromList [Weather], cdShadowEffect = True, cdEasyModeQuantity = Just 2}
+-- * Roam Across Rhovanion
+
+sneakingOff :: CardDef
+sneakingOff = (treachery "19044" "Sneaking Off" RoamAcrossRhovanion 3) {cdEasyModeQuantity = Just 1}
+
+harshWeather :: CardDef
+harshWeather =
+  (treachery "19045" "Harsh Weather" RoamAcrossRhovanion 3)
+    { cdCardTraits = setFromList [Weather]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 0
+    }
+
+-- | The treachery, not the Wild Creatures encounter set.
+wildCreatures :: CardDef
+wildCreatures = (treachery "19046" "Wild Creatures" RoamAcrossRhovanion 2) {cdEasyModeQuantity = Just 0}

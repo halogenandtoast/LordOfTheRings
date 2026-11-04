@@ -457,6 +457,11 @@ allEnemyCards =
       , coldDrake
       , snowTroll
       , dragonHatchling
+      , greyMountainGiant
+      , huntingEagle
+      , wilderlandBear
+      , urdugEnemy
+      , tinyEnemy
       ]
 
 namelessThing :: CardDef
@@ -3624,6 +3629,20 @@ urdugsElite =
     , cdEasyModeQuantity = Just 2
     }
 
+-- * Roam Across Rhovanion
+
+greyMountainGiant :: CardDef
+greyMountainGiant = (enemy "19038" "Grey Mountain Giant" RoamAcrossRhovanion 2 44 2 5 2 11) {cdCardTraits = setFromList [Giant], cdEasyModeQuantity = Just 1}
+
+huntingEagle :: CardDef
+huntingEagle =
+  (enemy "19039" "Hunting Eagle" RoamAcrossRhovanion 3 50 1 3 1 3)
+    { cdCardTraits = setFromList [Creature, Eagle]
+    , cdKeywords = setFromList [Surge]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 2
+    }
+
 fierceVanguard :: CardDef
 fierceVanguard =
   (enemy "19159" "Fierce Vanguard" TheFateOfWilderland 3 20 2 2 2 3)
@@ -3739,3 +3758,31 @@ dragonHatchling =
     , cdShadowEffect = True
     , cdEasyModeQuantity = Just 2
     }
+wilderlandBear :: CardDef
+wilderlandBear =
+  (enemy "19040" "Wilderland Bear" RoamAcrossRhovanion 2 30 3 4 1 5)
+    { cdCardTraits = setFromList [Creature]
+    , cdWhenRevealed = True
+    , cdEasyModeQuantity = Just 0
+    }
+
+-- | The enemy side of Urdug (Hall of Beorn's 19053): never gathered, Urdug's Gambit flips
+-- his objective-ally side to it.
+urdugEnemy :: CardDef
+urdugEnemy =
+  unique
+    (enemy "19053" "Urdug" RoamAcrossRhovanion 0 15 2 3 2 5)
+      { cdCardTraits = setFromList [Goblin, Orc]
+      , cdKeywords = setFromList [Indestructible]
+      , cdOtherSide = Just "19052"
+      }
+
+-- | The enemy side of Tiny (Hall of Beorn's 19055).
+tinyEnemy :: CardDef
+tinyEnemy =
+  unique
+    (enemy "19055" "Tiny" RoamAcrossRhovanion 0 50 1 6 3 9)
+      { cdCardTraits = setFromList [Troll]
+      , cdVictoryPoints = Just 6
+      , cdOtherSide = Just "19054"
+      }

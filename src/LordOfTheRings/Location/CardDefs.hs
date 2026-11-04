@@ -496,6 +496,9 @@ allLocationCards =
       , caveEntrance
       , creatureDen
       , highFalls
+      , greyMoorland
+      , deepRavine
+      , slopesOfEredMithrin
       ]
 
 drownedTreasury :: CardDef
@@ -3555,6 +3558,16 @@ slopesOfGundabad =
     , cdEasyModeQuantity = Just 1
     }
 
+-- * Roam Across Rhovanion
+
+greyMoorland :: CardDef
+greyMoorland =
+  (location "19041" "Grey Moorland" RoamAcrossRhovanion 2 3 4)
+    { cdCardTraits = setFromList [Hills]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
+    }
+
 -- | Journey Up the Anduin's, not The Hunt for Gollum's: set aside, out of play, until
 -- stage 3A adds it to the staging area.
 theOldFordJourneyUpTheAnduin :: CardDef
@@ -3714,4 +3727,15 @@ highFalls =
     { cdCardTraits = setFromList [Mountain]
     , cdKeywords = setFromList [Deep]
     , cdEasyModeQuantity = Just 1
+    }
+deepRavine :: CardDef
+deepRavine = (location "19042" "Deep Ravine" RoamAcrossRhovanion 3 2 3) {cdCardTraits = setFromList [Hills], cdEasyModeQuantity = Just 2}
+
+slopesOfEredMithrin :: CardDef
+slopesOfEredMithrin =
+  (location "19043" "Slopes of Ered Mithrin" RoamAcrossRhovanion 3 2 4)
+    { cdCardTraits = setFromList [Hills]
+    , cdKeywords = setFromList [Doomed 1]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 0
     }

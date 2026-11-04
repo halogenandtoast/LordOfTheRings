@@ -2546,6 +2546,34 @@
   "dragonScales": {
     "attach": "Choose a Dragon enemy to attach Dragon Scales to"
   },
+  "wilderlandBear": {
+    "choose": "Wilderland Bear: choose one",
+    "attack": "Wilderland Bear makes an immediate attack against you",
+    "discard": "Each player discards 1 random card from his hand"
+  },
+  "slopesOfEredMithrin": {
+    "ready": "Slopes of Ered Mithrin: you may ready a character you control"
+  },
+  "deepRavine": {
+    "travel": "Deep Ravine: choose how to travel here",
+    "exhaustUrdug": "Exhaust Urdug",
+    "raiseThreat": "Raise each player's threat by 2"
+  },
+  "harshWeather": {
+    "choose": "Harsh Weather: exhaust this character or raise your threat by 1",
+    "exhaust": "Exhaust it",
+    "raiseThreat": "Raise your threat by 1",
+    "exhaustOne": "Harsh Weather: choose a character you control to exhaust"
+  },
+  "sneakingOff": {
+    "location": "Sneaking Off: choose the location Urdug is attached to"
+  },
+  "wildCreatures": {
+    "engage": "Wild Creatures: choose an enemy in the staging area to engage"
+  },
+  "durinsKey": {
+    "reveal": "Durin's Key: choose 1 card to reveal; the rest are discarded"
+  },
   "ancientTreasury": {
     "choose": "Ancient Treasury: you may choose one",
     "threat": "Reduce your threat by 3",

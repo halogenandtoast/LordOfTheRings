@@ -3534,5 +3534,46 @@
       "Then, turning back to Urdug she added, “And you, Urdug, will be our guide.”",
       "The story continues in “Roam Across Rhovanion,” the second Adventure Pack in the Ered Mithrin cycle."
     ]
+  },
+  "roam-across-rhovanion": {
+    "intro": [
+      "Outside the entrance to the cold-drake’s lair, the Goblin, Urdug, howled as the heroes bound his wrists with a cord of rope.",
+      "“I won’t do it!” he screamed. “I won’t take you anywhere as your prisoner! You’ll have to kill me.”",
+      "“Very well,” replied one of the heroes as he drew his dagger from its sheath.",
+      "“Wait, wait, wait!” cried Urdug, falling to his knees. “There’s another way! A secret way only Urdug knows! If you kill me, you won’t find it!”",
+      "“What secret way?” asked the hero with his knife to the Goblin’s throat.",
+      "“There’s a side door, a secret entrance that the Dwarves built – only I know where it is,” said Urdug, speaking quickly. “You can’t simply walk into Gundabad through the front door; Dagnir will be on you in an instant with her fire-breath. But I can show you the hidden entrance, if you untie me.”",
+      "The hero looked searchingly at Urdug. “I don’t like it,” he said. “How do we know you’re telling the truth?”",
+      "“There’s a key.” replied Urdug, “I took it with me when I fled, but I lost it days ago running from an angry giant. Help me find the key, and I will give it to you as proof.”",
+      "The Goblin held out his hands, still bound together, and looked at the heroes pleadingly.",
+      "“The Dwarves are known to build secret entrances to their realms, and a key would be convincing proof,” said one of the companions.",
+      "“We should wait until we have evidence of his truthfulness before releasing him,” replied the hero with the knife.",
+      "“But he insists he would rather die than aid us as our prisoner,” said the first. “We cannot carry him down these mountains, or drag him across Rhovanion, but I believe there are enough of us to keep an eye on him to watch for any sign of betrayal.”",
+      "“Very well,” answered the other hero, sheathing his dagger. He narrowed his eyes and looked suspiciously at Urdug while untying him. “We will help you find this key,” he said, “and you will take us to your secret entrance. But be warned: if you attempt any deception, I will slit your throat.”",
+      "“Yes, yes,” said Urdug rising to his feet, “Urdug will find you the key, and maybe the horn I lost as well. Perhaps even my friend, Tiny. I think he escaped when the giant attacked us. He was never too bright, but he knew when fight and when to run. Anyway, off we go. Follow me!”",
+      "And with that, Urdug led the bewildered heroes down the slopes of the Grey Mountains to retrace his steps through Wilderland."
+    ],
+    "setup": [
+      "“Roam Across Rhovanion” is played with an encounter deck built with all the cards from the following encounter sets: Roam Across Rhovanion, Fell Beasts, Lost in Wilderland, and Hills of Wilderland. (Fell Beasts, Lost in Wilderland, and Hills of Wilderland can be found in The Wilds of Rhovanion deluxe expansion to The Lord of the Rings: The Card Game.)"
+    ],
+    "rules": [
+      {
+        "title": "Encounter",
+        "text": "Encounter is a new keyword that appears on player cards with an encounter card back, and it has the following rules:\n\n• Player cards with the encounter keyword cannot be included in any player’s deck because they have encounter card backs. Instead, when setting up a scenario, each player may set up to 3 cards with the encounter keyword aside, out of play. These cards do not count toward the player’s deck minimum of 50 cards.\n• Player cards with the encounter keyword have a dash (-) instead of a cost because they are never played from a player’s hand. Instead, player cards with the encounter keyword are meant to be shuffled into the encounter deck. In order to shuffle one of the set aside player cards into the encounter deck, a card effect must instruct a player to do so.\n• The “when revealed” effect on player cards with the encounter keyword cannot be canceled.\n• If a player card with the encounter keyword is dealt as a shadow card to an enemy, it is treated like an encounter card: place it in the encounter discard pile after resolving that enemy’s attack.\n• If a player card with the encounter keyword leaves play, it is removed from the game. Do not place it in a player’s discard pile or in the encounter deck discard pile."
+      },
+      {
+        "title": "Indestructible",
+        "text": "An enemy with the indestructible keyword cannot be destroyed by damage, even when it has damage on it equal to its hit points."
+      }
+    ],
+    "resolution": [
+      "The heroes had taken a risk by trusting Urdug, but they were no fools. They had anticipated his treachery, and dealt harshly with his friend, the Troll. But Urdug they kept alive because they still needed the location of the secret entrance to Gundabad. They bound him again with cords, and this time the Goblin did not complain. He didn’t even so much as whimper. Urdug had taken his chance to escape and failed. He knew that if he caused any more trouble for the adventurers that his fate would be the same as Tiny’s.",
+      "“We have the key to the Goblin’s door but it is still a long way to Mount Gundabad, and we are ill supplied for such a journey,” said one of the heroes.",
+      "“Agreed,” said another. “There is a great settlement of Woodmen between us and the mountain. It rests on the edge of Mirkwood Forest. Hrogar’s Hill, they call it. People are friendly there – though perhaps not to Goblins.”",
+      "He threw Urdug a sharp glance, but the Goblin did not even raise his eyes to see.",
+      "“Excellent,” replied the other hero. “Then we head for Hrogar’s Hill.”",
+      "The heroes packed their things and began the long trek to the Woodmen settlement, leading their captive by a rope tied to his wrists.",
+      "The story continues in “Fire in the Night,” the third Adventure Pack in the Ered Mithrin cycle."
+    ]
   }
 }

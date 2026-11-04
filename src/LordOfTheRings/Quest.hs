@@ -300,6 +300,11 @@ import LordOfTheRings.Quest.Cards.SearchingForDragonSign
 import LordOfTheRings.Quest.Cards.TheColdDrakeAttacks
 import LordOfTheRings.Quest.Cards.HuntingTheBeast
 import LordOfTheRings.Quest.Cards.ACorneredDragon
+import LordOfTheRings.Quest.Cards.TheGoblinsTask
+import LordOfTheRings.Quest.Cards.RescueTiny
+import LordOfTheRings.Quest.Cards.RetrieveUrdugsHorn
+import LordOfTheRings.Quest.Cards.FindDurinsKey
+import LordOfTheRings.Quest.Cards.UrdugsGambit
 import LordOfTheRings.Quest.Runner ()
 import LordOfTheRings.Quest.Types as X
 import LordOfTheRings.Id
@@ -632,5 +637,10 @@ allQuests =
         , SomeQuestCard theColdDrakeAttacks
         , SomeQuestCard huntingTheBeast
         , SomeQuestCard aCorneredDragon
+        , SomeQuestCard theGoblinsTask
+        , SomeQuestCard rescueTiny
+        , SomeQuestCard retrieveUrdugsHorn
+        , SomeQuestCard findDurinsKey
+        , SomeQuestCard urdugsGambit
         ]
     ]

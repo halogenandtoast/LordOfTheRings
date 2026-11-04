@@ -479,6 +479,9 @@ import LordOfTheRings.Location.Cards.DwarvenDoor
 import LordOfTheRings.Location.Cards.CaveEntrance
 import LordOfTheRings.Location.Cards.CreatureDen
 import LordOfTheRings.Location.Cards.HighFalls
+import LordOfTheRings.Location.Cards.GreyMoorland
+import LordOfTheRings.Location.Cards.DeepRavine
+import LordOfTheRings.Location.Cards.SlopesOfEredMithrin
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -1004,5 +1007,8 @@ allLocations =
         , SomeLocationCard caveEntrance
         , SomeLocationCard creatureDen
         , SomeLocationCard highFalls
+        , SomeLocationCard greyMoorland
+        , SomeLocationCard deepRavine
+        , SomeLocationCard slopesOfEredMithrin
         ]
     ]
