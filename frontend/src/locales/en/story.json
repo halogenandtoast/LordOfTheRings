@@ -3600,5 +3600,54 @@
       "One of the heroes clasped hands with the Woodman and said, “Thank you for your help. You are a brave man, Haldan. I wish you safe travel on your return journey.”",
       "With that, the heroes climbed aboard the Bardings’ boat and sailed north as Haldan waved goodbye from the shore."
     ]
+  },
+  "danger-in-dorwinion": {
+    "intro": [
+      "Built upon the shore of the Sea of Rhûn, the capital of Dorwinion was at most times a cacaphony of trade: The docks were lined with boats from Lake-town, hired hands loaded and unloaded cargo, and mules brayed loudly as they pulled heavy carts to and fro. Shouting could also be heard from the merchant district as sellers peddled their wares to the crowds of people who passed between their stands.",
+      "But not this day. When the heroes had arrived in Dorwinion, they found the capital a much quieter place. A shadow of fear hung over the city. People spoke in hushed tones, if they spoke at all. Most of the Dorwinions they met on the street did not greet them but rather looked down and walked faster. Nearly every home and shop around them was shut tight with windows shuttered.",
+      "Rutland guided them to the home of his cousin, and there a woman motioned for them to come inside. After the heroes entered her home, she glanced outside before closing the door.",
+      "“Rutland!” she exclaimed and hugged the Lakeman. When she saw that her embrace pained him, she looked him over with concern, and asked, “What happened to you?”",
+      "“I was injured by Easterling raiders when they attacked the merchant camp,” answered Rutland. “These brave companions rescued me.” He motioned to the heroes.",
+      "Their host bowed and said, “Welcome. I am Niena.”",
+      "“What troubles this place, Niena?” asked one of the heroes.",
+      "“A hidden evil afflicts our city,” she answered softly. “Each night people disappear, but no one will speak of it. Those who did have gone missing themselves. Now everyone looks suspiciously at their neighbors. We are prisoners to our fear.”",
+      "“Do you know who might be responsible?” asked the hero.",
+      "Niena looked nervously at the door. “There are rumors,” she said. “Some say a cult has taken root here in secret, and they are behind the abductions.”",
+      "“Can you tell us more about this cult?” the hero asked. “Who are they? Where do they meet?”",
+      "“I know not,” answered Niena. “It is only a rumor. Nobody will speak of it openly, so nothing is known. Please, help my city! My husband, Torwald, was one of those who tried uncover the truth, and he has been gone for weeks now. I fear that he is dead, but I need to know. Will you not help?”",
+      "“We will,” declared the hero. He stood and walked toward the door. Then turning he said, “We will discover the truth behind these disapperances, and unmask this cult if they are responsible. And if we cannot find your husband, then we shall avenge him.”"
+    ],
+    "setup": [
+      "“Danger in Dorwinion” is played with an encounter deck built with all the cards from the following encounter sets: Danger in Dorwinion, Servants of Sauron, City of Rhûn, and Under Guard."
+    ],
+    "rules": [
+      {
+        "title": "Guarded (X)",
+        "text": "Guarded (X) is an alternate version of the guarded keyword, where X is one or more card types (such as enemy or location). When a card with guarded (X) enters play, discard cards from the encounter deck until an encounter card with the matching type is discarded. Then, add that card to the staging area and attach the guarded (X) card to it as a guarded objective. Once attached, an objective with guarded (X) works just like an objective with the original guarded keyword. If the encounter deck is empty while resolving the guarded (X) keyword, shuffle the encounter discard pile into the encounter deck and finish resolving the guarded (X) keyword.\n\nExample: During the quest phase, Stephen reveals Evidence of the Cult. It has the guarded (enemy) keyword, so Stephen places it in the staging area and discards cards from the top of the encounter deck until an enemy is discarded. Then, he adds that enemy to the staging area and attaches Evidence of the Cult to that enemy as a guarded objective."
+      },
+      {
+        "title": "Immune to Player Card Effects",
+        "text": "Cards with the text “Immune to player card effects” ignore the effects of all player cards. Additionally, cards that are immune to player card effects cannot be chosen as targets of player card effects."
+      },
+      {
+        "title": "Encounter Side Quests",
+        "text": "A side quest with an encounter card back is called an “encounter side quest.” An encounter side quest is both a quest card and an encounter card. When an encounter side quest is revealed, it is added to the staging area. Because side quests are quest cards as well as encounter cards, the “when revealed” effects of side quests cannot be canceled by player card effects.\n\nWhile any side quest is in the staging area, it functions like a quest card with the following exception: when a side quest is defeated, the players do not advance to the next stage of the quest deck. Instead, the side quest is added the victory display.\n\nAt the beginning of each quest phase, if there are one or more side quests in the staging area, the first player may choose one to be the “current quest” until the end of the phase instead of the quest card that is currently active via the quest deck. While a side quest is the current quest, any progress that the players make is placed onto that side quest and any card effects that target the “current quest” target that side quest. Progress must still be placed on the active location before it can be placed on a side quest. Any progress that is made beyond the current quest’s total quest points is discarded; do not place progress on any other quest card in play."
+      }
+    ],
+    "resolution": [
+      "“Wroth am I to discover that Dorwinions did willingly consort with the agents of Mordor to terrorize their own countrymen,” growled one of the heroes. She stood over the body of her fallen enemy - the leader of the cult responsible for abducting Dorwinions and nearly subduing the country through fear.",
+      "“Yet treachery has ever been the Enemy’s favorite weapon, and greed and corruption his best allies,” replied her companion.",
+      "“I know it has always been thus,” she consented. “But it does not lessen the sting of betrayal.”",
+      "“That is true,” her friend agreed. “Yet my immediate concern is given to the missing Dorwinions: Where are they? We have searched out every secret meeting place in this city and still not found them.”",
+      "“You there!” said the hero, pointing at an injured cultist with her sword. “Where have you taken them? Speak quickly!”",
+      "The cultist clutched his wounded arm and looked wide-eyed at the bloodied sword mere inches from his face. “I - I don’t know!” he stammered.",
+      "“You lie!” shouted the hero. The cultist saw a raging fire in her eyes and tried to squirm away from her sword, but the wall was behind him and there was nowhere to go. He raised his good hand and said, “I don’t know where it is.”",
+      "“Where what is?”",
+      "“The temple!” said the cultist. “The temple where they’ve taken the captives. It’s somewhere in the Hills of Rhûn, but I don’t know where.”",
+      "“How did you learn of this temple? Who told you?”",
+      "“No one told me. I overheard that one there talking to his boss about it.” The cultist motioned to the dead body at the hero’s feet.",
+      "“So, our defeated foe was himself a servant,” remarked the hero’s companion. “Then the real danger is in the Hills of Rhûn, and our work in Dorwinion remains unfinished.”",
+      "“Indeed,” agreed the hero as she wiped the blood from her sword. “Let us hand this cultist over to the local authorities and go ourselves in search of this temple.”"
+    ]
   }
 }
