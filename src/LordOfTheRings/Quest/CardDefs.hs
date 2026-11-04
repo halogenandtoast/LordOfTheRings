@@ -401,6 +401,8 @@ allQuestCards =
       , shadowOfFearASitE
       , unwelcomeTravelers
       , lostInTheDark
+      , insideTheWalls
+      , driveThemOut
       ]
 
 theDrippingWalls :: CardDef
@@ -1629,3 +1631,9 @@ lostInTheDark =
     { cdVictoryPoints = Just 10
     , cdWhenRevealed = True
     }
+
+insideTheWalls :: CardDef
+insideTheWalls = quest "22025" "Inside the Walls" WrathAndRuin 1 4
+
+driveThemOut :: CardDef
+driveThemOut = quest "22026" "Drive them Out" WrathAndRuin 2 12

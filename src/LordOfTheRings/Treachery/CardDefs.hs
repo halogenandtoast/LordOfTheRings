@@ -408,6 +408,11 @@ allTreacheryCards =
       , ulchorsRage
       , fanaticism
       , fearfulShadows
+      , fury
+      , caughtOffGuard
+      , streetFightingWrathAndRuin
+      , underSiege
+      , ulchorsRevenge
       ]
 
 deepDeepDark :: CardDef
@@ -2585,6 +2590,32 @@ fanaticism = (treachery "21060" "Fanaticism" UlchorsGuard 2) {cdCardTraits = set
 fearfulShadows :: CardDef
 fearfulShadows =
   (treachery "21064" "Fearful Shadows" TwistedTunnels 2)
+    { cdKeywords = setFromList [Doomed 1]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
+    }
+
+fury :: CardDef
+fury =
+  (treachery "22019" "Fury" WrathAndRuin 2)
+    { cdCardTraits = setFromList [Easterling]
+    , cdKeywords = setFromList [Surge]
+    , cdEasyModeQuantity = Just 1
+    }
+
+caughtOffGuard :: CardDef
+caughtOffGuard = (treachery "22020" "Caught Off Guard" WrathAndRuin 2) {cdShadowEffect = True, cdEasyModeQuantity = Just 1}
+
+-- | Wrath and Ruin's, not Assault on Osgiliath's.
+streetFightingWrathAndRuin :: CardDef
+streetFightingWrathAndRuin = (treachery "22021" "Street Fighting" WrathAndRuin 2) {cdShadowEffect = True}
+
+underSiege :: CardDef
+underSiege = (treachery "22022" "Under Siege" WrathAndRuin 2) {cdShadowEffect = True}
+
+ulchorsRevenge :: CardDef
+ulchorsRevenge =
+  (treachery "22023" "Ulchor's Revenge" WrathAndRuin 2)
     { cdKeywords = setFromList [Doomed 1]
     , cdShadowEffect = True
     , cdEasyModeQuantity = Just 1
