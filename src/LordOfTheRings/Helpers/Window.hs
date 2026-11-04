@@ -97,7 +97,8 @@ windowMatchesM matcher w@(Window timing wType) = case (matcher, wType) of
   -- only a card with When Revealed effects leaves A Test of Will something to cancel
   (CardRevealedWindow t, Revealed target) | t == timing -> do
     es <- getsGame gameEntities
-    cancelable <- notElem WhenRevealedCannotBeCanceled <$> getModifiers target
+    -- on the game, no card's can be, as while Foothills of Mordor is in the staging area
+    cancelable <- notElem WhenRevealedCannotBeCanceled . concat <$> traverse getModifiers [target, GameTarget]
     pure $ cancelable && maybe False cdWhenRevealed case target of
       EnemyTarget i -> toCardDef <$> Map.lookup i es.enemies
       LocationTarget i -> toCardDef <$> Map.lookup i es.locations

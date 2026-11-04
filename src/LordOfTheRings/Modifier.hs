@@ -231,7 +231,8 @@ data ModifierType
     DoesNotExhaustToCommit
   | -- | on the game: no player card may cancel an encounter card's effects
     CannotCancelEncounterEffects
-  | -- | on an encounter card: its When Revealed effect cannot be canceled
+  | -- | on an encounter card: its When Revealed effect cannot be canceled; on the game:
+    -- no encounter card's can be
     WhenRevealedCannotBeCanceled
   | -- | on the game: matching cards cost this much more to play from hand
     IncreaseCost CardMatcher Int
