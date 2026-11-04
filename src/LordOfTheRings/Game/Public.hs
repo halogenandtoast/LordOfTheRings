@@ -21,7 +21,9 @@ import LordOfTheRings.Helpers.Modifiers (playProhibitions)
 import LordOfTheRings.Helpers.Staging
 import LordOfTheRings.Id
 import LordOfTheRings.Log.Entry (LogRef)
+import LordOfTheRings.Ally.Types (AllyAttrs (allyPoison))
 import LordOfTheRings.Enemy.Types (EnemyAttrs (..))
+import LordOfTheRings.Hero.Types (HeroAttrs (heroPoison))
 import LordOfTheRings.Location.Types (LocationAttrs (locationCardId, locationUnderneath), isUncharted)
 import LordOfTheRings.Log.Refs (sourceRefFor)
 import LordOfTheRings.Matcher
@@ -83,6 +85,9 @@ hiddenCards g = Set.fromList hidden `Set.difference` Set.fromList shown
         | a <- map toAttrs (toList merged.entities.enemies)
         ]
       <> [(toCard l).id | l <- toList merged.entities.locations, isUncharted l]
+      -- poison: cards attached facedown to characters (The Hobbit: On the Doorstep)
+      <> [c.id | h <- map toAttrs (toList merged.entities.heroes), c <- h.heroPoison]
+      <> [c.id | a <- map toAttrs (toList merged.entities.allies), c <- a.allyPoison]
       -- the loot deck facedown under The Burglar's Turn
       <> [c.id | k <- toList merged.entities.contracts, c <- (toAttrs k).contractUnderneath]
   shown = map (.id) $ concatMap searchedCards (toList g.question)
@@ -158,6 +163,9 @@ publicGameFor seesHand g = hideDecks $ toJSON merged
         $ KeyMap.insert "sideQuestDeck" (toJSON $ length (fromMeta "sideQuestDeck" :: [Value]))
         -- the damage a set-aside card keeps, as Cold-Drake's (The Withered Heath)
         $ KeyMap.insert "setAsideDamage" (toJSON (fromMeta "setAsideDamage" :: Map CardId Int))
+        -- poison is facedown: only its cards' ids are sent, so the board can lay them out
+        $ adjust (inside "heroes" $ overValues $ inside "poison" idsOnly) "entities"
+        $ adjust (inside "allies" $ overValues $ inside "poison" idsOnly) "entities"
         $ adjust (inside "objectives" $ overValues $ inside "underneath" $ const $ Array mempty) "entities"
         $ adjust (inside "contracts" $ overValues $ inside "underneath" $ const $ Array mempty) "entities"
         -- the player cards under a quest are facedown; an encounter card there is faceup, as

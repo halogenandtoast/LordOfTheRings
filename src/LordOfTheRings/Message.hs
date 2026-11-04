@@ -420,7 +420,8 @@ data Message
     Reanimate CardId EnemyId
   | ShuffleIntoEncounterDeck Target
   | {- | a treachery dealt as a shadow card resolves its revelation as if revealed, here
-    attaching itself where its placement says
+    attaching itself where its placement says; an enemy card dealt as one attaches itself
+    as its shadow reads, as Dark Bats
     -}
     PutShadowTreacheryIntoPlay EnemyId CardId Placement
   | -- | the treachery leaves the encounter discard pile attached to the target, its When
@@ -488,6 +489,22 @@ data Message
     PutInDiscard PlayerCard
   | -- | a card goes facedown under the ally, or the Nameless enemy
     AttachFacedown Target PlayerCard
+  | -- | poison attached to the character: cards taken from its controller's deck, facedown,
+    -- as Condition attachments (The Hobbit: On the Doorstep rules insert, "Venom, Poison,
+    -- and Poisoned"). As much poison as its printed hit points makes it unconscious.
+    AttachPoison Target [PlayerCard]
+  | -- | the character's controller gives it this much poison, the top cards of his deck,
+    -- unless it cannot be poisoned
+    GivePoison Target Int
+  | -- | this much of the character's poison goes to its owner's discard pile, as Forest
+    -- Stream discards it
+    DiscardPoison Target Int
+  | -- | the character is made unconscious: rotated 180 degrees, its poison to its owner's
+    -- discard pile
+    MakeUnconscious Target
+  | -- | an effect that targets an unconscious character readies it: rotated back to its
+    -- ready position, it is no longer unconscious
+    ReadyUnconscious Target
   | -- | the facedown card leaves the character for its owner's hand, as Bard son of Brand
     -- returns those on Eagles of the Misty Mountains
     ReturnFacedownToHand Target CardId

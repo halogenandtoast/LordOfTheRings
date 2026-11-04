@@ -239,6 +239,7 @@ import LordOfTheRings.Attachment.Cards.EsquireOfGondor
 import LordOfTheRings.Attachment.Cards.OrcDisguise
 import LordOfTheRings.Attachment.Cards.Guthwine
 import LordOfTheRings.Attachment.Cards.FriendOfFriends
+import LordOfTheRings.Attachment.Cards.BilbosMagicRing
 import LordOfTheRings.Attachment.Runner ()
 import LordOfTheRings.Attachment.Types as X
 import LordOfTheRings.Id
@@ -515,5 +516,6 @@ allAttachments =
         , SomeAttachmentCard orcDisguise
         , SomeAttachmentCard guthwine
         , SomeAttachmentCard friendOfFriends
+        , SomeAttachmentCard bilbosMagicRing
         ]
     ]

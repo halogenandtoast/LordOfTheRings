@@ -429,6 +429,10 @@ import LordOfTheRings.Treachery.Cards.Snowdrifts
 import LordOfTheRings.Treachery.Cards.BitterCold
 import LordOfTheRings.Treachery.Cards.StormOfHowls
 import LordOfTheRings.Treachery.Cards.LustForTheRing
+import LordOfTheRings.Treachery.Cards.CaughtInWebs
+import LordOfTheRings.Treachery.Cards.PoisonedBySpiders
+import LordOfTheRings.Treachery.Cards.FightingAmongFriends
+import LordOfTheRings.Treachery.Cards.WeighedDownWilderland
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -885,5 +889,9 @@ allTreacherys =
         , SomeTreacheryCard bitterCold
         , SomeTreacheryCard stormOfHowls
         , SomeTreacheryCard lustForTheRing
+        , SomeTreacheryCard caughtInWebs
+        , SomeTreacheryCard poisonedBySpiders
+        , SomeTreacheryCard fightingAmongFriends
+        , SomeTreacheryCard weighedDownWilderland
         ]
     ]

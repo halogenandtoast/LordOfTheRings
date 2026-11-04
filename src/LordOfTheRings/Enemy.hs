@@ -508,6 +508,12 @@ import LordOfTheRings.Enemy.Cards.GreatWargChief
 import LordOfTheRings.Enemy.Cards.HoundOfSauron
 import LordOfTheRings.Enemy.Cards.HowlingWarg
 import LordOfTheRings.Enemy.Cards.CrebainFromDunland
+import LordOfTheRings.Enemy.Cards.OldTomnoddy
+import LordOfTheRings.Enemy.Cards.CrazyCob
+import LordOfTheRings.Enemy.Cards.LazyLob
+import LordOfTheRings.Enemy.Cards.FatSpider
+import LordOfTheRings.Enemy.Cards.WickedSpider
+import LordOfTheRings.Enemy.Cards.DarkBats
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -1045,5 +1051,11 @@ allEnemys =
         , SomeEnemyCard houndOfSauron
         , SomeEnemyCard howlingWarg
         , SomeEnemyCard crebainFromDunland
+        , SomeEnemyCard oldTomnoddy
+        , SomeEnemyCard crazyCob
+        , SomeEnemyCard lazyLob
+        , SomeEnemyCard fatSpider
+        , SomeEnemyCard wickedSpider
+        , SomeEnemyCard darkBats
         ]
     ]

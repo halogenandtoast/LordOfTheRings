@@ -127,7 +127,7 @@ const toggleUnless = (attached: CardView) => {
 </script>
 
 <template>
-  <div class="card-slot" :class="{ expanded, hosting: attachments.length > 0, sideways: card.exhausted && !banner && !rotated, 'with-stats': card.stats.length && !banner && !card.exhausted }">
+  <div class="card-slot" :class="{ expanded, hosting: attachments.length > 0, sideways: card.exhausted && !card.unconscious && !banner && !rotated, 'with-stats': card.stats.length && !banner && !card.exhausted }">
     <div v-if="attachments.length" class="attachments">
       <div
         v-for="(attached, index) in attachments"
@@ -144,7 +144,7 @@ const toggleUnless = (attached: CardView) => {
       <div
         ref="cardRef"
         class="card"
-        :class="{ rotated, exhausted: card.exhausted, active, playing: card.playing, source: isSource, target: isTarget, drop: isDrop, committed: card.committed, 'out-of-play': card.outOfPlay, prohibited: card.prohibited, flipping }"
+        :class="{ rotated, exhausted: card.exhausted, unconscious: card.unconscious, active, playing: card.playing, source: isSource, target: isTarget, drop: isDrop, committed: card.committed, 'out-of-play': card.outOfPlay, prohibited: card.prohibited, flipping }"
         :style="{ viewTransitionName: `card-${card.id}` }"
         :aria-label="tr(card.name)"
         :data-card-id="card.id"
@@ -346,6 +346,8 @@ const toggleUnless = (attached: CardView) => {
 .card { -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; }
 @media (hover: none) { .card img { -webkit-user-drag: none; } }
 .card.exhausted { transform: rotate(90deg) scale(0.88); }
+/* an unconscious character is turned upside down (Flies and Spiders) */
+.card.exhausted.unconscious { transform: rotate(180deg); }
 /* its own layer, so a committed card that can also be used shows both frames */
 .card.committed::after {
   content: "";

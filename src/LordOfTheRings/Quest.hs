@@ -362,6 +362,10 @@ import LordOfTheRings.Quest.Cards.LeadTheRevolt
 import LordOfTheRings.Quest.Cards.TheForbiddenDoor (theForbiddenDoor)
 import LordOfTheRings.Quest.Cards.ThePathsOfTheDead (thePathsOfTheDead)
 import LordOfTheRings.Quest.Cards.TheDeadAreFollowing (theDeadAreFollowing)
+import LordOfTheRings.Quest.Cards.IntoMirkwood
+import LordOfTheRings.Quest.Cards.LostInTheDarkFliesAndSpiders
+import LordOfTheRings.Quest.Cards.CapturedBySpiders
+import LordOfTheRings.Quest.Cards.BattleWithTheSpiders
 import LordOfTheRings.Quest.Runner ()
 import LordOfTheRings.Quest.Types as X
 import LordOfTheRings.Id
@@ -756,5 +760,9 @@ allQuests =
         , SomeQuestCard theForbiddenDoor
         , SomeQuestCard thePathsOfTheDead
         , SomeQuestCard theDeadAreFollowing
+        , SomeQuestCard intoMirkwood
+        , SomeQuestCard lostInTheDarkFliesAndSpiders
+        , SomeQuestCard capturedBySpiders
+        , SomeQuestCard battleWithTheSpiders
         ]
     ]

@@ -4,6 +4,7 @@ module LordOfTheRings.Ally.Runner (module X) where
 
 import LordOfTheRings.Ally.Types as X
 import LordOfTheRings.Classes.HasQueue (HasQueue, push, pushAll, pushWhen)
+import LordOfTheRings.Card (cdHitPoints, toCardDef)
 import LordOfTheRings.Classes.RunMessage
 import LordOfTheRings.Helpers.Modifiers (doesNotExhaustToCommit, getModifiers)
 import LordOfTheRings.Message
@@ -42,8 +43,27 @@ instance RunMessage AllyAttrs where
       mods <- getModifiers attrs
       blocked <- (|| held || (CannotReadyFromCardEffects `elem` mods && ReadiedByRefresh `notElem` mods)) . elem CannotReady . (mods <>) <$> getModifiers GameTarget
       when (attrs.allyExhausted && not blocked) $ push $ CheckWindows [mkAfter $ BecameReady (toTarget attrs)]
-      pure $ attrs & exhaustedL %~ (&& blocked)
+      pure $ attrs & exhaustedL %~ (&& blocked) & unconsciousL %~ (&& blocked)
     AttachFacedown (isTarget attrs -> True) card -> pure $ attrs & facedownL %~ (card :)
+    AttachPoison (isTarget attrs -> True) cards -> do
+      let poison = attrs.allyPoison <> cards
+      -- as much poison as its printed hit points
+      pushWhen (maybe False (length poison >=) (cdHitPoints $ toCardDef attrs)) $ MakeUnconscious (toTarget attrs)
+      pure $ attrs & poisonL .~ poison
+    DiscardPoison (isTarget attrs -> True) n -> do
+      let (gone, kept) = splitAt n attrs.allyPoison
+      pushAll $ map PutInDiscard gone
+      pure $ attrs & poisonL .~ kept
+    -- a poison card discarded as a Condition attachment, as Miner of the Iron Hills does
+    Discard (CardIdTarget cid) | Just pc <- find ((== cid) . (.id)) attrs.allyPoison -> do
+      push $ PutInDiscard pc
+      pure $ attrs & poisonL %~ filter ((/= cid) . (.id))
+    MakeUnconscious (isTarget attrs -> True) -> do
+      pushAll $ map PutInDiscard attrs.allyPoison
+      pure $ attrs & poisonL .~ [] & unconsciousL .~ True & exhaustedL .~ True
+    ReadyUnconscious (isTarget attrs -> True) | attrs.allyUnconscious -> do
+      push $ CheckWindows [mkAfter $ BecameReady (toTarget attrs)]
+      pure $ attrs & unconsciousL .~ False & exhaustedL .~ False
     ReturnFacedownToHand (isTarget attrs -> True) cid -> do
       pushAll [PutInHand c | c <- attrs.allyFacedown, c.id == cid]
       pure $ attrs & facedownL %~ filter ((/= cid) . (.id))
@@ -72,8 +92,8 @@ instance RunMessage AllyAttrs where
     _ -> pure attrs
    where
     leaving = do
-      pushAll $ map PutInDiscard attrs.allyFacedown
-      pure $ attrs & facedownL .~ []
+      pushAll $ map PutInDiscard (attrs.allyFacedown <> attrs.allyPoison)
+      pure $ attrs & facedownL .~ [] & poisonL .~ []
 
 -- | The character exhausts, its When and After windows framing it.
 exhausting :: HasQueue Message m => Bool -> AllyAttrs -> m AllyAttrs

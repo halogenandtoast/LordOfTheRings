@@ -117,6 +117,8 @@ matchHero matcher hero = case matcher of
   HeroWithKeyword k -> hasKeyword k (toTarget hero) (toCardDef hero)
   ReadyHero -> pure $ not (heroExhausted $ toAttrs hero)
   ExhaustedHero -> pure $ heroExhausted (toAttrs hero)
+  PoisonedHero -> pure $ notNull (heroPoison $ toAttrs hero)
+  UnconsciousHero -> pure $ heroUnconscious (toAttrs hero)
   CommittedHero -> pure $ heroCommitted (toAttrs hero)
   AttackingHero -> pure $ heroAttacking (toAttrs hero)
   DefendingHero -> isDefending (toTarget hero)
@@ -187,6 +189,8 @@ matchAlly matcher ally = case matcher of
   AllyWithKeyword k -> hasKeyword k (toTarget ally) (toCardDef ally)
   ReadyAlly -> pure $ not (allyExhausted $ toAttrs ally)
   ExhaustedAlly -> pure $ allyExhausted (toAttrs ally)
+  PoisonedAlly -> pure $ notNull (allyPoison $ toAttrs ally)
+  UnconsciousAlly -> pure $ allyUnconscious (toAttrs ally)
   CommittedAlly -> pure $ allyCommitted (toAttrs ally)
   AttackingAlly -> pure $ allyAttacking (toAttrs ally)
   DefendingAlly -> isDefending (toTarget ally)
@@ -918,7 +922,13 @@ getConditionAttachments = do
   es <- getsGame gameEntities
   conditions <- filterM (\a -> hasTrait Condition (toTarget a) (toCardDef a)) (toList es.attachments)
   enemies <- filterM (\e -> hasTrait Condition (toTarget e) (toCardDef e)) [e | e <- toList es.enemies, isAttached e.placement]
-  pure $ map toTarget conditions <> [toTarget t | t <- toList es.treacheries, isAttached t.placement] <> map toTarget enemies
+  pure
+    $ map toTarget conditions
+    <> [toTarget t | t <- toList es.treacheries, isAttached t.placement]
+    <> map toTarget enemies
+    -- poison, facedown on characters (The Hobbit: On the Doorstep rules insert)
+    <> [CardIdTarget c.id | h <- toList es.heroes, c <- heroPoison (toAttrs h)]
+    <> [CardIdTarget c.id | a <- toList es.allies, c <- allyPoison (toAttrs a)]
  where
   isAttached = \case
     AttachedTo _ -> True

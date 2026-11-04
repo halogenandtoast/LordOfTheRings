@@ -536,6 +536,10 @@ import LordOfTheRings.Location.Cards.TreeCrownedHill
 import LordOfTheRings.Location.Cards.HillsOfHollin
 import LordOfTheRings.Location.Cards.RedhornFoothills
 import LordOfTheRings.Location.Cards.Eregion
+import LordOfTheRings.Location.Cards.TheSpidersGlade
+import LordOfTheRings.Location.Cards.GiantWeb
+import LordOfTheRings.Location.Cards.ForestStream
+import LordOfTheRings.Location.Cards.HiddenPath
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -1118,5 +1122,9 @@ allLocations =
         , SomeLocationCard hillsOfHollin
         , SomeLocationCard redhornFoothills
         , SomeLocationCard eregion
+        , SomeLocationCard theSpidersGlade
+        , SomeLocationCard giantWeb
+        , SomeLocationCard forestStream
+        , SomeLocationCard hiddenPath
         ]
     ]
