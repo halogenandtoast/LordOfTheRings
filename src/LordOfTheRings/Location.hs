@@ -541,6 +541,12 @@ import LordOfTheRings.Location.Cards.ShiftingQuagmire
 import LordOfTheRings.Location.Cards.HauntedMere
 import LordOfTheRings.Location.Cards.StagnantPools
 import LordOfTheRings.Location.Cards.SoftMires
+import LordOfTheRings.Location.Cards.TheCrossRoadsTheLandOfShadow
+import LordOfTheRings.Location.Cards.HennethAnnun
+import LordOfTheRings.Location.Cards.SouthwardRoad
+import LordOfTheRings.Location.Cards.FoothillsOfEphelDuath
+import LordOfTheRings.Location.Cards.IthilienWoods
+import LordOfTheRings.Location.Cards.HillsOfIthilien
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -1128,5 +1134,11 @@ allLocations =
         , SomeLocationCard hauntedMere
         , SomeLocationCard stagnantPools
         , SomeLocationCard softMires
+        , SomeLocationCard theCrossRoadsTheLandOfShadow
+        , SomeLocationCard hennethAnnun
+        , SomeLocationCard southwardRoad
+        , SomeLocationCard foothillsOfEphelDuath
+        , SomeLocationCard ithilienWoods
+        , SomeLocationCard hillsOfIthilien
         ]
     ]

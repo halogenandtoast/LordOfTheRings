@@ -513,6 +513,11 @@ import LordOfTheRings.Enemy.Cards.DeadThings
 import LordOfTheRings.Enemy.Cards.CandleBearer
 import LordOfTheRings.Enemy.Cards.MorgulWraith
 import LordOfTheRings.Enemy.Cards.GollumTheLandOfShadow
+import LordOfTheRings.Enemy.Cards.ManOfHarad
+import LordOfTheRings.Enemy.Cards.CaptainOfHarad
+import LordOfTheRings.Enemy.Cards.Oliphaunt
+import LordOfTheRings.Enemy.Cards.HaradrimSoldier
+import LordOfTheRings.Enemy.Cards.HaradrimArcher
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -1055,5 +1060,10 @@ allEnemys =
         , SomeEnemyCard candleBearer
         , SomeEnemyCard morgulWraith
         , SomeEnemyCard gollumTheLandOfShadow
+        , SomeEnemyCard manOfHarad
+        , SomeEnemyCard captainOfHarad
+        , SomeEnemyCard oliphaunt
+        , SomeEnemyCard haradrimSoldier
+        , SomeEnemyCard haradrimArcher
         ]
     ]
