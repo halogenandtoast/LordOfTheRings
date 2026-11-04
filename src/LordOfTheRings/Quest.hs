@@ -355,6 +355,9 @@ import LordOfTheRings.Quest.Cards.StormTheCastleNoQuarter
 import LordOfTheRings.Quest.Cards.StormTheCastleStrongholdOfMordor
 import LordOfTheRings.Quest.Cards.SlavesOfTheDarkLord
 import LordOfTheRings.Quest.Cards.LeadTheRevolt
+import LordOfTheRings.Quest.Cards.TheTamingOfSmeagol
+import LordOfTheRings.Quest.Cards.AcrossTheMarshes
+import LordOfTheRings.Quest.Cards.DontLookAtTheLights
 import LordOfTheRings.Quest.Runner ()
 import LordOfTheRings.Quest.Types as X
 import LordOfTheRings.Id
@@ -742,5 +745,8 @@ allQuests =
         , SomeQuestCard stormTheCastleStrongholdOfMordor
         , SomeQuestCard slavesOfTheDarkLord
         , SomeQuestCard leadTheRevolt
+        , SomeQuestCard theTamingOfSmeagol
+        , SomeQuestCard acrossTheMarshes
+        , SomeQuestCard dontLookAtTheLights
         ]
     ]
