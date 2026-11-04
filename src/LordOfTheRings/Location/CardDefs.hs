@@ -466,6 +466,10 @@ allLocationCards =
       , crumblingCavern
       , undergroundLake
       , woodmenVillage
+      , dragonHoard
+      , ironHillsMine
+      , contestedDepths
+      , deepChasm
       ]
 
 drownedTreasury :: CardDef
@@ -3494,4 +3498,21 @@ woodmenVillage =
   (location "18069A" "Woodmen Village" JourneyUpTheAnduin 1 4 4)
     { cdCardTraits = setFromList [Riverland]
     , cdOtherSide = Just "18069B"
+    }
+
+dragonHoard :: CardDef
+dragonHoard = unique (location "18043" "Dragon Hoard" TheKingsQuest 1 7 7) {cdCardTraits = setFromList [Underground, Dark, Lair], cdVictoryPoints = Just 1}
+
+ironHillsMine :: CardDef
+ironHillsMine = (location "18044" "Iron Hills Mine" TheKingsQuest 2 4 4) {cdCardTraits = setFromList [Underground], cdEasyModeQuantity = Just 1}
+
+contestedDepths :: CardDef
+contestedDepths = (location "18045" "Contested Depths" TheKingsQuest 3 1 5) {cdCardTraits = setFromList [Underground], cdEasyModeQuantity = Just 0}
+
+deepChasm :: CardDef
+deepChasm =
+  (location "18046" "Deep Chasm" TheKingsQuest 2 2 6)
+    { cdCardTraits = setFromList [Underground, Dark]
+    , cdKeywords = setFromList [Deep]
+    , cdEasyModeQuantity = Just 1
     }

@@ -3243,5 +3243,42 @@
       "Kahliel lifted his hand and his companions fell silent. “We will ride to Gondor,” he said, “The Mûmakil dwell in this forest, along with the supplies we need. We will capture the beasts we need and ride them to Gondor.”",
       "To be continued in “The Mûmakil,” the first Adventure Pack in “The Haradrim” cycle."
     ]
+  },
+  "the-kings-quest": {
+    "intro": [
+      "“Welcome, guests,” said King Brand to the small party of adventurers who had just arrived in Dale. The king sat upon a wooden throne at the far end of his great hall. About him were the knights of his guard in fine mail. Rich tapestries hung from the walls, and the king drank from a golden cup. “I understand you have traveled a great distance and through many perils to reach me. The hospitality of Dale is yours. Tell me: what errand brings you to my realm?”",
+      "One of the heroes stepped forward and knelt at the foot of the throne. “My lord,” she began, “our road has indeed been long and perilous. From Far Harad we escaped the grasp of Mordor with a tribe of noble Haradrim who aided us in our moment of need. They forfeited their home when they joined with us and now they are a houseless people in a foreign land. Word of your prosperity reached us in the south and we have traveled here on their behalf. King Brand, will you allow them to settle in Dale?”",
+      "The king stroked his beard as he considered all that had been said. “This is no small thing that you ask of me. Even here in the north we have heard tales of the savage Haradrim. It is a marvel to my ears to hear you speak of them as you do, but I do not doubt the truth of your words. The journey you have undertaken on their behalf speaks to their credit.”",
+      "King Brand paused for a moment before continuing, “It is timely that you arrived when you did for I have need of heroes such as you: Something drives the fell mountain creatures from the north and into my realm. An entire village was reported destroyed only yesterday. There were no survivors to tell the tale and the knights of my house are already stretched thin defending the other outlying villages. That is why I need you to investigate this attack and discover those who are responsible. I must secure the borders of my kingdom before I can admit your friends to settle here. What say you?”",
+      "The hero rose from where she was kneeling, drew the sword from her scabbard and held it aloft as she spoke her answer, “We will go at once to deal with this threat to your realm and will not return until it is done.”",
+      "King Brand also stood and said, “After it is done, you will send for your friends, and they will have a new home in my land.”"
+    ],
+    "setup": [
+      "“The King’s Quest” is played with an encounter deck built with all the cards from the following encounter sets: The King’s Quest, Fell Beasts, Wild Creatures, Deep Underground, Afraid of the Dark, Dragon Might, and Lost Caves."
+    ],
+    "rules": [
+      {
+        "title": "The Caves Deck",
+        "text": "To create the Caves deck, take each card from the Lost Caves encounter set and shuffle them together. This is the Caves deck."
+      },
+      {
+        "title": "Deep Keyword",
+        "text": "Deep is a new keyword that appears on some locations in the Wilderland box. After the players travel to a Deep location, they discard it and replace it with the top card of the Caves deck. That location then becomes the active location. If there are no cards remaining in the Caves deck, the Deep keyword is ignored."
+      }
+    ],
+    "resolution": [
+      "With a final mighty stroke the heroes hewed the fire-drake and it collapsed upon its side. As it lay there, dying, the companions caught their breath and marveled at the monster they had slain.",
+      "“Surely this was the beast that terrorized the borders of Brand’s realm!” said one of the heroes triumphantly.",
+      "“Indeed, not since Smaug the Golden has a dragon such as this been seen in Middle-earth,” added another. “This must be what drove the Goblins out of the mountains.”",
+      "The adventurers were all in agreement when a horrible, gurgling laughter interrupted their conversation. The fire-drake coughed and cackled, “Fools! When my mother learns of my death, she will set all Wilderland ablaze!”",
+      "The heroes looked with wonder and horror as the wounded fire-drake summoned the last ounce of its strength to glare at them. The only fire left within the beast was the rage in its eyes as it cursed its enemies: “Your cities will burn! She will leave... nothing green... alive...” it sputtered and died, and its head dropped back to the ground.",
+      "There was a long silence as each member of the company reeled at the dragon’s words.",
+      "“It lies,” said one of the companions at last. “It was an evil creature, and it means to rob us of our victory with empty threats.”",
+      "“Nay,” replied another. “My heart wishes that were true, but it warns me otherwise. The creature was evil, and evil is wont to boast. This beast could not but tell us the truth in order to ease the sting of its defeat.”",
+      "“If that is true, then we must seek the mother before she hears of what has happened here, or else the Bardings and many more will pay the price for our victory,” added a third.",
+      "“But where do we find the mother?” asked the first. “Wilderland is a vast and untamed country. She could be anywhere.”",
+      "“Wilderland is vast, but a dragon cannot go long unnoticed,” answered the second companion. “I believe we have felt her presence on our journey already. It must have been the mother that chased the creatures from the mountains, so that is where we shall seek her: in The Withered Heath, where the dragons breed.”",
+      "To be continued in “The Withered Heath,” the first Adventure Pack in the “Ered Mithrin” cycle."
+    ]
   }
 }

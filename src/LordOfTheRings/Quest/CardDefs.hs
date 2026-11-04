@@ -351,6 +351,9 @@ allQuestCards =
       , southronPursuit
       , orcPatrols
       , battleAtTheCrossings
+      , theIronHills
+      , theLowerDepths
+      , theFireWorm
       ]
 
 theDrippingWalls :: CardDef
@@ -1390,3 +1393,16 @@ orcPatrols = quest "17162" "Orc Patrols" TheCrossingsOfPoros 3 15
 
 battleAtTheCrossings :: CardDef
 battleAtTheCrossings = quest "17163" "Battle at the Crossings" TheCrossingsOfPoros 4 20
+
+-- | 0 quest points (Hall of Beorn): it is defeated once 3 locations with victory points
+-- are in the victory display.
+theIronHills :: CardDef
+theIronHills = quest "18078" "The Iron Hills" TheKingsQuest 1 0
+
+-- | No quest points: it advances as Dragon Hoard becomes the active location.
+theLowerDepths :: CardDef
+theLowerDepths = (quest "18079" "The Lower Depths" TheKingsQuest 2 0) {cdQuestPoints = Nothing}
+
+-- | No quest points: the players win as Fire-drake is defeated.
+theFireWorm :: CardDef
+theFireWorm = (quest "18080" "The Fire Worm" TheKingsQuest 3 0) {cdQuestPoints = Nothing}

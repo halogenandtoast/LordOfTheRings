@@ -375,6 +375,7 @@ allTreacheryCards =
       , eyesInTheDark
       , dragonBreath
       , dragonScales
+      , denizenOfTheDeep
       ]
 
 deepDeepDark :: CardDef
@@ -2387,3 +2388,6 @@ dragonBreath = (treachery "18058" "Dragon Breath" DragonMight 2) {cdCardTraits =
 
 dragonScales :: CardDef
 dragonScales = (treachery "18059" "Dragon Scales" DragonMight 2) {cdCardTraits = setFromList [Dragon], cdKeywords = setFromList [Surge]}
+
+denizenOfTheDeep :: CardDef
+denizenOfTheDeep = (treachery "18047" "Denizen of the Deep" TheKingsQuest 2) {cdShadowEffect = True, cdEasyModeQuantity = Just 1}

@@ -439,6 +439,7 @@ allEnemyCards =
       , werewolf
       , giantSpider
       , blackBats
+      , fireDrake
       ]
 
 namelessThing :: CardDef
@@ -3587,3 +3588,8 @@ blackBats =
     , cdKeywords = setFromList [Surge]
     , cdShadowEffect = True
     }
+
+-- | X, its threat and defense, is 1 more than the number of players: printed as 0, the
+-- card adds it.
+fireDrake :: CardDef
+fireDrake = unique (enemy "18042" "Fire-drake" TheKingsQuest 1 35 0 7 0 17) {cdCardTraits = setFromList [Dragon]}
