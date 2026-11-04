@@ -19,10 +19,10 @@ forkedPassage = location ForkedPassage Cards.forkedPassage
 instance HasAbilities ForkedPassage where
   getAbilities (ForkedPassage a) = [mkAbility a 1 $ response $ TraveledWindow After a.id]
 
-{- | The deep keyword still resolves after the response, as the card's "before resolving
-the deep keyword" reads: Forked Passage, in the victory display, is not there to discard,
-and the top card of the Caves deck becomes the active location. No ruling covers this; it
-is the reading the card's timing gives.
+{- | The deep keyword still resolves after the response: "The Deep keyword will resolve
+whether you trigger this effect or not" (Caleb, FFG forum "Unofficial Official Rulings
+thread", 4 May 2019). Forked Passage, in the victory display, is not there to discard, and
+the top card of the Caves deck becomes the active location.
 -}
 instance RunMessage ForkedPassage where
   runMessage msg l@(ForkedPassage a) = case msg of
