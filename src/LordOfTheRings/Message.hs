@@ -686,6 +686,9 @@ data Message
     cards resolve their revelations)
     -}
     EncounterCardEnteredHand PlayerId EncounterCard
+  | -- | the player drew the encounter card, as it entered his hand: its card, out of play,
+    -- answers it, as The Searching Eye's "After you draw this card"
+    EncounterCardDrawn PlayerId EncounterCard
   | -- | the enemy's attack on the player has resolved, defended by these: a window for each
     -- that took no damage defending it, before the attack's own After windows
     AttackDefended PlayerId EnemyId [Target]

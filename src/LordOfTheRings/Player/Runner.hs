@@ -160,7 +160,7 @@ runPlayer msg player = case msg of
           -- a hero in the deck was shuffled in by Lost and Alone, and is put into play as drawn
           (heroes, drawn) = partition ((== HeroType) . (.cardType)) cards
       pushAll [PutHeroIntoPlay player.id pc | PlayerCard pc <- heroes]
-      pushAll [EncounterCardEnteredHand player.id ec | EncounterCard ec <- drawn]
+      pushAll $ concat [[EncounterCardEnteredHand player.id ec, EncounterCardDrawn player.id ec] | EncounterCard ec <- drawn]
       pushWhen (notNull cards) $ CheckWindows [mkAfter $ CardsDrawn player.id (length cards)]
       pure $ player & handL <>~ drawn & deckL .~ deck
     WithTarget (isTarget player -> True) (DoPhase PlanningPhase) -> do
