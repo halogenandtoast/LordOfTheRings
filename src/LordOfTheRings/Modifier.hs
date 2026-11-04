@@ -329,6 +329,9 @@ data ModifierType
     ResourcePhaseDraws Int
   | -- | on a player: their threat cannot be reduced, as The Empty Mug reads
     CannotReduceThreat
+  | -- | on a player: a player card reduces their threat by at most this much, as Mines of
+    -- Cirith Gurat's "reduce that amount to 1" reads
+    PlayerCardThreatReductionLimit Int
   | -- | on a player: the threat at which they are eliminated, 50, moves by this much, as
     -- Double Dealings lowers it by 10
     EliminationThreatModifier Int

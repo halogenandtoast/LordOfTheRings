@@ -185,8 +185,10 @@ lowerThreat pid n = do
 it does reduce it: The Empty Mug answers a player card's.
 -}
 lowerThreatBy :: (ReverseQueue m, Sourceable source) => source -> PlayerId -> Int -> m ()
-lowerThreatBy source pid n = do
-  barred <- elem CannotReduceThreat <$> getModifiers (PlayerTarget pid)
+lowerThreatBy source pid n' = do
+  mods <- getModifiers (PlayerTarget pid)
+  let barred = CannotReduceThreat `elem` mods
+      n = if isPlayerCardSource (toSource source) then foldr min n' [k | PlayerCardThreatReductionLimit k <- mods] else n'
   threat <- (.threat) <$> getPlayer pid
   unless (barred || n <= 0 || threat <= 0) do
     push $ LowerThreat pid n
