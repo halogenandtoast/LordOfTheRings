@@ -1465,6 +1465,7 @@ library
       LordOfTheRings.Location.Cards.Catacombs
       LordOfTheRings.Location.Cards.CaveBarrow
       LordOfTheRings.Location.Cards.CaveEntrance
+      LordOfTheRings.Location.Cards.CaveEntranceWesternLands
       LordOfTheRings.Location.Cards.Celebdil
       LordOfTheRings.Location.Cards.ChamberOfRecords
       LordOfTheRings.Location.Cards.CharredCellar
@@ -1534,6 +1535,7 @@ library
       LordOfTheRings.Location.Cards.DragonHoard
       LordOfTheRings.Location.Cards.DreadfulGap
       LordOfTheRings.Location.Cards.DreamChaserLocation
+      LordOfTheRings.Location.Cards.DrearyHills
       LordOfTheRings.Location.Cards.DrownedCave
       LordOfTheRings.Location.Cards.DrownedGraves
       LordOfTheRings.Location.Cards.DrownedTreasury
@@ -1643,6 +1645,7 @@ library
       LordOfTheRings.Location.Cards.HithaeglirStream
       LordOfTheRings.Location.Cards.HithaeglirWoods
       LordOfTheRings.Location.Cards.HivesAndHives
+      LordOfTheRings.Location.Cards.HobbitLands
       LordOfTheRings.Location.Cards.HousesOfTheDead
       LordOfTheRings.Location.Cards.HuntersLookout
       LordOfTheRings.Location.Cards.IcyCavern
@@ -1662,6 +1665,7 @@ library
       LordOfTheRings.Location.Cards.LabyrinthineWoods
       LordOfTheRings.Location.Cards.LightlessGrotto
       LordOfTheRings.Location.Cards.LightlessPassage
+      LordOfTheRings.Location.Cards.LoneLands
       LordOfTheRings.Location.Cards.LonelyLands
       LordOfTheRings.Location.Cards.LostArmory
       LordOfTheRings.Location.Cards.LostIsland
@@ -1843,6 +1847,7 @@ library
       LordOfTheRings.Location.Cards.TheEmptyMug
       LordOfTheRings.Location.Cards.TheFirstForge
       LordOfTheRings.Location.Cards.TheFourthStar
+      LordOfTheRings.Location.Cards.TheGoblinsCaves
       LordOfTheRings.Location.Cards.TheGreatHall
       LordOfTheRings.Location.Cards.TheGrottosEntrance
       LordOfTheRings.Location.Cards.TheHeartOfTheMarshes
@@ -1879,6 +1884,8 @@ library
       LordOfTheRings.Location.Cards.TownGate
       LordOfTheRings.Location.Cards.TraitorsDen
       LordOfTheRings.Location.Cards.TreacherousBluffs
+      LordOfTheRings.Location.Cards.TrollCamp
+      LordOfTheRings.Location.Cards.TrollCave
       LordOfTheRings.Location.Cards.TrollFells
       LordOfTheRings.Location.Cards.TrollLair
       LordOfTheRings.Location.Cards.TunnelsOfMountGram

@@ -525,6 +525,13 @@ import LordOfTheRings.Location.Cards.SlaveQuarters
 import LordOfTheRings.Location.Cards.TheStorehouse
 import LordOfTheRings.Location.Cards.WorkingFields
 import LordOfTheRings.Location.Cards.WatchTowerTheLandOfSorrow
+import LordOfTheRings.Location.Cards.TrollCamp
+import LordOfTheRings.Location.Cards.TrollCave
+import LordOfTheRings.Location.Cards.HobbitLands
+import LordOfTheRings.Location.Cards.DrearyHills
+import LordOfTheRings.Location.Cards.LoneLands
+import LordOfTheRings.Location.Cards.CaveEntranceWesternLands
+import LordOfTheRings.Location.Cards.TheGoblinsCaves
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -1096,5 +1103,12 @@ allLocations =
         , SomeLocationCard theStorehouse
         , SomeLocationCard workingFields
         , SomeLocationCard watchTowerTheLandOfSorrow
+        , SomeLocationCard trollCamp
+        , SomeLocationCard trollCave
+        , SomeLocationCard hobbitLands
+        , SomeLocationCard drearyHills
+        , SomeLocationCard loneLands
+        , SomeLocationCard caveEntranceWesternLands
+        , SomeLocationCard theGoblinsCaves
         ]
     ]
