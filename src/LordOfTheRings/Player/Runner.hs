@@ -117,6 +117,9 @@ runPlayer msg player = case msg of
     RaiseThreat pid n | pid == player.id -> do
       push CheckEliminations
       pure $ player & threatL %~ max 0 . (+ n)
+    AddToStartingThreat pid n | pid == player.id -> do
+      push CheckEliminations
+      pure $ player & threatL %~ max 0 . (+ n) & startingThreatL %~ max 0 . (+ n)
     DoRaiseThreat pid n | pid == player.id -> do
       pushAll [CheckEliminations, CheckWindows [mkAfter $ ThreatRaised pid]]
       pure $ player & threatL %~ max 0 . (+ n)

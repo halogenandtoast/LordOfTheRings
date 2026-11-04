@@ -148,6 +148,7 @@ matchHero matcher hero = case matcher of
   HeroWithResources -> pure $ hero.resources > 0
   HeroWithPrintedSphere sphere -> pure $ hero.sphere == sphere
   HeroWithResourcesAtLeast n -> pure $ hero.resources >= n
+  HeroWithRestrictedAttachmentsAtLeast n -> (>= n) <$> restrictedAttachmentsOn (toTarget hero)
   AnyHero -> pure True
   NotHero m -> not <$> matchHero m hero
   HeroMatchAll ms -> allM (`matchHero` hero) ms
@@ -722,6 +723,20 @@ exhaustedCharactersOf pid =
 -- | The player attachments attached to the host.
 playerAttachmentsOn :: HasGame m => Target -> m [Attachment]
 playerAttachmentsOn host = getsGame \g -> [a | a <- toList (entitiesAttachments $ gameEntities g), a.placement == AttachedTo host]
+
+-- | How many restricted cards are attached to the host: attachments printed with the
+-- keyword or given it, as Wild Stallion's Mount text gives it, and claimed restricted
+-- objectives, as the restricted limit counts them.
+restrictedAttachmentsOn :: HasGame m => Target -> m Int
+restrictedAttachmentsOn host = getsGame \g ->
+  let es = gameEntities g
+      on' :: HasField "placement" a Placement => a -> Bool
+      on' x = x.placement == AttachedTo host
+      printed :: HasCardDef a => a -> Bool
+      printed = member Restricted . cdKeywords . toCardDef
+      gained t = GainKeyword Restricted `elem` map modifierType (Map.findWithDefault [] t (gameModifiers g))
+   in length [() | a <- toList (entitiesAttachments es), on' a, printed a || gained (toTarget a)]
+        + length [() | o <- toList (entitiesObjectives es), on' o, printed o]
 
 -- | The player cards attached facedown to the character, as Eagles of the Misty Mountains
 -- holds them; they count as attachments.

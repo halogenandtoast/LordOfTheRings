@@ -198,7 +198,7 @@ previewDeck db parsed =
   DeckPreview
     { deck = parsed
     , heroCodes = [c | s <- parsed.heroes, Just c <- [flip cardRingsdbCode db =<< s.cardCode]]
-    , cardCount = sum [s.quantity | s <- parsed.slots]
+    , cardCount = sum [s.quantity | s <- parsed.slots, not (maybe False (`isContract` db) s.cardCode)]
     , list = either (const Nothing) Just dealt
     , problem = either Just (const Nothing) dealt
     }
@@ -420,7 +420,8 @@ listDecks db userId = do
             , Just code <- [cardRingsdbCode ours db]
             , Just name <- [cardName ours db]
             ]
-        , cardCount = sum [s.lotrDeckSlotQuantity | s <- slots, s.lotrDeckSlotKind == "draw"]
+        , -- a contract goes with the deck, not in it (MEC77 rules)
+          cardCount = sum [s.lotrDeckSlotQuantity | s <- slots, s.lotrDeckSlotKind == "draw", not (maybe False (`isContract` db) s.lotrDeckSlotCardCode)]
         , unresolvedCount = length [() | s <- slots, isNothing s.lotrDeckSlotCardCode]
         , updatedAt = d.lotrDeckUpdatedAt
         , usedAt = d.lotrDeckUsedAt

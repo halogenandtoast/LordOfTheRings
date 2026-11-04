@@ -191,5 +191,8 @@
   "resolvesDiscover": "{player} resolves Discover {count} on {location}",
   "lootDiscarded": "{card} has Loot: it is discarded and another card is revealed",
   "secondEncounterDeckActive": "The second encounter deck becomes the active encounter deck, the first set aside",
-  "coldDrakeHealed": "{count} damage is removed from the set-aside Cold-Drake"
+  "coldDrakeHealed": "{count} damage is removed from the set-aside Cold-Drake",
+  "startingThreatRaised": "{player}'s starting threat rises by {count}, to {total}",
+  "contractFlipsToA": "{contract} flips back to side A",
+  "contractFlipsToB": "{contract} flips to side B"
 }

@@ -79,6 +79,8 @@
     "leave": "Leave your seat | Leave your seats",
     "takeAnother": "Take another seat",
     "errata": "Play the deck's cards with the current errata",
+    "contract": "Contract",
+    "deckContract": "The deck's own, if it has one",
     "start": "Start the game"
   },
   "seats": {

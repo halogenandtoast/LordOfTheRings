@@ -82,6 +82,9 @@ data ModifierType
   | CannotHaveAttachments
   | -- | no attachment with the restricted keyword can be attached to it
     CannotHaveRestrictedAttachments
+  | -- | on a character: it can have this many more restricted attachments than 2, as
+    -- Forth, The Three Hunters! gives each hero 1
+    AdditionalRestrictedSlots Int
   | -- | on the game: the total threat in the staging area is raised by this much
     StagingThreatBonus Int
   | -- | on the game: the archery total is raised by this much, as Pinned Down reads
@@ -307,6 +310,9 @@ data ModifierType
     ResourcesPayFor CardMatcher
   | -- | on the game: players cannot play matching cards
     CannotPlay CardMatcher
+  | -- | on a player: no matching card can be put into play under his control, as
+    -- Fellowship reads "put non-unique allies into play"
+    CannotPutIntoPlay CardMatcher
   | -- | on the game: attachments' printed text boxes are treated as blank
     BlankAttachments
   | -- | on the game: the Deep keyword is ignored, as The Fire Worm reads

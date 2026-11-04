@@ -24,6 +24,7 @@ data LogRefKind
   | RefQuest
   | RefObjective
   | RefScenario
+  | RefContract
   deriving stock (Show, Eq, Ord, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

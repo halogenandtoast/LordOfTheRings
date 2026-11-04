@@ -17,6 +17,9 @@ newtype TreacheryId = TreacheryId {unTreacheryId :: UUID}
 newtype ObjectiveId = ObjectiveId {unObjectiveId :: UUID}
   deriving newtype (Show, Eq, Ord, Random, ToJSON, FromJSON, ToJSONKey, FromJSONKey)
 
+newtype ContractId = ContractId {unContractId :: UUID}
+  deriving newtype (Show, Eq, Ord, Random, ToJSON, FromJSON, ToJSONKey, FromJSONKey)
+
 newtype QuestId = QuestId {unQuestId :: UUID}
   deriving newtype (Show, Eq, Ord, Random, ToJSON, FromJSON, ToJSONKey, FromJSONKey)
 

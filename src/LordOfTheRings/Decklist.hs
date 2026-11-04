@@ -2,11 +2,12 @@ module LordOfTheRings.Decklist (module LordOfTheRings.Decklist) where
 
 import Data.Map.Strict qualified as Map
 import LordOfTheRings.Card
+import LordOfTheRings.Contract.CardDefs qualified as Contracts
 import LordOfTheRings.Player.Types
 import LordOfTheRings.Hero
 import LordOfTheRings.Json (withDefaults)
 import LordOfTheRings.Keyword (Keyword (Encounter))
-import LordOfTheRings.I18n (ikey, ikeyWith, textVar)
+import LordOfTheRings.I18n (ikey, ikeyWith, intVar, textVar)
 import LordOfTheRings.Name (Name (..))
 import LordOfTheRings.Prelude
 
@@ -15,17 +16,31 @@ data DeckList = DeckList
   , cards :: [(CardCode, Int)]
   , errata :: Bool
   -- ^ play the deck's cards as the FAQ's errata reads them, not as printed
+  , contract :: Maybe CardCode
+  -- ^ the contract chosen with the deck, never in it: it does not count toward its size
+  -- (MEC77 rules, "Contracts")
   }
   deriving stock (Show, Eq, Generic)
   deriving anyclass ToJSON
 
--- decks stored before the errata toggle play with errata
+-- decks stored before the errata toggle play with errata, and those before contracts have none
 instance FromJSON DeckList where
-  parseJSON = genericParseJSON defaultOptions . withDefaults [("errata", toJSON True)]
+  parseJSON = genericParseJSON defaultOptions . withDefaults [("errata", toJSON True), ("contract", Null)]
 
--- | A deck played with errata, as every deck is unless its player turns them off.
+{- | A deck played with errata, as every deck is unless its player turns them off. A
+contract among the cards, as a RingsDB deck list has it, is the deck's contract, not one of
+its cards; a second one stays among them, for 'deckProblem' to refuse.
+-}
 deckList :: [CardCode] -> [(CardCode, Int)] -> DeckList
-deckList hs cs = DeckList hs cs True
+deckList hs cs = case break (isContract . fst) cs of
+  (before, (code, _) : after) -> DeckList hs (before <> after) True (Just code)
+  _ -> DeckList hs cs True Nothing
+ where
+  isContract code = (cdCardType <$> Map.lookup code allPlayerCards) == Just ContractType
+
+-- | The deck with the contract chosen for it.
+withContract :: CardCode -> DeckList -> DeckList
+withContract code dl = dl {contract = Just code}
 
 -- | The reference client's starter deck: Starter Set Leadership.
 starterDeck :: DeckList
@@ -90,30 +105,73 @@ barredHeroes scenarioId deckLists = [t | t <- barred, t `elem` titles]
 -- | Why the deck breaks the deckbuilding rules, if it does: 1 to 3 heroes with no two
 -- sharing a title, and no more copies of a title than its deck limit, 3 for most cards
 -- and 1 for those limited to 1 per deck. Cards the game does not know are not counted.
+-- Its contract's restrictions must be met too (MEC77 rules, "Contracts").
 deckProblem :: DeckList -> Maybe Text
 deckProblem dl
-  | null dl.heroes || length dl.heroes > 3 = Just $ ikey "error.heroCount"
+  | notNull contractCards = Just $ ikey "error.oneContract"
+  | null dl.heroes || length dl.heroes > maxHeroes = Just $ ikey "error.heroCount"
   | notNull twice = Just $ ikeyWith "error.duplicateHeroes" [textVar "heroes" (intercalate ", " twice)]
   | notNull over = Just $ ikeyWith "error.overDeckLimit" [textVar "cards" (intercalate ", " over)]
-  | otherwise = Nothing
+  | otherwise = contractProblem =<< (defOf =<< dl.contract)
  where
   title def = let Name t _ = cdName def in t
   defOf code = Map.lookup code allPlayerCards
-  twice = [t | (t, n) <- mapToList (Map.fromListWith (+) [(title d, 1 :: Int) | Just d <- map defOf dl.heroes]), n > 1]
-  copies = Map.fromListWith (\(a, l) (b, l') -> (a + b, min l l')) [(title d, (n, cdDeckLimit d)) | (code, n) <- dl.cards, Just d <- [defOf code]]
+  defs = [(d, n) | (code, n) <- dl.cards, Just d <- [defOf code]]
+  heroDefs = mapMaybe defOf dl.heroes
+  contractCards = [d | (d, _) <- defs, cdCardType d == ContractType]
+  -- Bond of Friendship allows a fourth
+  maxHeroes = if dl.contract == Just (toCardCode Contracts.bondOfFriendship) then 4 else 3
+  twice = [t | (t, n) <- mapToList (Map.fromListWith (+) [(title d, 1 :: Int) | d <- heroDefs]), n > 1]
+  copies = Map.fromListWith (\(a, l) (b, l') -> (a + b, min l l')) [(title d, (n, cdDeckLimit d)) | (d, n) <- defs]
   over = [t | (t, (n, limit)) <- mapToList copies, n > limit]
+  deckSize = sum (map snd defs)
+  named c = [textVar "contract" (display $ cdName c)]
+  barred c key = Just $ ikeyWith key (named c)
+  copyLimit c limit = case [t | (t, (n, _)) <- mapToList copies, n > limit] of
+    [] -> Nothing
+    ts -> Just $ ikeyWith "error.contractCopies" (named c <> [intVar "n" limit, textVar "cards" (intercalate ", " ts)])
+  heroLimit c limit
+    | length dl.heroes > limit = Just $ ikeyWith "error.contractHeroCount" (named c <> [intVar "n" limit])
+    | otherwise = Nothing
+  contractProblem c = case toCardCode c of
+    -- "Your deck cannot include ally cards."
+    code | code == toCardCode Contracts.forthTheThreeHunters -> if any ((== AllyType) . cdCardType . fst) defs then barred c "error.contractBarsAllies" else Nothing
+    -- "You cannot include attachments in your deck."
+    code | code == toCardCode Contracts.theBurglarsTurn -> if any ((== AttachmentType) . cdCardType . fst) defs then barred c "error.contractBarsAttachments" else Nothing
+    -- "You cannot choose more than 1 starting hero."
+    code | code == toCardCode Contracts.theGreyWanderer -> heroLimit c 1
+    -- "You cannot choose more than 2 heroes during setup."
+    code | code == toCardCode Contracts.messengerOfTheKing -> heroLimit c 2
+    -- "You cannot include more than 1 copy of a card, by title, in your deck."
+    code | code == toCardCode Contracts.councilOfTheWise -> copyLimit c 1
+    -- "Your deck must be exactly 50 players cards and include exactly 10 cards from each
+    -- of these four spheres: Leadership, Lore, Spirit, and Tactics. You cannot include
+    -- more than 2 copies of any card by title in your deck. ... Each of your heroes must
+    -- belong to a different sphere."
+    code | code == toCardCode Contracts.bondOfFriendship ->
+      let spheres = mapMaybe cdSphere heroDefs
+          inSphere sphere = sum [n | (d, n) <- defs, cdSphere d == Just sphere]
+          short = [tshow sphere | sphere <- [Leadership, Lore, Spirit, Tactics], inSphere sphere /= 10]
+       in if
+            | deckSize /= 50 -> Just $ ikeyWith "error.contractDeckSize" (named c <> [intVar "n" 50, intVar "count" deckSize])
+            | notNull short -> Just $ ikeyWith "error.contractSphereCount" (named c <> [intVar "n" 10, textVar "spheres" (intercalate ", " short)])
+            | length (ordNub spheres) /= length spheres -> Just $ ikeyWith "error.contractHeroSpheres" (named c)
+            | otherwise -> copyLimit c 2
+    _ -> Nothing
 
 loadPlayer :: (MonadRandom m) => Text -> DeckList -> m (Either DeckException (Player, [Hero]))
 loadPlayer name dl = do
   pid <- getRandom
   let defs =
-        (,)
+        (,,)
           <$> traverse lookupPlayerCardDef dl.heroes
           <*> (concat <$> traverse (\(cCode, n) -> replicate n <$> lookupPlayerCardDef cCode) dl.cards)
-  for defs \(heroDefs, cardDefs) -> do
+          <*> traverse lookupPlayerCardDef dl.contract
+  for defs \(heroDefs, cardDefs, contractDef) -> do
     heroes <- traverse (newHero pid <=< (`genPlayerCard` Just pid)) heroDefs
     cards <- traverse (fmap PlayerCard . (`genPlayerCard` Just pid)) cardDefs
     -- a card with the Encounter keyword is set aside out of play, not dealt into the deck
     let (setAside, deck) = partition (member Encounter . cdKeywords . toCardDef) cards
+    contractCard <- traverse (`genPlayerCard` Just pid) contractDef
     pure
-      ((newPlayer pid name deck) {playerErrata = dl.errata, playerStartingHeroes = dl.heroes, playerSetAsideCards = setAside}, heroes)
+      ((newPlayer pid name deck) {playerErrata = dl.errata, playerStartingHeroes = dl.heroes, playerSetAsideCards = setAside, playerContract = contractCard}, heroes)

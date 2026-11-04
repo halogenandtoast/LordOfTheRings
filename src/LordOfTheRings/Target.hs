@@ -11,6 +11,7 @@ data Target
   | AttachmentTarget AttachmentId
   | TreacheryTarget TreacheryId
   | ObjectiveTarget ObjectiveId
+  | ContractTarget ContractId
   | QuestTarget QuestId
   | PlayerTarget PlayerId
   | CardIdTarget CardId
@@ -32,6 +33,7 @@ isPlayerCardTarget = \case
   AllyTarget _ -> True
   AttachmentTarget _ -> True
   CardIdTarget _ -> True
+  ContractTarget _ -> True
   _ -> False
 
 instance Targetable Target where
@@ -54,6 +56,9 @@ instance Targetable TreacheryId where
 
 instance Targetable ObjectiveId where
   toTarget = ObjectiveTarget
+
+instance Targetable ContractId where
+  toTarget = ContractTarget
 
 instance Targetable QuestId where
   toTarget = QuestTarget

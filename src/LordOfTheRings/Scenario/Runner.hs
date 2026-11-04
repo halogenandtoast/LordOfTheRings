@@ -246,6 +246,8 @@ instance RunMessage ScenarioAttrs where
               push $ AttachFreedCard pid card
               pure attrs
     GuardPlayerCard cid release card -> pure $ attrs & guardedPlayerCardsL %~ Map.insertWith (flip (<>)) cid [(release, card)]
+    TakeGuardedPlayerCard cid card ->
+      pure $ attrs & guardedPlayerCardsL %~ Map.filter notNull . Map.adjust (filter ((/= card) . (.id) . snd)) cid
     ReleaseGuardedPlayerCards cid -> do
       lead <- getLead
       pushAll

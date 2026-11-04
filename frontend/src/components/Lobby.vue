@@ -7,7 +7,7 @@ import { currentUser } from '../auth'
 import { toDeckChoice, type DeckFace, type DeckKey } from '../deckChoice'
 import type { DeckList } from '../browser/types/deck'
 import type { DeckChoice } from '../api'
-import type { Table } from '../server'
+import type { CardDef, Table } from '../server'
 
 // A game before it is dealt: who has sat down, the link to send friends, and a seat to
 // take with a deck. The owner may take several. Taking the last seat deals the game.
@@ -41,13 +41,31 @@ const refresh = async () => {
 }
 onMounted(refresh)
 
+// the contracts a deck may be played with, named from the game's cards; the deck's own,
+// from its list, is played if none is chosen
+const contracts = ref<{ code: string; name: string }[]>([])
+onMounted(async () => {
+  try {
+    const cards = (await (await fetch('/api/cards')).json()) as Record<string, CardDef>
+    contracts.value = Object.values(cards)
+      .filter((c) => c.cardType === 'ContractType')
+      .map((c) => ({ code: c.cardCode, name: c.name }))
+      .sort((a, b) => a.code.localeCompare(b.code))
+  } catch {
+    // without them the deck's own contract is played
+  }
+})
+
 // a deck loaded for this game alone, not kept
 const loaded = ref<{ face: DeckFace; list: DeckList } | null>(null)
 const loading = ref(false)
 const errata = ref(true)
+// a contract to play the deck with, if not the one its list has
+const contract = ref('')
 const choice = (): DeckChoice => ({
   ...(deck.value === 'loaded' && loaded.value ? { list: loaded.value.list } : toDeckChoice(deck.value)),
   errata: errata.value,
+  ...(contract.value ? { contract: contract.value } : {}),
 })
 </script>
 
@@ -78,6 +96,13 @@ const choice = (): DeckChoice => ({
         <input v-model="errata" type="checkbox" role="switch" />
         <span class="track" aria-hidden="true" />
         {{ $t('game.lobby.errata') }}
+      </label>
+      <label v-if="!loading && contracts.length" class="contract">
+        {{ $t('game.lobby.contract') }}
+        <select v-model="contract">
+          <option value="">{{ $t('game.lobby.deckContract') }}</option>
+          <option v-for="c in contracts" :key="c.code" :value="c.code">{{ c.name }}</option>
+        </select>
       </label>
       <button v-if="!loading" type="button" class="join" @click="emit('join', choice())">{{ $t(solo ? 'game.lobby.start' : mine > 0 ? 'game.lobby.takeAnother' : 'game.lobby.join') }}</button>
     </template>
@@ -128,6 +153,8 @@ h3 { font-size: 0.8rem; letter-spacing: 0.1em; text-transform: uppercase; }
   font-weight: 700;
 }
 .name { font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.contract { display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: var(--text-muted); }
+.contract select { padding: 6px 8px; border: 1px solid var(--box-border); border-radius: 3px; background: var(--input-background); color: var(--text); }
 .invite { display: grid; gap: 6px; font-size: 0.85rem; color: var(--text-muted); }
 .link { display: flex; gap: 8px; }
 .link input {

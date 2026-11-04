@@ -60,7 +60,7 @@ export const fetchStats = (mine: boolean) => apiFetch(mine ? '/api/stats?mine' :
 
 /** A core starter deck by sphere, or one of the user's imported decks, and whether its
  * cards follow the FAQ's errata (the server takes them to unless told otherwise). */
-export type DeckChoice = ({ starter: string } | { deckId: number } | { list: DeckList }) & { errata?: boolean }
+export type DeckChoice = ({ starter: string } | { deckId: number } | { list: DeckList }) & { errata?: boolean; contract?: string }
 
 export const createGame = (game: { name: string; seed?: number; scenario?: string; deck?: DeckChoice; decks?: DeckChoice[]; seats?: number; allowSpectators?: boolean; easyMode?: boolean; nightmare?: boolean; publicScoring?: boolean }) =>
   apiFetch('/api/games', {

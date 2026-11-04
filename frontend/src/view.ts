@@ -20,6 +20,7 @@ const cardTypes: Record<string, string> = {
   PlayerSideQuestType: 'Player Side Quest',
   EncounterSideQuestType: 'Encounter Side Quest',
   NightmareType: 'Nightmare',
+  ContractType: 'Contract',
 }
 
 const phases: Record<string, string> = {
@@ -41,6 +42,7 @@ const targetKinds: Record<string, keyof ServerGame['entities']> = {
   QuestTarget: 'quests',
   TreacheryTarget: 'treacheries',
   ObjectiveTarget: 'objectives',
+  ContractTarget: 'contracts',
 }
 const kindTargets = Object.fromEntries(Object.entries(targetKinds).map(([tag, kind]) => [kind, tag]))
 
@@ -200,7 +202,7 @@ export const toView = (data: GameData, defs: Record<string, CardDef>, previous: 
     // claimed objectives, condition treacheries and enemies attached as Grasping Tentacle is sit on their hosts like attachments
     // and allies under a quest card, as Captured! holds Faramir, and guarded locations on their guards (Across the Ettenmoors)
     return [
-      ...[...placed('attachments', () => true), ...placed('objectives', () => true), ...placed('treacheries', () => true), ...placed('enemies', () => true), ...placed('allies', () => true), ...placed('heroes', (h) => !!h.guardedBy), ...placed('locations', isAt('AttachedTo'))].filter(
+      ...[...placed('attachments', () => true), ...placed('objectives', () => true), ...placed('contracts', () => true), ...placed('treacheries', () => true), ...placed('enemies', () => true), ...placed('allies', () => true), ...placed('heroes', (h) => !!h.guardedBy), ...placed('locations', isAt('AttachedTo'))].filter(
         (a) => a.attachedTo !== null && ids.has(a.attachedTo),
       ),
       // the player cards an encounter card guards sit on it, as a Guarded (X) attachment does
@@ -252,6 +254,8 @@ export const toView = (data: GameData, defs: Record<string, CardDef>, previous: 
         ...withAttachments(characters),
         // an attachment on the player's threat dial, as Favor of the Valar
         ...placed('attachments', onPlayer),
+        // the player's contract, on the side it shows, unless it is attached to a character
+        ...withAttachments(placed('contracts', isAt('InPlayArea', pid))),
         ...(game.scenario.hiddenCards?.[pid] ?? []).map((id) => card('', id, { facedown: 'encounter', name: ikey('log.hiddenCard') })),
       ],
       engaged: [

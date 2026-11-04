@@ -15,6 +15,7 @@ export type LogRefKind =
   | 'RefQuest'
   | 'RefObjective'
   | 'RefScenario'
+  | 'RefContract'
 
 /** Something in the game, drawn as a chip that previews its card. */
 export interface LogRef {
@@ -32,7 +33,7 @@ export const refPreview = (ref: LogRef): CardView | null =>
     ? ({
         code: ref.cardCode,
         name: ref.name,
-        flipped: ref.kind === 'RefQuest' && ref.faceDown,
+        flipped: (ref.kind === 'RefQuest' || ref.kind === 'RefContract') && ref.faceDown,
         // a player card fighting face down as an enemy shows its back, as on the board
         facedown: (ref.kind === 'RefHero' && ref.faceDown) || ref.cardCode === 'OrcGuard' || ref.cardCode === 'ReanimatedDead' ? 'player' : undefined,
       } as CardView)

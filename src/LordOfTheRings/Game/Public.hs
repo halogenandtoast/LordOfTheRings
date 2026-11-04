@@ -11,7 +11,7 @@ import Data.Set qualified as Set
 import LordOfTheRings.Campaign (campaignCardFor)
 import LordOfTheRings.Classes.Entity (toAttrs)
 import LordOfTheRings.Classes.HasGame
-import LordOfTheRings.Entities (entitiesLocations, entitiesObjectives, entitiesQuests)
+import LordOfTheRings.Entities (entitiesContracts, entitiesLocations, entitiesObjectives, entitiesQuests)
 import LordOfTheRings.Game.Base
 import LordOfTheRings.Game.SearchZones (searchZones)
 import LordOfTheRings.Card
@@ -26,6 +26,7 @@ import LordOfTheRings.Location.Types (LocationAttrs (locationCardId, locationUnd
 import LordOfTheRings.Log.Refs (sourceRefFor)
 import LordOfTheRings.Matcher
 import LordOfTheRings.Modifier (Modifier (..))
+import LordOfTheRings.Contract.Types (ContractAttrs (..))
 import LordOfTheRings.Objective.Types (ObjectiveAttrs (..))
 import LordOfTheRings.Quest.Types (QuestAttrs (..))
 import LordOfTheRings.I18n (ikey)
@@ -82,6 +83,8 @@ hiddenCards g = Set.fromList hidden `Set.difference` Set.fromList shown
         | a <- map toAttrs (toList merged.entities.enemies)
         ]
       <> [(toCard l).id | l <- toList merged.entities.locations, isUncharted l]
+      -- the loot deck facedown under The Burglar's Turn
+      <> [c.id | k <- toList merged.entities.contracts, c <- (toAttrs k).contractUnderneath]
   shown = map (.id) $ concatMap searchedCards (toList g.question)
 
 {- | The answer that took the game from one to the other brought something hidden into
@@ -153,6 +156,7 @@ publicGameFor seesHand g = hideDecks $ toJSON merged
         -- the damage a set-aside card keeps, as Cold-Drake's (The Withered Heath)
         $ KeyMap.insert "setAsideDamage" (toJSON (fromMeta "setAsideDamage" :: Map CardId Int))
         $ adjust (inside "objectives" $ overValues $ inside "underneath" $ const $ Array mempty) "entities"
+        $ adjust (inside "contracts" $ overValues $ inside "underneath" $ const $ Array mempty) "entities"
         $ adjust (inside "locations" $ overValues $ inside "underneath" $ const $ Array mempty) "entities"
         $ adjust (inside "locations" $ overValues hideOtherSide) "entities"
         $ adjust (overEntries \pid -> if seesHand pid then id else hideSearch) "question"
@@ -251,6 +255,8 @@ publicGameFor seesHand g = hideDecks $ toJSON merged
     mapFromList
       $ [(o.objectiveCardId, n o.objectiveUnderneath) | o <- map toAttrs (toList $ entitiesObjectives merged.entities)]
       <> [(q.questCardId, n q.questUnderneath) | q <- map toAttrs (toList $ entitiesQuests merged.entities)]
+      -- and contracts, as The Burglar's Turn's loot deck
+      <> [(c.contractCardId, n c.contractUnderneath) | c <- map toAttrs (toList $ entitiesContracts merged.entities)]
   -- what the scenario keeps by this key in its meta, as Escape from Mount Gram's captured
   -- cards, under each card and in each player's captured deck
   fromMeta :: FromJSON a => Monoid a => Key.Key -> a

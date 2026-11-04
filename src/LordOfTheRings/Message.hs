@@ -85,6 +85,9 @@ data Message
   | RaiseThreat PlayerId Int
   | -- | the threat raise itself, once the window before it has closed
     DoRaiseThreat PlayerId Int
+  | -- | added to the player's starting threat, his threat with it, during setup, as
+    -- Messenger of the King adds its ally's stats
+    AddToStartingThreat PlayerId Int
   | CheckEliminations
   | EliminatePlayer PlayerId
   | GameOver Outcome
@@ -320,6 +323,9 @@ data Message
     GuardPlayerCard CardId GuardRelease PlayerCard
   | -- | the encounter card has left play: the player cards it guarded go free
     ReleaseGuardedPlayerCards CardId
+  | -- | the encounter card, by its card id, no longer guards the player card, which is
+    -- taken to go elsewhere, as The Burglar's Turn takes its loot as a location is explored
+    TakeGuardedPlayerCard CardId CardId
   | -- | a Guarded (X) attachment free of encounters: its owner attaches it to an eligible
     -- card, its guarded keyword not resolved again
     AttachFreedCard PlayerId PlayerCard

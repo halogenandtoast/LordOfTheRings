@@ -74,6 +74,7 @@ getAllAbilities = do
           , concatMap getAbilities (toList es.quests)
           , if blank then [] else concatMap getAbilities (toList es.attachments)
           , concatMap getAbilities (toList es.objectives)
+          , concatMap getAbilities (toList es.contracts)
           , -- a nightmare setup card's, as Arkham's scenario gives its tarot cards'
             getAbilities scenario
           , leftPlayAbilities
@@ -222,6 +223,9 @@ windowMatchesM matcher w@(Window timing wType) = case (matcher, wType) of
       $ any (\e -> e.effectTarget == target && Defending `elem` e.effectModifiers) effects
       && any (\d -> d.target == target && trait `member` cdCardTraits (toCardDef d.card)) destroyed
   (PlayerCommittedCharactersWindow t pid, CommittedToQuest target) | t == timing -> (== Just pid) <$> characterController target
+  -- a hero entering play, or a character changing control, under the player
+  (CharacterEnteredPlayUnderWindow t pid, EntersPlay c@(HeroTarget _)) | t == timing -> (== Just pid) <$> characterController c
+  (CharacterEnteredPlayUnderWindow t pid, ChangedControl c) | t == timing -> (== Just pid) <$> characterController c
   (ObjectiveExhaustedWindow t code, Exhausted (ObjectiveTarget oid)) | t == timing ->
     maybe False ((== code) . toCardCode) . Map.lookup oid . (.objectives) <$> getsGame gameEntities
   (MatchingEnemyEngagedWindow t m, EnemyEngaged eid _) | t == timing -> selectAny (EnemyWithId eid <> m)
@@ -380,6 +384,8 @@ canPay = \case
       <$> getsGame (entitiesAttachments . gameEntities)
   ExhaustCost (ObjectiveTarget oid) ->
     maybe False (not . (.exhausted)) . Map.lookup oid <$> getsGame (entitiesObjectives . gameEntities)
+  ExhaustCost (ContractTarget cid) ->
+    maybe False (not . (.exhausted)) . Map.lookup cid <$> getsGame (entitiesContracts . gameEntities)
   ExhaustCost _ -> pure False
   ResourceCost (HeroTarget hid) n -> (>= n) . (.resources) <$> getHero hid
   -- an ally's own pool, as Treebeard's
@@ -478,6 +484,8 @@ sourceController = go
     -- its controller's to use
     TreacherySource tid -> attachedTo . fmap (.placement) . Map.lookup tid =<< getsGame (entitiesTreacheries . gameEntities)
     ObjectiveSource oid -> attachedTo . fmap (.placement) . Map.lookup oid =<< getsGame (entitiesObjectives . gameEntities)
+    -- a contract is its player's, wherever it is
+    ContractSource cid -> fmap (.owner) . Map.lookup cid <$> getsGame (entitiesContracts . gameEntities)
     -- encounter cards' responses are the first player's to make
     _ -> Just <$> getLead
   attachedTo = \case

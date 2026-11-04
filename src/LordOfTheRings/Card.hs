@@ -13,6 +13,7 @@ import LordOfTheRings.Card.Code as X
 import LordOfTheRings.Card.EncounterCard as X
 import LordOfTheRings.Card.PlayerCard as X
 import LordOfTheRings.Card.Synthetic (syntheticCards)
+import LordOfTheRings.Contract.CardDefs (allContractCards)
 import LordOfTheRings.Enemy.CardDefs (allEnemyCards)
 import LordOfTheRings.Event.CardDefs (allEventCards)
 import LordOfTheRings.Hero.CardDefs (allHeroCards)
@@ -65,7 +66,7 @@ instance FromJSON Card where
       else EncounterCard <$> parseJSON (Object o)
 
 allPlayerCards :: Map CardCode CardDef
-allPlayerCards = Map.unions [allHeroCards, allAllyCards, allAttachmentCards, allEventCards, allPlayerSideQuestCards]
+allPlayerCards = Map.unions [allHeroCards, allAllyCards, allAttachmentCards, allEventCards, allPlayerSideQuestCards, allContractCards]
 
 allEncounterCards :: Map CardCode CardDef
 allEncounterCards =
