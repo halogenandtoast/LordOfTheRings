@@ -207,6 +207,9 @@ data ModifierType
   | -- | on an objective: discarded, it goes to the encounter discard pile, not back to the
     -- staging area, as Wormsbane
     LeavesPlayToEncounterDiscard
+  | -- | on a Sack objective: leaving play, it is shuffled back into the sack deck (We Must
+    -- Away, Ere Break of Day rules)
+    LeavesPlayToSackDeck
   | ShuffledIntoEncounterDeckWhenDefeated
   | -- | on an encounter card: as it leaves play the first player shuffles it into any
     -- player's deck, as Recurring Nightmare reads

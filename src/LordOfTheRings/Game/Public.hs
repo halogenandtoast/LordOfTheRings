@@ -296,7 +296,7 @@ publicGameFor seesHand g = hideDecks $ toJSON merged
   campaignCard =
     let a = toAttrs g.scenario
      in (\code -> object ["code" .= code, "flipped" .= scenarioCampaignCardFlipped a]) <$> (flip campaignCardFor (scenarioId a) =<< scenarioCampaign a)
-  hideScenario = hideMeta . hideHidden . withSize "corsairDeck" "corsairDeckSize" . withSize "unchartedDeck" "unchartedDeckSize" . withSize "grottoDeck" "grottoDeckSize" . withSize "cavesDeck" "cavesDeckSize" . withSize "powerOfMordorDeck" "powerOfMordorDeckSize" . withSize "evilCreaturesDeck" "evilCreaturesDeckSize" . withSize "questDeck" "questDeckSize" . withSize "encounterDeck" "encounterDeckSize"
+  hideScenario = hideMeta . hideHidden . withSize "corsairDeck" "corsairDeckSize" . withSize "unchartedDeck" "unchartedDeckSize" . withSize "grottoDeck" "grottoDeckSize" . withSize "cavesDeck" "cavesDeckSize" . withSize "powerOfMordorDeck" "powerOfMordorDeckSize" . withSize "sackDeck" "sackDeckSize" . withSize "evilCreaturesDeck" "evilCreaturesDeckSize" . withSize "questDeck" "questDeckSize" . withSize "encounterDeck" "encounterDeckSize"
   hideMeta = \case
     Object o -> Object $ KeyMap.delete "meta" o
     v -> v

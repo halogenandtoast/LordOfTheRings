@@ -305,6 +305,16 @@ instance RunMessage ScenarioAttrs where
         push $ PlaceUnderneath target [EncounterCard top]
         pure $ attrs & powerOfMordorDeckL .~ rest
       [] -> pure attrs
+    -- the cards are drawn and resolved one at a time; with the deck empty the rest is
+    -- ignored (We Must Away, Ere Break of Day rules)
+    DrawFromSackDeck n | n > 0 -> case attrs.sackDeck of
+      top : rest -> do
+        pushAll $ DrawSackCard top : [DrawFromSackDeck (n - 1) | n > 1]
+        pure $ attrs & sackDeckL .~ rest
+      [] -> pure attrs
+    ShuffleIntoSackDeck card -> do
+      deck <- shuffleM (card : filter (/= card) attrs.sackDeck)
+      pure $ attrs & sackDeckL .~ deck
     -- the Evil Creatures discard pile is shuffled back in once the deck is empty, as the
     -- last card leaves it (Journey Up the Anduin rules)
     AddFromEvilCreaturesDeck source engaging -> case attrs.evilCreaturesDeck of

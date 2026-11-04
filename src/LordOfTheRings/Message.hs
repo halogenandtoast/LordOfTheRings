@@ -372,6 +372,18 @@ data Message
   | -- | the top card of the Power of Mordor deck is placed faceup under the card, out of play,
     -- as The Fortress of Nurn's setup places one under each side quest
     PlaceTopOfPowerOfMordorDeckUnderneath Target
+  | -- | Sack X: the first player draws the top X cards of the sack deck, one at a time,
+    -- resolving each one's When Sacked effect; with none left, nothing happens (We Must
+    -- Away, Ere Break of Day rules)
+    DrawFromSackDeck Int
+  | -- | the Sack card drawn from the sack deck comes into play to resolve its When Sacked
+    -- effect
+    DrawSackCard EncounterCard
+  | -- | the Sack card resolves its When Sacked effect
+    WhenSacked ObjectiveId
+  | -- | the Sack card leaves play, shuffled back into the sack deck
+    ReturnToSackDeck ObjectiveId
+  | ShuffleIntoSackDeck EncounterCard
   | -- | the top card of the Evil Creatures deck enters play for the source: added to the
     -- staging area, or put into play engaged with the player (Journey Up the Anduin)
     AddFromEvilCreaturesDeck Source (Maybe PlayerId)
