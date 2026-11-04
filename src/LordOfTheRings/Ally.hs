@@ -284,6 +284,17 @@ import LordOfTheRings.Ally.Cards.MistyMountainJourneyman
 import LordOfTheRings.Ally.Cards.Edrahil
 import LordOfTheRings.Ally.Cards.Arador
 import LordOfTheRings.Ally.Cards.Farin
+import LordOfTheRings.Ally.Cards.BillThePony
+import LordOfTheRings.Ally.Cards.BarlimanButterbur
+import LordOfTheRings.Ally.Cards.FarmerMaggot
+import LordOfTheRings.Ally.Cards.GaladrielTheRoadDarkens
+import LordOfTheRings.Ally.Cards.BoromirTheRoadDarkens
+import LordOfTheRings.Ally.Cards.ElrondTheRoadDarkens
+import LordOfTheRings.Ally.Cards.BilboBagginsTheRoadDarkens
+import LordOfTheRings.Ally.Cards.GimliTheTreasonOfSaruman
+import LordOfTheRings.Ally.Cards.LegolasTheTreasonOfSaruman
+import LordOfTheRings.Ally.Cards.QuickbeamTheTreasonOfSaruman
+import LordOfTheRings.Ally.Cards.HamaTheTreasonOfSaruman
 import LordOfTheRings.Ally.Runner ()
 import LordOfTheRings.Ally.Types as X
 import LordOfTheRings.Id
@@ -600,5 +611,16 @@ allAllies =
         , SomeAllyCard edrahil
         , SomeAllyCard arador
         , SomeAllyCard farin
+        , SomeAllyCard billThePony
+        , SomeAllyCard barlimanButterbur
+        , SomeAllyCard farmerMaggot
+        , SomeAllyCard galadrielTheRoadDarkens
+        , SomeAllyCard boromirTheRoadDarkens
+        , SomeAllyCard elrondTheRoadDarkens
+        , SomeAllyCard bilboBagginsTheRoadDarkens
+        , SomeAllyCard gimliTheTreasonOfSaruman
+        , SomeAllyCard legolasTheTreasonOfSaruman
+        , SomeAllyCard quickbeamTheTreasonOfSaruman
+        , SomeAllyCard hamaTheTreasonOfSaruman
         ]
     ]
