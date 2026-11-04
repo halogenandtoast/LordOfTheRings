@@ -484,6 +484,10 @@ import LordOfTheRings.Enemy.Cards.BlackNumenoreanASitE
 import LordOfTheRings.Enemy.Cards.ThaneUlchorWrathAndRuin
 import LordOfTheRings.Enemy.Cards.ChampionOfRhun
 import LordOfTheRings.Enemy.Cards.EasterlingSkirmisher
+import LordOfTheRings.Enemy.Cards.WainriderChampion
+import LordOfTheRings.Enemy.Cards.AggressiveRacer
+import LordOfTheRings.Enemy.Cards.ChariotDriver
+import LordOfTheRings.Enemy.Cards.VeteranWainrider
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -997,5 +1001,9 @@ allEnemys =
         , SomeEnemyCard thaneUlchorWrathAndRuin
         , SomeEnemyCard championOfRhun
         , SomeEnemyCard easterlingSkirmisher
+        , SomeEnemyCard wainriderChampion
+        , SomeEnemyCard aggressiveRacer
+        , SomeEnemyCard chariotDriver
+        , SomeEnemyCard veteranWainrider
         ]
     ]

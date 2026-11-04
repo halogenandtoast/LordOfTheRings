@@ -514,6 +514,9 @@ import LordOfTheRings.Location.Cards.ContestedSquare
 import LordOfTheRings.Location.Cards.RansackedHouse
 import LordOfTheRings.Location.Cards.MakeshiftFortification
 import LordOfTheRings.Location.Cards.CapturedTower
+import LordOfTheRings.Location.Cards.NarrowPass
+import LordOfTheRings.Location.Cards.CrowdedTrack
+import LordOfTheRings.Location.Cards.RavineLedge
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -1074,5 +1077,8 @@ allLocations =
         , SomeLocationCard ransackedHouse
         , SomeLocationCard makeshiftFortification
         , SomeLocationCard capturedTower
+        , SomeLocationCard narrowPass
+        , SomeLocationCard crowdedTrack
+        , SomeLocationCard ravineLedge
         ]
     ]

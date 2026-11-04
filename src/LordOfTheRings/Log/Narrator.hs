@@ -444,6 +444,17 @@ narrationFor = \case
     Just $ one $ toned Bad $ structure [ikeyPart "log.orcsAdvance" ["quest" ~> EncounterCard card]]
   ScenarioSpecific "orcs.join" _ -> Just $ one $ toned Bad $ mechanic [ikeyPart "log.orcsCaughtUp" []]
   ScenarioSpecific "orcs.split" _ -> Just $ one $ toned Good $ mechanic [ikeyPart "log.orcsLeftBehind" []]
+  -- \* The circuit, The Challengers and The Wainriders, and racing tests (Challenge of the
+  -- Wainriders)
+  ScenarioSpecific "challengers.advanced" (parseMaybe parseJSON -> Just card) ->
+    Just $ one $ toned Good $ structure [ikeyPart "log.challengersAdvance" ["quest" ~> EncounterCard card]]
+  ScenarioSpecific "wainriders.advanced" (parseMaybe parseJSON -> Just card) ->
+    Just $ one $ toned Bad $ structure [ikeyPart "log.wainridersAdvance" ["quest" ~> EncounterCard card]]
+  ScenarioSpecific "wainriders.damage" (parseMaybe parseJSON -> Just (n :: Int))
+    | n > 0 -> Just $ one $ toned Bad $ mechanic [ikeyPart "log.wainridersDamage" ["count" ~> n]]
+    | n < 0 -> Just $ one $ toned Good $ mechanic [ikeyPart "log.wainridersDamageRemoved" ["count" ~> negate n]]
+  ScenarioSpecific "racing.result" (parseMaybe parseJSON -> Just (found :: Int, required :: Int, passed :: Bool)) ->
+    Just $ one $ toned (if passed then Good else Bad) $ mechanic [ikeyPart (if passed then "log.racingTestPassed" else "log.racingTestFailed") ["found" ~> found, "required" ~> required]]
   -- \* Locations the players control, as Osgiliath's
   PlaceLocation lid placement -> Just $ whenRef (toTarget lid) \l -> do
     from <- maybe Unplaced (.placement) . Map.lookup lid <$> getsGame (entitiesLocations . gameEntities)

@@ -148,6 +148,8 @@ allObjectiveCards =
       , submitOrDie
       , sauronWorship
       , evidenceOfTheCult
+      , theWainriders
+      , theChallengers
       ]
 
 durinsAxe :: CardDef
@@ -1020,3 +1022,10 @@ evidenceOfTheCult =
     , cdKeywords = setFromList [GuardedBy [EnemyType]]
     , cdVictoryPoints = Just 1
     }
+-- * Challenge of the Wainriders
+
+theWainriders :: CardDef
+theWainriders = objective "22064" "The Wainriders" ChallengeOfTheWainriders 1
+
+theChallengers :: CardDef
+theChallengers = objective "22065" "The Challengers" ChallengeOfTheWainriders 1

@@ -119,6 +119,30 @@ const settings = ['sunny', 'cloudy', 'rainy', 'stormy'].map((key) => ({
         />
       </div>
     </div>
+    <!-- the circuit: stages 1 to 3 left to right, 4 to 6 above them right to left, so 4 is
+         above 3, with The Challengers and The Wainriders at their stages (Challenge of the Wainriders) -->
+    <div v-if="scenario.circuit" class="stormcaller-area circuit" data-zone="circuit">
+      <span class="heading-label">{{ $t('log.circuit') }}</span>
+      <div class="circuit-grid">
+        <div
+          v-for="s in scenario.circuit"
+          :key="s.card.id"
+          class="circuit-stage"
+          :class="{ current: s.challengersLap !== null }"
+          :style="{ gridColumn: s.stage <= 3 ? s.stage : 7 - s.stage, gridRow: s.stage <= 3 ? 2 : 1 }"
+          :data-stage="s.stage"
+        >
+          <GameCard :card="s.card" rotated :choices="choices" @choose="emit('choose', $event)" />
+          <div class="circuit-markers">
+            <span v-if="s.challengersLap !== null" class="good">{{ $t('log.theChallengers') }} · {{ s.challengersLap }}/2</span>
+            <span v-if="s.wainridersLap !== null" class="bad">{{ $t('log.theWainriders') }} · {{ s.wainridersLap }}/2</span>
+          </div>
+          <div v-if="s.objectives.length" class="circuit-objectives">
+            <GameCard v-for="o in s.objectives" :key="o.id" :card="o" :choices="choices" @choose="emit('choose', $event)" />
+          </div>
+        </div>
+      </div>
+    </div>
     <!-- the Orcs' area: their own quest stage, and the cards not in the staging area -->
     <div v-if="scenario.orcsStage" class="stormcaller-area">
       <span class="heading-label">{{ $t('log.orcsArea') }}</span>
@@ -147,6 +171,13 @@ const settings = ['sunny', 'cloudy', 'rainy', 'stormy'].map((key) => ({
 .heading-track li.current { opacity: 1; border-color: currentColor; color: var(--text); }
 .stormcaller-area { display: flex; flex-direction: column; gap: 4px; padding-left: 8px; border-left: 1px dashed var(--line-strong); font-size: 0.6rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); }
 .stormcaller-cards { display: flex; gap: 6px; align-items: flex-start; }
+.circuit-grid { display: grid; grid-template-columns: repeat(3, auto); grid-template-rows: repeat(2, auto); gap: 6px; --card-width: 4.5rem; }
+.circuit-stage { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 2px; border: 1px solid transparent; border-radius: 6px; }
+.circuit-stage.current { border-color: var(--text); }
+.circuit-markers { display: flex; flex-direction: column; align-items: center; gap: 1px; text-transform: none; letter-spacing: 0; }
+.circuit-markers .good { color: var(--success); }
+.circuit-markers .bad { color: var(--danger); }
+.circuit-objectives { display: flex; gap: 2px; }
 .island-map { display: grid; grid-template-columns: repeat(5, auto); grid-template-rows: repeat(3, auto); gap: 6px; }
 .island-cell { border: 2px solid transparent; border-radius: 8px; padding: 2px; opacity: 0.75; }
 .island-cell.staged { opacity: 1; border-color: var(--line-strong); }

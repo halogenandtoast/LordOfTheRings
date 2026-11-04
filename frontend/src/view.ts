@@ -1,6 +1,6 @@
 import { ikey } from './i18n'
 import type { Card, CardDef, Entity, GameData, Message, Question, ServerGame, Target, UI } from './server'
-import type { CardView, ChoiceView, GameView, PlayerView, QuestionView, SearchGroup } from './types'
+import type { CardView, ChoiceView, CircuitStageView, GameView, PlayerView, QuestionView, SearchGroup } from './types'
 
 // ringsdb type names, as the board compares against them
 const cardTypes: Record<string, string> = {
@@ -401,6 +401,23 @@ export const toView = (data: GameData, defs: Record<string, CardDef>, previous: 
       }
     })
 
+  // the circuit's stages, B side up, The Challengers and The Wainriders at the stages they
+  // have reached, the damage on The Wainriders' stage (Challenge of the Wainriders)
+  const circuitView = (c: NonNullable<ServerGame['circuit']>): CircuitStageView[] => {
+    const objective = (code: string) => placed('objectives', (e) => e.cardCode === code)
+    return c.stages.map((s, i) => {
+      const challengers = c.challengers % 6 === i
+      const wainriders = c.wainriders % 6 === i
+      return {
+        card: card(s.cardCode, `circuit-${s.id}`, { flipped: true, damage: wainriders ? c.damage : 0 }),
+        stage: i + 1,
+        objectives: [...(challengers ? objective('22065') : []), ...(wainriders ? objective('22064') : [])],
+        challengersLap: challengers ? Math.floor(c.challengers / 6) + 1 : null,
+        wainridersLap: wainriders ? Math.floor(c.wainriders / 6) + 1 : null,
+      }
+    })
+  }
+
   const [asked] = Object.entries(game.question)
 
   return {
@@ -457,6 +474,7 @@ export const toView = (data: GameData, defs: Record<string, CardDef>, previous: 
         ? card(game.orcsStage.cardCode, game.orcsStage.id, { flipped: true, image: `${game.orcsStage.cardCode}-d`, progress: game.orcsProgress ?? 0 })
         : null,
       orcsArea: withAttachments([...placed('enemies', isAt('OrcsArea')), ...placed('locations', isAt('OrcsArea'))]),
+      circuit: game.circuit ? circuitView(game.circuit) : null,
     },
     players,
     tally: { willpower: game.committedWillpower, threat: game.stagingThreat, lastWillpower: game.lastCommittedWillpower },

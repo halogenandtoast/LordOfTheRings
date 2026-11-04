@@ -413,6 +413,8 @@ import LordOfTheRings.Treachery.Cards.CaughtOffGuard
 import LordOfTheRings.Treachery.Cards.StreetFightingWrathAndRuin
 import LordOfTheRings.Treachery.Cards.UnderSiege
 import LordOfTheRings.Treachery.Cards.UlchorsRevenge
+import LordOfTheRings.Treachery.Cards.WainriderChariot
+import LordOfTheRings.Treachery.Cards.TheChampionsCunning
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -853,5 +855,7 @@ allTreacherys =
         , SomeTreacheryCard streetFightingWrathAndRuin
         , SomeTreacheryCard underSiege
         , SomeTreacheryCard ulchorsRevenge
+        , SomeTreacheryCard wainriderChariot
+        , SomeTreacheryCard theChampionsCunning
         ]
     ]
