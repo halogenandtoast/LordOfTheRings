@@ -1175,6 +1175,11 @@ escapeTest pid source n stat onFail onPass = do
   passed <- capture onPass
   push $ MakeEscapeTest $ EscapeTest pid (toSource source) n stat [] failed passed []
 
+-- | The player makes a Hide test against this many encounter cards, as a Travel cost or
+-- Hunting for the Ring has him (The Black Riders rules insert, "Hide Tests").
+hideTest :: (ReverseQueue m, Sourceable source) => PlayerId -> source -> Int -> m ()
+hideTest pid source n = push $ MakeHideTest $ HideTest pid (toSource source) n [] []
+
 {- | The party makes an escape test: each player still in the game, from the first player,
 commits their characters in turn.
 -}

@@ -57,6 +57,7 @@ matchPlayer matcher player = case matcher of
     Nothing -> pure False
     Just e -> (<=) <$> modifiedValue engagementCostOf (toTarget eid) e.engagementCost <*> getThreat player.id
   PlayerWithHiddenCards -> getsGame (notNull . Map.findWithDefault [] player.id . (.hiddenCards) . toAttrs . gameScenario)
+  PlayerEngagedWith m -> selectAny (m <> EnemyEngagedWith (PlayerWithId player.id))
 
 data Character = HeroCharacter Hero | AllyCharacter Ally
 

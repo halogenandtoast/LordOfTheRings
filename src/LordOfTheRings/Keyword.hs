@@ -40,6 +40,10 @@ data Keyword
     GuardedBy [CardType]
   | -- | an objective ally the last player gains control of as it enters play
     LastPlayerGainsControl
+  | -- | on an encounter card: the player who reveals it makes a Hide test against this many
+    -- encounter cards, before the rest of the card resolves (The Black Riders rules insert,
+    -- "Hide X")
+    Hide Int
   | -- | on an enemy: damage never destroys it, as Durin's Bane
     Indestructible
   | -- | on an encounter card: the player who reveals it resolves its staging on his own,

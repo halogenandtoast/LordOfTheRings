@@ -286,6 +286,8 @@
   },
   "escapeTest": "Commit characters to the escape test",
   "doneCommittingToEscape": "Done committing: deal the cards",
+  "hideTest": "Commit characters to the Hide test",
+  "doneCommittingToHide": "Done committing: discard the cards",
   "boromir": {
     "action1": "Raise your threat by 1 to ready Boromir.",
     "action2": "Discard Boromir to deal 2 damage to each enemy engaged with a single player.",

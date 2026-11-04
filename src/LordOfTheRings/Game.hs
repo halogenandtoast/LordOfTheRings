@@ -2948,6 +2948,34 @@ runGameMessage msg g = case msg of
               ]
             <> [Label (ikey "label.payRemainingCost") [PayCost costId]]
     pure g
+  -- a Hide test: the player may exhaust any number of characters he controls to commit
+  -- them, then the cards are discarded (The Black Riders rules insert, "Hide Tests")
+  MakeHideTest t -> do
+    ready <-
+      filter (`notElem` t.hideCommitted)
+        <$> selectCharacters
+          (HeroControlledBy (PlayerWithId t.hidePlayer) <> ReadyHero)
+          (AllyControlledBy (PlayerWithId t.hidePlayer) <> ReadyAlly)
+    push
+      $ questionLabelWith (ikey "label.hideTest") (sourceTarget t.hideSource) t.hideCommitted t.hidePlayer
+      $ [targetLabel c [Exhaust c, MakeHideTest t {hideCommitted = t.hideCommitted <> [c]}] | c <- ready]
+      <> [Label (ikey "label.doneCommittingToHide") [DiscardForHideTest t]]
+    pure g
+  -- passed if the committed willpower is at least the discarded cards' threat; after it,
+  -- the characters are no longer committed to it
+  ResolveHideTest t -> do
+    (willpower, threat) <- hideTestTotals t
+    pushAll
+      $ if threat > willpower
+        then [FailHideTest t.hidePlayer, CheckWindows [mkAfter $ FailedHideTest t.hidePlayer]]
+        else [CheckWindows [mkAfter $ PassedHideTest t.hidePlayer]]
+    pure g
+  FailHideTest pid -> do
+    pushAll
+      [ CreateEffect $ Effect GameSource (toTarget pid) [FailedHideTestThisPhase] UntilEndOfPhase
+      , CreateEffect $ Effect GameSource (toTarget pid) [FailedHideTestThisRound] UntilEndOfRound
+      ]
+    pure g
   ResolveEscapeTest t -> do
     (total, escape) <- escapeTestTotals t
     let (dealt, rest) = splitAt t.escapeCards (toAttrs g.scenario).encounterDeck
@@ -3104,6 +3132,7 @@ runGameMessage msg g = case msg of
   (revealedCard -> Just (engaging, card)) -> do
     let def = toCardDef card
     players <- getPlayerOrder
+    revealer <- maybe getLead pure (engaging <|> gameRevealer g)
     let surge = [RevealEncounterCard | Surge `member` cdKeywords def]
         doomed =
           concat
@@ -3116,11 +3145,14 @@ runGameMessage msg g = case msg of
         -- Drúadan Forest rules)
         prowl = [DiscardGroupResources lead n | Prowl n <- toList (cdKeywords def), n > 0, lead <- take 1 players]
         whenRevealed t = if cdWhenRevealed def then AskToResolveWhenRevealed t card else WhenRevealed t
+        -- the player who revealed it makes the Hide test before the rest of the card
+        -- resolves (The Black Riders rules insert, "Hide X")
+        hide = [MakeHideTest $ HideTest revealer (CardIdSource card.id) n [] [] | Hide n <- toList (cdKeywords def)]
         -- Prowl, a keyword, resolves before the When Revealed effect (ALeP 3.094)
         revealing t =
           inLogBlock (RevealBlock card)
             $ [CheckWindows [mkAfter $ EntersStagingArea t] | cdCardType def `elem` [EnemyType, LocationType, EncounterSideQuestType], isNothing engaging]
-            <> [CheckWindows [mkWhen $ Revealed t]] <> [WhileInPlay t prowl | notNull prowl] <> [whenRevealed t, WhileInPlay t doomed]
+            <> [CheckWindows [mkWhen $ Revealed t]] <> [WhileInPlay t prowl | notNull prowl] <> hide <> [whenRevealed t, WhileInPlay t doomed]
             <> [CheckWindows [mkAfter $ Revealed t]]
     case cdCardType def of
       -- an enemy revealed to be put into play engaged never enters the staging area

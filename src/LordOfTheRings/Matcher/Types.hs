@@ -25,6 +25,8 @@ data PlayerMatcher
   | PlayerMatchAll [PlayerMatcher]
   | -- | a player with a hidden card in their play area, as The Blood of Gondor deals them
     PlayerWithHiddenCards
+  | -- | a player engaged with a matching enemy, as "engaged player" reads on an enemy
+    PlayerEngagedWith EnemyMatcher
   | -- | a player with at least this many cards in their deck, as a cost to discard them
     PlayerWithCardsInDeck Int
   | -- | a player whose cards follow the FAQ's errata

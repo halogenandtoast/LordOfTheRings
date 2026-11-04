@@ -361,6 +361,18 @@ narrationFor = \case
           $ test [ikeyPart "log.questSucceeds" ["progress" ~> stat "progress" (willpower - threat)], versus]
       LT -> toned Bad $ test [ikeyPart "log.questFails" ["count" ~> (threat - willpower)], versus]
       EQ -> test [ikeyPart "log.questTied" [], versus]
+  MakeHideTest t | null t.hideCommitted -> Just $ withPlayer t.hidePlayer \_ who ->
+    one $ mechanic [ikeyPart "log.makesHideTest" ["player" ~> who, "count" ~> t.hideValue]]
+  ResolveHideTest t -> Just do
+    (willpower, threat) <- hideTestTotals t
+    let versus = ikeyPart "log.hideVersus" ["willpower" ~> willpower, "threat" ~> threat]
+        discarded = [mechanic [ikeyPart "log.discardedFromEncounterDeck" ["cards" ~> map EncounterCard t.hideDiscarded]] | notNull t.hideDiscarded]
+    pure
+      $ discarded
+      <> [ if threat > willpower
+             then toned Bad $ test [ikeyPart "log.hideFails" [], versus]
+             else toned Good $ test [ikeyPart "log.hidePasses" [], versus]
+         ]
   ResolveEscapeTest t -> Just do
     (total, escape) <- escapeTestTotals t
     let versus = ikeyPart "log.escapeVersus" ["total" ~> total, "escape" ~> escape]

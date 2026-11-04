@@ -313,6 +313,10 @@ data WindowMatcher
     PlayerCardPlacedProgressWindow Timing LocationMatcher
   | -- | a matching player raised his threat, as Sam Gamgee answers "a player"
     ThreatRaisedWindow Timing PlayerMatcher
+  | -- | a matching player failed a Hide test, as Black Rider answers its engaged player
+    FailedHideTestWindow Timing PlayerMatcher
+  | -- | a matching player made a successful Hide test, as Escape to Buckland answers
+    PassedHideTestWindow Timing PlayerMatcher
   | -- | a shadow card's effect raised an enemy's attack, as Tides of Fate reads
     ShadowIncreasedAttackWindow Timing
   | -- | an enemy's attack destroyed a character with the trait defending it, as Last Stand
@@ -552,6 +556,8 @@ windowMatches matcher (Window timing wType) = case (matcher, wType) of
   (DiscoverResolvedWindow t lid, DiscoverResolved lid' _) -> t == timing && lid == lid'
   (PlayerCardPlacedProgressWindow {}, _) -> False
   (ThreatRaisedWindow {}, _) -> False
+  (FailedHideTestWindow {}, _) -> False
+  (PassedHideTestWindow {}, _) -> False
   (MatchingThreatRaisedByDoomedWindow {}, _) -> False
   (PlayedCardWithDoomedWindow {}, _) -> False
   (DefenderWithTraitDestroyedWindow {}, _) -> False
