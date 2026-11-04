@@ -3291,6 +3291,7 @@ test-suite LordOfTheRings-test
       LordOfTheRings.HeirsOfNumenor.PlayerCardsSpec
       LordOfTheRings.HeirsOfNumenor.TheSiegeOfCairAndrosSpec
       LordOfTheRings.Hero.HeroAbilitiesSpec
+      LordOfTheRings.Hobbit.WeMustAwayEreBreakOfDaySpec
       LordOfTheRings.KeywordSpec
       LordOfTheRings.KhazadDum.FlightFromMoriaSpec
       LordOfTheRings.KhazadDum.IntoThePitSpec
