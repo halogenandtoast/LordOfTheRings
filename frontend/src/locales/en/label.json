@@ -2493,5 +2493,17 @@
     "choose": "The Ephel Dúath: choose one for the ally you played",
     "exhaust": "Exhaust the ally",
     "threat": "Raise your threat by 1"
+  },
+  "ruinedSupplies": {
+    "choose": "Ruined Supplies: choose one",
+    "raiseThreat": "Raise your threat by {n}, 1 for each ally you control",
+    "damage": "Deal 1 damage to each ally you control"
+  },
+  "lostInTheWild": {
+    "choosePlayer": "Choose a tied player to add Lost in the Wild to his hand"
+  },
+  "weighedDown": {
+    "attach": "Choose a tied hero to attach Weighed Down to",
+    "discard": "Weighed Down: choose an attachment to discard"
   }
 }

@@ -365,6 +365,9 @@ allTreacheryCards =
       , bitingInsects
       , dangerCloseBehind
       , mountainsOfShadow
+      , ruinedSupplies
+      , lostInTheWild
+      , weighedDown
       ]
 
 deepDeepDark :: CardDef
@@ -2334,3 +2337,19 @@ dangerCloseBehind =
 
 mountainsOfShadow :: CardDef
 mountainsOfShadow = (treachery "17155" "Mountains of Shadow" MountainsOfShadow 2) {cdShadowEffect = True, cdEasyModeQuantity = Just 1}
+
+-- * The Wilds of Rhovanion's shared encounter sets
+
+ruinedSupplies :: CardDef
+ruinedSupplies =
+  (treachery "18025" "Ruined Supplies" LostInWilderland 2)
+    { cdKeywords = setFromList [Doomed 1]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
+    }
+
+lostInTheWild :: CardDef
+lostInTheWild = (treachery "18026" "Lost in the Wild" LostInWilderland 2) {cdEasyModeQuantity = Just 1}
+
+weighedDown :: CardDef
+weighedDown = (treachery "18027" "Weighed Down" LostInWilderland 2) {cdEasyModeQuantity = Just 1}

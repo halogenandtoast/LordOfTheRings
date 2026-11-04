@@ -355,6 +355,9 @@ import LordOfTheRings.Treachery.Cards.TakenPrisoner
 import LordOfTheRings.Treachery.Cards.TormentedByOrcs
 import LordOfTheRings.Treachery.Cards.DangerCloseBehind
 import LordOfTheRings.Treachery.Cards.MountainsOfShadow
+import LordOfTheRings.Treachery.Cards.RuinedSupplies
+import LordOfTheRings.Treachery.Cards.LostInTheWild
+import LordOfTheRings.Treachery.Cards.WeighedDown
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -737,5 +740,8 @@ allTreacherys =
         , SomeTreacheryCard tormentedByOrcs
         , SomeTreacheryCard dangerCloseBehind
         , SomeTreacheryCard mountainsOfShadow
+        , SomeTreacheryCard ruinedSupplies
+        , SomeTreacheryCard lostInTheWild
+        , SomeTreacheryCard weighedDown
         ]
     ]

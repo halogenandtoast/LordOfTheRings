@@ -2290,6 +2290,7 @@ library
       LordOfTheRings.Treachery.Cards.LostAndHelpless
       LordOfTheRings.Treachery.Cards.LostCompany
       LordOfTheRings.Treachery.Cards.LostInTheCity
+      LordOfTheRings.Treachery.Cards.LostInTheWild
       LordOfTheRings.Treachery.Cards.LowOnProvisions
       LordOfTheRings.Treachery.Cards.LurkingInShadows
       LordOfTheRings.Treachery.Cards.LyingInWait
@@ -2363,6 +2364,7 @@ library
       LordOfTheRings.Treachery.Cards.RogueWave
       LordOfTheRings.Treachery.Cards.RottenStench
       LordOfTheRings.Treachery.Cards.RuinAndWroth
+      LordOfTheRings.Treachery.Cards.RuinedSupplies
       LordOfTheRings.Treachery.Cards.RuinsOfAgesPast
       LordOfTheRings.Treachery.Cards.RunForYourLives
       LordOfTheRings.Treachery.Cards.Sacked
@@ -2463,6 +2465,7 @@ library
       LordOfTheRings.Treachery.Cards.WatcherInTheWoods
       LordOfTheRings.Treachery.Cards.WatchfulEyes
       LordOfTheRings.Treachery.Cards.WaylaidByAgents
+      LordOfTheRings.Treachery.Cards.WeighedDown
       LordOfTheRings.Treachery.Cards.WeightOfResponsibility
       LordOfTheRings.Treachery.Cards.WhipLash
       LordOfTheRings.Treachery.Cards.WickednessAndMischief
