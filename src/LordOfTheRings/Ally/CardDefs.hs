@@ -195,6 +195,7 @@ allAllyCards =
       , starla
       , halflingBounder
       , vigilantDunadan
+      , andrathGuardsman
       ]
 
 guardOfTheCitadel :: CardDef
@@ -1359,3 +1360,10 @@ vigilantDunadan =
   (ally "16006" "Vigilant Dúnadan" Tactics (StaticCost 4) 1 3 2 3)
     { cdCardTraits = setFromList [Dunedain, Ranger]
     }
+
+andrathGuardsman :: CardDef
+andrathGuardsman =
+  (ally "17002" "Andrath Guardsman" Leadership (StaticCost 2) 1 0 1 2)
+    { cdCardTraits = setFromList [Dunedain, Ranger]
+    }
+

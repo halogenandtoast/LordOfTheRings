@@ -79,6 +79,7 @@ allHeroCards =
       , princeImrahilTactics
       , gimliLeadership
       , legolasSpirit
+      , kahliel
       ]
 
 aragorn :: CardDef
@@ -491,3 +492,10 @@ legolasSpirit =
     { cdCardTraits = setFromList [Silvan, Noble, Scout]
     , cdKeywords = setFromList [Ranged]
     }
+
+kahliel :: CardDef
+kahliel =
+  (hero "17001" "Kahliel" Leadership 10 2 2 2 4)
+    { cdCardTraits = setFromList [Harad, Noble]
+    }
+

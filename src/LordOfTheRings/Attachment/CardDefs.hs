@@ -186,6 +186,7 @@ allAttachmentCards =
       , dwarvenShield
       , mirkwoodLongKnife
       , theRoadGoesEverOn
+      , kahlielsHeaddress
       ]
 
 -- | A boon of the Revised Core campaign: Permanent, limit 1 per hero.
@@ -1246,3 +1247,12 @@ theRoadGoesEverOn =
   (attachment "16012" "The Road Goes Ever On" Lore (StaticCost 0))
     { cdCardTraits = setFromList [Song]
     }
+
+kahlielsHeaddress :: CardDef
+kahlielsHeaddress =
+  (attachment "17010" "Kahliel's Headdress" Neutral (StaticCost 3))
+    { cdUnique = True
+    , cdCardTraits = setFromList [Artifact, Item]
+    , cdKeywords = setFromList [Restricted]
+    }
+

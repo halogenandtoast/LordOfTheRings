@@ -74,6 +74,7 @@ import LordOfTheRings.Hero.Cards.Naasiyah
 import LordOfTheRings.Hero.Cards.PrinceImrahilTactics
 import LordOfTheRings.Hero.Cards.GimliLeadership
 import LordOfTheRings.Hero.Cards.LegolasSpirit
+import LordOfTheRings.Hero.Cards.Kahliel
 import LordOfTheRings.Hero.Runner ()
 import LordOfTheRings.Hero.Types as X
 import LordOfTheRings.Hero.Types qualified as HeroTypes
@@ -185,5 +186,6 @@ allHeroes =
         , SomeHeroCard princeImrahilTactics
         , SomeHeroCard gimliLeadership
         , SomeHeroCard legolasSpirit
+        , SomeHeroCard kahliel
         ]
     ]

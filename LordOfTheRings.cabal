@@ -21,6 +21,7 @@ library
       LordOfTheRings.Ally.Cards.AmarthiulAcrossTheEttenmoors
       LordOfTheRings.Ally.Cards.AmarthiulTheTreacheryOfRhudaur
       LordOfTheRings.Ally.Cards.Anborn
+      LordOfTheRings.Ally.Cards.AndrathGuardsman
       LordOfTheRings.Ally.Cards.AnfalasHerdsman
       LordOfTheRings.Ally.Cards.AngborTheFearless
       LordOfTheRings.Ally.Cards.ArwenUndomiel
@@ -302,6 +303,7 @@ library
       LordOfTheRings.Attachment.Cards.IarionsPendant
       LordOfTheRings.Attachment.Cards.InServiceOfTheSteward
       LordOfTheRings.Attachment.Cards.IthilienPit
+      LordOfTheRings.Attachment.Cards.KahlielsHeaddress
       LordOfTheRings.Attachment.Cards.KeepingCount
       LordOfTheRings.Attachment.Cards.KeysOfOrthanc
       LordOfTheRings.Attachment.Cards.KingUnderTheMountain
@@ -1060,6 +1062,7 @@ library
       LordOfTheRings.Hero.Cards.Hirgon
       LordOfTheRings.Hero.Cards.HirluinTheFair
       LordOfTheRings.Hero.Cards.Idraen
+      LordOfTheRings.Hero.Cards.Kahliel
       LordOfTheRings.Hero.Cards.Lanwyn
       LordOfTheRings.Hero.Cards.Legolas
       LordOfTheRings.Hero.Cards.LegolasSpirit
@@ -1700,6 +1703,7 @@ library
       LordOfTheRings.Quest.Cards.OutOfTheDepths
       LordOfTheRings.Quest.Cards.OutOfTheDungeons
       LordOfTheRings.Quest.Cards.OutOfTheSwamp
+      LordOfTheRings.Quest.Cards.PrepareForBattle
       LordOfTheRings.Quest.Cards.ProtectTheBreeLanders
       LordOfTheRings.Quest.Cards.ProtectTheFlanks
       LordOfTheRings.Quest.Cards.ProtectTheInnocent
