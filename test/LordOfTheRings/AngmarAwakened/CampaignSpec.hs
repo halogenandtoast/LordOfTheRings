@@ -132,6 +132,18 @@ spec = describe "Angmar Awakened campaign" do
       attachedTo Attachments.hardy `shouldReturn` [toTarget eowyn.id]
       (.pool) <$> getCampaignLog `shouldReturn` [PoolCard (toCardCode Attachments.hardy) Nothing (Just "01007")]
 
+    it "offers the second player only the boons the first did not take" . twoPlayerCampaignTestIn theWeatherHills angmar (coreDeck "tactics") $ \one two -> do
+      run . AddToStaging =<< genEncounterCard Quests.mysteriousOmens
+      q <- questOf Quests.mysteriousOmens
+      run $ CompleteQuest q.id
+      getQuestion two >>= (`shouldSatisfy` isNothing)
+      -- pass, then Cunning
+      void $ answerQuestion one 1
+      eowyn <- getHeroWithCode "01007"
+      chooseTarget one eowyn.id
+      offered <- maybe [] questionChoices <$> getQuestion two
+      length [() | TargetLabel {} <- offered] `shouldBe` 4
+
   describe "Deadmen's Dike" do
     it "attaches a random burden to Thaurdir as he enters play, for the pool" . campaignTestIn deadmensDike angmar testDeck $ \_ -> do
       run . AddToStaging =<< genEncounterCard Enemies.thaurdirDeadmensDike

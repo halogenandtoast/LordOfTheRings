@@ -166,17 +166,10 @@ attachPermanentBoons attrs code = for_ attrs.campaign \l -> do
       else (`putObjectiveIntoPlayAttached` h.id) =<< genEncounterCard def
 
 {- | Each player in turn order may select one of the boons and add it to their hand, and
-the Campaign Pool, for their deck.
-
+the Campaign Pool, for their deck. A boon one player selects is gone for those after.
 -}
 chooseBoonForHand :: ReverseQueue m => [CardDef] -> m ()
-chooseBoonForHand defs = eachPlayer \p -> do
-  boons <- traverse (`genPlayerCard` Just p) defs
+chooseBoonForHand defs = eachPlayerMayTakeOneOf "campaign.chooseBoon" Nothing defs \p boon -> do
   seat <- seatOf p
-  chooseOneM p do
-    questionLabeled "campaign.chooseBoon"
-    showing (map PlayerCard boons)
-    labeled "pass" $ pure ()
-    for_ boons \boon -> targeting (CardIdTarget boon.id) do
-      putInHand boon
-      updateCampaignLog $ AddToPool $ PoolCard (toCardCode boon) seat Nothing
+  putInHand boon
+  updateCampaignLog $ AddToPool $ PoolCard (toCardCode boon) seat Nothing
