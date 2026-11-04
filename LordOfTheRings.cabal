@@ -2063,6 +2063,7 @@ library
       LordOfTheRings.Quest.Cards.DoubleDealings
       LordOfTheRings.Quest.Cards.DouseTheFlames
       LordOfTheRings.Quest.Cards.DrawHerFire
+      LordOfTheRings.Quest.Cards.DriveThemOut
       LordOfTheRings.Quest.Cards.DunlendingAttack
       LordOfTheRings.Quest.Cards.EnteringTheMines
       LordOfTheRings.Quest.Cards.EscapeAttempt
@@ -2120,6 +2121,7 @@ library
       LordOfTheRings.Quest.Cards.HuntingTheBeast
       LordOfTheRings.Quest.Cards.ImminentPursuit
       LordOfTheRings.Quest.Cards.InEnemyTerritory
+      LordOfTheRings.Quest.Cards.InsideTheWalls
       LordOfTheRings.Quest.Cards.IntoTheEttenmoors
       LordOfTheRings.Quest.Cards.IntoTheEttenmoorsNightmare
       LordOfTheRings.Quest.Cards.IntoTheMarshes
@@ -2453,6 +2455,7 @@ library
       LordOfTheRings.Scenario.Scenarios.TroubleInTharbad
       LordOfTheRings.Scenario.Scenarios.TroubleInTharbad.Helpers
       LordOfTheRings.Scenario.Scenarios.VoyageAcrossBelegaer
+      LordOfTheRings.Scenario.Scenarios.WrathAndRuin
       LordOfTheRings.Scenario.Types
       LordOfTheRings.Source
       LordOfTheRings.Sphere
