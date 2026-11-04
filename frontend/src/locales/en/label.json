@@ -2527,5 +2527,12 @@
   },
   "dragonScales": {
     "attach": "Choose a Dragon enemy to attach Dragon Scales to"
+  },
+  "ancientTreasury": {
+    "choose": "Ancient Treasury: you may choose one",
+    "threat": "Reduce your threat by 3",
+    "draw": "Draw 2 cards",
+    "resource": "Add 1 resource to a hero's resource pool",
+    "hero": "Ancient Treasury: choose a hero to gain 1 resource"
   }
 }

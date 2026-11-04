@@ -1194,6 +1194,7 @@ library
       LordOfTheRings.Location.Cards.AncientForestLocation
       LordOfTheRings.Location.Cards.AncientFoundation
       LordOfTheRings.Location.Cards.AncientHarbor
+      LordOfTheRings.Location.Cards.AncientTreasury
       LordOfTheRings.Location.Cards.AnduinWharf
       LordOfTheRings.Location.Cards.ArchedTunnel
       LordOfTheRings.Location.Cards.BanksOfMorgulduin
@@ -1246,6 +1247,7 @@ library
       LordOfTheRings.Location.Cards.CorsairWaters
       LordOfTheRings.Location.Cards.CrewQuarters
       LordOfTheRings.Location.Cards.CrumbledBattlements
+      LordOfTheRings.Location.Cards.CrumblingCavern
       LordOfTheRings.Location.Cards.CrumblingStairs
       LordOfTheRings.Location.Cards.CursedCaverns
       LordOfTheRings.Location.Cards.CursedForest
@@ -1333,6 +1335,7 @@ library
       LordOfTheRings.Location.Cards.ForsakenCity
       LordOfTheRings.Location.Cards.FortressWalls
       LordOfTheRings.Location.Cards.FouledWell
+      LordOfTheRings.Location.Cards.FrightfulDen
       LordOfTheRings.Location.Cards.FrozenSilverlode
       LordOfTheRings.Location.Cards.GapOfRohan
       LordOfTheRings.Location.Cards.GardenOfPoisons
@@ -1386,8 +1389,10 @@ library
       LordOfTheRings.Location.Cards.JungleTrail
       LordOfTheRings.Location.Cards.KneesOfTheMountain
       LordOfTheRings.Location.Cards.LabyrinthineWoods
+      LordOfTheRings.Location.Cards.LightlessGrotto
       LordOfTheRings.Location.Cards.LightlessPassage
       LordOfTheRings.Location.Cards.LonelyLands
+      LordOfTheRings.Location.Cards.LostArmory
       LordOfTheRings.Location.Cards.LostIsland
       LordOfTheRings.Location.Cards.LushJungle
       LordOfTheRings.Location.Cards.MakeshiftPassage
@@ -1583,6 +1588,7 @@ library
       LordOfTheRings.Location.Cards.UmbarHarbor
       LordOfTheRings.Location.Cards.UmbarSquare
       LordOfTheRings.Location.Cards.UmbarStreet
+      LordOfTheRings.Location.Cards.UndergroundLake
       LordOfTheRings.Location.Cards.UnderseaGrotto
       LordOfTheRings.Location.Cards.UnholyCrypt
       LordOfTheRings.Location.Cards.UpperHall

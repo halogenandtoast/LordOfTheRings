@@ -459,6 +459,12 @@ allLocationCards =
       , darkBlackWoods
       , darkTunnel
       , forkedPassage
+      , lostArmory
+      , ancientTreasury
+      , frightfulDen
+      , lightlessGrotto
+      , crumblingCavern
+      , undergroundLake
       ]
 
 drownedTreasury :: CardDef
@@ -3458,3 +3464,24 @@ darkTunnel = (location "18054" "Dark Tunnel" DeepUnderground 4 3 3) {cdCardTrait
 
 forkedPassage :: CardDef
 forkedPassage = (location "18055" "Forked Passage" DeepUnderground 2 2 2) {cdCardTraits = setFromList [Underground, Dark], cdKeywords = setFromList [Deep]}
+
+-- | The Lost Caves set is the Caves deck (MEC65 rules), never shuffled into the encounter
+-- deck.
+lostArmory :: CardDef
+lostArmory = (location "18060" "Lost Armory" LostCaves 1 2 2) {cdCardTraits = setFromList [Underground], cdVictoryPoints = Just 1}
+
+ancientTreasury :: CardDef
+ancientTreasury = (location "18061" "Ancient Treasury" LostCaves 1 3 3) {cdCardTraits = setFromList [Underground], cdVictoryPoints = Just 1}
+
+frightfulDen :: CardDef
+frightfulDen = (location "18062" "Frightful Den" LostCaves 1 4 4) {cdCardTraits = setFromList [Underground, Dark], cdVictoryPoints = Just 1}
+
+lightlessGrotto :: CardDef
+lightlessGrotto = (location "18063" "Lightless Grotto" LostCaves 1 5 5) {cdCardTraits = setFromList [Underground, Dark], cdVictoryPoints = Just 1}
+
+crumblingCavern :: CardDef
+crumblingCavern = (location "18064" "Crumbling Cavern" LostCaves 1 6 6) {cdCardTraits = setFromList [Underground, Dark], cdVictoryPoints = Just 1}
+
+-- | X threat and X quest points, as Hills of Wilderland's.
+undergroundLake :: CardDef
+undergroundLake = (location "18065" "Underground Lake" LostCaves 1 0 0) {cdCardTraits = setFromList [Underground, Dark], cdVictoryPoints = Just 1}
