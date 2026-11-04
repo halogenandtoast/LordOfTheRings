@@ -2343,6 +2343,7 @@ library
       LordOfTheRings.Quest.Cards.Ghash
       LordOfTheRings.Quest.Cards.GoblinAmbush
       LordOfTheRings.Quest.Cards.GoblinPatrol
+      LordOfTheRings.Quest.Cards.GollumsBetrayal
       LordOfTheRings.Quest.Cards.GornakhsDungeons
       LordOfTheRings.Quest.Cards.GrimbeornsFolly
       LordOfTheRings.Quest.Cards.GrimbeornsQuest
@@ -2542,6 +2543,8 @@ library
       LordOfTheRings.Quest.Cards.TheShadowWorld
       LordOfTheRings.Quest.Cards.TheSideDoor
       LordOfTheRings.Quest.Cards.TheSpidersHive
+      LordOfTheRings.Quest.Cards.TheSpidersPass
+      LordOfTheRings.Quest.Cards.TheStairsOfCirithUngol
       LordOfTheRings.Quest.Cards.TheStarsGuidance
       LordOfTheRings.Quest.Cards.TheStormComes
       LordOfTheRings.Quest.Cards.TheTamingOfSmeagol
@@ -2661,6 +2664,7 @@ library
       LordOfTheRings.Scenario.Scenarios.RoamAcrossRhovanion.Helpers
       LordOfTheRings.Scenario.Scenarios.ShadowAndFlame
       LordOfTheRings.Scenario.Scenarios.ShadowAndFlame.Helpers
+      LordOfTheRings.Scenario.Scenarios.ShelobsLair
       LordOfTheRings.Scenario.Scenarios.ShelobsLair.Helpers
       LordOfTheRings.Scenario.Scenarios.TempleOfTheDeceived
       LordOfTheRings.Scenario.Scenarios.TempleOfTheDeceived.Helpers

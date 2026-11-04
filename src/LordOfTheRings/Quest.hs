@@ -368,6 +368,9 @@ import LordOfTheRings.Quest.Cards.DontLookAtTheLights
 import LordOfTheRings.Quest.Cards.PassTheTwoWatchers
 import LordOfTheRings.Quest.Cards.FightingInTheTower
 import LordOfTheRings.Quest.Cards.EscapeFromCirithUngol
+import LordOfTheRings.Quest.Cards.TheStairsOfCirithUngol
+import LordOfTheRings.Quest.Cards.TheSpidersPass
+import LordOfTheRings.Quest.Cards.GollumsBetrayal
 import LordOfTheRings.Quest.Runner ()
 import LordOfTheRings.Quest.Types as X
 import LordOfTheRings.Id
@@ -768,5 +771,8 @@ allQuests =
         , SomeQuestCard passTheTwoWatchers
         , SomeQuestCard fightingInTheTower
         , SomeQuestCard escapeFromCirithUngol
+        , SomeQuestCard theStairsOfCirithUngol
+        , SomeQuestCard theSpidersPass
+        , SomeQuestCard gollumsBetrayal
         ]
     ]
