@@ -104,7 +104,7 @@ spec = describe "Dream-chaser campaign cards" do
           _ <- setEncounterDeck []
           run . RevealCard =<< genEncounterCard def
           resolveRevealed
-        upgraded def = dc {campaignLogMarked = mapFromList [(toCardCode def, 3)]}
+        upgraded def = dc {campaignLogMarked = mapFromList [(toCardCode def, 4)]}
         alliesIn = getsGame (map toCardCode . toList . (.entities.allies))
     it "plays a card from the top 10 of the deck at no cost (Leadership)" . campaignTestIn voyageAcrossBelegaer dc starterDeck $ \pid -> do
       archer <- PlayerCard <$> genPlayerCard Allies.silverlodeArcher (Just pid)
