@@ -515,6 +515,11 @@ import LordOfTheRings.Enemy.Cards.Shagrat
 import LordOfTheRings.Enemy.Cards.Gorbag
 import LordOfTheRings.Enemy.Cards.WoundedUruk
 import LordOfTheRings.Enemy.Cards.TheTwoWatchersEnemy
+import LordOfTheRings.Enemy.Cards.GollumMountDoom
+import LordOfTheRings.Enemy.Cards.RingwraithOfSauron
+import LordOfTheRings.Enemy.Cards.OrcCaptain
+import LordOfTheRings.Enemy.Cards.BigUruk
+import LordOfTheRings.Enemy.Cards.LittleSnufflerMountDoom
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -1059,5 +1064,10 @@ allEnemys =
         , SomeEnemyCard orcOfMordor
         , SomeEnemyCard snagaArcher
         , SomeEnemyCard urukSoldierOrcsOfMordor
+        , SomeEnemyCard gollumMountDoom
+        , SomeEnemyCard ringwraithOfSauron
+        , SomeEnemyCard orcCaptain
+        , SomeEnemyCard bigUruk
+        , SomeEnemyCard littleSnufflerMountDoom
         ]
     ]

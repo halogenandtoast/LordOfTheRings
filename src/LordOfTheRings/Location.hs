@@ -542,6 +542,12 @@ import LordOfTheRings.Location.Cards.BloodiedCourtyard
 import LordOfTheRings.Location.Cards.WindingStairs
 import LordOfTheRings.Location.Cards.TorchLitHall
 import LordOfTheRings.Location.Cards.TheTwoWatchers
+import LordOfTheRings.Location.Cards.MountDoom
+import LordOfTheRings.Location.Cards.OrcHold
+import LordOfTheRings.Location.Cards.MordorRoad
+import LordOfTheRings.Location.Cards.PlainOfGorgoroth
+import LordOfTheRings.Location.Cards.BrakeOfThorns
+import LordOfTheRings.Location.Cards.OldWaterCourse
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -1130,5 +1136,11 @@ allLocations =
         , SomeLocationCard windingStairs
         , SomeLocationCard torchLitHall
         , SomeLocationCard theTwoWatchers
+        , SomeLocationCard mountDoom
+        , SomeLocationCard orcHold
+        , SomeLocationCard mordorRoad
+        , SomeLocationCard plainOfGorgoroth
+        , SomeLocationCard brakeOfThorns
+        , SomeLocationCard oldWaterCourse
         ]
     ]

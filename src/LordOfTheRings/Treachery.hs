@@ -433,6 +433,10 @@ import LordOfTheRings.Treachery.Cards.DrawnToTheRing
 import LordOfTheRings.Treachery.Cards.DeepShadows
 import LordOfTheRings.Treachery.Cards.EvilVigilance
 import LordOfTheRings.Treachery.Cards.OrcishHowls
+import LordOfTheRings.Treachery.Cards.WickedMaster
+import LordOfTheRings.Treachery.Cards.TheLidlessEye
+import LordOfTheRings.Treachery.Cards.FoulFumes
+import LordOfTheRings.Treachery.Cards.HeavyAndTired
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -893,5 +897,9 @@ allTreacherys =
         , SomeTreacheryCard drawnToTheRing
         , SomeTreacheryCard deepShadows
         , SomeTreacheryCard evilVigilance
+        , SomeTreacheryCard wickedMaster
+        , SomeTreacheryCard theLidlessEye
+        , SomeTreacheryCard foulFumes
+        , SomeTreacheryCard heavyAndTired
         ]
     ]
