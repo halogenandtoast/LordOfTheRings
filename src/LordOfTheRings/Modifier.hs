@@ -115,8 +115,12 @@ data ModifierType
     DoesNotCountAttack
   | -- | on an enemy: its attack is undefended, no character may defend against it
     CannotBeDefended
-  | -- | on a location: at most this much more progress can be placed on it now
+  | -- | on a location or quest card: at most this much more progress can be placed on it
+    -- now, as a stage that "cannot have more than 15 progress tokens on it" gives itself
     ProgressLimit Int
+  | -- | on a quest card: it is not defeated, whatever its progress; once nothing gives it
+    -- this, it is checked again, as "the players cannot defeat this stage while..." reads
+    CannotBeDefeated
   | -- | on a character committed to the quest: its willpower does not count toward it
     DoesNotCountWillpower
   | -- | on a character: it is discarded from play once its willpower is 0, as The
@@ -390,7 +394,9 @@ data ModifierType
     -- much by 'ProgressCanceled'
     QuestProgressCanceledBy Source
   | -- | on a location in the staging area: nothing moves it out, to be active, to a deck or
-    -- out of the game, as The Crossing at Tharbad reads; explored, it still leaves play
+    -- out of the game, as The Crossing at Tharbad reads; explored, it still leaves play. On
+    -- an enemy there: it is not engaged, moved or discarded, as The Black Serpent reads;
+    -- give it 'CannotBeOptionallyEngagedBy' too, for the players not to be offered it
     CannotLeaveStagingArea
   | -- | on a hero: player card effects cannot give it resources, as No End in Sight reads;
     -- encounter card effects still may
@@ -530,6 +536,15 @@ data ModifierType
     ExcessDamageTo Target
   | -- | on a player: they cannot discard cards from their hand, as Isen River reads
     CannotDiscardFromHand
+  | -- | on a player: he cannot have more than this many cards in hand, discarding down to
+    -- it at once, as In Enemy Territory reads
+    HandSizeLimit Int
+  | -- | on the game, or a character: player card effects cannot ready it, as Find Water
+    -- reads; the refresh phase still does
+    CannotBeReadiedByPlayerCards
+  | -- | on a character: it cannot defend against matching enemies, as Uruk of Mordor reads
+    -- for allies with less willpower than its threat
+    CannotDefendAgainst EnemyMatcher
   | -- | on a character: it cannot attack or defend against matching enemies, as Cursed
     -- Burden reads
     CannotFight EnemyMatcher

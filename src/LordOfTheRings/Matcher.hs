@@ -89,7 +89,8 @@ matchCharacter matcher character = case matcher of
 instance Query HeroMatcher where
   type QueryElement HeroMatcher = HeroId
   select matcher = do
-    heroes <- getsGame (toList . entitiesHeroes . gameEntities)
+    -- a captive guarded by an encounter card is a guarded objective, not a hero
+    heroes <- getsGame (filter (isNothing . heroGuardedBy . toAttrs) . toList . entitiesHeroes . gameEntities)
     map toId <$> filterM (matchHero matcher) heroes
 
 matchHero :: HasGame m => HeroMatcher -> Hero -> m Bool
@@ -144,8 +145,13 @@ matchHero matcher hero = case matcher of
 instance Query AllyMatcher where
   type QueryElement AllyMatcher = AllyId
   select matcher = do
-    allies <- getsGame (toList . entitiesAllies . gameEntities)
+    -- a captive guarded by an encounter card is a guarded objective, not an ally
+    allies <- getsGame (filter (not . guardedAlly) . toList . entitiesAllies . gameEntities)
     map toId <$> filterM (matchAlly matcher) allies
+   where
+    guardedAlly a = case a.placement of
+      AttachedTo (CardIdTarget _) -> True
+      _ -> False
 
 matchAlly :: HasGame m => AllyMatcher -> Ally -> m Bool
 matchAlly matcher ally = case matcher of
@@ -717,6 +723,11 @@ getCurrentQuest = do
 getMainQuests :: HasGame m => m [Target]
 getMainQuests = getsGame (map toTarget . filter (not . isSideQuest) . toList . entitiesQuests . gameEntities)
 
+-- | The progress on the main quest, not a side quest's, as "if there are no progress
+-- tokens on the main quest" reads.
+getMainQuestProgress :: HasGame m => m Int
+getMainQuestProgress = getsGame (sum . map (.progress) . filter (not . isSideQuest) . toList . entitiesQuests . gameEntities)
+
 -- | The objectives in play no hero has claimed: those in the staging area.
 unclaimedObjectives :: HasGame m => m Int
 unclaimedObjectives = getsGame (length . filter ((== StagingArea) . (.placement)) . toList . entitiesObjectives . gameEntities)
@@ -858,3 +869,11 @@ unchartedLocation = LocationWithKeyword Uncharted
 -- counts as 0.
 printedCostOf :: HasCardDef a => a -> Int
 printedCostOf = maybe 0 costAsResources . cdCost . toCardDef
+
+-- | The characters the encounter card guards as captives (see 'GuardCharacter').
+charactersGuardedBy :: HasGame m => CardId -> m [Target]
+charactersGuardedBy cid = do
+  es <- getsGame gameEntities
+  pure
+    $ [toTarget h | h <- toList (entitiesHeroes es), heroGuardedBy (toAttrs h) == Just cid]
+    <> [toTarget a | a <- toList (entitiesAllies es), a.placement == AttachedTo (CardIdTarget cid)]

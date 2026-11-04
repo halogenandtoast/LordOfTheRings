@@ -39,6 +39,7 @@ import LordOfTheRings.Placement (
  )
 import LordOfTheRings.Prelude hiding (count)
 import LordOfTheRings.Queue
+import LordOfTheRings.Quest.Types (isSideQuest)
 import LordOfTheRings.Question (Question (QuestionLabel))
 import LordOfTheRings.Source
 import LordOfTheRings.Sphere (Sphere)
@@ -47,7 +48,7 @@ import LordOfTheRings.Token
 import LordOfTheRings.Window (
   Timing (After, When),
   Window (..),
-  WindowType (AllyDiscardedByCardEffect, DeclaredAsDefender, DefendedAttack, EnemyAttacking, ShadowEffectTriggered, StagingStepEnds, ThreatRaisedByDoomed, ThreatRaisedByEncounter, ThreatReduced, Traveled, WhenRevealedCanceled),
+  WindowType (AllyDiscardedByCardEffect, CharacterRescued, DeclaredAsDefender, DefendedAttack, EnemyAttacking, ShadowEffectTriggered, StagingStepEnds, ThreatRaisedByDoomed, ThreatRaisedByEncounter, ThreatReduced, Traveled, WhenRevealedCanceled),
  )
 
 dealDamage
@@ -117,6 +118,18 @@ removeTimeCountersFromCurrentQuest source n = traverse_ (\q -> removeTimeCounter
 
 removeProgressFromQuest :: (ReverseQueue m, Sourceable source) => source -> Int -> m ()
 removeProgressFromQuest source n = push $ RemoveProgressFromQuest (toSource source) n
+
+{- | Remove this much progress from the main quest, not a side quest the players quest
+against instead, as the Haradrim cycle's "remove 2 progress from the main quest" reads.
+-}
+removeProgressFromMainQuest :: (ReverseQueue m, Sourceable source) => source -> Int -> m ()
+removeProgressFromMainQuest source n = do
+  quests <- getsGame (filter (not . isSideQuest) . toList . entitiesQuests . gameEntities)
+  for_ quests \q -> when (q.progress > 0) $ removeTokens source q Progress (min n q.progress)
+
+-- | Place progress on the main quest, bypassing the active location, as Umbar Square reads.
+placeProgressOnMainQuest :: (ReverseQueue m, Sourceable source) => source -> Int -> m ()
+placeProgressOnMainQuest source n = traverse_ (\q -> placeTokens source q Progress n) =<< getMainQuests
 
 -- | Remove this much progress from each quest card in play, the main quest and each side
 -- quest, as "remove 2 progress from each quest card in play" reads.
@@ -222,8 +235,17 @@ discard (toTarget -> t) = do
         push $ CheckWindows [Window After $ AllyDiscardedByCardEffect t (cdCardTraits def <> setFromList gained)]
     _ -> pure ()
 
+{- | A card effect readies the card, unless it is a character player card effects cannot
+ready, as Find Water reads.
+-}
 ready :: (ReverseQueue m, Targetable target) => target -> m ()
-ready = push . Ready . toTarget
+ready (toTarget -> t) = do
+  barred <- (CannotBeReadiedByPlayerCards `elem`) . concat <$> sequence [getModifiers GameTarget, getModifiers t]
+  let character = case t of
+        HeroTarget _ -> True
+        AllyTarget _ -> True
+        _ -> False
+  unless (character && barred) $ push (Ready t)
 
 exhaust :: (ReverseQueue m, Targetable target) => target -> m ()
 exhaust = push . Exhaust . toTarget
@@ -1213,6 +1235,18 @@ putLocationIntoPlay card = push . PutLocationIntoPlay card
 -- | The action's messages, unless the card has left play by the time they run.
 whileInPlay :: (ReverseQueue m, Targetable target) => target -> QueueT Message m () -> m ()
 whileInPlay target action = push . WhileInPlay (toTarget target) =<< capture action
+
+{- | The character, a hero or an ally, becomes a captive guarded by the encounter card: a
+guarded objective under no player's control, out of every matcher's reach, until the card
+leaves play and it is rescued, exhausted, as "attach that ally to Prison Guard" reads. What
+it had on it stays: discard its tokens and attachments first where the card says to.
+-}
+guardCharacterWith :: (ReverseQueue m, Targetable character, IsCard captor) => character -> captor -> m ()
+guardCharacterWith c captor = push $ GuardCharacter (toTarget c) (toCard captor).id
+
+-- | The guarded character is rescued now, as the card guarding it would leave play.
+rescueCharacter :: (ReverseQueue m, Targetable character) => character -> m ()
+rescueCharacter (toTarget -> c) = pushAll [RescueCharacter c, CheckWindows [Window After $ CharacterRescued c]]
 
 -- | Place the ally elsewhere, as Captured! puts Faramir under itself.
 placeAlly :: ReverseQueue m => AllyId -> Placement -> m ()

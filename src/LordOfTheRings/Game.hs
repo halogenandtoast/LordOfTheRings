@@ -154,7 +154,9 @@ runNext =
       g <- runGame msg =<< getGame
       putGame g
       putGame =<< withHandModifiers =<< preloadModifiers g
+      checkUnblockedQuests g
       discardAtNoWillpower
+      discardDownToHandLimit
       endWaitingGame
       pure True
 
@@ -175,6 +177,39 @@ gameCannotEndWith :: Outcome -> GameT Bool
 gameCannotEndWith outcome = do
   mods <- getModifiers GameTarget
   pure $ GameCannotEnd `elem` mods || (outcome == Won && PlayersCannotWin `elem` mods)
+
+{- | A quest card that could not be defeated, and now can, is checked again: one with
+enough progress is defeated. The game given has the modifiers from before the message.
+-}
+checkUnblockedQuests :: Game -> GameT ()
+checkUnblockedQuests before = do
+  let wasBlocked q = CannotBeDefeated `elem` map modifierType (Map.findWithDefault [] (toTarget q) (gameModifiers before))
+  quests <- getsGame (filter wasBlocked . toList . (.entities.quests))
+  for_ quests \q -> do
+    blocked <- elem CannotBeDefeated <$> getModifiers (toTarget q)
+    unless blocked $ push $ CheckStage (toId q)
+
+{- | A player with more cards in hand than he may have, as In Enemy Territory allows him
+5, chooses and discards cards down to it at once.
+-}
+discardDownToHandLimit :: GameT ()
+discardDownToHandLimit = do
+  over <- getsGame (isJust . (.outcome))
+  unless over do
+    queued <- peekQueue
+    players <- getPlayers
+    for_ players \p -> do
+      mods <- getModifiers (PlayerTarget p.id)
+      let excess = maybe 0 (length p.hand -) (minimumMay [k | HandSizeLimit k <- mods])
+          -- a discard already on its way, or being asked for
+          pending = flip any queued \case
+            ChooseAndDiscardFromHand pid _ _ -> pid == p.id
+            DiscardFromHand pid _ -> pid == p.id
+            Ask pid (QuestionLabel l _ _ _) -> pid == p.id && l == ikey "label.chooseCardToDiscardFromHand"
+            _ -> False
+      when (excess > 0 && not pending && CannotDiscardFromHand `notElem` mods && notNull (discardableHand p))
+        $ push
+        $ ChooseAndDiscardFromHand p.id GameSource excess
 
 {- | Characters that are discarded once their willpower is 0, as The Mountains' Peaks
 reads, are discarded as soon as it is, unless their discard is already on its way.
@@ -382,7 +417,8 @@ runGame msg g = case msg of
         mods <- getModifiers target
         placed <- progressPlacedThisRound target
         let reduced = max 0 (n - sum [k | ProgressReducedBy k <- mods])
-            room = foldr min reduced [max 0 (k - placed) | ProgressPerRoundLimit k <- mods]
+            -- and no more than it may take now, as Stranded in Umbar's 15 tokens at most
+            room = foldr min reduced $ [max 0 (k - placed) | ProgressPerRoundLimit k <- mods] <> [max 0 k | ProgressLimit k <- mods]
         if room <= 0
           then pure g
           else do
@@ -427,6 +463,11 @@ runGame msg g = case msg of
   -- nor can a Grotto deck card: it returns to the Grotto deck (The Drowned Ruins)
   Discard (LocationTarget lid) | grottoCard lid -> g <$ push (ShuffleIntoGrottoDeck lid)
   ShuffleIntoEncounterDeck (LocationTarget lid) | grottoCard lid -> g <$ push (ShuffleIntoGrottoDeck lid)
+  -- a quest card that cannot be defeated now keeps its progress, to be checked again once
+  -- it can be (see 'checkUnblockedQuests')
+  CompleteQuest qid -> do
+    blocked <- elem CannotBeDefeated <$> getModifiers (QuestTarget qid)
+    if blocked then pure g else runGame'' msg g
   _ -> runGame'' msg g
  where
   unchartedCard lid = maybe False (isUnchartedCard . toAttrs) (Map.lookup lid g.entities.locations)
@@ -434,16 +475,31 @@ runGame msg g = case msg of
 
 runGame'' :: Message -> Game -> GameT Game
 runGame'' msg g = case removedEnemy msg of
-  -- an enemy that cannot leave play unless destroyed, as The Morgul Vale's Captains, stays
+  -- an enemy that cannot leave play unless destroyed, as The Morgul Vale's Captains, stays,
+  -- and so does one that cannot leave the staging area, as The Black Serpent
   Just eid -> do
-    stays <- elem CannotLeavePlay <$> getModifiers (EnemyTarget eid)
-    if stays then pure g else runGame' msg g
+    mods <- getModifiers (EnemyTarget eid)
+    if CannotLeavePlay `elem` mods || stuckInStaging eid mods then pure g else runGame' msg g
+  -- nor is such an enemy engaged or moved out of it
+  Nothing | Just eid <- movedEnemy msg -> do
+    mods <- getModifiers (EnemyTarget eid)
+    if stuckInStaging eid mods then pure g else runGame' msg g
   Nothing -> case movedLocation msg of
     -- a location that cannot leave the staging area, as The Crossing at Tharbad, stays
     Just lid | Just l <- Map.lookup lid g.entities.locations, l.placement == StagingArea -> do
       stays <- elem CannotLeaveStagingArea <$> getModifiers (LocationTarget lid)
       if stays then pure g else runGame' msg g
     _ -> runGame' msg g
+ where
+  stuckInStaging eid mods =
+    CannotLeaveStagingArea `elem` mods && maybe False ((== StagingArea) . (.placement)) (Map.lookup eid g.entities.enemies)
+
+-- | The enemy a message moves out of where it is, without taking it out of play.
+movedEnemy :: Message -> Maybe EnemyId
+movedEnemy = \case
+  EngageEnemy _ eid -> Just eid
+  PlaceEnemy eid p | p /= StagingArea -> Just eid
+  _ -> Nothing
 
 -- | The location a message moves out of where it is, other than by exploring it.
 movedLocation :: Message -> Maybe LocationId
@@ -2999,6 +3055,14 @@ freeGuarded g target =
   , l <- toList g.entities.locations
   , l.placement == AttachedTo (CardIdTarget cid)
   ]
+    -- and the characters it guards as captives are rescued
+    <> concat
+      [ [RescueCharacter c, CheckWindows [mkAfter $ CharacterRescued c]]
+      | Just cid <- [guardCard]
+      , c <-
+          [toTarget h | h <- toList g.entities.heroes, heroGuardedBy (toAttrs h) == Just cid]
+            <> [toTarget a | a <- toList g.entities.allies, a.placement == AttachedTo (CardIdTarget cid)]
+      ]
  where
   cardIdIn :: IsCard v => Ord k => Map k v -> k -> Maybe CardId
   cardIdIn m k = (.id) . toCard <$> Map.lookup k m
@@ -3389,7 +3453,9 @@ canDefend eid c = do
         _ -> False
   -- only a Ship objective defends against a Ship enemy (Dream-chaser rules)
   shipOnly <- andM [selectAny (EnemyWithId eid <> shipEnemy), not <$> isShipObjective c]
-  if (noAllies && isAlly) || exhausts || shipOnly then pure False else canFight eid c
+  -- nor one that cannot defend against it, as an ally against Uruk of Mordor
+  barred <- (\ms -> anyM (\m -> selectAny (EnemyWithId eid <> m)) [m | CannotDefendAgainst m <- ms]) =<< getModifiers c
+  if (noAllies && isAlly) || exhausts || shipOnly || barred then pure False else canFight eid c
 
 -- | Whether the character is a Ship objective (Dream-chaser rules).
 isShipObjective :: Target -> GameT Bool
