@@ -677,6 +677,9 @@ data Message
   | -- | the hero leaves play, set aside out of play, as Unexpected Rescue sets aside the
     -- heroes not chosen to start
     SetAsideHero HeroId
+  | -- | the enemy leaves play, its card set aside out of play, as stage 3A of The Withered
+    -- Heath sets Cold-Drake aside
+    SetAsideEnemy EnemyId
   | {- | a card declares the character as a defender of the enemy's attack on the player,
     exhausted or not, from the window after the enemy is declared as an attacker, as
     Anchor Watch reads: it defends in place of the player's own declaration, alongside
