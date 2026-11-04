@@ -1096,6 +1096,7 @@ runGameMessage msg g = case msg of
       <> [DiscardRandomFromHand pid n | AttackDamageDiscardsRandomFrom pid <- attackMods]
       <> [HealDamage source t n | AttackDamageHeals t <- attackMods]
       <> [CreateEffect $ Effect source t [m] UntilEndOfRound | n > 0, AttackDamageModifiesUntilEndOfRound t m <- attackMods]
+      <> [CreateEffect $ Effect source target [m] UntilEndOfRound | n > 0, AttackDamageModifiesDamagedUntilEndOfRound m <- attackMods]
     pure $ recorded g
   HealDamage source target n | n > 0 -> do
     damage <- getDamage target
@@ -1104,9 +1105,14 @@ runGameMessage msg g = case msg of
     -- player attachment Athelas too
     let from = sourceCardTitle g source
         title code = cardTitle <$> lookupCardDef code
-        healed = foldr min (min n damage) $ [k | HealLimit k <- mods] <> [k | HealLimitExceptFrom k code <- mods, from /= title code]
+        healedThisRound = sum [k | HealedThisRound k <- mods]
+        eachRound = [max 0 (k - healedThisRound) | HealLimitEachRound k <- mods]
+        healed = foldr min (min n damage) $ [k | HealLimit k <- mods] <> [k | HealLimitExceptFrom k code <- mods, from /= title code] <> eachRound
     when (healed > 0 && CannotBeHealed `notElem` mods)
-      $ pushAll [RemoveTokens source target Damage healed, CheckWindows [mkAfter $ Healed target source]]
+      $ pushAll
+      $ [RemoveTokens source target Damage healed, CheckWindows [mkAfter $ Healed target source]]
+      -- counted while a limit each round reads it
+      <> [CreateEffect $ Effect source target [HealedThisRound healed] UntilEndOfRound | notNull eachRound]
     pure g
   ChooseAndDiscardFromHand pid source n | n > 0 -> do
     player <- getPlayer pid

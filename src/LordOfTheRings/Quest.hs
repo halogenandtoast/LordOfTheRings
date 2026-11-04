@@ -363,6 +363,7 @@ import LordOfTheRings.Quest.Cards.RetreatFromOsgiliath (retreatFromOsgiliath)
 import LordOfTheRings.Quest.Cards.TheWhiteCityBesieged (theWhiteCityBesieged)
 import LordOfTheRings.Quest.Cards.RohanHasCome (rohanHasCome)
 import LordOfTheRings.Quest.Cards.FightingInTheFields (fightingInTheFields)
+import LordOfTheRings.Quest.Cards.AttackOnPelargir (attackOnPelargir)
 import LordOfTheRings.Quest.Runner ()
 import LordOfTheRings.Quest.Types as X
 import LordOfTheRings.Id
@@ -758,5 +759,6 @@ allQuests =
         , SomeQuestCard theWhiteCityBesieged
         , SomeQuestCard rohanHasCome
         , SomeQuestCard fightingInTheFields
+        , SomeQuestCard attackOnPelargir
         ]
     ]

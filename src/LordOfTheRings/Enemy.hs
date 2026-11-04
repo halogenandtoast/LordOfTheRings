@@ -511,6 +511,10 @@ import LordOfTheRings.Enemy.Cards.OrcOfTheEye (orcOfTheEye)
 import LordOfTheRings.Enemy.Cards.MordorOrc (mordorOrc)
 import LordOfTheRings.Enemy.Cards.WraithOnWings (wraithOnWings)
 import LordOfTheRings.Enemy.Cards.TheWitchKing (theWitchKing, theWitchKingSorcerer)
+import LordOfTheRings.Enemy.Cards.CorsairCaptain (corsairCaptain)
+import LordOfTheRings.Enemy.Cards.CorsairOfUmbar (corsairOfUmbar)
+import LordOfTheRings.Enemy.Cards.UmbarPirateCrew (umbarPirateCrew)
+import LordOfTheRings.Enemy.Cards.HaradrimPirate (haradrimPirate)
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -1052,5 +1056,9 @@ allEnemys =
         , SomeEnemyCard wraithOnWings
         , SomeEnemyCard theWitchKing
         , SomeEnemyCard theWitchKingSorcerer
+        , SomeEnemyCard corsairCaptain
+        , SomeEnemyCard corsairOfUmbar
+        , SomeEnemyCard umbarPirateCrew
+        , SomeEnemyCard haradrimPirate
         ]
     ]

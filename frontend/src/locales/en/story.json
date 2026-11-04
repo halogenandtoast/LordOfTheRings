@@ -4039,5 +4039,13 @@
         "text": "Many effects in this scenario trigger at the beginning of the quest phase or at the end of the round: Minas Tirith, The Witch-king, Grond, Wraith on Wings and, in campaign mode, The Corsair Fleet."
       }
     ]
+  },
+  "the-siege-of-gondor": {
+    "intro": [
+      "Out of the mountains, Aragorn rides hard for Pelargir with the Dead at his back, racing to break the Corsair fleet of Umbar before it can sail up the Anduin to join Mordor's assault on Gondor."
+    ],
+    "setup": [
+      "The encounter deck is built from The Siege of Gondor encounter set. The first player takes control of the Fellowship sphere Aragorn."
+    ]
   }
 }

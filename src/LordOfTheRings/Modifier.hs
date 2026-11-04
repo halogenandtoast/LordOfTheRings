@@ -303,6 +303,12 @@ data ModifierType
     ImmuneToRangedDamage
   | -- | on a character: no single effect heals it of more than this
     HealLimit Int
+  | -- | on a character: no more than this much damage can be healed from it each round, as
+    -- Port of Pelargir reads
+    HealLimitEachRound Int
+  | -- | on a character: the damage healed from it this round, counted against a
+    -- 'HealLimitEachRound'
+    HealedThisRound Int
   | -- | on an enemy: at most this much more damage can be placed on it now, as Mumak's
     -- 3 a round
     DamageLimit Int
@@ -887,6 +893,9 @@ data ModifierType
   | -- | on an enemy: if its attack deals damage, the target gets the modifier until the end
     -- of the round, as Giant Scorpion's shadow bars the defender from readying
     AttackDamageModifiesUntilEndOfRound Target ModifierType
+  | -- | on an enemy: each character its attack damages gets the modifier until the end of
+    -- the round, as Port of Pelargir's shadow bars it from readying
+    AttackDamageModifiesDamagedUntilEndOfRound ModifierType
   | -- | on the game: allies enter play exhausted, as Flight to Gondor reads
     AlliesEnterPlayExhausted
   | -- | in a lasting effect: its modifiers apply only while the card shows the side of this

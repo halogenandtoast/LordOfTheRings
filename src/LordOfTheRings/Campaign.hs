@@ -96,8 +96,7 @@ data CampaignLogKey
     -- The Battle of the Pelennor Fields sets aside
     HaradEnemies
   | -- | The Lord of the Rings: the resources on The Corsair Fleet at the end of The Siege of
-    -- Gondor ('counted', under the Corsair Fleet's card code), which The Battle of the
-    -- Pelennor Fields places on it
+    -- Gondor ('counted'), placed on it as The Battle of the Pelennor Fields is set up
     CorsairFleetResources
   deriving stock (Show, Eq, Ord, Generic, Enum, Bounded)
   deriving anyclass (ToJSON, FromJSON)

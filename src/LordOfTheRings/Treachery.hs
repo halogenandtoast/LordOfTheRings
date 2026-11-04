@@ -430,6 +430,10 @@ import LordOfTheRings.Treachery.Cards.BlackDart (blackDart)
 import LordOfTheRings.Treachery.Cards.SpellsOfRuin (spellsOfRuin)
 import LordOfTheRings.Treachery.Cards.DreadAndDespair (dreadAndDespair)
 import LordOfTheRings.Treachery.Cards.ShadowOfMordor (shadowOfMordor)
+import LordOfTheRings.Treachery.Cards.FellFolkOfUmbar (fellFolkOfUmbar)
+import LordOfTheRings.Treachery.Cards.BlackSails (blackSails)
+import LordOfTheRings.Treachery.Cards.RaidingTheCoasts (raidingTheCoasts)
+import LordOfTheRings.Treachery.Cards.DrivenToTheBrink (drivenToTheBrink)
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -887,5 +891,9 @@ allTreacherys =
         , SomeTreacheryCard spellsOfRuin
         , SomeTreacheryCard dreadAndDespair
         , SomeTreacheryCard shadowOfMordor
+        , SomeTreacheryCard fellFolkOfUmbar
+        , SomeTreacheryCard blackSails
+        , SomeTreacheryCard raidingTheCoasts
+        , SomeTreacheryCard drivenToTheBrink
         ]
     ]

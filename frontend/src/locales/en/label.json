@@ -1662,7 +1662,9 @@
     "iarionsPendant": "Iârion's Pendant, for a player's deck",
     "amarthiulsCourage": "Amarthiúl's Courage, attached to Amarthiúl",
     "chooseBoon": "You may choose a boon to add to your hand and the Campaign Pool",
-    "searchForBoon": "You may search your deck for a boon to add to your hand"
+    "searchForBoon": "You may search your deck for a boon to add to your hand",
+    "anduril": "Raise each player's threat by 1 to search your deck for Andúril?",
+    "searchForAnduril": "Raise each player's threat by 1 and search your deck for Andúril"
   },
   "protectTheInnocent": {
     "resources": "Protect the Innocent: place 4 damage on it to add 1 resource to each of your heroes?",
@@ -2071,9 +2073,7 @@
     "response": "Choose a non-unique location to take the progress made beyond the active location this phase",
     "skip": "Do not choose a location"
   },
-  "westernQuarter": {
-    "discard": "Choose the highest cost attachment you control to discard"
-  },
+  "discardHighestCostAttachment": "Choose the highest cost attachment you control to discard",
   "falseAccusations": {
     "choose": "False Accusations: raise your threat by 5 or exhaust each ready character you control",
     "threat": "Raise your threat by 5",
@@ -3113,5 +3113,25 @@
   },
   "theWhiteCityBesieged": {
     "search": "The White City Besieged: choose a different enemy to add to the staging area"
+  },
+  "fellFolkOfUmbar": {
+    "choose": "Fell Folk of Umbar: choose one",
+    "return": "Return each Corsair enemy engaged with you to the staging area",
+    "discard": "Discard from the encounter deck until a Corsair enemy is discarded, and engage it"
+  },
+  "raidingTheCoasts": {
+    "choose": "Raiding the Coasts: choose one",
+    "threat": "Add 3 to the total threat in the staging area this phase",
+    "discard": "Discard the highest cost attachment you control"
+  },
+  "drivenToTheBrink": {
+    "choose": "Driven to the Brink: choose one",
+    "endQuestPhase": "End the quest phase without resolving the quest",
+    "damage": "Assign damage equal to the resources on The Corsair Fleet among your questing characters"
+  },
+  "theCorsairFleet": {
+    "choose": "The Corsair Fleet ({n} resources): choose one",
+    "reveal": "Reveal an encounter card",
+    "damage": "Assign {n} damage among characters you control"
   }
 }

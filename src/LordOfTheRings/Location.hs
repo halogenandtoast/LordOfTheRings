@@ -536,6 +536,11 @@ import LordOfTheRings.Location.Cards.CityWall (cityWall)
 import LordOfTheRings.Location.Cards.PelennorField (pelennorField)
 import LordOfTheRings.Location.Cards.FireFilledTrench (fireFilledTrench)
 import LordOfTheRings.Location.Cards.SiegeTower (siegeTower)
+import LordOfTheRings.Location.Cards.GreatCorsairShip (greatCorsairShip)
+import LordOfTheRings.Location.Cards.UmbarWarGalley (umbarWarGalley)
+import LordOfTheRings.Location.Cards.CorsairDromon (corsairDromon)
+import LordOfTheRings.Location.Cards.PortOfPelargir (portOfPelargir)
+import LordOfTheRings.Location.Cards.PelargirQuays (pelargirQuays)
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -1118,5 +1123,10 @@ allLocations =
         , SomeLocationCard pelennorField
         , SomeLocationCard fireFilledTrench
         , SomeLocationCard siegeTower
+        , SomeLocationCard greatCorsairShip
+        , SomeLocationCard umbarWarGalley
+        , SomeLocationCard corsairDromon
+        , SomeLocationCard portOfPelargir
+        , SomeLocationCard pelargirQuays
         ]
     ]

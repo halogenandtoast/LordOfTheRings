@@ -4,7 +4,7 @@ import Data.Aeson.Types (parseMaybe)
 import Data.List (elemIndex)
 import Data.Map.Strict qualified as Map
 import LordOfTheRings.Attachment.CardDefs qualified as Attachments
-import LordOfTheRings.Campaign (CampaignLogKey (CorsairFleetResources, HaradEnemies), PoolCard (..), addToPool)
+import LordOfTheRings.Campaign (CampaignLogKey (CorsairFleetResources, HaradEnemies), PoolCard (..), addToPool, recordedCount)
 import LordOfTheRings.Classes.HasGame (getsGame)
 import LordOfTheRings.EncounterSet qualified as EncounterSet
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
@@ -76,7 +76,7 @@ instance RunMessage TheBattleOfThePelennorFields where
         pure $ SetAsideAragorn pc attachments
       fleet <- genEncounterCard Objectives.theCorsairFleetGondor
       addToStaging fleet
-      let x = sum $ Map.findWithDefault mempty CorsairFleetResources l.counts
+      let x = recordedCount CorsairFleetResources (toCardCode Objectives.theCorsairFleet) l
       placeResources ScenarioSource (CardIdTarget fleet.id) x
       TheBattleOfThePelennorFields <$> runMessage msg (attrs & metaL .~ maybe Null toJSON meta)
     -- The Corsair Fleet's Forced effect: the first player takes control of Aragorn, with

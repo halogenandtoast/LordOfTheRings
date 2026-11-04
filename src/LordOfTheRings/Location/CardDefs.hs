@@ -548,6 +548,11 @@ allLocationCards =
       , trystingPlace
       , deadlyRoad
       , hauntedPath
+      , greatCorsairShip
+      , umbarWarGalley
+      , corsairDromon
+      , portOfPelargir
+      , pelargirQuays
       , grond
       , gateOfGondor
       , cityWall
@@ -4030,6 +4035,30 @@ deadlyRoad = (location "145020" "Deadly Road" ThePassingOfTheGreyCompany 3 2 3) 
 
 hauntedPath :: CardDef
 hauntedPath = (location "145021" "Haunted Path" ThePassingOfTheGreyCompany 3 1 4) {cdCardTraits = setFromList [Underground], cdShadowEffect = True}
+
+-- * The Siege of Gondor
+
+-- | X threat, the resources on The Corsair Fleet: given by its own modifiers. Set aside by
+-- the scenario, added to the staging area by stage 1A.
+greatCorsairShip :: CardDef
+greatCorsairShip =
+  unique
+    (location "145030" "Great Corsair Ship" TheSiegeOfGondor 1 0 5)
+      { cdCardTraits = setFromList [Ship]
+      , cdVictoryPoints = Just 5
+      }
+
+umbarWarGalley :: CardDef
+umbarWarGalley = (location "145031" "Umbar War Galley" TheSiegeOfGondor 3 3 3) {cdCardTraits = setFromList [Ship], cdVictoryPoints = Just 3}
+
+corsairDromon :: CardDef
+corsairDromon = (location "145032" "Corsair Dromon" TheSiegeOfGondor 3 2 2) {cdCardTraits = setFromList [Ship], cdVictoryPoints = Just 2}
+
+portOfPelargir :: CardDef
+portOfPelargir = (location "145033" "Port of Pelargir" TheSiegeOfGondor 3 2 4) {cdCardTraits = setFromList [City], cdShadowEffect = True}
+
+pelargirQuays :: CardDef
+pelargirQuays = (location "145034" "Pelargir Quays" TheSiegeOfGondor 2 3 4) {cdCardTraits = setFromList [City]}
 
 -- * The Battle of the Pelennor Fields
 

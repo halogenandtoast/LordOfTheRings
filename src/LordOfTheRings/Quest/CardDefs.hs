@@ -442,6 +442,7 @@ allQuestCards =
       , theForbiddenDoor
       , thePathsOfTheDead
       , theDeadAreFollowing
+      , attackOnPelargir
       , theGarrisonOfGondor
       , retreatFromOsgiliath
       , theWhiteCityBesieged
@@ -1843,6 +1844,12 @@ thePathsOfTheDead = quest "145064" "The Paths of the Dead" ThePassingOfTheGreyCo
 -- | The players win as The Stone of Erech leaves play explored, not by defeating it.
 theDeadAreFollowing :: CardDef
 theDeadAreFollowing = quest "145065" "The Dead are Following" ThePassingOfTheGreyCompany 3 5
+
+-- * The Siege of Gondor
+
+-- | The players win by defeating it, which they cannot while Great Corsair Ship is in play.
+attackOnPelargir :: CardDef
+attackOnPelargir = quest "145069" "Attack on Pelargir" TheSiegeOfGondor 1 20
 
 -- * The Battle of the Pelennor Fields
 
