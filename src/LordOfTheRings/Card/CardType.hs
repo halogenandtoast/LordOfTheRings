@@ -24,6 +24,9 @@ data CardType
     PlayerSideQuestType
   | -- | a side quest shuffled into the encounter deck, revealed into the staging area
     EncounterSideQuestType
+  | -- | a contract, never in a deck: its player puts it into play with his heroes, side A
+    -- faceup, and it may flip (MEC77 rules, "Contracts")
+    ContractType
   deriving stock (Show, Eq, Ord, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
@@ -33,7 +36,7 @@ isSideQuestType :: CardType -> Bool
 isSideQuestType = (`elem` [PlayerSideQuestType, EncounterSideQuestType])
 
 isPlayerCardType :: CardType -> Bool
-isPlayerCardType = (`elem` [HeroType, AllyType, AttachmentType, EventType, PlayerSideQuestType])
+isPlayerCardType = (`elem` [HeroType, AllyType, AttachmentType, EventType, PlayerSideQuestType, ContractType])
 
 instance IsLabel "ally" CardType where
   fromLabel = AllyType

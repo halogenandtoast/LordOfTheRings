@@ -184,6 +184,10 @@ playerSideQuest cCode name sphere cost questPoints =
 event :: CardCode -> Name -> Sphere -> CardCost -> CardDef
 event cCode name sphere cost = (playerCard cCode name EventType sphere) {cdCost = Just cost}
 
+-- | A contract: no sphere, cost or deck slot, one to a player (MEC77 rules, "Contracts").
+contract :: CardCode -> Name -> CardDef
+contract cCode name = (emptyCardDef cCode name ContractType) {cdDeckLimit = 1}
+
 encounterCard :: CardCode -> Name -> CardType -> EncounterSet -> Int -> CardDef
 encounterCard cCode name cType encounterSet quantity =
   (emptyCardDef cCode name cType)
