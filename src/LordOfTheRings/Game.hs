@@ -1216,7 +1216,7 @@ runGameMessage msg g = case msg of
     threat <- getEngagementThreat pid
     candidates <- traverse (\eid -> (eid,) <$> getEngagementCost eid) =<< engageableFromStaging
     -- an enemy can be spared engagement checks against it, as a trap does
-    checked <- filterM (fmap (\ms -> NoEngagementChecks `notElem` ms && CannotEngagePlayer pid `notElem` ms) . getModifiers . fst) candidates
+    checked <- filterM (fmap (\ms -> all (`notElem` ms) [NoEngagementChecks, CannotEngagePlayer pid, NoEngagementChecksAgainst pid]) . getModifiers . fst) candidates
     -- its cost against this player, as Hunting Pack's is lowered by his damaged characters
     costed <- for checked \(eid, cost) -> (\ms -> (eid, cost + sum [n | EngagementCostAgainst p n <- ms, p == pid])) <$> getModifiers eid
     case sortOn (Down . snd) [c | not skip, c@(_, cost) <- costed, cost <= threat] of
@@ -1236,7 +1236,7 @@ runGameMessage msg g = case msg of
       -- its cost against each player, as for an engagement check
       let costFor p = cost + sum [n | EngagementCostAgainst p' n <- mods, p' == p]
       players <- traverse (\p -> (p,) <$> getEngagementThreat p) =<< getPlayerOrder
-      for_ (find (\(p, threat) -> threat >= costFor p && CannotEngagePlayer p `notElem` mods) players) \(p, _) -> push (EngageEnemy p eid)
+      for_ (find (\(p, threat) -> threat >= costFor p && all (`notElem` mods) [CannotEngagePlayer p, NoEngagementChecksAgainst p]) players) \(p, _) -> push (EngageEnemy p eid)
     pure g
   EngageEnemy pid eid -> do
     -- a Ship enemy engaging from the staging area resolves its Boarding X (Dream-chaser rules)

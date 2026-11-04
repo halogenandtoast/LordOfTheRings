@@ -100,6 +100,9 @@ data ModifierType
   | -- | on the game: reveal fewer encounter cards, allowing staging to reveal none
     FewerStagingReveals Int
   | NoEngagementChecks
+  | -- | on an enemy: it makes no engagement checks against the player, though he may still
+    -- engage it, as Grey Cloak reads
+    NoEngagementChecksAgainst PlayerId
   | -- | on the game: enemies with ambush make no engagement check as they enter play
     IgnoreAmbush
   | SkipStagingStep
