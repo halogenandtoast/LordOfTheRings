@@ -439,6 +439,12 @@ allTreacheryCards =
       , bitterCold
       , stormOfHowls
       , lustForTheRing
+      , theyAreComing
+      , weCannotGetOut
+      , deepFissure
+      , foolOfATook
+      , shadowOfFearJourneyInTheDark
+      , pursuedByTheEnemy
       ]
 
 deepDeepDark :: CardDef
@@ -2771,4 +2777,41 @@ lustForTheRing =
     , cdSetIcon = Just TheRingGoesSouth
     , cdCardTraits = setFromList [Corruption]
     , cdKeywords = setFromList [Peril, Surge]
+    }
+
+-- * Journey in the Dark
+
+theyAreComing :: CardDef
+theyAreComing = (treachery "142056" "They Are Coming!" JourneyInTheDark 2) {cdKeywords = setFromList [Doomed 2], cdEasyModeQuantity = Just 1}
+
+weCannotGetOut :: CardDef
+weCannotGetOut = (treachery "142057" "We Cannot Get Out" JourneyInTheDark 3) {cdShadowEffect = True, cdEasyModeQuantity = Just 2}
+
+deepFissure :: CardDef
+deepFissure = (treachery "142058" "Deep Fissure" JourneyInTheDark 3) {cdCardTraits = setFromList [Hazard], cdKeywords = setFromList [Peril]}
+
+foolOfATook :: CardDef
+foolOfATook = (treachery "142059" "Fool of a Took!" JourneyInTheDark 2) {cdKeywords = setFromList [Doomed 1], cdShadowEffect = True, cdEasyModeQuantity = Just 1}
+
+-- | A burden of Journey in the Dark's burden set: in no encounter set, so never gathered;
+-- the campaign card shuffles it in, and earned, the Campaign Pool does.
+shadowOfFearJourneyInTheDark :: CardDef
+shadowOfFearJourneyInTheDark =
+  (treachery "142085" "Shadow of Fear" JourneyInTheDark 1)
+    { cdEncounterSet = Nothing
+    , cdEncounterSetQuantity = Nothing
+    , cdSetIcon = Just JourneyInTheDark
+    , cdKeywords = setFromList [Doomed 1, Surge]
+    , cdShadowEffect = True
+    }
+
+-- | A burden of Journey in the Dark's burden set, as Shadow of Fear.
+pursuedByTheEnemy :: CardDef
+pursuedByTheEnemy =
+  (treachery "142086" "Pursued by the Enemy" JourneyInTheDark 1)
+    { cdEncounterSet = Nothing
+    , cdEncounterSetQuantity = Nothing
+    , cdSetIcon = Just JourneyInTheDark
+    , cdKeywords = setFromList [Doomed 1, Surge]
+    , cdShadowEffect = True
     }

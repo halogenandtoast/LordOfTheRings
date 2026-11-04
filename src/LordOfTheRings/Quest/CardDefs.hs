@@ -446,6 +446,9 @@ allQuestCards =
       , theNineWalkers
       , theHuntIsUp
       , theGatesOfMoria
+      , theLongDarkOfMoria
+      , drumsInTheDeep
+      , theBridgeOfKhazadDum
       ]
 
 theDrippingWalls :: CardDef
@@ -1858,3 +1861,14 @@ theHuntIsUp = quest "142022" "The Hunt is Up!" TheRingGoesSouth 3 12
 -- | No quest points: the players win as Doors of Durin is explored.
 theGatesOfMoria :: CardDef
 theGatesOfMoria = quest "142023" "The Gates of Moria" TheRingGoesSouth 4 0
+
+-- * Journey in the Dark
+
+theLongDarkOfMoria :: CardDef
+theLongDarkOfMoria = quest "142040" "The Long Dark of Moria" JourneyInTheDark 1 14
+
+drumsInTheDeep :: CardDef
+drumsInTheDeep = quest "142041" "Drums in the Deep" JourneyInTheDark 2 9
+
+theBridgeOfKhazadDum :: CardDef
+theBridgeOfKhazadDum = quest "142042" "The Bridge of Khazad-dûm" JourneyInTheDark 3 15

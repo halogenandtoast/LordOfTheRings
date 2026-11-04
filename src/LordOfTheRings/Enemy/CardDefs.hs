@@ -517,6 +517,12 @@ allEnemyCards =
       , houndOfSauron
       , howlingWarg
       , crebainFromDunland
+      , theBalrog
+      , orcChieftain
+      , greatCaveTrollJourneyInTheDark
+      , urukFromMordor
+      , moriaOrc
+      , moriaArcher
       ]
 
 namelessThing :: CardDef
@@ -4258,4 +4264,60 @@ crebainFromDunland =
   (enemy "142028" "Crebain from Dunland" TheRingGoesSouth 2 28 3 1 1 2)
     { cdCardTraits = setFromList [Creature]
     , cdKeywords = setFromList [Peril]
+    }
+
+-- * Journey in the Dark
+
+-- | Indestructible. Cannot be optionally engaged, immune to player card effects, and
+-- engaged with the first player from the staging area (its card gives it the modifiers).
+theBalrog :: CardDef
+theBalrog =
+  unique
+    (enemy "142044" "The Balrog" JourneyInTheDark 1 50 5 8 9 25)
+      { cdCardTraits = setFromList [Balrog, Shadow, Flame]
+      , cdKeywords = setFromList [Indestructible]
+      , cdVictoryPoints = Just 50
+      }
+
+-- | Cannot have attachments. Allies cannot defend against it (its card gives it the
+-- modifiers).
+orcChieftain :: CardDef
+orcChieftain =
+  (enemy "142045" "Orc-chieftain" JourneyInTheDark 1 40 4 4 3 6)
+    { cdCardTraits = setFromList [Orc, Uruk]
+    }
+
+-- | Cannot have attachments (its card gives it the modifier).
+greatCaveTrollJourneyInTheDark :: CardDef
+greatCaveTrollJourneyInTheDark =
+  (enemy "142046" "Great Cave-troll" JourneyInTheDark 2 36 3 6 4 6)
+    { cdCardTraits = setFromList [Troll]
+    , cdEasyModeQuantity = Just 1
+    }
+
+urukFromMordor :: CardDef
+urukFromMordor =
+  (enemy "142047" "Uruk from Mordor" JourneyInTheDark 3 34 2 4 2 5)
+    { cdCardTraits = setFromList [Orc, Uruk]
+    , cdWhenRevealed = True
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 2
+    }
+
+moriaOrc :: CardDef
+moriaOrc =
+  (enemy "142048" "Moria Orc" JourneyInTheDark 3 38 2 3 1 3)
+    { cdCardTraits = setFromList [Orc]
+    , cdWhenRevealed = True
+    , cdShadowEffect = True
+    }
+
+-- | Its X threat, the number of players, comes from its card's modifiers.
+moriaArcher :: CardDef
+moriaArcher =
+  (enemy "142049" "Moria Archer" JourneyInTheDark 3 42 0 3 3 3)
+    { cdCardTraits = setFromList [Orc]
+    , cdKeywords = setFromList [Peril, Archery 2]
+    , cdWhenRevealed = True
+    , cdEasyModeQuantity = Just 2
     }
