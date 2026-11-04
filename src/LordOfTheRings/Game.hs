@@ -1437,7 +1437,9 @@ runGameMessage msg g = case msg of
     let limit = minimumMay [n | MayDeclareUpToDefenders n <- playerMods]
         many = MayDeclareMultipleDefenders `elem` playerMods || isJust limit
         full = maybe False (length chosen >=) limit
-    others <- filter (/= pid) <$> getPlayerOrder
+    -- no other player's sentinel defends against one only its player fights
+    alone <- elem OnlyEngagedPlayerFights <$> getModifiers eid
+    others <- if alone then pure [] else filter (/= pid) <$> getPlayerOrder
     defenders <- if full then pure [] else filter (`notElem` chosen) <$> (filterM (canDefend eid) =<< readyCharacters pid)
     enemyName <- cardVar "enemy" <$> getEnemy eid
     exhausts <- for defenders \d -> (d,) <$> exhaustToDefend d eid
@@ -1628,7 +1630,8 @@ runGameMessage msg g = case msg of
   DeclareAttackers pid eid -> do
     -- then other players' ranged characters may join an attack on an enemy engaged with them
     engaged <- selectAny (EnemyWithId eid <> EnemyEngagedWith (PlayerWithId pid))
-    others <- if engaged then filter (/= pid) <$> getPlayerOrder else pure []
+    alone <- elem OnlyEngagedPlayerFights <$> getModifiers eid
+    others <- if engaged && not alone then filter (/= pid) <$> getPlayerOrder else pure []
     attackers <- ownAttackers pid eid
     push
       $ if null attackers
