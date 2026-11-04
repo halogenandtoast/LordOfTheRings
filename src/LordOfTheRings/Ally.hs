@@ -297,6 +297,7 @@ import LordOfTheRings.Ally.Cards.RosieCotton
 import LordOfTheRings.Ally.Cards.ElfhelmTactics
 import LordOfTheRings.Ally.Cards.ElladanLore
 import LordOfTheRings.Ally.Cards.ElrohirSpirit
+import LordOfTheRings.Ally.Cards.GildorInglorionObjective
 import LordOfTheRings.Ally.Runner ()
 import LordOfTheRings.Ally.Types as X
 import LordOfTheRings.Id
@@ -626,5 +627,6 @@ allAllies =
         , SomeAllyCard elfhelmTactics
         , SomeAllyCard elladanLore
         , SomeAllyCard elrohirSpirit
+        , SomeAllyCard gildorInglorionObjective
         ]
     ]

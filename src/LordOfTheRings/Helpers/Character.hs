@@ -4,7 +4,7 @@ import LordOfTheRings.Card hiding (enemy)
 import LordOfTheRings.Classes.Entity (toAttrs)
 import LordOfTheRings.Entities (entitiesObjectives)
 import LordOfTheRings.Game.Base (gameEntities, gameScenario)
-import LordOfTheRings.Message (EscapeStat (..), EscapeTest (..))
+import LordOfTheRings.Message (EscapeStat (..), EscapeTest (..), HideTest (..))
 import LordOfTheRings.Scenario.Types (scenarioEncounterDeck)
 import LordOfTheRings.Classes.HasGame
 import LordOfTheRings.Helpers.Modifiers
@@ -127,3 +127,17 @@ escapeTestTotals t = do
     EscapeWillpower -> getWillpower
     EscapeAttack -> getAttack
     EscapeDefense -> getDefense
+
+-- | A Hide test's committed willpower, and the threat of the cards it discarded: treachery
+-- cards have none (The Black Riders rules insert, "Hide Tests").
+hideTestTotals :: (HasGame m) => HideTest -> m (Int, Int)
+hideTestTotals t = do
+  gameMods <- getModifiers GameTarget
+  playerMods <- getModifiers t.hidePlayer
+  willpower <- sum <$> traverse getWillpower t.hideCommitted
+  let perCharacter = sum [n | HideTestWillpower n <- gameMods]
+      bonus = sum [n | HideTestThreat n <- gameMods <> playerMods]
+  pure
+    ( willpower + perCharacter * length t.hideCommitted
+    , bonus + sum [fromMaybe 0 (cdThreat $ toCardDef c) | c <- t.hideDiscarded]
+    )

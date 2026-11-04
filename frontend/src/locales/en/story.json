@@ -4031,5 +4031,31 @@
         "text": "Stage 4A makes Doors of Durin the active location, adds Watcher in the Water to the staging area and puts the Ring-bearer, with all his attachments and no tokens, facedown under the Watcher. He stays in play, but no player controls him or his attachments until he is freed.\n\nOn stage 4B there can be 2 active locations: with Doors of Durin the only active one and a location in the staging area, the players must travel to it, making it active alongside the Doors.\n\nDoors of Durin is immune to player card effects, so a player card effect on the active location can only reach the other active location."
       }
     ]
+  },
+  "a-shadow-of-the-past": {
+    "intro": [
+      "Black Riders have come to the Shire asking after Baggins, and Gandalf has not returned. Frodo must slip away with the Ring and reach Buckland unseen."
+    ],
+    "setup": [
+      "The encounter deck is built from the A Shadow of the Past, Hunted, The Ring and The Black Riders encounter sets. The first player takes control of Frodo Baggins, the Ring-bearer, with The One Ring attached."
+    ],
+    "rules": [
+      {
+        "title": "Hide X",
+        "text": "When a card with Hide X is revealed, the player who revealed it makes a Hide test before the rest of the card resolves."
+      },
+      {
+        "title": "Hide Tests",
+        "text": "The player may exhaust characters he controls to commit them, then discards the top X cards of the encounter deck. The test fails if the discarded cards' total threat is greater than the committed characters' total willpower; otherwise it passes. Players may take actions once the threat total is known, before the test resolves."
+      },
+      {
+        "title": "Peril",
+        "text": "The player who reveals a card with Peril resolves its staging alone: the other players cannot take actions or trigger responses meanwhile."
+      },
+      {
+        "title": "Saga Staging",
+        "text": "Each player, starting with the first player, reveals and resolves his own encounter card in the staging step. “You” on an encounter card is the player who revealed it, and a surge card's extra reveal is his."
+      }
+    ]
   }
 }

@@ -109,6 +109,7 @@ allHeroCards =
       , eomerLeadership
       , tomCotton
       , frodoBagginsTheRoadDarkens
+      , frodoBagginsFellowship
       ]
 
 aragorn :: CardDef
@@ -714,5 +715,10 @@ tomCotton =
 frodoBagginsTheRoadDarkens :: CardDef
 frodoBagginsTheRoadDarkens =
   (hero "142001" "Frodo Baggins" Fellowship 0 2 1 2 2)
+-- | The Black Riders' Ring-bearer, of the Fellowship sphere: the game gives him to the
+-- first player as its scenarios are set up.
+frodoBagginsFellowship :: CardDef
+frodoBagginsFellowship =
+  (hero "141001" "Frodo Baggins" Fellowship 0 2 1 2 2)
     { cdCardTraits = setFromList [Hobbit, RingBearer]
     }

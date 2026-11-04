@@ -236,6 +236,7 @@ data EncounterSet
   | Hunted
   | TheBlackRiders
   | TheNazgul
+  | TheRing
   | TheRingGoesSouth
   | JourneyInTheDark
   | BreakingOfTheFellowship

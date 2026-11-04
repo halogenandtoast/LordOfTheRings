@@ -508,6 +508,10 @@ import LordOfTheRings.Enemy.Cards.GreatWargChief
 import LordOfTheRings.Enemy.Cards.HoundOfSauron
 import LordOfTheRings.Enemy.Cards.HowlingWarg
 import LordOfTheRings.Enemy.Cards.CrebainFromDunland
+import LordOfTheRings.Enemy.Cards.BlackRider
+import LordOfTheRings.Enemy.Cards.EvilCrowAShadowOfThePast
+import LordOfTheRings.Enemy.Cards.TheWitchKing
+import LordOfTheRings.Enemy.Cards.Ringwraith
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -1045,5 +1049,9 @@ allEnemys =
         , SomeEnemyCard houndOfSauron
         , SomeEnemyCard howlingWarg
         , SomeEnemyCard crebainFromDunland
+        , SomeEnemyCard blackRider
+        , SomeEnemyCard evilCrowAShadowOfThePast
+        , SomeEnemyCard theWitchKing
+        , SomeEnemyCard ringwraith
         ]
     ]
