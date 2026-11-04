@@ -3409,6 +3409,7 @@ test-suite LordOfTheRings-test
       LordOfTheRings.LostRealmEngineSpec
       LordOfTheRings.ModifierSpec
       LordOfTheRings.OnTheDoorstep.FliesAndSpidersSpec
+      LordOfTheRings.OnTheDoorstep.TheBattleOfFiveArmiesSpec
       LordOfTheRings.PlanningPhaseSpec
       LordOfTheRings.PlayerCardTextSpec
       LordOfTheRings.PlayerChoicesSpec
