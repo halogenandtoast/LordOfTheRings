@@ -74,6 +74,8 @@ data HeroMatcher
     HeroWithAttachment CardCode
   | -- | a hero with a player card attached, as "with a player attachment" reads
     HeroWithPlayerAttachment
+  | -- | a hero with a ready player card attached, as Bartering chooses one
+    HeroWithReadyPlayerAttachment
   | AnyHero
   | NotHero HeroMatcher
   | HeroMatchAll [HeroMatcher]
@@ -119,6 +121,8 @@ data AllyMatcher
     AllyWithAttached Trait
   | -- | an ally with a player card attached, as "with a player attachment" reads
     AllyWithPlayerAttachment
+  | -- | an ally with a ready player card attached, as Bartering chooses one
+    AllyWithReadyPlayerAttachment
   | AnyAlly
   | NotAlly AllyMatcher
   | AllyMatchAll [AllyMatcher]

@@ -119,6 +119,7 @@ matchHero matcher hero = case matcher of
   PrisonerHero -> pure $ heroPrisoner (toAttrs hero)
   HeroWithAttached trait -> notNull <$> attachedWithTrait trait (toTarget hero)
   HeroWithPlayerAttachment -> notNull <$> playerAttachmentsOn (toTarget hero)
+  HeroWithReadyPlayerAttachment -> any (not . attachmentExhausted . toAttrs) <$> playerAttachmentsOn (toTarget hero)
   HeroWithReadyAttached trait ->
     getsGame
       ( any
@@ -187,6 +188,7 @@ matchAlly matcher ally = case matcher of
       )
   AllyWithAttached trait -> notNull <$> attachedWithTrait trait (toTarget ally)
   AllyWithPlayerAttachment -> notNull <$> playerAttachmentsOn (toTarget ally)
+  AllyWithReadyPlayerAttachment -> any (not . attachmentExhausted . toAttrs) <$> playerAttachmentsOn (toTarget ally)
   AnyAlly -> pure True
   NotAlly m -> not <$> matchAlly m ally
   AllyMatchAll ms -> allM (`matchAlly` ally) ms
