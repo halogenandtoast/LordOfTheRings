@@ -448,6 +448,9 @@ import LordOfTheRings.Location.Cards.FrightfulDen
 import LordOfTheRings.Location.Cards.LightlessGrotto
 import LordOfTheRings.Location.Cards.CrumblingCavern
 import LordOfTheRings.Location.Cards.UndergroundLake
+import LordOfTheRings.Location.Cards.WoodmenVillage
+import LordOfTheRings.Location.Cards.TheOldFordJourneyUpTheAnduin
+import LordOfTheRings.Location.Cards.WoodedRiverbank
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -942,5 +945,8 @@ allLocations =
         , SomeLocationCard lightlessGrotto
         , SomeLocationCard crumblingCavern
         , SomeLocationCard undergroundLake
+        , SomeLocationCard woodmenVillage
+        , SomeLocationCard theOldFordJourneyUpTheAnduin
+        , SomeLocationCard woodedRiverbank
         ]
     ]

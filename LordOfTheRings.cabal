@@ -1562,6 +1562,7 @@ library
       LordOfTheRings.Location.Cards.TheNorthStair
       LordOfTheRings.Location.Cards.TheOldBridge
       LordOfTheRings.Location.Cards.TheOldFord
+      LordOfTheRings.Location.Cards.TheOldFordJourneyUpTheAnduin
       LordOfTheRings.Location.Cards.TheOuterRidge
       LordOfTheRings.Location.Cards.TheSecretChamber
       LordOfTheRings.Location.Cards.TheSerpentsRedoubt
@@ -1618,8 +1619,10 @@ library
       LordOfTheRings.Location.Cards.WhiteFloweredFields
       LordOfTheRings.Location.Cards.WhiteShip
       LordOfTheRings.Location.Cards.WindingCaverns
+      LordOfTheRings.Location.Cards.WoodedRiverbank
       LordOfTheRings.Location.Cards.WoodElfPath
       LordOfTheRings.Location.Cards.WoodmansGlade
+      LordOfTheRings.Location.Cards.WoodmenVillage
       LordOfTheRings.Location.Cards.ZigilMineshaft
       LordOfTheRings.Location.Grid
       LordOfTheRings.Location.Import.Lifted
@@ -2212,6 +2215,7 @@ library
       LordOfTheRings.Treachery.Cards.DarkCovenant
       LordOfTheRings.Treachery.Cards.DarkInterrogation
       LordOfTheRings.Treachery.Cards.DarkPlaces
+      LordOfTheRings.Treachery.Cards.DangerousCrossing
       LordOfTheRings.Treachery.Cards.DarkSorcery
       LordOfTheRings.Treachery.Cards.DeathAndCalamity
       LordOfTheRings.Treachery.Cards.DeathAndDecay
@@ -2268,6 +2272,7 @@ library
       LordOfTheRings.Treachery.Cards.FuryAndMalice
       LordOfTheRings.Treachery.Cards.GatheringForces
       LordOfTheRings.Treachery.Cards.GatheringGloom
+      LordOfTheRings.Treachery.Cards.FrenziedCreature
       LordOfTheRings.Treachery.Cards.GatheringGround
       LordOfTheRings.Treachery.Cards.GetThatDwarf
       LordOfTheRings.Treachery.Cards.GoblinPatrolNightmare
