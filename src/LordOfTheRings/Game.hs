@@ -945,7 +945,10 @@ runGameMessage msg g = case msg of
                 (CannotBeDamagedByPlayerCardEffects `elem` mods' && isPlayerCardSource source)
                   || maybe False (\p -> CannotBeDamagedByEffectsOf p `elem` mods') controller
           pure
-            $ if CannotTakeDamage `elem` mods' || (CannotTakeNonCombatDamage `elem` mods' && not combat) || barred
+            $ if CannotTakeDamage `elem` mods'
+              || (CannotTakeNonCombatDamage `elem` mods' && not combat)
+              || (CannotTakeNonQuestDamage `elem` mods' && not (isQuestSource source))
+              || barred
               then []
               else [CheckWindows [mkWhen $ DealtDamage t n'], DoStep 1 (DealDamage source t n')]
     unless (CannotTakeDamage `elem` mods) $ pushAll =<< case redirected of

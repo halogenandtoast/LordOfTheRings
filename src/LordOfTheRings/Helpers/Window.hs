@@ -209,6 +209,7 @@ windowMatchesM matcher w@(Window timing wType) = case (matcher, wType) of
     maybe False ((== code) . toCardCode) . Map.lookup oid . (.objectives) <$> getsGame gameEntities
   (MatchingEnemyEngagedWindow t m, EnemyEngaged eid _) | t == timing -> selectAny (EnemyWithId eid <> m)
   (MatchingEnemyDealtDamageWindow t m, DealtDamage (EnemyTarget eid) _) | t == timing -> selectAny (EnemyWithId eid <> m)
+  (MatchingEnemyAttackResolvedWindow t m, AttackedEnemy _ eid) | t == timing -> selectAny (EnemyWithId eid <> m)
   (ErrataWindow pid errata printed, _) -> do
     followsErrata <- selectAny (PlayerWithId pid <> PlayerUsingErrata)
     windowMatchesM (if followsErrata then errata else printed) w

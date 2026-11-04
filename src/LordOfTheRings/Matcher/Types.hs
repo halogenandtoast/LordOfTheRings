@@ -192,6 +192,9 @@ data EnemyMatcher
   | -- | an enemy guarding a card: an objective, a captive, a location or a player card, as
     -- "an enemy guarding a card" reads (Unseen Danger)
     EnemyGuardingACard
+  | -- | an enemy with as much damage as its hit points, as an Indestructible enemy may have
+    -- (The Great Worm)
+    EnemyWithNoHitPointsRemaining
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

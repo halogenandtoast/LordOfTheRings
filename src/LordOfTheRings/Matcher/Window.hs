@@ -327,6 +327,8 @@ data WindowMatcher
     MatchingEnemyRevealedWindow Timing EnemyMatcher
   | -- | the attackers against the enemy were declared, as Guardian of the Golden King answers
     AttackersDeclaredWindow Timing EnemyId
+  | -- | a player's attack against a matching enemy resolved, as The Great Worm answers
+    MatchingEnemyAttackResolvedWindow Timing EnemyMatcher
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
@@ -496,6 +498,7 @@ windowMatches matcher (Window timing wType) = case (matcher, wType) of
   (ObjectiveExhaustedWindow {}, _) -> False
   (MatchingEnemyEngagedWindow {}, _) -> False
   (MatchingEnemyDealtDamageWindow {}, _) -> False
+  (MatchingEnemyAttackResolvedWindow {}, _) -> False
   (QuestBypassedWindow t, QuestBypassed _) -> t == timing
   -- read with the player's errata in 'windowMatchesM'
   (ErrataWindow _ errata _, _) -> windowMatches errata (Window timing wType)
