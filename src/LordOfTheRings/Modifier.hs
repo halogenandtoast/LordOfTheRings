@@ -549,6 +549,9 @@ data ModifierType
   | -- | on the game: the encounter discard pile is reset into the deck as soon as the deck
     -- is empty, in any phase, as Journey Along the Anduin's nightmare setup card reads
     EncounterDeckResetsWheneverEmpty
+  | -- | on the game: an empty encounter deck is not reset from the discard pile, even in the
+    -- quest phase, as Roast Mutton advances once no cards are left in it
+    EncounterDeckDoesNotReset
   | -- | on an enemy: the damage its attack deals past the character's remaining hit points
     -- is placed on the active location, as Collapsed Tower's shadow reads
     ExcessDamageToActiveLocation

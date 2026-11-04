@@ -17,7 +17,7 @@ import LordOfTheRings.Campaign
 import LordOfTheRings.Game.Base (allPlayers, gameEntities, gamePhase, gamePlayerOrder, gamePlayers, gameRound)
 import LordOfTheRings.Entities (entitiesHeroes, entitiesObjectives)
 import LordOfTheRings.Helpers.Modifiers (getModifiers)
-import LordOfTheRings.Modifier (ModifierType (EncounterDeckResetsWheneverEmpty, RecordedIfWon, ReturnBeforeEncounterDeckResets, ShadowCardsDealt))
+import LordOfTheRings.Modifier (ModifierType (EncounterDeckDoesNotReset, EncounterDeckResetsWheneverEmpty, RecordedIfWon, ReturnBeforeEncounterDeckResets, ShadowCardsDealt))
 import LordOfTheRings.Outcome
 import LordOfTheRings.Phase (Phase (QuestPhase))
 import LordOfTheRings.Placement (GuardRelease (..), Placement (AttachedTo))
@@ -480,7 +480,8 @@ instance RunMessage ScenarioAttrs where
       phase <- getsGame gamePhase
       gameMods <- getModifiers GameTarget
       let anyPhase = EncounterDeckResetsWheneverEmpty `elem` gameMods
-      if (phase == QuestPhase || anyPhase) && null a.encounterDeck && notNull a.encounterDiscard
+          kept = EncounterDeckDoesNotReset `elem` gameMods
+      if (phase == QuestPhase || anyPhase) && not kept && null a.encounterDeck && notNull a.encounterDiscard
         then do
           -- the topmost matching card goes to the staging area first, as Ghostly Ruins reads
           let matchers = [m | ReturnBeforeEncounterDeckResets m <- gameMods]
