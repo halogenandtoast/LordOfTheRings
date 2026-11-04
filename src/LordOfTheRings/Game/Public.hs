@@ -295,7 +295,7 @@ publicGameFor seesHand g = hideDecks $ toJSON merged
   -- a scenario's own state holds what is facedown, as the underworld deck
   campaignCard =
     let a = toAttrs g.scenario
-     in (\code -> object ["code" .= code, "flipped" .= scenarioCampaignCardFlipped a]) <$> (flip campaignCardFor (scenarioId a) =<< scenarioCampaign a)
+     in (\code -> object ["code" .= code, "flipped" .= scenarioCampaignCardFlipped a, "resources" .= maybe 0 (.cardResources) (scenarioCampaign a)]) <$> (flip campaignCardFor (scenarioId a) =<< scenarioCampaign a)
   hideScenario = hideMeta . hideHidden . withSize "corsairDeck" "corsairDeckSize" . withSize "unchartedDeck" "unchartedDeckSize" . withSize "grottoDeck" "grottoDeckSize" . withSize "cavesDeck" "cavesDeckSize" . withSize "powerOfMordorDeck" "powerOfMordorDeckSize" . withSize "evilCreaturesDeck" "evilCreaturesDeckSize" . withSize "questDeck" "questDeckSize" . withSize "encounterDeck" "encounterDeckSize"
   hideMeta = \case
     Object o -> Object $ KeyMap.delete "meta" o

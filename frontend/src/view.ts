@@ -474,7 +474,7 @@ export const toView = (data: GameData, defs: Record<string, CardDef>, previous: 
       evilCreaturesDeck: game.scenario.evilCreaturesDeckSize ?? null,
       powerOfMordorDeck: game.scenario.powerOfMordorDeckSize ?? 0,
       evilCreaturesDiscard: (game.scenario.evilCreaturesDiscard ?? []).map((c) => card(c.cardCode, c.id)),
-      campaignCard: game.campaignCard ? card(game.campaignCard.code, `campaign-${game.campaignCard.code}`, { flipped: game.campaignCard.flipped }) : null,
+      campaignCard: game.campaignCard ? card(game.campaignCard.code, `campaign-${game.campaignCard.code}`, { flipped: game.campaignCard.flipped, resources: game.campaignCard.resources || null }) : null,
       stormcallerStage: game.stormcallerStage
         ? card(game.stormcallerStage.cardCode, game.stormcallerStage.id, { flipped: true, image: `${game.stormcallerStage.cardCode}-d`, progress: game.stormcallerProgress ?? 0 })
         : null,
