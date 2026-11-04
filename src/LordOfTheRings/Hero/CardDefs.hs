@@ -98,6 +98,7 @@ allHeroCards =
       , thorinStonehelm
       , gwaihirTheLandOfSorrow
       , aragornSpirit
+      , frodoBagginsTheMountainOfFire
       ]
 
 aragorn :: CardDef
@@ -629,4 +630,12 @@ aragornSpirit =
   (hero "22137" "Aragorn" Spirit 12 2 3 2 5)
     { cdCardTraits = setFromList [Dunedain, Ranger, Scout]
     , cdKeywords = setFromList [Sentinel]
+    }
+
+-- | The Mountain of Fire's Ring-bearer, of the Fellowship sphere: the first player takes
+-- control of him as The Tower of Cirith Ungol and Mount Doom are set up.
+frodoBagginsTheMountainOfFire :: CardDef
+frodoBagginsTheMountainOfFire =
+  (hero "146001" "Frodo Baggins" Fellowship 0 2 1 2 2)
+    { cdCardTraits = setFromList [Hobbit, RingBearer]
     }

@@ -153,6 +153,9 @@ allObjectiveCards =
       , edrahil
       , arador
       , farin
+      , lastOfTheCompany
+      , aHeavyBurden
+      , theOneRingTheMountainOfFire
       ]
 
 durinsAxe :: CardDef
@@ -1053,3 +1056,34 @@ arador = captive "22125" "Arador" Gondor 0 1 3 5
 
 farin :: CardDef
 farin = captive "22126" "Farin" Dwarf 1 3 0 4
+
+-- * The Tower of Cirith Ungol
+
+-- | Attached by stage 1A to a hero the first player controls, The One Ring with it.
+lastOfTheCompany :: CardDef
+lastOfTheCompany = (objective "146014" "Last of the Company" TheTowerOfCirithUngol 1) {cdCardTraits = setFromList [FellowshipTrait]}
+
+-- | A burden of the Shelob's Lair burden set: Permanent. "Setup: Attach to the
+-- Ring-bearer": the Campaign Pool's copy is attached to the Ring-bearer as the game is set
+-- up (see "LordOfTheRings.Scenario.Runner").
+aHeavyBurden :: CardDef
+aHeavyBurden =
+  (objective "144052" "A Heavy Burden" ShelobsLair 1)
+    { cdEncounterSet = Nothing
+    , cdEncounterSetQuantity = Nothing
+    , cdSetIcon = Just ShelobsLair
+    , cdCardTraits = setFromList [Burden, Condition]
+    , cdKeywords = setFromList [Permanent]
+    }
+
+-- | The Mountain of Fire's The One Ring, attached to the Ring-bearer as The Tower of Cirith
+-- Ungol and Mount Doom are set up (see 'LordOfTheRings.Saga.fellowshipSetup'). In no
+-- encounter set: never gathered.
+theOneRingTheMountainOfFire :: CardDef
+theOneRingTheMountainOfFire =
+  unique
+    (objective "146065" "The One Ring" TheTowerOfCirithUngol 1)
+      { cdEncounterSet = Nothing
+      , cdEncounterSetQuantity = Nothing
+      , cdCardTraits = setFromList [Artifact, Item, Ring]
+      }
