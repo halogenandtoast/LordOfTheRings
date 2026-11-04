@@ -2766,5 +2766,17 @@
     "choose": "Deadly Cold: exhaust this character, or deal 1 damage to it",
     "exhaust": "Exhaust it",
     "damage": "Deal 1 damage to it"
+  },
+  "mirkwoodPatrol": {
+    "guard": "Mirkwood Patrol: choose the objective-location it guards"
+  },
+  "unseenDanger": {
+    "remove": "Unseen Danger: choose a character you control to remove from the quest"
+  },
+  "carriedAway": {
+    "hero": "Carried Away: choose a hero you control to place in the staging area"
+  },
+  "trulyLost": {
+    "location": "Truly Lost: choose the location to place your hand facedown under"
   }
 }

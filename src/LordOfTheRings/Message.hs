@@ -296,6 +296,10 @@ data Message
     -- encounter card is revealed guarding it, the location attached to that card until it
     -- leaves play
     GuardLocation LocationId
+  | -- | Guarded (X) on a location as it enters play, as Lost in Mirkwood's objective-
+    -- locations: cards are discarded from the encounter deck until one of the types is,
+    -- which goes to the staging area with the location attached to it (MEC65 rules)
+    GuardLocationBy LocationId [CardType]
   | PutObjectiveIntoPlay EncounterCard
   | -- | an objective card comes into play attached to the hero, as a setup attaches it
     PutObjectiveIntoPlayAttached EncounterCard Target

@@ -453,6 +453,8 @@ import LordOfTheRings.Enemy.Cards.HuntingEagle
 import LordOfTheRings.Enemy.Cards.WilderlandBear
 import LordOfTheRings.Enemy.Cards.UrdugEnemy
 import LordOfTheRings.Enemy.Cards.TinyEnemy
+import LordOfTheRings.Enemy.Cards.MirkwoodPatrol
+import LordOfTheRings.Enemy.Cards.RavenousSpider
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -934,5 +936,7 @@ allEnemys =
         , SomeEnemyCard wilderlandBear
         , SomeEnemyCard urdugEnemy
         , SomeEnemyCard tinyEnemy
+        , SomeEnemyCard mirkwoodPatrol
+        , SomeEnemyCard ravenousSpider
         ]
     ]

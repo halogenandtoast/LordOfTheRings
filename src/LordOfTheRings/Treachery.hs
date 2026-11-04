@@ -384,6 +384,8 @@ import LordOfTheRings.Treachery.Cards.DeadlyCold
 import LordOfTheRings.Treachery.Cards.SneakingOff
 import LordOfTheRings.Treachery.Cards.HarshWeather
 import LordOfTheRings.Treachery.Cards.WildCreatures
+import LordOfTheRings.Treachery.Cards.UnseenDanger
+import LordOfTheRings.Treachery.Cards.VastnessOfMirkwood
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -795,5 +797,7 @@ allTreacherys =
         , SomeTreacheryCard sneakingOff
         , SomeTreacheryCard harshWeather
         , SomeTreacheryCard wildCreatures
+        , SomeTreacheryCard unseenDanger
+        , SomeTreacheryCard vastnessOfMirkwood
         ]
     ]

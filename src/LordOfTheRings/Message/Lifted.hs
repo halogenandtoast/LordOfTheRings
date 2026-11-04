@@ -789,6 +789,11 @@ returnToHand = push . ReturnToHand . toTarget
 putInHand :: ReverseQueue m => PlayerCard -> m ()
 putInHand = push . PutInHand
 
+-- | A player card from out of play goes to its owner's discard pile, as Truly Lost
+-- discards the cards under its locations.
+putInDiscard :: ReverseQueue m => PlayerCard -> m ()
+putInDiscard = push . PutInDiscard
+
 addToVictoryDisplay :: (ReverseQueue m, Targetable target) => target -> m ()
 addToVictoryDisplay = push . AddToVictoryDisplay . toTarget
 

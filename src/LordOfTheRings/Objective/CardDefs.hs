@@ -139,6 +139,7 @@ allObjectiveCards =
       , urdugsHorn
       , urdug
       , tiny
+      , searchingForAWayOut
       ]
 
 durinsAxe :: CardDef
@@ -972,3 +973,7 @@ tiny =
       , cdKeywords = setFromList [FirstPlayerGainsControl]
       , cdOtherSide = Just "19055"
       }
+-- | Lost in Mirkwood's objective, added to the staging area as stage 1A is set up: never
+-- in the encounter deck.
+searchingForAWayOut :: CardDef
+searchingForAWayOut = objective "18028" "Searching for a Way Out" LostInMirkwood 0

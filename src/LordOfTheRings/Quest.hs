@@ -232,6 +232,13 @@ import LordOfTheRings.Quest.Cards.EscapeIntoTheJungle
 import LordOfTheRings.Quest.Cards.TravelingNorth
 import LordOfTheRings.Quest.Cards.WoodmenUnderAttack
 import LordOfTheRings.Quest.Cards.ThePassageOfTheFord
+import LordOfTheRings.Quest.Cards.AmbushedAtNight
+import LordOfTheRings.Quest.Cards.SpidersOfMirkwoodStage
+import LordOfTheRings.Quest.Cards.DolGuldurOrcsStage
+import LordOfTheRings.Quest.Cards.CarriedAway
+import LordOfTheRings.Quest.Cards.TrulyLost
+import LordOfTheRings.Quest.Cards.TheForestOfGreatFear
+import LordOfTheRings.Quest.Cards.EscapeFromTaurNuFuin
 import LordOfTheRings.Quest.Cards.TheStormComes
 import LordOfTheRings.Quest.Cards.PrepareForBattle
 import LordOfTheRings.Quest.Cards.ExploreSecretWays
@@ -572,6 +579,13 @@ allQuests =
         , SomeQuestCard travelingNorth
         , SomeQuestCard woodmenUnderAttack
         , SomeQuestCard thePassageOfTheFord
+        , SomeQuestCard ambushedAtNight
+        , SomeQuestCard spidersOfMirkwoodStage
+        , SomeQuestCard dolGuldurOrcsStage
+        , SomeQuestCard carriedAway
+        , SomeQuestCard trulyLost
+        , SomeQuestCard theForestOfGreatFear
+        , SomeQuestCard escapeFromTaurNuFuin
         , SomeQuestCard lostUnderground
         , SomeQuestCard searchingTheCaves
         , SomeQuestCard gettingCloser

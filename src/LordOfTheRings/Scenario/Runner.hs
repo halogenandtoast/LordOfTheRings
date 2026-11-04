@@ -275,6 +275,24 @@ instance RunMessage ScenarioAttrs where
             pure $ attrs & evilCreaturesDeckL ?~ deck & evilCreaturesDiscardL .~ []
           else pure $ attrs & evilCreaturesDeckL ?~ rest
       _ -> pure attrs
+    -- Guarded (X) on a location, as Lost in Mirkwood's objective-locations: the first card
+    -- of its types discarded goes to the staging area, the location attached to it; the
+    -- discard pile is shuffled in should the deck run out first (MEC65 rules)
+    GuardLocationBy lid types -> do
+      let matching c = cdCardType (toCardDef c) `elem` types
+      case break matching attrs.encounterDeck of
+        (before, found : after) -> do
+          pushAll
+            $ [AddToEncounterDiscard before | notNull before]
+            <> [CheckWindows [mkAfter $ DiscardedFromEncounterDeck c.id | c <- before <> [found]]]
+            <> [AddToStaging found, PlaceLocation lid (AttachedTo $ CardIdTarget found.id)]
+          pure $ attrs & encounterDeckL .~ after
+        (_, [])
+          | any matching attrs.encounterDiscard -> do
+              deck <- shuffleM (attrs.encounterDiscard <> attrs.encounterDeck)
+              push msg
+              pure $ attrs & encounterDeckL .~ deck & encounterDiscardL .~ []
+          | otherwise -> pure attrs
     -- the next encounter card guards the location, attached to it as it is revealed so its
     -- own effects see it guarding (Troll-fells); any other card is only revealed
     GuardLocation lid -> case attrs.encounterDeck of

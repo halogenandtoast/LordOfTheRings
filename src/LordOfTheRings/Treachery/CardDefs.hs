@@ -394,6 +394,8 @@ allTreacheryCards =
       , sneakingOff
       , harshWeather
       , wildCreatures
+      , unseenDanger
+      , vastnessOfMirkwood
       ]
 
 deepDeepDark :: CardDef
@@ -2503,3 +2505,8 @@ harshWeather =
 -- | The treachery, not the Wild Creatures encounter set.
 wildCreatures :: CardDef
 wildCreatures = (treachery "19046" "Wild Creatures" RoamAcrossRhovanion 2) {cdEasyModeQuantity = Just 0}
+unseenDanger :: CardDef
+unseenDanger = (treachery "18036" "Unseen Danger" LostInMirkwood 2) {cdShadowEffect = True, cdEasyModeQuantity = Just 1}
+
+vastnessOfMirkwood :: CardDef
+vastnessOfMirkwood = (treachery "18037" "Vastness of Mirkwood" LostInMirkwood 3) {cdEasyModeQuantity = Just 0}
