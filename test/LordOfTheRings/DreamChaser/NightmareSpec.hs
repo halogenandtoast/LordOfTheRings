@@ -215,6 +215,17 @@ spec = describe "Dream-chaser Nightmare mode" do
       reveal Treacheries.sulfurCloud [Enemies.greatShark]
       enemyPlacement Enemies.greatShark `shouldReturn` Just StagingArea
 
+    it "Sulfur Cloud limits the progress placed on all Underwater locations together this phase" . nightmare theDrownedRuins $ \pid -> do
+      run . PutIntoPlayAsActiveLocation =<< genEncounterCard Locations.jaggedCavern
+      run . AddToStaging =<< genEncounterCard Locations.jaggedCavern
+      reveal Treacheries.sulfurCloud []
+      -- choose 1: no more than 2 progress on Underwater locations this phase
+      void $ answerQuestion pid 1
+      [active, staged'] <- getsGame (sortOn (\l -> l.placement /= ActiveLocation) . toList . (.entities.locations))
+      run $ PlaceTokens GameSource (toTarget active) Progress 2
+      run $ PlaceTokens GameSource (toTarget staged') Progress 1
+      (.progress) <$> getLocation (toId staged') `shouldReturn` 0
+
   describe "A Storm on Cobas Haven" do
     it "builds the nightmare deck, Aearlang and the Docks among the Dol Amroth objectives" . nightmare aStormOnCobasHaven $ \_ -> do
       run $ DoStep 1 Setup
