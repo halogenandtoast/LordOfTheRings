@@ -420,6 +420,14 @@ import LordOfTheRings.Treachery.Cards.TheDarkLordsReach
 import LordOfTheRings.Treachery.Cards.OverseersWhip
 import LordOfTheRings.Treachery.Cards.CrueltyOfMordor
 import LordOfTheRings.Treachery.Cards.BrokenCaptives
+import LordOfTheRings.Treachery.Cards.LotsOrNoneAtAll
+import LordOfTheRings.Treachery.Cards.ANicePickle
+import LordOfTheRings.Treachery.Cards.RoastEmOrBoilEm
+import LordOfTheRings.Treachery.Cards.HungryTroll
+import LordOfTheRings.Treachery.Cards.NoCampfire
+import LordOfTheRings.Treachery.Cards.WindWhippedRain
+import LordOfTheRings.Treachery.Cards.MoreLikeAGrocer
+import LordOfTheRings.Treachery.Cards.GripGrabPinchNab
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -867,5 +875,13 @@ allTreacherys =
         , SomeTreacheryCard overseersWhip
         , SomeTreacheryCard crueltyOfMordor
         , SomeTreacheryCard brokenCaptives
+        , SomeTreacheryCard lotsOrNoneAtAll
+        , SomeTreacheryCard aNicePickle
+        , SomeTreacheryCard roastEmOrBoilEm
+        , SomeTreacheryCard hungryTroll
+        , SomeTreacheryCard noCampfire
+        , SomeTreacheryCard windWhippedRain
+        , SomeTreacheryCard moreLikeAGrocer
+        , SomeTreacheryCard gripGrabPinchNab
         ]
     ]

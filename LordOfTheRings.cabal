@@ -2618,6 +2618,7 @@ library
       LordOfTheRings.Treachery.Cards.AllIsLost
       LordOfTheRings.Treachery.Cards.AncientDepths
       LordOfTheRings.Treachery.Cards.AnEvilFortune
+      LordOfTheRings.Treachery.Cards.ANicePickle
       LordOfTheRings.Treachery.Cards.AradorsBane
       LordOfTheRings.Treachery.Cards.Avalanche
       LordOfTheRings.Treachery.Cards.AWispOfPaleSheen
@@ -2765,6 +2766,7 @@ library
       LordOfTheRings.Treachery.Cards.GollumsBite
       LordOfTheRings.Treachery.Cards.GrabbedBySpiders
       LordOfTheRings.Treachery.Cards.Grappled
+      LordOfTheRings.Treachery.Cards.GripGrabPinchNab
       LordOfTheRings.Treachery.Cards.HarshWeather
       LordOfTheRings.Treachery.Cards.HatefulSearch
       LordOfTheRings.Treachery.Cards.HauntingFog
@@ -2776,6 +2778,7 @@ library
       LordOfTheRings.Treachery.Cards.HoldSteady
       LordOfTheRings.Treachery.Cards.HowlingAtTheirHeels
       LordOfTheRings.Treachery.Cards.HowlingOfWargs
+      LordOfTheRings.Treachery.Cards.HungryTroll
       LordOfTheRings.Treachery.Cards.IceStorm
       LordOfTheRings.Treachery.Cards.IllPurpose
       LordOfTheRings.Treachery.Cards.IllTidings
@@ -2805,6 +2808,7 @@ library
       LordOfTheRings.Treachery.Cards.LostCompany
       LordOfTheRings.Treachery.Cards.LostInTheCity
       LordOfTheRings.Treachery.Cards.LostInTheWild
+      LordOfTheRings.Treachery.Cards.LotsOrNoneAtAll
       LordOfTheRings.Treachery.Cards.LowOnProvisions
       LordOfTheRings.Treachery.Cards.LurkingInShadows
       LordOfTheRings.Treachery.Cards.LyingInWait
@@ -2817,6 +2821,7 @@ library
       LordOfTheRings.Treachery.Cards.MenInTheDark
       LordOfTheRings.Treachery.Cards.Mirage
       LordOfTheRings.Treachery.Cards.MordorLooms
+      LordOfTheRings.Treachery.Cards.MoreLikeAGrocer
       LordOfTheRings.Treachery.Cards.MorgothsBidding
       LordOfTheRings.Treachery.Cards.MountainsOfShadow
       LordOfTheRings.Treachery.Cards.MugashsCunning
@@ -2824,6 +2829,7 @@ library
       LordOfTheRings.Treachery.Cards.MysteriousFog
       LordOfTheRings.Treachery.Cards.NewDevilry
       LordOfTheRings.Treachery.Cards.Nightfall
+      LordOfTheRings.Treachery.Cards.NoCampfire
       LordOfTheRings.Treachery.Cards.NoQuarter
       LordOfTheRings.Treachery.Cards.NoRest
       LordOfTheRings.Treachery.Cards.NowhereToHide
@@ -2882,6 +2888,7 @@ library
       LordOfTheRings.Treachery.Cards.RetracedSteps
       LordOfTheRings.Treachery.Cards.RipplingFromBeneath
       LordOfTheRings.Treachery.Cards.RoastedSlowly
+      LordOfTheRings.Treachery.Cards.RoastEmOrBoilEm
       LordOfTheRings.Treachery.Cards.Rockslide
       LordOfTheRings.Treachery.Cards.RogueWave
       LordOfTheRings.Treachery.Cards.RottenStench
@@ -3018,6 +3025,7 @@ library
       LordOfTheRings.Treachery.Cards.WildMenOfDunland
       LordOfTheRings.Treachery.Cards.WildTenacity
       LordOfTheRings.Treachery.Cards.WindsOfWrath
+      LordOfTheRings.Treachery.Cards.WindWhippedRain
       LordOfTheRings.Treachery.Cards.Wrapped
       LordOfTheRings.Treachery.Cards.WrithingShadows
       LordOfTheRings.Treachery.Import.Lifted

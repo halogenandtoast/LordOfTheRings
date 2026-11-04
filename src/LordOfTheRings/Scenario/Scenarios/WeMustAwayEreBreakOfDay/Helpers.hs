@@ -14,6 +14,8 @@ module LordOfTheRings.Scenario.Scenarios.WeMustAwayEreBreakOfDay.Helpers (
   bilboHas,
   trollAbilities,
   runTroll,
+  unlessBagginsCancel,
+  trollInStaging,
 ) where
 
 import LordOfTheRings.Ability
@@ -24,6 +26,7 @@ import LordOfTheRings.Classes.RunMessage
 import LordOfTheRings.Enemy.Runner (EnemyAttrs)
 import LordOfTheRings.GameT (GameT)
 import LordOfTheRings.Helpers.Character (characterCardDef)
+import LordOfTheRings.I18n (intVar)
 import LordOfTheRings.Helpers.Modifiers (getModifiers)
 import LordOfTheRings.Matcher
 import LordOfTheRings.Message
@@ -153,3 +156,24 @@ runTroll n msg a = case msg of
       _ -> pure ()
     pure a
   _ -> runMessage msg a
+
+-- | Whether a Troll enemy is in the staging area.
+trollInStaging :: HasGame m => m Bool
+trollInStaging = selectAny (trollEnemy <> EnemyInStagingArea)
+
+{- | "(The first player may spend N Baggins resources to cancel this effect.)": the effect,
+unless the first player spends them from Bilbo Baggins' pool.
+-}
+unlessBagginsCancel
+  :: (ReverseQueue m, Targetable source) => source -> Int -> (forall n. ReverseQueue n => n ()) -> m ()
+unlessBagginsCancel source n effect = do
+  lead <- getLead
+  resources <- getBagginsResources
+  bilbo <- getBilbo
+  case bilbo of
+    Just b | resources >= n -> chooseOneM lead do
+      questionLabeledWith "baggins.cancel" [intVar "count" n]
+      causedBy source
+      labeledWith "baggins.spendToCancel" [intVar "count" n] $ spendResourcesFrom lead b n
+      labeled "baggins.doNotCancel" effect
+    _ -> effect
