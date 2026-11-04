@@ -536,6 +536,12 @@ import LordOfTheRings.Location.Cards.TreeCrownedHill
 import LordOfTheRings.Location.Cards.HillsOfHollin
 import LordOfTheRings.Location.Cards.RedhornFoothills
 import LordOfTheRings.Location.Cards.Eregion
+import LordOfTheRings.Location.Cards.TopmostChamber
+import LordOfTheRings.Location.Cards.EchoingPassage
+import LordOfTheRings.Location.Cards.BloodiedCourtyard
+import LordOfTheRings.Location.Cards.WindingStairs
+import LordOfTheRings.Location.Cards.TorchLitHall
+import LordOfTheRings.Location.Cards.TheTwoWatchers
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -1118,5 +1124,11 @@ allLocations =
         , SomeLocationCard hillsOfHollin
         , SomeLocationCard redhornFoothills
         , SomeLocationCard eregion
+        , SomeLocationCard topmostChamber
+        , SomeLocationCard echoingPassage
+        , SomeLocationCard bloodiedCourtyard
+        , SomeLocationCard windingStairs
+        , SomeLocationCard torchLitHall
+        , SomeLocationCard theTwoWatchers
         ]
     ]

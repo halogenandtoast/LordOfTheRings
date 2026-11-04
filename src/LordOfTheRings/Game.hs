@@ -3337,6 +3337,18 @@ runGameMessage msg g = case msg of
     , cdCardType (toCardDef other) == ObjectiveAllyType -> do
         pushAll $ discardAttached g target
         pure $ g & entitiesL . locationsL %~ Map.delete lid
+  -- a location whose other side is an enemy turns over, as The Two Watchers does after the
+  -- players travel there: the location leaves play, what was on it discarded, and the
+  -- enemy, the same card, is moved to the staging area
+  Flip target@(LocationTarget lid)
+    | Just l <- Map.lookup lid g.entities.locations
+    , Just other <- cdOtherSide (toCardDef l)
+    , cdCardType (toCardDef other) == EnemyType -> do
+        pushAll $ discardAttached g target
+        eid <- getRandom
+        let thisEnemy = overAttrs (\e -> e {enemyPlacement = StagingArea}) $ lookupEnemy other (toCard l).id eid
+        push $ CheckWindows [mkAfter $ EntersStagingArea (toTarget thisEnemy)]
+        pure $ g & entitiesL . locationsL %~ Map.delete lid & entitiesL . enemiesL %~ insertEntity thisEnemy
   -- a double-sided location turns over, as an Uncharted location does
   Flip (LocationTarget lid) | Just l <- turnLocationOver =<< Map.lookup lid g.entities.locations -> do
     pushAll $ [ArrangeIslandMap | isJust l.position] <> [CheckWindows [mkAfter $ LocationFlipped lid]]
@@ -4098,9 +4110,12 @@ attackDamage' pid eid target n = do
         HeroTarget h -> toCard <$> Map.lookup h es.heroes
         AllyTarget a -> toCard <$> Map.lookup a es.allies
         _ -> Nothing
+  defending <- fromMaybe pid <$> characterController target
   pure $ case captured of
     -- it captures the character instead, as Cruel Torturer reads
     Just card | CaptureInsteadOfAttackDamage `elem` mods, n > 0 -> [PlaceUnderneath (EnemyTarget eid) [card]]
+    -- or the defending player's threat is raised as much, as The Two Watchers' is
+    _ | AttackDamageToThreatInstead `elem` mods -> [x | n > 0, x <- [RaiseThreat defending n, CheckWindows [mkAfter $ ThreatRaisedByEncounter defending n]]]
     _ ->
       DealDamage (EnemyAttackSource eid) target n
         : concat [[RaiseThreat pid excess, CheckWindows [mkAfter $ ThreatRaisedByEncounter pid excess]] | excessToThreat, excess > 0]

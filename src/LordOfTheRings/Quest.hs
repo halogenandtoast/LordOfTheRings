@@ -362,6 +362,9 @@ import LordOfTheRings.Quest.Cards.LeadTheRevolt
 import LordOfTheRings.Quest.Cards.TheForbiddenDoor (theForbiddenDoor)
 import LordOfTheRings.Quest.Cards.ThePathsOfTheDead (thePathsOfTheDead)
 import LordOfTheRings.Quest.Cards.TheDeadAreFollowing (theDeadAreFollowing)
+import LordOfTheRings.Quest.Cards.PassTheTwoWatchers
+import LordOfTheRings.Quest.Cards.FightingInTheTower
+import LordOfTheRings.Quest.Cards.EscapeFromCirithUngol
 import LordOfTheRings.Quest.Runner ()
 import LordOfTheRings.Quest.Types as X
 import LordOfTheRings.Id
@@ -756,5 +759,8 @@ allQuests =
         , SomeQuestCard theForbiddenDoor
         , SomeQuestCard thePathsOfTheDead
         , SomeQuestCard theDeadAreFollowing
+        , SomeQuestCard passTheTwoWatchers
+        , SomeQuestCard fightingInTheTower
+        , SomeQuestCard escapeFromCirithUngol
         ]
     ]

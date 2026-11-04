@@ -4031,5 +4031,13 @@
         "text": "Stage 4A makes Doors of Durin the active location, adds Watcher in the Water to the staging area and puts the Ring-bearer, with all his attachments and no tokens, facedown under the Watcher. He stays in play, but no player controls him or his attachments until he is freed.\n\nOn stage 4B there can be 2 active locations: with Doors of Durin the only active one and a location in the staging area, the players must travel to it, making it active alongside the Doors.\n\nDoors of Durin is immune to player card effects, so a player card effect on the active location can only reach the other active location."
       }
     ]
+  },
+  "the-tower-of-cirith-ungol": {
+    "intro": [
+      "Frodo has been carried off by the Orcs to the top of the tower of Cirith Ungol. Alone, Sam must slip past the Silent Watchers at the gate and climb through a fortress torn by fighting between its own garrison to bring his master out again."
+    ],
+    "setup": [
+      "“The Tower of Cirith Ungol” is played with an encounter deck built with all the cards from the following encounter sets: The Tower of Cirith Ungol, Orcs of Mordor, and Deep Shadows. Aragorn cannot be used while playing The Tower of Cirith Ungol."
+    ]
   }
 }
