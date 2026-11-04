@@ -3426,6 +3426,7 @@ test-suite LordOfTheRings-test
       LordOfTheRings.Starter.ElvesOfLorienSpec
       LordOfTheRings.Starter.RidersOfRohanSpec
       LordOfTheRings.StarterDeckSpec
+      LordOfTheRings.TheRoadDarkens.BreakingOfTheFellowshipSpec
       LordOfTheRings.TheRoadDarkens.TheRingGoesSouthSpec
       LordOfTheRings.TravelPhaseSpec
       LordOfTheRings.VengeanceOfMordor.AShadowInTheEastPlayerCardsSpec
