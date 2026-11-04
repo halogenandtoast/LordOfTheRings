@@ -355,6 +355,9 @@ import LordOfTheRings.Quest.Cards.StormTheCastleNoQuarter
 import LordOfTheRings.Quest.Cards.StormTheCastleStrongholdOfMordor
 import LordOfTheRings.Quest.Cards.SlavesOfTheDarkLord
 import LordOfTheRings.Quest.Cards.LeadTheRevolt
+import LordOfTheRings.Quest.Cards.PassTheTwoWatchers
+import LordOfTheRings.Quest.Cards.FightingInTheTower
+import LordOfTheRings.Quest.Cards.EscapeFromCirithUngol
 import LordOfTheRings.Quest.Runner ()
 import LordOfTheRings.Quest.Types as X
 import LordOfTheRings.Id
@@ -742,5 +745,8 @@ allQuests =
         , SomeQuestCard stormTheCastleStrongholdOfMordor
         , SomeQuestCard slavesOfTheDarkLord
         , SomeQuestCard leadTheRevolt
+        , SomeQuestCard passTheTwoWatchers
+        , SomeQuestCard fightingInTheTower
+        , SomeQuestCard escapeFromCirithUngol
         ]
     ]

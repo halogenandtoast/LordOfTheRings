@@ -2153,6 +2153,7 @@ library
       LordOfTheRings.Quest.Cards.DunlendingAttack
       LordOfTheRings.Quest.Cards.EnteringTheMines
       LordOfTheRings.Quest.Cards.EscapeAttempt
+      LordOfTheRings.Quest.Cards.EscapeFromCirithUngol
       LordOfTheRings.Quest.Cards.EscapeFromDarkness
       LordOfTheRings.Quest.Cards.EscapeFromFangorn
       LordOfTheRings.Quest.Cards.EscapeFromTaurNuFuin
@@ -2166,6 +2167,7 @@ library
       LordOfTheRings.Quest.Cards.FendOffDespair
       LordOfTheRings.Quest.Cards.FightAtTheFords
       LordOfTheRings.Quest.Cards.FightingInTheStreets
+      LordOfTheRings.Quest.Cards.FightingInTheTower
       LordOfTheRings.Quest.Cards.FightYourWayOut
       LordOfTheRings.Quest.Cards.FinalConfrontation
       LordOfTheRings.Quest.Cards.FindAWayDown
@@ -2254,6 +2256,7 @@ library
       LordOfTheRings.Quest.Cards.OutOfTheSwamp
       LordOfTheRings.Quest.Cards.OverwhelmingDarkness
       LordOfTheRings.Quest.Cards.PassageIntoMordor
+      LordOfTheRings.Quest.Cards.PassTheTwoWatchers
       LordOfTheRings.Quest.Cards.PrepareForBattle
       LordOfTheRings.Quest.Cards.ProtectTheBreeLanders
       LordOfTheRings.Quest.Cards.ProtectTheFlanks
@@ -2571,6 +2574,7 @@ library
       LordOfTheRings.Scenario.Scenarios.TheThingInTheDepths
       LordOfTheRings.Scenario.Scenarios.TheThreeTrials
       LordOfTheRings.Scenario.Scenarios.TheThreeTrials.Helpers
+      LordOfTheRings.Scenario.Scenarios.TheTowerOfCirithUngol
       LordOfTheRings.Scenario.Scenarios.TheTowerOfCirithUngol.Helpers
       LordOfTheRings.Scenario.Scenarios.TheTreacheryOfRhudaur
       LordOfTheRings.Scenario.Scenarios.TheTreacheryOfRhudaur.Helpers
