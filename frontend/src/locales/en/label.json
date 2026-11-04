@@ -481,6 +481,9 @@
   "rainOfArrows": {
     "exhaust": "Exhaust a ranged character"
   },
+  "theOneRing": {
+    "choosePlayer": "Choose the player whose copy of The One Ring goes into play"
+  },
   "aLightInTheDark": {
     "return": "Return an engaged enemy to the staging area"
   },

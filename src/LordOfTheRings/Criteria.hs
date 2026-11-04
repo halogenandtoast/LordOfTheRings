@@ -152,6 +152,11 @@ controlsAlly :: PlayerId -> AllyMatcher -> Criterion
 controlsAlly pid m = AllyExists (AllyControlledBy (PlayerWithId pid) <> m)
 
 -- | Nothing stops a player card cancelling a shadow effect.
+-- | The player controls The One Ring, ready, as a Master event's "Exhaust The One Ring"
+-- needs: it is controlled by whoever controls the hero it is attached to (FAQ 1.38).
+theOneRingReady :: PlayerId -> Criterion
+theOneRingReady pid = HeroExists (heroWithReadyOneRing <> HeroControlledBy (PlayerWithId pid))
+
 shadowEffectsCancelable :: Criterion
 shadowEffectsCancelable = EncounterEffectsCancelable <> TargetLacksModifier GameTarget ShadowCannotBeCanceled
 

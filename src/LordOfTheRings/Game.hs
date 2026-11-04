@@ -44,7 +44,7 @@ import LordOfTheRings.Log.Refs (cardTitle, sendLogInOpenBlock, sourceCardTitle)
 import LordOfTheRings.Matcher
 import LordOfTheRings.Matcher.Window (windowMatches)
 import LordOfTheRings.Message
-import LordOfTheRings.Message.Lifted (choosePlayerM, drawCards, raiseThreatFromDoomed, shuffleIntoDeck)
+import LordOfTheRings.Message.Lifted (choosePlayerM, drawCards, raiseThreatFromDoomed, setUpTheOneRing, shuffleIntoDeck)
 import LordOfTheRings.Modifier
 import LordOfTheRings.Objective
 import LordOfTheRings.Outcome
@@ -721,10 +721,14 @@ runGameMessage msg g = case msg of
     pure g
   DoStep 3 Setup -> do
     firstPlayer <- uniform g.playerOrder
-    push $ SetFirstPlayer firstPlayer
+    -- The One Ring's Setup follows the placing of the starting heroes, its first player's
+    -- choice once there is one (A Shadow in the East rules), and comes before the setup hand
+    runQueueT do
+      push $ SetFirstPlayer firstPlayer
+      setUpTheOneRing firstPlayer
     pure g
   BeginRound -> do
-    pushAll [BeginPhase minBound, EndPhase minBound]
+    pushAll [CheckWindows [mkWhen RoundBegins], BeginPhase minBound, EndPhase minBound]
     -- no area has begun the round's first phase, those separated before the first round
     -- too, as at Unexpected Rescue
     pure $ g & roundL +~ 1 & separationL %~ fmap (\s -> s {separationAreas = [a {areaStatus = AreaWaiting} | a <- separationAreas s]})
@@ -1994,7 +1998,8 @@ runGameMessage msg g = case msg of
     damaged <- if inPlay g c then (> before) <$> getDamage c else pure False
     pushWhen damaged $ Exhaust c
     pure g
-  ChooseAndDiscard source pid targets -> do
+  ChooseAndDiscard source pid targets0 -> do
+    targets <- filterM (fmap not . immuneToSource source) targets0
     unless (null targets)
       $ push
       $ questionLabelWith
@@ -2421,9 +2426,8 @@ runGameMessage msg g = case msg of
         pure g
   UseAbility pid ab windows -> do
     pushAll
-      =<< inLogBlock
-        (AbilityBlock pid ab.abilitySource (isForcedAbility ab))
-        (payCost pid (abilityCost ab) [UseCardAbility pid ab.abilitySource ab.abilityIndex windows])
+      =<< inLogBlock (AbilityBlock pid ab.abilitySource (isForcedAbility ab))
+      =<< payCost pid (abilityCost ab) [UseCardAbility pid ab.abilitySource ab.abilityIndex windows]
     pure g
   PlayEvent pid card _ -> do
     for_ (lookupEvent (toCardCode card) card.id pid) $ void . runEach msg

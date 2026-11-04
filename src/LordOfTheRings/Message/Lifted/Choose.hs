@@ -13,9 +13,9 @@ import Control.Monad.Writer.Strict (WriterT, runWriterT, tell)
 import LordOfTheRings.Card (Card)
 import LordOfTheRings.Classes.HasGame
 import LordOfTheRings.Classes.HasQueue
-import LordOfTheRings.Helpers.Modifiers (getModifiers, immuneToEncounterCard)
+import LordOfTheRings.Helpers.Modifiers (getModifiers, immuneToEncounterCard, isMasterCard)
 import LordOfTheRings.I18n
-import LordOfTheRings.Modifier (ModifierType (ImmuneToPlayerCardEffects, ImmuneToPlayerEvents))
+import LordOfTheRings.Modifier (ModifierType (ImmuneToNonMasterCardEffects, ImmuneToPlayerCardEffects, ImmuneToPlayerEvents))
 import LordOfTheRings.Id
 import LordOfTheRings.Matcher (PlayerMatcher (PlayerWithId, PlayerWithThreatAtLeast), getMainQuestProgress, getMainQuests, selectAny)
 import LordOfTheRings.Message
@@ -154,14 +154,20 @@ removeMainQuestProgressLabeled source n = do
 
 -- | A choice made by clicking the target. A card immune to player card effects is not
 -- offered when a player card, the one 'causedBy' names, is causing the question, nor one
--- immune to player events when an event (its card id) is.
+-- immune to player events when an event (its card id) is, nor The One Ring when any but a
+-- Master card is.
 targeting :: (ReverseQueue m, Targetable a) => a -> QueueT Message m () -> ChooseT m ()
 targeting a action = do
   source <- ChooseT $ gets (.chooseSource)
   mods <- lift $ getModifiers a
   g <- lift getGame
+  master <- lift $ maybe (pure False) isMasterCard source
   let immune = case source of
-        Just s -> (ImmuneToPlayerCardEffects `elem` mods && isPlayerCardTarget s) || (ImmuneToPlayerEvents `elem` mods && isEvent s) || immuneToEncounterCard g mods s
+        Just s ->
+          (ImmuneToPlayerCardEffects `elem` mods && isPlayerCardTarget s)
+            || (ImmuneToPlayerEvents `elem` mods && isEvent s)
+            || (ImmuneToNonMasterCardEffects `elem` mods && not master)
+            || immuneToEncounterCard g mods s
         Nothing -> False
       isEvent = \case CardIdTarget _ -> True; _ -> False
   unless immune do

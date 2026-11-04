@@ -79,6 +79,11 @@ allAttachmentCards =
       , warAxe
       , hornOfTheMark
       , valiantSword
+      , theOneRing
+      , innerStrength
+      , strengthAndCourage
+      , powerOfCommand
+      , wellPreserved
       , songOfKings
       , dunedainWarning
       , bornAloft
@@ -547,6 +552,44 @@ valiantSword =
   (attachment "22083" "Valiant Sword" Leadership (StaticCost 1))
     { cdCardTraits = setFromList [Item, Weapon]
     , cdKeywords = setFromList [Restricted]
+    , cdLimitOnePerHost = True
+    }
+
+-- | The One Ring: no sphere and no cost to play, as it is never played, but attached by its
+-- Setup text (A Shadow in the East rules, "The One Ring & The Master Trait").
+theOneRing :: CardDef
+theOneRing =
+  unique
+    (attachment "21001" "The One Ring" Neutral (StaticCost 0))
+      { cdCardTraits = setFromList [Artifact, Ring, Master]
+      , cdKeywords = setFromList [Restricted]
+      }
+
+innerStrength :: CardDef
+innerStrength =
+  (attachment "22009" "Inner Strength" Spirit (StaticCost 1))
+    { cdCardTraits = setFromList [Master]
+    , cdLimitOnePerHost = True
+    }
+
+strengthAndCourage :: CardDef
+strengthAndCourage =
+  (attachment "22033" "Strength and Courage" Tactics (StaticCost 1))
+    { cdCardTraits = setFromList [Master]
+    , cdLimitOnePerHost = True
+    }
+
+powerOfCommand :: CardDef
+powerOfCommand =
+  (attachment "22055" "Power of Command" Leadership (StaticCost 1))
+    { cdCardTraits = setFromList [Master]
+    , cdLimitOnePerHost = True
+    }
+
+wellPreserved :: CardDef
+wellPreserved =
+  (attachment "22085" "Well Preserved" Lore (StaticCost 1))
+    { cdCardTraits = setFromList [Master]
     , cdLimitOnePerHost = True
     }
 

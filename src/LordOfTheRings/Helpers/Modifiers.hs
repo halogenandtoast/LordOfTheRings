@@ -24,7 +24,7 @@ import LordOfTheRings.Placement (Placement (..))
 import LordOfTheRings.Prelude
 import LordOfTheRings.Source (Source (..), isPlayerCardSource, isPlayerEventSource, sourceTarget)
 import LordOfTheRings.Target
-import LordOfTheRings.Trait (Trait (Modification))
+import LordOfTheRings.Trait (Trait (Master, Modification))
 
 -- | Collect every constant ability and lasting effect into the modifier cache.
 preloadModifiers :: (HasGame m) => Game -> m Game
@@ -132,7 +132,12 @@ preloadModifiers g = do
       unaffected t ms =
         let ms' = if immune ms then filter (\m -> sourceTarget (modifierSource m) == Just t || not (fromPlayerCard m)) ms else ms
             types = map modifierType ms'
-         in filter (\m -> sourceTarget (modifierSource m) == Just t || not (immuneToEncounterSource g types (modifierSource m))) ms'
+         in onlyMaster t ms $ filter (\m -> sourceTarget (modifierSource m) == Just t || not (immuneToEncounterSource g types (modifierSource m))) ms'
+      -- The One Ring keeps its own modifiers, the game's and Master cards' only
+      onlyMaster t ms kept
+        | ImmuneToNonMasterCardEffects `elem` map modifierType ms =
+            filter (\m -> m.modifierSource == GameSource || maybe False (\s -> s == t || masterCard g s) (sourceTarget m.modifierSource)) kept
+        | otherwise = kept
       -- no willpower from player cards, as Frozen Silverlode forbids
       frozen = NoWillpowerFromPlayerCards `elem` map modifierType (Map.findWithDefault [] GameTarget all')
       gained m = case m.modifierType of
@@ -177,11 +182,34 @@ immuneToSource GameSource _ = pure False
 immuneToSource source a = do
   mods <- getModifiers a
   g <- getGame
+  master <- maybe (pure False) isMasterCard (sourceTarget source)
   pure
     $ ImmuneToCardEffects `elem` mods
     || (isPlayerCardSource source && ImmuneToPlayerCardEffects `elem` mods)
     || (isPlayerEventSource source && ImmuneToPlayerEvents `elem` mods)
     || immuneToEncounterSource g mods source
+    || (not master && ImmuneToNonMasterCardEffects `elem` mods)
+
+-- | Whether the card is one of those whose effects The One Ring is not immune to: a Master
+-- card in play, or a Master event, known by its card id, wherever its owner holds it.
+isMasterCard :: HasGame m => Target -> m Bool
+isMasterCard t = getsGame (`masterCard` t)
+
+masterCard :: Game -> Target -> Bool
+masterCard g t = maybe False (member Master . cdCardTraits . toCardDef) code
+ where
+  es = g.entities
+  code = case t of
+    AttachmentTarget i -> toCardCode <$> Map.lookup i es.attachments
+    HeroTarget i -> toCardCode <$> Map.lookup i es.heroes
+    AllyTarget i -> toCardCode <$> Map.lookup i es.allies
+    CardIdTarget cid -> toCardCode <$> find ((== cid) . (.id)) [c | p <- toList g.players, c <- p.hand <> p.discard <> p.deck]
+    _ -> Nothing
+
+-- | Whether only Master cards' effects touch the card, as The One Ring's do: a card effect
+-- verb with no source, as 'LordOfTheRings.Message.Lifted.discard', leaves it be.
+onlyMasterCardsAffect :: (HasGame m, Targetable a) => a -> m Bool
+onlyMasterCardsAffect = fmap (elem ImmuneToNonMasterCardEffects) . getModifiers
 
 -- | A printed value with the target's modifiers applied, floored at 0.
 modifiedValue :: (HasGame m, Targetable a) => (ModifierType -> Maybe Int) -> a -> Int -> m Int

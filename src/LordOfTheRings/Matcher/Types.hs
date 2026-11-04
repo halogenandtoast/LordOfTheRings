@@ -1,5 +1,6 @@
 module LordOfTheRings.Matcher.Types (module LordOfTheRings.Matcher.Types) where
 
+import LordOfTheRings.Attachment.CardDefs qualified as Attachments
 import LordOfTheRings.Card.CardDef
 import LordOfTheRings.Card.CardType
 import LordOfTheRings.Card.Code
@@ -72,6 +73,8 @@ data HeroMatcher
     HeroWithResourcesAtLeast Int
   | -- | a hero with a copy of the card attached
     HeroWithAttachment CardCode
+  | -- | a hero with a ready copy of the card attached, as a Master card exhausts The One Ring
+    HeroWithReadyAttachment CardCode
   | -- | a hero with a player card attached, as "with a player attachment" reads
     HeroWithPlayerAttachment
   | -- | a hero with a ready player card attached, as Bartering chooses one
@@ -85,6 +88,14 @@ data HeroMatcher
     HeroWithPrintedSphere Sphere
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
+
+-- | The hero with The One Ring attached, as Master cards read.
+heroWithTheOneRing :: HeroMatcher
+heroWithTheOneRing = HeroWithAttachment (cdCardCode Attachments.theOneRing)
+
+-- | The hero with The One Ring attached, the ring ready, as a Master card exhausts it.
+heroWithReadyOneRing :: HeroMatcher
+heroWithReadyOneRing = HeroWithReadyAttachment (cdCardCode Attachments.theOneRing)
 
 instance Semigroup HeroMatcher where
   AnyHero <> x = x

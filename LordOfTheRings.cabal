@@ -358,6 +358,7 @@ library
       LordOfTheRings.Attachment.Cards.HornOfGondor
       LordOfTheRings.Attachment.Cards.HornOfTheMark
       LordOfTheRings.Attachment.Cards.IarionsPendant
+      LordOfTheRings.Attachment.Cards.InnerStrength
       LordOfTheRings.Attachment.Cards.InServiceOfTheSteward
       LordOfTheRings.Attachment.Cards.IthilienPit
       LordOfTheRings.Attachment.Cards.KahlielsHeaddress
@@ -398,6 +399,7 @@ library
       LordOfTheRings.Attachment.Cards.PathOfNeed
       LordOfTheRings.Attachment.Cards.PoisonedStakes
       LordOfTheRings.Attachment.Cards.PowerInTheEarth
+      LordOfTheRings.Attachment.Cards.PowerOfCommand
       LordOfTheRings.Attachment.Cards.PrinceOfDolAmroth
       LordOfTheRings.Attachment.Cards.ProtectorOfLorien
       LordOfTheRings.Attachment.Cards.RadagastsStaff
@@ -444,6 +446,7 @@ library
       LordOfTheRings.Attachment.Cards.SteedOfTheNorth
       LordOfTheRings.Attachment.Cards.StewardOfGondor
       LordOfTheRings.Attachment.Cards.Sting
+      LordOfTheRings.Attachment.Cards.StrengthAndCourage
       LordOfTheRings.Attachment.Cards.Strider
       LordOfTheRings.Attachment.Cards.SupportOfTheEagles
       LordOfTheRings.Attachment.Cards.SwordOfMorthond
@@ -456,6 +459,7 @@ library
       LordOfTheRings.Attachment.Cards.TheFallOfGilGalad
       LordOfTheRings.Attachment.Cards.TheFavorOfTheLady
       LordOfTheRings.Attachment.Cards.TheLongDefeat
+      LordOfTheRings.Attachment.Cards.TheOneRing
       LordOfTheRings.Attachment.Cards.TheRedArrow
       LordOfTheRings.Attachment.Cards.TheRoadGoesEverOn
       LordOfTheRings.Attachment.Cards.ThrorsMap
@@ -473,6 +477,7 @@ library
       LordOfTheRings.Attachment.Cards.WardenOfArnor
       LordOfTheRings.Attachment.Cards.WarriorSword
       LordOfTheRings.Attachment.Cards.WeatherStainedCloak
+      LordOfTheRings.Attachment.Cards.WellPreserved
       LordOfTheRings.Attachment.Cards.WildStallion
       LordOfTheRings.Attachment.Cards.Windfola
       LordOfTheRings.Attachment.Cards.Wingfoot
@@ -1143,7 +1148,10 @@ library
       LordOfTheRings.Event.Cards.TheHiddenWay
       LordOfTheRings.Event.Cards.TheHousesOfHealing
       LordOfTheRings.Event.Cards.TheKingsReturn
+      LordOfTheRings.Event.Cards.TheMasterRing
       LordOfTheRings.Event.Cards.TheMusterOfRohan
+      LordOfTheRings.Event.Cards.TheRingOfPower
+      LordOfTheRings.Event.Cards.TheRulingRing
       LordOfTheRings.Event.Cards.TheSeeingStone
       LordOfTheRings.Event.Cards.TheShirefolk
       LordOfTheRings.Event.Cards.TheTreePeople
@@ -3050,6 +3058,7 @@ test-suite LordOfTheRings-test
       LordOfTheRings.TravelPhaseSpec
       LordOfTheRings.VengeanceOfMordor.PowerOfMordorSpec
       LordOfTheRings.VengeanceOfMordor.SmeagolSpec
+      LordOfTheRings.VengeanceOfMordor.TheOneRingSpec
       LordOfTheRings.VoiceOfIsengard.IntoFangornSpec
       LordOfTheRings.VoiceOfIsengard.NightmareSpec
       LordOfTheRings.VoiceOfIsengard.PlayerCardsSpec
