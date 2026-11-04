@@ -37,7 +37,10 @@ frodo = cdCardCode Heroes.frodoBagginsTheMountainOfFire
 -- | Setup, its stage 1A clicked, Last of the Company and The One Ring given to Beravor.
 setUp :: PlayerId -> GameT ()
 setUp pid = do
-  flipFirstQuest pid
+  run Setup
+  chooseRingBearer pid frodo
+  chooseLabel "$label.keepHand" pid
+  chooseOptionMatching "flip the quest" pid (const True)
   chooseTarget pid =<< hero beravor
 
 hero :: CardCode -> GameT Target
@@ -340,6 +343,7 @@ spec = describe "The Tower of Cirith Ungol" do
         setUpCampaign pid = do
           withBlade pid
           run Setup
+          chooseRingBearer pid frodo
           -- the only Item boon of the seat: set aside without a question
           chooseLabel "$label.keepHand" pid
           chooseOptionMatching "flip the quest" pid (const True)
