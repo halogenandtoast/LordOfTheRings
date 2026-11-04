@@ -879,6 +879,18 @@ objectivesWithTrait trait =
 getTheOneRing :: HasGame m => m (Maybe AttachmentId)
 getTheOneRing = getsGame (fmap toId . find ((== toCardCode Attachments.theOneRing) . toCardCode) . toList . entitiesAttachments . gameEntities)
 
+-- | The sagas' The One Ring, the objective attached to the Ring-bearer (The Black Riders
+-- rules insert, "The One Ring").
+getTheOneRingObjective :: HasGame m => m (Maybe ObjectiveId)
+getTheOneRingObjective =
+  getsGame (fmap toId . find ((== "The One Ring") . (\(Name t _) -> t) . cdName . toCardDef) . toList . entitiesObjectives . gameEntities)
+
+-- | "If The One Ring is exhausted", as The Witch-king and Lure of the Ring read.
+theOneRingExhausted :: HasGame m => m Bool
+theOneRingExhausted = do
+  ring <- getTheOneRingObjective
+  getsGame \g -> maybe False (.exhausted) (flip Map.lookup (entitiesObjectives $ gameEntities g) =<< ring)
+
 -- | Whether the player controls The One Ring, as Master cards may only be used by him.
 -- It is controlled by whoever controls the hero it is attached to (FAQ 1.38).
 controlsTheOneRing :: HasGame m => PlayerId -> m Bool

@@ -350,6 +350,7 @@ passesCriteria = \case
   EncounterEffectsCancelable -> notElem CannotCancelEncounterEffects <$> getModifiers GameTarget
   FirstTreacheryRevealedThisRound -> getsGame ((<= 1) . length . filter (elem TreacheryRevealedThisRound . effectModifiers) . gameEffects)
   NotCriterion c -> not <$> passesCriteria c
+  TheOneRingExhausted -> theOneRingExhausted
   TargetHasModifier t m -> elem m <$> getModifiers t
   TargetLacksModifier t m -> notElem m <$> getModifiers t
   ModifierFrom source m ->
