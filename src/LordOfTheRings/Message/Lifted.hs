@@ -1806,6 +1806,24 @@ revealTopOfPowerOfMordorDeck = do
 placeTopOfPowerOfMordorDeckUnderneath :: (ReverseQueue m, Targetable target) => target -> m ()
 placeTopOfPowerOfMordorDeckUnderneath = push . PlaceTopOfPowerOfMordorDeckUnderneath . toTarget
 
+-- | Sack X: the first player draws the top X cards of the sack deck and resolves their
+-- When Sacked effects, one at a time (We Must Away, Ere Break of Day rules).
+sack :: ReverseQueue m => Int -> m ()
+sack n = when (n > 0) $ push $ DrawFromSackDeck n
+
+-- | The Sack card leaves play, shuffled back into the sack deck.
+returnToSackDeck :: ReverseQueue m => ObjectiveId -> m ()
+returnToSackDeck = push . ReturnToSackDeck
+
+-- | The top N cards of the encounter discard pile go to the bottom of the encounter deck,
+-- as Cave Entrance and A Nice Pickle read.
+moveDiscardToBottomOfEncounterDeck :: ReverseQueue m => Int -> m ()
+moveDiscardToBottomOfEncounterDeck n = do
+  cards <- take n <$> getEncounterDiscard
+  unless (null cards) do
+    traverse_ removeFromEncounterDiscard cards
+    push $ PutOnBottomOfEncounterDeck cards
+
 -- | The top card of the Evil Creatures deck is added to the staging area, the source told
 -- of it with 'AddedFromEvilCreaturesDeck' (Journey Up the Anduin).
 addFromEvilCreaturesDeck :: (ReverseQueue m, Sourceable source) => source -> m ()

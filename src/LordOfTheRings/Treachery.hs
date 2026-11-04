@@ -442,6 +442,14 @@ import LordOfTheRings.Treachery.Cards.WeighedDownWilderland
 import LordOfTheRings.Treachery.Cards.HatredRekindledTheBattleOfFiveArmies
 import LordOfTheRings.Treachery.Cards.GoblinsAreUponYou
 import LordOfTheRings.Treachery.Cards.HeedlessOfOrder
+import LordOfTheRings.Treachery.Cards.LotsOrNoneAtAll
+import LordOfTheRings.Treachery.Cards.ANicePickle
+import LordOfTheRings.Treachery.Cards.RoastEmOrBoilEm
+import LordOfTheRings.Treachery.Cards.HungryTroll
+import LordOfTheRings.Treachery.Cards.NoCampfire
+import LordOfTheRings.Treachery.Cards.WindWhippedRain
+import LordOfTheRings.Treachery.Cards.MoreLikeAGrocer
+import LordOfTheRings.Treachery.Cards.GripGrabPinchNab
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -911,5 +919,13 @@ allTreacherys =
         , SomeTreacheryCard hatredRekindledTheBattleOfFiveArmies
         , SomeTreacheryCard goblinsAreUponYou
         , SomeTreacheryCard heedlessOfOrder
+        , SomeTreacheryCard lotsOrNoneAtAll
+        , SomeTreacheryCard aNicePickle
+        , SomeTreacheryCard roastEmOrBoilEm
+        , SomeTreacheryCard hungryTroll
+        , SomeTreacheryCard noCampfire
+        , SomeTreacheryCard windWhippedRain
+        , SomeTreacheryCard moreLikeAGrocer
+        , SomeTreacheryCard gripGrabPinchNab
         ]
     ]

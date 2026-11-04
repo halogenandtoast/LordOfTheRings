@@ -549,6 +549,13 @@ import LordOfTheRings.Location.Cards.NorthernSlopes
 import LordOfTheRings.Location.Cards.RuinsOfDale
 import LordOfTheRings.Location.Cards.Ravenhill
 import LordOfTheRings.Location.Cards.TheFrontGate
+import LordOfTheRings.Location.Cards.TrollCamp
+import LordOfTheRings.Location.Cards.TrollCave
+import LordOfTheRings.Location.Cards.HobbitLands
+import LordOfTheRings.Location.Cards.DrearyHills
+import LordOfTheRings.Location.Cards.LoneLands
+import LordOfTheRings.Location.Cards.CaveEntranceWesternLands
+import LordOfTheRings.Location.Cards.TheGoblinsCaves
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -1144,5 +1151,12 @@ allLocations =
         , SomeLocationCard ruinsOfDale
         , SomeLocationCard ravenhill
         , SomeLocationCard theFrontGate
+        , SomeLocationCard trollCamp
+        , SomeLocationCard trollCave
+        , SomeLocationCard hobbitLands
+        , SomeLocationCard drearyHills
+        , SomeLocationCard loneLands
+        , SomeLocationCard caveEntranceWesternLands
+        , SomeLocationCard theGoblinsCaves
         ]
     ]

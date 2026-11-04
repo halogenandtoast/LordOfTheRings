@@ -162,6 +162,15 @@ allObjectiveCards =
       , smeagolTheLandOfShadow
       , theOneRingTheRoadDarkens
       , mistyMountainEagle
+      , trollPurse
+      , trollKey
+      , aSmellySack
+      , aStrongSack
+      , aToughSack
+      , aLargeSack
+      , aDeepSack
+      , aFoulSack
+      , aWornSack
       ]
 
 durinsAxe :: CardDef
@@ -1141,3 +1150,36 @@ mistyMountainEagle =
     { cdCardTraits = setFromList [Creature, Eagle]
     , cdShadowEffect = True
     }
+
+-- * We Must Away, Ere Break of Day
+
+trollPurse :: CardDef
+trollPurse = unique (objective "131042" "Troll Purse" WeMustAwayEreBreakOfDay 1) {cdCardTraits = setFromList [Item]}
+
+trollKey :: CardDef
+trollKey = unique (objective "131043" "Troll Key" WeMustAwayEreBreakOfDay 1) {cdCardTraits = setFromList [Item]}
+
+-- | A Sack card: the scenario sets it in the sack deck, never the encounter deck.
+sackCard :: CardCode -> Name -> CardDef
+sackCard code name = (objective code name WeMustAwayEreBreakOfDay 1) {cdCardTraits = setFromList [Sack]}
+
+aSmellySack :: CardDef
+aSmellySack = sackCard "131044" "A Smelly Sack"
+
+aStrongSack :: CardDef
+aStrongSack = sackCard "131045" "A Strong Sack"
+
+aToughSack :: CardDef
+aToughSack = sackCard "131046" "A Tough Sack"
+
+aLargeSack :: CardDef
+aLargeSack = sackCard "131047" "A Large Sack"
+
+aDeepSack :: CardDef
+aDeepSack = sackCard "131048" "A Deep Sack"
+
+aFoulSack :: CardDef
+aFoulSack = sackCard "131049" "A Foul Sack"
+
+aWornSack :: CardDef
+aWornSack = sackCard "131050" "A Worn Sack"

@@ -374,6 +374,9 @@ import LordOfTheRings.Quest.Cards.TheEasternSpur
 import LordOfTheRings.Quest.Cards.BattleInTheDale
 import LordOfTheRings.Quest.Cards.TheDefenseOfRavenhill
 import LordOfTheRings.Quest.Cards.TheCloudsBurst
+import LordOfTheRings.Quest.Cards.AnUnexpectedParty
+import LordOfTheRings.Quest.Cards.RoastMutton
+import LordOfTheRings.Quest.Cards.DawnTakeYouAll
 import LordOfTheRings.Quest.Runner ()
 import LordOfTheRings.Quest.Types as X
 import LordOfTheRings.Id
@@ -780,5 +783,8 @@ allQuests =
         , SomeQuestCard battleInTheDale
         , SomeQuestCard theDefenseOfRavenhill
         , SomeQuestCard theCloudsBurst
+        , SomeQuestCard anUnexpectedParty
+        , SomeQuestCard roastMutton
+        , SomeQuestCard dawnTakeYouAll
         ]
     ]

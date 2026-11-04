@@ -526,6 +526,14 @@ import LordOfTheRings.Enemy.Cards.GundabadClimber
 import LordOfTheRings.Enemy.Cards.VanguardOfBolg
 import LordOfTheRings.Enemy.Cards.GundabadArcher
 import LordOfTheRings.Enemy.Cards.RavenousWarg
+import LordOfTheRings.Enemy.Cards.William
+import LordOfTheRings.Enemy.Cards.Bert
+import LordOfTheRings.Enemy.Cards.Tom
+import LordOfTheRings.Enemy.Cards.ASuspiciousCrow
+import LordOfTheRings.Enemy.Cards.GoblinAxeman
+import LordOfTheRings.Enemy.Cards.GoblinMiners
+import LordOfTheRings.Enemy.Cards.GoblinRunners
+import LordOfTheRings.Enemy.Cards.GoblinDriver
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -1081,5 +1089,13 @@ allEnemys =
         , SomeEnemyCard vanguardOfBolg
         , SomeEnemyCard gundabadArcher
         , SomeEnemyCard ravenousWarg
+        , SomeEnemyCard william
+        , SomeEnemyCard bert
+        , SomeEnemyCard tom
+        , SomeEnemyCard aSuspiciousCrow
+        , SomeEnemyCard goblinAxeman
+        , SomeEnemyCard goblinMiners
+        , SomeEnemyCard goblinRunners
+        , SomeEnemyCard goblinDriver
         ]
     ]

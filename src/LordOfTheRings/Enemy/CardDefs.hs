@@ -535,6 +535,14 @@ allEnemyCards =
       , vanguardOfBolg
       , gundabadArcher
       , ravenousWarg
+      , william
+      , bert
+      , tom
+      , aSuspiciousCrow
+      , goblinAxeman
+      , goblinMiners
+      , goblinRunners
+      , goblinDriver
       ]
 
 namelessThing :: CardDef
@@ -4393,3 +4401,54 @@ ravenousWarg =
     , cdShadowEffect = True
     , cdEasyModeQuantity = Just 1
     }
+
+-- * We Must Away, Ere Break of Day
+
+-- | A Troll set aside by stage 1A, added to the staging area by stage 2A.
+troll :: CardCode -> Name -> Int -> Int -> Int -> CardDef
+troll code name engagementCost hitPoints victory =
+  unique
+    (enemy code name WeMustAwayEreBreakOfDay 1 engagementCost 3 5 2 hitPoints)
+      { cdCardTraits = setFromList [Troll]
+      , cdVictoryPoints = Just victory
+      }
+
+william :: CardDef
+william = troll "131032" "William" 38 12 5
+
+bert :: CardDef
+bert = troll "131033" "Bert" 23 10 3
+
+tom :: CardDef
+tom = troll "131034" "Tom" 33 11 4
+
+-- * Western Lands
+
+aSuspiciousCrow :: CardDef
+aSuspiciousCrow =
+  (enemy "131035" "A Suspicious Crow" WesternLands 3 25 1 1 1 1)
+    { cdCardTraits = setFromList [Creature]
+    , cdWhenRevealed = True
+    , cdShadowEffect = True
+    }
+
+-- * Misty Mountain Goblins
+
+goblin :: CardCode -> Name -> Int -> Int -> Int -> Int -> Int -> CardDef
+goblin code name engagementCost threat attack defense hitPoints =
+  (enemy code name MistyMountainGoblins 3 engagementCost threat attack defense hitPoints)
+    { cdCardTraits = setFromList [Goblin, Orc]
+    , cdShadowEffect = True
+    }
+
+goblinAxeman :: CardDef
+goblinAxeman = goblin "131058" "Goblin Axeman" 25 2 1 2 2
+
+goblinMiners :: CardDef
+goblinMiners = goblin "131059" "Goblin Miners" 25 2 2 0 2
+
+goblinRunners :: CardDef
+goblinRunners = (goblin "131060" "Goblin Runners" 20 1 3 1 2) {cdKeywords = setFromList [Surge]}
+
+goblinDriver :: CardDef
+goblinDriver = (goblin "131061" "Goblin Driver" 30 3 2 2 3) {cdWhenRevealed = True}

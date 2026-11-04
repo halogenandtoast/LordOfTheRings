@@ -882,6 +882,15 @@ objectivesWithTrait trait =
 getTheOneRing :: HasGame m => m (Maybe AttachmentId)
 getTheOneRing = getsGame (fmap toId . find ((== toCardCode Attachments.theOneRing) . toCardCode) . toList . entitiesAttachments . gameEntities)
 
+-- | Bilbo Baggins, while he is in play: in The Hobbit's scenarios only the Baggins sphere
+-- Bilbo may be (The Hobbit: Over Hill and Under Hill rules insert, "Bilbo Baggins").
+getBilbo :: HasGame m => m (Maybe HeroId)
+getBilbo = headMay <$> select (HeroWithTitle "Bilbo Baggins")
+
+-- | The Baggins resources: those in Bilbo Baggins' resource pool.
+getBagginsResources :: HasGame m => m Int
+getBagginsResources = maybe (pure 0) (fmap (.resources) . getHero) =<< getBilbo
+
 -- | Whether the player controls The One Ring, as Master cards may only be used by him.
 -- It is controlled by whoever controls the hero it is attached to (FAQ 1.38).
 controlsTheOneRing :: HasGame m => PlayerId -> m Bool

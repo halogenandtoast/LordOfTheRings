@@ -126,6 +126,7 @@ export interface ServerGame {
     /** The Evil Creatures deck's size, while there is one, and its own discard pile (Journey Up the Anduin). */
     evilCreaturesDeckSize?: number
     powerOfMordorDeckSize?: number
+    sackDeckSize?: number
     evilCreaturesDiscard?: Card[]
     /** The player cards each encounter card, by its card id, guards: a Guarded (X) attachment, or Hobgoblin's card. */
     guardedPlayerCards?: Record<string, [string, Card][]>

@@ -4075,5 +4075,15 @@
         "text": "Stages 2, 3 and 4 are in play at the same time. At the beginning of each round, before resources are collected, the first player chooses which of them is the current quest for the round. Progress can only be placed on the current quest stage."
       }
     ]
+  },
+  "we-must-away-ere-break-of-day": {
+    "intro": [
+      "Bilbo has left the Shire with Gandalf, Thorin and the dwarves, bound for the Lonely Mountain. Not far into the wild, the company stumbles upon a camp of three hungry trolls."
+    ],
+    "setup": [
+      "Build the encounter deck from the We Must Away, Ere Break of Day and Western Lands encounter sets. The seven Sack objectives form a separate sack deck.",
+      "Sack X: the first player draws the top X cards of the sack deck, one at a time, and resolves their When Sacked effects. With the sack deck empty, Sack X is ignored. A Sack card that leaves play, or has no eligible target, is shuffled back into the sack deck.",
+      "The first player takes control of Bilbo Baggins. If he leaves play, the players lose."
+    ]
   }
 }

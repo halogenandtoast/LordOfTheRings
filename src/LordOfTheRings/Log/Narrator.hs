@@ -284,6 +284,9 @@ narrationFor = \case
       _ -> pure []
   CreatePowerOfMordorDeck -> Just $ one $ mechanic [ikeyPart "log.powerOfMordorDeckCreated" []]
   RevealTopOfPowerOfMordorDeck -> Just $ one $ toned Bad $ mechanic [ikeyPart "log.powerOfMordorReveals" []]
+  DrawFromSackDeck n -> Just $ one $ toned Bad $ mechanic [ikeyPart "log.sack" ["count" ~> n]]
+  DrawSackCard card -> Just $ one $ toned Bad $ mechanic [ikeyPart "log.sackCardDrawn" ["card" ~> EncounterCard card]]
+  ReturnToSackDeck oid -> Just $ whenRef (ObjectiveTarget oid) \o -> one $ mechanic [ikeyPart "log.returnedToSackDeck" ["card" ~> o]]
   -- an objective ally turning to its enemy side, as Captain Sahír's
   Flip (AllyTarget aid) -> Just $ whenRef (toTarget aid) \a -> one $ mechanic [ikeyPart "log.allyFlips" ["ally" ~> a]]
   -- Secret Cultist turns an ally into an enemy engaged with its owner

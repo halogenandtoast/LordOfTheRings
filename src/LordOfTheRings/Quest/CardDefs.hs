@@ -458,6 +458,9 @@ allQuestCards =
       , battleInTheDale
       , theDefenseOfRavenhill
       , theCloudsBurst
+      , anUnexpectedParty
+      , roastMutton
+      , dawnTakeYouAll
       ]
 
 theDrippingWalls :: CardDef
@@ -1916,3 +1919,16 @@ theDefenseOfRavenhill = (quest "132078" "The Defense of Ravenhill" TheBattleOfFi
 -- | Progress cannot be placed on it: Bolg's destruction wins the game.
 theCloudsBurst :: CardDef
 theCloudsBurst = (quest "132079" "The Clouds Burst" TheBattleOfFiveArmies 5 0) {cdQuestPoints = Nothing}
+
+-- * We Must Away, Ere Break of Day
+
+anUnexpectedParty :: CardDef
+anUnexpectedParty = quest "131023" "An Unexpected Party" WeMustAwayEreBreakOfDay 1 7
+
+-- | 1 quest point, though progress never goes on it: cards are discarded from the
+-- encounter deck instead.
+roastMutton :: CardDef
+roastMutton = quest "131024" "Roast Mutton" WeMustAwayEreBreakOfDay 2 1
+
+dawnTakeYouAll :: CardDef
+dawnTakeYouAll = quest "131025" "Dawn Take You All" WeMustAwayEreBreakOfDay 3 0

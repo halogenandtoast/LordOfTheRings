@@ -214,6 +214,9 @@ data ModifierType
   | -- | on an objective: discarded, it goes to the encounter discard pile, not back to the
     -- staging area, as Wormsbane
     LeavesPlayToEncounterDiscard
+  | -- | on a Sack objective: leaving play, it is shuffled back into the sack deck (We Must
+    -- Away, Ere Break of Day rules)
+    LeavesPlayToSackDeck
   | ShuffledIntoEncounterDeckWhenDefeated
   | -- | on an encounter card: as it leaves play the first player shuffles it into any
     -- player's deck, as Recurring Nightmare reads
@@ -297,6 +300,9 @@ data ModifierType
   | CannotBeHealed
   | -- | on an enemy: no character may attack it
     CannotBeAttacked
+  | -- | on an enemy: it can only be attacked by one character at a time, as Tom makes the
+    -- Troll enemies
+    AttackedByOneCharacterAtATime
   | -- | on an enemy: it has dealt damage this round, as Rock Adder reads
     DealtDamageThisRound
   | -- | on a character or enemy: damage dealt to it is canceled
@@ -572,6 +578,9 @@ data ModifierType
   | -- | on the game: the encounter discard pile is reset into the deck as soon as the deck
     -- is empty, in any phase, as Journey Along the Anduin's nightmare setup card reads
     EncounterDeckResetsWheneverEmpty
+  | -- | on the game: an empty encounter deck is not reset from the discard pile, even in the
+    -- quest phase, as Roast Mutton advances once no cards are left in it
+    EncounterDeckDoesNotReset
   | -- | on an enemy: the damage its attack deals past the character's remaining hit points
     -- is placed on the active location, as Collapsed Tower's shadow reads
     ExcessDamageToActiveLocation

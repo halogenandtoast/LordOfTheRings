@@ -1744,9 +1744,13 @@ runGameMessage msg g = case msg of
   DeclareAttackers pid eid -> do
     -- then other players' ranged characters may join an attack on an enemy engaged with them
     engaged <- engagedForAttack pid eid
-    alone <- elem OnlyEngagedPlayerFights <$> getModifiers eid
-    others <- if engaged && not alone then filter (/= pid) <$> getPlayerOrder else pure []
-    attackers <- ownAttackers pid eid
+    mods <- getModifiers eid
+    let alone = OnlyEngagedPlayerFights `elem` mods
+        -- one attacker only: once he is declared, no other joins him
+        single = AttackedByOneCharacterAtATime `elem` mods
+    declared <- notNull <$> selectCharacters AttackingHero AttackingAlly
+    others <- if engaged && not alone && not single then filter (/= pid) <$> getPlayerOrder else pure []
+    attackers <- if single && declared then pure [] else ownAttackers pid eid
     push
       $ if null attackers
         then DeclareRangedAttackers pid eid others
@@ -2790,6 +2794,14 @@ runGameMessage msg g = case msg of
     thisObjective <- newObjective card
     pushAll [SetObjectiveGuard (toId thisObjective) cid, CheckWindows [mkAfter $ EntersStagingArea (toTarget thisObjective)]]
     pure $ g & entitiesL . objectivesL %~ insertEntity (overAttrs (\a -> a {objectivePlacement = StagingArea}) thisObjective)
+  -- a Sack card drawn comes into play, unattached, to resolve its When Sacked effect
+  DrawSackCard card -> do
+    sack <- newObjective card
+    push $ WhenSacked (toId sack)
+    pure $ g & entitiesL . objectivesL %~ insertEntity sack
+  ReturnToSackDeck oid | Just o <- Map.lookup oid g.entities.objectives -> do
+    push $ ShuffleIntoSackDeck (MkEncounterCard (objectiveCardId $ toAttrs o) (toCardCode o))
+    pure $ g & entitiesL . objectivesL %~ Map.delete oid
   PutObjectiveIntoPlayAttached card host -> do
     thisObjective <- newObjective card
     pure $ g & entitiesL . objectivesL %~ insertEntity (overAttrs (\a -> a {objectivePlacement = AttachedTo host}) thisObjective)
@@ -3710,6 +3722,7 @@ discardFromPlay target g = case target of
       Just o | LeavesPlayToEncounterDiscard `elem` mods -> do
         push $ AddToEncounterDiscard [MkEncounterCard (objectiveCardId $ toAttrs o) (toCardCode o)]
         pure $ g & entitiesL . objectivesL %~ Map.delete oid
+      Just _ | LeavesPlayToSackDeck `elem` mods -> g <$ push (ReturnToSackDeck oid)
       _ ->
         g <$ push (if LeavesPlayToTopOfEncounterDeck `elem` mods then ReturnToTopOfEncounterDeck target else PlaceObjective oid StagingArea)
   _ -> pure g
