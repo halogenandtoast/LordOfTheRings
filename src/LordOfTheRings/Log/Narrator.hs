@@ -100,6 +100,7 @@ narrationFor = \case
   -- \* Threat
   RaiseThreat pid n | n > 0 -> Just $ threatChange "log.threatRaised" pid n (+ n)
   LowerThreat pid n | n > 0 -> Just $ threatChange "log.threatLowered" pid n (max 0 . subtract n)
+  AddToStartingThreat pid n | n > 0 -> Just $ threatChange "log.startingThreatRaised" pid n (+ n)
   ScenarioSpecific "tharbad.lowerElimination" v ->
     Just $ one $ toned Bad $ mechanic [ikeyPart "log.eliminationLevelLowered" ["count" ~> fromMaybe (10 :: Int) (parseMaybe parseJSON v)]]
   -- \* The heat tracker (Desert Crossing): read before it moves, so the new temperature is worked out
@@ -275,6 +276,13 @@ narrationFor = \case
   Flip (EnemyTarget eid) -> Just $ whenRef (toTarget eid) \e -> one $ mechanic [ikeyPart "log.enemyFlips" ["enemy" ~> e]]
   -- an objective ally turning to its enemy side, as Captain Sahír's
   Flip (AllyTarget aid) -> Just $ whenRef (toTarget aid) \a -> one $ mechanic [ikeyPart "log.allyFlips" ["ally" ~> a]]
+  -- a contract turns over: read before it does, so the side it turns to is the other one
+  Flip (ContractTarget cid) -> Just do
+    cs <- getsGame (entitiesContracts . gameEntities)
+    case Map.lookup cid cs of
+      Just c | cdDoubleSided (toCardDef c) -> whenRef (toTarget cid) \ref ->
+        one $ mechanic [ikeyPart (if c.flipped then "log.contractFlipsToA" else "log.contractFlipsToB") ["contract" ~> ref]]
+      _ -> pure []
   -- a location turns over, as an Uncharted one does: the side it turns to is named
   Flip (LocationTarget lid) -> Just do
     ls <- getsGame (entitiesLocations . gameEntities)
