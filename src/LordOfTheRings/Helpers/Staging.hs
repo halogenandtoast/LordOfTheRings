@@ -6,7 +6,9 @@ import LordOfTheRings.Helpers.Modifiers
 import LordOfTheRings.Matcher
 import LordOfTheRings.Modifier
 import LordOfTheRings.Prelude
+import LordOfTheRings.Classes.Entity (toId)
 import LordOfTheRings.Id
+import LordOfTheRings.Placement (Placement (OrcsArea))
 import LordOfTheRings.Target
 
 getEnemyThreat :: (HasGame m) => EnemyId -> m Int
@@ -25,9 +27,19 @@ getLocationThreat lid = do
 getStagingThreat :: (HasGame m) => m Int
 getStagingThreat = do
   cards <- getStagingThreats
-  bonus <- sum . mapMaybe (\case StagingThreatBonus n -> Just n; _ -> Nothing) <$> getModifiers GameTarget
+  gameMods <- getModifiers GameTarget
+  let bonus = sum $ mapMaybe (\case StagingThreatBonus n -> Just n; _ -> Nothing) gameMods
+  -- the cards in the Orcs' area, apart from the players' staging area, add theirs as they
+  -- are now, as Howling at their Heels has them (Race Across Harad)
+  orcs <-
+    if OrcsAreaThreatAddsToStaging `elem` gameMods
+      then do
+        enemies <- getsGame (map toId . filter ((== OrcsArea) . (.placement)) . toList . (.entities.enemies))
+        locations <- getsGame (map toId . filter ((== OrcsArea) . (.placement)) . toList . (.entities.locations))
+        (+) <$> (sum <$> traverse getEnemyThreat enemies) <*> (sum <$> traverse getLocationThreat locations)
+      else pure 0
   -- a reduction, as Followed's, takes it no lower than 0
-  pure $ max 0 (sum (map snd cards) + bonus)
+  pure $ max 0 (sum (map snd cards) + bonus + orcs)
 
 -- | What each card in the staging area adds to its threat, modifiers included.
 getStagingThreats :: (HasGame m) => m [(CardId, Int)]

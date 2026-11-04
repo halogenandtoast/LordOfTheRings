@@ -1,5 +1,6 @@
 module LordOfTheRings.Quest.Cards.LostUnderground (lostUnderground) where
 
+import LordOfTheRings.Card (toCardCode)
 import LordOfTheRings.Objective.CardDefs qualified as Objectives
 import LordOfTheRings.Quest.CardDefs qualified as Cards
 import LordOfTheRings.Quest.Import.Lifted
@@ -21,7 +22,8 @@ instance HasModifiersFor LostUnderground where
 {- | When Revealed: Flip the Search objective to Off Track.
 Response: When this stage is defeated, flip the Search objective to On Track and ignore its
 Forced effect until the end of the phase. The players gain by it, so it is taken, as Find
-Water's is; On Track is blank until the end of the phase.
+Water's is; On Track is blank until the end of the phase, while it shows On Track: flipped
+back to Off Track, Off Track's text is not.
 -}
 instance RunMessage LostUnderground where
   runMessage msg q@(LostUnderground attrs) = case msg of
@@ -30,6 +32,6 @@ instance RunMessage LostUnderground where
       pure q
     CompleteQuest qid | qid == attrs.id -> do
       turnSearchTo Objectives.onTrack
-      getSearchObjective >>= traverse_ \o -> phaseModifier attrs o Blank
+      getSearchObjective >>= traverse_ \o -> phaseModifiers attrs o [Blank, WhileShowing (toCardCode Objectives.onTrack)]
       LostUnderground <$> runMessage msg attrs
     _ -> LostUnderground <$> runMessage msg attrs

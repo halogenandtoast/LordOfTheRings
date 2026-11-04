@@ -26,7 +26,7 @@ instance HasModifiersFor Kahliel where
 instance HasAbilities Kahliel where
   getAbilities (Kahliel a) =
     [ limited (GroupLimit PerPhase 1)
-        $ restricted a 1 (CardInHandMatching a.owner haradAlly <> CharactersAtLeast 1 (ExhaustedHero <> HeroWithTrait Harad) (ExhaustedAlly <> AllyWithTrait Harad))
+        $ restricted a 1 (CardInHandToDiscard a.owner haradAlly <> CharactersAtLeast 1 (ExhaustedHero <> HeroWithTrait Harad) (ExhaustedAlly <> AllyWithTrait Harad))
         $ ActionAbility Free
     ]
 

@@ -146,6 +146,13 @@ spec = describe "The Mûmakil" do
     attached `shouldBe` [AttachedTo (EnemyTarget mumak)]
     length <$> setAsideCodes `shouldReturn` 7
 
+  it "cannot advance while there are more Wild Mûmakil in play than players" . mumakilTest $ \pid -> do
+    setup pid
+    _ <- stage Enemies.wildMumak
+    _ <- stage Enemies.wildMumak
+    q <- getActiveQuest
+    getModifiers (toTarget q) >>= (`shouldSatisfy` elem CannotBeDefeated)
+
   -- \* Stage 2
 
   it "cannot be defeated while a Capture objective is in play, and the players win once none is" . mumakilTest $ \pid -> do

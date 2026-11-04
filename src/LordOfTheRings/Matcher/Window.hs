@@ -377,7 +377,7 @@ windowMatches matcher (Window timing wType) = case (matcher, wType) of
   (PlayerPlayingEventWindow t pid, PlayingEvent pid' _) -> t == timing && pid == pid'
   (DamagedByEnemyAttackWindow t target, DamagedByEnemyAttack target' _) -> t == timing && target == target'
   (LocationEntersPlayWindow t, EntersStagingArea (LocationTarget _)) -> t == timing
-  (CardPlayedWindow t m, PlayedCard _ code) -> t == timing && cardMatches m code
+  (CardPlayedWindow t m, PlayedCard _ card) -> t == timing && cardMatches m card
   (EnemyOptionallyEngagedWindow t eid, OptionallyEngaged eid' _) -> t == timing && eid == eid'
   (AttackUndefendedWindow t pid, AttackUndefended pid' _) -> t == timing && pid == pid'
   (EnemyDefeatedWindow t, EnemyDefeated _) -> t == timing

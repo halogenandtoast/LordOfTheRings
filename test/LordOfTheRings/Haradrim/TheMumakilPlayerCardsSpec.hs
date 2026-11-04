@@ -56,6 +56,15 @@ spec = describe "The Mûmakil player cards" do
       isExhausted yazan `shouldReturn` False
       map (.id) . (.discard) <$> getPlayer pid `shouldReturn` [card.id]
 
+    it "discards a copy of a unique Harad ally already in play, which could not be played" . gameTestWith withKahliel $ \pid -> do
+      yazan <- putAllyIntoPlay pid Allies.yazan
+      run $ Exhaust yazan
+      card <- putCardIntoHand pid Allies.yazan
+      run $ ActionWindow pid
+      chooseAbilityOf pid =<< hero kahlielCode
+      isExhausted yazan `shouldReturn` False
+      map (.id) . (.discard) <$> getPlayer pid `shouldReturn` [card.id]
+
   describe "Andrath Guardsman" do
     it "keeps a non-unique engaged enemy from attacking you this round" . gameTest $ \pid -> do
       eid <- engagedEnemy pid Enemies.forestSpider

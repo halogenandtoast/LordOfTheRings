@@ -1,6 +1,6 @@
 module LordOfTheRings.Treachery.Cards.HowlingAtTheirHeels (howlingAtTheirHeels) where
 
-import LordOfTheRings.Scenario.Scenarios.RaceAcrossHarad.Helpers (atOrcsStage, orcsAreaThreat)
+import LordOfTheRings.Scenario.Scenarios.RaceAcrossHarad.Helpers (atOrcsStage)
 import LordOfTheRings.Treachery.CardDefs qualified as Cards
 import LordOfTheRings.Treachery.Import.Lifted
 
@@ -17,6 +17,8 @@ end of the phase. If the players are at the same stage as the Orcs, each enemy g
 threat until the end of the phase.
 Shadow: Raise your threat by 1.
 
+The Orcs' area's threat is read as it changes this phase: the scenario adds it to the
+staging area's while the effect lasts.
 -}
 instance RunMessage HowlingAtTheirHeels where
   runMessage msg t@(HowlingAtTheirHeels attrs) = case msg of
@@ -24,9 +26,7 @@ instance RunMessage HowlingAtTheirHeels where
       together <- atOrcsStage
       if together
         then select AnyEnemy >>= traverse_ \e -> phaseModifier attrs e (ThreatModifier 1)
-        else do
-          x <- orcsAreaThreat
-          when (x > 0) $ phaseModifier attrs GameTarget (StagingThreatBonus x)
+        else phaseModifier attrs GameTarget OrcsAreaThreatAddsToStaging
       pure t
     ResolveShadowEffect cid _ pid _ | cid == attrs.cardId -> do
       encounterRaisesThreat pid 1

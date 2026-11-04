@@ -1,6 +1,6 @@
 module LordOfTheRings.Treachery.Cards.DangerCloseBehind (dangerCloseBehind) where
 
-import LordOfTheRings.Scenario.Scenarios.TheCrossingsOfPoros.Helpers (randomFromLargestSetAside)
+import LordOfTheRings.Scenario.Scenarios.TheCrossingsOfPoros.Helpers (withRandomFromLargestSetAside)
 import LordOfTheRings.Treachery.CardDefs qualified as Cards
 import LordOfTheRings.Treachery.Import.Lifted
 
@@ -30,4 +30,4 @@ instance RunMessage DangerCloseBehind where
       pure t
     _ -> DangerCloseBehind <$> runMessage msg attrs
    where
-    revealRandomFromLargest = traverse_ revealSetAsideCard =<< randomFromLargestSetAside
+    revealRandomFromLargest = withRandomFromLargestSetAside revealSetAsideCard

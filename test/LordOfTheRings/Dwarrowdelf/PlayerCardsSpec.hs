@@ -542,7 +542,8 @@ spec = describe "Dwarrowdelf player cards" do
   it "Love of Tales adds a resource to its hero after a Song is played" . gameTest $ \pid -> do
     b <- hero beravor
     love <- putAttachmentOn pid Attachments.loveOfTales b
-    run $ CheckWindows [mkAfter $ PlayedCard pid (toCardCode Attachments.songOfEarendil)]
+    song <- genPlayerCard Attachments.songOfEarendil (Just pid)
+    run $ CheckWindows [mkAfter $ PlayedCard pid song]
     chooseAbilityOf pid love
     resourcesOf b `shouldReturn` 1
 

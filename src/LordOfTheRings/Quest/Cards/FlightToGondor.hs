@@ -6,11 +6,15 @@ import LordOfTheRings.Quest.CardDefs qualified as Cards
 import LordOfTheRings.Quest.Import.Lifted
 
 newtype FlightToGondor = FlightToGondor QuestAttrs
-  deriving anyclass (IsQuest, HasModifiersFor)
+  deriving anyclass IsQuest
   deriving newtype (Show, Eq, ToJSON, Entity)
 
 flightToGondor :: QuestCard FlightToGondor
 flightToGondor = quest FlightToGondor Cards.flightToGondor
+
+-- | Allies enter play exhausted.
+instance HasModifiersFor FlightToGondor where
+  getModifiersFor (FlightToGondor a) = when a.flipped $ modified a GameTarget [AlliesEnterPlayExhausted]
 
 -- | Forced: At the end of the planning phase, advance to a random stage 2 (the scenario
 -- picks it).
@@ -22,7 +26,6 @@ Mountains of Shadow, Desert Sands, Desert Creatures, Harad Soldiers, and Mordor 
 first player adds The Black Serpent to the staging area and shuffles the encounter deck.
 Each other player reveals an encounter card. The scenario set the cards aside as it
 gathered the encounter deck, The Black Serpent among them.
-Allies enter play exhausted.
 -}
 instance RunMessage FlightToGondor where
   runMessage msg q@(FlightToGondor attrs) = case msg of
@@ -34,9 +37,6 @@ instance RunMessage FlightToGondor where
       shuffleEncounterDeck
       others <- drop 1 <$> getRemainingPlayers
       revealEncounterCards (length others)
-      FlightToGondor <$> runMessage msg attrs
-    CheckWindows ws | attrs.flipped -> do
-      for_ [t | Window After (AllyEnteredPlay t _ _) <- ws] exhaust
       FlightToGondor <$> runMessage msg attrs
     UseCardAbility _ (isSource attrs -> True) 1 _ -> do
       completeQuest attrs.id
