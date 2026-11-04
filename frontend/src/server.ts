@@ -86,6 +86,8 @@ export interface ServerPlayer {
   handSize?: number
   discard: Card[]
   deckSize: number
+  /** Cards facedown under the threat dial, as Lost in the Dark places them. */
+  underThreatDialSize?: number
   /** Whether the player's cards follow the FAQ's errata. */
   errata?: boolean
 }

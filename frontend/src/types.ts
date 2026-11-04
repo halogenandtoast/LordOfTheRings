@@ -161,6 +161,8 @@ export interface PlayerView {
   eliminated: boolean
   handSize: number
   deckSize: number
+  /** cards facedown under the player's threat dial (Lost in the Dark) */
+  underThreatDialSize: number
   /** cards in the player's captured deck (Escape from Mount Gram) */
   capturedDeckSize: number
   discardSize: number

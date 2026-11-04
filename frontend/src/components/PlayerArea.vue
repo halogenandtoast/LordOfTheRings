@@ -68,6 +68,8 @@ onClickOutside(useTemplateRef('hand'), () => (handOpen.value = false))
 
     <div class="threat-box">
       <ThreatDial class="dial" :threat="player.threat" />
+      <!-- the cards facedown under the threat dial (Lost in the Dark) -->
+      <CardBack v-if="player.underThreatDialSize" :count="player.underThreatDialSize" back="player" :title="$t('log.underThreatDial', { count: player.underThreatDialSize })" />
       <!-- the dial's stand-in where there is no room for it -->
       <span class="threat-stat" :class="{ danger: player.threat >= 40 }" :title="$t('game.threat', { value: player.threat })">
         <span class="icon" :style="threatIcon" />{{ player.threat }}

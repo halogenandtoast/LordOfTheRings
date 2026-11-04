@@ -301,6 +301,15 @@ runPlayer msg player = case msg of
     ShuffleDiscardIntoDeck pid | pid == player.id -> do
       deck <- shuffleM (player.deck <> player.discard)
       pure $ player & deckL .~ deck & discardL .~ []
+    PlaceUnderThreatDial pid n | pid == player.id -> do
+      let (placed, rest) = splitAt n player.deck
+      pure $ player & deckL .~ rest & underThreatDialL <>~ placed
+    DiscardFromUnderThreatDial pid | pid == player.id -> case player.underThreatDial of
+      top : rest -> pure $ player & underThreatDialL .~ rest & discardL %~ (top :)
+      [] -> pure player
+    ShuffleUnderThreatDialIntoDeck pid | pid == player.id -> do
+      deck <- shuffleM (player.deck <> player.underThreatDial)
+      pure $ player & deckL .~ deck & underThreatDialL .~ []
     TakeFromDeck pid cid | pid == player.id -> do
       let (taken, kept) = partition ((== cid) . (.id)) player.deck
       pushAll [EncounterCardEnteredHand pid ec | EncounterCard ec <- taken]

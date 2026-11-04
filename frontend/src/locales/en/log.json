@@ -156,6 +156,10 @@
   "capturedRescued": "A captured card is rescued from underneath {card} | {count} captured cards are rescued from underneath {card}",
   "capturedUnderneath": "A captured card underneath | {count} captured cards underneath",
   "capturedDeck": "Captured deck: {count} cards",
+  "underThreatDial": "Under the threat dial: {count} cards",
+  "placesUnderThreatDial": "{player} places the top card of their deck facedown under their threat dial | {player} places the top {count} cards of their deck facedown under their threat dial",
+  "discardsFromUnderThreatDial": "{player} discards {card} from under their threat dial",
+  "shufflesUnderThreatDialIntoDeck": "{player} shuffles the cards under their threat dial back into their deck",
   "headingShifts": "The heading shifts to {heading}",
   "headingStays": "The heading stays at {heading}",
   "heading": {

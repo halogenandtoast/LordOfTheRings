@@ -1681,6 +1681,19 @@ drawTreacheryIntoHand pid = push . DrawTreacheryIntoHand pid
 shuffleDiscardIntoDeck :: ReverseQueue m => PlayerId -> m ()
 shuffleDiscardIntoDeck = push . ShuffleDiscardIntoDeck
 
+-- | The player places the top N cards of his deck facedown under his threat dial, without
+-- looking at them, as Lost in the Dark reads.
+placeUnderThreatDial :: ReverseQueue m => PlayerId -> Int -> m ()
+placeUnderThreatDial pid = push . PlaceUnderThreatDial pid
+
+-- | The player discards the top card from under his threat dial, if there is one.
+discardFromUnderThreatDial :: ReverseQueue m => PlayerId -> m ()
+discardFromUnderThreatDial = push . DiscardFromUnderThreatDial
+
+-- | The player shuffles all the cards under his threat dial back into his deck.
+shuffleUnderThreatDialIntoDeck :: ReverseQueue m => PlayerId -> m ()
+shuffleUnderThreatDialIntoDeck = push . ShuffleUnderThreatDialIntoDeck
+
 -- | The players make engagement checks, from the first player, as in the encounter phase.
 -- | The enemy in the staging area makes engagement checks against each player, as "it
 -- makes engagement checks against each player" reads.
