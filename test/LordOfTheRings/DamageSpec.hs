@@ -1,11 +1,25 @@
 module LordOfTheRings.DamageSpec (spec) where
 
 import Data.Map.Strict qualified as Map
+import LordOfTheRings.Effect (Effect (..), EffectDuration (UntilEndOfPhase))
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
+import LordOfTheRings.Modifier (ModifierType (ExhaustsCharactersDamagedByExcess))
 import TestImport
 
 spec :: Spec
 spec = describe "Damage" do
+  it "exhausts each character excess damage goes to, as Terrible Strength reads" . gameTest $ \pid -> do
+    _ <- setEncounterDeck [Enemies.forestSpider]
+    run RevealEncounterCard
+    spider <- getsGame (fromJustNote "no enemy" . headMay . map toId . toList . (.entities.enemies))
+    run $ CreateEffect $ Effect GameSource (EnemyTarget spider) [ExhaustsCharactersDamagedByExcess] UntilEndOfPhase
+    beravor <- toTarget <$> getHeroWithCode "01012"
+    eowyn <- toTarget <$> getHeroWithCode "01007"
+    run $ DamageAnotherCharacter (EnemyAttackSource spider) pid beravor
+    chooseTarget pid eowyn
+    getCharacterDamage eowyn `shouldReturn` 1
+    heroExhausted . toAttrs <$> getHeroWithCode "01007" `shouldReturn` True
+
   it "places damage on a character" . gameTest $ \_ -> do
     beravor <- getHeroWithCode "01012"
     run $ DealDamage GameSource (toTarget beravor) 2

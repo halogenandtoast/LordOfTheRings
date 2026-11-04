@@ -3,11 +3,11 @@ module LordOfTheRings.AngmarAwakened.TheDreadRealmSpec (spec) where
 import LordOfTheRings.Ally.CardDefs qualified as Allies
 import LordOfTheRings.Card.Synthetic qualified as Synthetic
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
-import LordOfTheRings.Helpers.Character (getAttack)
+import LordOfTheRings.Helpers.Character (getAttack, getWillpower)
 import LordOfTheRings.Helpers.Modifiers (getModifiers)
 import LordOfTheRings.Helpers.Staging (getEnemyAttack, getEnemyDefense, getLocationThreat)
 import LordOfTheRings.Location.CardDefs qualified as Locations
-import LordOfTheRings.Modifier (ModifierType (DoesNotCountWillpower, MustCommitToQuest))
+import LordOfTheRings.Modifier (ModifierType (MustCommitToQuest))
 import LordOfTheRings.Outcome (Outcome (Won))
 import LordOfTheRings.Phase (Phase (QuestPhase))
 import LordOfTheRings.Quest.CardDefs qualified as Quests
@@ -229,7 +229,9 @@ spec = describe "The Dread Realm" do
     reveal [Treacheries.aFellDread]
     eowyn <- toTarget <$> getHeroWithCode "01007"
     chooseTarget pid eowyn
-    getModifiers eowyn >>= (`shouldSatisfy` \ms -> all (`elem` ms) [DoesNotCountWillpower, MustCommitToQuest])
+    getModifiers eowyn >>= (`shouldSatisfy` elem MustCommitToQuest)
+    -- reduced to 0 wherever it is read, not only toward the quest
+    getWillpower eowyn `shouldReturn` 0
     run $ CommitCharacters pid
     Just q <- getQuestion pid
     [() | Label "$label.doneCommitting" _ <- questionChoices q] `shouldBe` []

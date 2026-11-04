@@ -18,18 +18,22 @@ theFiresSpread = treachery TheFiresSpread Cards.theFiresSpread
 instance RunMessage TheFiresSpread where
   runMessage msg t@(TheFiresSpread attrs) = case msg of
     WhenRevealed (isTarget attrs -> True) -> do
-      burning <- spread
-      when (burning < 3) revealEncounterCard
+      spread
+      doStep 1 msg
+      pure t
+    -- the damage it dealt, none counted for a location that took none
+    DoStep 1 (WhenRevealed (isTarget attrs -> True)) -> do
+      dealt <- sum . map snd <$> damageDealtBy attrs
+      when (dealt < 3) revealEncounterCard
       pure t
     ResolveShadowEffect cid eid _ _ | cid == attrs.cardId -> do
       ifThisAttackDestroys eid msg
       pure t
     DoStep 1 (ResolveShadowEffect cid _ _ _) | cid == attrs.cardId -> do
-      void spread
+      spread
       pure t
     _ -> TheFiresSpread <$> runMessage msg attrs
    where
     spread = do
       burning <- map fst <$> getAflameLocations
       for_ burning \l -> dealDamage attrs l 1
-      pure (length burning)

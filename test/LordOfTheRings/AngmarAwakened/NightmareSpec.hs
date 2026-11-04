@@ -1,6 +1,7 @@
 module LordOfTheRings.AngmarAwakened.NightmareSpec (spec) where
 
 import LordOfTheRings.Ally.CardDefs qualified as Allies
+import LordOfTheRings.Attachment.CardDefs qualified as Attachments
 import LordOfTheRings.Card.Synthetic qualified as Synthetic
 import LordOfTheRings.Card (CardDef (cdKeywords), CardType (HeroType), cdCardType, toCard, toCardDef)
 import LordOfTheRings.Keyword (Keyword (Safe))
@@ -11,6 +12,7 @@ import LordOfTheRings.Hero.CardDefs qualified as Heroes
 import LordOfTheRings.Helpers.Modifiers (getModifiers)
 import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Matcher (PlayerMatcher (AnyPlayer), getEnemy)
+import LordOfTheRings.Effect (Effect (..), EffectDuration (UntilEndOfPhase))
 import LordOfTheRings.Modifier (ModifierType (..))
 import LordOfTheRings.Objective.CardDefs qualified as Objectives
 import LordOfTheRings.Quest.CardDefs qualified as Quests
@@ -154,6 +156,16 @@ spec = describe "Angmar Awakened Nightmare mode" do
       reveal [Treacheries.torrentOfHail]
       getCharacterDamage eowyn `shouldReturn` 1
 
+    it "Torrent of Hail, at Night, discards only from characters its damage reached" . nightmare theWastesOfEriador $ \pid -> do
+      timeShowing Objectives.nightfall
+      eowyn <- toTarget <$> getHeroWithCode "01007"
+      run $ CommitToQuest eowyn
+      run $ CreateEffect $ Effect GameSource eowyn [CannotTakeDamage] UntilEndOfPhase
+      _ <- putAttachmentOn pid Attachments.bladeOfGondolin eowyn
+      reveal [Treacheries.torrentOfHail]
+      getCharacterDamage eowyn `shouldReturn` 0
+      getsGame (length . (.entities.attachments)) `shouldReturn` 1
+
     it "Make a Stand turns Day to Night and keeps it Night" . nightmare theWastesOfEriador $ \pid -> do
       timeShowing Objectives.daybreak
       _ <- setEncounterDeck [Locations.northDowns, Locations.northDowns]
@@ -228,6 +240,16 @@ spec = describe "Angmar Awakened Nightmare mode" do
       replicateM_ 8 $ putCardIntoHand pid Allies.silverlodeArcher
       reveal [Treacheries.cruelTorment, Locations.prisonCellNightmare]
       getQuestion pid >>= (`shouldSatisfy` isJust)
+
+    it "Cruel Torment trims a hand that grows past 6 any way, not only by drawing" . nightmare escapeFromMountGram $ \pid -> do
+      _ <- putQuestStage Quests.flightFromMountGram
+      held <- length . (.hand) <$> getPlayer pid
+      replicateM_ (6 - held) $ putCardIntoHand pid Allies.silverlodeArcher
+      reveal [Treacheries.cruelTorment, Locations.prisonCellNightmare]
+      getQuestion pid >>= (`shouldSatisfy` isNothing)
+      run . PutInHand =<< genPlayerCard Allies.silverlodeArcher (Just pid)
+      chooseOptionMatching "discard a card" pid (const True)
+      length . (.hand) <$> getPlayer pid `shouldReturn` 6
 
     it "Goblin Patrol raises each threat by the cards left in hand" . nightmare escapeFromMountGram $ \pid -> do
       _ <- putQuestStage Quests.flightFromMountGram
@@ -473,6 +495,16 @@ spec = describe "Angmar Awakened Nightmare mode" do
       reveal [Treacheries.howlingOfWargs, Locations.strongholdTower]
       chooseLabel "$label.howlingOfWargs.shadow" pid
       length . (.shadowCards) <$> getEnemy elite `shouldReturn` 1
+
+    it "Howling of Wargs' shadow deals a shadow card only to engaged enemies that have not attacked this phase" . nightmare theBattleOfCarnDum $ \pid -> do
+      attacking <- staged Enemies.thaurdirsElite
+      run $ EngageEnemy pid attacking
+      attacked <- staged Enemies.thaurdirsHunter
+      run $ EngageEnemy pid attacked
+      run $ CreateEffect $ Effect GameSource (toTarget attacked) [AttackedThisPhase] UntilEndOfPhase
+      _ <- setEncounterDeck [Locations.strongholdTower, Locations.strongholdTower]
+      shadow pid attacking Treacheries.howlingOfWargs []
+      length . (.shadowCards) <$> getEnemy attacked `shouldReturn` 0
 
     it "Black Mare gives Thaurdir 3 hit points, and raises each threat as he flips" . nightmare theBattleOfCarnDum $ \pid -> do
       thaurdir <- staged Enemies.thaurdirCaptain
