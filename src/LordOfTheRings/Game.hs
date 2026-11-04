@@ -2877,7 +2877,7 @@ runGameMessage msg g = case msg of
         location <- newLocation card
         -- a guarded one, as Across the Ettenmoors' objective-locations, is guarded by the
         -- next card before its surge
-        let guarded = [GuardLocation (toId location) | Guarded `member` cdKeywords def]
+        let guarded = guardLocation (toId location) def
         pushAll . (<> guarded <> [ResolveSurge (toTarget location) card]) =<< revealing (toTarget location)
         pure
           $ g
@@ -3166,6 +3166,9 @@ runGameMessage msg g = case msg of
     LocationType -> do
       thisLocation <- newLocation card
       push $ CheckWindows [mkAfter $ EntersStagingArea (toTarget thisLocation)]
+      -- Guarded (X) resolves as the card enters play, not only as it is revealed (MEC65
+      -- rules), as Searching for a Way Out puts an objective-location into play
+      pushAll [GuardLocationBy (toId thisLocation) ts | GuardedBy ts <- toList (cdKeywords $ toCardDef card)]
       pure
         $ g
         & entitiesL
@@ -4074,3 +4077,9 @@ progressFirst source n firsts rest = do
     _ ->
       questionLabelWith (ikey "label.progressFirst") Nothing (map (toTarget . fst) firsts) lead
         $ [targetLabel lid (place first) | first@(lid, _) <- firsts]
+
+-- | A location guarded as it is revealed: by the next card (Guarded), or by the first card
+-- of its types discarded (Guarded (X)).
+guardLocation :: LocationId -> CardDef -> [Message]
+guardLocation lid def =
+  [GuardLocation lid | Guarded `member` cdKeywords def] <> [GuardLocationBy lid ts | GuardedBy ts <- toList (cdKeywords def)]
