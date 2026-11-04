@@ -43,6 +43,7 @@ import LordOfTheRings.Question
 import LordOfTheRings.Source
 import LordOfTheRings.Target
 import LordOfTheRings.Token
+import LordOfTheRings.Trait (Trait (Master))
 import LordOfTheRings.Treachery.Types ()
 import LordOfTheRings.Window (
   Window (Window),
@@ -526,9 +527,14 @@ canPayAdditional p c = case cdAdditionalCost (toCardDef c) of
     pure $ not barred && length [x | x <- discardableHand p, x.id /= c.id] >= n
   _ -> pure True
 
--- | Whether the game forbids playing the card.
+-- | Whether the game forbids playing the card; a Master card too, but to the player who
+-- controls The One Ring (A Shadow in the East rules, "The One Ring & The Master Trait").
 cannotPlay :: HasGame m => PlayerId -> Card -> m Bool
-cannotPlay pid c = notNull <$> playProhibitions pid c
+cannotPlay pid c =
+  orM
+    [ notNull <$> playProhibitions pid c
+    , andM [pure $ Master `member` cdCardTraits (toCardDef c), not <$> controlsTheOneRing pid]
+    ]
 
 canAfford :: HasGame m => Player -> Card -> m Bool
 canAfford p c = do
