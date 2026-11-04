@@ -713,6 +713,9 @@ data ModifierType
   | -- | on the game: each character defending the attack that takes no damage from it
     -- readies, as Hold the Line reads
     ReadyUndamagedDefenders
+  | -- | on an enemy, for an attack: the attack deals no damage, though it resolves, its
+    -- shadow cards too, as Frodo Baggins (The Road Darkens) makes it
+    AttackDealsNoDamage
   | -- | on a player: he is eliminated at the end of the round, as Justice Shall Be Done reads
     EliminatedAtEndOfRound
   | -- | on a player: he draws 1 card each time he attacks and destroys an enemy, as

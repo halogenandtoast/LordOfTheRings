@@ -1611,6 +1611,7 @@ runGameMessage msg g = case msg of
             $ [targetLabel d (defend d) | d <- sentinels]
             <> [Label (ikey "label.doNotDefend") [DeclareSentinels pid eid chosen rest]]
     pure g
+  DefendedByMany _ eid _ | dealsNoDamage g eid -> pure g
   DefendedByMany pid eid (filter (inPlay g) -> []) -> g <$ push (UndefendedDamage pid eid)
   DefendedByMany pid eid (filter (inPlay g) -> defenders) -> do
     attack <- getEnemyAttack eid
@@ -1846,6 +1847,8 @@ runGameMessage msg g = case msg of
       CheckWindows ws -> CheckWindows (filter (not . attacking) ws)
       m -> m
     pure g
+  -- an attack that deals no damage, as Frodo Baggins (The Road Darkens) makes one
+  AttackDamage eid _ | dealsNoDamage g eid -> pure g
   -- an attack turned on another enemy, as Small Target's, deals that enemy its damage
   AttackDamage eid target@(EnemyTarget other) -> do
     when (inPlay g target) do
@@ -3488,6 +3491,10 @@ runGameMessage msg g = case msg of
         . objectivesL
         %~ insertEntity (overAttrs (\a -> a {objectivePlacement = StagingArea}) thisObjective)
   _ -> pure g
+
+-- | The enemy's attack deals no damage, as Frodo Baggins (The Road Darkens) makes it.
+dealsNoDamage :: Game -> EnemyId -> Bool
+dealsNoDamage g eid = AttackDealsNoDamage `elem` map modifierType (Map.findWithDefault [] (EnemyTarget eid) (gameModifiers g))
 
 -- | An objective ally that a player gains control of as it enters play.
 gainsController :: CardDef -> Bool
