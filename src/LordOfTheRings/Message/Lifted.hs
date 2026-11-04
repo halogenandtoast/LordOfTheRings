@@ -19,7 +19,7 @@ import LordOfTheRings.Classes.HasQueue
 import LordOfTheRings.Effect
 import LordOfTheRings.Entities (entitiesLocations, entitiesQuests)
 import LordOfTheRings.Game.Base (gameEntities, gamePhase)
-import LordOfTheRings.Helpers.Modifiers (cardsPlayedThisRound, getModifiers, immuneToSource)
+import LordOfTheRings.Helpers.Modifiers (cardsPlayedThisRound, getModifiers, immuneToSource, onlyMasterCardsAffect)
 import LordOfTheRings.Helpers.Staging (getLocationQuestPoints)
 import LordOfTheRings.Ally.Types (allyCardId)
 import LordOfTheRings.Hero.Types (heroCardId)
@@ -249,7 +249,7 @@ is gone, with its traits as it left, as Éothain answers; one destroyed by damag
 discarded by the game, not this.
 -}
 discard :: (ReverseQueue m, Targetable target) => target -> m ()
-discard (toTarget -> t) = do
+discard (toTarget -> t) = unlessM (onlyMasterCardsAffect t) do
   push $ Discard t
   case t of
     AllyTarget aid -> do
@@ -271,14 +271,29 @@ ready (toTarget -> t) = do
         HeroTarget _ -> True
         AllyTarget _ -> True
         _ -> False
-  unless (character && barred) $ push (Ready t)
+  unless (character && barred) $ cardEffectOn t (Ready t)
 
 -- | An encounter or quest card's effect readies the card, as Find Water's own Response.
 encounterReadies :: (ReverseQueue m, Targetable target) => target -> m ()
 encounterReadies = push . Ready . toTarget
 
 exhaust :: (ReverseQueue m, Targetable target) => target -> m ()
-exhaust = push . Exhaust . toTarget
+exhaust (toTarget -> t) = cardEffectOn t (Exhaust t)
+
+{- | A card effect's message on the card, unless only Master cards' effects touch it, as The
+One Ring's: the verbs that push through this are never a Master card's (a Master card's
+"Exhaust The One Ring" is its cost, 'theOneRingCost' or 'payTheOneRing').
+-}
+cardEffectOn :: ReverseQueue m => Target -> Message -> m ()
+cardEffectOn t msg = unlessM (onlyMasterCardsAffect t) $ push msg
+
+{- | "Exhaust The One Ring and raise your threat by 1", a Master event's cost, paid as it
+resolves: its criteria, 'theOneRingReady', have checked he can.
+-}
+payTheOneRing :: ReverseQueue m => PlayerId -> m ()
+payTheOneRing pid = do
+  traverse_ (push . Exhaust . AttachmentTarget) =<< getTheOneRing
+  raiseThreat pid 1
 
 -- | The character is committed to the quest, as Avalanche! commits those it exhausts.
 commitToQuest :: (ReverseQueue m, Targetable target) => target -> m ()
@@ -782,7 +797,7 @@ cancelShadowEffects windows =
       _ -> False
 
 returnToHand :: (ReverseQueue m, Targetable target) => target -> m ()
-returnToHand = push . ReturnToHand . toTarget
+returnToHand (toTarget -> t) = cardEffectOn t (ReturnToHand t)
 
 -- | A player card from out of play goes to its owner's hand, as Lost in the Wilderness
 -- returns the cards underneath it.
@@ -895,7 +910,7 @@ attachObjective oid = push . ClaimObjective oid . toTarget
 
 -- | Move an attachment to another host.
 moveAttachment :: (ReverseQueue m, Targetable host) => AttachmentId -> host -> m ()
-moveAttachment aid = push . AttachCard aid . toTarget
+moveAttachment aid = cardEffectOn (AttachmentTarget aid) . AttachCard aid . toTarget
 
 {- | An objective card, taken from where it was, comes into play attached to the hero, as
 "have the first player attach Cave Torch to a hero of his choice" reads.
@@ -910,15 +925,15 @@ putObjectiveIntoPlayGuardedBy card = push . PutObjectiveIntoPlayGuardedBy card
 
 -- | The card leaves play for good: an objective or a location.
 removeFromGame :: (ReverseQueue m, Targetable target) => target -> m ()
-removeFromGame = push . RemoveFromGame . toTarget
+removeFromGame (toTarget -> t) = cardEffectOn t (RemoveFromGame t)
 
 -- | The character is shuffled into its owner's deck, as Lost and Alone does with a hero.
 shuffleIntoOwnersDeck :: (ReverseQueue m, Targetable target) => target -> m ()
-shuffleIntoOwnersDeck = push . ShuffleIntoOwnersDeck . toTarget
+shuffleIntoOwnersDeck (toTarget -> t) = cardEffectOn t (ShuffleIntoOwnersDeck t)
 
 -- | The ally leaves play for the bottom of its owner's deck, as Curious Brandybuck.
 putOnBottomOfOwnersDeck :: (ReverseQueue m, Targetable target) => target -> m ()
-putOnBottomOfOwnersDeck = push . PutOnBottomOfOwnersDeck . toTarget
+putOnBottomOfOwnersDeck (toTarget -> t) = cardEffectOn t (PutOnBottomOfOwnersDeck t)
 
 putObjectiveAllyIntoPlay :: ReverseQueue m => ObjectiveId -> PlayerId -> m ()
 putObjectiveAllyIntoPlay oid = push . PutObjectiveAllyIntoPlay oid

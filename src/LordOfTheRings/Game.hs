@@ -1982,7 +1982,8 @@ runGameMessage msg g = case msg of
     damaged <- if inPlay g c then (> before) <$> getDamage c else pure False
     pushWhen damaged $ Exhaust c
     pure g
-  ChooseAndDiscard source pid targets -> do
+  ChooseAndDiscard source pid targets0 -> do
+    targets <- filterM (fmap not . immuneToSource source) targets0
     unless (null targets)
       $ push
       $ questionLabelWith

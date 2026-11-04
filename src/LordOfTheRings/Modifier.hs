@@ -49,6 +49,8 @@ data ModifierType
     ImmuneToPlayerCardEffects
   | -- | on a card in play: player events do not touch it, as The Shattered Monument reads
     ImmuneToPlayerEvents
+  | -- | on a card in play: only Master cards' effects touch it, as The One Ring reads
+    ImmuneToNonMasterCardEffects
   | -- | on a location: no card effect, player or encounter, places or removes its tokens
     ImmuneToCardEffects
   | -- | on a location: player card effects cannot place progress on it, as Retake the City
