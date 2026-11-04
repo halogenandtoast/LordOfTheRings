@@ -396,6 +396,7 @@ allQuestCards =
       , retrieveUrdugsHorn
       , findDurinsKey
       , urdugsGambit
+      , warriorsOfTheEast
       ]
 
 theDrippingWalls :: CardDef
@@ -1594,3 +1595,12 @@ findDurinsKey = quest "19050" "Find Durin's Key" RoamAcrossRhovanion 2 5
 
 urdugsGambit :: CardDef
 urdugsGambit = quest "19051" "Urdug's Gambit" RoamAcrossRhovanion 3 5
+
+-- * A Shadow in the East's shared encounter sets
+
+warriorsOfTheEast :: CardDef
+warriorsOfTheEast =
+  (encounterSideQuest "21024" "Warriors of the East" EasterlingRaiders 8)
+    { cdKeywords = setFromList [Surge]
+    , cdVictoryPoints = Just 10
+    }

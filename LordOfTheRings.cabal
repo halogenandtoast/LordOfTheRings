@@ -625,6 +625,7 @@ library
       LordOfTheRings.Enemy.Cards.Dwimmerlaik
       LordOfTheRings.Enemy.Cards.EastBightPatrol
       LordOfTheRings.Enemy.Cards.EasterlingCaptain
+      LordOfTheRings.Enemy.Cards.EasterlingRaider
       LordOfTheRings.Enemy.Cards.EasternCrows
       LordOfTheRings.Enemy.Cards.ElderNamelessThing
       LordOfTheRings.Enemy.Cards.EliteMarauder
@@ -943,6 +944,7 @@ library
       LordOfTheRings.Enemy.Cards.WargRider
       LordOfTheRings.Enemy.Cards.Wargs
       LordOfTheRings.Enemy.Cards.WarriorOfNurn
+      LordOfTheRings.Enemy.Cards.WarriorOfRhun
       LordOfTheRings.Enemy.Cards.WebSpinner
       LordOfTheRings.Enemy.Cards.Werewolf
       LordOfTheRings.Enemy.Cards.WerewolfOfAngmar
@@ -2212,6 +2214,7 @@ library
       LordOfTheRings.Quest.Cards.UrdugsAssault
       LordOfTheRings.Quest.Cards.UrdugsGambit
       LordOfTheRings.Quest.Cards.UruksOfTheEye
+      LordOfTheRings.Quest.Cards.WarriorsOfTheEast
       LordOfTheRings.Quest.Cards.WashedAway
       LordOfTheRings.Quest.Cards.WelcomeToTheJungle
       LordOfTheRings.Quest.Cards.WoodmenUnderAttack
@@ -2619,6 +2622,7 @@ library
       LordOfTheRings.Treachery.Cards.RaisingTheCry
       LordOfTheRings.Treachery.Cards.RammingSpeed
       LordOfTheRings.Treachery.Cards.RavenTalisman
+      LordOfTheRings.Treachery.Cards.RecurveBow
       LordOfTheRings.Treachery.Cards.RelentlessAttack
       LordOfTheRings.Treachery.Cards.RemnantsOfElderDays
       LordOfTheRings.Treachery.Cards.RestlessEvil
@@ -2682,6 +2686,7 @@ library
       LordOfTheRings.Treachery.Cards.SwarmingInsect
       LordOfTheRings.Treachery.Cards.SwarmingMosquitoes
       LordOfTheRings.Treachery.Cards.SwarmOfBats
+      LordOfTheRings.Treachery.Cards.SwordOfRhun
       LordOfTheRings.Treachery.Cards.TakeCover
       LordOfTheRings.Treachery.Cards.TakenPrisoner
       LordOfTheRings.Treachery.Cards.TakingOnWater

@@ -312,6 +312,7 @@ import LordOfTheRings.Quest.Cards.RescueTiny
 import LordOfTheRings.Quest.Cards.RetrieveUrdugsHorn
 import LordOfTheRings.Quest.Cards.FindDurinsKey
 import LordOfTheRings.Quest.Cards.UrdugsGambit
+import LordOfTheRings.Quest.Cards.WarriorsOfTheEast
 import LordOfTheRings.Quest.Runner ()
 import LordOfTheRings.Quest.Types as X
 import LordOfTheRings.Id
@@ -656,5 +657,6 @@ allQuests =
         , SomeQuestCard retrieveUrdugsHorn
         , SomeQuestCard findDurinsKey
         , SomeQuestCard urdugsGambit
+        , SomeQuestCard warriorsOfTheEast
         ]
     ]

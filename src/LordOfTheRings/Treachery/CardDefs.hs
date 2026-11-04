@@ -398,6 +398,8 @@ allTreacheryCards =
       , vastnessOfMirkwood
       , stinker
       , easterlingHorse
+      , swordOfRhun
+      , recurveBow
       ]
 
 deepDeepDark :: CardDef
@@ -2524,3 +2526,19 @@ stinker =
 
 easterlingHorse :: CardDef
 easterlingHorse = (treachery "21019" "Easterling Horse" RidersOfRhun 3) {cdCardTraits = setFromList [Easterling]}
+
+swordOfRhun :: CardDef
+swordOfRhun =
+  (treachery "21022" "Sword of Rhûn" EasterlingRaiders 2)
+    { cdCardTraits = setFromList [Easterling]
+    , cdKeywords = setFromList [Surge]
+    , cdEasyModeQuantity = Just 1
+    }
+
+recurveBow :: CardDef
+recurveBow =
+  (treachery "21023" "Recurve Bow" EasterlingRaiders 2)
+    { cdCardTraits = setFromList [Easterling]
+    , cdKeywords = setFromList [Surge]
+    , cdEasyModeQuantity = Just 1
+    }

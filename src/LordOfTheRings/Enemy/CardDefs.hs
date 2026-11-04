@@ -468,6 +468,8 @@ allEnemyCards =
       , khamulTheEasterling
       , easterlingCaptain
       , riderOfRhun
+      , easterlingRaider
+      , warriorOfRhun
       ]
 
 namelessThing :: CardDef
@@ -3835,4 +3837,20 @@ riderOfRhun =
     , cdKeywords = setFromList [Archery 2]
     , cdWhenRevealed = True
     , cdEasyModeQuantity = Just 1
+    }
+
+easterlingRaider :: CardDef
+easterlingRaider =
+  (enemy "21020" "Easterling Raider" EasterlingRaiders 3 28 2 2 2 3)
+    { cdCardTraits = setFromList [Easterling]
+    , cdKeywords = setFromList [Archery 1]
+    , cdShadowEffect = True
+    }
+
+warriorOfRhun :: CardDef
+warriorOfRhun =
+  (enemy "21021" "Warrior of Rhûn" EasterlingRaiders 3 34 3 3 3 4)
+    { cdCardTraits = setFromList [Easterling]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 2
     }

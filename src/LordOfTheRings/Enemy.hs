@@ -459,6 +459,8 @@ import LordOfTheRings.Enemy.Cards.GollumASitE
 import LordOfTheRings.Enemy.Cards.KhamulTheEasterling
 import LordOfTheRings.Enemy.Cards.EasterlingCaptain
 import LordOfTheRings.Enemy.Cards.RiderOfRhun
+import LordOfTheRings.Enemy.Cards.EasterlingRaider
+import LordOfTheRings.Enemy.Cards.WarriorOfRhun
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -946,5 +948,7 @@ allEnemys =
         , SomeEnemyCard khamulTheEasterling
         , SomeEnemyCard easterlingCaptain
         , SomeEnemyCard riderOfRhun
+        , SomeEnemyCard easterlingRaider
+        , SomeEnemyCard warriorOfRhun
         ]
     ]

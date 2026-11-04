@@ -2786,5 +2786,8 @@
   },
   "easterlingCaptain": {
     "discard": "Easterling Captain: choose an Easterling attachment to discard from him"
+  },
+  "warriorsOfTheEast": {
+    "attack": "Warriors of the East: choose a tied enemy to attack the first player"
   }
 }

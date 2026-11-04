@@ -388,6 +388,8 @@ import LordOfTheRings.Treachery.Cards.UnseenDanger
 import LordOfTheRings.Treachery.Cards.VastnessOfMirkwood
 import LordOfTheRings.Treachery.Cards.Stinker
 import LordOfTheRings.Treachery.Cards.EasterlingHorse
+import LordOfTheRings.Treachery.Cards.SwordOfRhun
+import LordOfTheRings.Treachery.Cards.RecurveBow
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -803,5 +805,7 @@ allTreacherys =
         , SomeTreacheryCard vastnessOfMirkwood
         , SomeTreacheryCard stinker
         , SomeTreacheryCard easterlingHorse
+        , SomeTreacheryCard swordOfRhun
+        , SomeTreacheryCard recurveBow
         ]
     ]
