@@ -9,7 +9,7 @@ module LordOfTheRings.Message.Lifted (
 ) where
 
 import LordOfTheRings.Campaign (CampaignLogUpdate)
-import LordOfTheRings.Card (Card (..), CardDef, CardType, EncounterCard, HasCardCode (..), IsCard (..), PlayerCard, cdCardTraits, cdCardType, toCardDef)
+import LordOfTheRings.Card (Card (..), CardDef, CardType, EncounterCard, HasCardCode (..), IsCard (..), PlayerCard, cdCardTraits, cdCardType, genPlayerCard, toCardDef)
 import LordOfTheRings.Classes.Entity (Entity (toAttrs))
 import LordOfTheRings.Scenario.Types (ScenarioAttrs (scenarioSetAside))
 import LordOfTheRings.Classes.HasGame (HasGame, getsGame)
@@ -270,6 +270,32 @@ roundModifier source target = roundModifiers source target . pure
 -- | For each player still in the game, in turn order from the first player.
 eachPlayer :: ReverseQueue m => (PlayerId -> m ()) -> m ()
 eachPlayer f = traverse_ f =<< getRemainingPlayers
+
+{- | Each player still in the game, in turn order from the first player, may take one of
+the cards (a boon), shown under the label. The box holds one copy of each, so a card one
+player takes is not offered to the players after.
+-}
+eachPlayerMayTakeOneOf
+  :: ReverseQueue m
+  => Text
+  -> Maybe Target
+  -> [CardDef]
+  -> (forall n. ReverseQueue n => PlayerId -> PlayerCard -> n ())
+  -> m ()
+eachPlayerMayTakeOneOf label source defs f = go defs =<< getRemainingPlayers
+ where
+  go :: ReverseQueue k => [CardDef] -> [PlayerId] -> k ()
+  go _ [] = pure ()
+  go left (p : ps) = do
+    cards <- traverse (`genPlayerCard` Just p) left
+    chooseOneM p do
+      questionLabeled label
+      for_ source causedBy
+      showing (map PlayerCard cards)
+      labeled "pass" $ go left ps
+      for_ (zip left cards) \(def, c) -> targeting (CardIdTarget c.id) do
+        f p c
+        go (filter ((/= toCardCode def) . toCardCode) left) ps
 
 {- | The player chooses a player still in the game, the card causing it marked; with one
 player left there is no choice.
