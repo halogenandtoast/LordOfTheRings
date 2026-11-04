@@ -34,7 +34,7 @@ instance RunMessage InspiringFury where
       pure t
     ResolveShadowEffect cid eid pid defenders | cid == attrs.cardId -> do
       shuffleEncounterDiscardIntoDeck AnyCard
-      attackModifier (CardIdSource cid) GameTarget ShadowEffectsCannotBeCanceled
+      attackModifier (CardIdSource cid) GameTarget CannotCancelShadowEffects
       dealShadowCardsDuringAttack eid pid defenders 3
       pure t
     _ -> InspiringFury <$> runMessage msg attrs

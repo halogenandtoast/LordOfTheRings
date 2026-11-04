@@ -19,8 +19,12 @@ instance HasAbilities ThrorsMap where
   getAbilities (ThrorsMap a) =
     errataOr
       a.owner
-      (restricted a 1 (DuringPhase TravelPhase <> exists LocationInStagingArea) $ ActionAbility Free)
-      (restricted a 1 (exists LocationInStagingArea) $ ActionAbility (ExhaustCost $ toTarget a))
+      (restricted a 1 (DuringPhase TravelPhase <> exists LocationInStagingArea <> activeMayReturn) $ ActionAbility Free)
+      (restricted a 1 (exists LocationInStagingArea <> activeMayReturn) $ ActionAbility (ExhaustCost $ toTarget a))
+   where
+    -- an active location that cannot return to the staging area, as Shrine to Morgoth,
+    -- leaves no room for another
+    activeMayReturn = NotCriterion (exists $ IsActiveLocation <> not_ LocationCanEnterStagingArea)
 
 instance RunMessage ThrorsMap where
   runMessage msg s@(ThrorsMap a) = case msg of

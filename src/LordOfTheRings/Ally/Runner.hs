@@ -7,7 +7,7 @@ import LordOfTheRings.Classes.HasQueue (HasQueue, push, pushAll, pushWhen)
 import LordOfTheRings.Classes.RunMessage
 import LordOfTheRings.Helpers.Modifiers (doesNotExhaustToCommit, getModifiers)
 import LordOfTheRings.Message
-import LordOfTheRings.Modifier (ModifierType (CannotExhaust, CannotReady, ControlledCardsCannotReady, DoesNotExhaustToAttack))
+import LordOfTheRings.Modifier (ModifierType (CannotExhaust, CannotReady, CannotReadyFromCardEffects, ControlledCardsCannotReady, DoesNotExhaustToAttack, ReadiedByRefresh))
 import LordOfTheRings.Phase
 import LordOfTheRings.Placement (Placement (AttachedTo, InPlayArea), placementController)
 import LordOfTheRings.Prelude
@@ -35,9 +35,11 @@ instance RunMessage AllyAttrs where
       pure $ attrs & committedL .~ False
     Ready (isTarget attrs -> True) -> do
       -- on the game, no character readies, as Enfeebled's "exhausted characters cannot ready";
-      -- nor one whose controller's cards cannot, as Ungoliant's Brood's
+      -- nor one whose controller's cards cannot, as Ungoliant's Brood's; a card effect cannot
+      -- ready one barred from it, the refresh phase still does
       held <- maybe (pure False) (fmap (elem ControlledCardsCannotReady) . getModifiers . PlayerTarget) (placementController attrs.placement)
-      blocked <- (|| held) . elem CannotReady . concat <$> sequence [getModifiers attrs, getModifiers GameTarget]
+      mods <- getModifiers attrs
+      blocked <- (|| held || (CannotReadyFromCardEffects `elem` mods && ReadiedByRefresh `notElem` mods)) . elem CannotReady . (mods <>) <$> getModifiers GameTarget
       when (attrs.allyExhausted && not blocked) $ push $ CheckWindows [mkAfter $ BecameReady (toTarget attrs)]
       pure $ attrs & exhaustedL %~ (&& blocked)
     AttachFacedown (isTarget attrs -> True) card -> pure $ attrs & facedownL %~ (card :)

@@ -59,6 +59,18 @@ data WindowMatcher
     SideQuestRevealedWindow Timing
   | ShadowEffectWindow Timing
   | ExploredWindow Timing LocationId
+  | -- | the location left play, however it did, for its own abilities to answer
+    LocationLeftPlayWindow Timing LocationId
+  | -- | a matching enemy entered play, however it did, as "after a Spider enemy enters
+    -- play" reads
+    MatchingEnemyEntersPlayWindow Timing EnemyMatcher
+  | -- | a player looked at one or more cards in the encounter deck, as Hideous Depths reads
+    LookedAtEncounterDeckWindow Timing
+  | -- | a player turned 1 or more hidden cards faceup (The Blood of Gondor)
+    TurnedHiddenCardsFaceupWindow Timing
+  | -- | any number of time counters removed from a matching enemy, as Sacred Forest's
+    -- Guardians read
+    TimeCountersRemovedFromEnemyWindow Timing EnemyMatcher
   | -- | any location worth no victory points explored
     ExploredWithoutVictoryWindow Timing
   | PhaseEndsWindow Timing Phase
@@ -346,6 +358,11 @@ windowMatches matcher (Window timing wType) = case (matcher, wType) of
   (SideQuestRevealedWindow t, Revealed (QuestTarget _)) -> t == timing
   (ShadowEffectWindow t, ShadowEffectTriggered _ _) -> t == timing
   (ExploredWindow t lid, Explored lid') -> t == timing && lid == lid'
+  (LocationLeftPlayWindow t lid, LocationLeftPlay lid') -> t == timing && lid == lid'
+  (LookedAtEncounterDeckWindow t, LookedAtEncounterDeck _) -> t == timing
+  (TurnedHiddenCardsFaceupWindow t, TurnedHiddenCardsFaceup _) -> t == timing
+  (MatchingEnemyEntersPlayWindow {}, _) -> False
+  (TimeCountersRemovedFromEnemyWindow {}, _) -> False
   (PhaseEndsWindow t phase, PhaseEnds phase') -> t == timing && phase == phase'
   (RoundEndsWindow, RoundEnds) -> True
   (StagingStepBeginsWindow, StagingStepBegins) -> True

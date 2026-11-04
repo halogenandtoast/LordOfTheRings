@@ -515,6 +515,13 @@ data Message
   | -- | the messages, if the enemy's attack has destroyed a character, as "if this attack
     -- destroys a character" reads once the attack is over (see 'attackDestroyed')
     IfAttackDestroyed EnemyId [Message]
+  | -- | the messages, if the enemy's attack dealt damage to one of the characters, as "if
+    -- this attack deals damage to a Ship objective" reads once the attack is over
+    IfAttackDamaged EnemyId [Target] [Message]
+  | -- | resources added to a card that is out of play, kept for it until it enters play
+    PlaceResourcesOutOfPlay CardId Int
+  | -- | the player deals the damage to a hero the matcher picks out to pay a cost
+    PayDamageHeroCost PlayerId HeroMatcher Int [Message]
   | -- | the messages, if the enemy's last attack dealt no damage, as King's Knight reads
     IfAttackDealtNoDamage EnemyId [Message]
   | DrawCards Drawing

@@ -147,6 +147,7 @@ getModifiers a = map modifierType . Map.findWithDefault [] (toTarget a) <$> gets
 playProhibitions :: (HasGame m) => PlayerId -> Card -> m [Modifier]
 playProhibitions pid c = do
   mods <- getsGame gameModifiers
+  entryBarred <- getsGame allyEntryBarred
   let on t = Map.findWithDefault [] t mods
       allyPlayed = AllyPlayedThisRound `elem` map modifierType (on GameTarget)
   pure
@@ -155,6 +156,7 @@ playProhibitions pid c = do
     , case m.modifierType of
         CannotPlay matcher -> cardMatches matcher c
         OneAllyPerRound -> allyPlayed && c.cardType == AllyType
+        OneAllyEntersPlayPerRound -> entryBarred && c.cardType == AllyType
         _ -> False
     ]
 

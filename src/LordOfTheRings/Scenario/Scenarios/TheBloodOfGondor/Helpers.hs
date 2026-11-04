@@ -26,7 +26,7 @@ import LordOfTheRings.Prelude
 import LordOfTheRings.Scenario.Types ()
 import LordOfTheRings.Source
 import LordOfTheRings.Target
-import LordOfTheRings.Window (WindowType (EntersPlay, HiddenCardTurnedFaceup), mkAfter)
+import LordOfTheRings.Window (WindowType (EntersPlay, HiddenCardTurnedFaceup, TurnedHiddenCardsFaceup), mkAfter)
 
 -- | The hidden cards in the player's play area, the first taken first.
 getHiddenCards :: HasGame m => PlayerId -> m [EncounterCard]
@@ -50,7 +50,11 @@ discardHiddenCard pid = traverse_ (push . DiscardHiddenCard pid) . take 1 =<< ge
 back so the caller can act on it once it has; a treachery or location is discarded.
 -}
 turnFaceup :: ReverseQueue m => PlayerId -> EncounterCard -> m (Maybe EnemyId)
-turnFaceup pid card
+turnFaceup pid card = turnOver pid card <* turnedSomeFaceup pid
+
+-- | The card turns faceup, as 'turnFaceup', the window for it left to the caller.
+turnOver :: ReverseQueue m => PlayerId -> EncounterCard -> m (Maybe EnemyId)
+turnOver pid card
   | cdCardType (toCardDef card) == EnemyType = do
       eid <- getRandom
       push $ TurnHiddenCardFaceup pid card [CreateEnemyEngaged pid eid card, turnedFaceup eid]
@@ -61,7 +65,16 @@ turnFaceup pid card
 as they do stays facedown (FAQ). The enemies that engage the player are given back.
 -}
 turnHiddenCardsFaceup :: ReverseQueue m => PlayerId -> m [EnemyId]
-turnHiddenCardsFaceup pid = catMaybes <$> (traverse (turnFaceup pid) =<< getHiddenCards pid)
+turnHiddenCardsFaceup pid = do
+  cards <- getHiddenCards pid
+  enemies <- catMaybes <$> traverse (turnOver pid) cards
+  unless (null cards) $ turnedSomeFaceup pid
+  pure enemies
+
+-- | The window for the player turning 1 or more hidden cards faceup, once for them all, as
+-- "after you turn 1 or more hidden cards faceup" reads.
+turnedSomeFaceup :: ReverseQueue m => PlayerId -> m ()
+turnedSomeFaceup pid = push $ CheckWindows [mkAfter $ TurnedHiddenCardsFaceup pid]
 
 {- | The hidden card turns faceup, as Faramir turns it: an enemy is dealt the damage before
 it engages the player, and one destroyed by it never engages (ruling).
@@ -78,6 +91,7 @@ turnFaceupDamaging source n pid card
           , DealDamage (toSource source) (EnemyTarget eid) n
           , WhileInPlay (EnemyTarget eid) [EngageEnemy pid eid, CheckWindows [mkAfter $ EntersPlay $ EnemyTarget eid], turnedFaceup eid]
           ]
+      turnedSomeFaceup pid
   | otherwise = void $ turnFaceup pid card
 
 {- | The hidden card turns faceup as Lying in Wait turns it: its When Revealed effects
@@ -92,7 +106,10 @@ turnFaceupResolving pid card
         $ CreateEnemyEngaged pid eid card
         : turnedFaceup eid
         : [AskToResolveWhenRevealed (EnemyTarget eid) card | cdWhenRevealed def]
-  | otherwise = push $ TurnHiddenCardFaceup pid card [ResolveWhenRevealedOf card]
+      turnedSomeFaceup pid
+  | otherwise = do
+      push $ TurnHiddenCardFaceup pid card [ResolveWhenRevealedOf card]
+      turnedSomeFaceup pid
  where
   def = toCardDef card
 

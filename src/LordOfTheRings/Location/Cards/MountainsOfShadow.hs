@@ -6,21 +6,24 @@ import LordOfTheRings.Placement (Placement (ActiveLocation))
 import LordOfTheRings.Scenario.Scenarios.TheBloodOfGondor.Helpers (takeHiddenCard)
 
 newtype MountainsOfShadow = MountainsOfShadow LocationAttrs
-  deriving anyclass (IsLocation, HasAbilities, HasModifiersFor)
+  deriving anyclass (IsLocation, HasModifiersFor)
   deriving newtype (Show, Eq, ToJSON, Entity)
 
 mountainsOfShadow :: LocationCard MountainsOfShadow
 mountainsOfShadow = location MountainsOfShadow Cards.mountainsOfShadow
 
 -- | While Mountains of Shadow is the active location, it gains: "Forced: After you turn 1
--- or more hidden cards faceup, take 1 hidden card."
--- Shadow: Either take 2 hidden cards, or this attack is considered undefended. An
+-- or more hidden cards faceup, take 1 hidden card." Once for each time any are turned.
+instance HasAbilities MountainsOfShadow where
+  getAbilities (MountainsOfShadow a) = [mkAbility a 1 $ forced $ TurnedHiddenCardsFaceupWindow After | a.placement == ActiveLocation]
+
+-- | Shadow: Either take 2 hidden cards, or this attack is considered undefended. An
 -- undefended attack already is, so it asks nothing.
 instance RunMessage MountainsOfShadow where
   runMessage msg l@(MountainsOfShadow a) = case msg of
-    TurnHiddenCardFaceup pid _ _ | a.placement == ActiveLocation -> do
-      takeHiddenCard pid
-      MountainsOfShadow <$> runMessage msg a
+    UseCardAbility _ (isSource a -> True) 1 ws -> do
+      for_ [pid | Window _ (TurnedHiddenCardsFaceup pid) <- ws] takeHiddenCard
+      pure l
     ResolveShadowEffect cid _ pid defenders | cid == a.cardId -> do
       unless (null defenders) do
         chooseOneM pid do

@@ -16,7 +16,7 @@ captainSahir = ally CaptainSahir Cards.captainSahirObjective
 -- | Captain Sahír gets +1 willpower and +1 attack for each resource on him (max +6).
 instance HasModifiersFor CaptainSahir where
   getModifiersFor (CaptainSahir a) = do
-    let x = min 6 (countTokens Resource $ allyTokens a)
+    x <- min 6 <$> resourcesHeld a (countTokens Resource $ allyTokens a)
     when (x > 0) $ modifySelf a [WillpowerModifier x, AttackModifier x]
 
 -- | Action: Spend 1 resource from a hero you control to place 1 resource on Captain Sahír.

@@ -488,7 +488,7 @@ spec = describe "Angmar Awakened Nightmare mode" do
 
     it "Stronghold Tower deals each player 2 damage to travel there" . nightmare theBattleOfCarnDum $ \pid -> do
       tower <- stagedLocation Locations.strongholdTower
-      getModifiers GameTarget >>= (`shouldSatisfy` elem CannotCancelEncounterEffects)
+      getModifiers GameTarget >>= (`shouldSatisfy` elem CannotCancelShadowEffects)
       run $ TravelTo tower
       eowyn <- toTarget <$> getHeroWithCode "01007"
       chooseTarget pid eowyn

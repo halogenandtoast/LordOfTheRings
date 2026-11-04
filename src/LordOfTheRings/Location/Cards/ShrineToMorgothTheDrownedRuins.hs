@@ -15,7 +15,7 @@ shrineToMorgothTheDrownedRuins = location ShrineToMorgothTheDrownedRuins Cards.s
 
 -- | Shrine to Morgoth cannot have attachments and cannot enter the staging area.
 instance HasModifiersFor ShrineToMorgothTheDrownedRuins where
-  getModifiersFor (ShrineToMorgothTheDrownedRuins a) = modifySelf a [CannotHaveAttachments]
+  getModifiersFor (ShrineToMorgothTheDrownedRuins a) = modifySelf a [CannotHaveAttachments, CannotEnterStagingArea]
 
 -- | Forced: At the beginning of the quest phase, flip Shrine to Morgoth to its Underwater
 -- side, without removing its progress tokens.

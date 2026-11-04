@@ -5,7 +5,7 @@ import LordOfTheRings.Card.CardType (CardType)
 import LordOfTheRings.Card.Code (CardCode)
 import LordOfTheRings.Id (PlayerId)
 import LordOfTheRings.Keyword (Keyword)
-import LordOfTheRings.Matcher.Types (CardMatcher, EnemyMatcher, PlayerMatcher)
+import LordOfTheRings.Matcher.Types (CardMatcher, EnemyMatcher, LocationMatcher, PlayerMatcher)
 import LordOfTheRings.Outcome (Outcome)
 import LordOfTheRings.Prelude
 import LordOfTheRings.Source
@@ -267,8 +267,6 @@ data ModifierType
   | -- | on an encounter card: its When Revealed effect cannot be canceled; on the game:
     -- no encounter card's can be
     WhenRevealedCannotBeCanceled
-  | -- | on the game: no shadow effect can be canceled, as Dark and Stormy reads
-    ShadowEffectsCannotBeCanceled
   | -- | on the game: matching cards cost this much more to play from hand
     IncreaseCost CardMatcher Int
   | -- | on a player: matching cards they play from hand cost this much less
@@ -666,6 +664,43 @@ data ModifierType
   | -- | on a player: card effects draw him no cards, the resource phase's draw still does, as
     -- Isolated reads
     CannotDrawCardsFromCardEffects
+  | -- | on a card: it is considered to have no resources, as Captain's Quarters reads of
+    -- Raider characters
+    HasNoResources
+  | -- | on the game: archery damage must be dealt to Ship objectives, as City Under Siege
+    -- reads
+    ArcheryDamageToShipObjectives
+  | -- | on the game: no more than 1 ally can enter play each round, however it enters, as
+    -- Corsair Waters reads
+    OneAllyEntersPlayPerRound
+  | -- | on the game: no player card may cancel a When Revealed effect, as Decrepit City
+    -- reads
+    CannotCancelWhenRevealedEffects
+  | -- | on the game: no player card may cancel a shadow effect, as Stronghold Tower and
+    -- Dark and Stormy read
+    CannotCancelShadowEffects
+  | -- | on a player: he has played an event this round
+    PlayedEventThisRound
+  | -- | on the game: the players have played an ally this round
+    PlayedAnAllyThisRound
+  | -- | on the game: the matching active location adds its threat to the staging area, as
+    -- Flooded Ruins reads
+    ActiveLocationsAddThreat LocationMatcher
+  | -- | on the game: a treachery card has been revealed this round
+    TreacheryRevealedThisRound
+  | -- | on the game: as an additional cost to bypass a quest card, each player raises his
+    -- threat by this much, as Shadowed Corridor reads
+    BypassCostRaisesThreat Int
+  | -- | on a location: it cannot enter the staging area, as Shrine to Morgoth reads
+    CannotEnterStagingArea
+  | -- | on a character: card effects cannot ready it, the refresh phase still does, as
+    -- Twisting Hollow reads
+    CannotReadyFromCardEffects
+  | -- | on a character: the refresh phase is readying it, not a card effect
+    ReadiedByRefresh
+  | -- | on a quest card: this much progress that would have been placed on it was canceled
+    -- this round
+    ProgressCanceledThisRound Int
   | -- | on a card in play: player card effects cannot damage it, as The Watcher's in the
     -- staging area; its other effects still reach it
     CannotBeDamagedByPlayerCardEffects
@@ -688,9 +723,6 @@ data ModifierType
   | -- | on an enemy, by an effect until the end of the round: a character was declared as
     -- an attacker against it, for 'AttackersPerRoundLimit' to count
     DeclaredAttackerThisRound
-  | -- | on an enemy, until its next attack: its attack dealt damage, as King's Knight reads,
-    -- given it by 'AttackDamageModifiesUntilEndOfRound'
-    DealtAttackDamage
   | -- | on an enemy: if its attack deals damage, the target gets the modifier until the end
     -- of the round, as Giant Scorpion's shadow bars the defender from readying
     AttackDamageModifiesUntilEndOfRound Target ModifierType

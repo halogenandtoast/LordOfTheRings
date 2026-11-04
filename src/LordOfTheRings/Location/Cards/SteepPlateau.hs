@@ -15,7 +15,7 @@ steepPlateau = location SteepPlateau Cards.steepPlateau
 -- location in the staging area.
 instance HasAbilities SteepPlateau where
   getAbilities (SteepPlateau a) =
-    [restricted a 1 (exists $ LocationInStagingArea <> unchartedLocation) $ response $ ExploredWindow When a.id]
+    [restricted a 1 (exists $ LocationInStagingArea <> unchartedLocation) $ response $ ExploredWindow After a.id]
 
 -- | Shadow: Discard the bottom card of the defending player's deck. If that card's printed
 -- cost is 2 or less, attacking enemy gets +2 attack.

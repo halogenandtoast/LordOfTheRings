@@ -23,7 +23,7 @@ import LordOfTheRings.Name (Name (..))
 import LordOfTheRings.Modifier (
   ModifierType (Blank, BlankAttachments, CannotBeTraveledTo, CannotCancelEncounterEffects, CannotExhaust, CannotTriggerAbilities, Defending, WhenRevealedCannotBeCanceled),
   ModifierType (Blank, BlankAttachments, CannotBeTraveledTo, CannotCancelEncounterEffects, CannotExhaust, CannotTriggerAbilities, StagingStepBegun, TravelRange, TravelableWithActiveLocation),
-  ModifierType (CannotDiscardFromHand, GainKeyword, ShadowEffectsCannotBeCanceled),
+  ModifierType (CannotDiscardFromHand, CannotTakeDamage, GainKeyword, TreacheryRevealedThisRound),
  )
 import LordOfTheRings.Phase (Phase (QuestPhase))
 import LordOfTheRings.Placement
@@ -39,6 +39,8 @@ getAllAbilities = do
   -- an ally that just left play answers only its own leaving, as Arkham's cards in discard
   departed <- getsGame gameLeftPlay
   scenario <- getsGame gameScenario
+  -- and so does a location that left play, its leaving or its being explored
+  gone <- getsGame gameLeftPlayLocations
   let leftPlayAbilities =
         [ ab
         | a <- toList departed
@@ -46,6 +48,15 @@ getAllAbilities = do
         , Just (LeftPlayWindow _ t) <- [abilityWindow ab]
         , t == toTarget a
         ]
+          <> [ ab
+             | (lid, l) <- Map.toList gone
+             , not (Map.member lid es.locations)
+             , ab <- getAbilities l
+             , case abilityWindow ab of
+                 Just (LocationLeftPlayWindow _ lid') -> lid == lid'
+                 Just (ExploredWindow After lid') -> lid == lid'
+                 _ -> False
+             ]
   -- attachments whose text is blank have no abilities
   blank <- elem BlankAttachments <$> getModifiers GameTarget
   let abilities =
@@ -108,8 +119,8 @@ windowMatchesM matcher w@(Window timing wType) = case (matcher, wType) of
       QuestTarget i -> toCardDef <$> Map.lookup i es.quests
       _ -> Nothing
   -- the shadow effect about to resolve is there to cancel unless it cannot be canceled
-  (ShadowEffectWindow t, ShadowEffectTriggered cid _) | t == timing -> shadowEffectCancelable cid
-  (ShadowEffectAgainstWindow t target, ShadowEffectAgainst cid target') | t == timing && target == target' -> shadowEffectCancelable cid
+  (ShadowEffectWindow t, ShadowEffectTriggered cid _) | t == timing -> shadowCardCancelable cid
+  (ShadowEffectAgainstWindow t target, ShadowEffectAgainst cid target') | t == timing && target == target' -> shadowCardCancelable cid
   -- only while the enemy is still in play, to be dealt more
   (AttackDealtDamageWithTraitWindow t trait, AttackDealtDamage eid attackers _) | t == timing ->
     andM
@@ -125,6 +136,8 @@ windowMatchesM matcher w@(Window timing wType) = case (matcher, wType) of
   (EnemyAttacksPlayerWindow t pid m, EnemyAttacking eid pid') | t == timing && pid == pid' -> selectAny (EnemyWithId eid <> m)
   (MatchingEnemyAttacksWindow t m, EnemyAttacking eid _) | t == timing -> selectAny (EnemyWithId eid <> m)
   (MatchingEnemyRevealedWindow t m, Revealed (EnemyTarget eid)) | t == timing -> selectAny (EnemyWithId eid <> m)
+  (MatchingEnemyEntersPlayWindow t m, EnemyEnteredPlay eid) | t == timing -> selectAny (EnemyWithId eid <> m)
+  (TimeCountersRemovedFromEnemyWindow t m, TimeCountersRemoved (EnemyTarget eid) n) | t == timing && n > 0 -> selectAny (EnemyWithId eid <> m)
   (PlayerDiscardedFromDeckWindow t m, DiscardedFromDeck pid _) | t == timing -> selectAny (PlayerWithId pid <> m)
   -- the attachment played is in play by now, on its host
   (AttachmentPlayedOnHeroWindow t pid, PlayedFromHand (CardIdTarget cid)) | t == timing -> do
@@ -204,14 +217,14 @@ windowMatchesM matcher w@(Window timing wType) = case (matcher, wType) of
     AllyTarget aid -> toCardDef <$> getAlly aid
     _ -> error "not a character"
 
-{- | Whether the shadow card's effect can be canceled: not one whose text says it cannot,
-as Blazing Grip's, nor while an effect bars it, as Dark and Stormy's.
+{- | Whether this shadow card's effect can be canceled: not one whose own text says it
+cannot, as Blazing Grip's. An effect barring every shadow cancel, as Dark and Stormy's, is
+the 'shadowEffectsCancelable' criterion's.
 -}
-shadowEffectCancelable :: HasGame m => CardId -> m Bool
-shadowEffectCancelable cid = do
-  barred <- elem ShadowEffectsCannotBeCanceled <$> getModifiers GameTarget
+shadowCardCancelable :: HasGame m => CardId -> m Bool
+shadowCardCancelable cid = do
   shadows <- getsGame (concatMap (.shadowCards) . toList . (.enemies) . gameEntities)
-  pure $ not barred && not (any (\c -> ecId c == cid && cdShadowCannotBeCanceled (toCardDef c)) shadows)
+  pure $ not (any (\c -> ecId c == cid && cdShadowCannotBeCanceled (toCardDef c)) shadows)
 
 {- | Whether an ability's limit leaves it a use: its controller's uses for a player
 limit, everyone's for a group limit.
@@ -291,6 +304,7 @@ passesCriteria = \case
   BeforeStaging ->
     andM [(== QuestPhase) <$> getsGame gamePhase, notElem StagingStepBegun <$> getModifiers GameTarget]
   EncounterEffectsCancelable -> notElem CannotCancelEncounterEffects <$> getModifiers GameTarget
+  FirstTreacheryRevealedThisRound -> getsGame ((<= 1) . length . filter (elem TreacheryRevealedThisRound . effectModifiers) . gameEffects)
   NotCriterion c -> not <$> passesCriteria c
   TargetHasModifier t m -> elem m <$> getModifiers t
   TargetLacksModifier t m -> notElem m <$> getModifiers t
@@ -341,6 +355,7 @@ canPay = \case
   RaiseThreatCost _ -> pure True
   SphereResourceCost pid sphere n -> (>= n) <$> getResourcesOfSphere pid sphere
   ExhaustHeroCost m -> notNull <$> exhaustableHeroes m
+  DamageHeroCost m _ -> notNull <$> damageableHeroes m
   Costs cs -> allM canPay cs
   ExhaustCharacterCost hm am -> notNull <$> exhaustableCharacters hm am
   SpendResourcesCost sphere n -> do
@@ -359,6 +374,10 @@ asPlayer pid q = runReadGame q . (\g -> g {gameActivePlayer = pid}) <$> getGame
 exhaustableHeroes :: HasGame m => HeroMatcher -> m [HeroId]
 exhaustableHeroes m = filterM (\h -> notElem CannotExhaust <$> getModifiers (HeroTarget h)) =<< select (m <> ReadyHero)
 
+-- | The heroes matching that can take damage.
+damageableHeroes :: HasGame m => HeroMatcher -> m [HeroId]
+damageableHeroes m = filterM (\h -> notElem CannotTakeDamage <$> getModifiers (HeroTarget h)) =<< select m
+
 -- | The ready heroes and allies matching that can exhaust.
 exhaustableCharacters :: HasGame m => HeroMatcher -> AllyMatcher -> m [Target]
 exhaustableCharacters hm am = filterM (fmap (notElem CannotExhaust) . getModifiers) =<< selectCharacters (hm <> ReadyHero) (am <> ReadyAlly)
@@ -369,6 +388,7 @@ until it is made.
 payCost :: PlayerId -> AbilityCost -> [Message] -> [Message]
 payCost pid cost rest = case cost of
   ExhaustHeroCost m -> [PayExhaustHeroCost pid m rest]
+  DamageHeroCost m n -> [PayDamageHeroCost pid m n rest]
   ExhaustCharacterCost hm am -> [PayExhaustCharacterCost pid hm am rest]
   Costs cs -> foldr (payCost pid) rest cs
   _ -> costMessages (PlayerSource pid) cost <> rest
@@ -384,6 +404,7 @@ costMessages source = \case
     _ -> []
   SphereResourceCost pid sphere n -> [SpendResources pid sphere n]
   ExhaustHeroCost _ -> [] -- chosen as it is paid, by 'payCost'
+  DamageHeroCost _ _ -> []
   Costs cs -> concatMap (costMessages source) cs
   ExhaustCharacterCost _ _ -> []
   SpendResourcesCost sphere n -> case source of
