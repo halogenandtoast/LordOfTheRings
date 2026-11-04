@@ -69,7 +69,8 @@ export const provideCombat = (question: () => QuestionView | null, cards: () => 
       if (enemy) {
         const strength = enemy.attackStrength ?? 0
         const defense = stat(enemy, 'defense')
-        const withHovered = strength + stat(hovered, 'attack')
+        // the hovered attacker's attack against this enemy, its bonuses included
+        const withHovered = strength + (hovered?.attackAdding ?? 0)
         const bar = (stat: 'defense' | 'hit-points', of: number, through: (attack: number) => number) => ({
           stat, of, done: through(strength), adding: through(withHovered) - through(strength),
         })

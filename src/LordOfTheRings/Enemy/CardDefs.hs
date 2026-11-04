@@ -397,6 +397,38 @@ allEnemyCards =
       , thaurdirsElite
       , silentGuardian
       , necromancerOfCarnDum
+      , southronCaptain
+      , southronSoldier
+      , southronArcher
+      , sandViper
+      , giantScorpion
+      , urukChieftain
+      , urukOfMordor
+      , urukWargRider
+      , mordorWarg
+      , sauronsEnforcers
+      , broodMother
+      , hiveGuardian
+      , spiderBroodling
+      , wereWorm
+      , carrionBird
+      , umbarSentry
+      , urukPursuer
+      , racingWarg
+      , theBlackSerpent
+      , serpentGuard
+      , jailerOfCirithGurat
+      , prisonGuardCirithGurat
+      , dungeonWarg
+      , wildMumak
+      , haradTiger
+      , territorialApe
+      , stranglingPython
+      , giantCentipede
+      , theBlackSerpentCrossingsOfPoros
+      , southronOutrider
+      , urukProwler
+      , desertWarg
       ]
 
 namelessThing :: CardDef
@@ -3223,4 +3255,245 @@ necromancerOfCarnDum :: CardDef
 necromancerOfCarnDum =
   (enemy "the-dread-realm-nightmare-the-dread-realm-003" "Necromancer of Carn Dûm" TheDreadRealmNightmare 3 28 2 0 3 3)
     { cdCardTraits = setFromList [Sorcerer]
+    }
+
+-- * The Sands of Harad: the shared encounter sets (Harad Soldiers, Desert Creatures, Mordor
+-- Orcs). Easy mode copy counts from Hall of Beorn's scenario pages.
+
+southronCaptain :: CardDef
+southronCaptain = unique (enemy "16041" "Southron Captain" HaradSoldiers 1 40 2 5 3 6) {cdCardTraits = setFromList [Harad]}
+
+southronSoldier :: CardDef
+southronSoldier =
+  (enemy "16042" "Southron Soldier" HaradSoldiers 3 32 3 3 2 5)
+    { cdCardTraits = setFromList [Harad]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 2
+    }
+
+southronArcher :: CardDef
+southronArcher =
+  (enemy "16043" "Southron Archer" HaradSoldiers 4 36 2 4 3 4)
+    { cdCardTraits = setFromList [Harad]
+    , cdKeywords = setFromList [Archery 2]
+    , cdEasyModeQuantity = Just 3
+    }
+
+sandViper :: CardDef
+sandViper =
+  (enemy "16054" "Sand Viper" DesertCreatures 2 44 4 1 1 3)
+    { cdCardTraits = setFromList [Creature]
+    , cdEasyModeQuantity = Just 1
+    }
+
+giantScorpion :: CardDef
+giantScorpion =
+  (enemy "16055" "Giant Scorpion" DesertCreatures 3 33 3 3 2 4)
+    { cdCardTraits = setFromList [Creature]
+    , cdShadowEffect = True
+    }
+
+urukChieftain :: CardDef
+urukChieftain =
+  unique
+    (enemy "16061" "Uruk Chieftain" MordorOrcs 1 50 4 5 3 6)
+      { cdCardTraits = setFromList [Orc, Uruk]
+      , cdVictoryPoints = Just 3
+      }
+
+urukOfMordor :: CardDef
+urukOfMordor =
+  (enemy "16062" "Uruk of Mordor" MordorOrcs 3 35 2 4 2 4)
+    { cdCardTraits = setFromList [Orc, Uruk]
+    , cdShadowEffect = True
+    }
+
+urukWargRider :: CardDef
+urukWargRider =
+  (enemy "16063" "Uruk Warg-Rider" MordorOrcs 2 40 3 3 1 5)
+    { cdCardTraits = setFromList [Orc, Uruk]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
+    }
+
+-- | "Mordor Warg" as printed, and as the card names itself; cards.json has "Mordor Wargs".
+mordorWarg :: CardDef
+mordorWarg =
+  (enemy "16064" "Mordor Warg" MordorOrcs 2 20 2 2 2 2)
+    { cdCardTraits = setFromList [Creature]
+    , cdWhenRevealed = True
+    }
+
+-- | X attack, defense and threat, X the main quest's stage number: its card gives them.
+sauronsEnforcers :: CardDef
+sauronsEnforcers =
+  (enemy "16035" "Sauron's Enforcers" TheLongArmOfMordor 4 30 0 0 0 3)
+    { cdCardTraits = setFromList [Orc, Uruk]
+    }
+-- * Beneath the Sands
+
+broodMother :: CardDef
+broodMother =
+  (enemy "17065" "Brood Mother" BeneathTheSands 1 50 4 6 4 12)
+    { cdUnique = True
+    , cdCardTraits = setFromList [Creature, Spider]
+    , cdVictoryPoints = Just 4
+    }
+
+-- | On Track printed in its lower right corner.
+hiveGuardian :: CardDef
+hiveGuardian =
+  (enemy "17066" "Hive Guardian" BeneathTheSands 3 40 3 3 2 5)
+    { cdCardTraits = setFromList [Creature, Spider]
+    , cdShadowEffect = True
+    }
+
+-- | On Track printed in its lower right corner.
+spiderBroodling :: CardDef
+spiderBroodling =
+  (enemy "17067" "Spider Broodling" BeneathTheSands 5 20 1 2 1 2)
+    { cdCardTraits = setFromList [Creature, Spider]
+    , cdShadowEffect = True
+    }
+
+-- * Desert Crossing (The Sands of Harad). Easy mode copy counts from Hall of Beorn's
+-- scenario page.
+
+-- | X attack and X defense: the tens digit of the temperature, which the card adds.
+wereWorm :: CardDef
+wereWorm =
+  (enemy "16023" "Were-worm" DesertCrossing 4 22 0 0 0 5)
+    { cdCardTraits = setFromList [Creature]
+    , cdShadowEffect = True
+    }
+
+carrionBird :: CardDef
+carrionBird =
+  (enemy "16024" "Carrion Bird" DesertCrossing 2 40 2 2 1 3)
+    { cdCardTraits = setFromList [Creature]
+    , cdEasyModeQuantity = Just 1
+    }
+
+-- * Escape from Umbar. Easy mode copy counts from Hall of Beorn's scenario page.
+
+umbarSentry :: CardDef
+umbarSentry =
+  (enemy "16015" "Umbar Sentry" EscapeFromUmbar 5 28 1 2 1 3)
+    { cdCardTraits = setFromList [Harad]
+    , cdKeywords = setFromList [Surge, Archery 1]
+    , cdEasyModeQuantity = Just 4
+    }
+
+-- * Race Across Harad
+
+urukPursuer :: CardDef
+urukPursuer =
+  (enemy "17043" "Uruk Pursuer" RaceAcrossHarad 4 20 2 3 2 3)
+    { cdCardTraits = setFromList [Orc, Uruk]
+    , cdWhenRevealed = True
+    , cdShadowEffect = True
+    }
+
+racingWarg :: CardDef
+racingWarg =
+  (enemy "17044" "Racing Warg" RaceAcrossHarad 3 10 1 1 1 1)
+    { cdCardTraits = setFromList [Creature]
+    , cdKeywords = setFromList [Surge]
+    , cdWhenRevealed = True
+    }
+
+-- * The Black Serpent. Easy mode copy counts from Hall of Beorn's scenario page.
+
+-- | The Black Serpent's, not The Crossings of Poros'.
+theBlackSerpent :: CardDef
+theBlackSerpent = unique (enemy "17094" "The Black Serpent" TheBlackSerpent 1 50 0 2 1 8) {cdCardTraits = setFromList [Harad]}
+
+serpentGuard :: CardDef
+serpentGuard =
+  (enemy "17095" "Serpent Guard" TheBlackSerpent 4 28 2 3 1 4)
+    { cdCardTraits = setFromList [Harad]
+    , cdShadowEffect = True
+    }
+
+-- The Dungeons of Cirith Gurat (17121-17123). Easy mode copy counts from Hall of Beorn's
+-- scenario page.
+
+jailerOfCirithGurat :: CardDef
+jailerOfCirithGurat =
+  (enemy "17121" "Jailer of Cirith Gurat" TheDungeonsOfCirithGurat 2 45 4 3 2 5)
+    { cdCardTraits = setFromList [Orc, Uruk]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
+    }
+
+-- | The Dungeons of Cirith Gurat's Prison Guard; Escape from Mount Gram's is 'prisonGuard'.
+prisonGuardCirithGurat :: CardDef
+prisonGuardCirithGurat =
+  (enemy "17122" "Prison Guard" TheDungeonsOfCirithGurat 3 30 3 4 1 4)
+    { cdCardTraits = setFromList [Orc, Uruk]
+    }
+
+dungeonWarg :: CardDef
+dungeonWarg =
+  (enemy "17123" "Dungeon Warg" TheDungeonsOfCirithGurat 3 25 1 3 1 3)
+    { cdCardTraits = setFromList [Creature]
+    , cdKeywords = setFromList [Surge]
+    , cdWhenRevealed = True
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 2
+    }
+
+-- The Mûmakil
+
+-- | Indestructible. Immune to player card effects. Cannot take more than 3 damage each
+-- round.
+wildMumak :: CardDef
+wildMumak =
+  (enemy "17015" "Wild Mûmak" TheMumakil 4 40 3 6 3 9)
+    { cdCardTraits = setFromList [Creature, Mumak]
+    , cdKeywords = setFromList [Indestructible]
+    , cdVictoryPoints = Just 3
+    }
+
+haradTiger :: CardDef
+haradTiger = (enemy "17016" "Harad Tiger" TheMumakil 1 0 4 4 3 5) {cdCardTraits = setFromList [Creature], cdEasyModeQuantity = Just 0}
+
+territorialApe :: CardDef
+territorialApe = (enemy "17017" "Territorial Ape" TheMumakil 4 35 2 2 2 4) {cdCardTraits = setFromList [Creature], cdShadowEffect = True}
+
+stranglingPython :: CardDef
+stranglingPython =
+  (enemy "17018" "Strangling Python" TheMumakil 2 25 1 3 1 3)
+    { cdCardTraits = setFromList [Creature]
+    , cdKeywords = setFromList [Surge]
+    , cdEasyModeQuantity = Just 1
+    }
+
+giantCentipede :: CardDef
+giantCentipede = (enemy "17019" "Giant Centipede" TheMumakil 2 30 3 3 1 2) {cdCardTraits = setFromList [Creature], cdShadowEffect = True}
+
+-- * The Crossings of Poros: its two encounter sets, The Crossings of Poros and Mountains of
+-- Shadow. Easy mode copy counts from Hall of Beorn's scenario page.
+
+-- | The Crossings of Poros' copy of The Black Serpent, not The Black Serpent scenario's.
+theBlackSerpentCrossingsOfPoros :: CardDef
+theBlackSerpentCrossingsOfPoros = unique (enemy "17146" "The Black Serpent" TheCrossingsOfPoros 1 50 0 2 1 8) {cdCardTraits = setFromList [Harad]}
+
+southronOutrider :: CardDef
+southronOutrider = (enemy "17147" "Southron Outrider" TheCrossingsOfPoros 2 28 2 3 1 4) {cdCardTraits = setFromList [Harad], cdShadowEffect = True}
+
+urukProwler :: CardDef
+urukProwler =
+  (enemy "17148" "Uruk Prowler" TheCrossingsOfPoros 2 45 3 4 2 5)
+    { cdCardTraits = setFromList [Orc, Uruk]
+    , cdShadowEffect = True
+    , cdWhenRevealed = True
+    }
+
+desertWarg :: CardDef
+desertWarg =
+  (enemy "17149" "Desert Warg" TheCrossingsOfPoros 2 34 2 5 2 3)
+    { cdCardTraits = setFromList [Creature]
+    , cdShadowEffect = True
+    , cdWhenRevealed = True
     }

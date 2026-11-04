@@ -28,6 +28,8 @@ data Trait
   | Captain
   | Captive
   | Captured
+  | -- | the Capture trait, named apart from the keyword (The Mûmakil)
+    CaptureTrait
   | CarnDum
   | Cave
   | Champion
@@ -43,6 +45,7 @@ data Trait
   | Cursed
   | Dale
   | Dark
+  | Desert
   | Deck
   | DeadMarshes
   | Disaster
@@ -97,6 +100,7 @@ data Trait
   | Mount
   | MountGram
   | Mountain
+  | Mumak
   | Nameless
   | Nazgul
   | Noble
@@ -108,6 +112,7 @@ data Trait
   | Outlands
   | Panic
   | Pipe
+  | Pipeweed
   | Plains
   | Plot
   | Raider
@@ -125,6 +130,8 @@ data Trait
   | Scheme
   | Scout
   | Scroll
+  | -- | the Search trait, named apart from the message (Beneath the Sands)
+    SearchTrait
   | Shadow
   | Ship
   | Shirriff
@@ -165,6 +172,7 @@ data Trait
   | Upgraded
   | Uruk
   | Valley
+  | Village
   | Villain
   | Warg
   | Warrior

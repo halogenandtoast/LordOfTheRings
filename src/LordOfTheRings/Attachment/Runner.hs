@@ -8,7 +8,7 @@ import LordOfTheRings.Classes.HasQueue (push, pushWhen)
 import LordOfTheRings.Classes.RunMessage
 import LordOfTheRings.Helpers.Modifiers (getModifiers)
 import LordOfTheRings.Matcher (characterController)
-import LordOfTheRings.Matcher.Types (AttachMatcher (PlayIntoStagingArea))
+import LordOfTheRings.Matcher.Types (AttachMatcher (PlayIntoPlayArea, PlayIntoStagingArea))
 import LordOfTheRings.Message
 import LordOfTheRings.Modifier
 import LordOfTheRings.Placement
@@ -28,6 +28,15 @@ instance RunMessage AttachmentAttrs where
       | attrs.placement == StagingArea
       , attrs.attachTo == PlayIntoStagingArea
       , (eid : _) <- [eid | Window After (EntersStagingArea (EnemyTarget eid)) <- ws] -> do
+          eligible <- notElem CannotHaveAttachments <$> getModifiers eid
+          pushWhen eligible $ AttachCard attrs.id (toTarget eid)
+          pure attrs
+    -- one waiting in its owner's play area, as Followed, attaches to the next enemy that
+    -- engages him and can take it
+    CheckWindows ws
+      | InPlayArea pid <- attrs.placement
+      , attrs.attachTo == PlayIntoPlayArea
+      , (eid : _) <- [eid | Window After (EnemyEngaged eid pid') <- ws, pid' == pid] -> do
           eligible <- notElem CannotHaveAttachments <$> getModifiers eid
           pushWhen eligible $ AttachCard attrs.id (toTarget eid)
           pure attrs

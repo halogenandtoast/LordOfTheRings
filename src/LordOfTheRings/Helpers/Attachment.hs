@@ -55,6 +55,7 @@ hosts = \case
   AttachToQuest -> getQuestCards
   AttachToPlayer -> map PlayerTarget <$> getRemainingPlayers
   PlayIntoStagingArea -> pure []
+  PlayIntoPlayArea -> pure []
 
 -- | What the host's modifiers take off the cost of attaching the card to it.
 attachDiscount :: (HasGame m) => Card -> Target -> m Int

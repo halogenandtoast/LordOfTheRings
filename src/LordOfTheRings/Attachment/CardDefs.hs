@@ -183,6 +183,21 @@ allAttachmentCards =
       , cirdansBlessingTactics
       , cirdansBlessingSpirit
       , cirdansBlessingLore
+      , dwarvenShield
+      , mirkwoodLongKnife
+      , theRoadGoesEverOn
+      , kahlielsHeaddress
+      , steedOfTheNorth
+      , mightyWarrior
+      , haradrimSpear
+      , firesideSong
+      , doughtyRanger
+      , songOfHope
+      , fearlessScout
+      , dunedainPipe
+      , diligentNoble
+      , legacyBlade
+      , followed
       ]
 
 -- | A boon of the Revised Core campaign: Permanent, limit 1 per hero.
@@ -1223,3 +1238,107 @@ ordersFromAngmar = restrictedBoon "AAC187" "Orders from Angmar" 0 [Item]
 
 raimentOfTheSecondAge :: CardDef
 raimentOfTheSecondAge = (restrictedBoon "AAC191" "Raiment of the Second Age" 3 [Armor, Weapon, Item]) {cdUnique = False}
+
+dwarvenShield :: CardDef
+dwarvenShield =
+  (attachment "16010" "Dwarven Shield" Leadership (StaticCost 2))
+    { cdCardTraits = setFromList [Item, Armor]
+    , cdKeywords = setFromList [Restricted]
+    }
+
+mirkwoodLongKnife :: CardDef
+mirkwoodLongKnife =
+  (attachment "16011" "Mirkwood Long-knife" Spirit (StaticCost 2))
+    { cdCardTraits = setFromList [Item, Weapon]
+    , cdKeywords = setFromList [Restricted]
+    }
+
+theRoadGoesEverOn :: CardDef
+theRoadGoesEverOn =
+  (attachment "16012" "The Road Goes Ever On" Lore (StaticCost 0))
+    { cdCardTraits = setFromList [Song]
+    }
+
+kahlielsHeaddress :: CardDef
+kahlielsHeaddress =
+  (attachment "17010" "Kahliel's Headdress" Neutral (StaticCost 3))
+    { cdUnique = True
+    , cdCardTraits = setFromList [Artifact, Item]
+    , cdKeywords = setFromList [Restricted]
+    }
+
+steedOfTheNorth :: CardDef
+steedOfTheNorth =
+  (attachment "17030" "Steed of the North" Leadership (StaticCost 1))
+    { cdCardTraits = setFromList [Mount]
+    , cdKeywords = setFromList [Restricted]
+    }
+
+mightyWarrior :: CardDef
+mightyWarrior =
+  (attachment "17031" "Mighty Warrior" Tactics (StaticCost 1))
+    { cdCardTraits = setFromList [Skill]
+    , cdLimitOnePerHost = True
+    }
+
+haradrimSpear :: CardDef
+haradrimSpear =
+  (attachment "17056" "Haradrim Spear" Leadership (StaticCost 2))
+    { cdCardTraits = setFromList [Item, Weapon]
+    , cdKeywords = setFromList [Restricted]
+    }
+
+firesideSong :: CardDef
+firesideSong =
+  (attachment "17061" "Fireside Song" Spirit (StaticCost 2))
+    { cdCardTraits = setFromList [Song]
+    , cdLimitOnePerHost = True
+    }
+
+doughtyRanger :: CardDef
+doughtyRanger =
+  (attachment "17063" "Doughty Ranger" Lore (StaticCost 1))
+    { cdCardTraits = setFromList [Skill]
+    , cdLimitOnePerHost = True
+    }
+
+songOfHope :: CardDef
+songOfHope =
+  (attachment "17082" "Song of Hope" Leadership (StaticCost 0))
+    { cdCardTraits = setFromList [Song]
+    , cdLimitOnePerHost = True
+    }
+
+fearlessScout :: CardDef
+fearlessScout =
+  (attachment "17086" "Fearless Scout" Spirit (StaticCost 1))
+    { cdCardTraits = setFromList [Skill]
+    , cdLimitOnePerHost = True
+    }
+
+dunedainPipe :: CardDef
+dunedainPipe =
+  (attachment "17088" "Dúnedain Pipe" Lore (StaticCost 1))
+    { cdCardTraits = setFromList [Item, Pipe]
+    , cdLimitOnePerHost = True
+    }
+
+diligentNoble :: CardDef
+diligentNoble =
+  (attachment "17111" "Diligent Noble" Leadership (StaticCost 1))
+    { cdCardTraits = setFromList [Skill]
+    , cdLimitOnePerHost = True
+    }
+
+legacyBlade :: CardDef
+legacyBlade =
+  (attachment "17117" "Legacy Blade" Lore (StaticCost 0))
+    { cdCardTraits = setFromList [Item, Weapon]
+    , cdKeywords = setFromList [Restricted]
+    }
+
+followed :: CardDef
+followed =
+  (attachment "17139" "Followed" Tactics (StaticCost 1))
+    { cdCardTraits = setFromList [Condition, Trap]
+    }

@@ -4,13 +4,13 @@ module LordOfTheRings.DreamChaser.FlightOfTheStormcallerPlayerCardsSpec (spec) w
 import LordOfTheRings.Ally.CardDefs qualified as Allies
 import LordOfTheRings.Attachment.CardDefs qualified as Attachments
 import LordOfTheRings.Card (cdCardTraits)
-import LordOfTheRings.Effect (Effect (..), EffectDuration (UntilEndOfAttack))
+import LordOfTheRings.Effect (Effect (..), EffectDuration (UntilEndOfAttack, UntilEndOfRound))
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Event.CardDefs qualified as Events
 import LordOfTheRings.Helpers.Character (getAttack, getDefense)
 import LordOfTheRings.Helpers.Modifiers (getModifiers)
 import LordOfTheRings.Matcher (getEnemy, getThreat)
-import LordOfTheRings.Modifier (ModifierType (Defending, GainTrait))
+import LordOfTheRings.Modifier (ModifierType (CannotDiscardFromHand, Defending, GainTrait))
 import LordOfTheRings.Phase
 import LordOfTheRings.Trait (Trait (Gondor))
 import LordOfTheRings.Window (WindowType (DeclaredAsAttacker, EnemyDestroyedByAttack), mkAfter)
@@ -206,6 +206,14 @@ spec = describe "Flight of the Stormcaller player cards" do
       _ <- putCardIntoHand pid Allies.gondorianSpearman
       card <- putCardIntoHand pid Allies.guardianOfRivendell
       giveResources theodredCode 3
+      run $ BeginPhase PlanningPhase
+      offersCard pid card `shouldReturn` False
+
+    it "cannot be played by a player who cannot discard from hand" . gameTest $ \pid -> do
+      replicateM_ 2 $ putCardIntoHand pid Allies.gondorianSpearman
+      card <- putCardIntoHand pid Allies.guardianOfRivendell
+      giveResources theodredCode 3
+      run $ CreateEffect $ Effect GameSource (PlayerTarget pid) [CannotDiscardFromHand] UntilEndOfRound
       run $ BeginPhase PlanningPhase
       offersCard pid card `shouldReturn` False
 

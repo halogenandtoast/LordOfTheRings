@@ -9,11 +9,12 @@ import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Helpers.Modifiers (getModifiers)
 import LordOfTheRings.Message
 import LordOfTheRings.I18n (ikey)
-import LordOfTheRings.Modifier (ModifierType (KeepUnresolvedShadowCards))
+import LordOfTheRings.Effect (Effect (..), EffectDuration (UntilEndOfRound))
+import LordOfTheRings.Modifier (ModifierType (DamageLimit, KeepUnresolvedShadowCards))
 import LordOfTheRings.Phase
 import LordOfTheRings.Placement (placementController)
 import LordOfTheRings.Question
-import LordOfTheRings.Source (sourceTarget)
+import LordOfTheRings.Source (sourceTarget, toSource)
 import LordOfTheRings.Prelude
 import LordOfTheRings.Target
 import LordOfTheRings.Token
@@ -58,6 +59,16 @@ instance RunMessage EnemyAttrs where
     ReturnToBottomOfEncounterDeck (isTarget attrs -> True) -> leaving
     ShuffleIntoEncounterDeck (isTarget attrs -> True) -> leaving
     RemoveFromGame (isTarget attrs -> True) -> leaving
+    -- one that cannot take more than N damage each round, as Mumak: damage past what the
+    -- round has left is lost, and what it has left is kept as a round effect
+    PlaceTokens _ (isTarget attrs -> True) Damage n | n > 0 -> do
+      left <- foldr min maxBound . (\ms -> [k | DamageLimit k <- ms]) <$> getModifiers attrs
+      let placed = min n left
+      when (left < maxBound)
+        $ push
+        $ CreateEffect
+        $ Effect (toSource attrs) (toTarget attrs) [DamageLimit (left - placed)] UntilEndOfRound
+      pure $ attrs & tokensL %~ addTokens Damage placed
     PlaceTokens _ (isTarget attrs -> True) token n -> do
       pure $ attrs & tokensL %~ addTokens token n
     RemoveTokens _ (isTarget attrs -> True) token n -> do

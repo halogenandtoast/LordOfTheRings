@@ -19,6 +19,7 @@ const leave = async () => {
       <RouterLink to="/cards" class="nav-link">{{ $t('nav.cards') }}</RouterLink>
       <RouterLink v-if="currentUser" to="/decks" class="nav-link">{{ $t('nav.decks') }}</RouterLink>
       <RouterLink to="/watch" class="nav-link">{{ $t('nav.watch') }}</RouterLink>
+      <RouterLink to="/stats" class="nav-link">{{ $t('nav.stats') }}</RouterLink>
       <RouterLink to="/about" class="nav-link">{{ $t('nav.about') }}</RouterLink>
       <RouterLink v-if="currentUser?.admin" to="/admin" class="nav-link">{{ $t('nav.admin') }}</RouterLink>
     </nav>

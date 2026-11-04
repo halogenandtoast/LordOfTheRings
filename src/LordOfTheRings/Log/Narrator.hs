@@ -39,11 +39,12 @@ import LordOfTheRings.Phase
 import LordOfTheRings.Placement
 import LordOfTheRings.Player.Types
 import LordOfTheRings.Prelude hiding (say)
+import LordOfTheRings.Scenario.Scenarios.DesertCrossing.Helpers (getTemperature)
 import LordOfTheRings.Scenario.Types
 import LordOfTheRings.Source
 import LordOfTheRings.Target
 import LordOfTheRings.Token
-import LordOfTheRings.Window (TimeOfDay (..), Window (..), WindowType (Became))
+import LordOfTheRings.Window (TimeOfDay (..), Window (..), WindowType (Became, FlippedTo))
 
 {- | What a message adds to the log, if anything. The match is pure, so a message that
 says nothing costs nothing; only a narrating one reads the game.
@@ -100,8 +101,15 @@ narrationFor = \case
   LowerThreat pid n | n > 0 -> Just $ threatChange "log.threatLowered" pid n (max 0 . subtract n)
   ScenarioSpecific "tharbad.lowerElimination" v ->
     Just $ one $ toned Bad $ mechanic [ikeyPart "log.eliminationLevelLowered" ["count" ~> fromMaybe (10 :: Int) (parseMaybe parseJSON v)]]
+  -- \* The heat tracker (Desert Crossing): read before it moves, so the new temperature is worked out
+  ScenarioSpecific "desertCrossing.temperature" (parseMaybe parseJSON -> Just (n :: Int)) | n /= 0 -> Just do
+    t <- getTemperature
+    one $ toned (if n > 0 then Bad else Good) $ mechanic [ikeyPart (if n > 0 then "log.temperatureRises" else "log.temperatureFalls") ["count" ~> abs n, "temperature" ~> max 0 (t + n)]]
   -- \* Day and Night, as The Wastes of Eriador's Time objective flips
   CheckWindows [Window _ (Became time)] -> Just $ one $ mechanic [ikeyPart (case time of Daytime -> "log.becomesDay"; Nighttime -> "log.becomesNight") []]
+  -- a card turned over to its other side, as Beneath the Sands' Search objective: read
+  -- once it has, so the side named is the one now faceup
+  CheckWindows [Window _ (FlippedTo t _)] -> Just $ whenRef t \c -> one $ mechanic [ikeyPart "log.flippedTo" ["card" ~> c]]
   -- \* The heading and the Sailing test (Dream-chaser rules)
   ShiftHeading _ shift -> Just do
     heading <- getsGame ((.heading) . toAttrs . gameScenario)
@@ -203,6 +211,10 @@ narrationFor = \case
   ShuffleIntoEncounterDeck target -> Just $ simply "log.shuffledIntoEncounterDeck" target
   ReturnToTopOfEncounterDeck target -> Just $ simply "log.returnedToTopOfEncounterDeck" target
   RemoveFromQuest target -> Just $ simply "log.removedFromQuest" target
+  -- an enemy or objective a card adds to the victory display, as a Capture objective takes a
+  -- Wild Mûmak with it (a destroyed enemy goes there without this message)
+  AddToVictoryDisplay target@(EnemyTarget _) -> Just $ simply "log.addedToVictoryDisplay" target
+  AddToVictoryDisplay target@(ObjectiveTarget _) -> Just $ simply "log.addedToVictoryDisplay" target
   ReturnToBottomOfEncounterDeck target -> Just $ simply "log.returnedToBottomOfEncounterDeck" target
   -- \* The encounter deck
   AddToStaging card -> Just $ one $ mechanic [ikeyPart "log.addedToStaging" ["card" ~> EncounterCard card]]
@@ -212,6 +224,7 @@ narrationFor = \case
   PutObjectiveIntoPlayAttached card host -> Just $ whenRef host \h ->
     one $ mechanic [ikeyPart "log.attachedTo" ["card" ~> EncounterCard card, "target" ~> h]]
   RemoveFromGame target -> Just $ simply "log.removedFromGame" target
+  RemoveSetAsideFromGame cards | notNull cards -> Just $ one $ mechanic [ikeyPart "log.setAsideRemovedFromGame" ["cards" ~> map EncounterCard cards]]
   SetAsideHero hid -> Just $ simply "log.setAsideOutOfPlay" (HeroTarget hid)
   PutIntoPlayAsActiveLocation card -> Just $ one $ mechanic [ikeyPart "log.becomesActive" ["location" ~> EncounterCard card]]
   DiscardTopOfEncounterDeck _ _ n | n > 0 -> Just do
@@ -288,6 +301,18 @@ narrationFor = \case
   AttachCard aid target -> Just $ attached (toTarget aid) target
   TakePrisoner hid -> Just $ whenRef (toTarget hid) \h -> one $ toned Bad $ mechanic [ikeyPart "log.takenPrisoner" ["hero" ~> h]]
   RescuePrisoner hid -> Just $ whenRef (toTarget hid) \h -> one $ toned Good $ mechanic [ikeyPart "log.rescued" ["hero" ~> h]]
+  GuardCharacter c cid -> Just $ attached c (CardIdTarget cid)
+  GuardCard card cid -> Just $ whenRef (CardIdTarget cid) \h -> one $ mechanic [ikeyPart "log.attachedTo" ["card" ~> card, "target" ~> h]]
+  RescueCharacter c -> Just $ whenRef c \h -> one $ toned Good $ mechanic [ikeyPart "log.rescued" ["hero" ~> h]]
+  MoveHeroToStagingArea hid -> Just $ whenRef (toTarget hid) \h -> one $ toned Bad $ mechanic [ikeyPart "log.heroToStagingArea" ["hero" ~> h]]
+  TakeControlOfHero hid -> Just $ whenRef (toTarget hid) \h -> do
+    owner <- getsGame (fmap (.owner) . Map.lookup hid . entitiesHeroes . gameEntities)
+    flip (maybe (pure [])) owner \pid -> do
+      who <- playerRefFor pid
+      one $ toned Good $ mechanic [ikeyPart "log.takesControlOfHero" ["player" ~> who, "hero" ~> h]]
+  PutObjectiveHeroIntoPlayUnder pid card -> Just do
+    who <- playerRefFor pid
+    one $ mechanic [ikeyPart "log.takesControlOfHero" ["player" ~> who, "hero" ~> EncounterCard card]]
   -- an enemy taking an objective, as Alcaron's Scroll goes to the enemy that damaged its hero
   ClaimObjective oid target@(EnemyTarget _) -> Just $ attached (toTarget oid) target
   ClaimObjective oid target -> Just $ whenRef (toTarget oid) \o -> whenRef target \t ->
@@ -322,7 +347,7 @@ narrationFor = \case
   RemoveFromQuestDeck card -> Just $ one $ toned Good $ mechanic [ikeyPart "log.removedFromQuestDeck" ["card" ~> EncounterCard card]]
   AdvanceToQuest card -> Just $ one $ structure [ikeyPart "log.questStage" ["quest" ~> EncounterCard card]]
   -- \* Hands and decks
-  DrawCards drawing | drawing.count > 0 -> Just $ withPlayer drawing.player \player who -> do
+  DoDrawCards drawing | drawing.count > 0 -> Just $ withPlayer drawing.player \player who -> do
     let drawn = take drawing.count player.deck
     pure
       [ forPlayer player.id $ mechanic [ikeyPart "log.drawsCards" ["player" ~> who, "cards" ~> drawn]]
@@ -370,6 +395,15 @@ narrationFor = \case
   ScenarioSpecific "stormcaller.advanced" (parseMaybe parseJSON -> Just card) ->
     Just $ one $ toned Bad $ structure [ikeyPart "log.stormcallerAdvances" ["quest" ~> EncounterCard card]]
   ScenarioSpecific "stormcaller.join" _ -> Just $ one $ toned Good $ mechanic [ikeyPart "log.stormcallerCaughtUp" []]
+  -- \* The Orcs' area and their quest stage (Race Across Harad)
+  PlaceEnemy eid OrcsArea -> Just $ whenRef (toTarget eid) \e -> one $ mechanic [ikeyPart "log.toOrcsArea" ["card" ~> e]]
+  PlaceLocation lid OrcsArea -> Just $ whenRef (toTarget lid) \l -> one $ mechanic [ikeyPart "log.toOrcsArea" ["card" ~> l]]
+  ScenarioSpecific "orcs.progress" (parseMaybe parseJSON -> Just (n :: Int)) ->
+    Just $ one $ toned Bad $ mechanic [ikeyPart "log.orcsProgress" ["count" ~> n]]
+  ScenarioSpecific "orcs.advanced" (parseMaybe parseJSON -> Just card) ->
+    Just $ one $ toned Bad $ structure [ikeyPart "log.orcsAdvance" ["quest" ~> EncounterCard card]]
+  ScenarioSpecific "orcs.join" _ -> Just $ one $ toned Bad $ mechanic [ikeyPart "log.orcsCaughtUp" []]
+  ScenarioSpecific "orcs.split" _ -> Just $ one $ toned Good $ mechanic [ikeyPart "log.orcsLeftBehind" []]
   -- \* Locations the players control, as Osgiliath's
   PlaceLocation lid placement -> Just $ whenRef (toTarget lid) \l -> do
     from <- maybe Unplaced (.placement) . Map.lookup lid <$> getsGame (entitiesLocations . gameEntities)
@@ -387,6 +421,14 @@ narrationFor = \case
   -- Havens Burn
   PlaceUnderneath target [card] | cdCardType (toCardDef card) == LocationType -> Just $ whenRef target \t ->
     one $ toned Bad $ mechanic [ikeyPart "log.locationPlacedUnderneath" ["location" ~> card, "target" ~> t]]
+  -- an enemy leaving play for underneath a card, as Narrow Alleyway hides one; one from
+  -- out of play goes facedown unnamed, as The Steward's Fear's underworld cards
+  PlaceUnderneath target [card] | cdCardType (toCardDef card) == EnemyType -> Just $ whenRef target \t -> do
+    inPlay <- getsGame (any ((== card.id) . (.id) . toCard) . entitiesEnemies . gameEntities)
+    one
+      $ if inPlay
+        then mechanic [ikeyPart "log.enemyPlacedUnderneath" ["enemy" ~> card, "target" ~> t]]
+        else toned Bad $ mechanic [ikeyPart "log.placedUnderneath" ["target" ~> t, "count" ~> (1 :: Int)]]
   PlaceUnderneath target cards | notNull cards -> Just $ whenRef target \t ->
     one $ toned Bad $ mechanic [ikeyPart "log.placedUnderneath" ["target" ~> t, "count" ~> length cards]]
   _ -> Nothing

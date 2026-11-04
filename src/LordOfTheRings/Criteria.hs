@@ -9,6 +9,7 @@ import LordOfTheRings.Target (Target)
 import LordOfTheRings.Phase (Phase)
 import LordOfTheRings.Prelude
 import LordOfTheRings.Sphere (Sphere)
+import LordOfTheRings.Trait (Trait)
 
 data Criterion
   = NoCriteria
@@ -56,6 +57,8 @@ data Criterion
   | -- | a matching card is in any player's discard pile, as The Houses of Healing needs a
     -- hero there
     CardInAnyDiscard CardMatcher
+  | -- | the main quest has no keywords, printed or gained, as Backtrack reads
+    MainQuestWithoutKeywords
   | Criteria [Criterion]
   | AnyCriteria [Criterion]
   | -- | at least this many enemies match
@@ -64,6 +67,9 @@ data Criterion
     HeadingMatches HeadingMatcher
   | -- | the game is dealt in nightmare mode, as a setup card changes a stage's ability
     InNightmareMode
+  | -- | the characters the player controls have at least this many different traits
+    -- between them, as The Free Peoples reads
+    DifferentTraitsAtLeast PlayerId Int
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
@@ -97,6 +103,15 @@ instance Exists AllyMatcher where
 -- if each hero you control has a printed [lore] resource icon" reads.
 eachHeroHasPrintedIcon :: PlayerId -> Sphere -> Criterion
 eachHeroHasPrintedIcon pid sphere = NotCriterion $ HeroExists (HeroControlledBy (PlayerWithId pid) <> NotHero (HeroWithPrintedSphere sphere))
+
+-- | The player controls a different unique character with each trait, as "Play only if you
+-- control a unique character with the Warrior trait and another unique character with the
+-- Scout trait" reads.
+uniqueCharactersWith :: PlayerId -> [Trait] -> Criterion
+uniqueCharactersWith pid = DistinctCharacters . map \trait ->
+  (HeroControlledBy you <> HeroWithTrait trait, AllyControlledBy you <> UniqueAlly <> AllyWithTrait trait)
+ where
+  you = PlayerWithId pid
 
 -- | The player may resolve a Valour trigger: his threat is 40 or higher.
 valour :: PlayerId -> Criterion

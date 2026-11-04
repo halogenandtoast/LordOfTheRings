@@ -197,6 +197,22 @@ allEventCards =
       , commandLore
       , commandSpirit
       , commandTactics
+      , unlikelyFriendship
+      , wellWarned
+      , dourHanded
+      , proudHunters
+      , backtrack
+      , huntingParty
+      , theFreePeoples
+      , burstIntoSong
+      , oldToby
+      , fierceDefense
+      , heirsOfEarendil
+      , openTheArmory
+      , bulwarkOfTheWest
+      , flightToTheSea
+      , theDamBursts
+      , windFromTheSea
       ]
 
 everVigilant :: CardDef
@@ -784,3 +800,63 @@ determination = (event "AAC172" "Determination" Neutral (StaticCost 1)) {cdCardT
 
 loreOfAncientArnor :: CardDef
 loreOfAncientArnor = (event "AAC190" "Lore of Ancient Arnor" Neutral (StaticCost 3)) {cdCardTraits = setFromList [Boon]}
+
+unlikelyFriendship :: CardDef
+unlikelyFriendship = event "16007" "Unlikely Friendship" Leadership (StaticCost 0)
+
+wellWarned :: CardDef
+wellWarned = event "16008" "Well Warned" Spirit (StaticCost 0)
+
+dourHanded :: CardDef
+dourHanded = event "16009" "Dour-handed" Tactics (StaticCost 1)
+
+proudHunters :: CardDef
+proudHunters = event "17032" "Proud Hunters" Tactics (StaticCost 0)
+
+backtrack :: CardDef
+backtrack = event "17034" "Backtrack" Spirit (StaticCost 1)
+
+huntingParty :: CardDef
+huntingParty = event "17057" "Hunting Party" Leadership (StaticCost 1)
+
+theFreePeoples :: CardDef
+theFreePeoples = event "17064" "The Free Peoples" Neutral (StaticCost 5)
+
+burstIntoSong :: CardDef
+burstIntoSong = event "17083" "Burst into Song" Leadership (StaticCost 2)
+
+oldToby :: CardDef
+oldToby =
+  (event "17089" "Old Toby" Lore (StaticCost 2))
+    { cdCardTraits = setFromList [Pipeweed]
+    }
+
+fierceDefense :: CardDef
+fierceDefense = event "17113" "Fierce Defense" Tactics (StaticCost 3)
+
+heirsOfEarendil :: CardDef
+heirsOfEarendil = event "17115" "Heirs of Eärendil" Spirit (StaticCost 1)
+
+openTheArmory :: CardDef
+openTheArmory = event "17118" "Open the Armory" Neutral (StaticCost 1)
+
+bulwarkOfTheWest :: CardDef
+bulwarkOfTheWest = event "17137" "Bulwark of the West" Leadership (StaticCost 0)
+
+flightToTheSea :: CardDef
+flightToTheSea = event "17140" "Flight to the Sea" Spirit (StaticCost 2)
+
+theDamBursts :: CardDef
+theDamBursts = event "17142" "The Dam Bursts" Lore (StaticCost 2)
+
+-- * The Crossings of Poros
+
+-- | Encounter: an encounter card back and no cost. Set aside out of play at setup, it is
+-- never in a player's deck.
+windFromTheSea :: CardDef
+windFromTheSea =
+  (event "17144" "Wind from the Sea" Neutral (StaticCost 0))
+    { cdCost = Nothing
+    , cdKeywords = setFromList [Encounter]
+    , cdShadowEffect = True
+    }

@@ -52,6 +52,8 @@ data WindowType
   | ProgressPlaced Target Int
   | QuestedUnsuccessfully
   | QuestedSuccessfully
+  | -- | the progress from questing successfully has been placed
+    PlacedProgressFromQuesting
   | -- | an attack the character made has resolved
     AttackedEnemy Target EnemyId
   | -- | an attack the character defended has resolved
@@ -92,6 +94,8 @@ data WindowType
     PlayingEvent PlayerId CardId
   | -- | an attack the characters made dealt the enemy this much damage
     AttackDealtDamage EnemyId [Target] Int
+  | -- | the enemy's attack dealt the card damage, as Dwarven Shield answers
+    DamagedByEnemyAttack Target EnemyId
   | -- | the player let the enemy's attack go undefended
     AttackUndefended PlayerId EnemyId
   | -- | an enemy was defeated: damage destroyed it
@@ -129,6 +133,9 @@ data WindowType
     BecameReady Target
   | -- | it became Day or Night, as The Wastes of Eriador's Time objective flipped
     Became TimeOfDay
+  | -- | the card turned over to the side with this code, as Beneath the Sands' Search
+    -- objective flips to On Track
+    FlippedTo Target CardCode
   | -- | the When Revealed effects of the card just revealed were canceled
     WhenRevealedCanceled Target
   | -- | the captured cards underneath the card were rescued, as Jailor Gornákh answers
@@ -159,6 +166,8 @@ data WindowType
     QuestBypassed Target
   | -- | the character was committed to an escape test, as Things in the Pools answers
     CommittedToEscapeTest Target
+  | -- | the guarded character went free of encounters, back under its owner's control
+    CharacterRescued Target
   | -- | the hidden card was turned faceup: the enemy it put into play (The Blood of Gondor)
     HiddenCardTurnedFaceup Target
   | -- | a card was discarded from the encounter deck, as Calaerion answers

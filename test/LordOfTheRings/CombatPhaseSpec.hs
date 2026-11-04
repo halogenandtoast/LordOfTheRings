@@ -1,5 +1,7 @@
 module LordOfTheRings.CombatPhaseSpec (spec) where
 
+import Data.Aeson.Types (parseMaybe)
+import Data.Map.Strict qualified as Map
 import LordOfTheRings.Enemy (Enemy, EnemyAttrs (..))
 import LordOfTheRings.Card.CardDef (toCardDef)
 import LordOfTheRings.Effect
@@ -7,7 +9,9 @@ import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Helpers.Character (getAttack, getAttackStrength, getDefense)
 import LordOfTheRings.Modifier
 import LordOfTheRings.Location.CardDefs qualified as Locations
+import LordOfTheRings.Game.Public (publicGame)
 import LordOfTheRings.Phase
+import LordOfTheRings.Trait (Trait (Spider))
 import LordOfTheRings.Window (WindowType (EnemyAttacking), mkAfter)
 import TestImport
 
@@ -103,6 +107,16 @@ spec = describe "Combat phase" do
     Just (QuestionLabel _ _ targets _) <- getQuestion pid
     targets `shouldBe` [toTarget s]
 
+  it "tells the board what each attacker would add, with its bonus against the enemy's traits" . gameTest $ \pid -> do
+    s <- engageSpider pid
+    hero <- getHeroWithCode "01002"
+    run $ CreateEffect $ Effect GameSource (toTarget hero) [AttackBonusAgainst Spider 2] UntilEndOfRound
+    run $ DeclareAttackers pid (toId s)
+    attack <- getAttack (toTarget hero)
+    seen <- getsGame publicGame
+    let adding = parseMaybe (withObject "game" (.: "attackAdding")) seen :: Maybe (Map CardId Int)
+    (Map.lookup (toAttrs hero).heroCardId =<< adding) `shouldBe` Just (attack + 2)
+
   it "lets the player choose which engaged enemy attacks next" . gameTest $ \pid -> do
     _ <- engageSpider pid
     _ <- setEncounterDeck [Enemies.forestSpider, Locations.oldForestRoad, Locations.oldForestRoad]
@@ -122,7 +136,7 @@ spec = describe "Combat phase" do
     run $ EngageEnemy pid two
     run $ PlayerAttacks pid
     Just (QuestionLabel prompt _ targets _) <- getQuestion pid
-    prompt `shouldBe` "$label.chooseEnemyToAttack"
+    prompt `shouldBe` "$label.chooseNextEnemyToAttack"
     length targets `shouldBe` 2
     chooseTarget pid two
     Just (QuestionLabel declare _ declared _) <- getQuestion pid

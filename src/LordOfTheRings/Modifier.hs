@@ -56,7 +56,8 @@ data ModifierType
     CannotAttack
   | -- | on a character: it does not exhaust, so cannot commit, attack or defend
     CannotExhaust
-  | CannotReady
+  | -- | on a character; on the game, no character readies, as Enfeebled reads
+    CannotReady
   | -- | on an enemy: characters with ranged may attack it in the staging area
     AttackableInStagingAreaByRanged
   | -- | on an enemy: it cannot attack that player, though it may attack others
@@ -124,8 +125,12 @@ data ModifierType
     DoesNotCountAttack
   | -- | on an enemy: its attack is undefended, no character may defend against it
     CannotBeDefended
-  | -- | on a location: at most this much more progress can be placed on it now
+  | -- | on a location or quest card: at most this much more progress can be placed on it
+    -- now, as a stage that "cannot have more than 15 progress tokens on it" gives itself
     ProgressLimit Int
+  | -- | on a quest card: it is not defeated, whatever its progress; once nothing gives it
+    -- this, it is checked again, as "the players cannot defeat this stage while..." reads
+    CannotBeDefeated
   | -- | on a character committed to the quest: its willpower does not count toward it
     DoesNotCountWillpower
   | -- | on a character: it is discarded from play once its willpower is 0, as The
@@ -235,7 +240,8 @@ data ModifierType
     DoesNotExhaustToCommit
   | -- | on the game: no player card may cancel an encounter card's effects
     CannotCancelEncounterEffects
-  | -- | on an encounter card: its When Revealed effect cannot be canceled
+  | -- | on an encounter card: its When Revealed effect cannot be canceled; on the game:
+    -- no encounter card's can be
     WhenRevealedCannotBeCanceled
   | -- | on the game: matching cards cost this much more to play from hand
     IncreaseCost CardMatcher Int
@@ -260,6 +266,8 @@ data ModifierType
     IgnoresDefenseWhenAttackingAlone
   | -- | on a player: an enemy engaged them this round
     EngagedAnEnemyThisRound
+  | -- | on an enemy: it engaged a player this round, as Nowhere to Hide's shadow reads
+    EngagedThisRound
   | -- | on a player: they played a copy of the card this phase
     PlayedThisPhase CardCode
   | -- | on a card: the card type its controller named
@@ -333,6 +341,9 @@ data ModifierType
     ResourcePhaseDraws Int
   | -- | on a player: their threat cannot be reduced, as The Empty Mug reads
     CannotReduceThreat
+  | -- | on a player: a player card reduces their threat by at most this much, as Mines of
+    -- Cirith Gurat's "reduce that amount to 1" reads
+    PlayerCardThreatReductionLimit Int
   | -- | on a player: the threat at which they are eliminated, 50, moves by this much, as
     -- Double Dealings lowers it by 10
     EliminationThreatModifier Int
@@ -401,13 +412,22 @@ data ModifierType
     -- much by 'ProgressCanceled'
     QuestProgressCanceledBy Source
   | -- | on a location in the staging area: nothing moves it out, to be active, to a deck or
-    -- out of the game, as The Crossing at Tharbad reads; explored, it still leaves play
+    -- out of the game, as The Crossing at Tharbad reads; explored, it still leaves play. On
+    -- an enemy there: it is not engaged, moved or discarded, as The Black Serpent reads;
+    -- give it 'CannotBeOptionallyEngagedBy' too, for the players not to be offered it.
+    -- On a card in the Orcs' area, the same holds of that area (Race Across Harad)
     CannotLeaveStagingArea
   | -- | on a hero: player card effects cannot give it resources, as No End in Sight reads;
     -- encounter card effects still may
     CannotGainResourcesFromPlayerCardEffects
   | -- | on a player: he played a card this round, from wherever, as A Forgotten Land counts
     PlayedACardThisRound
+  | -- | on a player: he played a card this phase, as "the first card each player plays each
+    -- phase" counts (The Long Arm of Mordor)
+    PlayedACardThisPhase
+  | -- | on a player: he played a card of the type this round, from wherever, as The Storm
+    -- Comes reads "the first ally played by each player each round"
+    PlayedCardTypeThisRound CardType
   | -- | on a player: they draw this many more cards in the resource phase, in the same
     -- draw, as Bilbo Baggins reads
     AdditionalResourcePhaseDraws Int
@@ -544,6 +564,19 @@ data ModifierType
     ExcessDamageTo Target
   | -- | on a player: they cannot discard cards from their hand, as Isen River reads
     CannotDiscardFromHand
+  | -- | on a player: he cannot have more than this many cards in hand, discarding down to
+    -- it at once, as In Enemy Territory reads
+    HandSizeLimit Int
+  | -- | on an objective: the first player claims it as soon as nothing guards it, attaching
+    -- it to a hero he controls, as The Black Serpent's stages read of each Harad objective
+    -- that is not attached
+    FirstPlayerClaimsWhenFree
+  | -- | on the game, or a character: player card effects cannot ready it, as Find Water
+    -- reads; the refresh phase still does
+    CannotBeReadiedByPlayerCards
+  | -- | on a character: it cannot defend against matching enemies, as Uruk of Mordor reads
+    -- for allies with less willpower than its threat
+    CannotDefendAgainst EnemyMatcher
   | -- | on a character: it cannot attack or defend against matching enemies, as Cursed
     -- Burden reads
     CannotFight EnemyMatcher
