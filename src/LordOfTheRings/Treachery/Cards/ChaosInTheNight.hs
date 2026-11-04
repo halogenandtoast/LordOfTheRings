@@ -1,6 +1,5 @@
 module LordOfTheRings.Treachery.Cards.ChaosInTheNight (chaosInTheNight) where
 
-import LordOfTheRings.Classes.HasGame (getsGame)
 import LordOfTheRings.Treachery.CardDefs qualified as Cards
 import LordOfTheRings.Treachery.Import.Lifted
 
@@ -14,18 +13,18 @@ chaosInTheNight = treachery ChaosInTheNight Cards.chaosInTheNight
 {- | When Revealed: The first player must choose: either raise each player's threat by 3,
 or progress cannot be placed on quest cards until the end of the round.
 Shadow: Attacking enemy gets +1 attack. If this attack destroys a character, remove all
-progress from the main quest.
+progress from the main quest. The bar is on the game, so a stage or side quest entering
+play later this round takes none either.
 -}
 instance RunMessage ChaosInTheNight where
   runMessage msg t@(ChaosInTheNight attrs) = case msg of
     WhenRevealed (isTarget attrs -> True) -> do
       lead <- getLead
-      quests <- getsGame (map toTarget . toList . (.entities.quests))
       chooseOneM lead do
         questionLabeled "chaosInTheNight.choose"
         causedBy attrs
         labeled "chaosInTheNight.threat" $ eachPlayer (`encounterRaisesThreat` 3)
-        labeled "chaosInTheNight.noProgress" $ for_ quests \q -> roundModifier attrs q (ProgressLimit 0)
+        labeled "chaosInTheNight.noProgress" $ roundModifier attrs GameTarget NoProgressOnQuestCards
       pure t
     ResolveShadowEffect cid eid _ _ | cid == attrs.cardId -> do
       enemyGetsAttack attrs eid 1

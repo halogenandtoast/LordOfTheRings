@@ -450,7 +450,8 @@ runGame msg g = case msg of
       [] -> placeOnQuest
    where
     placeOnQuest = do
-        mods <- getModifiers target
+        barred <- elem NoProgressOnQuestCards <$> getModifiers GameTarget
+        mods <- (<> [ProgressLimit 0 | barred]) <$> getModifiers target
         placed <- progressPlacedThisRound target
         let reduced = max 0 (n - sum [k | ProgressReducedBy k <- mods])
             -- and no more than it may take now, as Stranded in Umbar's 15 tokens at most
