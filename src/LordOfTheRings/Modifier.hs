@@ -153,6 +153,9 @@ data ModifierType
   | -- | on an enemy: it gets +1 threat for each token of the kind on it, counted as they
     -- change, as Foes of Ecthelion reads for resources
     ThreatPerToken Token
+  | -- | on a card: it gets this much threat while it has a token of the kind on it, counted
+    -- as they change, as Vastness of Mirkwood's "+2 instead if it has at least 1 progress"
+    ThreatWithToken Token Int
   | -- | on the game: the total threat in the staging area is raised by 1 for each token of
     -- the kind on the card, counted as they change, as The Tower Beckons reads
     StagingThreatPerToken Target Token
@@ -527,6 +530,9 @@ data ModifierType
   | -- | on the game: each location in the staging area takes the modifier, one that
     -- enters it later too, for as long as the effect lasts, as Treacherous Fog reads
     EachLocationInStagingArea ModifierType
+  | -- | on the game: as 'EachLocationInStagingArea', each matching one, as Vastness of
+    -- Mirkwood's "each non-objective location in the staging area"
+    EachMatchingLocationInStagingArea CardMatcher ModifierType
   | -- | on the game: a hero committed to the quest this round, as The Rear Guard reads
     HeroCommittedThisRound
   | -- | on the game: the players quested successfully this phase, as Bofur reads

@@ -248,6 +248,22 @@ spec = describe "Lost in Mirkwood" do
       -- 1 location for 1 player: no surge
       getsGame (any ((== toCardCode Locations.twilightHall) . toCardCode) . (.entities.locations)) `shouldReturn` False
 
+    it "reaches a location staged later in the phase, and one that takes progress later (FAQ 1.55)" . mirkwoodTest $ \_ -> do
+      woods <- stageLocation Locations.darkBlackWoods
+      -- Overgrown Path is guarded by an Accursed Forest, which gets +1 too
+      _ <- setEncounterDeck [Locations.accursedForest]
+      path <- stageLocation Locations.overgrownPath
+      _ <- setEncounterDeck [Treacheries.vastnessOfMirkwood]
+      run RevealEncounterCard
+      resolveRevealed
+      getLocationThreat woods `shouldReturn` 4
+      hall <- stageLocation Locations.twilightHall
+      getLocationThreat hall `shouldReturn` 3
+      run $ PlaceTokens GameSource (toTarget hall) Progress 1
+      getLocationThreat hall `shouldReturn` 4
+      -- an objective-location gets none
+      getLocationThreat path `shouldReturn` 0
+
   describe "Spiders of Mirkwood" do
     it "shuffles the Spiders of Mirkwood set in and reveals a card per player" . mirkwoodTest $ \pid -> do
       setSetAside [Enemies.kingSpider, Enemies.chieftanUfthak]
