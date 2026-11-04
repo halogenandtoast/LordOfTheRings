@@ -178,6 +178,13 @@ spec = describe "Quest phase" do
     (name, _) <- questingStat
     name `shouldBe` "defense"
 
+  it "quests with defense when the quest has both battle and siege" . gameTest $ \pid -> do
+    flipFirstQuest pid
+    quest <- putQuestStage Quests.ambushInIthilien
+    run $ CreateEffect $ Effect GameSource quest [GainKeyword Siege] UntilEndOfRound
+    (name, _) <- questingStat
+    name `shouldBe` "defense"
+
   it "a lost keyword stays lost though another card grants it" . gameTest $ \pid -> do
     flipFirstQuest pid
     quest <- putQuestStage Quests.ambushInIthilien

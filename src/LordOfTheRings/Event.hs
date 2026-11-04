@@ -180,6 +180,22 @@ import LordOfTheRings.Event.Cards.InspiringPresence
 import LordOfTheRings.Event.Cards.GaldorsCounsel
 import LordOfTheRings.Event.Cards.ComeTogether
 import LordOfTheRings.Event.Cards.Command
+import LordOfTheRings.Event.Cards.UnlikelyFriendship
+import LordOfTheRings.Event.Cards.WellWarned
+import LordOfTheRings.Event.Cards.DourHanded
+import LordOfTheRings.Event.Cards.ProudHunters
+import LordOfTheRings.Event.Cards.Backtrack
+import LordOfTheRings.Event.Cards.HuntingParty
+import LordOfTheRings.Event.Cards.TheFreePeoples
+import LordOfTheRings.Event.Cards.BurstIntoSong
+import LordOfTheRings.Event.Cards.OldToby
+import LordOfTheRings.Event.Cards.FierceDefense
+import LordOfTheRings.Event.Cards.HeirsOfEarendil
+import LordOfTheRings.Event.Cards.OpenTheArmory
+import LordOfTheRings.Event.Cards.BulwarkOfTheWest
+import LordOfTheRings.Event.Cards.FlightToTheSea
+import LordOfTheRings.Event.Cards.TheDamBursts
+import LordOfTheRings.Event.Cards.WindFromTheSea
 import LordOfTheRings.Event.Types as X
 import LordOfTheRings.Id
 import LordOfTheRings.Prelude
@@ -379,5 +395,21 @@ allEvents =
         , SomeEventCard commandLore
         , SomeEventCard commandSpirit
         , SomeEventCard commandTactics
+        , SomeEventCard unlikelyFriendship
+        , SomeEventCard wellWarned
+        , SomeEventCard dourHanded
+        , SomeEventCard proudHunters
+        , SomeEventCard backtrack
+        , SomeEventCard huntingParty
+        , SomeEventCard theFreePeoples
+        , SomeEventCard burstIntoSong
+        , SomeEventCard oldToby
+        , SomeEventCard fierceDefense
+        , SomeEventCard heirsOfEarendil
+        , SomeEventCard openTheArmory
+        , SomeEventCard bulwarkOfTheWest
+        , SomeEventCard flightToTheSea
+        , SomeEventCard theDamBursts
+        , SomeEventCard windFromTheSea
         ]
     ]

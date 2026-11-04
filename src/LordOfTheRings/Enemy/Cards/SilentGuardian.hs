@@ -21,10 +21,10 @@ instance RunMessage SilentGuardian where
   runMessage msg (SilentGuardian attrs) = case msg of
     CheckWindows ws | EngagedWith pid <- attrs.placement -> do
       player <- getPlayer pid
-      played <- length . filter (== PlayedEventThisRound) <$> getModifiers (PlayerTarget pid)
+      played <- length . filter (== PlayedCardTypeThisRound EventType) <$> getModifiers (PlayerTarget pid)
       let fromHand = [cid | Window After (PlayedFromHand (CardIdTarget cid)) <- ws]
           -- one played from elsewhere is known by its code, the last of it discarded
-          elsewhere = [code | null fromHand, Window After (PlayedCard p code) <- ws, p == pid]
+          elsewhere = [toCardCode pc | null fromHand, Window After (PlayedCard p pc) <- ws, p == pid]
           events =
             [c.id | c@(PlayerCard pc) <- player.discard, pc.id `elem` fromHand, c.cardType == EventType]
               <> take 1 [c.id | c <- player.discard, toCardCode c `elem` elsewhere, c.cardType == EventType]

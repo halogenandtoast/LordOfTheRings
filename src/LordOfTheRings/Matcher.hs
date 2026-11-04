@@ -89,14 +89,17 @@ matchCharacter matcher character = case matcher of
 instance Query HeroMatcher where
   type QueryElement HeroMatcher = HeroId
   select matcher = do
-    heroes <- getsGame (toList . entitiesHeroes . gameEntities)
+    -- a captive guarded by an encounter card is a guarded objective, not a hero
+    heroes <- getsGame (filter (isNothing . heroGuardedBy . toAttrs) . toList . entitiesHeroes . gameEntities)
     map toId <$> filterM (matchHero matcher) heroes
 
 matchHero :: HasGame m => HeroMatcher -> Hero -> m Bool
 matchHero matcher hero = case matcher of
   HeroWithId hid -> pure $ hero.id == hid
   -- a prisoner is face down: no one controls it until it is rescued
-  HeroControlledBy pm -> if heroPrisoner (toAttrs hero) then pure False else elem hero.owner <$> select pm
+  -- and one in the staging area is under no player's control (The Long Arm of Mordor)
+  HeroControlledBy pm -> if heroPrisoner (toAttrs hero) || heroInStagingArea (toAttrs hero) then pure False else elem hero.owner <$> select pm
+  HeroInStagingArea -> pure $ heroInStagingArea (toAttrs hero)
   HeroWithTitle name -> pure $ hero.name == name
   HeroWithTrait trait -> hasTrait trait (toTarget hero) (toCardDef hero)
   -- a hero belongs to the sphere of each resource icon it gains too, as Song of Wisdom's
@@ -144,8 +147,13 @@ matchHero matcher hero = case matcher of
 instance Query AllyMatcher where
   type QueryElement AllyMatcher = AllyId
   select matcher = do
-    allies <- getsGame (toList . entitiesAllies . gameEntities)
+    -- a captive guarded by an encounter card is a guarded objective, not an ally
+    allies <- getsGame (filter (not . guardedAlly) . toList . entitiesAllies . gameEntities)
     map toId <$> filterM (matchAlly matcher) allies
+   where
+    guardedAlly a = case a.placement of
+      AttachedTo (CardIdTarget _) -> True
+      _ -> False
 
 matchAlly :: HasGame m => AllyMatcher -> Ally -> m Bool
 matchAlly matcher ally = case matcher of
@@ -241,6 +249,10 @@ matchLocation matcher location = case matcher of
     _ -> pure False
   LocationWithIdBelow lid -> pure $ location.id < lid
   UniqueLocation -> pure $ cdUnique (toCardDef location)
+  LocationWithActiveLocationTitle -> do
+    let title l = case cdName (toCardDef l) of Name t _ -> t
+    active <- getsGame (filter ((== ActiveLocation) . (.placement)) . toList . entitiesLocations . gameEntities)
+    pure $ any ((== title location) . title) active
   LocationDiscardableByPlayerCards -> notElem CannotBeDiscardedByPlayerCards . map modifierType . Map.findWithDefault [] (toTarget location) <$> getsGame gameModifiers
 
 -- | Not considered out of play, as Saruman's chosen card is.
@@ -278,12 +290,29 @@ titles es =
 isDefending :: HasGame m => Target -> m Bool
 isDefending target = elem Defending . map modifierType . Map.findWithDefault [] target <$> getsGame gameModifiers
 
+-- | The characters defending the enemy's attack, as "while attacking a character with less
+-- willpower" reads of Uruk Warg-Rider's.
+getDefendersAgainst :: HasGame m => EnemyId -> m [Target]
+getDefendersAgainst eid = getsGame \g ->
+  [t | (t, ms) <- Map.toList (gameModifiers g), any (\m -> m.modifierType == Defending && m.modifierSource == EnemyAttackSource eid) ms]
+
 -- | A printed trait, or one a modifier grants.
 hasTrait :: HasGame m => Trait -> Target -> CardDef -> m Bool
 hasTrait trait target def = do
   mods <- map modifierType . Map.findWithDefault [] target <$> getsGame gameModifiers
   -- one it lost, as Shot from the Sky takes the Eagle trait, it no longer has
   pure $ LoseTrait trait `notElem` mods && (trait `member` cdCardTraits def || GainTrait trait `elem` mods)
+
+-- | The character's traits: its printed ones and those a modifier grants, less those it
+-- lost.
+characterTraits :: HasGame m => Target -> m (Set Trait)
+characterTraits target = do
+  printed <- case target of
+    HeroTarget hid -> cdCardTraits . toCardDef <$> getHero hid
+    AllyTarget aid -> cdCardTraits . toCardDef <$> getAlly aid
+    _ -> pure mempty
+  mods <- map modifierType . Map.findWithDefault [] target <$> getsGame gameModifiers
+  pure $ (printed <> setFromList [t | GainTrait t <- mods]) `difference` setFromList [t | LoseTrait t <- mods]
 
 {- | Whether the hero's resources can pay for a card or cost of the sphere: its own
 sphere's, one a gained resource icon gives it, or any while the game lets resources be
@@ -590,7 +619,7 @@ attackDestroyedAllies = fmap (filter \d -> case d.target of AllyTarget _ -> True
 -- | The player who controls the character, if it is one.
 characterController :: HasGame m => Target -> m (Maybe PlayerId)
 characterController = \case
-  HeroTarget hid -> Just . (.owner) <$> getHero hid
+  HeroTarget hid -> (\h -> guard (not $ heroInStagingArea $ toAttrs h) $> h.owner) <$> getHero hid
   AllyTarget aid -> placementController . (.placement) <$> getAlly aid
   _ -> pure Nothing
 
@@ -692,14 +721,16 @@ getDamage = \case
 damagedCharacters :: HasGame m => HeroMatcher -> AllyMatcher -> m [Target]
 damagedCharacters heroes allies = filterM (fmap (> 0) . getDamage) =<< selectCharacters heroes allies
 
-{- | Condition attachments in play: attachments with the Condition trait, and encounter
-cards attached to something, which in the core set all count as Conditions.
+{- | Condition attachments in play: attachments with the Condition trait, encounter cards
+attached to something, which in the core set all count as Conditions, and an enemy
+attached as one, as Strangling Python counts as a Condition attachment.
 -}
 getConditionAttachments :: HasGame m => m [Target]
 getConditionAttachments = do
   es <- getsGame gameEntities
   conditions <- filterM (\a -> hasTrait Condition (toTarget a) (toCardDef a)) (toList es.attachments)
-  pure $ map toTarget conditions <> [toTarget t | t <- toList es.treacheries, isAttached t.placement]
+  enemies <- filterM (\e -> hasTrait Condition (toTarget e) (toCardDef e)) [e | e <- toList es.enemies, isAttached e.placement]
+  pure $ map toTarget conditions <> [toTarget t | t <- toList es.treacheries, isAttached t.placement] <> map toTarget enemies
  where
   isAttached = \case
     AttachedTo _ -> True
@@ -716,6 +747,21 @@ getCurrentQuest = do
 -- | The quest cards in play, side quests left out.
 getMainQuests :: HasGame m => m [Target]
 getMainQuests = getsGame (map toTarget . filter (not . isSideQuest) . toList . entitiesQuests . gameEntities)
+
+-- | The progress on the main quest, not a side quest's, as "if there are no progress
+-- tokens on the main quest" reads.
+getMainQuestProgress :: HasGame m => m Int
+getMainQuestProgress = getsGame (sum . map (.progress) . filter (not . isSideQuest) . toList . entitiesQuests . gameEntities)
+
+-- | The card is in the victory display, as a player side quest's "while this quest is in
+-- the victory display" reads: built from its card there, it gives its modifiers.
+inVictoryDisplay :: HasGame m => CardId -> m Bool
+inVictoryDisplay cid = getsGame (any ((== cid) . (.id)) . (.victoryDisplay) . toAttrs . gameScenario)
+
+-- | The side quests in the victory display, as "X is the number of side quests in the
+-- victory display" reads.
+getSideQuestsInVictoryDisplay :: HasGame m => m Int
+getSideQuestsInVictoryDisplay = getsGame (length . filter (cardMatches sideQuestCard) . (.victoryDisplay) . toAttrs . gameScenario)
 
 -- | The objectives in play no hero has claimed: those in the staging area.
 unclaimedObjectives :: HasGame m => m Int
@@ -773,6 +819,10 @@ getEncounterDiscard :: HasGame m => m [EncounterCard]
 getEncounterDiscard = getsGame ((.encounterDiscard) . toAttrs . gameScenario)
 
 -- | The top card of the encounter deck, if there is one.
+-- | The top N cards of the encounter deck, as "search the top 5 cards" reads.
+getTopOfEncounterDeckN :: HasGame m => Int -> m [EncounterCard]
+getTopOfEncounterDeckN n = getsGame (take n . (.encounterDeck) . toAttrs . gameScenario)
+
 getTopOfEncounterDeck :: HasGame m => m (Maybe EncounterCard)
 getTopOfEncounterDeck = getsGame (headMay . (.encounterDeck) . toAttrs . gameScenario)
 
@@ -858,3 +908,27 @@ unchartedLocation = LocationWithKeyword Uncharted
 -- counts as 0.
 printedCostOf :: HasCardDef a => a -> Int
 printedCostOf = maybe 0 costAsResources . cdCost . toCardDef
+
+-- | The characters the encounter card guards as captives (see 'GuardCharacter').
+charactersGuardedBy :: HasGame m => CardId -> m [Target]
+charactersGuardedBy cid = do
+  es <- getsGame gameEntities
+  pure
+    $ [toTarget h | h <- toList (entitiesHeroes es), heroGuardedBy (toAttrs h) == Just cid]
+    <> [toTarget a | a <- toList (entitiesAllies es), a.placement == AttachedTo (CardIdTarget cid)]
+
+-- | Every captive an encounter card guards, with the player who owns it: none for an
+-- objective ally, an encounter card (see 'GuardCharacter').
+guardedCharacters :: HasGame m => m [(Target, Maybe PlayerId)]
+guardedCharacters = do
+  es <- getsGame gameEntities
+  pure
+    $ [(toTarget h, Just h.owner) | h <- toList (entitiesHeroes es), isJust (heroGuardedBy (toAttrs h))]
+    <> [ (toTarget a, owner (toCard a))
+       | a <- toList (entitiesAllies es)
+       , AttachedTo (CardIdTarget _) <- [a.placement]
+       ]
+ where
+  owner = \case
+    PlayerCard pc -> pc.owner
+    EncounterCard _ -> Nothing

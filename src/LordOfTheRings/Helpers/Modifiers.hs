@@ -3,7 +3,7 @@ module LordOfTheRings.Helpers.Modifiers (module LordOfTheRings.Helpers.Modifiers
 import Control.Monad.Writer.Strict (execWriterT)
 import Data.Map.Monoidal.Strict (MonoidalMap (..))
 import Data.Map.Strict qualified as Map
-import LordOfTheRings.Card (Card, CardType (AllyType))
+import LordOfTheRings.Card (Card, CardType (AllyType), toCardCode)
 import LordOfTheRings.Classes.HasGame
 import LordOfTheRings.Classes.HasModifiersFor
 import LordOfTheRings.Ally.Types (allyCardId)
@@ -41,8 +41,17 @@ preloadModifiers g = do
   let -- what is out of play only while its source is in play, as Saruman's chosen card,
       -- comes back as the source leaves
       lasting e =
-        ConsideredOutOfPlay `notElem` effectModifiers e
-          || maybe True (hostInPlay es . AttachedTo) (sourceTarget $ effectSource e)
+        ( ConsideredOutOfPlay `notElem` effectModifiers e
+            || maybe True (hostInPlay es . AttachedTo) (sourceTarget $ effectSource e)
+        )
+          && all (shows (effectTarget e)) [c | WhileShowing c <- effectModifiers e]
+      -- the card's faceup side, as a two-sided card flipped shows the other's code
+      shows t c = case t of
+        ObjectiveTarget oid -> maybe False ((== c) . toCardCode) (Map.lookup oid es.objectives)
+        QuestTarget qid -> maybe False ((== c) . toCardCode) (Map.lookup qid es.quests)
+        LocationTarget lid -> maybe False ((== c) . toCardCode) (Map.lookup lid es.locations)
+        EnemyTarget eid -> maybe False ((== c) . toCardCode) (Map.lookup eid es.enemies)
+        _ -> False
       fromEffects =
         Map.fromListWith
           (<>)

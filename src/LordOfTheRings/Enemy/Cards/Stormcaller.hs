@@ -4,7 +4,6 @@ import LordOfTheRings.Classes.HasGame (getsGame)
 import LordOfTheRings.Enemy.CardDefs qualified as Cards
 import LordOfTheRings.Enemy.Import.Lifted
 import LordOfTheRings.Helpers.Campaign (getCampaignLog)
-import LordOfTheRings.Helpers.Modifiers (getModifiers)
 import LordOfTheRings.Placement (Placement (StormcallerArea))
 import LordOfTheRings.Scenario.Scenarios.FlightOfTheStormcaller.Helpers
 
@@ -45,17 +44,9 @@ instance HasModifiersFor Stormcaller where
 
 {- | When the Stormcaller advances to the next quest stage, return it to the Stormcaller's
 area. If the Stormcaller leaves play, the players win the game.
-Damage past the round's limit is lost, as Mumak's is.
 -}
 instance RunMessage Stormcaller where
   runMessage msg e@(Stormcaller attrs) = case msg of
-    PlaceTokens source (isTarget attrs -> True) Damage n | n > 0 -> do
-      left <- foldr min maxBound . (\ms -> [k | DamageLimit k <- ms]) <$> getModifiers attrs
-      let placed = min n left
-      when (left < maxBound) $ roundModifier attrs attrs (DamageLimit (left - placed))
-      if placed > 0
-        then Stormcaller <$> runMessage (PlaceTokens source (toTarget attrs) Damage placed) attrs
-        else pure e
     ScenarioSpecific "stormcaller.advanced" _ -> do
       when (attrs.placement /= StormcallerArea) $ placeEnemy attrs.id StormcallerArea
       pure e

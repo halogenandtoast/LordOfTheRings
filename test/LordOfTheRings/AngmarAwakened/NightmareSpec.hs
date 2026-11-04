@@ -2,7 +2,7 @@ module LordOfTheRings.AngmarAwakened.NightmareSpec (spec) where
 
 import LordOfTheRings.Ally.CardDefs qualified as Allies
 import LordOfTheRings.Card.Synthetic qualified as Synthetic
-import LordOfTheRings.Card (CardDef (cdKeywords), CardType (HeroType), cdCardType, toCard, toCardDef)
+import LordOfTheRings.Card (CardDef (cdKeywords), CardType (EventType, HeroType), cdCardType, toCard, toCardDef)
 import LordOfTheRings.Keyword (Keyword (Safe))
 import LordOfTheRings.Quest.Types (isSideQuest)
 import LordOfTheRings.Effect (Effect (..), EffectDuration (UntilEndOfRound))
@@ -53,7 +53,7 @@ stagedLocation def = do
 
 -- | The player plays an event this round, as far as the round's count of them goes.
 playedEvent :: PlayerId -> GameT ()
-playedEvent pid = run $ CreateEffect $ Effect GameSource (PlayerTarget pid) [PlayedEventThisRound] UntilEndOfRound
+playedEvent pid = run $ CreateEffect $ Effect GameSource (PlayerTarget pid) [PlayedCardTypeThisRound EventType] UntilEndOfRound
 
 -- | Use every forced ability offered, one at a time, then pass the responses offered.
 resolveForced :: PlayerId -> GameT ()
@@ -568,6 +568,16 @@ spec = describe "Angmar Awakened Nightmare mode" do
       run $ EnemyAttack pid necro
       resolveForced pid
       length <$> reanimated `shouldReturn` 1
+
+    it "Necromancer of Carn Dûm, its attack canceled, has not attacked for Blight of Carn Dûm" . nightmare theDreadRealm $ \pid -> do
+      _ <- stagedLocation Locations.blightOfCarnDum
+      necro <- staged Enemies.necromancerOfCarnDum
+      run $ EngageEnemy pid necro
+      run $ DealDamage GameSource (toTarget necro) 1
+      _ <- onTop pid Allies.silverlodeArcher
+      run $ EnemyAttack pid necro
+      resolveForced pid
+      getDamage (toTarget necro) `shouldReturn` 1
 
     it "Inner Sanctum takes no progress in the staging area, and resolves the Sorcery it discards" . nightmare theDreadRealm $ \_ -> do
       _ <- putQuestStage Quests.theCatacombsOfCarnDum

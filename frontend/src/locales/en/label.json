@@ -4,6 +4,7 @@
   "questAgainstMainQuest": "The main quest",
   "chooseNewCurrentQuest": "Choose a new quest card to be the current quest",
   "valour": "Valour: resolve the Valour trigger instead",
+  "removeMainQuestProgress": "Remove {n} progress from the main quest",
   "dealDamageToOneCharacter": "Deal {n} damage to a character you control",
   "chooseCardToDiscardFromHand": "Choose a card to discard from your hand",
   "discardAnyFromHand": "Discard a card from your hand?",
@@ -17,7 +18,7 @@
   "chooseNextAttack": "Choose the next enemy attack to resolve",
   "takeAttackUndefended": "Take the attack undefended",
   "endOfPhaseAlly": "Choose which effect resolves first for this ally",
-  "returnAllyToHand": "Return it to its owner's hand",
+  "returnToOwnersHand": "Return it to its owner's hand",
   "shuffleAllyIntoDeck": "Shuffle it into its owner's deck",
   "doneDeclaringDefenders": "Done declaring defenders",
   "defendWithSentinel": "Defend {enemy}'s attack on another player with a sentinel?",
@@ -25,7 +26,7 @@
   "joinAttackRanged": "Join the attack with a ranged character?",
   "undefendedDamage": "The attack is undefended: which hero takes the damage?",
   "attackStagingAlone": "Attack an enemy in the staging area alone?",
-  "chooseEnemyToAttack": "Choose the next enemy to attack",
+  "chooseNextEnemyToAttack": "Choose the next enemy to attack",
   "doNotAttack": "Do not attack",
   "declareAttackers": "Declare attackers",
   "doneAttacking": "Done attacking",
@@ -546,6 +547,7 @@
   "chooseEnemy": "Choose an enemy",
   "returnFromDiscard": "Choose a card to return from your discard pile to your hand",
   "chooseHeroToReady": "Choose a hero to ready",
+  "chooseLocation": "Choose a location",
   "chooseEnemyToAttack": "Choose an enemy to attack",
   "treebeard": {
     "ready": "Ready an Ent character"
@@ -1067,7 +1069,9 @@
     "returnLocation": "Return the active location to the staging area"
   },
   "offTrack": {
-    "attach": "Attach Off Track to a location"
+    "attach": "Attach Off Track to a location",
+    "choose": "Off Track: return the topmost location in the encounter discard pile to the staging area, or raise each player's threat",
+    "raiseThreat": "Raise each player's threat by 1 for each resource on Off Track"
   },
   "inNeedOfRest": {
     "attach": "Remove a hero from the quest and attach In Need of Rest to it"
@@ -2056,7 +2060,10 @@
     "discard": "Choose an attachment to discard for Torrent of Hail"
   },
   "forcedOffTrack": {
-    "discard": "Choose a Warg enemy in the staging area to discard"
+    "discard": "Choose a Warg enemy in the staging area to discard",
+    "choose": "Forced Off Track: flip the Search objective to Off Track, or deal 1 damage to each questing character",
+    "flip": "Flip the Search objective to Off Track",
+    "damage": "Deal 1 damage to each questing character"
   },
   "goblinPatrolNightmare": {
     "capture": "Goblin Patrol: capture random cards from your hand underneath the current quest",
@@ -2204,5 +2211,254 @@
     "parryingCutlass": "Parrying Cutlass",
     "throwingAxe": "Throwing Axe",
     "attachTo": "Campaign: choose the hero to attach it to"
+  },
+  "southronSoldier": {
+    "choose": "Southron Soldier: choose one",
+    "attack": "Southron Soldier makes an immediate attack",
+    "engage": "Southron Soldier: choose an enemy in the staging area to engage and deal a shadow card"
+  },
+  "southronArcher": {
+    "choose": "Southron Archer: choose one",
+    "discardAlly": "Discard an ally you control",
+    "ally": "Southron Archer: choose an ally to discard"
+  },
+  "injuredCompanion": {
+    "choose": "Injured Companion: choose one",
+    "raiseThreat": "Raise your threat by {n}, 1 for each character you control",
+    "discard": "Discard a character you control",
+    "character": "Injured Companion: choose a character to discard"
+  },
+  "findWater": {
+    "ready": "Find Water: choose a hero to ready"
+  },
+  "desertOasis": {
+    "heal": "Desert Oasis: heal 1 damage from a character ({count} left)"
+  },
+  "sandstorm": {
+    "choose": "Sandstorm: choose one",
+    "discardHand": "Discard your hand",
+    "damage": "Assign {n} damage among characters you control",
+    "discardAttachment": "Discard the highest cost attachment you control",
+    "attachment": "Sandstorm: choose the attachment to discard"
+  },
+  "heatExhaustion": {
+    "exhaust": "Heat Exhaustion: choose a character to exhaust and deal 1 damage to"
+  },
+  "overgrown": {
+    "attach": "Overgrown: choose the location to attach it to"
+  },
+  "urukChieftain": {
+    "engage": "Uruk Chieftain: choose the player it engages"
+  },
+  "mordorWarg": {
+    "attach": "Mordor Warg: choose the Orc enemy to attach it to"
+  },
+  "theLongArmOfMordor": {
+    "takeControl": "Choose a hero you own in the staging area to take control of"
+  },
+  "surpriseAttack": {
+    "objectiveHero": "Surprise Attack: choose the objective-hero you take control of"
+  },
+  "freeTheCaptives": {
+    "guard": "Free the Captives: choose the Orc enemy that guards this hero"
+  },
+  "kahlielObjective": {
+    "resource": "Kahliel: choose the hero to add 1 resource to"
+  },
+  "yazanObjective": {
+    "damage": "Yazan: choose the non-unique enemy to deal 1 damage to"
+  },
+  "jubayrObjective": {
+    "discard": "Jubayr: choose the non-unique enemy to discard a facedown shadow card from"
+  },
+  "savageAttack": {
+    "choose": "Savage Attack: choose one",
+    "discardAlly": "Discard the highest cost ally you control",
+    "chooseAlly": "Choose the ally to discard",
+    "reveal": "Reveal an encounter card"
+  },
+  "onTrack": {
+    "add": "On Track: choose the card with On Track to add to the staging area"
+  },
+  "carrionBird": {
+    "discard": "Carrion Bird: choose a damaged character you control to discard"
+  },
+  "scorchingSun": {
+    "choose": "Scorching Sun: choose one",
+    "temperature": "Raise the temperature by 2",
+    "return": "Return the attacking enemy to the staging area after this attack"
+  },
+  "theDesertOfHarad": {
+    "choose": "The Desert of Harad: exhaust the ally or deal 1 damage to it",
+    "exhaust": "Exhaust it",
+    "damage": "Deal 1 damage to it"
+  },
+  "umbarSentry": {
+    "choose": "Umbar Sentry: choose one",
+    "attack": "Umbar Sentry gets +2 attack for this attack"
+  },
+  "narrowAlleyway": {
+    "choose": "Narrow Alleyway: choose a non-unique engaged enemy to place under it"
+  },
+  "enemyPursuit": {
+    "choose": "Enemy Pursuit: choose one",
+    "removeProgress": "Remove all progress from the main quest",
+    "damage": "Assign 1 damage among characters in play for each progress on the main quest"
+  },
+  "racingNorth": {
+    "choose": "Racing North: choose where Uruk Warg-rider goes",
+    "staging": "The staging area",
+    "orcsArea": "The Orcs' area"
+  },
+  "racingWarg": {
+    "attach": "Racing Warg: choose the Orc enemy to attach it to"
+  },
+  "theBlackSerpent": {
+    "choose": "The Black Serpent: choose one",
+    "attack": "The Black Serpent makes an immediate attack against the first player"
+  },
+  "serpentGuard": {
+    "choose": "Serpent Guard: choose one",
+    "noDamage": "Enemies engaged with you cannot take damage until the end of the round",
+    "attackerNoDamage": "The attacking enemy cannot take damage this round"
+  },
+  "theSerpentsRedoubt": {
+    "choose": "The Serpent's Redoubt: choose one",
+    "exhaust": "Exhaust that ally"
+  },
+  "rooflessTower": {
+    "choose": "Roofless Tower: choose one",
+    "cancel": "Cancel the effects of that event",
+    "exhaustHero": "Roofless Tower: exhaust a hero to travel here"
+  },
+  "brokenCourtyard": {
+    "choose": "Broken Courtyard: choose one",
+    "return": "Return the attacking enemy to the staging area after this attack"
+  },
+  "boldAndGrim": {
+    "choose": "Bold and Grim: attach a Harad objective you control to the attacking enemy, or",
+    "attack": "The attacking enemy makes an additional attack after this one"
+  },
+  "noQuarter": {
+    "choose": "No Quarter: reveal 2 encounter cards, or choose a Harad objective to detach from its hero and reveal",
+    "reveal": "Reveal 2 encounter cards",
+    "objective": "No Quarter: choose a Harad objective you control",
+    "host": "No Quarter: choose a non-unique encounter card in the staging area to attach it to"
+  },
+  "chaosInTheNight": {
+    "choose": "Chaos in the Night: choose one",
+    "threat": "Raise each player's threat by 3",
+    "noProgress": "Progress cannot be placed on quest cards until the end of the round"
+  },
+  "theSerpentsGarb": {
+    "enemy": "The Serpent's Garb: choose a Harad enemy in the staging area"
+  },
+  "theDungeonsOfCirithGurat": {
+    "attachCaptive": "Choose the encounter card to attach it to as a captive"
+  },
+  "abaan": {
+    "choose": "Abaan: choose a Harad character to get +1 willpower, +1 attack and +1 defense"
+  },
+  "jailerOfCirithGurat": {
+    "attach": "Jailer of Cirith Gurat: choose an ally to attach to it"
+  },
+  "dungeonWarg": {
+    "attack": "Dungeon Warg: choose the player it attacks"
+  },
+  "gateOfIron": {
+    "choose": "Gate of Iron: discard a card from your hand with a higher cost, or raise each player's threat by 3",
+    "raiseThreat": "Raise each player's threat by 3"
+  },
+  "takenPrisoner": {
+    "ally": "Taken Prisoner: choose an ally to attach"
+  },
+  "capturedCirithGurat": {
+    "ally": "Captured!: choose an ally to attach to this stage"
+  },
+  "rescueThePrisoners": {
+    "searchOrc": "Rescue the Prisoners: choose a different Orc enemy to add to the staging area"
+  },
+  "fightYourWayOut": {
+    "hero": "Fight Your Way Out: choose a hero to attach as a captive"
+  },
+  "huntingParty": {
+    "discard": "Hunting Party: discard a non-unique enemy in the staging area"
+  },
+  "dunedainPipe": {
+    "bottom": "Dúnedain Pipe: choose a card from your hand to place on the bottom of your deck"
+  },
+  "fierceDefense": {
+    "enemy": "Fierce Defense: choose a non-unique enemy engaged with you",
+    "damage": "Deal 3 damage to a non-unique enemy engaged with you"
+  },
+  "heirsOfEarendil": {
+    "location": "Heirs of Eärendil: choose a non-unique location in the staging area to discard"
+  },
+  "openTheArmory": {
+    "toHand": "Search the top 10 cards for a Weapon or Armor to add to your hand",
+    "intoPlay": "Open the Armory: choose a Weapon or Armor to put into play",
+    "host": "Open the Armory: choose where to attach it",
+    "none": "Put none into play"
+  },
+  "halfastGamgee": {
+    "hero": "Halfast Gamgee: add 1 resource to a hero's pool"
+  },
+  "beorningGuardian": {
+    "location": "Beorning Guardian: place progress on a location"
+  },
+  "bulwarkOfTheWest": {
+    "ally": "Bulwark of the West: discard an ally you control",
+    "condition": "Bulwark of the West: choose a Condition attachment to discard"
+  },
+  "flightToTheSea": {
+    "shuffle": "Flight to the Sea: shuffle a Wind from the Sea into the encounter deck"
+  },
+  "stampedingOliphaunt": {
+    "attack": "Stampeding Oliphaunt: choose the Wild Mûmak to attack the first player"
+  },
+  "terribleFever": {
+    "attach": "Terrible Fever: choose the hero to remove from the quest and attach it to"
+  },
+  "captureTheOliphaunts": {
+    "attach": "Capture the Oliphaunts: choose the Wild Mûmak to attach this Capture objective to"
+  },
+  "theBlackSerpentCrossingsOfPoros": {
+    "choose": "The Black Serpent: choose one",
+    "attack": "The Black Serpent attacks the first player"
+  },
+  "southronOutrider": {
+    "choose": "Southron Outrider: choose one",
+    "discard": "Place a random set-aside Harad Soldiers enemy in the encounter discard pile",
+    "attack": "Southron Outrider gets +3 attack this round"
+  },
+  "urukProwler": {
+    "choose": "Uruk Prowler: choose one",
+    "discard": "Place a random set-aside Mordor Orcs enemy in the encounter discard pile",
+    "attack": "Uruk Prowler makes an immediate attack against the first player"
+  },
+  "desertWarg": {
+    "choose": "Desert Warg: choose one",
+    "discard": "Place a random set-aside Desert Creatures enemy in the encounter discard pile",
+    "surge": "Desert Warg gains surge"
+  },
+  "theCrossingsOfPoros": {
+    "largestSet": "Choose a set aside encounter set with the most cards remaining",
+    "set": {
+      "DesertCreatures": "Desert Creatures",
+      "DesertSands": "Desert Sands",
+      "HaradSoldiers": "Harad Soldiers",
+      "MordorOrcs": "Mordor Orcs",
+      "MountainsOfShadow": "Mountains of Shadow"
+    }
+  },
+  "theDesertPath": {
+    "choose": "The Desert Path: choose one for the ally you played",
+    "exhaust": "Exhaust the ally",
+    "damage": "Deal 1 damage to the ally"
+  },
+  "theEphelDuath": {
+    "choose": "The Ephel Dúath: choose one for the ally you played",
+    "exhaust": "Exhaust the ally",
+    "threat": "Raise your threat by 1"
   }
 }

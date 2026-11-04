@@ -23,6 +23,6 @@ instance RunMessage OldForestRoad where
       chooseOneM lead do
         questionLabeled "oldForestRoad.ready"
         causedBy a
-        targets exhausted ready
+        targets exhausted encounterReadies
       pure l
     _ -> OldForestRoad <$> runMessage msg a
