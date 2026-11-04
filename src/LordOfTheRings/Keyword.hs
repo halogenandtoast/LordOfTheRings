@@ -49,6 +49,11 @@ data Keyword
   | -- | on an enemy: the damage its attack would deal is canceled, and the defending player
     -- raises his threat by as much instead (The Flame of the West rules insert)
     Phantom
+  | -- | on a quest card: while it is the main quest, each player's threat elimination
+    -- level is 99, his threat cannot be reduced by more than 1 each round by non-boon
+    -- player card effects, and Valour triggers at 80 threat, not 40 (The Mountain of Fire
+    -- rules insert, "Dire")
+    Dire
   | -- | on a boon or burden: earned, it is attached to a hero the campaign log records. It
     -- cannot be discarded from that hero while the hero is in play, and is removed from the
     -- game as the hero leaves play (The Black Riders rules insert)

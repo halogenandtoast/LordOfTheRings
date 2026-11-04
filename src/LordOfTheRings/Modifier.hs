@@ -362,6 +362,8 @@ data ModifierType
   | -- | on a player, by an effect until the end of the round: player card effects reduced
     -- his threat by this much this round, for Moonlit Passage's limit to count
     ThreatReducedByPlayerCardsThisRound Int
+  | -- | as 'ThreatReducedByPlayerCardsThisRound', by non-boon player cards, for Dire's limit
+    ThreatReducedByNonBoonPlayerCardsThisRound Int
   | -- | on the game: every character must commit to the quest
     MustCommitAll
   | -- | on the game: each card dealt for an escape test adds this much more

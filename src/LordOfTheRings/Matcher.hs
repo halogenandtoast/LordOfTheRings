@@ -49,6 +49,9 @@ matchPlayer matcher player = case matcher of
   AnyPlayer -> pure True
   NotPlayer m -> not <$> matchPlayer m player
   PlayerWithThreatAtLeast n -> (>= n) <$> getThreat player.id
+  PlayerAtValourThreat -> do
+    dire <- direInEffect
+    (>= if dire then 80 else 40) <$> getThreat player.id
   PlayerWithCardsInHand n -> pure $ length player.hand >= n
   PlayerMatchAll ms -> allM (`matchPlayer` player) ms
   PlayerWithCardsInDeck n -> pure $ length player.deck >= n
@@ -883,10 +886,18 @@ getTheOneRing = getsGame (fmap toId . find ((== toCardCode Attachments.theOneRin
 controlsTheOneRing :: HasGame m => PlayerId -> m Bool
 controlsTheOneRing pid = selectAny (heroWithTheOneRing <> HeroControlledBy (PlayerWithId pid))
 
+-- | 50, as modifiers move it, or 99 while the main quest is Dire.
 getEliminationLevel :: HasGame m => PlayerId -> m Int
 getEliminationLevel pid = do
   mods <- map modifierType . Map.findWithDefault [] (PlayerTarget pid) <$> getsGame gameModifiers
-  pure $ 50 + sum [n | EliminationThreatModifier n <- mods]
+  dire <- direInEffect
+  pure $ if dire then 99 else 50 + sum [n | EliminationThreatModifier n <- mods]
+
+-- | The main quest has the Dire keyword (The Mountain of Fire rules insert).
+direInEffect :: HasGame m => m Bool
+direInEffect = do
+  quests <- getsGame (filter (not . isSideQuest) . toList . entitiesQuests . gameEntities)
+  anyM (\q -> hasKeyword Dire (toTarget q) (toCardDef q)) quests
 
 getRemainingPlayers :: HasGame m => m [PlayerId]
 getRemainingPlayers = filterM (fmap (not . (.eliminated)) . getPlayer) =<< getPlayerOrder

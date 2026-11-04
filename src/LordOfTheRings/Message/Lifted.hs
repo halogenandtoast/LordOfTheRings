@@ -11,7 +11,8 @@ module LordOfTheRings.Message.Lifted (
 import LordOfTheRings.Attachment.CardDefs qualified as Attachments
 import LordOfTheRings.Campaign (CampaignLogUpdate)
 import LordOfTheRings.Card (Card (..), CardCode, CardDef, CardType, EncounterCard, HasCardCode (..), IsCard (..), PlayerCard, cdCardTraits, cdCardType, genEncounterCard, genPlayerCard, lookupCardDef, toCardDef)
-import LordOfTheRings.Trait (Trait (Master))
+import LordOfTheRings.Trait (Trait (Boon, Master))
+import LordOfTheRings.Log.Refs (sourceCardDef)
 import LordOfTheRings.Classes.Entity (Entity (toAttrs))
 import LordOfTheRings.Scenario.Types (ScenarioAttrs (scenarioSetAside))
 import LordOfTheRings.Classes.HasGame (HasGame, getsGame)
@@ -219,18 +220,33 @@ lowerThreatBy :: (ReverseQueue m, Sourceable source) => source -> PlayerId -> In
 lowerThreatBy source pid n' = do
   mods <- getModifiers (PlayerTarget pid)
   threat <- (.threat) <$> getPlayer pid
+  dire <- direInEffect
+  g <- getsGame id
+  direReduced <- getThreatReducedByNonBoonPlayerCardsThisRound pid
   let barred = CannotReduceThreat `elem` mods
-      limited = if isPlayerCardSource (toSource source) then foldr min n' [k | PlayerCardThreatReductionLimit k <- mods] else n'
+      playerCard = isPlayerCardSource (toSource source)
+      boon = maybe False ((Boon `member`) . cdCardTraits) (sourceCardDef g (toSource source))
+      -- while the main quest is Dire, non-boon player card effects reduce it by no more
+      -- than 1 each round (The Mountain of Fire rules insert, "Dire")
+      direLimits = [max 0 (1 - direReduced) | dire, playerCard, not boon]
+      limited = if playerCard then foldr min n' ([k | PlayerCardThreatReductionLimit k <- mods] <> direLimits) else n'
       -- no lower than a floor, as The Paths of the Dead sets
       n = foldr min limited [threat - k | CannotReduceThreatBelow k <- mods]
   unless (barred || n <= 0 || threat <= 0) do
     push $ LowerThreat pid n
     -- counted for the round, as Moonlit Passage limits it
-    when (isPlayerCardSource (toSource source))
+    when playerCard
       $ push
       $ CreateEffect
-      $ Effect (toSource source) (PlayerTarget pid) [ThreatReducedByPlayerCardsThisRound (min n threat)] UntilEndOfRound
+      $ Effect (toSource source) (PlayerTarget pid) ([ThreatReducedByPlayerCardsThisRound (min n threat)] <> [ThreatReducedByNonBoonPlayerCardsThisRound (min n threat) | not boon]) UntilEndOfRound
     push $ CheckWindows [Window After $ ThreatReduced pid (toSource source)]
+
+-- | How much non-boon player cards have reduced the player's threat this round, as Dire
+-- limits it.
+getThreatReducedByNonBoonPlayerCardsThisRound :: HasGame m => PlayerId -> m Int
+getThreatReducedByNonBoonPlayerCardsThisRound pid = do
+  effects <- getsGame gameEffects
+  pure $ sum [n | e <- effects, effectTarget e == PlayerTarget pid, ThreatReducedByNonBoonPlayerCardsThisRound n <- effectModifiers e]
 
 -- | How much player cards have reduced the player's threat this round, as Moonlit Passage
 -- and Covered in Darkness limit it.

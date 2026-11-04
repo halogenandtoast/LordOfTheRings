@@ -17,7 +17,7 @@ import LordOfTheRings.Helpers.Modifiers (fellowshipCard, getModifiers, immuneToE
 import LordOfTheRings.I18n
 import LordOfTheRings.Modifier (ModifierType (ImmuneToNonFellowshipPlayerCardEffects, ImmuneToNonMasterCardEffects, ImmuneToPlayerCardEffects, ImmuneToPlayerEvents))
 import LordOfTheRings.Id
-import LordOfTheRings.Matcher (PlayerMatcher (PlayerWithId, PlayerWithThreatAtLeast), getMainQuestProgress, getMainQuests, selectAny)
+import LordOfTheRings.Matcher (PlayerMatcher (PlayerWithId, PlayerAtValourThreat), getMainQuestProgress, getMainQuests, selectAny)
 import LordOfTheRings.Message
 import LordOfTheRings.Message.Lifted.Queue
 import LordOfTheRings.Prelude
@@ -125,15 +125,15 @@ labeledWith key vars action = do
   ChooseT $ lift $ tell [Label (ikeyWith ("label." <> key) vars) msgs]
 
 -- | A card's Valour trigger as a choice, offered only while the player's threat is 40 or
--- higher; beside the card's other trigger in 'chooseOrRunOneM', the player below 40 is
--- not asked:
+-- higher (80 while the main quest is Dire); beside the card's other trigger in
+-- 'chooseOrRunOneM', the player below it is not asked:
 --
 -- > chooseOrRunOneM pid do
 -- >   labeled "hornsCry.action" $ ...
 -- >   valourLabeled pid $ ...
 valourLabeled :: (ReverseQueue m) => PlayerId -> QueueT Message m () -> ChooseT m ()
 valourLabeled pid action = do
-  high <- lift $ selectAny (PlayerWithId pid <> PlayerWithThreatAtLeast 40)
+  high <- lift $ selectAny (PlayerWithId pid <> PlayerAtValourThreat)
   when high $ labeled "valour" action
 
 {- | "Either remove N progress from the main quest, or ..." as a choice, offered only while
