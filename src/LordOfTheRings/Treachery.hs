@@ -458,6 +458,10 @@ import LordOfTheRings.Treachery.Cards.ItLikesRiddles
 import LordOfTheRings.Treachery.Cards.HidingInTheTrees
 import LordOfTheRings.Treachery.Cards.WhatsInMyPocket
 import LordOfTheRings.Treachery.Cards.NotFairNotFair
+import LordOfTheRings.Treachery.Cards.PretendingToSleep (pretendingToSleep)
+import LordOfTheRings.Treachery.Cards.KnownToAnOunce (knownToAnOunce)
+import LordOfTheRings.Treachery.Cards.BelchingFire (belchingFire)
+import LordOfTheRings.Treachery.Cards.DragonSpell (dragonSpell)
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -943,5 +947,9 @@ allTreacherys =
         , SomeTreacheryCard hidingInTheTrees
         , SomeTreacheryCard whatsInMyPocket
         , SomeTreacheryCard notFairNotFair
+        , SomeTreacheryCard pretendingToSleep
+        , SomeTreacheryCard knownToAnOunce
+        , SomeTreacheryCard belchingFire
+        , SomeTreacheryCard dragonSpell
         ]
     ]

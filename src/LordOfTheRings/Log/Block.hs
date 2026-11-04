@@ -27,6 +27,8 @@ data LogBlockKind
     AbilityBlock PlayerId Source Bool
   | -- | a card played from hand, with what it costs and does
     PlayBlock PlayerId Card
+  | -- | the first player makes a burgle attempt (The Hobbit: On the Doorstep)
+    BurgleBlock PlayerId
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
@@ -56,6 +58,7 @@ logBlockKey b = kind <> ":" <> UUID.toText b.id
     WhenRevealedBlock {} -> "whenRevealed"
     AbilityBlock {} -> "ability"
     PlayBlock {} -> "play"
+    BurgleBlock {} -> "burgle"
 
 -- | The group id of the innermost of these open blocks, outermost first.
 logBlockPath :: [LogBlock] -> Maybe Text

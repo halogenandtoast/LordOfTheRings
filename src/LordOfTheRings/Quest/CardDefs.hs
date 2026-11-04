@@ -467,6 +467,10 @@ allQuestCards =
       , outOfTheFryingPan
       , riddlesInTheDark
       , intoTheFire
+      , aWarmWelcome
+      , theBurglarsTurnTheLonelyMountain
+      , insideInformation
+      , thievesFireMurder
       ]
 
 theDrippingWalls :: CardDef
@@ -1963,3 +1967,19 @@ riddlesInTheDark = quest "131030" "Riddles in the Dark" DungeonsDeepAndCavernsDi
 
 intoTheFire :: CardDef
 intoTheFire = quest "131031" "Into the Fire" DungeonsDeepAndCavernsDim 3 16
+
+-- * The Lonely Mountain
+
+-- | No quest points: its Forced effect advances at the end of the round.
+aWarmWelcome :: CardDef
+aWarmWelcome = quest "132071" "A Warm Welcome" TheLonelyMountain 1 0
+
+-- | No quest points: the players may advance once its burgle attempt is made.
+theBurglarsTurnTheLonelyMountain :: CardDef
+theBurglarsTurnTheLonelyMountain = quest "132072" "The Burglar's Turn" TheLonelyMountain 2 0
+
+insideInformation :: CardDef
+insideInformation = quest "132073" "Inside Information" TheLonelyMountain 3 20
+
+thievesFireMurder :: CardDef
+thievesFireMurder = quest "132074" "Thieves! Fire! Murder!" TheLonelyMountain 4 7

@@ -469,6 +469,10 @@ allTreacheryCards =
       , hidingInTheTrees
       , whatsInMyPocket
       , notFairNotFair
+      , pretendingToSleep
+      , knownToAnOunce
+      , belchingFire
+      , dragonSpell
       ]
 
 deepDeepDark :: CardDef
@@ -2945,3 +2949,17 @@ whatsInMyPocket = riddleTreachery "131083" "What's In My Pocket?" 2 [RiddleSpher
 
 notFairNotFair :: CardDef
 notFairNotFair = treachery "131084" "Not fair! Not fair!" DungeonsDeepAndCavernsDim 1
+
+-- * The Lonely Mountain
+
+pretendingToSleep :: CardDef
+pretendingToSleep = (treachery "132048" "Pretending to Sleep" TheLonelyMountain 3) {cdKeywords = setFromList [Surge]}
+
+knownToAnOunce :: CardDef
+knownToAnOunce = treachery "132049" "Known to an Ounce" TheLonelyMountain 2
+
+belchingFire :: CardDef
+belchingFire = treachery "132050" "Belching Fire" TheLonelyMountain 4
+
+dragonSpell :: CardDef
+dragonSpell = (treachery "132051" "Dragon-Spell" TheLonelyMountain 2) {cdCardTraits = setFromList [Enchantment]}

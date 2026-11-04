@@ -4107,5 +4107,27 @@
       "When an encounter card with a riddle is revealed from the encounter deck, the first player either resolves it normally or answers its riddle: he names the items it asks for, shuffles his deck and discards the top cards, and each discarded card matching every named item places 1 progress on stage 2. Players may take actions before the matches are counted. Failing to find a match makes Gollum attack Bilbo.",
       "The players cannot advance to stage 3 until both stage 1 and stage 2 are complete."
     ]
+  },
+  "the-lonely-mountain": {
+    "intro": [
+      "Freed from the Elvenking's dungeons and welcomed in Lake-town, the company at last reaches the Lonely Mountain. There Thorin sends his burglar down into the dragon's lair to steal what he can from Smaug's hoard without waking him."
+    ],
+    "setup": [
+      "The Lonely Mountain is played with an encounter deck built from The Lonely Mountain and Wilderland encounter sets. Players may add previously discovered treasures from the scenarios of Over Hill and Under Hill and from Flies and Spiders. The five Erebor treasures are stacked facedown under The Lonely Mountain."
+    ],
+    "rules": [
+      {
+        "title": "Burgle",
+        "text": "Burgle effects are ignored except during a burgle attempt. To make one, the first player discards cards from the top of the encounter deck until a card with a burgle effect is discarded. He then shuffles his deck and reveals the top card (with no cards in his deck the attempt fails), and succeeds if he discards from his hand the cards the burgle effect asks for."
+      },
+      {
+        "title": "Indestructible",
+        "text": "An enemy with the Indestructible keyword cannot be destroyed by damage, even with damage on it equal to its hit points."
+      },
+      {
+        "title": "Immune to player card effects",
+        "text": "Cards immune to player card effects ignore the effects of player cards, and cannot be chosen as targets of player card effects."
+      }
+    ]
   }
 }

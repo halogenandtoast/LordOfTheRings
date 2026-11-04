@@ -160,7 +160,6 @@ allObjectiveCards =
       , theOneRingTheLandOfShadow
       , theOneRingTheMountainOfFire
       , smeagolTheLandOfShadow
-      , theOneRingTheRoadDarkens
       , mistyMountainEagle
       , trollPurse
       , trollKey
@@ -172,6 +171,7 @@ allObjectiveCards =
       , aFoulSack
       , aWornSack
       , bilbosMagicRing
+      , aBarePatch
       ]
 
 durinsAxe :: CardDef
@@ -1189,3 +1189,7 @@ aWornSack = sackCard "131050" "A Worn Sack"
 
 bilbosMagicRing :: CardDef
 bilbosMagicRing = unique (objective "131079" "Bilbo's Magic Ring" DungeonsDeepAndCavernsDim 1) {cdCardTraits = setFromList [Artifact, Ring]}
+
+-- | Set aside by stage 1A, until stage 3A adds it to the staging area.
+aBarePatch :: CardDef
+aBarePatch = (objective "132039" "A Bare Patch" TheLonelyMountain 1) {cdCardTraits = setFromList [Information]}

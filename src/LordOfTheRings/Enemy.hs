@@ -540,6 +540,9 @@ import LordOfTheRings.Enemy.Cards.TheGreatGoblin
 import LordOfTheRings.Enemy.Cards.GollumDungeonsDeep
 import LordOfTheRings.Enemy.Cards.GreatGrayWolf
 import LordOfTheRings.Enemy.Cards.WildWargs
+import LordOfTheRings.Enemy.Cards.SmaugTheGolden (smaugTheGolden)
+import LordOfTheRings.Enemy.Cards.SmaugTheMagnificent (smaugTheMagnificent)
+import LordOfTheRings.Enemy.Cards.CroakingCrows (croakingCrows)
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -1109,5 +1112,8 @@ allEnemys =
         , SomeEnemyCard gollumDungeonsDeep
         , SomeEnemyCard greatGrayWolf
         , SomeEnemyCard wildWargs
+        , SomeEnemyCard smaugTheGolden
+        , SomeEnemyCard smaugTheMagnificent
+        , SomeEnemyCard croakingCrows
         ]
     ]

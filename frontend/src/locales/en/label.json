@@ -424,7 +424,8 @@
     "treasure": "Treasure"
   },
   "theArkenstone": {
-    "chooseX": "The Arkenstone: raise your threat by X to lower the cost of your next ally by X"
+    "chooseX": "The Arkenstone: raise your threat by X to lower the cost of your next ally by X",
+    "hero": "The Arkenstone: choose a hero controlled by another player to attach it to"
   },
   "gandalfHobbit": {
     "discardOrStay": "Gandalf: discard him, or raise your threat by 2 to keep him",
@@ -2711,9 +2712,6 @@
   "greyCloak": {
     "enemy": "Grey Cloak: choose a non-unique enemy in the staging area"
   },
-  "theArkenstone": {
-    "hero": "The Arkenstone: choose a hero controlled by another player to attach it to"
-  },
   "trafficFromDale": {
     "hero": "Traffic from Dale: choose a Dale hero to add the resources to"
   },
@@ -3438,5 +3436,41 @@
     "location": "Location",
     "treachery": "Treachery",
     "objective": "Objective"
+  },
+  "theLonelyMountain": {
+    "burgle": {
+      "sphereAndType": "Burgle: discard {count} card(s) from your hand that match the revealed card's sphere and type",
+      "sphereAndCost": "Burgle: discard {count} card(s) from your hand that match the revealed card's sphere and cost",
+      "typeAndCost": "Burgle: discard {count} card(s) from your hand that match the revealed card's type and cost",
+      "sphere": "Burgle: discard {count} card(s) from your hand that match the revealed card's sphere",
+      "type": "Burgle: discard {count} card(s) from your hand that match the revealed card's type",
+      "cost": "Burgle: discard {count} card(s) from your hand that match the revealed card's cost",
+      "discard": "Discard the matching cards",
+      "takeRevealed": "The Lonely Mountain: spend 2 Baggins resources to take the revealed card into hand and reveal the next card",
+      "fail": "Fail the burgle attempt",
+      "discardOne": "Choose a matching card to discard ({count} left)"
+    }
+  },
+  "secretEntrance": {
+    "name": "Name a card type: Secret Entrance returns to the staging area unless the top card of the encounter deck is that type",
+    "enemy": "Enemy",
+    "location": "Location",
+    "treachery": "Treachery"
+  },
+  "westernSlopes": {
+    "choose": "Western Slopes: choose one",
+    "draw": "The first player draws 2 cards",
+    "removeProgress": "Remove 1 progress from Smaug the Golden"
+  },
+  "belchingFire": {
+    "player": "Choose the player Smaug attacks"
+  },
+  "dragonSpell": {
+    "attach": "Choose the hero Dragon-Spell attaches to"
+  },
+  "theBurglarsTurnTheLonelyMountain": {
+    "advance": "The players may advance to stage 3",
+    "advanceToStage3": "Advance to stage 3",
+    "stay": "Stay at stage 2"
   }
 }

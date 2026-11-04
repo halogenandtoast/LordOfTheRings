@@ -580,8 +580,11 @@ allLocationCards =
       , greatCavernRoom
       , theWargsGlade
       , lakeInTheCavern
-      , theWargsGlade
-      , lakeInTheCavern
+      , theLonelyMountain
+      , greatHall
+      , secretEntrance
+      , desolationOfSmaug
+      , westernSlopes
       ]
 
 drownedTreasury :: CardDef
@@ -4225,3 +4228,26 @@ theWargsGlade =
 -- | Its threat X is twice the number of players; it has no quest points to travel to.
 lakeInTheCavern :: CardDef
 lakeInTheCavern = unique (location "131078" "Lake in the Cavern" DungeonsDeepAndCavernsDim 1 0 0) {cdCardTraits = setFromList [Cave]}
+
+-- * The Lonely Mountain
+
+theLonelyMountain :: CardDef
+theLonelyMountain =
+  unique
+    (location "132043" "The Lonely Mountain" TheLonelyMountain 1 12 4)
+      { cdCardTraits = setFromList [Mountain]
+      , cdVictoryPoints = Just 10
+      }
+
+greatHall :: CardDef
+greatHall = (location "132044" "Great Hall" TheLonelyMountain 3 4 4) {cdCardTraits = setFromList [Underground]}
+
+-- | Of The Lonely Mountain's set, as its icon and the card database have it.
+secretEntrance :: CardDef
+secretEntrance = (location "132045" "Secret Entrance" TheLonelyMountain 2 1 1) {cdCardTraits = setFromList [Mountain]}
+
+desolationOfSmaug :: CardDef
+desolationOfSmaug = (location "132046" "Desolation of Smaug" TheLonelyMountain 3 3 3) {cdCardTraits = setFromList [Wasteland]}
+
+westernSlopes :: CardDef
+westernSlopes = (location "132047" "Western Slopes" TheLonelyMountain 3 2 5) {cdCardTraits = setFromList [Mountain]}

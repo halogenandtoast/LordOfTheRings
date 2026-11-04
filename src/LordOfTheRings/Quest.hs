@@ -383,6 +383,10 @@ import LordOfTheRings.Quest.Cards.DownDownToGoblinTown
 import LordOfTheRings.Quest.Cards.OutOfTheFryingPan
 import LordOfTheRings.Quest.Cards.RiddlesInTheDark
 import LordOfTheRings.Quest.Cards.IntoTheFire
+import LordOfTheRings.Quest.Cards.AWarmWelcome (aWarmWelcome)
+import LordOfTheRings.Quest.Cards.TheBurglarsTurnTheLonelyMountain (theBurglarsTurnTheLonelyMountain)
+import LordOfTheRings.Quest.Cards.InsideInformation (insideInformation)
+import LordOfTheRings.Quest.Cards.ThievesFireMurder (thievesFireMurder)
 import LordOfTheRings.Quest.Runner ()
 import LordOfTheRings.Quest.Types as X
 import LordOfTheRings.Id
@@ -798,5 +802,9 @@ allQuests =
         , SomeQuestCard outOfTheFryingPan
         , SomeQuestCard riddlesInTheDark
         , SomeQuestCard intoTheFire
+        , SomeQuestCard aWarmWelcome
+        , SomeQuestCard theBurglarsTurnTheLonelyMountain
+        , SomeQuestCard insideInformation
+        , SomeQuestCard thievesFireMurder
         ]
     ]

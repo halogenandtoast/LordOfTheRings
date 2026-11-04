@@ -24,6 +24,9 @@ data ModifierType
   | DefenseModifier Int
   | HitPointModifier Int
   | ThreatModifier Int
+  | -- | on a location: its threat, every other modifier applied, is reduced by half,
+    -- rounding up, as Secret Entrance reduces The Lonely Mountain's
+    ThreatHalved
   | EngagementCostModifier Int
   | -- | on an enemy: its engagement cost is this much higher as the player makes an
     -- engagement check against it, as Hunting Pack's is lower

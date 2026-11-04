@@ -549,6 +549,9 @@ allEnemyCards =
       , gollumDungeonsDeep
       , greatGrayWolf
       , wildWargs
+      , smaugTheGolden
+      , smaugTheMagnificent
+      , croakingCrows
       ]
 
 namelessThing :: CardDef
@@ -4498,4 +4501,30 @@ wildWargs =
   (enemy "131076" "Wild Wargs" DungeonsDeepAndCavernsDim 4 25 3 3 2 3)
     { cdCardTraits = setFromList [Creature]
     , cdRiddle = Just $ Riddle [RiddleCardType] 2
+    }
+
+-- * The Lonely Mountain
+
+-- | Its threat is X, the non-Burglar characters committed to the quest (see its card).
+smaugTheGolden :: CardDef
+smaugTheGolden =
+  unique
+    (enemy "132040" "Smaug the Golden" TheLonelyMountain 1 50 0 6 9 20)
+      { cdCardTraits = setFromList [Dragon]
+      , cdKeywords = setFromList [Indestructible]
+      }
+
+smaugTheMagnificent :: CardDef
+smaugTheMagnificent =
+  unique
+    (enemy "132041" "Smaug the Magnificent" TheLonelyMountain 1 50 6 8 8 20)
+      { cdCardTraits = setFromList [Dragon]
+      , cdKeywords = setFromList [Indestructible]
+      }
+
+croakingCrows :: CardDef
+croakingCrows =
+  (enemy "132042" "Croaking Crows" TheLonelyMountain 3 33 1 1 1 2)
+    { cdCardTraits = setFromList [Creature]
+    , cdKeywords = setFromList [Surge]
     }

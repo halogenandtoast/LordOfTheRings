@@ -562,6 +562,11 @@ import LordOfTheRings.Location.Cards.FrontPorch
 import LordOfTheRings.Location.Cards.GreatCavernRoom
 import LordOfTheRings.Location.Cards.TheWargsGlade
 import LordOfTheRings.Location.Cards.LakeInTheCavern
+import LordOfTheRings.Location.Cards.TheLonelyMountain (theLonelyMountain)
+import LordOfTheRings.Location.Cards.GreatHall (greatHall)
+import LordOfTheRings.Location.Cards.SecretEntrance (secretEntrance)
+import LordOfTheRings.Location.Cards.DesolationOfSmaug (desolationOfSmaug)
+import LordOfTheRings.Location.Cards.WesternSlopes (westernSlopes)
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -1170,5 +1175,10 @@ allLocations =
         , SomeLocationCard greatCavernRoom
         , SomeLocationCard theWargsGlade
         , SomeLocationCard lakeInTheCavern
+        , SomeLocationCard theLonelyMountain
+        , SomeLocationCard greatHall
+        , SomeLocationCard secretEntrance
+        , SomeLocationCard desolationOfSmaug
+        , SomeLocationCard westernSlopes
         ]
     ]

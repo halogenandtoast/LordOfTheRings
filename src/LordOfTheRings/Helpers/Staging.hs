@@ -20,8 +20,13 @@ getEnemyThreat eid = do
 getLocationThreat :: (HasGame m) => LocationId -> m Int
 getLocationThreat lid = do
   location <- getLocation lid
-  blank <- elem DoesNotContributeThreat <$> getModifiers lid
-  if blank then pure 0 else modifiedValue threatOf (toTarget lid) location.threat
+  mods <- getModifiers lid
+  threat <- modifiedValue threatOf (toTarget lid) location.threat
+  pure
+    $ if
+      | DoesNotContributeThreat `elem` mods -> 0
+      | ThreatHalved `elem` mods -> (threat + 1) `div` 2
+      | otherwise -> threat
 
 -- | The total threat of every card in the staging area.
 getStagingThreat :: (HasGame m) => m Int
