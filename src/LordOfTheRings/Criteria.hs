@@ -138,9 +138,10 @@ uniqueCharactersWith pid = DistinctCharacters . map \trait ->
  where
   you = PlayerWithId pid
 
--- | The player may resolve a Valour trigger: his threat is 40 or higher.
+-- | The player may resolve a Valour trigger: his threat is 40 or higher, 80 or higher while
+-- the main quest has the dire keyword.
 valour :: PlayerId -> Criterion
-valour pid = PlayerExists (PlayerWithId pid <> PlayerWithThreatAtLeast 40)
+valour pid = PlayerExists (PlayerWithId pid <> PlayerAtValourThreat)
 
 -- | The player's cards follow the FAQ's errata, as a card's errata'd ability needs.
 usesErrata :: PlayerId -> Criterion

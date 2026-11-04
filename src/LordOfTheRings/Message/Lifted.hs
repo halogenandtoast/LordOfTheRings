@@ -11,12 +11,13 @@ module LordOfTheRings.Message.Lifted (
 import LordOfTheRings.Attachment.CardDefs qualified as Attachments
 import LordOfTheRings.Campaign (CampaignLogUpdate)
 import LordOfTheRings.Card (Card (..), CardCode, CardDef, CardType, EncounterCard, HasCardCode (..), IsCard (..), PlayerCard, cdCardTraits, cdCardType, genEncounterCard, genPlayerCard, lookupCardDef, toCardDef)
-import LordOfTheRings.Trait (Trait (Master))
+import LordOfTheRings.Trait (Trait (Boon, Master))
 import LordOfTheRings.Classes.Entity (Entity (toAttrs))
 import LordOfTheRings.Scenario.Types (ScenarioAttrs (scenarioSetAside))
 import LordOfTheRings.Classes.HasGame (HasGame, getsGame)
 import LordOfTheRings.Frontend (Frontend)
 import LordOfTheRings.Log.Block (LogBlockKind (PlayBlock))
+import LordOfTheRings.Log.Refs (sourceCardCode)
 import LordOfTheRings.Classes.HasQueue
 import LordOfTheRings.Effect
 import LordOfTheRings.Entities (entitiesLocations, entitiesQuests)
@@ -219,8 +220,14 @@ lowerThreatBy :: (ReverseQueue m, Sourceable source) => source -> PlayerId -> In
 lowerThreatBy source pid n' = do
   mods <- getModifiers (PlayerTarget pid)
   threat <- (.threat) <$> getPlayer pid
+  -- while the main quest is dire, non-boon player card effects reduce it by no more than 1
+  -- each round, boons as they read (The Mountain of Fire rules insert, "Dire")
+  dire <- mainQuestIsDire
+  boon <- sourceIsBoon (toSource source)
+  direReduced <- if dire then getThreatReducedByNonBoonPlayerCardsThisRound pid else pure 0
   let barred = CannotReduceThreat `elem` mods
-      limited = if isPlayerCardSource (toSource source) then foldr min n' [k | PlayerCardThreatReductionLimit k <- mods] else n'
+      direLimit = [max 0 (1 - direReduced) | dire, not boon]
+      limited = if isPlayerCardSource (toSource source) then foldr min n' ([k | PlayerCardThreatReductionLimit k <- mods] <> direLimit) else n'
       -- no lower than a floor, as The Paths of the Dead sets
       n = foldr min limited [threat - k | CannotReduceThreatBelow k <- mods]
   unless (barred || n <= 0 || threat <= 0) do
@@ -238,6 +245,18 @@ getThreatReducedByPlayerCardsThisRound :: HasGame m => PlayerId -> m Int
 getThreatReducedByPlayerCardsThisRound pid = do
   effects <- getsGame gameEffects
   pure $ sum [n | e <- effects, effectTarget e == PlayerTarget pid, ThreatReducedByPlayerCardsThisRound n <- effectModifiers e]
+
+-- | How much non-boon player cards have reduced the player's threat this round, as the
+-- dire keyword limits it.
+getThreatReducedByNonBoonPlayerCardsThisRound :: HasGame m => PlayerId -> m Int
+getThreatReducedByNonBoonPlayerCardsThisRound pid = do
+  effects <- getsGame gameEffects
+  counted <- filterM (fmap not . sourceIsBoon . effectSource) [e | e <- effects, effectTarget e == PlayerTarget pid]
+  pure $ sum [n | e <- counted, ThreatReducedByPlayerCardsThisRound n <- effectModifiers e]
+
+-- | Whether the card behind the source is a boon, as the dire keyword spares boons.
+sourceIsBoon :: HasGame m => Source -> m Bool
+sourceIsBoon source = getsGame \g -> maybe False ((Boon `member`) . cdCardTraits) (lookupCardDef =<< sourceCardCode g source)
 
 -- | The player draws N cards by the source's effect, unless player card effects cannot
 -- make him draw and it is a player card.

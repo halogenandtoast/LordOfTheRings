@@ -21,6 +21,9 @@ data PlayerMatcher
   | NotPlayer PlayerMatcher
   | -- | a player whose threat is at least this, as Valour reads
     PlayerWithThreatAtLeast Int
+  | -- | a player who may resolve a Valour trigger: his threat is 40 or higher, 80 or higher
+    -- while the main quest has the dire keyword
+    PlayerAtValourThreat
   | PlayerWithCardsInHand Int
   | PlayerMatchAll [PlayerMatcher]
   | -- | a player with a hidden card in their play area, as The Blood of Gondor deals them

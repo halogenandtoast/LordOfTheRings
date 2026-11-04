@@ -21,6 +21,10 @@ data Keyword
   | -- | on an encounter card: as it is revealed it captures this many cards from the top of
     -- its player's captured deck underneath it (Escape from Mount Gram resolves it)
     Capture Int
+  | -- | on a main quest: each player's threat elimination level is 99, their threat cannot
+    -- be reduced by more than 1 each round by non-boon player card effects, and Valour
+    -- triggers at 80 threat, not 40 (The Mountain of Fire rules insert, "Dire")
+    Dire
   | Doomed Int
   | -- | on a player card: it is shuffled into the encounter deck, not a player's deck, and
     -- resolves as an encounter card when revealed, as Ranger of the North (its cards
