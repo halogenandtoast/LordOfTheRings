@@ -2703,6 +2703,7 @@ test-suite LordOfTheRings-test
       LordOfTheRings.EncounterPhaseSpec
       LordOfTheRings.EndGameSpec
       LordOfTheRings.EredMithrin.MountGundabadPlayerCardsSpec
+      LordOfTheRings.EredMithrin.TheFateOfWilderlandPlayerCardsSpec
       LordOfTheRings.EredMithrinEngineSpec
       LordOfTheRings.Haradrim.BeneathTheSandsPlayerCardsSpec
       LordOfTheRings.Haradrim.BeneathTheSandsSpec
