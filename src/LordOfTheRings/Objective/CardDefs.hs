@@ -153,6 +153,7 @@ allObjectiveCards =
       , edrahil
       , arador
       , farin
+      , toIsengard
       ]
 
 durinsAxe :: CardDef
@@ -1053,3 +1054,9 @@ arador = captive "22125" "Arador" Gondor 0 1 3 5
 
 farin :: CardDef
 farin = captive "22126" "Farin" Dwarf 1 3 0 4
+
+-- * The Uruk-hai
+
+-- | Added to the staging area as stage 1A is set up, the Captives faceup under it.
+toIsengard :: CardDef
+toIsengard = objective "143022" "To Isengard!" TheUrukHai 1

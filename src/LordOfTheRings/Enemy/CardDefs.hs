@@ -507,6 +507,12 @@ allEnemyCards =
       , borlach
       , easterlingGuard
       , nurnSlaver
+      , ugluk
+      , grishnakh
+      , ugluksUrukHai
+      , isengardUruk
+      , urukHaiFighter
+      , snaga
       ]
 
 namelessThing :: CardDef
@@ -4160,4 +4166,63 @@ nurnSlaver =
     { cdCardTraits = setFromList [Easterling]
     , cdShadowEffect = True
     , cdEasyModeQuantity = Just 3
+    }
+
+-- * The Uruk-hai
+
+-- | Toughness 3. Cannot have attachments, from its own modifiers.
+ugluk :: CardDef
+ugluk =
+  unique
+    (enemy "143023" "Uglúk" TheUrukHai 1 10 3 5 1 6)
+      { cdCardTraits = setFromList [Orc, UrukHai]
+      , cdKeywords = setFromList [Toughness 3]
+      , cdVictoryPoints = Just 5
+      }
+
+grishnakh :: CardDef
+grishnakh =
+  unique
+    (enemy "143024" "Grishnákh" TheUrukHai 1 40 4 3 4 5)
+      { cdCardTraits = setFromList [Orc, Mordor]
+      , cdVictoryPoints = Just 3
+      }
+
+ugluksUrukHai :: CardDef
+ugluksUrukHai =
+  (enemy "143025" "Uglúk's Uruk-hai" TheUrukHai 3 38 2 4 2 5)
+    { cdCardTraits = setFromList [Orc, UrukHai]
+    , cdKeywords = setFromList [Peril, Toughness 1, Archery 1]
+    , cdWhenRevealed = True
+    , cdEasyModeQuantity = Just 1
+    }
+
+-- * Orcs of the White Hand
+
+isengardUruk :: CardDef
+isengardUruk =
+  (enemy "143063" "Isengard Uruk" OrcsOfTheWhiteHand 3 34 2 3 1 4)
+    { cdCardTraits = setFromList [Orc, UrukHai]
+    , cdKeywords = setFromList [Peril, Toughness 1, Archery 2]
+    , cdWhenRevealed = True
+    , cdEasyModeQuantity = Just 2
+    }
+
+urukHaiFighter :: CardDef
+urukHaiFighter =
+  (enemy "143064" "Uruk-hai Fighter" OrcsOfTheWhiteHand 3 29 3 3 2 3)
+    { cdCardTraits = setFromList [Orc, UrukHai]
+    , cdKeywords = setFromList [Toughness 2]
+    , cdShadowEffect = True
+    }
+
+-- * Snaga Orcs
+
+snaga :: CardDef
+snaga =
+  (enemy "143066" "Snaga" SnagaOrcs 3 44 1 3 1 3)
+    { cdCardTraits = setFromList [Orc]
+    , cdKeywords = setFromList [Peril, Archery 1]
+    , cdWhenRevealed = True
+    , cdEasyModeQuantity = Just 2
     }

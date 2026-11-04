@@ -439,6 +439,8 @@ allQuestCards =
       , stormTheCastleStrongholdOfMordor
       , slavesOfTheDarkLord
       , leadTheRevolt
+      , followTheOrcs
+      , rescueTheCaptives
       ]
 
 theDrippingWalls :: CardDef
@@ -1821,3 +1823,14 @@ slavesOfTheDarkLord = quest "22135" "Slaves of the Dark Lord" TheLandOfSorrow 1 
 -- | 10 quest points, and 10 more per player from its own modifiers.
 leadTheRevolt :: CardDef
 leadTheRevolt = quest "22136" "Lead the Revolt" TheLandOfSorrow 2 10
+
+-- * The Uruk-hai
+
+-- | X quest points, X the pursuit value: 1 printed, the rest from its own modifiers, so a
+-- stage with as much progress as the pursuit value is defeated (see 'hasEnoughProgress').
+followTheOrcs :: CardDef
+followTheOrcs = quest "143069" "Follow the Orcs" TheUrukHai 1 1
+
+-- | X quest points, X the pursuit value, as 'followTheOrcs'.
+rescueTheCaptives :: CardDef
+rescueTheCaptives = quest "143070" "Rescue the Captives" TheUrukHai 2 1

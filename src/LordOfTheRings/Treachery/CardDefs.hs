@@ -430,6 +430,11 @@ allTreacheryCards =
       , overseersWhip
       , crueltyOfMordor
       , brokenCaptives
+      , restByNight
+      , strangeWeariness
+      , unseenBarrier
+      , fightingUrukHai
+      , sarumansOrders
       ]
 
 deepDeepDark :: CardDef
@@ -2718,3 +2723,29 @@ crueltyOfMordor = (treachery "22132" "Cruelty of Mordor" TheLandOfSorrow 3) {cdS
 
 brokenCaptives :: CardDef
 brokenCaptives = (treachery "22133" "Broken Captives" TheLandOfSorrow 2) {cdShadowEffect = True, cdEasyModeQuantity = Just 1}
+
+-- * The Uruk-hai
+
+restByNight :: CardDef
+restByNight = treachery "143030" "Rest by Night" TheUrukHai 2
+
+strangeWeariness :: CardDef
+strangeWeariness =
+  (treachery "143031" "Strange Weariness" TheUrukHai 2)
+    { cdCardTraits = setFromList [Enchantment]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
+    }
+
+unseenBarrier :: CardDef
+unseenBarrier = (treachery "143032" "Unseen Barrier" TheUrukHai 2) {cdCardTraits = setFromList [Enchantment], cdShadowEffect = True}
+
+-- * Orcs of the White Hand
+
+fightingUrukHai :: CardDef
+fightingUrukHai = (treachery "143065" "Fighting Uruk-hai" OrcsOfTheWhiteHand 2) {cdKeywords = setFromList [Peril], cdEasyModeQuantity = Just 1}
+
+-- * Snaga Orcs
+
+sarumansOrders :: CardDef
+sarumansOrders = (treachery "143067" "Saruman's Orders" SnagaOrcs 2) {cdShadowEffect = True, cdEasyModeQuantity = Just 1}
