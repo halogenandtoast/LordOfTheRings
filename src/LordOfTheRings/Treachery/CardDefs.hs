@@ -2149,6 +2149,7 @@ blazingGrip =
     { cdCardTraits = setFromList [Attack]
     , cdWhenRevealed = False
     , cdShadowEffect = True
+    , cdShadowCannotBeCanceled = True
     }
 
 morgothsBidding :: CardDef

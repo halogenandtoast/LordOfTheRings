@@ -57,6 +57,15 @@ spec = do
       eowyn <- hero "01007"
       getCharacterDamage eowyn `shouldReturn` 1
 
+    it "still cancels a treachery while Dark and Stormy bars canceling shadow effects" . spiritTest $ \pid -> do
+      _ <- setEncounterDeck [Treacheries.darkAndStormy, Locations.forestGate]
+      run RevealEncounterCard
+      chooseLabel "$label.pass" pid
+      resolveRevealed
+      _ <- setEncounterDeck [Treacheries.theNecromancersReach]
+      run RevealEncounterCard
+      (offersAbilityOf pid =<< hero "01008") `shouldReturn` True
+
   describe "Hasty Stroke" do
     it "cancels a shadow effect as it triggers" . spiritTest $ \pid -> do
       card <- putCardIntoHand pid Events.hastyStroke
@@ -75,3 +84,41 @@ spec = do
       -- King Spider's shadow would have the defending player exhaust a character
       Just (QuestionLabel prompt _ _ _) <- getQuestion pid
       prompt `shouldBe` "$label.declareAttackers"
+
+    it "is offered against a shadow effect that can be canceled" . spiritTest $ \pid -> do
+      card <- hastyStrokeAgainst pid [] Enemies.kingSpider
+      offered pid card `shouldReturn` True
+
+    it "isn't offered against a shadow effect that cannot be canceled" . spiritTest $ \pid -> do
+      card <- hastyStrokeAgainst pid [] Treacheries.blazingGrip
+      offered pid card `shouldReturn` False
+
+    it "isn't offered while Dark and Stormy bars canceling shadow effects" . spiritTest $ \pid -> do
+      card <- hastyStrokeAgainst pid [Treacheries.darkAndStormy, Locations.forestGate] Enemies.kingSpider
+      offered pid card `shouldReturn` False
+ where
+  -- the cards revealed first, then a Forest Spider engaged attacks with the shadow card,
+  -- Thalin defending
+  hastyStrokeAgainst pid revealed shadow = do
+    card <- putCardIntoHand pid Events.hastyStroke
+    eowyn <- hero "01007"
+    run $ PlaceTokens GameSource eowyn Resource 1
+    unless (null revealed) do
+      _ <- setEncounterDeck revealed
+      run RevealEncounterCard
+      -- Eleanor passes on canceling it
+      chooseLabel "$label.pass" pid
+      resolveRevealed
+    _ <- setEncounterDeck [Enemies.forestSpider]
+    run RevealEncounterCard
+    eid <- getsGame (fromJustNote "no spider" . headMay . map toId . filter ((== toCardCode Enemies.forestSpider) . toCardCode) . toList . (.entities.enemies))
+    run $ EngageEnemy pid eid
+    _ <- setEncounterDeck [shadow]
+    run $ BeginPhase CombatPhase
+    passActions pid
+    chooseTarget pid =<< hero "01008"
+    passActions pid
+    pure card
+  offered pid card = do
+    question <- getQuestion pid
+    pure $ CardIdTarget card.id `elem` [t | Just q <- [question], TargetLabel t _ <- questionChoices q]

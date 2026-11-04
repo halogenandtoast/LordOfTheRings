@@ -19,7 +19,7 @@ instance RunMessage DarkAndStormy where
     WhenRevealed (isTarget attrs -> True) -> do
       ships <- select shipEnemy
       for_ ships dealShadowCard
-      roundModifier attrs GameTarget CannotCancelEncounterEffects
+      roundModifier attrs GameTarget ShadowEffectsCannotBeCanceled
       pure t
     ResolveShadowEffect cid eid pid _ | cid == attrs.cardId -> do
       additionalAttack pid eid
