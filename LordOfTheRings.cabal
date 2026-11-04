@@ -2510,6 +2510,7 @@ library
       LordOfTheRings.Treachery.Cards.CaveIn
       LordOfTheRings.Treachery.Cards.CenturiesOfSorrow
       LordOfTheRings.Treachery.Cards.ChanceEncounter
+      LordOfTheRings.Treachery.Cards.CaughtOffGuard
       LordOfTheRings.Treachery.Cards.ChaosInTheNight
       LordOfTheRings.Treachery.Cards.ChillOfTheRoots
       LordOfTheRings.Treachery.Cards.ClosingIn
@@ -2605,6 +2606,7 @@ library
       LordOfTheRings.Treachery.Cards.FuryAndMalice
       LordOfTheRings.Treachery.Cards.GatheringForces
       LordOfTheRings.Treachery.Cards.GatheringGloom
+      LordOfTheRings.Treachery.Cards.Fury
       LordOfTheRings.Treachery.Cards.GatheringGround
       LordOfTheRings.Treachery.Cards.GetThatDwarf
       LordOfTheRings.Treachery.Cards.GoblinPatrolNightmare
@@ -2769,6 +2771,7 @@ library
       LordOfTheRings.Treachery.Cards.SuddenAssault
       LordOfTheRings.Treachery.Cards.SuddenAssaultNightmare
       LordOfTheRings.Treachery.Cards.SuddenDarkness
+      LordOfTheRings.Treachery.Cards.StreetFightingWrathAndRuin
       LordOfTheRings.Treachery.Cards.SuddenOnslaught
       LordOfTheRings.Treachery.Cards.SuddenPitfall
       LordOfTheRings.Treachery.Cards.SuddenPrecipice
@@ -2830,9 +2833,11 @@ library
       LordOfTheRings.Treachery.Cards.UmbarPatrol
       LordOfTheRings.Treachery.Cards.UnbearableHeat
       LordOfTheRings.Treachery.Cards.UnderGuard
+      LordOfTheRings.Treachery.Cards.UlchorsRevenge
       LordOfTheRings.Treachery.Cards.UnderTheShadow
       LordOfTheRings.Treachery.Cards.UndisturbedBones
       LordOfTheRings.Treachery.Cards.UnnaturalFog
+      LordOfTheRings.Treachery.Cards.UnderSiege
       LordOfTheRings.Treachery.Cards.UnseenDanger
       LordOfTheRings.Treachery.Cards.UnwelcomeDiscovery
       LordOfTheRings.Treachery.Cards.UrdugsCommand
