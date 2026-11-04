@@ -2708,6 +2708,7 @@ test-suite LordOfTheRings-test
       LordOfTheRings.EncounterPhaseSpec
       LordOfTheRings.EndGameSpec
       LordOfTheRings.EredMithrin.TheWildsOfRhovanionPlayerCardsSpec
+      LordOfTheRings.EredMithrin.TheWitheredHeathPlayerCardsSpec
       LordOfTheRings.EredMithrinEngineSpec
       LordOfTheRings.Haradrim.BeneathTheSandsPlayerCardsSpec
       LordOfTheRings.Haradrim.BeneathTheSandsSpec
