@@ -356,6 +356,7 @@ passesCriteria = \case
   FewerInVictoryDisplay n m -> getsGame ((< n) . length . filter (cardMatches m) . (.victoryDisplay) . toAttrs . gameScenario)
   CardInDiscard pid m -> any (cardMatches m) . (.discard) <$> getPlayer pid
   CardInAnyDiscard m -> anyM (fmap (any (cardMatches m) . (.discard)) . getPlayer) =<< getRemainingPlayers
+  CardInEncounterDiscard m -> getsGame (any (cardMatches m) . (.encounterDiscard) . toAttrs . gameScenario)
   Criteria cs -> allM passesCriteria cs
   EnemiesAtLeast n m -> (>= n) . length <$> select m
   HeadingMatches m -> headingMatches m
