@@ -30,7 +30,6 @@ instance RunMessage SmokingBlood where
     ResolveShadowEffect cid eid pid defenders | cid == attrs.cardId -> do
       damage <- (.damage) <$> getEnemy eid
       when (damage > 0) do
-        -- ponytail: undefended, the player picks the hero; the damage is not yet dealt
         targets' <- if null defenders then map toTarget <$> select (HeroControlledBy $ PlayerWithId pid) else pure defenders
         chooseOrRunOneM pid do
           questionLabeled "smokingBlood.moveDamage"

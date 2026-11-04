@@ -17,7 +17,6 @@ elvenWaveRunner = location ElvenWaveRunner Cards.elvenWaveRunner
 -- place 1 resource on attacking enemy.
 instance RunMessage ElvenWaveRunner where
   runMessage msg l@(ElvenWaveRunner a) = case msg of
-    -- ponytail: the draw is taken, not offered; a response no player would decline
     AddToVictoryDisplay (isTarget a -> True) -> do
       eachPlayer \p -> drawCards a p 1
       ElvenWaveRunner <$> runMessage msg a

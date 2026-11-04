@@ -188,7 +188,6 @@ instance HasField "victoryDisplay" ScenarioAttrs [Card] where
 instance HasField "victoryPoints" ScenarioAttrs Int where
   getField a = sum . mapMaybe (cdVictoryPoints . toCardDef) . filter counts $ scenarioVictoryDisplay a
    where
-    -- ponytail: the one setup card that touches scoring is named here, not a modifier
     noPlayerCards = a.nightmare && fmap nightmareSet a.nightmareDeck == Just TheSiegeOfCairAndrosNightmare
     counts = \case
       PlayerCard _ -> not noPlayerCards

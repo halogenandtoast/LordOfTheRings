@@ -66,6 +66,14 @@ spec = describe "Dream-chaser campaign" do
       spendXp "DCC172" dc `shouldBe` Nothing
       (spendXp "DCC172" <=< spendXp "DCC172" <=< spendXp "DCC172") dc {campaignLogXp = 5} `shouldBe` Nothing
 
+    pureIt "has the Campaign Log sheet's checkboxes by each title" do
+      let boxes code = xpBoxes <$> find ((== code) . xpCard) (xpCards dc)
+      map boxes ["DCC201", "DCC184", "DCC211", "DCC212", "DCC213", "DCC214"] `shouldBe` map Just [4, 5, 3, 2, 4, 3]
+
+    pureIt "levels a scalable card from 0, one level for each box marked" do
+      level "DCC184" dc `shouldBe` 0
+      level "DCC184" dc {campaignLogMarked = mapFromList [("DCC184", 2)]} `shouldBe` 2
+
     pureIt "offers Gavin once A Storm on Cobas Haven is won" do
       map xpCard (xpCards dc) `shouldSatisfy` notElem "DCC210"
       map xpCard (xpCards dc {campaignLogCompleted = [CompletedScenario "a-storm-on-cobas-haven" 0]}) `shouldSatisfy` elem "DCC210"

@@ -13,7 +13,6 @@ decrepitCity = location DecrepitCity Cards.decrepitCity
 
 -- | While Decrepit City is the active location, "when revealed" effects cannot be
 -- canceled.
--- ponytail: no encounter effect can be canceled then, as The Eaves of Mirkwood reads
 instance HasModifiersFor DecrepitCity where
   getModifiersFor (DecrepitCity a) = when (a.placement == ActiveLocation) $ modified a GameTarget [CannotCancelEncounterEffects]
 

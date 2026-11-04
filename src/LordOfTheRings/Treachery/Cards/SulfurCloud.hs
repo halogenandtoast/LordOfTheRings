@@ -16,8 +16,6 @@ sulfurCloud = treachery SulfurCloud Cards.sulfurCloud
 -- player's threat by that number. No more than X progress may be placed on Underwater
 -- locations this phase, where X is twice the chosen number. If the active location is not
 -- Underwater, Sulfur Cloud gains surge.
--- ponytail: the first player chooses from 0 to 10, and the limit holds on the Underwater
--- locations in play now, for each placement of progress
 instance RunMessage SulfurCloud where
   runMessage msg t@(SulfurCloud attrs) = case msg of
     WhenRevealed (isTarget attrs -> True) -> do

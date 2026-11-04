@@ -13,7 +13,6 @@ blazingGrip = treachery BlazingGrip Cards.blazingGrip
 
 -- | Shadow: Discard all cards attached to the defending character and deal it 1 damage.
 -- Cannot be canceled.
--- ponytail: a shadow effect that cannot be canceled is not told apart yet; this one can be
 instance RunMessage BlazingGrip where
   runMessage msg t@(BlazingGrip attrs) = case msg of
     ResolveShadowEffect cid _ _ defenders | cid == attrs.cardId -> do

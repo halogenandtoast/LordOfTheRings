@@ -20,7 +20,6 @@ instance HasAbilities ThroughTheMarshAnArduousJourney where
 -- picks it).
 instance RunMessage ThroughTheMarshAnArduousJourney where
   runMessage msg (ThroughTheMarshAnArduousJourney attrs) = case msg of
-    -- ponytail: exhausted as it enters play, its entering windows already open
     CheckWindows ws | attrs.flipped -> do
       for_ [t | Window After (AllyEnteredPlay t _ _) <- ws] exhaust
       ThroughTheMarshAnArduousJourney <$> runWanderingStage msg attrs

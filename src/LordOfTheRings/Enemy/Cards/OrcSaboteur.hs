@@ -24,8 +24,6 @@ instance HasModifiersFor OrcSaboteur where
 -- play.
 instance RunMessage OrcSaboteur where
   runMessage msg e@(OrcSaboteur attrs) = case msg of
-    -- ponytail: the redirect covers all the defender's damage during the attack, a
-    -- shadow's too
     CheckWindows ws | defenders@(_ : _) <- [d | Window _ (DeclaredAsDefender d eid) <- ws, eid == attrs.id] -> do
       battlegrounds <- select (LocationWithTrait Battleground)
       for_ defenders \d -> for_ battlegrounds \l -> attackModifier attrs d (DamageRedirectedTo $ toTarget l)

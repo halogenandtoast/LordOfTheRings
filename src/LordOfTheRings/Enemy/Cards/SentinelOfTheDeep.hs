@@ -14,7 +14,6 @@ sentinelOfTheDeep = enemy SentinelOfTheDeep Cards.sentinelOfTheDeep
 
 -- | While Sentinel of the Deep is engaged with a player, that player cannot draw cards from
 -- card effects.
--- ponytail: from player card effects; no encounter card here makes a player draw
 instance HasModifiersFor SentinelOfTheDeep where
   getModifiersFor (SentinelOfTheDeep a) = for_ [pid | EngagedWith pid <- [a.placement]] \pid ->
     modified a (PlayerTarget pid) [CannotDrawCardsFromPlayerCardEffects]

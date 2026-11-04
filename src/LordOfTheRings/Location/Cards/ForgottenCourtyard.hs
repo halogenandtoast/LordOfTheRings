@@ -18,7 +18,6 @@ instance HasModifiersFor ForgottenCourtyard where
     when (n > 0) $ modified a a [ThreatModifier n]
 
 -- | Forced: After an Undead enemy enters play, place 1 resource on Forgotten Courtyard.
--- ponytail: as it enters the staging area; one put into play engaged is missed.
 instance HasAbilities ForgottenCourtyard where
   getAbilities (ForgottenCourtyard a) = [mkAbility a 1 $ forced $ EnemyWithTraitEntersStagingAreaWindow After Undead]
 

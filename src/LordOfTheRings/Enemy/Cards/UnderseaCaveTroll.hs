@@ -25,7 +25,6 @@ excessOn eid defender = do
 -- | For each point of excess damage dealt by Undersea Cave Troll (damage that is dealt
 -- beyond the remaining hit points of the character damaged by this attack) discard 1
 -- resource from one of your objective-allies or from one of your heroes' resource pools.
--- ponytail: from a hero's pool only, as the attack's damage stands as it is dealt
 instance RunMessage UnderseaCaveTroll where
   runMessage msg (UnderseaCaveTroll attrs) = case msg of
     AttackDamage eid defender | eid == attrs.id, character defender, EngagedWith pid <- attrs.placement -> do

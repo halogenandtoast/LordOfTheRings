@@ -137,8 +137,6 @@ Thaurdir enters play, randomly select one of the following burdens and attach it
 Thaurdir: Thaurdir's Legacy, Thaurdir's Majesty, or Thaurdir's Spite. Add that card to the
 Campaign Pool.
 
-ponytail: a burden comes into play as Thaurdir does, so its Forced effect waits while he is
-out of play; one discarded while he stays in play is attached to him again
 -}
 thaurdirsBurdens :: ReverseQueue m => ScenarioAttrs -> Bool -> m ()
 thaurdirsBurdens attrs firstTime = for_ attrs.campaign \l -> do
@@ -170,7 +168,6 @@ attachPermanentBoons attrs code = for_ attrs.campaign \l -> do
 {- | Each player in turn order may select one of the boons and add it to their hand, and
 the Campaign Pool, for their deck.
 
-ponytail: the players choose at once, so two may pick the same boon, of which the box has 1
 -}
 chooseBoonForHand :: ReverseQueue m => [CardDef] -> m ()
 chooseBoonForHand defs = eachPlayer \p -> do

@@ -16,7 +16,6 @@ gateKey :: ObjectiveCard GateKey
 gateKey = objective GateKey Cards.gateKey
 
 -- | Its Upgraded side (the Dream-chaser campaign): looking costs no resources.
--- ponytail: it looks at a Temple of the Deceived location only, not at a secret.
 gateKeyUpgraded :: ObjectiveCard GateKey
 gateKeyUpgraded = objective GateKey Cards.gateKeyUpgraded
 

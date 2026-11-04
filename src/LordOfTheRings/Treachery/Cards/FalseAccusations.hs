@@ -32,8 +32,6 @@ instance RunMessage FalseAccusations where
       returnToStagingAfterAttack eid
       afterAttack eid [DoStep 1 msg]
       pure t
-    -- ponytail: the engagement checks are the round's, made for every enemy in the staging
-    -- area, not for the attacking enemy alone
     DoStep 1 (ResolveShadowEffect cid _ _ _) | cid == attrs.cardId -> do
       makeEngagementChecks
       pure t

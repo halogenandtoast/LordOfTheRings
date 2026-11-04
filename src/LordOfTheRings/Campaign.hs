@@ -250,8 +250,8 @@ data XpCard = XpCard
 instance ToJSON XpCard where
   toJSON = genericToJSON (aesonOptions $ Just "xp")
 
--- ponytail: the Campaign Log sheet's checkbox counts are not to hand; an upgradable card
--- has as many as the XP cost printed on its Upgraded side, a scalable card 5.
+-- | The checkboxes by each title on the Dream-chaser Campaign Log sheet (Dream-chaser
+-- Campaign Expansion rules, p. 31).
 xpCards :: CampaignLog -> [XpCard]
 xpCards l = case l.campaign of
   "dream-chaser" ->
@@ -259,7 +259,9 @@ xpCards l = case l.campaign of
       -- the Grey Havens' and the cycle's own cards, their Upgraded sides the expansion's
       <> [XpCard "11080" 4 (Just "DCC136U"), XpCard "11081" 4 (Just "DCC137U"), XpCard "11082" 4 (Just "DCC140U"), XpCard "11083" 4 (Just "DCC141U"), XpCard "12071" 2 (Just "DCC078U")]
       <> [XpCard code 5 Nothing | code <- scalable]
-      <> [XpCard "DCC211" 3 Nothing, XpCard "DCC212" 3 Nothing, XpCard "DCC213" 3 Nothing, XpCard "DCC214" 3 Nothing]
+      <> [XpCard code 4 Nothing | code <- command]
+      -- Send for Help: Leadership 3, Tactics 2, Spirit 4, Lore 3
+      <> [XpCard "DCC211" 3 Nothing, XpCard "DCC212" 2 Nothing, XpCard "DCC213" 4 Nothing, XpCard "DCC214" 3 Nothing]
       -- "Gavin returned", once A Storm on Cobas Haven is won
       <> [XpCard "DCC210" 4 Nothing | "a-storm-on-cobas-haven" `elem` map completedScenario l.completed]
   _ -> []
@@ -270,17 +272,17 @@ xpCards l = case l.campaign of
     , ("DCC180", 3), ("DCC183", 4), ("DCC189", 5), ("DCC190", 5)
     , ("DCC192", 5), ("DCC193", 5)
     ]
-  -- Galdor's Counsel, Come Together, Starla, Command and Círdan's Blessing
-  scalable = ["DCC184", "DCC185", "DCC186", "DCC187", "DCC195", "DCC198", "DCC201", "DCC202", "DCC203", "DCC204", "DCC205", "DCC206", "DCC207", "DCC208"]
+  -- Galdor's Counsel, Come Together, Starla and Círdan's Blessing
+  scalable = ["DCC184", "DCC185", "DCC186", "DCC187", "DCC195", "DCC198", "DCC205", "DCC206", "DCC207", "DCC208"]
+  command = ["DCC201", "DCC202", "DCC203", "DCC204"]
 
 marked :: CardCode -> CampaignLog -> Int
 marked code = Map.findWithDefault 0 code . (.marked)
 
--- | A scalable card's level: the boxes marked by its title.
--- ponytail: a card with none marked plays at level 1, so a boon taken before XP is spent
--- on it still does something.
+-- | A scalable card's level: the boxes marked by its title, 0 with none ("A scalable
+-- card is leveled up for each checkbox marked by its title").
 level :: CardCode -> CampaignLog -> Int
-level code l = max 1 (marked code l)
+level = marked
 
 isUpgraded :: CardCode -> CampaignLog -> Bool
 isUpgraded code l = any (\x -> xpCard x == code && marked code l >= xpBoxes x) (xpCards l)

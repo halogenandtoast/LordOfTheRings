@@ -22,7 +22,6 @@ instance HasModifiersFor Ruthless where
 instance HasAbilities Ruthless where
   getAbilities (Ruthless a) = [limited (GroupLimit PerGame 1) $ mkAbility a 1 $ ActionAbility Free | AttachedTo _ <- [a.placement]]
 
--- ponytail: "any amount" moves all of it, the most it can be
 instance RunMessage Ruthless where
   runMessage msg s@(Ruthless a) = case msg of
     UseCardAbility pid (isSource a -> True) 1 _ -> do

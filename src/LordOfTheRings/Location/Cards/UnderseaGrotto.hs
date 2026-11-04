@@ -17,7 +17,6 @@ underseaGrotto = location UnderseaGrotto Cards.underseaGrotto
 -- | While Undersea Grotto is the active location, reduce the cost of the first ally played
 -- by the players each round by 1: a discount for the round as it becomes active, and again
 -- as each round begins while it is.
--- ponytail: the discount stays the round out should it stop being active first
 -- Response: After you travel to Undersea Grotto, you may flip it to its Underwater side.
 instance HasAbilities UnderseaGrotto where
   getAbilities (UnderseaGrotto a) =

@@ -16,10 +16,8 @@ captainsQuarters = location CaptainsQuarters Cards.captainsQuarters
 
 -- | While Captain's Quarters is grappled, Raider characters are considered to have no
 -- resources.
--- ponytail: not applied; no Raider character of this scenario reads its resources
 -- Travel: Add 2 resources to Captain Sahír (even if he is out of play) and 1 resource to
 -- each other Raider card in play.
--- ponytail: Captain Sahír out of play gets none
 instance RunMessage CaptainsQuarters where
   runMessage msg (CaptainsQuarters a) = case msg of
     TravelTo lid | lid == a.id -> do

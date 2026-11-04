@@ -18,8 +18,6 @@ instance HasModifiersFor MailOfEarnur where
     _ -> pure ()
 
 -- | Response: After a player's threat is reduced, heal 1 damage from attached hero.
--- ponytail: answers a threat reduced by a player card, the reductions the engine opens a
--- window for
 instance HasAbilities MailOfEarnur where
   getAbilities (MailOfEarnur a) = [mkAbility a 1 $ response $ ThreatReducedByPlayerCardWindow After | AttachedTo _ <- [a.placement]]
 
