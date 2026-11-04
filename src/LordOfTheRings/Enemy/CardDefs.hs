@@ -945,7 +945,6 @@ crebain =
     { cdCardTraits = setFromList [Creature]
     , cdKeywords = setFromList [Surge]
     , cdShadowEffect = True
-    , cdEasyModeQuantity = Just 2
     }
 
 wildBear :: CardDef
@@ -4193,6 +4192,7 @@ houndOfSauron =
     { cdCardTraits = setFromList [Creature, Warg]
     , cdKeywords = setFromList [Surge]
     , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 2
     }
 
 howlingWarg :: CardDef

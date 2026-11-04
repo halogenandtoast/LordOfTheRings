@@ -2323,7 +2323,7 @@ mirage :: CardDef
 mirage = (treachery "16028" "Mirage" DesertCrossing 2) {cdCardTraits = setFromList [Weather]}
 
 unbearableHeat :: CardDef
-unbearableHeat = (treachery "16029" "Unbearable Heat" DesertCrossing 2) {cdCardTraits = setFromList [Weather], cdShadowEffect = True, cdEasyModeQuantity = Just 1}
+unbearableHeat = (treachery "16029" "Unbearable Heat" DesertCrossing 2) {cdCardTraits = setFromList [Weather], cdShadowEffect = True}
 
 scorchingSun :: CardDef
 scorchingSun =
@@ -2733,7 +2733,7 @@ snowdrifts :: CardDef
 snowdrifts = (treachery "142036" "Snowdrifts" TheRingGoesSouth 2) {cdCardTraits = setFromList [Weather]}
 
 bitterCold :: CardDef
-bitterCold = (treachery "142037" "Bitter Cold" TheRingGoesSouth 2) {cdCardTraits = setFromList [Weather], cdShadowEffect = True}
+bitterCold = (treachery "142037" "Bitter Cold" TheRingGoesSouth 2) {cdCardTraits = setFromList [Weather], cdShadowEffect = True, cdEasyModeQuantity = Just 1}
 
 stormOfHowls :: CardDef
 stormOfHowls = (treachery "142038" "Storm of Howls" TheRingGoesSouth 3) {cdKeywords = setFromList [Peril], cdEasyModeQuantity = Just 2}
