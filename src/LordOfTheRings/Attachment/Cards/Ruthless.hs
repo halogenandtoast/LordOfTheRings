@@ -31,8 +31,8 @@ instance RunMessage Ruthless where
         chooseOrRunOneM pid do
           questionLabeled "ruthless.moveDamage"
           causedBy a
-          targets enemies \e -> do
-            removeTokens a host Damage damage
-            placeDamage a e damage
+          targets enemies \e -> chooseAmountM pid "ruthless.amount" a 1 damage \n -> do
+            removeTokens a host Damage n
+            placeDamage a e n
       pure s
     _ -> Ruthless <$> runMessage msg a
