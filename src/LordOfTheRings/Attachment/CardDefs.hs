@@ -34,6 +34,10 @@ allAttachmentCards =
       , mithrilShirtTheRoadDarkens
       , glamdringTheRoadDarkens
       , andurilTheRoadDarkens
+      , phialOfGaladriel
+      , threeGoldenHairs
+      , lorienRope
+      , leafWrappedLembas
       , valor
       , appointedByFate
       , celebriansStone
@@ -1821,3 +1825,28 @@ glamdringTheRoadDarkens = restrictedBoon "142013" "Glamdring" 2 [Artifact, Item,
 
 andurilTheRoadDarkens :: CardDef
 andurilTheRoadDarkens = restrictedBoon "142014" "Andúril" 3 [Artifact, Item, Weapon]
+
+{- | The Gift boons of Breaking of the Fellowship: earned in the campaign, each is attached
+to a hero at setup (Setup: Attach to a hero in play).
+-}
+giftBoon :: CardCode -> Name -> CardDef
+giftBoon code name =
+  unique
+    (attachment code name Neutral (StaticCost 0))
+      { cdCardTraits = setFromList [Item, Gift, Boon]
+      , cdVictoryPoints = Just 3
+      , cdSetupAttach = True
+      , cdDeckLimit = 1
+      }
+
+phialOfGaladriel :: CardDef
+phialOfGaladriel = giftBoon "142015" "Phial of Galadriel"
+
+threeGoldenHairs :: CardDef
+threeGoldenHairs = giftBoon "142016" "Three Golden Hairs"
+
+lorienRope :: CardDef
+lorienRope = giftBoon "142017" "Lórien Rope"
+
+leafWrappedLembas :: CardDef
+leafWrappedLembas = giftBoon "142018" "Leaf-wrapped Lembas"

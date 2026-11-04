@@ -446,6 +446,13 @@ allQuestCards =
       , theNineWalkers
       , theHuntIsUp
       , theGatesOfMoria
+      , theGreatRiver
+      , theCompanyDivided
+      , searchingTheWoods
+      , guardTheHobbits
+      , theSeatOfAmonHen
+      , orcHunting
+      , theRingBearerSetsOut
       ]
 
 theDrippingWalls :: CardDef
@@ -1858,3 +1865,30 @@ theHuntIsUp = quest "142022" "The Hunt is Up!" TheRingGoesSouth 3 12
 -- | No quest points: the players win as Doors of Durin is explored.
 theGatesOfMoria :: CardDef
 theGatesOfMoria = quest "142023" "The Gates of Moria" TheRingGoesSouth 4 0
+
+-- * Breaking of the Fellowship
+
+theGreatRiver :: CardDef
+theGreatRiver = quest "142061" "The Great River" BreakingOfTheFellowship 1 12
+
+-- | No quest points: its Forced effect at the end of the refresh phase leaves it for the
+-- players' own stage 3s.
+theCompanyDivided :: CardDef
+theCompanyDivided = quest "142062" "The Company Divided" BreakingOfTheFellowship 2 0
+
+-- | The four stage 3s, one for each player's own staging area: no quest points, each
+-- advances to stage 4A once Frodo's Choice is revealed at it.
+searchingTheWoods :: CardDef
+searchingTheWoods = quest "142063" "Searching the Woods" BreakingOfTheFellowship 3 0
+
+guardTheHobbits :: CardDef
+guardTheHobbits = quest "142064" "Guard the Hobbits" BreakingOfTheFellowship 3 0
+
+theSeatOfAmonHen :: CardDef
+theSeatOfAmonHen = quest "142065" "The Seat of Amon Hen" BreakingOfTheFellowship 3 0
+
+orcHunting :: CardDef
+orcHunting = quest "142066" "Orc Hunting" BreakingOfTheFellowship 3 0
+
+theRingBearerSetsOut :: CardDef
+theRingBearerSetsOut = quest "142067" "The Ring-bearer Sets Out" BreakingOfTheFellowship 4 16

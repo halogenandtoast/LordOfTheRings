@@ -158,6 +158,7 @@ allObjectiveCards =
       , theOneRingTheLandOfShadow
       , theOneRingTheMountainOfFire
       , theOneRingTheRoadDarkens
+      , frodosChoice
       ]
 
 durinsAxe :: CardDef
@@ -1112,4 +1113,13 @@ theOneRingTheRoadDarkens =
   (emptyCardDef "142091" "The One Ring" ObjectiveType)
     { cdUnique = True
     , cdCardTraits = setFromList [Artifact, Item, Ring]
+    }
+
+-- * Breaking of the Fellowship
+
+frodosChoice :: CardDef
+frodosChoice =
+  (objective "142068" "Frodo's Choice" BreakingOfTheFellowship 1)
+    { cdCardTraits = setFromList [Doom]
+    , cdWhenRevealed = True
     }
