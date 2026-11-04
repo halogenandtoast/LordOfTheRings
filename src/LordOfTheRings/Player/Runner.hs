@@ -212,10 +212,10 @@ runPlayer msg player = case msg of
       | pid == player.id
       , cdCardType (toCardDef card) == EventType
       , cdCost (toCardDef card) == Just DynamicCost -> do
-          push $ CheckWindows [mkAfter $ PlayedCard pid (toCardCode card)]
+          push $ CheckWindows [mkAfter $ PlayedCard pid card]
           pure $ player & discardL %~ (PlayerCard card :)
     PlayAtNoCost pid card | pid == player.id -> do
-      pushAll $ playCard pid card [] <> [CheckWindows [mkAfter $ PlayedCard pid (toCardCode card)]]
+      pushAll $ playCard pid card [] <> [CheckWindows [mkAfter $ PlayedCard pid card]]
       pure player
     PlayFromHandAtNoCost pid cid | pid == player.id -> case find ((== cid) . (.id)) player.hand of
       Just card@(PlayerCard pc) -> do

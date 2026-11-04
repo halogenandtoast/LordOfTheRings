@@ -2,7 +2,7 @@ module LordOfTheRings.Location.Cards.HarondorWaste (harondorWaste) where
 
 import LordOfTheRings.Location.CardDefs qualified as Cards
 import LordOfTheRings.Location.Import.Lifted
-import LordOfTheRings.Scenario.Scenarios.TheCrossingsOfPoros.Helpers (randomFromLargestSetAside)
+import LordOfTheRings.Scenario.Scenarios.TheCrossingsOfPoros.Helpers (withRandomFromLargestSetAside)
 
 newtype HarondorWaste = HarondorWaste LocationAttrs
   deriving anyclass (IsLocation, HasModifiersFor)
@@ -22,7 +22,7 @@ Shadow: Return attacking enemy to the staging area after this attack.
 instance RunMessage HarondorWaste where
   runMessage msg l@(HarondorWaste a) = case msg of
     UseCardAbility _ (isSource a -> True) 1 _ -> do
-      traverse_ (discardSetAside . pure) =<< randomFromLargestSetAside
+      withRandomFromLargestSetAside (discardSetAside . pure)
       shuffleEncounterDiscardIntoDeck AnyCard
       pure l
     ResolveShadowEffect cid eid _ _ | cid == a.cardId -> do

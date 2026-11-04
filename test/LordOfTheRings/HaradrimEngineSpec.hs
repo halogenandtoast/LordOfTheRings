@@ -4,6 +4,7 @@ import LordOfTheRings.Ally.CardDefs qualified as Allies
 import LordOfTheRings.Effect (Effect (..), EffectDuration (..))
 import LordOfTheRings.Enemy (EnemyAttrs (..))
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
+import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Matcher (AllyMatcher (..), EnemyMatcher (..), HeroMatcher (..), PlayerMatcher (..), charactersGuardedBy, select)
 import LordOfTheRings.Message.Lifted (chooseOrRunOneM, placeProgressOnMainQuest, ready, removeMainQuestProgressLabeled, removeProgressFromMainQuest)
 import LordOfTheRings.Modifier (ModifierType (..))
@@ -74,6 +75,18 @@ spec = describe "The Haradrim engine" do
     run $ Run []
     heroExhausted . toAttrs <$> getHeroWithCode "01007" `shouldReturn` True
     run $ Ready eowyn
+    heroExhausted . toAttrs <$> getHeroWithCode "01007" `shouldReturn` False
+
+  it "lets an encounter card's effect ready a character while player card effects cannot" . gameTest $ \pid -> do
+    eowyn <- toTarget <$> getHeroWithCode "01007"
+    run $ Exhaust eowyn
+    lasting GameTarget CannotBeReadiedByPlayerCards
+    road <- genEncounterCard Locations.oldForestRoad
+    run $ AddToStaging road
+    lid <- getsGame (fromJustNote "no location" . fmap toId . find ((== toCardCode road) . toCardCode) . toList . (.entities.locations))
+    run $ TravelTo lid
+    chooseAbilityOf pid lid
+    chooseTarget pid eowyn
     heroExhausted . toAttrs <$> getHeroWithCode "01007" `shouldReturn` False
 
   it "bars a character from defending against matching enemies" . gameTest $ \_ -> do

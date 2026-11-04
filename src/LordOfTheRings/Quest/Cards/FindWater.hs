@@ -17,8 +17,7 @@ instance HasModifiersFor FindWater where
 
 -- | Response: When this stage is defeated, each player readies 1 hero he controls. The
 -- players gain by it, so it is taken, as Make Camp's is. Find Water's own effect is no
--- player card's, but it is still in play as it resolves, and the 'ready' verb would read
--- its bar: so the 'Ready' is pushed raw.
+-- player card's, so its bar, still in play as it resolves, does not stop it.
 instance RunMessage FindWater where
   runMessage msg (FindWater attrs) = case msg of
     CompleteQuest qid | qid == attrs.id -> do
@@ -27,6 +26,6 @@ instance RunMessage FindWater where
         chooseOrRunOneM p do
           questionLabeled "findWater.ready"
           causedBy attrs
-          targets heroes \h -> push $ Ready (toTarget h)
+          targets heroes encounterReadies
       FindWater <$> runMessage msg attrs
     _ -> FindWater <$> runMessage msg attrs

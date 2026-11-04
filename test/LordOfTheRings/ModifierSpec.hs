@@ -22,4 +22,7 @@ spec = describe "Lasting effects" do
     runOnly $ EndPhase QuestPhase
     getWillpower (toTarget eowyn) `shouldReturn` 5
     runOnly EndRound
+    -- they last through the round's end-of-round effects, then end
+    getWillpower (toTarget eowyn) `shouldReturn` 5
+    void mainLoop
     getWillpower (toTarget eowyn) `shouldReturn` 4

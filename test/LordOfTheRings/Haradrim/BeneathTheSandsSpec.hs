@@ -5,7 +5,7 @@ import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Helpers.Modifiers (getModifiers)
 import LordOfTheRings.Helpers.Staging (getEnemyAttack, getLocationThreat)
 import LordOfTheRings.Location.CardDefs qualified as Locations
-import LordOfTheRings.Modifier (ModifierType (CannotCancelEncounterEffects))
+import LordOfTheRings.Modifier (ModifierType (Blank, CannotCancelEncounterEffects, ProgressLimit))
 import LordOfTheRings.Objective.CardDefs qualified as Objectives
 import LordOfTheRings.Outcome (Outcome (Won))
 import LordOfTheRings.Phase (Phase (QuestPhase))
@@ -283,6 +283,19 @@ spec = describe "Beneath the Sands" do
     chooseTarget pid guard'
     getsGame (length . (.entities.allies)) `shouldReturn` 0
     getsGame (length . (.entities.treacheries)) `shouldReturn` 0
+
+  it "blanks On Track, and not Off Track should it flip back, for the phase after Lost Underground is defeated" . sandsTest $ \_ -> do
+    main <- putQuestStage Quests.fliesAndSpiders
+    o <- onTrack
+    reveal [Quests.lostUnderground, Locations.spiderBurrow]
+    q <- questOf Quests.lostUnderground
+    run $ PlaceTokens GameSource q Progress 5
+    searchSide `shouldReturn` [toCardCode Objectives.onTrack]
+    getModifiers (ObjectiveTarget o) >>= (`shouldSatisfy` elem Blank)
+    run $ Flip (ObjectiveTarget o)
+    searchSide `shouldReturn` [toCardCode Objectives.offTrack]
+    getModifiers (ObjectiveTarget o) >>= (`shouldSatisfy` notElem Blank)
+    getModifiers main >>= (`shouldSatisfy` elem (ProgressLimit 0))
 
   it "keeps the Search objective from flipping while Lost Underground is in play, then flips it On Track as it is defeated" . sandsTest $ \_ -> do
     _ <- onTrack

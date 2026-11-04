@@ -2,7 +2,7 @@ module LordOfTheRings.Location.Cards.DesolateLand (desolateLand) where
 
 import LordOfTheRings.Location.CardDefs qualified as Cards
 import LordOfTheRings.Location.Import.Lifted
-import LordOfTheRings.Scenario.Scenarios.TheCrossingsOfPoros.Helpers (randomFromLargestSetAside)
+import LordOfTheRings.Scenario.Scenarios.TheCrossingsOfPoros.Helpers (withRandomFromLargestSetAside)
 
 newtype DesolateLand = DesolateLand LocationAttrs
   deriving anyclass IsLocation
@@ -27,6 +27,6 @@ instance HasAbilities DesolateLand where
 instance RunMessage DesolateLand where
   runMessage msg l@(DesolateLand a) = case msg of
     UseCardAbility _ (isSource a -> True) 1 _ -> do
-      traverse_ revealSetAsideCard =<< randomFromLargestSetAside
+      withRandomFromLargestSetAside revealSetAsideCard
       pure l
     _ -> DesolateLand <$> runMessage msg a

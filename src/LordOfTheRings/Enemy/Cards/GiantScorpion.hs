@@ -2,8 +2,6 @@ module LordOfTheRings.Enemy.Cards.GiantScorpion (giantScorpion) where
 
 import LordOfTheRings.Enemy.CardDefs qualified as Cards
 import LordOfTheRings.Enemy.Import.Lifted
-import LordOfTheRings.Helpers.Character (getDefenseAgainst)
-import LordOfTheRings.Helpers.Staging (getEnemyAttack)
 
 newtype GiantScorpion = GiantScorpion EnemyAttrs
   deriving anyclass (IsEnemy, HasAbilities, HasModifiersFor)
@@ -15,7 +13,7 @@ giantScorpion = enemy GiantScorpion Cards.giantScorpion
 {- | Forced: After Giant Scorpion damages a character, that character cannot ready until
 the end of the round: read as the damage is dealt, as Muck Adder's.
 Shadow: If this attack deals damage, the defending character cannot ready until the end of
-the round.
+the round: read off the damage the attack goes on to deal.
 -}
 instance RunMessage GiantScorpion where
   runMessage msg e@(GiantScorpion attrs) = case msg of
@@ -23,9 +21,7 @@ instance RunMessage GiantScorpion where
       roundModifier attrs target CannotReady
       GiantScorpion <$> runMessage msg attrs
     ResolveShadowEffect cid eid _ defenders | cid == attrs.cardId -> do
-      attack <- getEnemyAttack eid
-      defense <- sum <$> traverse (getDefenseAgainst eid) defenders
-      when (attack > defense) $ for_ defenders \d -> roundModifier (CardIdSource cid) d CannotReady
+      for_ defenders \d -> attackModifier (CardIdSource cid) eid (AttackDamageModifiesUntilEndOfRound d CannotReady)
       pure e
     _ -> GiantScorpion <$> runMessage msg attrs
    where
