@@ -466,6 +466,11 @@ allLocationCards =
       , crumblingCavern
       , undergroundLake
       , woodmenVillage
+      , mountainPass
+      , dwarvenDoor
+      , caveEntrance
+      , creatureDen
+      , highFalls
       ]
 
 drownedTreasury :: CardDef
@@ -3494,4 +3499,32 @@ woodmenVillage =
   (location "18069A" "Woodmen Village" JourneyUpTheAnduin 1 4 4)
     { cdCardTraits = setFromList [Riverland]
     , cdOtherSide = Just "18069B"
+    }
+
+-- * The Withered Heath
+
+mountainPass :: CardDef
+mountainPass = (location "19015" "Mountain Pass" TheWitheredHeath 3 2 4) {cdCardTraits = setFromList [Mountain]}
+
+dwarvenDoor :: CardDef
+dwarvenDoor = (location "19016" "Dwarven Door" TheWitheredHeath 3 3 3) {cdCardTraits = setFromList [Mountain], cdKeywords = setFromList [Deep]}
+
+caveEntrance :: CardDef
+caveEntrance =
+  (location "19017" "Cave Entrance" TheWitheredHeath 3 1 5)
+    { cdCardTraits = setFromList [Mountain]
+    , cdKeywords = setFromList [Deep]
+    , cdEasyModeQuantity = Just 2
+    }
+
+creatureDen :: CardDef
+creatureDen = (location "19018" "Creature Den" TheWitheredHeath 2 4 4) {cdCardTraits = setFromList [Mountain, Dark]}
+
+-- | X threat: the number of locations in the staging area.
+highFalls :: CardDef
+highFalls =
+  (location "19019" "High Falls" TheWitheredHeath 2 0 6)
+    { cdCardTraits = setFromList [Mountain]
+    , cdKeywords = setFromList [Deep]
+    , cdEasyModeQuantity = Just 1
     }

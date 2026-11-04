@@ -398,6 +398,9 @@ narrationFor = \case
   ScenarioSpecific "stormcaller.advanced" (parseMaybe parseJSON -> Just card) ->
     Just $ one $ toned Bad $ structure [ikeyPart "log.stormcallerAdvances" ["quest" ~> EncounterCard card]]
   ScenarioSpecific "stormcaller.join" _ -> Just $ one $ toned Good $ mechanic [ikeyPart "log.stormcallerCaughtUp" []]
+  -- \* Cold-Drake set aside with its damage (The Withered Heath)
+  ScenarioSpecific "witheredHeath.drakeHealed" (parseMaybe parseJSON -> Just (n :: Int)) ->
+    Just $ one $ toned Good $ mechanic [ikeyPart "log.coldDrakeHealed" ["count" ~> n]]
   -- \* The Orcs' area and their quest stage (Race Across Harad)
   PlaceEnemy eid OrcsArea -> Just $ whenRef (toTarget eid) \e -> one $ mechanic [ikeyPart "log.toOrcsArea" ["card" ~> e]]
   PlaceLocation lid OrcsArea -> Just $ whenRef (toTarget lid) \l -> one $ mechanic [ikeyPart "log.toOrcsArea" ["card" ~> l]]

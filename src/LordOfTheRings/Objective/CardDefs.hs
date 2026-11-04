@@ -127,6 +127,7 @@ allObjectiveCards =
       , nooseOfVines
       , porosGarrison
       , haldan
+      , dragonSign
       ]
 
 durinsAxe :: CardDef
@@ -867,4 +868,14 @@ haldan =
     { cdCardTraits = setFromList [Woodman, Scout]
     , cdKeywords = setFromList [FirstPlayerGainsControl]
     , cdOtherSide = Just "18069A"
+    }
+
+-- * The Withered Heath
+
+dragonSign :: CardDef
+dragonSign =
+  (objective "19012" "Dragon Sign" TheWitheredHeath 4)
+    { cdCardTraits = setFromList [Clue]
+    , cdKeywords = setFromList [GuardedBy [EnemyType]]
+    , cdVictoryPoints = Just 1
     }

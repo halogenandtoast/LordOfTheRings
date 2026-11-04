@@ -375,6 +375,8 @@ allTreacheryCards =
       , eyesInTheDark
       , dragonBreath
       , dragonScales
+      , heavySnow
+      , deadlyCold
       ]
 
 deepDeepDark :: CardDef
@@ -2387,3 +2389,17 @@ dragonBreath = (treachery "18058" "Dragon Breath" DragonMight 2) {cdCardTraits =
 
 dragonScales :: CardDef
 dragonScales = (treachery "18059" "Dragon Scales" DragonMight 2) {cdCardTraits = setFromList [Dragon], cdKeywords = setFromList [Surge]}
+
+-- * The Withered Heath
+
+heavySnow :: CardDef
+heavySnow =
+  (treachery "19020" "Heavy Snow" TheWitheredHeath 2)
+    { cdCardTraits = setFromList [Weather]
+    , cdKeywords = setFromList [Doomed 1]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
+    }
+
+deadlyCold :: CardDef
+deadlyCold = (treachery "19021" "Deadly Cold" TheWitheredHeath 3) {cdCardTraits = setFromList [Weather], cdShadowEffect = True, cdEasyModeQuantity = Just 2}

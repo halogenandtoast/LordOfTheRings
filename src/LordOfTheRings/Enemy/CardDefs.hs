@@ -439,6 +439,9 @@ allEnemyCards =
       , werewolf
       , giantSpider
       , blackBats
+      , coldDrake
+      , snowTroll
+      , dragonHatchling
       ]
 
 namelessThing :: CardDef
@@ -3586,4 +3589,30 @@ blackBats =
     { cdCardTraits = setFromList [Creature]
     , cdKeywords = setFromList [Surge]
     , cdShadowEffect = True
+    }
+
+-- * The Withered Heath
+
+coldDrake :: CardDef
+coldDrake =
+  unique
+    (enemy "19011" "Cold-Drake" TheWitheredHeath 1 10 1 6 1 18)
+      { cdCardTraits = setFromList [Dragon]
+      , cdVictoryPoints = Just 6
+      }
+
+snowTroll :: CardDef
+snowTroll =
+  (enemy "19013" "Snow-troll" TheWitheredHeath 2 35 3 5 3 9)
+    { cdCardTraits = setFromList [Troll]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
+    }
+
+dragonHatchling :: CardDef
+dragonHatchling =
+  (enemy "19014" "Dragon Hatchling" TheWitheredHeath 3 20 2 2 0 4)
+    { cdCardTraits = setFromList [Dragon]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 2
     }

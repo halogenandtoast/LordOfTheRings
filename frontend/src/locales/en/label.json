@@ -2534,5 +2534,13 @@
     "draw": "Draw 2 cards",
     "resource": "Add 1 resource to a hero's resource pool",
     "hero": "Ancient Treasury: choose a hero to gain 1 resource"
+  },
+  "heavySnow": {
+    "exhaust": "Heavy Snow: choose a character to exhaust"
+  },
+  "deadlyCold": {
+    "choose": "Deadly Cold: exhaust this character, or deal 1 damage to it",
+    "exhaust": "Exhaust it",
+    "damage": "Deal 1 damage to it"
   }
 }

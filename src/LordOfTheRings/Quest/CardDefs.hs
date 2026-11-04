@@ -351,6 +351,10 @@ allQuestCards =
       , southronPursuit
       , orcPatrols
       , battleAtTheCrossings
+      , searchingForDragonSign
+      , theColdDrakeAttacks
+      , huntingTheBeast
+      , aCorneredDragon
       ]
 
 theDrippingWalls :: CardDef
@@ -1390,3 +1394,18 @@ orcPatrols = quest "17162" "Orc Patrols" TheCrossingsOfPoros 3 15
 
 battleAtTheCrossings :: CardDef
 battleAtTheCrossings = quest "17163" "Battle at the Crossings" TheCrossingsOfPoros 4 20
+
+-- * The Withered Heath
+
+searchingForDragonSign :: CardDef
+searchingForDragonSign = quest "19022" "Searching for Dragon Sign" TheWitheredHeath 1 6
+
+theColdDrakeAttacks :: CardDef
+theColdDrakeAttacks = quest "19023" "The Cold-Drake Attacks!" TheWitheredHeath 2 3
+
+huntingTheBeast :: CardDef
+huntingTheBeast = quest "19024" "Hunting the Beast" TheWitheredHeath 3 9
+
+-- | No progress defeats it: the players win as Cold-Drake is defeated.
+aCorneredDragon :: CardDef
+aCorneredDragon = quest "19025" "A Cornered Dragon" TheWitheredHeath 4 0
