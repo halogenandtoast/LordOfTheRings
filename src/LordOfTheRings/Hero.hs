@@ -90,6 +90,8 @@ import LordOfTheRings.Hero.Cards.Smeagol
 import LordOfTheRings.Hero.AllyHero (allyHero)
 import LordOfTheRings.Hero.Cards.BilboBagginsTactics
 import LordOfTheRings.Hero.Cards.Radagast
+import LordOfTheRings.Hero.Cards.SarumanLore
+import LordOfTheRings.Hero.Cards.GildorInglorionLeadership
 import LordOfTheRings.Hero.Runner ()
 import LordOfTheRings.Hero.Types as X
 import LordOfTheRings.Id
@@ -207,5 +209,7 @@ allHeroes =
         , SomeHeroCard thranduil
         , SomeHeroCard dainIronfootSpirit
         , SomeHeroCard smeagol
+        , SomeHeroCard sarumanLore
+        , SomeHeroCard gildorInglorionLeadership
         ]
     ]

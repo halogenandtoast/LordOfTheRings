@@ -261,6 +261,12 @@ import LordOfTheRings.Ally.Cards.Thalion
 import LordOfTheRings.Ally.Cards.SoldierOfErebor
 import LordOfTheRings.Ally.Cards.MirkwoodHunter
 import LordOfTheRings.Ally.Cards.DescendantOfGirion
+import LordOfTheRings.Ally.Cards.SoldierOfIsengard
+import LordOfTheRings.Ally.Cards.NoriTactics
+import LordOfTheRings.Ally.Cards.RohirrimScout
+import LordOfTheRings.Ally.Cards.WanderingExile
+import LordOfTheRings.Ally.Cards.NorthernBowmaster
+import LordOfTheRings.Ally.Cards.OdoProudfoot
 import LordOfTheRings.Ally.Runner ()
 import LordOfTheRings.Ally.Types as X
 import LordOfTheRings.Id
@@ -554,5 +560,11 @@ allAllies =
         , SomeAllyCard soldierOfErebor
         , SomeAllyCard mirkwoodHunter
         , SomeAllyCard descendantOfGirion
+        , SomeAllyCard soldierOfIsengard
+        , SomeAllyCard noriTactics
+        , SomeAllyCard rohirrimScout
+        , SomeAllyCard wanderingExile
+        , SomeAllyCard northernBowmaster
+        , SomeAllyCard odoProudfoot
         ]
     ]

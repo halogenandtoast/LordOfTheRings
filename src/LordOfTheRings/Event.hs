@@ -218,6 +218,10 @@ import LordOfTheRings.Event.Cards.QuickerThanSight
 import LordOfTheRings.Event.Cards.ManTheWalls
 import LordOfTheRings.Event.Cards.FamiliarLands
 import LordOfTheRings.Event.Cards.SwiftAndStrong
+import LordOfTheRings.Event.Cards.HornsHornsHorns
+import LordOfTheRings.Event.Cards.FarSighted
+import LordOfTheRings.Event.Cards.RecklessAttack
+import LordOfTheRings.Event.Cards.DefiantChallenge
 import LordOfTheRings.Event.Types as X
 import LordOfTheRings.Id
 import LordOfTheRings.Prelude
@@ -455,5 +459,9 @@ allEvents =
         , SomeEventCard manTheWalls
         , SomeEventCard familiarLands
         , SomeEventCard swiftAndStrong
+        , SomeEventCard hornsHornsHorns
+        , SomeEventCard farSighted
+        , SomeEventCard recklessAttack
+        , SomeEventCard defiantChallenge
         ]
     ]

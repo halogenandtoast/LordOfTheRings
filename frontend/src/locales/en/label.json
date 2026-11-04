@@ -772,6 +772,29 @@
     "chooseHero": "Choose a hero to swap out",
     "chooseSwap": "Choose a hero from your collection to swap in"
   },
+  "hornsHornsHorns": {
+    "chooseAlly": "Horns! Horns! Horns!: you may put an ally from your hand into play",
+    "none": "Put no ally into play"
+  },
+  "farSighted": {
+    "look": "Far-sighted: the top cards of the encounter deck, put back in the same order",
+    "done": "Put them back"
+  },
+  "sarumansStaff": {
+    "choose": "Saruman's Staff: choose one",
+    "reduce": "Reduce the X value of the next Doomed X event you play this phase by 2",
+    "search": "Search the top 5 cards of your deck for a Doomed event"
+  },
+  "rohirrimScout": {
+    "chooseEnemy": "Rohirrim Scout: choose an enemy that makes no engagement checks against you this round"
+  },
+  "recklessAttack": {
+    "chooseEnemy": "Reckless Attack: choose an enemy engaged with you to deal 2 damage to"
+  },
+  "defiantChallenge": {
+    "ready": "Defiant Challenge: you may ready a character you control",
+    "none": "Ready no character"
+  },
   "discardItOrFromHand": "Discard it from play, or discard 1 card from your hand",
   "discardItFromPlay": "Discard it from play",
   "discardOneFromHand": "Discard 1 card from your hand",

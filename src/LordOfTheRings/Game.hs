@@ -2265,7 +2265,8 @@ runGameMessage msg g = case msg of
     | otherwise -> payFor g pid card fromHand windows Nothing 0
   PayToAttach pid card fromHand windows host -> payFor g pid card fromHand windows (Just host) =<< attachDiscount card host
   PaidCost costId -> do
-    -- a card with Doomed, printed or gained, raises each player's threat as it is played
+    -- a card with Doomed, printed or gained, raises each player's threat as it is played,
+    -- by its X less what lowers it, as Saruman's Staff
     for_ (Map.lookup costId (gameActiveCosts g)) \ac -> do
       gained <- getModifiers (CardIdTarget ac.activeCostCard.id)
       runQueueT
@@ -3702,7 +3703,8 @@ isRestricted = member Restricted . cdKeywords . toCardDef
 
 {- | With more than 2 restricted cards on the character, its controller discards one of
 them, and again until 2 are left; a card may count as 2, as Raiment of War. A character
-may be allowed more, as Forth, The Three Hunters! allows each hero 1 more.
+may be allowed more, as Forth, The Three Hunters! allows each hero 1 more, and Golden
+Belt its hero.
 -}
 checkRestricted :: Game -> Target -> GameT ()
 checkRestricted g host = do
@@ -4145,14 +4147,20 @@ payFor g pid card fromHand windows host discount = do
   extra <- (+ ownExtra) . subtract discount <$> costModifier pid card
   -- a reduction of the next matching card's cost is spent on this one, and the Doomed
   -- that comes with it, as Gríma's
-  let spent e =
-        effectTarget e
-          `elem` [PlayerTarget pid, GameTarget]
+  let ours e = effectTarget e `elem` [PlayerTarget pid, GameTarget]
+      gainsDoomed = or [fromHand | e <- gameEffects g, ours e, NextCardGainsDoomed _ <- effectModifiers e]
+  -- a lowering of the next Doomed X event's X, as Saruman's Staff's, is spent on an event
+  -- with Doomed, printed or gained
+  doomedNow <- keywordValue (\case Doomed k -> Just k; _ -> Nothing) (CardIdTarget card.id) (toCardDef card)
+  let doomedEvent = card.cardType == EventType && (doomedNow > 0 || gainsDoomed)
+      spent e =
+        ours e
           && or
             ( [cardMatches m card | ReduceNextCostOf m _ <- effectModifiers e]
                 <> [cardMatches m card | LowerNextCostOf m _ <- effectModifiers e]
                 <> [cardMatches m card | NextIgnoresResourceMatch m <- effectModifiers e]
                 <> [fromHand | NextCardGainsDoomed _ <- effectModifiers e]
+                <> [doomedEvent | LowerNextDoomed _ <- effectModifiers e]
             )
       spentEffects = filter spent (gameEffects g)
       -- one that does not require a resource match, as King of Dale's ally, is paid as neutral;
@@ -4173,7 +4181,7 @@ payFor g pid card fromHand windows host discount = do
           , activeCostWindows = windows
           , activeCostHost = host
           , activeCostFromHand = fromHand
-          , activeCostDoomed = sum [n | e <- spentEffects, NextCardGainsDoomed n <- effectModifiers e]
+          , activeCostDoomed = negate $ sum [n | e <- spentEffects, LowerNextDoomed n <- effectModifiers e]
           , activeCostPaidFrom = []
           }
   -- resources on allies, as Radagast's, may pay for the cards they are for
@@ -4232,6 +4240,13 @@ payFor g pid card fromHand windows host discount = do
     [ CreateEffect $ Effect (effectSource e) (CardIdTarget card.id) ms UntilEndOfRound
     | e <- spentEffects
     , SpentOnCardGives ms <- effectModifiers e
+    ]
+  -- the Doomed it gains, as Gríma's, is on it for the round, for what reads a card with
+  -- Doomed, as Saruman does; lost as it is played again, as Greyflood Wanderer's is
+  pushAll
+    [ CreateEffect $ Effect (CardIdSource card.id) (CardIdTarget card.id) [GainKeyword (Doomed k)] UntilEndOfRound
+    | e <- spentEffects
+    , NextCardGainsDoomed k <- effectModifiers e
     ]
   let gained e = effectSource e == CardIdSource card.id && effectTarget e == CardIdTarget card.id
   pure $ g & activeCostsL %~ insertEntity activeCost & effectsL %~ filter (\e -> not (spent e || gained e))

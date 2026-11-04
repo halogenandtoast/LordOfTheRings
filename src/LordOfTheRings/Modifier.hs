@@ -83,7 +83,7 @@ data ModifierType
   | -- | no attachment with the restricted keyword can be attached to it
     CannotHaveRestrictedAttachments
   | -- | on a character: it can have this many more restricted attachments than 2, as
-    -- Forth, The Three Hunters! gives each hero 1
+    -- Forth, The Three Hunters! gives each hero 1 and Golden Belt its hero
     AdditionalRestrictedSlots Int
   | -- | on the game: the total threat in the staging area is raised by this much
     StagingThreatBonus Int
@@ -436,6 +436,9 @@ data ModifierType
   | -- | on a player, or on the game for every player: the next card played from hand
     -- gains Doomed N, as Gríma's Action reads; spent with it
     NextCardGainsDoomed Int
+  | -- | on a player: the X of the next Doomed X event they play is lowered by this much, as
+    -- Saruman's Staff reads; spent with it
+    LowerNextDoomed Int
   | -- | alongside a reduction of the next matching card's cost, on the same effect: the
     -- card that spends it gets these modifiers until the end of the round, as the allies
     -- Man the Walls lowers cannot quest

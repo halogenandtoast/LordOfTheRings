@@ -216,6 +216,12 @@ data WindowMatcher
     LastTimeCounterRemovedWindow Timing Target
   | -- | the player raised his threat from the Doomed keyword
     ThreatRaisedByDoomedWindow Timing PlayerId
+  | -- | a matching player raised his threat from the Doomed keyword, as Soldier of Isengard
+    -- answers "a player"
+    MatchingThreatRaisedByDoomedWindow Timing PlayerMatcher
+  | -- | the player played a card with the Doomed keyword, printed or gained, as Saruman
+    -- answers
+    PlayedCardWithDoomedWindow Timing PlayerId
   | -- | the player, or any player, drew any number of cards
     DrewCardsWindow Timing (Maybe PlayerId)
   | -- | any location explored
@@ -533,6 +539,8 @@ windowMatches matcher (Window timing wType) = case (matcher, wType) of
   (DiscoverResolvedWindow t lid, DiscoverResolved lid' _) -> t == timing && lid == lid'
   (PlayerCardPlacedProgressWindow {}, _) -> False
   (ThreatRaisedWindow {}, _) -> False
+  (MatchingThreatRaisedByDoomedWindow {}, _) -> False
+  (PlayedCardWithDoomedWindow {}, _) -> False
   (DefenderWithTraitDestroyedWindow {}, _) -> False
   (PlayerCommittedCharactersWindow {}, _) -> False
   (CharacterDefenderDeclaredWindow {}, _) -> False

@@ -33,7 +33,7 @@ data ActiveCost = ActiveCost
   , activeCostFromHand :: Bool
   -- ^ played from its owner's hand, not from the discard pile
   , activeCostDoomed :: Int
-  -- ^ the Doomed it gained from an effect spent on it, as Gríma's
+  -- ^ what its Doomed X is changed by as it is paid for, as Saruman's Staff lowers it
   , activeCostPaidFrom :: [Target]
   -- ^ the heroes and allies whose resources paid for it, once for each resource
   }

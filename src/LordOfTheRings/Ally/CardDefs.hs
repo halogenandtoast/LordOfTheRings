@@ -83,6 +83,12 @@ allAllyCards =
       , soldierOfGondor
       , angborTheFearless
       , westfoldLancer
+      , soldierOfIsengard
+      , noriTactics
+      , rohirrimScout
+      , wanderingExile
+      , northernBowmaster
+      , odoProudfoot
       , wingedGuardian
       , rivendellMinstrel
       , beorningBeekeeper
@@ -649,6 +655,46 @@ westfoldLancer :: CardDef
 westfoldLancer =
   (ally "22142" "Westfold Lancer" Tactics (StaticCost 3) 2 2 0 2)
     { cdCardTraits = setFromList [Rohan, Warrior]
+    }
+
+soldierOfIsengard :: CardDef
+soldierOfIsengard =
+  (ally "22057" "Soldier of Isengard" Lore (StaticCost 2) 2 2 2 2)
+    { cdCardTraits = setFromList [Isengard]
+    , cdKeywords = setFromList [Doomed 2]
+    }
+
+noriTactics :: CardDef
+noriTactics =
+  (ally "22059" "Nori" Tactics (StaticCost 3) 1 2 1 2)
+    { cdUnique = True
+    , cdCardTraits = setFromList [Dwarf]
+    }
+
+rohirrimScout :: CardDef
+rohirrimScout =
+  (ally "22061" "Rohirrim Scout" Spirit (StaticCost 2) 1 1 0 2)
+    { cdCardTraits = setFromList [Rohan, Scout]
+    }
+
+wanderingExile :: CardDef
+wanderingExile =
+  (ally "22082" "Wandering Exile" Leadership (StaticCost 3) 2 2 0 2)
+    { cdCardTraits = setFromList [Noldor]
+    }
+
+northernBowmaster :: CardDef
+northernBowmaster =
+  (ally "22086" "Northern Bowmaster" Tactics (StaticCost 1) 0 2 0 1)
+    { cdCardTraits = setFromList [Dunedain, Ranger]
+    , cdKeywords = setFromList [Ranged]
+    }
+
+odoProudfoot :: CardDef
+odoProudfoot =
+  (ally "22088" "Odo Proudfoot" Spirit (StaticCost 2) 1 1 1 2)
+    { cdUnique = True
+    , cdCardTraits = setFromList [Hobbit]
     }
 
 wingedGuardian :: CardDef
