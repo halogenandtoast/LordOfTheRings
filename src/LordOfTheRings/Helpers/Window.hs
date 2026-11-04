@@ -11,6 +11,8 @@ import LordOfTheRings.Classes.HasGame
 import LordOfTheRings.Enemy.Types (enemyCardId)
 import LordOfTheRings.Entities
 import LordOfTheRings.Game.Base
+import LordOfTheRings.Campaign (recorded)
+import LordOfTheRings.Helpers.Campaign (getCampaignLog)
 import LordOfTheRings.Helpers.Modifiers (getModifiers)
 import LordOfTheRings.Helpers.Staging (getLocationQuestPoints)
 import LordOfTheRings.Location.Grid (distance)
@@ -289,6 +291,7 @@ passesCriteria = \case
   EnemiesAtLeast n m -> (>= n) . length <$> select m
   HeadingMatches m -> headingMatches m
   InNightmareMode -> inNightmareMode
+  CampaignRecorded key -> maybe False (any (/= "") . recorded key) <$> getCampaignLog
   AnyCriteria cs -> anyM passesCriteria cs
 
 -- | Whether each list can give a character not taken by an earlier one.

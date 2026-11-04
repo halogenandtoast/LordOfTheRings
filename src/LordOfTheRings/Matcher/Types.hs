@@ -5,6 +5,7 @@ import LordOfTheRings.Card.CardType
 import LordOfTheRings.Card.Code
 import LordOfTheRings.Id
 import LordOfTheRings.Keyword (Keyword (Doomed))
+import LordOfTheRings.Location.Grid (Pos)
 import LordOfTheRings.Name
 import LordOfTheRings.Prelude
 import LordOfTheRings.Sphere (Sphere)
@@ -218,6 +219,8 @@ data LocationMatcher
   | UniqueLocation
   | -- | a location player card effects may discard from play
     LocationDiscardableByPlayerCards
+  | -- | the location lying there on the Island Map (Temple of the Deceived)
+    LocationAtPosition Pos
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

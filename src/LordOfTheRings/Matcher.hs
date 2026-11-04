@@ -241,6 +241,7 @@ matchLocation matcher location = case matcher of
     _ -> pure False
   LocationWithIdBelow lid -> pure $ location.id < lid
   UniqueLocation -> pure $ cdUnique (toCardDef location)
+  LocationAtPosition pos -> pure $ location.position == Just pos
   LocationDiscardableByPlayerCards -> notElem CannotBeDiscardedByPlayerCards . map modifierType . Map.findWithDefault [] (toTarget location) <$> getsGame gameModifiers
 
 -- | Not considered out of play, as Saruman's chosen card is.
