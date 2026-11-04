@@ -101,6 +101,9 @@ data CampaignLogKey
   | -- | The Lord of the Rings: the resources on The Corsair Fleet at the end of The Siege of
     -- Gondor ('counted'), placed on it as The Battle of the Pelennor Fields is set up
     CorsairFleetResources
+  | -- | The Lord of the Rings: the heroes taken captive at the end of Breaking of the
+    -- Fellowship, one for each player
+    Captives
   deriving stock (Show, Eq, Ord, Generic, Enum, Bounded)
   deriving anyclass (ToJSON, FromJSON)
 

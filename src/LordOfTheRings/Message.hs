@@ -324,6 +324,13 @@ data Message
     -- blank, and engages its owner, as Secret Cultist turns it: its owner's card still,
     -- keeping its id and its damage
     AllyBecomesEnemy AllyId
+  | -- | the hero loses the hero card type and gains the enemy card type, its owner's card
+    -- still, keeping its id and its damage, what was attached to it discarded, as Fallen
+    -- into Evil turns it: its threat and engagement cost are its attachment's to give
+    HeroBecomesEnemy HeroId
+  | -- | the hero turned enemy returns to its owner's control as a hero, as it does once
+    -- Fallen into Evil is discarded
+    EnemyBecomesHero EnemyId
   | ChooseAndExhaust Source PlayerId Int
   | ChooseAndExhaustHero Source PlayerId
   | -- | the player exhausts a hero the matcher picks out to pay a cost; the ability then
@@ -836,6 +843,9 @@ data Message
     player holds stay with the first group.
     -}
     SeparatePlayers [[PlayerId]]
+  | -- | as 'SeparatePlayers', the players still interacting: each group has a stage of its
+    -- own, the first player's taking the one in play (Breaking of the Fellowship)
+    SeparateStagingAreas [[PlayerId]]
   | -- | the area holding the player comes into focus, to resolve what follows
     FocusArea PlayerId
   | -- | the area in focus is to join another at the beginning of the travel phase
@@ -890,9 +900,10 @@ data Message
     RevealFromCorsairDeckWithShadow Source PlayerId
   | -- | deal a shadow card to the enemy whose card this is, once it has entered play
     DealShadowCardToCard CardId
-  | -- | the enemy goes to the staging area of the player's area, as Giant Cave Centipede
-    -- moves to a different player's while the players are separated
-    PlaceInStagingAreaOf PlayerId EnemyId
+  | -- | the card goes to the staging area of the player's area, as Giant Cave Centipede
+    -- moves to a different player's while the players are separated, from wherever it is:
+    -- an enemy, a location, a treachery or an objective, and what is attached to it
+    PlaceInStagingAreaOf PlayerId Target
   | -- | the card the source revealed from the Corsair deck, as Light Cruiser reads it
     RevealedFromCorsairDeck Source PlayerId EncounterCard
   | -- | the Ship enemy engaged the player from the staging area: its Boarding X resolves

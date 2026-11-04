@@ -597,6 +597,10 @@ allEnemyCards =
       , urukFromMordor
       , moriaOrc
       , moriaArcher
+      , urukHaiCaptain
+      , urukHaiArcher
+      , urukHaiTracker
+      , urukHaiHunter
       ]
 
 namelessThing :: CardDef
@@ -4951,6 +4955,47 @@ moriaArcher =
   (enemy "142049" "Moria Archer" JourneyInTheDark 3 42 0 3 3 3)
     { cdCardTraits = setFromList [Orc]
     , cdKeywords = setFromList [Peril, Archery 2]
+    , cdWhenRevealed = True
+    , cdEasyModeQuantity = Just 2
+    }
+
+-- * Breaking of the Fellowship
+
+-- | Cannot have attachments (its card gives it the modifier).
+urukHaiCaptain :: CardDef
+urukHaiCaptain =
+  (enemy "142069" "Uruk-hai Captain" BreakingOfTheFellowship 2 36 3 5 2 3)
+    { cdCardTraits = setFromList [Orc, UrukHai]
+    , cdKeywords = setFromList [Toughness 2]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
+    }
+
+-- | Its threat and archery are X, the number of players at its stage (its card gives them).
+urukHaiArcher :: CardDef
+urukHaiArcher =
+  (enemy "142070" "Uruk-hai Archer" BreakingOfTheFellowship 4 44 0 4 1 4)
+    { cdCardTraits = setFromList [Orc, UrukHai]
+    , cdKeywords = setFromList [Peril, Toughness 1]
+    , cdThreat = Nothing
+    , cdWhenRevealed = True
+    , cdEasyModeQuantity = Just 3
+    }
+
+urukHaiTracker :: CardDef
+urukHaiTracker =
+  (enemy "142071" "Uruk-hai Tracker" BreakingOfTheFellowship 3 33 1 3 1 3)
+    { cdCardTraits = setFromList [Orc, UrukHai]
+    , cdKeywords = setFromList [Surge, Toughness 1, Archery 1]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 2
+    }
+
+urukHaiHunter :: CardDef
+urukHaiHunter =
+  (enemy "142072" "Uruk-hai Hunter" BreakingOfTheFellowship 3 28 2 4 1 3)
+    { cdCardTraits = setFromList [Orc, UrukHai]
+    , cdKeywords = setFromList [Peril, Toughness 1]
     , cdWhenRevealed = True
     , cdEasyModeQuantity = Just 2
     }

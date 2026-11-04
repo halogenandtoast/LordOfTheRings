@@ -587,6 +587,10 @@ import LordOfTheRings.Enemy.Cards.GreatCaveTrollJourneyInTheDark
 import LordOfTheRings.Enemy.Cards.UrukFromMordor
 import LordOfTheRings.Enemy.Cards.MoriaOrc
 import LordOfTheRings.Enemy.Cards.MoriaArcher
+import LordOfTheRings.Enemy.Cards.UrukHaiCaptain
+import LordOfTheRings.Enemy.Cards.UrukHaiArcher
+import LordOfTheRings.Enemy.Cards.UrukHaiTracker
+import LordOfTheRings.Enemy.Cards.UrukHaiHunter
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -607,8 +611,8 @@ createEnemy card = lookupEnemy (toCardCode card) (ecId card)
 lookupEnemy :: (HasCallStack) => CardCode -> CardId -> EnemyId -> Enemy
 lookupEnemy cardCode cardId ident = case Map.lookup cardCode allEnemys of
   Just (SomeEnemyCard builder) -> Enemy $ cbCardBuilder builder cardId ident
-  -- an ally turned enemy, as Secret Cultist turns it
-  Nothing | cdCardType (toCardDef cardCode) == AllyType -> Enemy $ cbCardBuilder (turnedAlly cardCode) cardId ident
+  -- an ally turned enemy, as Secret Cultist turns it, or a hero, as Fallen into Evil does
+  Nothing | cdCardType (toCardDef cardCode) `elem` [AllyType, HeroType] -> Enemy $ cbCardBuilder (turnedAlly cardCode) cardId ident
   Nothing -> error $ "Unknown enemy: " <> show cardCode
 
 newEnemy :: (MonadRandom m) => EncounterCard -> m Enemy
@@ -1204,5 +1208,9 @@ allEnemys =
         , SomeEnemyCard urukFromMordor
         , SomeEnemyCard moriaOrc
         , SomeEnemyCard moriaArcher
+        , SomeEnemyCard urukHaiCaptain
+        , SomeEnemyCard urukHaiArcher
+        , SomeEnemyCard urukHaiTracker
+        , SomeEnemyCard urukHaiHunter
         ]
     ]

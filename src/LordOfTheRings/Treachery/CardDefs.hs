@@ -523,6 +523,12 @@ allTreacheryCards =
       , foolOfATook
       , shadowOfFearJourneyInTheDark
       , pursuedByTheEnemy
+      , growingThreat
+      , orcsOfTheWhiteHand
+      , blackFeatheredArrows
+      , fallenIntoEvil
+      , followedByNightTheRoadDarkens
+      , illFate
       ]
 
 deepDeepDark :: CardDef
@@ -3293,4 +3299,39 @@ pursuedByTheEnemy =
     , cdSetIcon = Just JourneyInTheDark
     , cdKeywords = setFromList [Doomed 1, Surge]
     , cdShadowEffect = True
+    }
+
+-- * Breaking of the Fellowship
+
+growingThreat :: CardDef
+growingThreat = (treachery "142080" "Growing Threat" BreakingOfTheFellowship 2) {cdKeywords = setFromList [Peril], cdShadowEffect = True}
+
+orcsOfTheWhiteHand :: CardDef
+orcsOfTheWhiteHand = (treachery "142081" "Orcs of the White Hand" BreakingOfTheFellowship 2) {cdShadowEffect = True}
+
+blackFeatheredArrows :: CardDef
+blackFeatheredArrows = (treachery "142082" "Black Feathered Arrows" BreakingOfTheFellowship 3) {cdShadowEffect = True}
+
+fallenIntoEvil :: CardDef
+fallenIntoEvil = (treachery "142083" "Fallen into Evil" BreakingOfTheFellowship 1) {cdCardTraits = setFromList [Corruption]}
+
+-- | The burdens of Breaking of the Fellowship's burden set: in no encounter set, so never
+-- gathered; the campaign card shuffles them in, and earned, the Campaign Pool does.
+followedByNightTheRoadDarkens :: CardDef
+followedByNightTheRoadDarkens =
+  (treachery "142089" "Followed by Night" BreakingOfTheFellowship 1)
+    { cdEncounterSet = Nothing
+    , cdEncounterSetQuantity = Nothing
+    , cdSetIcon = Just BreakingOfTheFellowship
+    , cdKeywords = setFromList [Peril, Surge]
+    }
+
+illFate :: CardDef
+illFate =
+  (treachery "142090" "Ill Fate" BreakingOfTheFellowship 1)
+    { cdEncounterSet = Nothing
+    , cdEncounterSetQuantity = Nothing
+    , cdSetIcon = Just BreakingOfTheFellowship
+    , cdCardTraits = setFromList [Despair]
+    , cdKeywords = setFromList [Peril, Surge]
     }

@@ -4,6 +4,7 @@ module LordOfTheRings.Game.Base (module LordOfTheRings.Game.Base) where
 
 import Data.List (elemIndex)
 import Data.Map.Strict qualified as Map
+import Data.Set qualified as Set
 import LordOfTheRings.ActiveCost
 import LordOfTheRings.Ally.Types (Ally)
 import LordOfTheRings.Location.Types (Location)
@@ -18,6 +19,7 @@ import LordOfTheRings.Message
 import LordOfTheRings.Modifier
 import LordOfTheRings.Outcome
 import LordOfTheRings.Phase
+import LordOfTheRings.Placement (Placement (..))
 import LordOfTheRings.Player.Types
 import LordOfTheRings.Prelude
 import LordOfTheRings.Quest.Types (inEachStagingArea, isSideQuest)
@@ -86,11 +88,19 @@ the others are held here until it is their turn to resolve the phase. Each phase
 resolved by every area in turn, from the first player's, and the first player token
 still passes around the whole table; within an area its first player in turn order acts
 as the first player.
+
+Shared, as at stage 3 of Breaking of the Fellowship, the players still interact through the
+normal rules of the game: only each area's stage is its own (see 'splitStage'), the
+players and their cards staying in the game. The phases are played once, by every player,
+each area resolving in turn what concerns its stage: questing, travel, engagement and
+archery (The Road Darkens rules insert, "Multiple Staging Areas").
 -}
 data Separation = Separation
   { separationFirstPlayer :: PlayerId
   -- ^ who holds the first player token
   , separationAreas :: [Area]
+  , separationShared :: Bool
+  -- ^ the players interact, each area holding only its stage
   }
   deriving stock (Show, Generic)
 
@@ -107,6 +117,8 @@ data Area = Area
   , areaJoining :: Bool
   -- ^ its quest card defeated, its players join another area at the beginning of the
   -- travel phase
+  , areaInFocus :: Bool
+  -- ^ shared, the area whose stage is the game's
   }
   deriving stock (Show, Generic)
 
@@ -154,7 +166,59 @@ instance ToJSON Area where
 
 -- | Whether the area is the one in focus: its players are the game's.
 isFocusedArea :: Game -> Area -> Bool
-isFocusedArea g a = any (`Map.member` gamePlayers g) (areaPlayers a)
+isFocusedArea g a = case gameSeparation g of
+  Just s | separationShared s -> areaInFocus a
+  _ -> any (`Map.member` gamePlayers g) (areaPlayers a)
+
+-- | Whether the players are separated into areas of their own, apart from each other.
+isolated :: Game -> Bool
+isolated = maybe False (not . separationShared) . gameSeparation
+
+-- | Whether the player's area is the one in focus, as it is when no one is separated.
+inFocusedArea :: Game -> PlayerId -> Bool
+inFocusedArea g pid = case gameSeparation g of
+  Just s | separationShared s -> any (\a -> areaInFocus a && elem pid (areaPlayers a)) (separationAreas s)
+  _ -> Map.member pid (gamePlayers g)
+
+{- | A stage's cards, and the rest: the encounter cards in its staging area, its active
+location, its quest cards but one in each staging area, and the cards attached to them.
+-}
+splitStage :: Entities -> (Entities, Entities)
+splitStage es = splitCards roots es
+ where
+  atStage p = p `elem` [StagingArea, ActiveLocation]
+  roots =
+    [toTarget q | q <- toList es.quests, not (inEachStagingArea q)]
+      <> [toTarget x | x <- toList es.enemies, atStage x.placement]
+      <> [toTarget x | x <- toList es.locations, atStage x.placement]
+      <> [toTarget x | x <- toList es.treacheries, atStage x.placement]
+      <> [toTarget x | x <- toList es.objectives, atStage x.placement]
+
+-- | The cards given, with what is attached to them, and the rest.
+splitCards :: [Target] -> Entities -> (Entities, Entities)
+splitCards roots es =
+  ( Entities mempty mempty (fst enemies) (fst locations) (fst treacheries) (fst quests) (fst attachments) (fst objectives) mempty
+  , Entities es.heroes es.allies (snd enemies) (snd locations) (snd treacheries) (snd quests) (snd attachments) (snd objectives) es.contracts
+  )
+ where
+  cards = close $ Set.fromList roots
+  part :: Targetable a => Map k a -> (Map k a, Map k a)
+  part = Map.partition ((`Set.member` cards) . toTarget)
+  enemies = part es.enemies
+  locations = part es.locations
+  treacheries = part es.treacheries
+  quests = part es.quests
+  attachments = part es.attachments
+  objectives = part es.objectives
+  placed =
+    [(toTarget x, x.placement) | x <- toList es.enemies]
+      <> [(toTarget x, x.placement) | x <- toList es.locations]
+      <> [(toTarget x, x.placement) | x <- toList es.treacheries]
+      <> [(toTarget x, x.placement) | x <- toList es.attachments]
+      <> [(toTarget x, x.placement) | x <- toList es.objectives]
+  close s =
+    let s' = s <> Set.fromList [t | (t, AttachedTo h) <- placed, h `Set.member` s]
+     in if s' == s then s else close s'
 
 -- | The players in seat order, from the one given.
 seatsFrom :: PlayerId -> [PlayerId] -> [PlayerId]
@@ -174,6 +238,21 @@ areasInTurnOrder g s = sortOn (\a -> elemIndex (areaLead g s a) seats) (separati
 -- | Bring the area holding the player into focus, holding back the one in focus.
 focusArea :: PlayerId -> Game -> Game
 focusArea pid g = case gameSeparation g of
+  Just s
+    | separationShared s ->
+        case find (elem pid . areaPlayers) (separationAreas s) of
+          Just t | not (areaInFocus t) ->
+            let (stage, rest) = splitStage (gameEntities g)
+                hold a
+                  | areaInFocus a = a {areaHeldEntities = stage, areaHeldModifiers = gameModifiers g, areaInFocus = False}
+                  | elem pid (areaPlayers a) = a {areaHeldEntities = mempty, areaHeldModifiers = mempty, areaInFocus = True}
+                  | otherwise = a
+             in g
+                  { gameEntities = rest <> areaHeldEntities t
+                  , gameModifiers = Map.union (areaHeldModifiers t) (gameModifiers g)
+                  , gameSeparation = Just s {separationAreas = map hold (separationAreas s)}
+                  }
+          _ -> g
   Just s
     | not (Map.member pid (gamePlayers g))
     , Just t <- find (elem pid . areaPlayers) (separationAreas s) ->
@@ -218,7 +297,9 @@ joinArea joining target g0 = case gameSeparation g of
                 }
          in case areas of
               [_] -> joined {gameSeparation = Nothing, gameFirstPlayer = separationFirstPlayer s}
-              _ -> let s' = s {separationAreas = areas} in joined {gameSeparation = Just s', gameFirstPlayer = maybe (gameFirstPlayer g) (areaLead g s') (find (isFocusedArea joined) areas)}
+              _
+                | separationShared s -> joined {gameSeparation = Just s {separationAreas = areas}}
+                | otherwise -> let s' = s {separationAreas = areas} in joined {gameSeparation = Just s', gameFirstPlayer = maybe (gameFirstPlayer g) (areaLead g s') (find (isFocusedArea joined) areas)}
   _ -> g
  where
   g = focusArea target g0

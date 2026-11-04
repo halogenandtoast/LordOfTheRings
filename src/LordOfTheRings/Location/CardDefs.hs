@@ -640,6 +640,13 @@ allLocationCards =
       , manyPillaredHall
       , darkenedStairway
       , ancientGuardroom
+      , parthGalen
+      , seatOfSeeing
+      , theArgonath
+      , sarnGebir
+      , riverAnduin
+      , woodedShoreline
+      , slopesOfAmonHen
       ]
 
 drownedTreasury :: CardDef
@@ -4572,3 +4579,61 @@ darkenedStairway = (location "142054" "Darkened Stairway" JourneyInTheDark 2 4 2
 
 ancientGuardroom :: CardDef
 ancientGuardroom = (location "142055" "Ancient Guardroom" JourneyInTheDark 2 3 3) {cdCardTraits = setFromList [Underground]}
+
+-- * Breaking of the Fellowship
+
+-- | Immune to player card effects (its card gives it the modifier).
+parthGalen :: CardDef
+parthGalen =
+  unique
+    (location "142073" "Parth Galen" BreakingOfTheFellowship 1 2 4)
+      { cdCardTraits = setFromList [River, Lawn]
+      , cdVictoryPoints = Just 1
+      }
+
+-- | Immune to player card effects (its card gives it the modifier).
+seatOfSeeing :: CardDef
+seatOfSeeing =
+  unique
+    (location "142074" "Seat of Seeing" BreakingOfTheFellowship 1 1 6)
+      { cdCardTraits = setFromList [Hills]
+      , cdVictoryPoints = Just 1
+      }
+
+-- | Immune to player card effects. Its threat is X, the number of players in the game (its
+-- card gives both).
+theArgonath :: CardDef
+theArgonath =
+  unique
+    (location "142075" "The Argonath" BreakingOfTheFellowship 1 0 2)
+      { cdCardTraits = setFromList [River]
+      , cdVictoryPoints = Just 1
+      , cdThreat = Nothing
+      }
+
+-- | Immune to player card effects (its card gives it the modifier).
+sarnGebir :: CardDef
+sarnGebir =
+  unique
+    (location "142076" "Sarn Gebir" BreakingOfTheFellowship 1 3 4)
+      { cdCardTraits = setFromList [River]
+      , cdVictoryPoints = Just 1
+      }
+
+riverAnduin :: CardDef
+riverAnduin = (location "142077" "River Anduin" BreakingOfTheFellowship 4 2 5) {cdCardTraits = setFromList [River]}
+
+-- | Archery 2 while in the staging area (its card gives it).
+woodedShoreline :: CardDef
+woodedShoreline =
+  (location "142078" "Wooded Shoreline" BreakingOfTheFellowship 3 3 4)
+    { cdCardTraits = setFromList [River, Forest]
+    , cdEasyModeQuantity = Just 1
+    }
+
+slopesOfAmonHen :: CardDef
+slopesOfAmonHen =
+  (location "142079" "Slopes of Amon Hen" BreakingOfTheFellowship 3 3 3)
+    { cdCardTraits = setFromList [Forest, Hills]
+    , cdShadowEffect = True
+    }

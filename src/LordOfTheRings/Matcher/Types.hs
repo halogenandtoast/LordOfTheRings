@@ -39,6 +39,8 @@ data PlayerMatcher
   | -- | a player whose threat is equal to or higher than the enemy's engagement cost, as City
     -- Guard is "considered to be engaged with" each
     PlayerWithThreatAtLeastEngagementCostOf EnemyId
+  | -- | a player at the stage in focus: see 'LordOfTheRings.Matcher.getStagePlayers'
+    PlayerAtThisStage
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

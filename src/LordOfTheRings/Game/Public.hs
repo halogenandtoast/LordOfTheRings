@@ -128,7 +128,7 @@ publicGameFor seesHand g = hideDecks $ toJSON merged
         [ "players" .= areaPlayers a
         , "focused" .= isFocusedArea g a
         , "threat" .= runReadGame getStagingThreat v
-        , "cards" .= encounterCards v.entities
+        , "cards" .= encounterCards (if separationShared s then fst (splitStage v.entities) else v.entities)
         ]
     | Just s <- [gameSeparation g]
     , a <- areasInTurnOrder g s

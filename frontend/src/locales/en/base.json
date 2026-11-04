@@ -201,7 +201,8 @@
       "RecurringNightmares": "Choose a player for each Recurring Nightmare as the next scenario is set up: it joins the Campaign Pool, shuffled into their deck after their starting hand: {cards}",
       "HaradEnemies": "Harad enemies underneath The Black Gate, set aside in The Battle of the Pelennor Fields: {cards}",
       "BlackGateResources": "Resources on The Black Gate as The Black Gate Opens ended, placed on Mount Doom's campaign card: {cards}",
-      "CampaignLost": "The players lost the campaign: The One Ring was kept, and the power of Sauron endures."
+      "CampaignLost": "The players lost the campaign: The One Ring was kept, and the power of Sauron endures.",
+      "Captives": "Taken captive at the end of Breaking of the Fellowship: {cards}"
     },
     "scenarios": "Scenarios",
     "total": "Campaign total",

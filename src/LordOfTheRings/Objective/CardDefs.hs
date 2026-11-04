@@ -186,6 +186,7 @@ allObjectiveCards =
       , doomDoomDoom
       , overcomeByGrief
       , grievousWound
+      , frodosChoice
       ]
 
 durinsAxe :: CardDef
@@ -1334,4 +1335,13 @@ grievousWound =
     , cdEncounterSetQuantity = Nothing
     , cdSetIcon = Just JourneyInTheDark
     , cdCardTraits = setFromList [Wound]
+    }
+
+-- * Breaking of the Fellowship
+
+frodosChoice :: CardDef
+frodosChoice =
+  (objective "142068" "Frodo's Choice" BreakingOfTheFellowship 1)
+    { cdCardTraits = setFromList [Doom]
+    , cdWhenRevealed = True
     }

@@ -512,6 +512,12 @@ import LordOfTheRings.Treachery.Cards.DeepFissure
 import LordOfTheRings.Treachery.Cards.FoolOfATook
 import LordOfTheRings.Treachery.Cards.ShadowOfFearJourneyInTheDark
 import LordOfTheRings.Treachery.Cards.PursuedByTheEnemy
+import LordOfTheRings.Treachery.Cards.GrowingThreat
+import LordOfTheRings.Treachery.Cards.OrcsOfTheWhiteHand
+import LordOfTheRings.Treachery.Cards.BlackFeatheredArrows
+import LordOfTheRings.Treachery.Cards.FallenIntoEvil
+import LordOfTheRings.Treachery.Cards.FollowedByNightTheRoadDarkens
+import LordOfTheRings.Treachery.Cards.IllFate
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -1051,5 +1057,11 @@ allTreacherys =
         , SomeTreacheryCard foolOfATook
         , SomeTreacheryCard shadowOfFearJourneyInTheDark
         , SomeTreacheryCard pursuedByTheEnemy
+        , SomeTreacheryCard growingThreat
+        , SomeTreacheryCard orcsOfTheWhiteHand
+        , SomeTreacheryCard blackFeatheredArrows
+        , SomeTreacheryCard fallenIntoEvil
+        , SomeTreacheryCard followedByNightTheRoadDarkens
+        , SomeTreacheryCard illFate
         ]
     ]

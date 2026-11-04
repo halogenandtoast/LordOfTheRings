@@ -7,6 +7,7 @@ import LordOfTheRings.Id (CardId, EnemyId, PlayerId)
 import LordOfTheRings.Keyword (Keyword)
 import LordOfTheRings.Matcher.Types (CardMatcher, EnemyMatcher, HeroMatcher, LocationMatcher, PlayerMatcher)
 import LordOfTheRings.Outcome (Outcome)
+import LordOfTheRings.Phase (Phase)
 import LordOfTheRings.Placement (Placement)
 import LordOfTheRings.Prelude
 import LordOfTheRings.Source
@@ -738,6 +739,9 @@ data ModifierType
   | -- | on the game: questing unsuccessfully deals the difference as damage to the card
     -- instead of raising each player's threat, as the Assault keyword reads (MEC54 rules)
     QuestFailureDamagesInstead Target
+  | -- | on the game: the round goes on from the phase before to the one after, as The Great
+    -- River skips the encounter phase
+    SkipPhase Phase
   | -- | on the game: a player with no cards in his deck is eliminated, as Deadmen's Dike's
     -- stages read
     EliminatedWithEmptyDeck

@@ -1500,6 +1500,15 @@ allyBecomesHero a = push $ AllyBecomesHero a.id
 allyBecomesEnemy :: ReverseQueue m => AllyId -> m ()
 allyBecomesEnemy = push . AllyBecomesEnemy
 
+-- | The hero loses the hero card type and gains the enemy card type, as Fallen into Evil
+-- turns it.
+heroBecomesEnemy :: ReverseQueue m => HeroId -> m ()
+heroBecomesEnemy = push . HeroBecomesEnemy
+
+-- | The hero turned enemy returns to its owner's control, a hero again.
+enemyBecomesHero :: ReverseQueue m => EnemyId -> m ()
+enemyBecomesHero = push . EnemyBecomesHero
+
 -- | The hero an ally became is an ally again, given as the ally its own text reads.
 heroBecomesAlly :: (ReverseQueue m, HasField "id" ally AllyId) => ally -> m ()
 heroBecomesAlly a = push $ HeroBecomesAlly (HeroId $ unAllyId a.id)
@@ -2172,6 +2181,12 @@ each group, the first player's first. See 'LordOfTheRings.Game.Base.Separation'.
 separatePlayers :: ReverseQueue m => [[PlayerId]] -> m ()
 separatePlayers = push . SeparatePlayers
 
+{- | Each group creates its own staging area, its players still interacting with the
+others (Breaking of the Fellowship): see 'LordOfTheRings.Game.Base.Separation'.
+-}
+separateStagingAreas :: ReverseQueue m => [[PlayerId]] -> m ()
+separateStagingAreas = push . SeparateStagingAreas
+
 -- | What follows resolves in the area holding the player, while the players are separated.
 focusAreaOf :: ReverseQueue m => PlayerId -> m ()
 focusAreaOf = push . FocusArea
@@ -2244,8 +2259,8 @@ revealFromCorsairDeckWithShadow source pid = push $ RevealFromCorsairDeckWithSha
 
 -- | The enemy goes to the staging area the player shares, his area's while the players are
 -- separated.
-placeInStagingAreaOf :: ReverseQueue m => PlayerId -> EnemyId -> m ()
-placeInStagingAreaOf pid eid = push $ PlaceInStagingAreaOf pid eid
+placeInStagingAreaOf :: (ReverseQueue m, Targetable target) => PlayerId -> target -> m ()
+placeInStagingAreaOf pid = push . PlaceInStagingAreaOf pid . toTarget
 
 -- | The player moves 1 resource from one of his heroes' pools to the card, as Umbar Raider
 -- takes it; nothing, with no resources to move.
