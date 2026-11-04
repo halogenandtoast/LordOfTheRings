@@ -178,6 +178,26 @@
   "cavesDeck": {
     "keepOnTop": "Choose the card to keep on top of the Caves deck; the other goes to the bottom"
   },
+  "theSideDoor": {
+    "wormsbane": "Choose the hero to attach Wormsbane to, Broken side faceup",
+    "bottom": "Choose the quest card to place on the bottom of the quest deck"
+  },
+  "theLowerDeeps": {
+    "location": "Choose a location in the Caves deck to make the active location"
+  },
+  "forebodingDarkness": {
+    "bottom": "Choose the quest card to place on the bottom of the quest deck; the top card is flipped over"
+  },
+  "imminentPursuit": {
+    "damage": "Deal 2 damage to a questing character you control",
+    "discard": "Discard a non-unique enemy from play"
+  },
+  "theFirstForge": {
+    "attach": "Choose the hero to attach the Reforged Wormsbane to"
+  },
+  "throatOfTheMountain": {
+    "quest": "Choose the quest card to make the current main quest, flipped over"
+  },
   "shadowCard": "A shadow card dealt to an enemy engaged with you",
   "leaveOnTop": "Leave it on top",
   "moveToBottom": "Move it to the bottom",

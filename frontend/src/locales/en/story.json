@@ -3243,5 +3243,58 @@
       "Kahliel lifted his hand and his companions fell silent. “We will ride to Gondor,” he said, “The Mûmakil dwell in this forest, along with the supplies we need. We will capture the beasts we need and ride them to Gondor.”",
       "To be continued in “The Mûmakil,” the first Adventure Pack in “The Haradrim” cycle."
     ]
+  },
+  "mount-gundabad": {
+    "intro": [
+      "As morning dawned on the ruins of Framsburg, the heroes had already left the broken streets and buildings behind them on their way north. They paused atop a high hill to take one last look at the forgotten city, and it seemed to them that in the gentle light of the rising sun the old keep no longer held any menace.",
+      "“Farewell, Fram son of Frumgar,” spoke one of the heroes.",
+      "“May his spirit finally rest in peace,” another intoned.",
+      "“I would rest easier if we weren’t on our way to confront a giant Dragon with a broken sword,” one of their companions complained. “I can’t believe we went through all that trouble for a splintered blade!”",
+      "“It was a disappointment to us all,” said one, “but we must find a way nonetheless.”",
+      "“Find a way?” came the reply. “How are we going to fight Dagnir the Terrible with a broken sword? Throw it at her?”",
+      "“We reforge it,” answered the first, ignoring the jab. “Legend holds that Durin, father of Dwarves, awoke to this world in Mount Gundabad. According to his people, Durin built his first forge within the mountain and there taught his children the craft of metal work. So we bring the shards of Wormsbane and find the First Forge.”",
+      "“This just gets better and better,” laughed the second. “First we find a broken sword, then we carry it into Dagnir’s lair to fix it, while she what – waits politely for us to reforge it? What if she finds us before we’re done? Let’s not forget about the Goblins in her service that still live in the mines!”",
+      "“These are the hazards in our path,” agreed the first, “and we will risk all of them to save Wilderland from Dagnir’s wrath.”",
+      "She looked at her disgruntled friend with compassion, but she spoke with determination: “You saw what she did to the Woodmen’s town at Hrogar’s Hill, and you know how much worse it might have been if we had not been there. We must endure whatever dangers lie in our path to prevent more suffering. We have the skill to repair Wormsbane and the courage to wield it. All that is left is to find Durin’s forge. Are you with me?”",
+      "“Aye, of course I’m coming with you. That’s why I dislike this plan so much!” laughed her companion. “Let’s not forget we still have to find Urdug’s secret entrance,” he added.",
+      "“I have not forgotten. Indeed, I believe I know where to look for it,” she answered, smiling at her friend. “You remember the Goblin’s account of how he escaped the Dragon? He used his secret route to escape Dagnir’s assault, and fled into the daylight- toward the rising sun. That means the hidden door is on the eastern face of the mountain. The door may be camouflaged but the path leading to it is not. No doubt Urdug and his Goblins left a trail in their hurry to escape.”",
+      "“Very well,” replied her friend, “then there is naught else for us to do but get on with this folly. Let us hurry before I regain my senses.”",
+      "With that the heroes resumed their march to Mount Gundabad."
+    ],
+    "setup": [
+      "“Mount Gundabad” is played with an encounter deck built with all the cards from the following encounter sets: Mount Gundabad, Fell Beasts, Deep Underground, Afraid of the Dark, Lost Caves, and Dragon Might. (Fell Beasts, Deep Underground, Afraid of the Dark, Lost Caves, and Dragon Might can be found in The Wilds of Rhovanion deluxe expansion to The Lord of the Rings: The Card Game.)"
+    ],
+    "rules": [
+      {
+        "title": "Creating the Quest Deck",
+        "text": "This scenario uses multiple stage 2 quest cards. When setup instructs players to “Prepare the quest deck,” players shuffle all stage 2 quest cards together randomly, with side 2A faceup, and place them beneath stage 1. These shuffled stage 2 quest cards are considered to be the “quest deck”.\n\nPlayers will progress through stage 2 quest cards until they have won the game; there is no stage 3. Quest cards are not flipped to side B immediately when revealed. Rather, the current quest card is flipped at the beginning of the staging step of the quest phase. Flipping a quest card this way causes the B side to be revealed."
+      },
+      {
+        "title": "Bypassing a Quest Card",
+        "text": "Players are given the option to bypass some of the quest cards at the end of the combat phase. Bypassing the current quest removes all progress tokens on it, and moves it to the bottom of the quest deck with side 2B facedown. Bypassing a quest is optional, and players may choose to stay on each quest card instead of bypassing it. When a quest stage is bypassed (or defeated), it causes the next stage 2A to be revealed, triggering its ‘when revealed’ effect.\n\nWhen a quest is completed, players will either add it to their victory display or win the game."
+      },
+      {
+        "title": "The Caves Deck",
+        "text": "To create the Caves deck, take each card from the Lost Caves encounter set and shuffle them together. This is the Caves deck."
+      },
+      {
+        "title": "Deep Keyword",
+        "text": "Deep is a keyword that appears on some locations in Mount Gundabad. After the players travel to a deep location, they discard it and replace it with the top card of the Caves deck. That location then becomes the active location. If there are no cards remaining in the Caves deck, the deep keyword is ignored."
+      }
+    ],
+    "resolution": [
+      "The blade of Fram son of Frumgar bit deep into Dagnir’s chest and the Dragon bellowed in pain. Her roars shook the walls of the great hall, and her mighty tail smashed against a tall pillar, toppling it. As she thrashed about in her death throes, Wormsbane was wrested from the hero who dealt the final blow. Then, the giant Dragon toppled over the edge of a deep chasm and disappeared into utter darkness.",
+      "Dagnir the Terrible was dead and Wormsbane lost to the world forever, but all about the heroes lay the glittering treasure of Gundabad. Piles of gold were scattered here and there by the Dragon’s death spasms, and now the entire hall was lit by the sparkling reflection of torch-light on shimmering jewels. Such a wealth had not been imagined since Erebor was recovered from Smaug the Golden.",
+      "The companions clapped each other on their backs and started rummaging through the treasure. One of them opened his travel pack and was stuffing as much gold as he could fit inside when his companion laid a gentle hand on his shoulder.",
+      "“Easy friend,” spoke his companion. “Others need this gold more than we.”",
+      "“But surely there is enough here for us as well?” complained the adventurer with a pack full of gold.",
+      "“Indeed,” answered his companion with a smile, “but let us learn from Fram’s example and not be greedy.”",
+      "The adventurer looked at the gold spilling out of his pack and sighed, “Aye. You’re right. The people of Hrogar’s Hill will need this wealth to rebuild their town.”",
+      "He stood and emptied the gold from his bag, when from outside they heard a horn blast. The heroes stopped what they were doing and listened. Another horn blast rang out.",
+      "“I know that horn,” said one of the heroes in a grim voice.",
+      "“Urdug,” said another.",
+      "They drew their weapons and rushed to the gate. A full moon was overhead, and below them they saw Urdug astride a mighty Warg blowing his horn. About him was a large force of Goblins making their way up the mountainside. Mount Gundabad was under siege.",
+      "The story continues in “The Fate of Wilderland,” the sixth Adventure Pack in the Ered Mithrin cycle."
+    ]
   }
 }
