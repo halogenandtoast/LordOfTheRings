@@ -2355,6 +2355,10 @@ runGameMessage msg g = case msg of
     pushAll
       [Discard (toTarget att) | att <- toList g.entities.attachments, att.placement == AttachedTo target]
     pure $ g' & entitiesL . alliesL %~ Map.delete aid & playersL . ix a.owner . deckL %~ (<> [toCard a])
+  -- an attachment returned to its owner's hand, as Bard son of Brand and Bartering return them
+  ReturnToHand (AttachmentTarget aid) | Just a <- Map.lookup aid g.entities.attachments -> do
+    let owner = (toAttrs a).owner
+    pure $ g & entitiesL . attachmentsL %~ Map.delete aid & playersL . ix owner . handL %~ (<> [toCard a])
   ShuffleIntoOwnersDeck (AttachmentTarget aid) | Just a <- Map.lookup aid g.entities.attachments -> do
     let owner = (toAttrs a).owner
     deck <- shuffleM . (toCard a :) . (.deck) =<< getPlayer owner
