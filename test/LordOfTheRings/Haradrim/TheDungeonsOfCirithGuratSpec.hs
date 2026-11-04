@@ -3,6 +3,7 @@ module LordOfTheRings.Haradrim.TheDungeonsOfCirithGuratSpec (spec) where
 import LordOfTheRings.Ally.CardDefs qualified as Allies
 import LordOfTheRings.Card (CardType (AllyType), IsCard (toCard))
 import LordOfTheRings.Matcher (CardMatcher (CardWithType))
+import LordOfTheRings.Effect (Effect (..), EffectDuration (..))
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Event.CardDefs qualified as Events
 import LordOfTheRings.Helpers.Modifiers (getModifiers)
@@ -212,7 +213,13 @@ spec = describe "The Dungeons of Cirith Gurat" do
       guard' <- engaged pid Enemies.prisonGuardCirithGurat
       getEnemyDefense guard' `shouldReturn` 1
       guardian <- putAllyIntoPlay pid Allies.guardOfTheCitadel
-      run $ DealDamage (EnemyAttackSource guard') guardian 1
+      -- its 4 attack deals the ally 1 damage, once the attack has resolved it takes it
+      run $ CreateEffect $ Effect GameSource guardian [DefenseModifier 3] UntilEndOfRound
+      putGame . (phaseL .~ CombatPhase) =<< getGame
+      run $ EnemyAttacks pid
+      passActions pid
+      chooseTarget pid guardian
+      passActions pid
       cid <- cardIdOfEnemy guard'
       placementOfAlly guardian `shouldReturn` Just (AttachedTo (CardIdTarget cid))
       getEnemyDefense guard' `shouldReturn` 3
