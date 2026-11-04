@@ -2904,5 +2904,16 @@
   },
   "woodmanLore": {
     "ready": "Woodman Lore: ready up to X Woodman characters"
+  },
+  "farin": {
+    "damage": "Farin: choose an enemy engaged with a player to deal 1 damage to"
+  },
+  "overseersWhip": {
+    "damage": "Overseer's Whip: choose an exhausted character you control to deal 1 damage to"
+  },
+  "crueltyOfMordor": {
+    "choose": "Cruelty of Mordor: choose one",
+    "damage": "Deal 1 damage to each damaged character you control",
+    "threat": "Raise your threat by {n}, 1 for each damaged character you control"
   }
 }

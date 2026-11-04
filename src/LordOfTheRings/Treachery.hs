@@ -399,6 +399,9 @@ import LordOfTheRings.Treachery.Cards.UlchorsRage
 import LordOfTheRings.Treachery.Cards.Fanaticism
 import LordOfTheRings.Treachery.Cards.FearfulShadows
 import LordOfTheRings.Treachery.Cards.EnemiesCloseBehind
+import LordOfTheRings.Treachery.Cards.OverseersWhip
+import LordOfTheRings.Treachery.Cards.CrueltyOfMordor
+import LordOfTheRings.Treachery.Cards.BrokenCaptives
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -825,5 +828,8 @@ allTreacherys =
         , SomeTreacheryCard fanaticism
         , SomeTreacheryCard fearfulShadows
         , SomeTreacheryCard enemiesCloseBehind
+        , SomeTreacheryCard overseersWhip
+        , SomeTreacheryCard crueltyOfMordor
+        , SomeTreacheryCard brokenCaptives
         ]
     ]
