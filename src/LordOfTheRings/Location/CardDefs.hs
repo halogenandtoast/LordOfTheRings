@@ -508,6 +508,8 @@ allLocationCards =
       , theTowerOfBaradDur
       , rollingPlains
       , rockyOutcrop
+      , cityForum
+      , seedyTavern
       ]
 
 drownedTreasury :: CardDef
@@ -3796,3 +3798,9 @@ rollingPlains =
 
 rockyOutcrop :: CardDef
 rockyOutcrop = (location "21026" "Rocky Outcrop" RollingPlains 2 3 3) {cdCardTraits = setFromList [Plains], cdEasyModeQuantity = Just 1}
+
+cityForum :: CardDef
+cityForum = (location "21046" "City Forum" CityOfRhun 2 1 5) {cdCardTraits = setFromList [City]}
+
+seedyTavern :: CardDef
+seedyTavern = (location "21047" "Seedy Tavern" CityOfRhun 2 2 5) {cdCardTraits = setFromList [City], cdVictoryPoints = Just 2}

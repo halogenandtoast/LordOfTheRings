@@ -403,6 +403,7 @@ allTreacheryCards =
       , wearyLands
       , painfulFatigue
       , overwhelmed
+      , darknessInTheEast
       ]
 
 deepDeepDark :: CardDef
@@ -2564,3 +2565,6 @@ overwhelmed =
     , cdShadowEffect = True
     , cdEasyModeQuantity = Just 1
     }
+
+darknessInTheEast :: CardDef
+darknessInTheEast = (treachery "21048" "Darkness in the East" CityOfRhun 2) {cdShadowEffect = True}

@@ -393,6 +393,7 @@ import LordOfTheRings.Treachery.Cards.RecurveBow
 import LordOfTheRings.Treachery.Cards.WearyLands
 import LordOfTheRings.Treachery.Cards.PainfulFatigue
 import LordOfTheRings.Treachery.Cards.Overwhelmed
+import LordOfTheRings.Treachery.Cards.DarknessInTheEast
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -813,5 +814,6 @@ allTreacherys =
         , SomeTreacheryCard wearyLands
         , SomeTreacheryCard painfulFatigue
         , SomeTreacheryCard overwhelmed
+        , SomeTreacheryCard darknessInTheEast
         ]
     ]

@@ -490,6 +490,8 @@ import LordOfTheRings.Location.Cards.SlopesOfEredMithrin
 import LordOfTheRings.Location.Cards.TheTowerOfBaradDur
 import LordOfTheRings.Location.Cards.RollingPlains
 import LordOfTheRings.Location.Cards.RockyOutcrop
+import LordOfTheRings.Location.Cards.CityForum
+import LordOfTheRings.Location.Cards.SeedyTavern
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -1026,5 +1028,7 @@ allLocations =
         , SomeLocationCard theTowerOfBaradDur
         , SomeLocationCard rollingPlains
         , SomeLocationCard rockyOutcrop
+        , SomeLocationCard cityForum
+        , SomeLocationCard seedyTavern
         ]
     ]

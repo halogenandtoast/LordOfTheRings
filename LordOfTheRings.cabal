@@ -817,6 +817,7 @@ library
       LordOfTheRings.Enemy.Cards.RearguardAmbusher
       LordOfTheRings.Enemy.Cards.RecurringNightmare
       LordOfTheRings.Enemy.Cards.Revenant
+      LordOfTheRings.Enemy.Cards.RhunBackstabber
       LordOfTheRings.Enemy.Cards.RiderOfRhun
       LordOfTheRings.Enemy.Cards.RobAndBob
       LordOfTheRings.Enemy.Cards.RockAdder
@@ -909,6 +910,7 @@ library
       LordOfTheRings.Enemy.Cards.TortureMaster
       LordOfTheRings.Enemy.Cards.TraitorousWight
       LordOfTheRings.Enemy.Cards.TrapdoorSpider
+      LordOfTheRings.Enemy.Cards.TreacherousEasterling
       LordOfTheRings.Enemy.Cards.TreetopBirdEater
       LordOfTheRings.Enemy.Cards.TunnelingNamelessThing
       LordOfTheRings.Enemy.Cards.UmbarAssassin
@@ -1356,6 +1358,7 @@ library
       LordOfTheRings.Location.Cards.ChamberOfRecords
       LordOfTheRings.Location.Cards.CharredCellar
       LordOfTheRings.Location.Cards.ChetwoodForest
+      LordOfTheRings.Location.Cards.CityForum
       LordOfTheRings.Location.Cards.CityOfCorsairs
       LordOfTheRings.Location.Cards.CityOfSpies
       LordOfTheRings.Location.Cards.CityRemains
@@ -1640,6 +1643,7 @@ library
       LordOfTheRings.Location.Cards.SecondHall
       LordOfTheRings.Location.Cards.SecretAntechamber
       LordOfTheRings.Location.Cards.SeedyInn
+      LordOfTheRings.Location.Cards.SeedyTavern
       LordOfTheRings.Location.Cards.Sewers
       LordOfTheRings.Location.Cards.ShadowedCorridor
       LordOfTheRings.Location.Cards.ShadowyVale
@@ -2456,6 +2460,7 @@ library
       LordOfTheRings.Treachery.Cards.DarkClouds
       LordOfTheRings.Treachery.Cards.DarkCovenant
       LordOfTheRings.Treachery.Cards.DarkInterrogation
+      LordOfTheRings.Treachery.Cards.DarknessInTheEast
       LordOfTheRings.Treachery.Cards.DarkPlaces
       LordOfTheRings.Treachery.Cards.DarkSorcery
       LordOfTheRings.Treachery.Cards.DeadlyCold

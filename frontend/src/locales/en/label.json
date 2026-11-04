@@ -2808,5 +2808,14 @@
     "choose": "Overwhelmed: choose one",
     "raiseThreat": "Raise your threat by 2",
     "noDamage": "The attacking enemy cannot take damage this round"
+  },
+  "rhunBackstabber": {
+    "choose": "Rhûn Backstabber: choose one",
+    "raiseThreat": "Raise your threat by 2",
+    "discardAlly": "Discard an ally you control with printed cost 2 or higher",
+    "ally": "Choose an ally with printed cost 2 or higher to discard"
+  },
+  "seedyTavern": {
+    "placeUnderneath": "Seedy Tavern: choose a card to put facedown under it; the rest are shuffled back"
   }
 }

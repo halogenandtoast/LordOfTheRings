@@ -472,6 +472,8 @@ allEnemyCards =
       , warriorOfRhun
       , messengerFromMordor
       , servantOfSauron
+      , rhunBackstabber
+      , treacherousEasterling
       ]
 
 namelessThing :: CardDef
@@ -3872,3 +3874,9 @@ servantOfSauron =
     , cdKeywords = setFromList [Surge]
     , cdEasyModeQuantity = Just 1
     }
+
+rhunBackstabber :: CardDef
+rhunBackstabber = (enemy "21044" "Rhûn Backstabber" CityOfRhun 2 28 2 3 2 3) {cdCardTraits = setFromList [Easterling], cdShadowEffect = True}
+
+treacherousEasterling :: CardDef
+treacherousEasterling = (enemy "21045" "Treacherous Easterling" CityOfRhun 2 32 3 3 1 5) {cdCardTraits = setFromList [Easterling], cdEasyModeQuantity = Just 1}
