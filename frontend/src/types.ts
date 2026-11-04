@@ -135,6 +135,9 @@ export interface ScenarioView {
   /** The Orcs' quest stage, with its progress, and the cards in their area (Race Across Harad). */
   orcsStage: CardView | null
   orcsArea: CardView[]
+  /** Riddles in the Dark, and Gollum, in the riddle area (Dungeons Deep and Caverns Dim). */
+  riddleStage: CardView | null
+  riddleArea: CardView[]
   /** The circuit, stages 1 to 6, with where The Challengers and The Wainriders are (Challenge of the Wainriders). */
   circuit: CircuitStageView[] | null
 }

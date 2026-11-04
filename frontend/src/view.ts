@@ -395,7 +395,13 @@ export const toView = (data: GameData, defs: Record<string, CardDef>, previous: 
     const card = fromEntity(e, 'locations')
     return [{ card, attachments: attachmentsOn([card]), ...e.position, active: isAt('ActiveLocation')(e), staged: isAt('StagingArea')(e) }]
   })
-  const quests = placed('quests', (q) => !isSideQuest(q))
+  // a stage that cannot be the current quest waits apart from the quest stage, as Riddles in
+  // the Dark in the riddle area (Dungeons Deep and Caverns Dim)
+  const notCurrentQuest = (q: Entity) =>
+    (game.modifiers ?? []).some(
+      ([t, modifiers]) => t.tag === 'QuestTarget' && t.contents === q.id && modifiers.some((m) => m.modifierType.tag === 'CannotBeCurrentQuest'),
+    )
+  const quests = placed('quests', (q) => !isSideQuest(q) && !notCurrentQuest(q))
   const [activeLocation, ...otherActiveLocations] = activeLocations.filter(inFocus)
   const [quest] = quests.filter(inFocus)
   const otherAreas = areas
@@ -485,6 +491,8 @@ export const toView = (data: GameData, defs: Record<string, CardDef>, previous: 
         ? card(game.orcsStage.cardCode, game.orcsStage.id, { flipped: true, image: `${game.orcsStage.cardCode}-d`, progress: game.orcsProgress ?? 0 })
         : null,
       orcsArea: withAttachments([...placed('enemies', isAt('OrcsArea')), ...placed('locations', isAt('OrcsArea'))]),
+      riddleStage: placed('quests', (q) => !isSideQuest(q) && notCurrentQuest(q))[0] ?? null,
+      riddleArea: withAttachments(placed('enemies', isAt('RiddleArea'))),
       circuit: game.circuit ? circuitView(game.circuit) : null,
     },
     players,

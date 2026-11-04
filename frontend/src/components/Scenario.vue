@@ -144,6 +144,21 @@ const settings = ['sunny', 'cloudy', 'rainy', 'stormy'].map((key) => ({
         </div>
       </div>
     </div>
+    <!-- the riddle area: Riddles in the Dark and Gollum, apart from the quest and staging area -->
+    <div v-if="scenario.riddleStage" class="stormcaller-area">
+      <span class="heading-label">{{ $t('log.riddleArea') }}</span>
+      <div class="stormcaller-cards">
+        <GameCard :card="scenario.riddleStage" rotated :choices="choices" @choose="emit('choose', $event)" />
+        <GameCard
+          v-for="c in scenario.riddleArea"
+          :key="c.id"
+          :card="c"
+          :choices="choices"
+          :flipping="isFlipping(c)"
+          @choose="emit('choose', $event)"
+        />
+      </div>
+    </div>
     <!-- the Orcs' area: their own quest stage, and the cards not in the staging area -->
     <div v-if="scenario.orcsStage" class="stormcaller-area">
       <span class="heading-label">{{ $t('log.orcsArea') }}</span>
