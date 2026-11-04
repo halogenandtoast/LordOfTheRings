@@ -517,6 +517,8 @@ allLocationCards =
       , crumblingPassage
       , riverRunning
       , exposedRiverbank
+      , templeOfSauron
+      , hallOfHorrors
       ]
 
 drownedTreasury :: CardDef
@@ -3844,3 +3846,14 @@ riverRunning = (location "21014" "River Running" TheRiverRunning 2 2 5) {cdCardT
 
 exposedRiverbank :: CardDef
 exposedRiverbank = (location "21015" "Exposed Riverbank" TheRiverRunning 2 4 4) {cdCardTraits = setFromList [Riverland], cdEasyModeQuantity = Just 1}
+templeOfSauron :: CardDef
+templeOfSauron =
+  (location "21055" "Temple of Sauron" TheTempleOfDoom 2 4 1)
+    { cdCardTraits = setFromList [Underground]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
+    }
+
+-- | Its threat is X, given by its own modifiers.
+hallOfHorrors :: CardDef
+hallOfHorrors = (location "21056" "Hall of Horrors" TheTempleOfDoom 3 0 5) {cdCardTraits = setFromList [Underground], cdEasyModeQuantity = Just 2}

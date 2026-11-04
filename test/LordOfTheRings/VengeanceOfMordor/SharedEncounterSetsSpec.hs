@@ -523,6 +523,8 @@ spec = describe "A Shadow in the East's shared encounter sets" do
       _ <- setEncounterDeck [Treacheries.ulchorsRage, Locations.oldForestRoad, Locations.oldForestRoad]
       run RevealEncounterCard
       resolveRevealed
+      -- the action window before defenders are declared, then the defender against him
+      passActions pid
       Just (QuestionLabel _ source _ _) <- getQuestion pid
       source `shouldBe` Just (toTarget t)
 

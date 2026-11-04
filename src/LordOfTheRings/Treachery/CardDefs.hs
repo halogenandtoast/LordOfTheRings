@@ -409,6 +409,7 @@ allTreacheryCards =
       , fanaticism
       , fearfulShadows
       , enemiesCloseBehind
+      , placeOfEvil
       ]
 
 deepDeepDark :: CardDef
@@ -2595,3 +2596,5 @@ fearfulShadows =
 
 enemiesCloseBehind :: CardDef
 enemiesCloseBehind = (treachery "21016" "Enemies Close Behind" TheRiverRunning 2) {cdShadowEffect = True}
+placeOfEvil :: CardDef
+placeOfEvil = (treachery "21057" "Place of Evil" TheTempleOfDoom 3) {cdShadowEffect = True, cdEasyModeQuantity = Just 1}

@@ -399,6 +399,7 @@ import LordOfTheRings.Treachery.Cards.UlchorsRage
 import LordOfTheRings.Treachery.Cards.Fanaticism
 import LordOfTheRings.Treachery.Cards.FearfulShadows
 import LordOfTheRings.Treachery.Cards.EnemiesCloseBehind
+import LordOfTheRings.Treachery.Cards.PlaceOfEvil
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -825,5 +826,6 @@ allTreacherys =
         , SomeTreacheryCard fanaticism
         , SomeTreacheryCard fearfulShadows
         , SomeTreacheryCard enemiesCloseBehind
+        , SomeTreacheryCard placeOfEvil
         ]
     ]

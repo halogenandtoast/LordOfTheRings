@@ -476,6 +476,7 @@ allEnemyCards =
       , treacherousEasterling
       , ulchorsGuard
       , easterlingOutrider
+      , thaneUlchorTheTempleOfDoom
       ]
 
 namelessThing :: CardDef
@@ -3901,3 +3902,12 @@ easterlingOutrider =
     , cdShadowEffect = True
     , cdEasyModeQuantity = Just 1
     }
+-- | The Temple of Doom's Thane Ulchor.
+thaneUlchorTheTempleOfDoom :: CardDef
+thaneUlchorTheTempleOfDoom =
+  unique
+    (enemy "21054" "Thane Ulchor" TheTempleOfDoom 1 50 0 6 4 9)
+      { cdCardTraits = setFromList [Mordor]
+      , cdKeywords = setFromList [Indestructible]
+      , cdVictoryPoints = Just 6
+      }

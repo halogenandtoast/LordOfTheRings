@@ -319,6 +319,12 @@ import LordOfTheRings.Quest.Cards.UnwelcomeTravelers
 import LordOfTheRings.Quest.Cards.LostInTheDark
 import LordOfTheRings.Quest.Cards.ChasedByEasterlings
 import LordOfTheRings.Quest.Cards.TheCrossingOfAraw
+import LordOfTheRings.Quest.Cards.TributeToMordor
+import LordOfTheRings.Quest.Cards.TheForgottenTemple
+import LordOfTheRings.Quest.Cards.TheLegacyOfMordor
+import LordOfTheRings.Quest.Cards.MemoryOfTheDarkYears
+import LordOfTheRings.Quest.Cards.ShrineToSauron
+import LordOfTheRings.Quest.Cards.TheLordOfMiddleEarth
 import LordOfTheRings.Quest.Runner ()
 import LordOfTheRings.Quest.Types as X
 import LordOfTheRings.Id
@@ -670,5 +676,11 @@ allQuests =
         , SomeQuestCard lostInTheDark
         , SomeQuestCard chasedByEasterlings
         , SomeQuestCard theCrossingOfAraw
+        , SomeQuestCard tributeToMordor
+        , SomeQuestCard theForgottenTemple
+        , SomeQuestCard theLegacyOfMordor
+        , SomeQuestCard memoryOfTheDarkYears
+        , SomeQuestCard shrineToSauron
+        , SomeQuestCard theLordOfMiddleEarth
         ]
     ]
