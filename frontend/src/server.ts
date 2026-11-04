@@ -148,6 +148,8 @@ export interface ServerGame {
   /** The Stormcaller's quest stage and the progress on it (Flight of the Stormcaller). */
   stormcallerStage?: Card | null
   stormcallerProgress?: number | null
+  /** The heat tracker's temperature (Desert Crossing). */
+  temperature?: number | null
   lastCommittedWillpower: number | null
   /** What each target is modified by, as [target, modifiers] pairs. */
   modifiers?: [Target, { modifierType: { tag: string; contents?: unknown } }[]][]

@@ -75,6 +75,7 @@
   },
   "noActiveLocation": "No active location",
   "heading": "Heading",
+  "temperature": "Temperature",
   "bands": {
     "scenario": "scenario",
     "staging": "staging",

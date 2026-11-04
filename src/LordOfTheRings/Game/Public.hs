@@ -112,6 +112,8 @@ publicGameFor seesHand g = hideDecks $ toJSON merged
         -- the Stormcaller's quest stage and its progress (Flight of the Stormcaller)
         $ KeyMap.insert "stormcallerStage" (metaValue "stormcallerStage")
         $ KeyMap.insert "stormcallerProgress" (metaValue "stormcallerProgress")
+        -- the heat tracker's temperature (Desert Crossing)
+        $ KeyMap.insert "temperature" (metaValue "temperature")
         $ adjust (inside "objectives" $ overValues $ inside "underneath" $ const $ Array mempty) "entities"
         $ adjust (inside "locations" $ overValues hideOtherSide) "entities"
         $ adjust (overEntries \pid -> if seesHand pid then id else hideSearch) "question"
