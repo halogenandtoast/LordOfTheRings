@@ -725,6 +725,23 @@ shadow card, built again, resolves it then, and may read what was destroyed with
 ifThisAttackDestroys :: (MonadTrans t, HasQueue Message m) => EnemyId -> Message -> t m ()
 ifThisAttackDestroys eid shadow = afterAttack eid [IfAttackDestroyed eid [DoStep 1 shadow]]
 
+-- | The player discards a non-objective attachment he controls, as Spies from Mordor's
+-- shadow reads.
+discardNonObjectiveAttachment :: (ReverseQueue m, Targetable source) => source -> PlayerId -> m ()
+discardNonObjectiveAttachment source pid = do
+  attachments <- filter (\case ObjectiveTarget _ -> False; _ -> True) <$> getAttachmentsControlledBy pid
+  chooseOrRunOneM pid do
+    questionLabeled "discardNonObjectiveAttachment"
+    causedBy source
+    targets attachments discard
+
+{- | "If this attack destroys a character", of an attack the card has the enemy make now, as
+Vigilant Orc's immediate attack reads: 'DoStep' 1 of the message, once that attack is over,
+if its damage destroyed one.
+-}
+ifImmediateAttackDestroys :: ReverseQueue m => EnemyId -> Message -> m ()
+ifImmediateAttackDestroys eid msg = push $ IfAttackDestroyed eid [DoStep 1 msg]
+
 {- | Until the end of the phase, the enemy cannot attack the player it is engaged with now,
 as "that enemy cannot attack that player this phase" reads.
 -}

@@ -21,7 +21,7 @@ instance RunMessage VigilantOrc where
     UseCardAbility _ (isSource attrs -> True) 1 _ -> do
       lead <- getLead
       immediateAttack lead attrs.id
-      push $ IfAttackDestroyed attrs.id [DoStep 1 msg]
+      ifImmediateAttackDestroys attrs.id msg
       pure e
     DoStep 1 (UseCardAbility _ (isSource attrs -> True) 1 _) -> do
       removeTimeCountersFromCurrentQuest attrs 1
