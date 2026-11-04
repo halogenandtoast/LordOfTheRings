@@ -4031,5 +4031,13 @@
         "text": "Stage 4A makes Doors of Durin the active location, adds Watcher in the Water to the staging area and puts the Ring-bearer, with all his attachments and no tokens, facedown under the Watcher. He stays in play, but no player controls him or his attachments until he is freed.\n\nOn stage 4B there can be 2 active locations: with Doors of Durin the only active one and a location in the staging area, the players must travel to it, making it active alongside the Doors.\n\nDoors of Durin is immune to player card effects, so a player card effect on the active location can only reach the other active location."
       }
     ]
+  },
+  "journey-in-the-dark": {
+    "intro": [
+      "Turned back by the snows of the Redhorn Pass and driven by Wargs, the Company has gone under the mountains into Moria. They find no trace of Balin's Dwarves, only darkness and the sense that something below has noticed the Ring. Their one hope is to cross the mines in secret and reach the eastern gate."
+    ],
+    "setup": [
+      "The encounter deck is built from the Journey in the Dark encounter set."
+    ]
   }
 }
