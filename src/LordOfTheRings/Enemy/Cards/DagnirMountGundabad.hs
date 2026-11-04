@@ -26,7 +26,7 @@ instance HasModifiersFor Dagnir where
   getModifiersFor (Dagnir a) = do
     quests <- questCardsInVictoryDisplay
     let x = quests + 1
-    modifySelf a [ImmuneToPlayerCardEffects, ThreatModifier x, DamageLimit x]
+    modifySelf a [ImmuneToPlayerCardEffects, ThreatModifier x]
     when (quests >= 5)
       $ modifySelf
         a
@@ -36,12 +36,20 @@ instance HasModifiersFor Dagnir where
         , EngagedWithEachPlayer AnyPlayer
         ]
 
--- | Dagnir's Wrath's 5 damage is not limited by her text, nor counted toward it.
+{- | Cannot take more than X damage each round: what she has taken this round is kept as a
+round effect and X is read as the damage is placed, so a quest card added to the victory
+display later in the round lets her take more. Dagnir's Wrath's 5 damage "is not limited by
+Dagnir's text, and does not count toward her X value".
+-}
 instance RunMessage Dagnir where
   runMessage msg (Dagnir attrs) = case msg of
-    PlaceTokens (QuestSource qid) (isTarget attrs -> True) Damage n -> do
-      quest <- getsGame (Map.lookup qid . (.quests) . gameEntities)
-      if fmap toCardCode quest == Just (toCardCode Quests.dagnirsWrath)
+    PlaceTokens source (isTarget attrs -> True) Damage n | n > 0 -> do
+      wrath <- case source of
+        QuestSource qid -> (== Just (toCardCode Quests.dagnirsWrath)) . fmap toCardCode <$> getsGame (Map.lookup qid . (.quests) . gameEntities)
+        _ -> pure False
+      if wrath
         then pure $ Dagnir $ attrs & tokensL %~ addTokens Damage n
-        else Dagnir <$> runMessage msg attrs
+        else do
+          x <- dagnirX
+          Dagnir <$> placeDamageWithinRoundLimit x n attrs
     _ -> Dagnir <$> runMessage msg attrs

@@ -2,7 +2,6 @@ module LordOfTheRings.Enemy.Cards.Dagnir (dagnir) where
 
 import LordOfTheRings.Enemy.CardDefs qualified as Cards
 import LordOfTheRings.Enemy.Import.Lifted
-import LordOfTheRings.Helpers.Modifiers (getModifiers)
 import LordOfTheRings.Scenario.Scenarios.FireInTheNight.Helpers (sideQuestX)
 
 newtype Dagnir = Dagnir EnemyAttrs
@@ -30,17 +29,11 @@ defeated later in the round lets her take more. A quest card's damage, as Face t
 Dragon's, is not limited and does not count.
 -}
 instance RunMessage Dagnir where
-  runMessage msg e@(Dagnir attrs) = case msg of
+  runMessage msg (Dagnir attrs) = case msg of
     PlaceTokens source (isTarget attrs -> True) Damage n | n > 0 ->
       if isQuestSource source
         then pure $ Dagnir $ attrs & tokensL %~ addTokens Damage n
         else do
           x <- sideQuestX
-          taken <- sum . (\ms -> [k | DamageTakenThisRound k <- ms]) <$> getModifiers attrs
-          let placed = max 0 (min n (x - taken))
-          if placed == 0
-            then pure e
-            else do
-              roundModifier attrs attrs (DamageTakenThisRound placed)
-              pure $ Dagnir $ attrs & tokensL %~ addTokens Damage placed
+          Dagnir <$> placeDamageWithinRoundLimit x n attrs
     _ -> Dagnir <$> runMessage msg attrs

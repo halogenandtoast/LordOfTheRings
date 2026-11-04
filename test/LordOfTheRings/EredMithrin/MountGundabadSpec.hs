@@ -227,6 +227,9 @@ spec = describe "Mount Gundabad" do
     q <- stageB Quests.dagnirsWrath
     run $ PlaceTokens GameSource q Progress 7
     (.damage) <$> getEnemy dagnir `shouldReturn` 6
+    -- X is now 2 (Dagnir's Wrath in the victory display), and her 5 do not count toward it
+    run $ PlaceTokens GameSource (EnemyTarget dagnir) Damage 5
+    (.damage) <$> getEnemy dagnir `shouldReturn` 7
 
   it "lets each player play only 1 card each phase on Foreboding Darkness, and flips the top stage over as it is defeated" . gundabadTest $ \pid -> do
     [a, b] <- setQuestDeck [Quests.theLowerDeeps, Quests.frenziedWarrens]
@@ -283,6 +286,22 @@ spec = describe "Mount Gundabad" do
     getEnemyThreat dagnir `shouldReturn` 3
     run $ PlaceTokens GameSource (EnemyTarget dagnir) Damage 5
     (.damage) <$> getEnemy dagnir `shouldReturn` 3
+
+  it "lets Dagnir take more damage the same round as X rises" . gundabadTest $ \_ -> do
+    dagnir <- stage Enemies.dagnirMountGundabad
+    run $ PlaceTokens GameSource (EnemyTarget dagnir) Damage 5
+    (.damage) <$> getEnemy dagnir `shouldReturn` 1
+    questsInVictory 2
+    run $ PlaceTokens GameSource (EnemyTarget dagnir) Damage 5
+    (.damage) <$> getEnemy dagnir `shouldReturn` 3
+
+  it "leaves Dagnir in play with as much damage as her hit points, as she is Indestructible" . gundabadTest $ \_ -> do
+    dagnir <- stage Enemies.dagnirMountGundabad
+    g <- getGame
+    putGame $ g & entitiesL . enemiesL . ix dagnir %~ overAttrs (\a -> a {enemyTokens = addTokens Damage 19 a.enemyTokens})
+    run $ DealDamage GameSource (EnemyTarget dagnir) 1
+    (.damage) <$> getEnemy dagnir `shouldReturn` 20
+    enemyCodes `shouldReturn` [toCardCode Enemies.dagnirMountGundabad]
 
   it "keeps Dagnir in the staging area, engaged with each player, with 5 quest cards in the victory display" . gundabadTest $ \pid -> do
     dagnir <- stage Enemies.dagnirMountGundabad
