@@ -750,6 +750,14 @@ runGameMessage msg g = case msg of
   UseCardAbility _ (LocationSource lid) _ _ | Just l <- Map.lookup lid (gameLeftPlayLocations g), not (Map.member lid g.entities.locations) -> do
     l' <- runEach msg l
     pure $ g & leftPlayLocationsL . ix lid .~ l'
+  -- and to what its answer reads back in later steps, as Slopes of Cirith Gorgor's
+  -- discards once the encounter deck is shuffled
+  DoStep _ (UseCardAbility _ (LocationSource lid) _ _) | Just l <- Map.lookup lid (gameLeftPlayLocations g), not (Map.member lid g.entities.locations) -> do
+    l' <- runEach msg l
+    pure $ g & leftPlayLocationsL . ix lid .~ l'
+  DiscardedTopOfEncounterDeck (LocationSource lid) _ _ | Just l <- Map.lookup lid (gameLeftPlayLocations g), not (Map.member lid g.entities.locations) -> do
+    l' <- runEach msg l
+    pure $ g & leftPlayLocationsL . ix lid .~ l'
   CloseLogBlock bid -> pure $ g & logBlocksL %~ filter ((/= bid) . (.id))
   -- step 8 follows the quest's own setup: a nightmare setup card's instructions, as its
   -- "the game is now ready to begin" reads; step 9 a campaign card's setup that needs what
@@ -2154,15 +2162,24 @@ runGameMessage msg g = case msg of
     let extra = sum [n | AdditionalStagingReveals n <- mods]
         fewer = sum [n | FewerStagingReveals n <- mods]
         players = length [() | player <- toList g.players, not player.eliminated]
-        reveals = max 0 $ max 1 (players + extra) - fewer
+        -- the first player alone reveals so many instead, as The Battle of the Morannon
+        -- has him reveal 1 for each resource on The Black Gate
+        instead = headMay [n | FirstPlayerRevealsForStaging n <- mods]
+        reveals = case instead of
+          Just n -> max 0 $ n + extra - fewer
+          Nothing -> max 0 $ max 1 (players + extra) - fewer
     order <- filterM (fmap (not . (.eliminated)) . getPlayer) =<< getPlayerOrder
+    let lead = fromMaybe g.firstPlayer $ headMay order
+        revealers = case instead of
+          Just _ -> replicate reveals lead
+          Nothing -> take reveals (order <> replicate reveals lead)
     -- in The Lord of the Rings saga each player reveals his own card in turn order, the
     -- first player any more the step reveals
     let revealing
           | revealsIndividually (scenarioId $ toAttrs g.scenario) =
               concat
                 [ [SetRevealer (Just pid), RevealEncounterCard]
-                | pid <- take reveals (order <> replicate reveals (fromMaybe g.firstPlayer $ headMay order))
+                | pid <- revealers
                 ]
                 <> [SetRevealer Nothing]
           | otherwise = replicate reveals RevealEncounterCard

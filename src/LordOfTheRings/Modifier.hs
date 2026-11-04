@@ -129,6 +129,9 @@ data ModifierType
     NoEngagementChecksAgainst PlayerId
   | -- | on the game: enemies with ambush make no engagement check as they enter play
     IgnoreAmbush
+  | -- | on the game: in the staging step the first player alone reveals this many
+    -- encounter cards, not one for each player, as The Battle of the Morannon reads
+    FirstPlayerRevealsForStaging Int
   | SkipStagingStep
   | -- | on the game: the players, as a group, cannot play more than 1 ally each round
     OneAllyPerRound
