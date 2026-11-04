@@ -218,9 +218,11 @@ it does reduce it: The Empty Mug answers a player card's.
 lowerThreatBy :: (ReverseQueue m, Sourceable source) => source -> PlayerId -> Int -> m ()
 lowerThreatBy source pid n' = do
   mods <- getModifiers (PlayerTarget pid)
-  let barred = CannotReduceThreat `elem` mods
-      n = if isPlayerCardSource (toSource source) then foldr min n' [k | PlayerCardThreatReductionLimit k <- mods] else n'
   threat <- (.threat) <$> getPlayer pid
+  let barred = CannotReduceThreat `elem` mods
+      limited = if isPlayerCardSource (toSource source) then foldr min n' [k | PlayerCardThreatReductionLimit k <- mods] else n'
+      -- no lower than a floor, as The Paths of the Dead sets
+      n = foldr min limited [threat - k | CannotReduceThreatBelow k <- mods]
   unless (barred || n <= 0 || threat <= 0) do
     push $ LowerThreat pid n
     -- counted for the round, as Moonlit Passage limits it

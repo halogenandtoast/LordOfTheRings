@@ -504,6 +504,9 @@ data ModifierType
     ResourcePhaseDraws Int
   | -- | on a player: their threat cannot be reduced, as The Empty Mug reads
     CannotReduceThreat
+  | -- | on a player: their threat cannot be reduced below this, as The Paths of the Dead
+    -- keeps it at the initial threat level
+    CannotReduceThreatBelow Int
   | -- | on a player: a player card reduces their threat by at most this much, as Mines of
     -- Cirith Gurat's "reduce that amount to 1" reads
     PlayerCardThreatReductionLimit Int
