@@ -3999,5 +3999,19 @@
       "Farin laughed and said, “Then let’s get moving. It will be dark soon.”",
       "The story continues in “The Fortress of Nurn,” the sixth Adventure Pack in “The Vengeance of Mordor” cycle."
     ]
+  },
+  "the-uruk-hai": {
+    "intro": [
+      "With the Fellowship scattered at Amon Hen and some of its members carried off by the Orcs of Saruman, Aragorn and the remaining companions set out across the plains of Rohan to overtake the Uruk-hai before they reach Isengard."
+    ],
+    "setup": [
+      "“The Uruk-hai” is played with an encounter deck built with all the cards from the following encounter sets: The Uruk-hai, Orcs of the White Hand, and Snaga Orcs."
+    ],
+    "rules": [
+      {
+        "title": "Pursuit Value & Pursuit Tracker",
+        "text": "An extra threat tracker beside the quest deck tracks the pursuit value, set to 10 during setup. Each quest stage needs as much progress as the pursuit value to be defeated. If the pursuit value is 30 at the end of the round, the players lose the game."
+      }
+    ]
   }
 }
