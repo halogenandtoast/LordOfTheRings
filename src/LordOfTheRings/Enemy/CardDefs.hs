@@ -406,6 +406,10 @@ allEnemyCards =
       , urukOfMordor
       , urukWargRider
       , mordorWarg
+      , theBlackSerpentCrossingsOfPoros
+      , southronOutrider
+      , urukProwler
+      , desertWarg
       ]
 
 namelessThing :: CardDef
@@ -3298,5 +3302,31 @@ mordorWarg :: CardDef
 mordorWarg =
   (enemy "16064" "Mordor Warg" MordorOrcs 2 20 2 2 2 2)
     { cdCardTraits = setFromList [Creature]
+    , cdWhenRevealed = True
+    }
+
+-- * The Crossings of Poros: its two encounter sets, The Crossings of Poros and Mountains of
+-- Shadow. Easy mode copy counts from Hall of Beorn's scenario page.
+
+-- | The Crossings of Poros' copy of The Black Serpent, not The Black Serpent scenario's.
+theBlackSerpentCrossingsOfPoros :: CardDef
+theBlackSerpentCrossingsOfPoros = unique (enemy "17146" "The Black Serpent" TheCrossingsOfPoros 1 50 0 2 1 8) {cdCardTraits = setFromList [Harad]}
+
+southronOutrider :: CardDef
+southronOutrider = (enemy "17147" "Southron Outrider" TheCrossingsOfPoros 2 28 2 3 1 4) {cdCardTraits = setFromList [Harad], cdShadowEffect = True}
+
+urukProwler :: CardDef
+urukProwler =
+  (enemy "17148" "Uruk Prowler" TheCrossingsOfPoros 2 45 3 4 2 5)
+    { cdCardTraits = setFromList [Orc, Uruk]
+    , cdShadowEffect = True
+    , cdWhenRevealed = True
+    }
+
+desertWarg :: CardDef
+desertWarg =
+  (enemy "17149" "Desert Warg" TheCrossingsOfPoros 2 34 2 5 2 3)
+    { cdCardTraits = setFromList [Creature]
+    , cdShadowEffect = True
     , cdWhenRevealed = True
     }

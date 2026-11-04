@@ -419,6 +419,10 @@ allLocationCards =
       , jungleTrail
       , forestClearing
       , denseJungle
+      , desolateLand
+      , harondorWaste
+      , foothillsOfMordor
+      , shadowyVale
       ]
 
 drownedTreasury :: CardDef
@@ -3203,3 +3207,19 @@ denseJungle =
     { cdCardTraits = setFromList [Forest]
     , cdShadowEffect = True
     }
+
+-- * The Crossings of Poros: its two encounter sets, The Crossings of Poros and Mountains of
+-- Shadow. Easy mode copy counts from Hall of Beorn's scenario page.
+
+-- | Its threat is X, worked out by its card.
+desolateLand :: CardDef
+desolateLand = (location "17150" "Desolate Land" TheCrossingsOfPoros 3 0 4) {cdCardTraits = setFromList [Desert, Hills], cdEasyModeQuantity = Just 1}
+
+harondorWaste :: CardDef
+harondorWaste = (location "17151" "Harondor Waste" TheCrossingsOfPoros 4 2 3) {cdCardTraits = setFromList [Desert, Hills], cdShadowEffect = True}
+
+foothillsOfMordor :: CardDef
+foothillsOfMordor = (location "17153" "Foothills of Mordor" MountainsOfShadow 3 3 3) {cdCardTraits = setFromList [Hills], cdEasyModeQuantity = Just 2}
+
+shadowyVale :: CardDef
+shadowyVale = (location "17154" "Shadowy Vale" MountainsOfShadow 2 2 5) {cdCardTraits = setFromList [Hills], cdEasyModeQuantity = Just 1}

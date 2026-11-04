@@ -197,6 +197,7 @@ allEventCards =
       , commandLore
       , commandSpirit
       , commandTactics
+      , windFromTheSea
       ]
 
 everVigilant :: CardDef
@@ -784,3 +785,15 @@ determination = (event "AAC172" "Determination" Neutral (StaticCost 1)) {cdCardT
 
 loreOfAncientArnor :: CardDef
 loreOfAncientArnor = (event "AAC190" "Lore of Ancient Arnor" Neutral (StaticCost 3)) {cdCardTraits = setFromList [Boon]}
+
+-- * The Crossings of Poros
+
+-- | Encounter: an encounter card back and no cost. Set aside out of play at setup, it is
+-- never in a player's deck.
+windFromTheSea :: CardDef
+windFromTheSea =
+  (event "17144" "Wind from the Sea" Neutral (StaticCost 0))
+    { cdCost = Nothing
+    , cdKeywords = setFromList [Encounter]
+    , cdShadowEffect = True
+    }

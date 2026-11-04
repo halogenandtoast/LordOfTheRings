@@ -107,6 +107,7 @@ allObjectiveCards =
       , riseToPower
       , assassination
       , theCabalsChampion
+      , porosGarrison
       ]
 
 durinsAxe :: CardDef
@@ -718,4 +719,16 @@ theCabalsChampion =
   (objective "the-stewards-fear-nightmare-the-stewards-fear-010" "The Cabal's Champion" TheStewardsFearNightmare 3)
     { cdCardTraits = setFromList [Title]
     , cdKeywords = setFromList [Surge, Doomed 1]
+    }
+
+-- * The Crossings of Poros: its two encounter sets, The Crossings of Poros and Mountains of
+-- Shadow. Easy mode copy counts from Hall of Beorn's scenario page.
+
+porosGarrison :: CardDef
+porosGarrison =
+  ((objective "17145" "Poros Garrison" TheCrossingsOfPoros 1)
+      { cdCardType = ObjectiveAllyType, cdWillpower = Just 3, cdAttack = Just 4, cdDefense = Just 3, cdHitPoints = Just 6 })
+    { cdUnique = True
+    , cdCardTraits = setFromList [Gondor]
+    , cdKeywords = setFromList [FirstPlayerGainsControl]
     }

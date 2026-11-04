@@ -399,6 +399,10 @@ import LordOfTheRings.Enemy.Cards.UrukChieftain
 import LordOfTheRings.Enemy.Cards.UrukOfMordor
 import LordOfTheRings.Enemy.Cards.UrukWargRider
 import LordOfTheRings.Enemy.Cards.MordorWarg
+import LordOfTheRings.Enemy.Cards.TheBlackSerpentCrossingsOfPoros
+import LordOfTheRings.Enemy.Cards.SouthronOutrider
+import LordOfTheRings.Enemy.Cards.UrukProwler
+import LordOfTheRings.Enemy.Cards.DesertWarg
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -824,5 +828,9 @@ allEnemys =
         , SomeEnemyCard urukOfMordor
         , SomeEnemyCard urukWargRider
         , SomeEnemyCard mordorWarg
+        , SomeEnemyCard theBlackSerpentCrossingsOfPoros
+        , SomeEnemyCard southronOutrider
+        , SomeEnemyCard urukProwler
+        , SomeEnemyCard desertWarg
         ]
     ]

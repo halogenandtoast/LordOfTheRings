@@ -402,6 +402,10 @@ import LordOfTheRings.Location.Cards.DesertOasis
 import LordOfTheRings.Location.Cards.JungleTrail
 import LordOfTheRings.Location.Cards.ForestClearing
 import LordOfTheRings.Location.Cards.DenseJungle
+import LordOfTheRings.Location.Cards.DesolateLand
+import LordOfTheRings.Location.Cards.HarondorWaste
+import LordOfTheRings.Location.Cards.FoothillsOfMordor
+import LordOfTheRings.Location.Cards.ShadowyVale
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -850,5 +854,9 @@ allLocations =
         , SomeLocationCard jungleTrail
         , SomeLocationCard forestClearing
         , SomeLocationCard denseJungle
+        , SomeLocationCard desolateLand
+        , SomeLocationCard harondorWaste
+        , SomeLocationCard foothillsOfMordor
+        , SomeLocationCard shadowyVale
         ]
     ]
