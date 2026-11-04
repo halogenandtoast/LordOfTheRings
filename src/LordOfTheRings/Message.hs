@@ -88,6 +88,8 @@ data Message
   | CheckEliminations
   | EliminatePlayer PlayerId
   | GameOver Outcome
+  | -- | the players concede: the game ends lost, whatever would stop it ending
+    Surrender
   | {- | the scenario has been won in campaign mode: its campaign card's resolution, then
     what every campaign records, the score and the fallen heroes, written to the log the
     scenario holds. The game is over, so nothing pushed here runs.

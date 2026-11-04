@@ -63,6 +63,7 @@ narrationFor = \case
   GameOver outcome -> Just $ one $ case outcome of
     Won -> toned Good $ structure [ikeyPart "log.gameOver.won" []]
     Lost -> toned Bad $ structure [ikeyPart "log.gameOver.lost" []]
+  Surrender -> Just $ one $ toned Bad $ structure [ikeyPart "log.gameOver.surrendered" []]
   -- \* Blocks: an event that spans several answers, as one entry
   OpenLogBlock block -> Just $ openBlock block
   CloseLogBlock bid -> Just $ closeBlock bid

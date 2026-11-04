@@ -12,7 +12,8 @@
   },
   "gameOver": {
     "won": "The players win",
-    "lost": "The players lose"
+    "lost": "The players lose",
+    "surrendered": "The players surrender"
   },
 
   "plays": "{player} plays {card}",

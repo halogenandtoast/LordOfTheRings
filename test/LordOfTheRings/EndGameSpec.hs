@@ -2,7 +2,9 @@ module LordOfTheRings.EndGameSpec (spec) where
 
 import Data.Aeson.KeyMap qualified as KeyMap
 import LordOfTheRings.Game.Public (GroupScore (..), groupScore, publicGame)
+import LordOfTheRings.Effect (Effect (..), EffectDuration (UntilSpent))
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
+import LordOfTheRings.Modifier (ModifierType (GameCannotEnd))
 import LordOfTheRings.Scenario.Types (victoryDisplayL)
 import LordOfTheRings.Outcome
 import TestImport
@@ -27,6 +29,18 @@ spec = describe "End of the game" do
   it "loses the game when every player is eliminated" . gameTest $ \pid -> do
     flipFirstQuest pid
     run $ RaiseThreat pid 23
+    getsGame (.outcome) `shouldReturn` Just Lost
+
+  it "loses the game when the players surrender" . gameTest $ \pid -> do
+    flipFirstQuest pid
+    run Surrender
+    getsGame (.outcome) `shouldReturn` Just Lost
+    getsGame (null . (.question)) `shouldReturn` True
+
+  it "loses the game on a surrender even while it cannot end" . gameTest $ \pid -> do
+    flipFirstQuest pid
+    run $ CreateEffect $ Effect GameSource GameTarget [GameCannotEnd] UntilSpent
+    run Surrender
     getsGame (.outcome) `shouldReturn` Just Lost
 
   it "discards an eliminated player's hand and heroes" . gameTest $ \pid -> do

@@ -894,6 +894,10 @@ runGameMessage msg g = case msg of
             else pure g
         clearQueue
         pure $ g' & outcomeL ?~ outcome
+  -- conceding is not a loss by the rules, so nothing that stops the game ending stops it
+  Surrender -> do
+    clearQueue
+    pure $ g & questionL .~ mempty & outcomeL ?~ Lost
   -- an ally put into play by its card, as Emery is, discarded by its card
   Discard (CardIdTarget cid)
     | Just a <- find ((== cid) . allyCardId . toAttrs) (toList g.entities.allies) ->
