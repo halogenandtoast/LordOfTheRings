@@ -1,7 +1,5 @@
 module LordOfTheRings.Location.Cards.WesternQuarter (westernQuarter) where
 
-import LordOfTheRings.Card (CardCost (StaticCost), cdCost, toCardDef)
-import LordOfTheRings.Classes.HasGame (getsGame)
 import LordOfTheRings.Location.CardDefs qualified as Cards
 import LordOfTheRings.Location.Import.Lifted
 import LordOfTheRings.Placement (Placement (InPlayArea))
@@ -25,15 +23,7 @@ instance HasAbilities WesternQuarter where
 instance RunMessage WesternQuarter where
   runMessage msg l@(WesternQuarter a) = case msg of
     PlaceLocation lid (InPlayArea pid) | lid == a.id && a.placement /= InPlayArea pid -> do
-      attachments <- getsGame (filter ((== pid) . (.controller) . toAttrs) . toList . (.entities.attachments))
-      let cost x = case cdCost (toCardDef x) of
-            Just (StaticCost n) -> n
-            _ -> 0
-          highest = foldr (max . cost) 0 attachments
-      chooseOrRunOneM pid do
-        questionLabeled "westernQuarter.discard"
-        causedBy a
-        targets [toId x | x <- attachments, cost x == highest] discard
+      discardHighestCostAttachment a pid
       WesternQuarter <$> runMessage msg a
     UseCardAbility _ (isSource a -> True) 1 _ -> do
       returnToStaging a.id

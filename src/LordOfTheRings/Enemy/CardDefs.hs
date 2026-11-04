@@ -561,6 +561,10 @@ allEnemyCards =
       , billFerny
       , shadyBreeLander
       , squintEyedSoutherner
+      , corsairCaptain
+      , corsairOfUmbar
+      , umbarPirateCrew
+      , haradrimPirate
       ]
 
 namelessThing :: CardDef
@@ -4590,3 +4594,26 @@ squintEyedSoutherner =
     , cdWhenRevealed = True
     , cdEasyModeQuantity = Just 2
     }
+
+-- * The Siege of Gondor
+
+corsairCaptain :: CardDef
+corsairCaptain =
+  (enemy "145035" "Corsair Captain" TheSiegeOfGondor 2 49 3 5 3 6)
+    { cdCardTraits = setFromList [Corsair]
+    , cdEasyModeQuantity = Just 1
+    }
+
+corsairOfUmbar :: CardDef
+corsairOfUmbar = (enemy "145036" "Corsair of Umbar" TheSiegeOfGondor 3 29 2 2 1 3) {cdCardTraits = setFromList [Corsair], cdShadowEffect = True}
+
+umbarPirateCrew :: CardDef
+umbarPirateCrew =
+  (enemy "145037" "Umbar Pirate Crew" TheSiegeOfGondor 2 39 3 6 2 8)
+    { cdCardTraits = setFromList [Corsair]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
+    }
+
+haradrimPirate :: CardDef
+haradrimPirate = (enemy "145038" "Haradrim Pirate" TheSiegeOfGondor 3 34 2 3 2 4) {cdCardTraits = setFromList [Corsair], cdShadowEffect = True}

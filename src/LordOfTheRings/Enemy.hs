@@ -552,6 +552,10 @@ import LordOfTheRings.Enemy.Cards.RiderOfMordor
 import LordOfTheRings.Enemy.Cards.BillFerny
 import LordOfTheRings.Enemy.Cards.ShadyBreeLander
 import LordOfTheRings.Enemy.Cards.SquintEyedSoutherner
+import LordOfTheRings.Enemy.Cards.CorsairCaptain (corsairCaptain)
+import LordOfTheRings.Enemy.Cards.CorsairOfUmbar (corsairOfUmbar)
+import LordOfTheRings.Enemy.Cards.UmbarPirateCrew (umbarPirateCrew)
+import LordOfTheRings.Enemy.Cards.HaradrimPirate (haradrimPirate)
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -1133,5 +1137,9 @@ allEnemys =
         , SomeEnemyCard billFerny
         , SomeEnemyCard shadyBreeLander
         , SomeEnemyCard squintEyedSoutherner
+        , SomeEnemyCard corsairCaptain
+        , SomeEnemyCard corsairOfUmbar
+        , SomeEnemyCard umbarPirateCrew
+        , SomeEnemyCard haradrimPirate
         ]
     ]

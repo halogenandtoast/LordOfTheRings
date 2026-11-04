@@ -175,6 +175,7 @@ allObjectiveCards =
       , gildorInglorionObjective
       , gandalfsDelay
       , anEvilWound
+      , theCorsairFleet
       ]
 
 durinsAxe :: CardDef
@@ -1229,3 +1230,10 @@ gandalfsDelay =
 -- | Attach to the Ring-bearer: stage 1A's setup attaches it.
 anEvilWound :: CardDef
 anEvilWound = (objective "141057" "An Evil Wound" FlightToTheFord 1) {cdCardTraits = setFromList [Morgul]}
+
+-- * The Siege of Gondor
+
+-- | Its Corsair side: set aside by the scenario, added to the staging area by stage 1A. Its
+-- Gondor side (145072) is played in The Battle of the Pelennor Fields.
+theCorsairFleet :: CardDef
+theCorsairFleet = unique (objective "145071" "The Corsair Fleet" TheSiegeOfGondor 1) {cdCardTraits = setFromList [Corsair]}

@@ -586,6 +586,11 @@ import LordOfTheRings.Location.Cards.FordOfBruinen
 import LordOfTheRings.Location.Cards.TheTrollsCamp
 import LordOfTheRings.Location.Cards.Ettenmoors
 import LordOfTheRings.Location.Cards.TheOldRoad
+import LordOfTheRings.Location.Cards.GreatCorsairShip (greatCorsairShip)
+import LordOfTheRings.Location.Cards.UmbarWarGalley (umbarWarGalley)
+import LordOfTheRings.Location.Cards.CorsairDromon (corsairDromon)
+import LordOfTheRings.Location.Cards.PortOfPelargir (portOfPelargir)
+import LordOfTheRings.Location.Cards.PelargirQuays (pelargirQuays)
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -1218,5 +1223,10 @@ allLocations =
         , SomeLocationCard theTrollsCamp
         , SomeLocationCard ettenmoors
         , SomeLocationCard theOldRoad
+        , SomeLocationCard greatCorsairShip
+        , SomeLocationCard umbarWarGalley
+        , SomeLocationCard corsairDromon
+        , SomeLocationCard portOfPelargir
+        , SomeLocationCard pelargirQuays
         ]
     ]

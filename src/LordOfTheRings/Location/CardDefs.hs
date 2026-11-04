@@ -604,6 +604,11 @@ allLocationCards =
       , theTrollsCamp
       , ettenmoors
       , theOldRoad
+      , greatCorsairShip
+      , umbarWarGalley
+      , corsairDromon
+      , portOfPelargir
+      , pelargirQuays
       ]
 
 drownedTreasury :: CardDef
@@ -4354,3 +4359,27 @@ midgewater = unique (location "141048" "Midgewater" AKnifeInTheDark 1 3 6) {cdCa
 
 weatherHills :: CardDef
 weatherHills = (location "141049" "Weather Hills" AKnifeInTheDark 3 3 2) {cdCardTraits = setFromList [Forest, Hills]}
+
+-- * The Siege of Gondor
+
+-- | X threat, the resources on The Corsair Fleet: given by its own modifiers. Set aside by
+-- the scenario, added to the staging area by stage 1A.
+greatCorsairShip :: CardDef
+greatCorsairShip =
+  unique
+    (location "145030" "Great Corsair Ship" TheSiegeOfGondor 1 0 5)
+      { cdCardTraits = setFromList [Ship]
+      , cdVictoryPoints = Just 5
+      }
+
+umbarWarGalley :: CardDef
+umbarWarGalley = (location "145031" "Umbar War Galley" TheSiegeOfGondor 3 3 3) {cdCardTraits = setFromList [Ship], cdVictoryPoints = Just 3}
+
+corsairDromon :: CardDef
+corsairDromon = (location "145032" "Corsair Dromon" TheSiegeOfGondor 3 2 2) {cdCardTraits = setFromList [Ship], cdVictoryPoints = Just 2}
+
+portOfPelargir :: CardDef
+portOfPelargir = (location "145033" "Port of Pelargir" TheSiegeOfGondor 3 2 4) {cdCardTraits = setFromList [City], cdShadowEffect = True}
+
+pelargirQuays :: CardDef
+pelargirQuays = (location "145034" "Pelargir Quays" TheSiegeOfGondor 2 3 4) {cdCardTraits = setFromList [City]}

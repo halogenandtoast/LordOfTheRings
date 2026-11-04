@@ -479,6 +479,7 @@ allQuestCards =
       , troubleInBree
       , intoTheWild
       , theRingwraithsAttack
+      , attackOnPelargir
       ]
 
 theDrippingWalls :: CardDef
@@ -2025,3 +2026,9 @@ intoTheWild = quest "141026" "Into the Wild" AKnifeInTheDark 2 6
 -- | No quest points: the players win once no Nazgûl enemy is in play.
 theRingwraithsAttack :: CardDef
 theRingwraithsAttack = quest "141027" "The Ringwraiths Attack" AKnifeInTheDark 3 0
+
+-- * The Siege of Gondor
+
+-- | The players win by defeating it, which they cannot while Great Corsair Ship is in play.
+attackOnPelargir :: CardDef
+attackOnPelargir = quest "145069" "Attack on Pelargir" TheSiegeOfGondor 1 20

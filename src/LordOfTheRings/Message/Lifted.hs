@@ -10,9 +10,9 @@ module LordOfTheRings.Message.Lifted (
 
 import LordOfTheRings.Attachment.CardDefs qualified as Attachments
 import LordOfTheRings.Campaign (CampaignLogUpdate)
-import LordOfTheRings.Card (Card (..), CardCode, CardDef, CardType, EncounterCard, HasCardCode (..), IsCard (..), PlayerCard, cdCardTraits, cdCardType, genEncounterCard, genPlayerCard, lookupCardDef, toCardDef)
+import LordOfTheRings.Card (Card (..), CardCode, CardCost (StaticCost), CardDef, CardType, EncounterCard, HasCardCode (..), IsCard (..), PlayerCard, cdCardTraits, cdCardType, cdCost, genEncounterCard, genPlayerCard, lookupCardDef, toCardDef)
 import LordOfTheRings.Trait (Trait (Master))
-import LordOfTheRings.Classes.Entity (Entity (toAttrs))
+import LordOfTheRings.Classes.Entity (Entity (toAttrs, toId))
 import LordOfTheRings.Scenario.Types (ScenarioAttrs (scenarioSetAside))
 import LordOfTheRings.Classes.HasGame (HasGame, getsGame)
 import LordOfTheRings.Frontend (Frontend)
@@ -861,6 +861,20 @@ discardNonObjectiveAttachment source pid = do
     questionLabeled "discardNonObjectiveAttachment"
     causedBy source
     targets attachments discard
+
+-- | The player discards the highest cost attachment he controls, picking among those tied,
+-- as Western Quarter and Raiding the Coasts read.
+discardHighestCostAttachment :: (ReverseQueue m, Targetable source) => source -> PlayerId -> m ()
+discardHighestCostAttachment source pid = do
+  attachments <- getsGame (filter ((== pid) . (.controller) . toAttrs) . toList . (.attachments) . gameEntities)
+  let cost x = case cdCost (toCardDef x) of
+        Just (StaticCost n) -> n
+        _ -> 0
+      highest = foldr (max . cost) 0 attachments
+  chooseOrRunOneM pid do
+    questionLabeled "discardHighestCostAttachment"
+    causedBy source
+    targets [toId x | x <- attachments, cost x == highest] discard
 
 {- | "If this attack destroys a character", of an attack the card has the enemy make now, as
 Vigilant Orc's immediate attack reads: 'DoStep' 1 of the message, once that attack is over,

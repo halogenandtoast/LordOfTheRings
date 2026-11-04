@@ -395,6 +395,7 @@ import LordOfTheRings.Quest.Cards.RaceToRivendell
 import LordOfTheRings.Quest.Cards.TroubleInBree
 import LordOfTheRings.Quest.Cards.IntoTheWild
 import LordOfTheRings.Quest.Cards.TheRingwraithsAttack
+import LordOfTheRings.Quest.Cards.AttackOnPelargir (attackOnPelargir)
 import LordOfTheRings.Quest.Runner ()
 import LordOfTheRings.Quest.Types as X
 import LordOfTheRings.Id
@@ -822,5 +823,6 @@ allQuests =
         , SomeQuestCard troubleInBree
         , SomeQuestCard intoTheWild
         , SomeQuestCard theRingwraithsAttack
+        , SomeQuestCard attackOnPelargir
         ]
     ]
