@@ -211,6 +211,9 @@ data ModifierType
     ReduceCostToAttach CardMatcher Int
   | -- | on an enemy: any player's characters may attack it, wherever it is
     AttackableByAnyCharacter
+  | -- | on an enemy: the player attacks it as if it were engaged with him, wherever it is,
+    -- as Charge into Battle reads
+    AttackedAsIfEngagedWith PlayerId
   | -- | when attacking an enemy with the trait, attack is raised by this much
     AttackBonusAgainst Trait Int
   | -- | the hero may attack an enemy in the staging area when attacking alone
