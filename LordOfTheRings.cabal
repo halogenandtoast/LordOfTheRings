@@ -1177,6 +1177,7 @@ library
       LordOfTheRings.Location.Cards.AbandonedCampNightmare
       LordOfTheRings.Location.Cards.AbandonedMine
       LordOfTheRings.Location.Cards.AccursedBattlefield
+      LordOfTheRings.Location.Cards.AccursedForest
       LordOfTheRings.Location.Cards.AFloodedFord
       LordOfTheRings.Location.Cards.AftCabin
       LordOfTheRings.Location.Cards.AltarOfMidwinter
@@ -1247,6 +1248,7 @@ library
       LordOfTheRings.Location.Cards.CursedTemple
       LordOfTheRings.Location.Cards.CursedTempleNightmare
       LordOfTheRings.Location.Cards.DarkAbyss
+      LordOfTheRings.Location.Cards.DarkBlackWoods
       LordOfTheRings.Location.Cards.DarkCornerOfFangorn
       LordOfTheRings.Location.Cards.DarkHalls
       LordOfTheRings.Location.Cards.DarkPathway

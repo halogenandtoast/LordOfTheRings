@@ -438,6 +438,8 @@ import LordOfTheRings.Location.Cards.FoothillsOfMordor
 import LordOfTheRings.Location.Cards.ShadowyVale
 import LordOfTheRings.Location.Cards.HillsOfWilderland
 import LordOfTheRings.Location.Cards.LonelyLands
+import LordOfTheRings.Location.Cards.AccursedForest
+import LordOfTheRings.Location.Cards.DarkBlackWoods
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -922,5 +924,7 @@ allLocations =
         , SomeLocationCard shadowyVale
         , SomeLocationCard hillsOfWilderland
         , SomeLocationCard lonelyLands
+        , SomeLocationCard accursedForest
+        , SomeLocationCard darkBlackWoods
         ]
     ]

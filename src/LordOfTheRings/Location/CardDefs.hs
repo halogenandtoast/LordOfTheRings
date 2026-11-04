@@ -455,6 +455,8 @@ allLocationCards =
       , shadowyVale
       , hillsOfWilderland
       , lonelyLands
+      , accursedForest
+      , darkBlackWoods
       ]
 
 drownedTreasury :: CardDef
@@ -3442,3 +3444,9 @@ hillsOfWilderland = (location "18023" "Hills of Wilderland" HillsOfWilderland 2 
 
 lonelyLands :: CardDef
 lonelyLands = (location "18024" "Lonely Lands" HillsOfWilderland 3 2 5) {cdCardTraits = setFromList [Hills], cdEasyModeQuantity = Just 2}
+
+accursedForest :: CardDef
+accursedForest = (location "18038" "Accursed Forest" DarkWoods 2 4 4) {cdCardTraits = setFromList [Forest, Dark], cdEasyModeQuantity = Just 1}
+
+darkBlackWoods :: CardDef
+darkBlackWoods = (location "18039" "Dark Black Woods" DarkWoods 3 3 3) {cdCardTraits = setFromList [Forest, Dark], cdEasyModeQuantity = Just 2}
