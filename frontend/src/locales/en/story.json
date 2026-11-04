@@ -4061,5 +4061,23 @@
     "setup": [
       "“The Tower of Cirith Ungol” is played with an encounter deck built with all the cards from the following encounter sets: The Tower of Cirith Ungol, Orcs of Mordor, and Deep Shadows. Aragorn cannot be used while playing The Tower of Cirith Ungol."
     ]
+  },
+  "shelobs-lair": {
+    "intro": [
+      "Turned away from the Black Gate, Frodo and Sam let Sméagol lead them south through Ithilien towards a hidden pass into Mordor. Past the Morgul Vale the path climbs to Cirith Ungol, where something old and hungry waits in the dark."
+    ],
+    "setup": [
+      "Build the encounter deck from the Shelob's Lair, The Great Spider, Gollum and Morgul Nazgûl encounter sets. Cleft of Cirith Ungol, Shelob and The Great Spider are set aside for later stages."
+    ],
+    "rules": [
+      {
+        "title": "Shelob",
+        "text": "Shelob enters the staging area at stage 2A and cannot leave it during that stage. Resources placed on her raise her threat. While Cleft of Cirith Ungol is in the victory display she loses Indestructible and engages the first player."
+      },
+      {
+        "title": "Gollum's Betrayal",
+        "text": "At stage 3 Sméagol turns into Gollum. Once defeated, Gollum goes to the victory display instead of turning back over. The players win once Shelob and Gollum are both in the victory display and the stage is defeated."
+      }
+    ]
   }
 }
