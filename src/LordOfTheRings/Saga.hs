@@ -88,6 +88,11 @@ fellowshipSetup sid
  where
   ringBearer ring = Just $ FellowshipSetup ringBearers (Just ring)
 
+-- | The One Ring objective of each box that has one: The Black Riders', The Road
+-- Darkens', The Land of Shadow's and The Mountain of Fire's.
+oneRings :: [CardCode]
+oneRings = ["141085", "142091", "144063", "146065"]
+
 -- | The Fellowship sphere heroes with the Ring-bearer trait: the Frodo Baggins of The Black
 -- Riders, The Road Darkens, The Land of Shadow and The Mountain of Fire.
 ringBearers :: [CardCode]
