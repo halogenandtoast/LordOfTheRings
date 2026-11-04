@@ -28,12 +28,14 @@ data Trait
   | Burden
   | Burglar
   | CairAndros
+  | Camp
   | Captain
   | Captive
   | Captured
   | -- | the Capture trait, named apart from the keyword (The Mûmakil)
     CaptureTrait
   | CarnDum
+  | Castle
   | Cave
   | Champion
   | City
@@ -45,6 +47,7 @@ data Trait
   | Craftsman
   | Corruption
   | Creature
+  | Cultist
   | Cursed
   | Dale
   | Dark
@@ -61,6 +64,7 @@ data Trait
   | Dunland
   | Dwarf
   | Eagle
+  | Easterling
   | Elite
   | EmynMuil
   | Enedwaith
@@ -96,9 +100,11 @@ data Trait
   | Ithilien
   | Key
   | Lair
+  | Legend
   | Light
   | Marsh
   | Marshland
+  | Master
   | Mathom
   | Minstrel
   | Mirkwood
@@ -185,6 +191,7 @@ data Trait
   | Valley
   | Village
   | Villain
+  | Warden
   | Warg
   | Warrior
   | Wasteland
