@@ -4057,5 +4057,27 @@
         "text": "Each player, starting with the first player, reveals and resolves his own encounter card in the staging step. “You” on an encounter card is the player who revealed it, and a surge card's extra reveal is his."
       }
     ]
+  },
+  "a-knife-in-the-dark": {
+    "intro": [
+      "The hobbits reach the village of Bree, but the Enemy's spies are already at work there. A ranger called Strider offers to guide them into the wild toward Rivendell, while the Ringwraiths close in on the old watch-hill of Weathertop."
+    ],
+    "setup": [
+      "The encounter deck is built from the A Knife in the Dark, Hunted, The Ring and The Nazgûl encounter sets. The first player takes control of Frodo Baggins, the Ring-bearer, with The One Ring attached."
+    ],
+    "rules": [
+      {
+        "title": "Peril",
+        "text": "The player who reveals a card with Peril resolves its staging alone: the other players cannot take actions or trigger responses meanwhile."
+      },
+      {
+        "title": "Saga Staging",
+        "text": "Each player, starting with the first player, reveals and resolves his own encounter card in the staging step. “You” on an encounter card is the player who revealed it, and a surge card's extra reveal is his."
+      },
+      {
+        "title": "Out of Play Ringwraiths",
+        "text": "Stage 1A sets every Ringwraith aside, out of play. Several cards let the players shuffle one of them into the encounter deck instead of suffering another effect."
+      }
+    ]
   }
 }
