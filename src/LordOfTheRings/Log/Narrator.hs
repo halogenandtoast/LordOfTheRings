@@ -130,6 +130,7 @@ narrationFor = \case
     : [ikeyPart "log.sailingIconCanceled" [] | canceled > 0]
   PrepareCorsairDeck -> Just $ one $ mechanic [ikeyPart "log.corsairDeckPrepared" []]
   ScenarioSpecific "cityOfCorsairs.switchEncounterDeck" _ -> Just $ one $ mechanic [ikeyPart "log.secondEncounterDeckActive" []]
+  ScenarioSpecific "overTheMistyMountainsGrim.switchEncounterDeck" _ -> Just $ one $ mechanic [ikeyPart "log.secondEncounterDeckActive" []]
   PutObjectiveAllyIntoPlayUnder _ card -> Just $ one $ mechanic [ikeyPart "log.putIntoPlay" ["card" ~> EncounterCard card]]
   EliminatePlayer pid -> Just do
     who <- playerRefFor pid

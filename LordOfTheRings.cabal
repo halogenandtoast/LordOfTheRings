@@ -2191,6 +2191,7 @@ library
       LordOfTheRings.Quest.Cards.ApproachingCairAndros
       LordOfTheRings.Quest.Cards.ApproachingRivendell
       LordOfTheRings.Quest.Cards.APresenceInTheDark
+      LordOfTheRings.Quest.Cards.AShortRest
       LordOfTheRings.Quest.Cards.AssaultOnDolRhugar
       LordOfTheRings.Quest.Cards.AWayUp
       LordOfTheRings.Quest.Cards.AWellLaidTrap
@@ -2237,6 +2238,7 @@ library
       LordOfTheRings.Quest.Cards.DoubleBack
       LordOfTheRings.Quest.Cards.DoubleDealings
       LordOfTheRings.Quest.Cards.DouseTheFlames
+      LordOfTheRings.Quest.Cards.DownDownToGoblinTown
       LordOfTheRings.Quest.Cards.DrawHerFire
       LordOfTheRings.Quest.Cards.DrawingAttention
       LordOfTheRings.Quest.Cards.DriveThemOut
@@ -2463,6 +2465,7 @@ library
       LordOfTheRings.Quest.Cards.TheLowerDeeps
       LordOfTheRings.Quest.Cards.TheLowerDepths
       LordOfTheRings.Quest.Cards.TheMorgulRider
+      LordOfTheRings.Quest.Cards.TheMountainPass
       LordOfTheRings.Quest.Cards.TheMountainsPeaks
       LordOfTheRings.Quest.Cards.TheNecromancersTower
       LordOfTheRings.Quest.Cards.TheNineWalkers
@@ -2586,6 +2589,7 @@ library
       LordOfTheRings.Scenario.Scenarios.MirkwoodPaths
       LordOfTheRings.Scenario.Scenarios.MountGundabad
       LordOfTheRings.Scenario.Scenarios.MountGundabad.Helpers
+      LordOfTheRings.Scenario.Scenarios.OverTheMistyMountainsGrim
       LordOfTheRings.Scenario.Scenarios.OverTheMistyMountainsGrim.Helpers
       LordOfTheRings.Scenario.Scenarios.PassageThroughMirkwood
       LordOfTheRings.Scenario.Scenarios.PerilInPelargir
