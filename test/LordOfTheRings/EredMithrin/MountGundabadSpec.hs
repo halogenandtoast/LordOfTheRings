@@ -422,6 +422,14 @@ spec = describe "Mount Gundabad" do
     activeQuestFlipped `shouldReturn` True
     sort . map toCardCode . (.questDeck) <$> scenarioAttrs `shouldReturn` sort (map toCardCode [Quests.theLowerDeeps, Quests.frenziedWarrens])
 
+  it "puts Wormsbane discarded from a hero still in play in the encounter discard pile, the game not lost" . gundabadTest $ \pid -> do
+    setUp pid
+    w <- getsGame (fromJustNote "no Wormsbane" . fmap toId . headMay . toList . (.entities.objectives))
+    run $ Discard (ObjectiveTarget w)
+    getsGame (.outcome) `shouldReturn` Nothing
+    wormsbaneOn `shouldReturn` []
+    map toCardCode . scenarioEncounterDiscard <$> scenarioAttrs `shouldReturn` [toCardCode Objectives.wormsbane]
+
   it "loses the game as the hero with Wormsbane leaves play" . gundabadTest $ \pid -> do
     setUp pid
     beravor <- hero "01012"

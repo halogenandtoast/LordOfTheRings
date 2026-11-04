@@ -25,18 +25,26 @@ wormsbaneReforged = objective Wormsbane Cards.wormsbaneReforged
 isReforged :: ObjectiveAttrs -> Bool
 isReforged a = toCardCode a == toCardCode Cards.wormsbaneReforged
 
--- | Broken: Attached hero gets +1 attack. Reforged: Attached hero gets +X attack, where X is
--- 1 more than the number of quest cards in the victory display.
+{- | Broken: Attached hero gets +1 attack. Reforged: Attached hero gets +X attack, where X is
+1 more than the number of quest cards in the victory display.
+Discarded, as the restricted limit may discard it from a hero still in play, it goes to the
+encounter discard pile: the rule sheet and FAQ 1.9 say nothing of it, and neither side of the
+card says to return it to the staging area, so the core rules apply: a discarded card goes
+to the discard pile of the deck it belongs to, and Wormsbane is an encounter card, an
+objective of the Mount Gundabad encounter set (as Hall of Beorn prints it).
+-}
 instance HasModifiersFor Wormsbane where
-  getModifiersFor (Wormsbane a) = case a.placement of
-    AttachedTo host -> do
-      x <- if isReforged a then dagnirX else pure 1
-      modified a host [AttackModifier x]
-    _ -> pure ()
+  getModifiersFor (Wormsbane a) = do
+    modifySelf a [LeavesPlayToEncounterDiscard]
+    case a.placement of
+      AttachedTo host -> do
+        x <- if isReforged a then dagnirX else pure 1
+        modified a host [AttackModifier x]
+      _ -> pure ()
 
 -- | If attached hero leaves play, the players lose the game: the hero gone, what was
 -- attached to it is discarded. Wormsbane discarded from a hero still in play, as The Great
--- Worm discards it, loses nothing.
+-- Worm or the restricted limit discards it, loses nothing.
 instance RunMessage Wormsbane where
   runMessage msg (Wormsbane attrs) = case msg of
     Discard (isTarget attrs -> True) | AttachedTo (HeroTarget hid) <- attrs.placement -> do

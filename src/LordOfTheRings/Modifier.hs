@@ -177,6 +177,9 @@ data ModifierType
     -- must travel here
     MustBeTraveledTo
   | LeavesPlayToTopOfEncounterDeck
+  | -- | on an objective: discarded, it goes to the encounter discard pile, not back to the
+    -- staging area, as Wormsbane
+    LeavesPlayToEncounterDiscard
   | ShuffledIntoEncounterDeckWhenDefeated
   | -- | on an encounter card: as it leaves play the first player shuffles it into any
     -- player's deck, as Recurring Nightmare reads
