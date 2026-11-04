@@ -4684,7 +4684,7 @@ mordorOrc =
 
 -- | A burden with a set icon: never gathered. The scenario sets its 4 copies aside for
 -- stage 1A; its resolution adds 1 per player to the campaign pool. Its "Setup: Add Wraith
--- on Wings to the staging area" is for the scenarios that follow.
+-- on Wings to the staging area" is for the scenarios that follow ('cdSetupToStaging').
 wraithOnWings :: CardDef
 wraithOnWings =
   (enemy "145062" "Wraith on Wings" TheBattleOfThePelennorFields 4 45 0 6 4 12)
@@ -4692,6 +4692,7 @@ wraithOnWings =
     , cdSetIcon = Just TheBattleOfThePelennorFields
     , cdCardTraits = setFromList [Nazgul, Burden]
     , cdVictoryPoints = Just 5
+    , cdSetupToStaging = True
     }
 
 -- | Its Captain side; its Sorcerer side is 'theWitchKingSorcerer'. Set aside by stage 1A.

@@ -49,11 +49,12 @@ gatherEncounterSet attrs encounterSet =
 keptBurden :: ScenarioAttrs -> CardDef -> Bool
 keptBurden attrs def = maybe True (`notElem` removedBurdenSets attrs.scenarioId) (cdSetIcon def)
 
--- | An objective of the Campaign Pool comes into play as the scenario is set up rather than
--- being shuffled into a deck: each objective, and a saga objective-ally boon (with a set
--- icon), as Army of the Dead.
+-- | A card of the Campaign Pool that comes into play as the scenario is set up rather than
+-- being shuffled into a deck: each objective, a saga objective-ally boon (with a set icon),
+-- as Army of the Dead, and a burden whose Setup adds it to the staging area, as Wraith on
+-- Wings.
 entersPlayAtSetup :: CardDef -> Bool
-entersPlayAtSetup def = cdCardType def == ObjectiveType || (cdCardType def == ObjectiveAllyType && isJust (cdSetIcon def))
+entersPlayAtSetup def = cdCardType def == ObjectiveType || (cdCardType def == ObjectiveAllyType && isJust (cdSetIcon def)) || cdSetupToStaging def
 
 -- | The scenario's encounter deck from its encounter sets. In nightmare mode the
 -- nightmare deck's removals come out and its nightmare set goes in.
@@ -102,8 +103,8 @@ instance RunMessage ScenarioAttrs where
             else do
               card <- genEncounterCard def
               push $ PutObjectiveIntoPlayAttached card (toTarget hero.id)
-      -- a saga burden objective of the pool comes into play as its Setup reads: to the
-      -- staging area, as Gandalf's Delay, or onto the threat dial of the player the log
+      -- a saga burden of the pool comes into play as its Setup reads: to the staging area,
+      -- as Gandalf's Delay and Wraith on Wings, or onto the threat dial of the player the log
       -- records it for, as Overcome by Fear; a saga objective-ally boon under the control
       -- its text gives, as Army of the Dead's "Setup: The first player takes control"
       order <- getsGame gamePlayerOrder

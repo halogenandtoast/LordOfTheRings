@@ -247,6 +247,13 @@ spec = describe "The Battle of the Pelennor Fields" do
       sort attached `shouldBe` sort (map toCardCode [Attachments.andurilTheRoadDarkens, Attachments.bannerOfElendil])
       map toCardCode . (.victoryDisplay) <$> scenarioAttrs >>= (`shouldSatisfy` elem (toCardCode Objectives.theCorsairFleetGondor))
 
+    -- "Setup: Add Wraith on Wings to the staging area": an earned copy is not shuffled in
+    it "adds a Wraith on Wings of the Campaign Pool to the staging area as the game is set up" . campaignTestIn theBattleOfThePelennorFields lotr {campaignLogPool = [PoolCard (toCardCode Enemies.wraithOnWings) Nothing Nothing]} testDeck $ \pid -> do
+      setUp pid
+      wraiths <- getsGame (filter ((== toCardCode Enemies.wraithOnWings) . toCardCode) . toList . (.entities.enemies))
+      map (.placement) wraiths `shouldBe` [StagingArea]
+      copies Enemies.wraithOnWings . (.encounterDeck) <$> scenarioAttrs `shouldReturn` 0
+
     it "earns a Wraith on Wings for each player, and the Esquires for their heroes' controllers" . campaignTestIn theBattleOfThePelennorFields lotr testDeck $ \pid -> do
       flipFirstQuest pid
       beravor <- getHeroWithCode "01012"

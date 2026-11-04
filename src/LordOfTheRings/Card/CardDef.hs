@@ -116,12 +116,17 @@ data CardDef = CardDef
   -- gathered with one. The Lord of the Rings' campaign cards remove the burdens of the sets
   -- they name; a Hobbit scenario lets in the treasures of the sets its setup lists
   , cdTreasure :: Bool
+  -- ^ a Hobbit saga treasure: a player card discovered in one scenario and added to its
+  -- player's deck in a later one (The Hobbit: Over Hill and Under Hill rules insert)
   , cdSetupAttach :: Bool
   -- ^ a player card reading "Setup: Attach to a hero in play", as The Road Darkens' Gift
   -- boons: in its owner's deck as the game is set up, it is attached before the setup hand
   -- is drawn (The Black Riders rules insert, "New Setup Instructions")
-  -- ^ a Hobbit saga treasure: a player card discovered in one scenario and added to its
-  -- player's deck in a later one (The Hobbit: Over Hill and Under Hill rules insert)
+  , cdSetupToStaging :: Bool
+  -- ^ a saga burden reading "Setup: Add this to the staging area", as Wraith on Wings: in
+  -- the Campaign Pool, it enters the staging area as the game is set up instead of being
+  -- shuffled into the encounter deck (The Black Riders rules insert, "New Setup
+  -- Instructions")
   }
   deriving stock (Show, Eq, Generic)
 
@@ -185,6 +190,7 @@ emptyCardDef cCode name cType =
     , cdSetIcon = Nothing
     , cdTreasure = False
     , cdSetupAttach = False
+    , cdSetupToStaging = False
     }
 
 -- | Whether the card is a Hobbit saga treasure, the card type riddles and Expert
