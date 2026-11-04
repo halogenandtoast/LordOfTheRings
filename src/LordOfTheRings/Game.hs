@@ -44,7 +44,7 @@ import LordOfTheRings.Log.Refs (cardTitle, sendLogInOpenBlock, sourceCardTitle)
 import LordOfTheRings.Matcher
 import LordOfTheRings.Matcher.Window (windowMatches)
 import LordOfTheRings.Message
-import LordOfTheRings.Message.Lifted (choosePlayerM, drawCards, lowerThreatBy, raiseThreatFromDoomed, setUpFellowship, setUpTheOneRing, shuffleIntoDeck)
+import LordOfTheRings.Message.Lifted (choosePlayerM, declaredAttacker, drawCards, lowerThreatBy, raiseThreatFromDoomed, setUpFellowship, setUpTheOneRing, shuffleIntoDeck)
 import LordOfTheRings.Message.Lifted.Queue (capture)
 import LordOfTheRings.Modifier
 import LordOfTheRings.Objective
@@ -4044,6 +4044,12 @@ damage counts against the player, the threat it raises.
 -}
 attackDamage :: PlayerId -> EnemyId -> Target -> Int -> GameT [Message]
 attackDamage pid eid target n = do
+  -- all of it canceled, as Bilbo's Magic Ring cancels it
+  canceled <- elem (AttackDamageCanceled eid) <$> getModifiers GameTarget
+  if canceled then pure [] else attackDamageDealt pid eid target n
+
+attackDamageDealt :: PlayerId -> EnemyId -> Target -> Int -> GameT [Message]
+attackDamageDealt pid eid target n = do
   mods <- getModifiers eid
   let excessToThreat = ExcessDamageToThreat `elem` mods
       excessToOthers = ExcessDamageToOtherCharacters `elem` mods
@@ -4200,13 +4206,6 @@ attackerRoom :: EnemyId -> GameT (Maybe Int)
 attackerRoom eid = do
   mods <- getModifiers eid
   pure $ subtract (length [() | DeclaredAttackerThisRound <- mods]) <$> minimumMay [n | AttackersPerRoundLimit n <- mods]
-
--- | The character is declared as an attacker against the enemy.
-declaredAttacker :: Target -> EnemyId -> [Message]
-declaredAttacker a eid =
-  [ CreateEffect $ Effect GameSource (EnemyTarget eid) [DeclaredAttackerThisRound] UntilEndOfRound
-  , CheckWindows [mkAfter $ DeclaredAsAttacker a eid]
-  ]
 
 -- | Whether the character may defend against the enemy's attack: one that cannot exhaust
 -- only if it defends without exhausting.

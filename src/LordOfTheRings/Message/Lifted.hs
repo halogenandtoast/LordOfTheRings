@@ -54,7 +54,8 @@ import LordOfTheRings.Token
 import LordOfTheRings.Window (
   Timing (After, When),
   Window (..),
-  WindowType (AllyDiscardedByCardEffect, CharacterRescued, DeclaredAsDefender, DefendedAttack, DiscardedFromEncounterDeck, EnemyAttacking, ShadowEffectTriggered, StagingStepEnds, ThreatRaisedByDoomed, ThreatRaisedByEncounter, ThreatReduced, Traveled, WhenRevealedCanceled),
+  WindowType (AllyDiscardedByCardEffect, AttackersDeclared, CharacterRescued, DeclaredAsAttacker, DeclaredAsDefender, DefendedAttack, DiscardedFromEncounterDeck, EnemyAttacking, ShadowEffectTriggered, StagingStepEnds, ThreatRaisedByDoomed, ThreatRaisedByEncounter, ThreatReduced, Traveled, WhenRevealedCanceled),
+  mkAfter,
  )
 
 dealDamage
@@ -1364,6 +1365,21 @@ playFromDiscardAtNoCost :: ReverseQueue m => PlayerId -> PlayerId -> PlayerCard 
 playFromDiscardAtNoCost owner pid card = do
   removeFromDiscard owner card.id
   pushAll =<< inLogBlock (PlayBlock pid (PlayerCard card)) [PlayAtNoCost pid card]
+
+-- | What declaring the character as an attacker against the enemy opens: the enemy is one
+-- an attacker was declared against this round, and the window after it.
+declaredAttacker :: Target -> EnemyId -> [Message]
+declaredAttacker a eid =
+  [ CreateEffect $ Effect GameSource (EnemyTarget eid) [DeclaredAttackerThisRound] UntilEndOfRound
+  , CheckWindows [mkAfter $ DeclaredAsAttacker a eid]
+  ]
+
+{- | The character is declared as the only attacker against the enemy, wherever it is, and
+the attack resolves, as Great Yew Bow's ranged attack on an enemy in the staging area.
+-}
+declareSoleAttacker :: (ReverseQueue m, Targetable attacker) => PlayerId -> attacker -> EnemyId -> m ()
+declareSoleAttacker pid (toTarget -> attacker) eid =
+  pushAll $ AttackWith attacker : declaredAttacker attacker eid <> [CheckWindows [mkAfter $ AttackersDeclared eid], ResolveAttack pid eid]
 
 {- | The character attacks the enemy, wherever it is, as an effect declares it an
 attacker; its attack raised by the bonus for that attack alone.

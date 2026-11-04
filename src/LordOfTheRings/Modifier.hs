@@ -3,7 +3,7 @@ module LordOfTheRings.Modifier (module LordOfTheRings.Modifier) where
 import LordOfTheRings.Campaign (CampaignLogKey)
 import LordOfTheRings.Card.CardType (CardType)
 import LordOfTheRings.Card.Code (CardCode)
-import LordOfTheRings.Id (PlayerId)
+import LordOfTheRings.Id (EnemyId, PlayerId)
 import LordOfTheRings.Keyword (Keyword)
 import LordOfTheRings.Matcher.Types (CardMatcher, EnemyMatcher, HeroMatcher, LocationMatcher, PlayerMatcher)
 import LordOfTheRings.Outcome (Outcome)
@@ -472,6 +472,9 @@ data ModifierType
   | -- | on the game: the next enemy revealed from the encounter deck is dealt this much
     -- damage by the effect's source, as Expecting Mischief reads
     DamageNextRevealedEnemy Int
+  | -- | on the game: all damage from the enemy's attack is canceled, as Bilbo's Magic Ring
+    -- cancels it, whatever the enemy is immune to
+    AttackDamageCanceled EnemyId
   | -- | on a card: no time counter can be removed from it, as Tharbad Hideout reads for
     -- the current quest
     CannotRemoveTimeCounters
