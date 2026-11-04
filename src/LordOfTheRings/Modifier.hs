@@ -861,7 +861,7 @@ data ModifierType
     -- reads
     ArcheryDamageToShipObjectives
   | -- | on the game: no more than 1 ally can enter play each round, however it enters, as
-    -- Corsair Waters reads
+    -- Corsair Waters reads; on a player, no more than 1 under him, as The Spider's Pass
     OneAllyEntersPlayPerRound
   | -- | on the game: the matching active location adds its threat to the staging area, as
     -- Flooded Ruins reads

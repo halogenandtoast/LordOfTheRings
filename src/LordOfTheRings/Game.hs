@@ -514,7 +514,7 @@ runGame msg g = case msg of
       _ -> runGame'' msg g
   -- no ally enters play once one has this round, as Corsair Waters reads: one to be put
   -- into play stays where it is, or goes to its owner's discard pile if it has left it
-  PutAllyIntoPlay {} | allyEntryBarred g -> pure g
+  PutAllyIntoPlay pid _ | allyEntryBarred pid g -> pure g
   -- nor one its controller cannot put into play, as Fellowship bars non-unique allies
   PutAllyIntoPlay pid cid
     | Just card <- find ((== cid) . (.id)) . (.hand) =<< Map.lookup pid g.players
@@ -525,7 +525,7 @@ runGame msg g = case msg of
         held = maybe False (\p -> any ((== card.id) . (.id)) (p.hand <> p.deck <> p.discard)) owner
     pushWhen (not held) $ PutInDiscard card
     pure g
-  PutAllyIntoPlayUnder _ card | allyEntryBarred g -> do
+  PutAllyIntoPlayUnder pid card | allyEntryBarred pid g -> do
     let owner = card.owner >>= (`Map.lookup` g.players)
         held = maybe False (\p -> any ((== card.id) . (.id)) (p.hand <> p.deck <> p.discard)) owner
     pushWhen (not held) $ PutInDiscard card
@@ -3913,9 +3913,9 @@ entering a = do
   exhausted <- elem AlliesEnterPlayExhausted <$> getModifiers GameTarget
   pure $ if exhausted then overAttrs (\x -> x {allyExhausted = True}) a else a
 
--- | Mark the ally as having entered play this round.
+-- | Mark the ally as having entered play this round, under the player its source names.
 enteredPlayThisRound :: Ally -> Message
-enteredPlayThisRound a = CreateEffect $ Effect GameSource (toTarget a) [EnteredPlayThisRound] UntilEndOfRound
+enteredPlayThisRound a = CreateEffect $ Effect (PlayerSource $ allyOwner $ toAttrs a) (toTarget a) [EnteredPlayThisRound] UntilEndOfRound
 
 -- | The windows for an ally entering play under the player.
 allyEntersPlay :: PlayerId -> Ally -> Message
