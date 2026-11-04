@@ -1776,6 +1776,7 @@ runGameMessage msg g = case msg of
             [ CreateEffect $ Effect GameSource GameTarget [QuestedSuccessfullyThisPhase] UntilEndOfPhase
             , CheckWindows [mkAfter QuestedSuccessfully]
             , PlaceProgressOnQuest (willpower - threat)
+            , CheckWindows [mkAfter PlacedProgressFromQuesting]
             ]
       | threat > willpower ->
           -- responses before the threat is raised may stop it, as Ever Onward's: see
