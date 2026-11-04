@@ -4023,6 +4023,11 @@ payFor g pid card fromHand windows host discount = do
             [CreateEffect $ Effect (CardIdSource card.id) (CardIdTarget card.id) [GainKeyword (Doomed k)] UntilEndOfRound]
         , Label (ikey "label.doNotGiveDoomed") []
         ]
+  pushAll
+    [ CreateEffect $ Effect (effectSource e) (CardIdTarget card.id) ms UntilEndOfRound
+    | e <- spentEffects
+    , SpentOnCardGives ms <- effectModifiers e
+    ]
   let gained e = effectSource e == CardIdSource card.id && effectTarget e == CardIdTarget card.id
   pure $ g & activeCostsL %~ insertEntity activeCost & effectsL %~ filter (\e -> not (spent e || gained e))
 

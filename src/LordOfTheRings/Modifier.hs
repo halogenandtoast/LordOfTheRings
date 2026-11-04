@@ -374,6 +374,10 @@ data ModifierType
   | -- | on a player, or on the game for every player: the next card played from hand
     -- gains Doomed N, as Gríma's Action reads; spent with it
     NextCardGainsDoomed Int
+  | -- | alongside a reduction of the next matching card's cost, on the same effect: the
+    -- card that spends it gets these modifiers until the end of the round, as the allies
+    -- Man the Walls lowers cannot quest
+    SpentOnCardGives [ModifierType]
   | -- | on a card in hand, as its card id: its player may give it Doomed N as they play
     -- it from hand, as Greyflood Wanderer reads; it then gains 'GainKeyword' of it
     MayGainDoomed Int
