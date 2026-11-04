@@ -182,6 +182,8 @@ import LordOfTheRings.Event.Cards.ComeTogether
 import LordOfTheRings.Event.Cards.Command
 import LordOfTheRings.Event.Cards.HuntingParty
 import LordOfTheRings.Event.Cards.TheFreePeoples
+import LordOfTheRings.Event.Cards.BurstIntoSong
+import LordOfTheRings.Event.Cards.OldToby
 import LordOfTheRings.Event.Types as X
 import LordOfTheRings.Id
 import LordOfTheRings.Prelude
@@ -383,5 +385,7 @@ allEvents =
         , SomeEventCard commandTactics
         , SomeEventCard huntingParty
         , SomeEventCard theFreePeoples
+        , SomeEventCard burstIntoSong
+        , SomeEventCard oldToby
         ]
     ]

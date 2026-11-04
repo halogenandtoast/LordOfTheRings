@@ -195,6 +195,8 @@ allAllyCards =
       , starla
       , riderOfRohan
       , dunedainLookout
+      , defenderOfCairAndros
+      , southronRefugee
       ]
 
 guardOfTheCitadel :: CardDef
@@ -1358,4 +1360,16 @@ dunedainLookout :: CardDef
 dunedainLookout =
   (ally "17062" "Dúnedain Lookout" Lore (StaticCost 2) 1 1 1 2)
     { cdCardTraits = setFromList [Dunedain]
+    }
+
+defenderOfCairAndros :: CardDef
+defenderOfCairAndros =
+  (ally "17084" "Defender of Cair Andros" Tactics (StaticCost 4) 1 1 0 3)
+    { cdCardTraits = setFromList [Gondor, Warrior]
+    }
+
+southronRefugee :: CardDef
+southronRefugee =
+  (ally "17090" "Southron Refugee" Neutral (StaticCost 2) 1 1 0 2)
+    { cdCardTraits = setFromList [Harad]
     }

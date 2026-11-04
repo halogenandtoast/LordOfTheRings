@@ -12,7 +12,7 @@ import LordOfTheRings.Trait (Trait (Burden))
 
 -- | Side quests from players' decks: player cards, built as quests once played.
 allPlayerSideQuestCards :: Map CardCode CardDef
-allPlayerSideQuestCards = Map.fromList $ map (\def -> (cdCardCode def, def)) [gatherInformation, doubleBack, delayTheEnemy, sendForAid, scoutAhead, keepWatch]
+allPlayerSideQuestCards = Map.fromList $ map (\def -> (cdCardCode def, def)) [gatherInformation, doubleBack, delayTheEnemy, sendForAid, scoutAhead, keepWatch, rallyTheWest]
 
 scoutAhead :: CardDef
 scoutAhead =
@@ -53,6 +53,13 @@ sendForAid =
 keepWatch :: CardDef
 keepWatch =
   (playerSideQuest "17059" "Keep Watch" Tactics (StaticCost 1) 6)
+    { cdVictoryPoints = Just 1
+    , cdLimitOneInVictoryDisplay = True
+    }
+
+rallyTheWest :: CardDef
+rallyTheWest =
+  (playerSideQuest "17087" "Rally the West" Spirit (StaticCost 1) 6)
     { cdVictoryPoints = Just 1
     , cdLimitOneInVictoryDisplay = True
     }

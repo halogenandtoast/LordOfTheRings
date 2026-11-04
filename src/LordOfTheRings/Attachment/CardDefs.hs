@@ -186,6 +186,9 @@ allAttachmentCards =
       , haradrimSpear
       , firesideSong
       , doughtyRanger
+      , songOfHope
+      , fearlessScout
+      , dunedainPipe
       ]
 
 -- | A boon of the Revised Core campaign: Permanent, limit 1 per hero.
@@ -1245,5 +1248,26 @@ doughtyRanger :: CardDef
 doughtyRanger =
   (attachment "17063" "Doughty Ranger" Lore (StaticCost 1))
     { cdCardTraits = setFromList [Skill]
+    , cdLimitOnePerHost = True
+    }
+
+songOfHope :: CardDef
+songOfHope =
+  (attachment "17082" "Song of Hope" Leadership (StaticCost 0))
+    { cdCardTraits = setFromList [Song]
+    , cdLimitOnePerHost = True
+    }
+
+fearlessScout :: CardDef
+fearlessScout =
+  (attachment "17086" "Fearless Scout" Spirit (StaticCost 1))
+    { cdCardTraits = setFromList [Skill]
+    , cdLimitOnePerHost = True
+    }
+
+dunedainPipe :: CardDef
+dunedainPipe =
+  (attachment "17088" "Dúnedain Pipe" Lore (StaticCost 1))
+    { cdCardTraits = setFromList [Item, Pipe]
     , cdLimitOnePerHost = True
     }

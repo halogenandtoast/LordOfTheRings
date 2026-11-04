@@ -217,6 +217,8 @@ import LordOfTheRings.Ally.Cards.Starla
 import LordOfTheRings.Ally.Cards.CaptiveVillager
 import LordOfTheRings.Ally.Cards.RiderOfRohan
 import LordOfTheRings.Ally.Cards.DunedainLookout
+import LordOfTheRings.Ally.Cards.DefenderOfCairAndros
+import LordOfTheRings.Ally.Cards.SouthronRefugee
 import LordOfTheRings.Ally.Runner ()
 import LordOfTheRings.Ally.Types as X
 import LordOfTheRings.Id
@@ -466,5 +468,7 @@ allAllies =
         , SomeAllyCard captiveVillager
         , SomeAllyCard riderOfRohan
         , SomeAllyCard dunedainLookout
+        , SomeAllyCard defenderOfCairAndros
+        , SomeAllyCard southronRefugee
         ]
     ]

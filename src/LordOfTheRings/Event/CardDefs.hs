@@ -199,6 +199,8 @@ allEventCards =
       , commandTactics
       , huntingParty
       , theFreePeoples
+      , burstIntoSong
+      , oldToby
       ]
 
 everVigilant :: CardDef
@@ -792,3 +794,12 @@ huntingParty = event "17057" "Hunting Party" Leadership (StaticCost 1)
 
 theFreePeoples :: CardDef
 theFreePeoples = event "17064" "The Free Peoples" Neutral (StaticCost 5)
+
+burstIntoSong :: CardDef
+burstIntoSong = event "17083" "Burst into Song" Leadership (StaticCost 2)
+
+oldToby :: CardDef
+oldToby =
+  (event "17089" "Old Toby" Lore (StaticCost 2))
+    { cdCardTraits = setFromList [Pipeweed]
+    }

@@ -2207,5 +2207,8 @@
   },
   "huntingParty": {
     "discard": "Hunting Party: discard a non-unique enemy in the staging area"
+  },
+  "dunedainPipe": {
+    "bottom": "Dúnedain Pipe: choose a card from your hand to place on the bottom of your deck"
   }
 }

@@ -50,6 +50,7 @@ library
       LordOfTheRings.Ally.Cards.Damrod
       LordOfTheRings.Ally.Cards.DaughterOfTheNimrodel
       LordOfTheRings.Ally.Cards.DawnStar
+      LordOfTheRings.Ally.Cards.DefenderOfCairAndros
       LordOfTheRings.Ally.Cards.DefenderOfRammas
       LordOfTheRings.Ally.Cards.DefenderOfTheNaith
       LordOfTheRings.Ally.Cards.Denethor
@@ -196,6 +197,7 @@ library
       LordOfTheRings.Ally.Cards.SoldierOfDolAmroth
       LordOfTheRings.Ally.Cards.SoldierOfGondor
       LordOfTheRings.Ally.Cards.SonOfArnor
+      LordOfTheRings.Ally.Cards.SouthronRefugee
       LordOfTheRings.Ally.Cards.SquireOfTheCitadel
       LordOfTheRings.Ally.Cards.Starla
       LordOfTheRings.Ally.Cards.Sulien
@@ -265,6 +267,7 @@ library
       LordOfTheRings.Attachment.Cards.DoughtyRanger
       LordOfTheRings.Attachment.Cards.DunedainCache
       LordOfTheRings.Attachment.Cards.DunedainMark
+      LordOfTheRings.Attachment.Cards.DunedainPipe
       LordOfTheRings.Attachment.Cards.DunedainQuest
       LordOfTheRings.Attachment.Cards.DunedainRemedy
       LordOfTheRings.Attachment.Cards.DunedainSignal
@@ -282,6 +285,7 @@ library
       LordOfTheRings.Attachment.Cards.ExtraSails
       LordOfTheRings.Attachment.Cards.FastHitch
       LordOfTheRings.Attachment.Cards.FavorOfTheValar
+      LordOfTheRings.Attachment.Cards.FearlessScout
       LordOfTheRings.Attachment.Cards.Firefoot
       LordOfTheRings.Attachment.Cards.FiresideSong
       LordOfTheRings.Attachment.Cards.ForestSnare
@@ -358,6 +362,7 @@ library
       LordOfTheRings.Attachment.Cards.Silverthorn
       LordOfTheRings.Attachment.Cards.SongOfBattle
       LordOfTheRings.Attachment.Cards.SongOfEarendil
+      LordOfTheRings.Attachment.Cards.SongOfHope
       LordOfTheRings.Attachment.Cards.SongOfKings
       LordOfTheRings.Attachment.Cards.SongOfMocking
       LordOfTheRings.Attachment.Cards.SongOfTravel
@@ -829,6 +834,7 @@ library
       LordOfTheRings.Event.Cards.BeornsHospitality
       LordOfTheRings.Event.Cards.BladeMastery
       LordOfTheRings.Event.Cards.BoomedAndTrumpeted
+      LordOfTheRings.Event.Cards.BurstIntoSong
       LordOfTheRings.Event.Cards.CampfireTales
       LordOfTheRings.Event.Cards.CaptainsWisdom
       LordOfTheRings.Event.Cards.ChargeOfTheRohirrim
@@ -920,6 +926,7 @@ library
       LordOfTheRings.Event.Cards.NoiselessMovement
       LordOfTheRings.Event.Cards.NoneReturn
       LordOfTheRings.Event.Cards.OathOfEorl
+      LordOfTheRings.Event.Cards.OldToby
       LordOfTheRings.Event.Cards.OutOfSight
       LordOfTheRings.Event.Cards.OutOfTheWild
       LordOfTheRings.Event.Cards.PartingGifts
@@ -1707,6 +1714,7 @@ library
       LordOfTheRings.Quest.Cards.RadagastsRequest
       LordOfTheRings.Quest.Cards.RaidGolfimbulsVault
       LordOfTheRings.Quest.Cards.RallyTheFighters
+      LordOfTheRings.Quest.Cards.RallyTheWest
       LordOfTheRings.Quest.Cards.ReinforcingTheBanks
       LordOfTheRings.Quest.Cards.RescueFromTheTrolls
       LordOfTheRings.Quest.Cards.RescueIarion
