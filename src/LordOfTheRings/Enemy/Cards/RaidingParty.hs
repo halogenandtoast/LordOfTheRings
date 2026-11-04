@@ -27,11 +27,11 @@ instance RunMessage RaidingParty where
       let discarded = zip players deck
       discardTopOfEncounterDeck attrs (length discarded)
       -- the engagement check is against that enemy alone, in the discard pile: it comes
-      -- out engaged with him if his threat reaches its printed engagement cost, else it
-      -- stays discarded. Out of play, no modifier of a card in play reaches its cost.
+      -- out engaged with him if his threat, as engagement checks read it, reaches its
+      -- printed engagement cost, else it stays discarded
       for_ discarded \(pid, card) -> do
         let def = toCardDef card
-        threat <- getThreat pid
+        threat <- getEngagementThreat pid
         when (cdCardType def == EnemyType && Ambush `member` cdKeywords def && maybe False (<= threat) (cdEngagementCost def)) do
           removeFromEncounterDiscard card
           putEnemyIntoPlayEngaged pid card

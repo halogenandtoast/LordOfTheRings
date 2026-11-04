@@ -27,6 +27,9 @@ data ModifierType
   | -- | on an enemy: its engagement cost is this much higher as the player makes an
     -- engagement check against it, as Hunting Pack's is lower
     EngagementCostAgainst PlayerId Int
+  | -- | on a player: he is considered to have this much more threat for engagement checks
+    -- only, as Vicious Trackers reads; read with 'getEngagementThreat'
+    ThreatForEngagementChecks Int
   | GainTrait Trait
   | GainResourceIcon Sphere
   | ReturnToHandAtEndOfPhase

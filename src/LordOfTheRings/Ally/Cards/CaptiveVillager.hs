@@ -13,12 +13,10 @@ newtype CaptiveVillager = CaptiveVillager AllyAttrs
 captiveVillager :: AllyCard CaptiveVillager
 captiveVillager = ally CaptiveVillager Cards.captiveVillager
 
--- | Its controller is considered to have +5 threat while making engagement checks: each
--- enemy in the staging area costs 5 less to engage him, an ambush's check among them.
+-- | Its controller is considered to have +5 threat while making engagement checks.
 instance HasModifiersFor CaptiveVillager where
-  getModifiersFor (CaptiveVillager a) = for_ [p | InPlayArea p <- [a.placement]] \pid -> do
-    enemies <- select EnemyInStagingArea
-    for_ enemies \e -> modified a e [EngagementCostAgainst pid (-5)]
+  getModifiersFor (CaptiveVillager a) = for_ [p | InPlayArea p <- [a.placement]] \pid ->
+    modified a (PlayerTarget pid) [ThreatForEngagementChecks 5]
 
 -- | If a Captive Villager leaves play, the players lose the game (Nightmare setup card).
 instance HasAbilities CaptiveVillager where

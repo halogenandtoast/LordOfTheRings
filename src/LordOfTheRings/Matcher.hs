@@ -527,6 +527,15 @@ getThreat pid = do
   mods <- map modifierType . Map.findWithDefault [] (PlayerTarget pid) <$> getsGame gameModifiers
   pure $ foldr min threat [n | ThreatCountsAsAtMost n <- mods]
 
+-- | The player's threat as an engagement check reads it, an enemy's in the discard pile
+-- too: more by what he is considered to have for engagement checks, as Vicious Trackers
+-- reads.
+getEngagementThreat :: HasGame m => PlayerId -> m Int
+getEngagementThreat pid = do
+  threat <- getThreat pid
+  mods <- map modifierType . Map.findWithDefault [] (PlayerTarget pid) <$> getsGame gameModifiers
+  pure $ threat + sum [n | ThreatForEngagementChecks n <- mods]
+
 -- | The player whose set-aside cards hold the card, as a Ranger of the North shuffled
 -- into the encounter deck stays its owner's.
 setAsideOwner :: HasGame m => CardId -> m (Maybe PlayerId)

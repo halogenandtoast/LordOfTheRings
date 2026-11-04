@@ -5,7 +5,7 @@ import LordOfTheRings.Helpers.Modifiers (getModifiers)
 import LordOfTheRings.Helpers.Staging (getEngagementCost, getEnemyAttack, getEnemyDefense, getStagingThreat)
 import LordOfTheRings.Modifier (ModifierType (..))
 import LordOfTheRings.Location.CardDefs qualified as Locations
-import LordOfTheRings.Matcher (EnemyMatcher (EnemyEngagedWith, EnemyWithId), PlayerMatcher (PlayerWithId), getEnemy, selectAny)
+import LordOfTheRings.Matcher (EnemyMatcher (EnemyEngagedWith, EnemyWithId), PlayerMatcher (PlayerWithId), getEnemy, getThreat, selectAny)
 import LordOfTheRings.Quest.CardDefs qualified as Quests
 import LordOfTheRings.Objective.CardDefs qualified as Objectives
 import LordOfTheRings.Phase (Phase (QuestPhase))
@@ -158,6 +158,16 @@ spec = describe "Dwarrowdelf nightmare decks" do
       run $ RaiseThreat pid 20
       run $ EngagementCheck pid 0
       (.placement) <$> getEnemy party `shouldReturn` EngagedWith pid
+
+    it "Vicious Trackers' 20 threat counts in Raiding Party's check against a discarded ambusher" . nightmare roadToRivendell $ \pid -> do
+      reveal Enemies.viciousTrackers [Enemies.raidingParty]
+      run . EngageEnemy pid =<< enemyOf Enemies.viciousTrackers
+      -- 15 threat, short of the Goblin Trapper's 30 but for the Trackers' 20
+      run . RaiseThreat pid . (15 -) =<< getThreat pid
+      _ <- setEncounterDeck [Enemies.goblinTrapper]
+      run . EngageEnemy pid =<< enemyOf Enemies.raidingParty
+      resolveRevealed
+      (.placement) <$> (getEnemy =<< enemyOf Enemies.goblinTrapper) `shouldReturn` EngagedWith pid
 
     it "Tumultuous Assault returns the ambushers engaged for new engagement checks" . nightmare roadToRivendell $ \pid -> do
       reveal Enemies.goblinTrapper []
