@@ -2,6 +2,7 @@ module LordOfTheRings.Attachment.CardDefs (module LordOfTheRings.Attachment.Card
 
 import Data.Map.Strict qualified as Map
 import LordOfTheRings.Card.CardDef
+import LordOfTheRings.Card.CardType (CardType (..))
 import LordOfTheRings.Card.Code
 import LordOfTheRings.Keyword
 import LordOfTheRings.Name (Name)
@@ -198,6 +199,9 @@ allAttachmentCards =
       , diligentNoble
       , legacyBlade
       , followed
+      , sting
+      , roundShield
+      , armorOfErebor
       ]
 
 -- | A boon of the Revised Core campaign: Permanent, limit 1 per hero.
@@ -1341,4 +1345,26 @@ followed :: CardDef
 followed =
   (attachment "17139" "Followed" Tactics (StaticCost 1))
     { cdCardTraits = setFromList [Condition, Trap]
+    }
+
+sting :: CardDef
+sting =
+  unique
+    (attachment "19117" "Sting" Tactics (StaticCost 0))
+      { cdCardTraits = setFromList [Artifact, Item, Weapon]
+      , cdKeywords = setFromList [GuardedBy [EnemyType], Restricted]
+      }
+
+roundShield :: CardDef
+roundShield =
+  (attachment "19118" "Round Shield" Tactics (StaticCost 0))
+    { cdCardTraits = setFromList [Item, Armor]
+    , cdKeywords = setFromList [Restricted]
+    }
+
+armorOfErebor :: CardDef
+armorOfErebor =
+  (attachment "19120" "Armor of Erebor" Spirit (StaticCost 2))
+    { cdCardTraits = setFromList [Item, Armor]
+    , cdKeywords = setFromList [Restricted]
     }

@@ -196,6 +196,9 @@ import LordOfTheRings.Event.Cards.BulwarkOfTheWest
 import LordOfTheRings.Event.Cards.FlightToTheSea
 import LordOfTheRings.Event.Cards.TheDamBursts
 import LordOfTheRings.Event.Cards.WindFromTheSea
+import LordOfTheRings.Event.Cards.ElfGuide
+import LordOfTheRings.Event.Cards.DrinkingSong
+import LordOfTheRings.Event.Cards.TheShirefolk
 import LordOfTheRings.Event.Types as X
 import LordOfTheRings.Id
 import LordOfTheRings.Prelude
@@ -411,5 +414,8 @@ allEvents =
         , SomeEventCard flightToTheSea
         , SomeEventCard theDamBursts
         , SomeEventCard windFromTheSea
+        , SomeEventCard elfGuide
+        , SomeEventCard drinkingSong
+        , SomeEventCard theShirefolk
         ]
     ]

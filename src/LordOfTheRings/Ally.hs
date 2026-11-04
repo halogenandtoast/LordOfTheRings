@@ -234,6 +234,9 @@ import LordOfTheRings.Ally.Cards.Leaflock
 import LordOfTheRings.Ally.Cards.HalfastGamgee
 import LordOfTheRings.Ally.Cards.BeorningGuardian
 import LordOfTheRings.Ally.Cards.PorosGarrison
+import LordOfTheRings.Ally.Cards.GreenwoodDefender
+import LordOfTheRings.Ally.Cards.GafferGamgee
+import LordOfTheRings.Ally.Cards.EreborToymaker
 import LordOfTheRings.Ally.Runner ()
 import LordOfTheRings.Ally.Types as X
 import LordOfTheRings.Id
@@ -500,5 +503,8 @@ allAllies =
         , SomeAllyCard halfastGamgee
         , SomeAllyCard beorningGuardian
         , SomeAllyCard porosGarrison
+        , SomeAllyCard greenwoodDefender
+        , SomeAllyCard gafferGamgee
+        , SomeAllyCard ereborToymaker
         ]
     ]

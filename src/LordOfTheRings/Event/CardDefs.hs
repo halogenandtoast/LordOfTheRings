@@ -213,6 +213,9 @@ allEventCards =
       , flightToTheSea
       , theDamBursts
       , windFromTheSea
+      , elfGuide
+      , drinkingSong
+      , theShirefolk
       ]
 
 everVigilant :: CardDef
@@ -860,3 +863,12 @@ windFromTheSea =
     , cdKeywords = setFromList [Encounter]
     , cdShadowEffect = True
     }
+
+elfGuide :: CardDef
+elfGuide = event "19114" "Elf Guide" Leadership (StaticCost 0)
+
+drinkingSong :: CardDef
+drinkingSong = (event "19116" "Drinking Song" Lore (StaticCost 0)) {cdCardTraits = setFromList [Song]}
+
+theShirefolk :: CardDef
+theShirefolk = event "19121" "The Shirefolk" Neutral (StaticCost 0)

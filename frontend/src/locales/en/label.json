@@ -2493,5 +2493,8 @@
     "choose": "The Ephel Dúath: choose one for the ally you played",
     "exhaust": "Exhaust the ally",
     "threat": "Raise your threat by 1"
+  },
+  "elfGuide": {
+    "hero": "Elf Guide: add 1 resource to a hero's pool"
   }
 }

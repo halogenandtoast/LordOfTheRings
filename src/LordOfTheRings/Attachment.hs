@@ -180,6 +180,9 @@ import LordOfTheRings.Attachment.Cards.DunedainPipe
 import LordOfTheRings.Attachment.Cards.DiligentNoble
 import LordOfTheRings.Attachment.Cards.LegacyBlade
 import LordOfTheRings.Attachment.Cards.Followed
+import LordOfTheRings.Attachment.Cards.Sting
+import LordOfTheRings.Attachment.Cards.RoundShield
+import LordOfTheRings.Attachment.Cards.ArmorOfErebor
 import LordOfTheRings.Attachment.Runner ()
 import LordOfTheRings.Attachment.Types as X
 import LordOfTheRings.Id
@@ -397,5 +400,8 @@ allAttachments =
         , SomeAttachmentCard diligentNoble
         , SomeAttachmentCard legacyBlade
         , SomeAttachmentCard followed
+        , SomeAttachmentCard sting
+        , SomeAttachmentCard roundShield
+        , SomeAttachmentCard armorOfErebor
         ]
     ]
