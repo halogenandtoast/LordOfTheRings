@@ -313,6 +313,13 @@ spec = describe "The Crossings of Poros" do
     length <$> setAsideCodes `shouldReturn` 2
     map toCardCode <$> getEncounterDeck >>= (`shouldSatisfy` \d -> length d == 1 && all (`elem` map toCardCode [Enemies.southronSoldier, Enemies.southronArcher]) d)
 
+  it "has the first player choose between set aside sets tied for the most cards" . porosTest $ \pid -> do
+    _ <- setSetAside [Enemies.giantScorpion, Enemies.southronSoldier]
+    reveal [Treacheries.dangerCloseBehind]
+    chooseLabel "$label.theCrossingsOfPoros.set.DesertCreatures" pid
+    enemyCodes `shouldReturn` [toCardCode Enemies.giantScorpion]
+    setAsideCodes `shouldReturn` [toCardCode Enemies.southronSoldier]
+
   it "has Danger Close Behind reveal a card of the largest set aside set" . porosTest $ \_ -> do
     _ <- setSetAside [Enemies.giantScorpion]
     reveal [Treacheries.dangerCloseBehind]
