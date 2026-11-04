@@ -185,6 +185,18 @@ matchAlly matcher ally = case matcher of
           . gameEffects
       )
   AllyWithAttached trait -> notNull <$> attachedWithTrait trait (toTarget ally)
+  AllyWithReadyAttached trait ->
+    getsGame
+      ( any
+          ( \a ->
+              a.placement == AttachedTo (toTarget ally)
+                && maybe True (`member` cdCardTraits (toCardDef a)) trait
+                && not (attachmentExhausted $ toAttrs a)
+          )
+          . toList
+          . entitiesAttachments
+          . gameEntities
+      )
   AnyAlly -> pure True
   NotAlly m -> not <$> matchAlly m ally
   AllyMatchAll ms -> allM (`matchAlly` ally) ms

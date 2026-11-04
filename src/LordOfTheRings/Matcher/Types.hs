@@ -115,6 +115,9 @@ data AllyMatcher
     AllyEnteredPlayThisRound
   | -- | an ally with an attachment of the trait attached
     AllyWithAttached Trait
+  | -- | an ally with a ready attachment of the trait attached, as Swift and Strong
+    -- exhausts a Weapon; any attachment without one, as Wiglaf exhausts one
+    AllyWithReadyAttached (Maybe Trait)
   | AnyAlly
   | NotAlly AllyMatcher
   | AllyMatchAll [AllyMatcher]
