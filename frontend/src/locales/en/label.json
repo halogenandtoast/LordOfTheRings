@@ -2271,5 +2271,17 @@
     "choose": "The Desert of Harad: exhaust the ally or deal 1 damage to it",
     "exhaust": "Exhaust it",
     "damage": "Deal 1 damage to it"
+  },
+  "umbarSentry": {
+    "choose": "Umbar Sentry: choose one",
+    "attack": "Umbar Sentry gets +2 attack for this attack"
+  },
+  "narrowAlleyway": {
+    "choose": "Narrow Alleyway: choose a non-unique engaged enemy to place under it"
+  },
+  "enemyPursuit": {
+    "choose": "Enemy Pursuit: choose one",
+    "removeProgress": "Remove all progress from the main quest",
+    "damage": "Assign 1 damage among characters in play for each progress on the main quest"
   }
 }

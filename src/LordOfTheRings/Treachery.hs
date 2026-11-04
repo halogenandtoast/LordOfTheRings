@@ -339,6 +339,7 @@ import LordOfTheRings.Treachery.Cards.GrabbedBySpiders
 import LordOfTheRings.Treachery.Cards.Mirage
 import LordOfTheRings.Treachery.Cards.UnbearableHeat
 import LordOfTheRings.Treachery.Cards.ScorchingSun
+import LordOfTheRings.Treachery.Cards.EnemyPursuit
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -705,5 +706,6 @@ allTreacherys =
         , SomeTreacheryCard mirage
         , SomeTreacheryCard unbearableHeat
         , SomeTreacheryCard scorchingSun
+        , SomeTreacheryCard enemyPursuit
         ]
     ]

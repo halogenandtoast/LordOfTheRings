@@ -788,6 +788,7 @@ library
       LordOfTheRings.Enemy.Cards.UmbarCaptain
       LordOfTheRings.Enemy.Cards.UmbarPatrolNightmare
       LordOfTheRings.Enemy.Cards.UmbarRaider
+      LordOfTheRings.Enemy.Cards.UmbarSentry
       LordOfTheRings.Enemy.Cards.UmbarSlaver
       LordOfTheRings.Enemy.Cards.UndeadHorde
       LordOfTheRings.Enemy.Cards.UndeadThrall
@@ -1272,6 +1273,7 @@ library
       LordOfTheRings.Location.Cards.GreenwayPath
       LordOfTheRings.Location.Cards.GrimFoothills
       LordOfTheRings.Location.Cards.HallowedCircle
+      LordOfTheRings.Location.Cards.HaradrimEstate
       LordOfTheRings.Location.Cards.HarborStorehouse
       LordOfTheRings.Location.Cards.HauntedKeep
       LordOfTheRings.Location.Cards.HauntedPillars
@@ -1322,6 +1324,7 @@ library
       LordOfTheRings.Location.Cards.MunuvDuvRavine
       LordOfTheRings.Location.Cards.MunuvDuvRiver
       LordOfTheRings.Location.Cards.NarelenyaLocation
+      LordOfTheRings.Location.Cards.NarrowAlleyway
       LordOfTheRings.Location.Cards.NarrowFissure
       LordOfTheRings.Location.Cards.NecromancersPass
       LordOfTheRings.Location.Cards.NestOfHorrors
@@ -1358,6 +1361,7 @@ library
       LordOfTheRings.Location.Cards.PlainsOfDunland
       LordOfTheRings.Location.Cards.PlainsOfEnedwaith
       LordOfTheRings.Location.Cards.PlunderedArmoury
+      LordOfTheRings.Location.Cards.PortOfHarad
       LordOfTheRings.Location.Cards.PrisonCell
       LordOfTheRings.Location.Cards.PrisonCellNightmare
       LordOfTheRings.Location.Cards.QuarterDeck
@@ -1487,6 +1491,8 @@ library
       LordOfTheRings.Location.Cards.TwistingShadows
       LordOfTheRings.Location.Cards.UmbarBridge
       LordOfTheRings.Location.Cards.UmbarHarbor
+      LordOfTheRings.Location.Cards.UmbarSquare
+      LordOfTheRings.Location.Cards.UmbarStreet
       LordOfTheRings.Location.Cards.UnderseaGrotto
       LordOfTheRings.Location.Cards.UnholyCrypt
       LordOfTheRings.Location.Cards.UpperHall
@@ -1596,6 +1602,7 @@ library
       LordOfTheRings.Objective.Cards.Scarred
       LordOfTheRings.Objective.Cards.SeaWardTower
       LordOfTheRings.Objective.Cards.SecretMap
+      LordOfTheRings.Objective.Cards.SeizeThem
       LordOfTheRings.Objective.Cards.ShadowKey
       LordOfTheRings.Objective.Cards.SignsOfGollum
       LordOfTheRings.Objective.Cards.ThaurdirsLegacy
@@ -1692,6 +1699,7 @@ library
       LordOfTheRings.Quest.Cards.FindShelter
       LordOfTheRings.Quest.Cards.FindWater
       LordOfTheRings.Quest.Cards.FleeingFromTharbad
+      LordOfTheRings.Quest.Cards.FleeTheCity
       LordOfTheRings.Quest.Cards.FliesAndSpiders
       LordOfTheRings.Quest.Cards.FlightFromMountGram
       LordOfTheRings.Quest.Cards.ForageForFood
@@ -1786,6 +1794,7 @@ library
       LordOfTheRings.Quest.Cards.SouthronCounterAttack
       LordOfTheRings.Quest.Cards.StopTheExecutioners
       LordOfTheRings.Quest.Cards.StopTheWarParty
+      LordOfTheRings.Quest.Cards.StrandedInUmbar
       LordOfTheRings.Quest.Cards.SwiftDeparture
       LordOfTheRings.Quest.Cards.TakeTheShip
       LordOfTheRings.Quest.Cards.ThaurdirsPursuit
@@ -1889,6 +1898,8 @@ library
       LordOfTheRings.Scenario.Scenarios.EscapeFromDolGuldur
       LordOfTheRings.Scenario.Scenarios.EscapeFromMountGram
       LordOfTheRings.Scenario.Scenarios.EscapeFromMountGram.Helpers
+      LordOfTheRings.Scenario.Scenarios.EscapeFromUmbar
+      LordOfTheRings.Scenario.Scenarios.EscapeFromUmbar.Helpers
       LordOfTheRings.Scenario.Scenarios.FlightFromMoria
       LordOfTheRings.Scenario.Scenarios.FlightFromMoria.Helpers
       LordOfTheRings.Scenario.Scenarios.FlightOfTheStormcaller
@@ -2067,6 +2078,7 @@ library
       LordOfTheRings.Treachery.Cards.DrumsOfTheWildMen
       LordOfTheRings.Treachery.Cards.DunlendingAmbush
       LordOfTheRings.Treachery.Cards.DwindlingSupplies
+      LordOfTheRings.Treachery.Cards.EnemyPursuit
       LordOfTheRings.Treachery.Cards.Enfeebled
       LordOfTheRings.Treachery.Cards.EvilStorm
       LordOfTheRings.Treachery.Cards.Exhaustion
@@ -2528,6 +2540,7 @@ test-suite LordOfTheRings-test
       LordOfTheRings.EndGameSpec
       LordOfTheRings.Haradrim.BeneathTheSandsSpec
       LordOfTheRings.Haradrim.DesertCrossingSpec
+      LordOfTheRings.Haradrim.EscapeFromUmbarSpec
       LordOfTheRings.Haradrim.RaceAcrossHaradPlayerCardsSpec
       LordOfTheRings.Haradrim.SharedEncounterSetsSpec
       LordOfTheRings.Haradrim.TheMumakilPlayerCardsSpec

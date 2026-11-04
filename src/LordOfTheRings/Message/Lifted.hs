@@ -578,6 +578,15 @@ discardEncounterCardsUntilCount a n matcher = when (n > 0) do
   let matching = [i | (i, c) <- zip [0 ..] deck, cardMatches matcher c]
   discardTopOfEncounterDeck a $ maybe (length deck) (+ 1) (headMay $ drop (n - 1) matching)
 
+{- | As 'discardEncounterCardsUntil', read back on behalf of the target, as "each player
+discards cards ... until he discards an enemy" reads with each player (Flee the City).
+-}
+discardEncounterCardsUntilFor
+  :: (ReverseQueue m, Sourceable source, Targetable target) => source -> target -> CardMatcher -> m ()
+discardEncounterCardsUntilFor source target matcher = do
+  deck <- getsGame ((.encounterDeck) . toAttrs . (.scenario))
+  discardTopOfEncounterDeckFor source target $ maybe (length deck) (+ 1) (findIndex (cardMatches matcher) deck)
+
 -- | An encounter card, taken from where it was, becomes the active location, as a setup puts one.
 putIntoPlayAsActiveLocation :: ReverseQueue m => EncounterCard -> m ()
 putIntoPlayAsActiveLocation = push . PutIntoPlayAsActiveLocation

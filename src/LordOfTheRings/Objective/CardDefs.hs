@@ -109,6 +109,7 @@ allObjectiveCards =
       , theCabalsChampion
       , offTrack
       , onTrack
+      , seizeThem
       ]
 
 durinsAxe :: CardDef
@@ -732,3 +733,8 @@ offTrack = (objective "17079" "Off Track" BeneathTheSands 1) {cdCardTraits = set
 -- | The Search objective's other side: no copy of it is gathered, Off Track turns into it.
 onTrack :: CardDef
 onTrack = (objective "17080" "On Track" BeneathTheSands 0) {cdCardTraits = setFromList [SearchTrait]}
+
+-- * Escape from Umbar
+
+seizeThem :: CardDef
+seizeThem = objective "16014" "Seize Them!" EscapeFromUmbar 1

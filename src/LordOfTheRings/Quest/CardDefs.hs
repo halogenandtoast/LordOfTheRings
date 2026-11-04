@@ -304,6 +304,8 @@ allQuestCards =
       , theDesertOfHarad
       , underTheMercilessSun
       , beastsOfLegend
+      , strandedInUmbar
+      , fleeTheCity
       ]
 
 theDrippingWalls :: CardDef
@@ -1217,3 +1219,11 @@ underTheMercilessSun = quest "16069" "Under the Merciless Sun" DesertCrossing 2 
 
 beastsOfLegend :: CardDef
 beastsOfLegend = quest "16070" "Beasts of Legend" DesertCrossing 3 16
+
+-- * Escape from Umbar
+
+strandedInUmbar :: CardDef
+strandedInUmbar = quest "16066" "Stranded in Umbar" EscapeFromUmbar 1 15
+
+fleeTheCity :: CardDef
+fleeTheCity = quest "16067" "Flee the City" EscapeFromUmbar 2 15

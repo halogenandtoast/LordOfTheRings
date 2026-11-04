@@ -236,6 +236,8 @@ import LordOfTheRings.Quest.Cards.SeekShade
 import LordOfTheRings.Quest.Cards.TheDesertOfHarad
 import LordOfTheRings.Quest.Cards.UnderTheMercilessSun
 import LordOfTheRings.Quest.Cards.BeastsOfLegend
+import LordOfTheRings.Quest.Cards.StrandedInUmbar
+import LordOfTheRings.Quest.Cards.FleeTheCity
 import LordOfTheRings.Quest.Runner ()
 import LordOfTheRings.Quest.Types as X
 import LordOfTheRings.Id
@@ -504,5 +506,7 @@ allQuests =
         , SomeQuestCard theDesertOfHarad
         , SomeQuestCard underTheMercilessSun
         , SomeQuestCard beastsOfLegend
+        , SomeQuestCard strandedInUmbar
+        , SomeQuestCard fleeTheCity
         ]
     ]

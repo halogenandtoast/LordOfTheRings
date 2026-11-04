@@ -349,6 +349,7 @@ allTreacheryCards =
       , mirage
       , unbearableHeat
       , scorchingSun
+      , enemyPursuit
       ]
 
 deepDeepDark :: CardDef
@@ -2241,3 +2242,8 @@ scorchingSun =
     , cdShadowEffect = True
     , cdEasyModeQuantity = Just 1
     }
+
+-- * Escape from Umbar
+
+enemyPursuit :: CardDef
+enemyPursuit = (treachery "16021" "Enemy Pursuit" EscapeFromUmbar 2) {cdShadowEffect = True}
