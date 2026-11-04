@@ -9,6 +9,7 @@ import LordOfTheRings.Target (Target)
 import LordOfTheRings.Phase (Phase)
 import LordOfTheRings.Prelude
 import LordOfTheRings.Sphere (Sphere)
+import LordOfTheRings.Trait (Trait)
 
 data Criterion
   = NoCriteria
@@ -97,6 +98,15 @@ instance Exists AllyMatcher where
 -- if each hero you control has a printed [lore] resource icon" reads.
 eachHeroHasPrintedIcon :: PlayerId -> Sphere -> Criterion
 eachHeroHasPrintedIcon pid sphere = NotCriterion $ HeroExists (HeroControlledBy (PlayerWithId pid) <> NotHero (HeroWithPrintedSphere sphere))
+
+-- | The player controls a different unique character with each trait, as "Play only if you
+-- control a unique character with the Warrior trait and another unique character with the
+-- Scout trait" reads.
+uniqueCharactersWith :: PlayerId -> [Trait] -> Criterion
+uniqueCharactersWith pid = DistinctCharacters . map \trait ->
+  (HeroControlledBy you <> HeroWithTrait trait, AllyControlledBy you <> UniqueAlly <> AllyWithTrait trait)
+ where
+  you = PlayerWithId pid
 
 -- | The player may resolve a Valour trigger: his threat is 40 or higher.
 valour :: PlayerId -> Criterion

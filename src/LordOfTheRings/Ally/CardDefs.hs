@@ -193,6 +193,8 @@ allAllyCards =
       , sulien
       , guardianOfIthilien
       , starla
+      , riderOfRohan
+      , dunedainLookout
       ]
 
 guardOfTheCitadel :: CardDef
@@ -1345,3 +1347,15 @@ elrondsChampion = (ally "AAC189" "Elrond's Champion" Neutral (StaticCost 3) 2 3 
 
 rivendellSkirmishers :: CardDef
 rivendellSkirmishers = (ally "AAC192" "Rivendell Skirmishers" Neutral (StaticCost 3) 2 2 3 3) {cdCardTraits = setFromList [Noldor, Warrior, Boon]}
+
+riderOfRohan :: CardDef
+riderOfRohan =
+  (ally "17060" "Rider of Rohan" Spirit (StaticCost 3) 2 2 0 2)
+    { cdCardTraits = setFromList [Rohan, Scout]
+    }
+
+dunedainLookout :: CardDef
+dunedainLookout =
+  (ally "17062" "Dúnedain Lookout" Lore (StaticCost 2) 1 1 1 2)
+    { cdCardTraits = setFromList [Dunedain]
+    }

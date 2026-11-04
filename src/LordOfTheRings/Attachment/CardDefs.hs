@@ -183,6 +183,9 @@ allAttachmentCards =
       , cirdansBlessingTactics
       , cirdansBlessingSpirit
       , cirdansBlessingLore
+      , haradrimSpear
+      , firesideSong
+      , doughtyRanger
       ]
 
 -- | A boon of the Revised Core campaign: Permanent, limit 1 per hero.
@@ -1223,3 +1226,24 @@ ordersFromAngmar = restrictedBoon "AAC187" "Orders from Angmar" 0 [Item]
 
 raimentOfTheSecondAge :: CardDef
 raimentOfTheSecondAge = (restrictedBoon "AAC191" "Raiment of the Second Age" 3 [Armor, Weapon, Item]) {cdUnique = False}
+
+haradrimSpear :: CardDef
+haradrimSpear =
+  (attachment "17056" "Haradrim Spear" Leadership (StaticCost 2))
+    { cdCardTraits = setFromList [Item, Weapon]
+    , cdKeywords = setFromList [Restricted]
+    }
+
+firesideSong :: CardDef
+firesideSong =
+  (attachment "17061" "Fireside Song" Spirit (StaticCost 2))
+    { cdCardTraits = setFromList [Song]
+    , cdLimitOnePerHost = True
+    }
+
+doughtyRanger :: CardDef
+doughtyRanger =
+  (attachment "17063" "Doughty Ranger" Lore (StaticCost 1))
+    { cdCardTraits = setFromList [Skill]
+    , cdLimitOnePerHost = True
+    }

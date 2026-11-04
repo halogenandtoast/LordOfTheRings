@@ -164,6 +164,9 @@ import LordOfTheRings.Attachment.Cards.BlackKey
 import LordOfTheRings.Attachment.Cards.ParryingCutlass
 import LordOfTheRings.Attachment.Cards.ThrowingAxe
 import LordOfTheRings.Attachment.Cards.CirdansBlessing
+import LordOfTheRings.Attachment.Cards.HaradrimSpear
+import LordOfTheRings.Attachment.Cards.FiresideSong
+import LordOfTheRings.Attachment.Cards.DoughtyRanger
 import LordOfTheRings.Attachment.Runner ()
 import LordOfTheRings.Attachment.Types as X
 import LordOfTheRings.Id
@@ -365,5 +368,8 @@ allAttachments =
         , SomeAttachmentCard cirdansBlessingTactics
         , SomeAttachmentCard cirdansBlessingSpirit
         , SomeAttachmentCard cirdansBlessingLore
+        , SomeAttachmentCard haradrimSpear
+        , SomeAttachmentCard firesideSong
+        , SomeAttachmentCard doughtyRanger
         ]
     ]

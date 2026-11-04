@@ -180,6 +180,8 @@ import LordOfTheRings.Event.Cards.InspiringPresence
 import LordOfTheRings.Event.Cards.GaldorsCounsel
 import LordOfTheRings.Event.Cards.ComeTogether
 import LordOfTheRings.Event.Cards.Command
+import LordOfTheRings.Event.Cards.HuntingParty
+import LordOfTheRings.Event.Cards.TheFreePeoples
 import LordOfTheRings.Event.Types as X
 import LordOfTheRings.Id
 import LordOfTheRings.Prelude
@@ -379,5 +381,7 @@ allEvents =
         , SomeEventCard commandLore
         , SomeEventCard commandSpirit
         , SomeEventCard commandTactics
+        , SomeEventCard huntingParty
+        , SomeEventCard theFreePeoples
         ]
     ]

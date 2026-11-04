@@ -2204,5 +2204,8 @@
     "parryingCutlass": "Parrying Cutlass",
     "throwingAxe": "Throwing Axe",
     "attachTo": "Campaign: choose the hero to attach it to"
+  },
+  "huntingParty": {
+    "discard": "Hunting Party: discard a non-unique enemy in the staging area"
   }
 }

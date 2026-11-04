@@ -197,6 +197,8 @@ allEventCards =
       , commandLore
       , commandSpirit
       , commandTactics
+      , huntingParty
+      , theFreePeoples
       ]
 
 everVigilant :: CardDef
@@ -784,3 +786,9 @@ determination = (event "AAC172" "Determination" Neutral (StaticCost 1)) {cdCardT
 
 loreOfAncientArnor :: CardDef
 loreOfAncientArnor = (event "AAC190" "Lore of Ancient Arnor" Neutral (StaticCost 3)) {cdCardTraits = setFromList [Boon]}
+
+huntingParty :: CardDef
+huntingParty = event "17057" "Hunting Party" Leadership (StaticCost 1)
+
+theFreePeoples :: CardDef
+theFreePeoples = event "17064" "The Free Peoples" Neutral (StaticCost 5)
