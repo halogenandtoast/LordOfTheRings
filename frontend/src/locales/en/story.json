@@ -4053,5 +4053,13 @@
         "text": "The Searching Eye is an encounter card shuffled into a player's deck. It is drawn, held and discarded like a player card, to its player's discard pile, but it cannot be played."
       }
     ]
+  },
+  "journey-to-the-cross-roads": {
+    "intro": [
+      "With the Black Gate barred to them, Frodo and Sam follow Sméagol south through the green woods of Ithilien toward a secret way into Mordor, only to find themselves in the path of Southron soldiers marching to swell Sauron's armies, and of the Rangers of Gondor who lie in wait for them."
+    ],
+    "setup": [
+      "Build the encounter deck from the Journey to the Cross-roads and Men of Harad encounter sets."
+    ]
   }
 }
