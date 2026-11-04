@@ -224,18 +224,19 @@ discardAtNoWillpower = do
     pushAll [Discard c | c <- doomed, Discard c `notElem` queued, LeavePlay (Discard c) `notElem` queued]
 
 {- | The modifiers cards in hand give themselves, as what they cost to play: each ally and
-event in a hand, or being paid for, is built from its card to be asked. So is each side
-quest in the victory display.
+event in a hand, or being paid for, is built from its card to be asked. So is each player
+side quest in the victory display.
 -}
 withHandModifiers :: Game -> GameT Game
 withHandModifiers g = do
   MonoidalMap fromHands <- execWriterT do
     for_ g.players \player -> for_ player.hand (handCardModifiers player.id)
     for_ (gameActiveCosts g) \ac -> handCardModifiers ac.activeCostPlayer ac.activeCostCard
-    -- a side quest in the victory display, as Keep Watch, has effects there: it is built
-    -- from its card with no quest id, as 'questInVictoryDisplay' reads
+    -- a player side quest in the victory display, as Keep Watch, has effects there: it is
+    -- built from its card with no quest id, as 'questInVictoryDisplay' reads (an encounter
+    -- side quest's constant effects, as Make Camp's, end as it leaves play)
     for_ (toAttrs g.scenario).victoryDisplay \c ->
-      when (isSideQuestType c.cardType && Map.member (toCardCode c) allQuests)
+      when (c.cardType == PlayerSideQuestType && Map.member (toCardCode c) allQuests)
         $ getModifiersFor (lookupQuest (toCardCode c) c.id (QuestId UUID.nil))
   pure
     $ if null fromHands then g else g {gameModifiers = Map.unionWith (<>) (gameModifiers g) fromHands}
