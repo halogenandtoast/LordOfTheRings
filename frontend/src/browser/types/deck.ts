@@ -71,6 +71,8 @@ export interface ImportRequest {
 export interface DeckList {
   heroes: string[]
   cards: [string, number][]
+  /** The contract chosen with the deck, never in it. */
+  contract?: string | null
 }
 
 /** A deck loaded but not kept: what it holds, and its list, or why it cannot be played. */
@@ -91,7 +93,8 @@ export function unresolvedSlots(deck: Deck): Slot[] {
   return allSlots(deck).filter((slot) => slot.card === null)
 }
 
-/** Cards in the draw deck. The rules put the minimum at 50. */
+/** Cards in the draw deck. The rules put the minimum at 50. A contract goes with the
+ * deck but is not in it, nor counted toward its size. */
 export function drawDeckSize(deck: Deck): number {
-  return deck.slots.reduce((n, slot) => n + slot.quantity, 0)
+  return deck.slots.filter((slot) => slot.card?.type !== 'contract').reduce((n, slot) => n + slot.quantity, 0)
 }

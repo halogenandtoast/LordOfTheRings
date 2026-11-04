@@ -25,6 +25,7 @@ import LordOfTheRings.Campaign
 import LordOfTheRings.Card (
   CardCode (..),
   CardDef (..),
+  CardType (ContractType),
   Display (..),
   Sphere,
   allEncounterCards,
@@ -574,8 +575,9 @@ getGamesR = do
 -}
 data DeckSource = StarterDeck Text | ImportedDeck LotrDeckId | ListedDeck DeckList
 
--- | A deck and whether its cards follow the FAQ's errata (they do unless turned off).
-data DeckChoice = DeckChoice DeckSource Bool
+-- | A deck, whether its cards follow the FAQ's errata (they do unless turned off), and
+-- the contract chosen to play it with, if not its own (MEC77 rules, "Contracts").
+data DeckChoice = DeckChoice DeckSource Bool (Maybe CardCode)
 
 instance FromJSON DeckChoice where
   parseJSON = withObject "DeckChoice" \o -> do
@@ -583,7 +585,7 @@ instance FromJSON DeckChoice where
       (StarterDeck <$> o .: "starter")
         <|> (ImportedDeck <$> o .: "deckId")
         <|> (ListedDeck <$> o .: "list")
-    DeckChoice source <$> o .:? "errata" .!= True
+    DeckChoice source <$> o .:? "errata" .!= True <*> o .:? "contract"
 
 data NewGame = NewGame
   { name :: Text
@@ -616,7 +618,14 @@ newtype JoinGame = JoinGame {deck :: Maybe DeckChoice}
 resolveDeck :: UserId -> Maybe DeckChoice -> Handler (Maybe DeckList)
 resolveDeck userId = \case
   Nothing -> pure Nothing
-  Just (DeckChoice source errata) -> fmap (\dl -> dl {errata}) <$> resolveSource userId source
+  Just (DeckChoice source errata chosen) ->
+    resolveSource userId source >>= traverse \dl -> do
+      let dl' = maybe dl (`withContract` dl) chosen & \d -> d {errata}
+      -- the contract's restrictions must be met to choose it
+      for_ (deckProblem dl') (sendResponseStatus status400)
+      unless (maybe True (\code -> (cdCardType <$> Map.lookup code allPlayerCards) == Just ContractType) chosen)
+        $ sendResponseStatus status400 (ikey "error.notAContract")
+      pure dl'
 
 resolveSource :: UserId -> DeckSource -> Handler (Maybe DeckList)
 resolveSource userId = \case

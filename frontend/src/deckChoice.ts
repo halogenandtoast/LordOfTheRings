@@ -14,6 +14,18 @@ const starters: { name: string; sphere: string; heroCodes: string[]; detail: str
   { name: 'riders-of-rohan', sphere: 'tactics', heroCodes: ['07001', '17055', '22027'], detail: 'newGame.starterBox' },
 ]
 
+/** The contracts a deck may be played with, by RingsDB code (A Shadow in the East and the
+ * Vengeance of Mordor cycle); the deck's own, from its list, is played if none is chosen. */
+export const contracts: { code: string; name: string }[] = [
+  { code: '21074', name: 'Fellowship' },
+  { code: '22024', name: "The Burglar's Turn" },
+  { code: '22049', name: 'Forth, The Three Hunters!' },
+  { code: '22074', name: 'The Grey Wanderer' },
+  { code: '22091', name: 'Council of the Wise' },
+  { code: '22134', name: 'Messenger of the King' },
+  { code: '22147', name: 'Bond of Friendship' },
+]
+
 /** A deck as a string, for v-model: `starter:<sphere>` or `deck:<id>`. */
 export type DeckKey = string
 
