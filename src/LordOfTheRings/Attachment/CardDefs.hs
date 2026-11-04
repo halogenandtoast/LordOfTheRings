@@ -5,6 +5,7 @@ import LordOfTheRings.Card.CardDef
 import LordOfTheRings.Card.CardType (CardType (..))
 import LordOfTheRings.Card.Code
 import LordOfTheRings.EncounterSet (EncounterSet (FliesAndSpiders))
+import LordOfTheRings.EncounterSet (EncounterSet (WeMustAwayEreBreakOfDay))
 import LordOfTheRings.Keyword
 import LordOfTheRings.Name (Name)
 import LordOfTheRings.Prelude
@@ -285,6 +286,7 @@ allAttachmentCards =
       , beyondAllHope
       , palantirOfOrthanc
       , bilbosMagicRing
+      , stingTreasure
       ]
 
 -- | A boon of the Revised Core campaign: Permanent, limit 1 per hero.
@@ -2062,3 +2064,15 @@ bilbosMagicRing =
       , cdTreasure = True
       , cdSetIcon = Just FliesAndSpiders
       }
+
+-- * The Hobbit: Over Hill and Under Hill treasures
+
+-- | A treasure of We Must Away, Ere Break of Day's set: its card, without its game text.
+stingTreasure :: CardDef
+stingTreasure =
+  (unique $ attachment "131020" "Sting" Neutral (StaticCost 0))
+    { cdCardTraits = setFromList [Artifact, Item, Weapon]
+    , cdKeywords = setFromList [Restricted]
+    , cdTreasure = True
+    , cdSetIcon = Just WeMustAwayEreBreakOfDay
+    }

@@ -3362,5 +3362,20 @@
   },
   "dawnTakeYouAllQuest": {
     "treasure": "Choose the player who discovers {treasure}"
+  },
+  "stoneGiant": {
+    "discardAlly": "Stone-giant: choose an ally you control to discard"
+  },
+  "gallopingBoulders": {
+    "choose": "Galloping Boulders: choose a questing character to take 3 damage and leave the quest"
+  },
+  "guffawingOfGiants": {
+    "choose": "Guffawing of Giants: choose a Stone-giant to engage the player with the highest threat at the end of the quest phase"
+  },
+  "overhangingRock": {
+    "take": "Choose a card to add to your hand; the other is discarded"
+  },
+  "downDownToGoblinTown": {
+    "spend": "Spend how many Baggins resources to reveal that many fewer encounter cards?"
   }
 }

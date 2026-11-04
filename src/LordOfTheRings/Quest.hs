@@ -377,6 +377,9 @@ import LordOfTheRings.Quest.Cards.TheCloudsBurst
 import LordOfTheRings.Quest.Cards.AnUnexpectedParty
 import LordOfTheRings.Quest.Cards.RoastMutton
 import LordOfTheRings.Quest.Cards.DawnTakeYouAll
+import LordOfTheRings.Quest.Cards.AShortRest
+import LordOfTheRings.Quest.Cards.TheMountainPass
+import LordOfTheRings.Quest.Cards.DownDownToGoblinTown
 import LordOfTheRings.Quest.Runner ()
 import LordOfTheRings.Quest.Types as X
 import LordOfTheRings.Id
@@ -786,5 +789,8 @@ allQuests =
         , SomeQuestCard anUnexpectedParty
         , SomeQuestCard roastMutton
         , SomeQuestCard dawnTakeYouAll
+        , SomeQuestCard aShortRest
+        , SomeQuestCard theMountainPass
+        , SomeQuestCard downDownToGoblinTown
         ]
     ]

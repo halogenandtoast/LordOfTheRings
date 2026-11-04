@@ -534,6 +534,9 @@ import LordOfTheRings.Enemy.Cards.GoblinAxeman
 import LordOfTheRings.Enemy.Cards.GoblinMiners
 import LordOfTheRings.Enemy.Cards.GoblinRunners
 import LordOfTheRings.Enemy.Cards.GoblinDriver
+import LordOfTheRings.Enemy.Cards.StoneGiant
+import LordOfTheRings.Enemy.Cards.GoblinBentSwords
+import LordOfTheRings.Enemy.Cards.TheGreatGoblin
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -1097,5 +1100,8 @@ allEnemys =
         , SomeEnemyCard goblinMiners
         , SomeEnemyCard goblinRunners
         , SomeEnemyCard goblinDriver
+        , SomeEnemyCard stoneGiant
+        , SomeEnemyCard goblinBentSwords
+        , SomeEnemyCard theGreatGoblin
         ]
     ]

@@ -624,6 +624,22 @@ attackBeforeEnemies pid = lift $ withQueue_ \q ->
 discardTopOfDeck :: ReverseQueue m => PlayerId -> Int -> m ()
 discardTopOfDeck pid n = push $ DiscardTopOfDeck pid n
 
+{- | The player looks at the top N cards of their deck, adds 1 of them to their hand and
+discards the others, as King Under the Mountain and Overhanging Rock read; asked as the
+prompt, a key under @label.@.
+-}
+takeOneOfTopDiscardRest :: (ReverseQueue m, Targetable source) => PlayerId -> source -> Text -> Int -> m ()
+takeOneOfTopDiscardRest pid source key n = do
+  top <- take n . (.deck) <$> getPlayer pid
+  chooseOneM pid do
+    questionLabeled key
+    causedBy source
+    showing top
+    targets [pc | PlayerCard pc <- top] \pc -> do
+      push $ TakeFromDeck pid pc.id
+      -- the others are on top now
+      discardTopOfDeck pid (length top - 1)
+
 shufflePlayerDeck :: ReverseQueue m => PlayerId -> m ()
 shufflePlayerDeck = push . ShufflePlayerDeck
 

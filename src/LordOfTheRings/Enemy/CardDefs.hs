@@ -543,6 +543,9 @@ allEnemyCards =
       , goblinMiners
       , goblinRunners
       , goblinDriver
+      , stoneGiant
+      , goblinBentSwords
+      , theGreatGoblin
       ]
 
 namelessThing :: CardDef
@@ -4452,3 +4455,25 @@ goblinRunners = (goblin "131060" "Goblin Runners" 20 1 3 1 2) {cdKeywords = setF
 
 goblinDriver :: CardDef
 goblinDriver = (goblin "131061" "Goblin Driver" 30 3 2 2 3) {cdWhenRevealed = True}
+
+-- * Over the Misty Mountains Grim
+
+stoneGiant :: CardDef
+stoneGiant = (enemy "131064" "Stone-giant" OverTheMistyMountainsGrim 3 40 4 6 3 9) {cdCardTraits = setFromList [Giant]}
+
+-- * The Great Goblin
+
+goblinBentSwords :: CardDef
+goblinBentSwords =
+  (enemy "131062" "Goblin Bent-Swords" TheGreatGoblin 4 33 2 3 2 3)
+    { cdCardTraits = setFromList [Goblin, Orc]
+    , cdShadowEffect = True
+    }
+
+theGreatGoblin :: CardDef
+theGreatGoblin =
+  unique
+    (enemy "131063" "The Great Goblin" TheGreatGoblin 1 15 3 5 2 8)
+      { cdCardTraits = setFromList [Goblin, Orc]
+      , cdVictoryPoints = Just 3
+      }

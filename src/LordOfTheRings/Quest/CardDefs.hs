@@ -461,6 +461,9 @@ allQuestCards =
       , anUnexpectedParty
       , roastMutton
       , dawnTakeYouAll
+      , aShortRest
+      , theMountainPass
+      , downDownToGoblinTown
       ]
 
 theDrippingWalls :: CardDef
@@ -1932,3 +1935,16 @@ roastMutton = quest "131024" "Roast Mutton" WeMustAwayEreBreakOfDay 2 1
 
 dawnTakeYouAll :: CardDef
 dawnTakeYouAll = quest "131025" "Dawn Take You All" WeMustAwayEreBreakOfDay 3 0
+
+-- * Over the Misty Mountains Grim
+
+-- | No quest points: its When Revealed effect advances it.
+aShortRest :: CardDef
+aShortRest = quest "131026" "A Short Rest" OverTheMistyMountainsGrim 1 0
+
+theMountainPass :: CardDef
+theMountainPass = quest "131027" "The Mountain Pass" OverTheMistyMountainsGrim 2 16
+
+-- | Printed with The Great Goblin's set icon; it is part of the quest deck all the same.
+downDownToGoblinTown :: CardDef
+downDownToGoblinTown = quest "131028" "Down, Down to Goblin Town" TheGreatGoblin 3 20

@@ -4085,5 +4085,16 @@
       "Sack X: the first player draws the top X cards of the sack deck, one at a time, and resolves their When Sacked effects. With the sack deck empty, Sack X is ignored. A Sack card that leaves play, or has no eligible target, is shuffled back into the sack deck.",
       "The first player takes control of Bilbo Baggins. If he leaves play, the players lose."
     ]
+  },
+  "over-the-misty-mountains-grim": {
+    "intro": [
+      "Rested after their stay in Rivendell, Bilbo and the dwarves set out to cross the Misty Mountains, where giants hurl stones for sport and goblins wait in the caves below."
+    ],
+    "setup": [
+      "Played with two encounter decks. The Over the Misty Mountains Grim and Western Lands encounter sets make up the active encounter deck. The Great Goblin and Misty Mountain Goblins encounter sets make up a second deck, set aside, inactive.",
+      "Only the active encounter deck can be interacted with. When a quest effect makes the second deck active, all encounter cards in play and in the encounter discard pile are set aside with the first deck, inactive, for the rest of the game.",
+      "Each player may add treasures he has discovered in We Must Away, Ere Break of Day to his deck.",
+      "The first player takes control of Bilbo Baggins. If he leaves play, the players lose."
+    ]
   }
 }

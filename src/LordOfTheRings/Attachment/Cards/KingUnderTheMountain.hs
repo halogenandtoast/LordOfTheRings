@@ -2,7 +2,6 @@ module LordOfTheRings.Attachment.Cards.KingUnderTheMountain (kingUnderTheMountai
 
 import LordOfTheRings.Attachment.CardDefs qualified as Cards
 import LordOfTheRings.Attachment.Import.Lifted
-import LordOfTheRings.Card (Card (PlayerCard))
 import LordOfTheRings.Trait (Trait (Dwarf))
 
 newtype KingUnderTheMountain = KingUnderTheMountain AttachmentAttrs
@@ -22,14 +21,6 @@ instance HasAbilities KingUnderTheMountain where
 instance RunMessage KingUnderTheMountain where
   runMessage msg s@(KingUnderTheMountain a) = case msg of
     UseCardAbility pid (isSource a -> True) 1 _ -> do
-      top <- take 2 . (.deck) <$> getPlayer pid
-      chooseOneM pid do
-        questionLabeled "kingUnderTheMountain.take"
-        causedBy a
-        showing top
-        targets [pc | PlayerCard pc <- top] \pc -> do
-          push $ TakeFromDeck pid pc.id
-          -- the other card is on top now
-          discardTopOfDeck pid (length top - 1)
+      takeOneOfTopDiscardRest pid a "kingUnderTheMountain.take" 2
       pure s
     _ -> KingUnderTheMountain <$> runMessage msg a

@@ -574,6 +574,10 @@ allLocationCards =
       , loneLands
       , caveEntranceWesternLands
       , theGoblinsCaves
+      , overhangingRock
+      , theHighPass
+      , frontPorch
+      , greatCavernRoom
       ]
 
 drownedTreasury :: CardDef
@@ -4187,3 +4191,20 @@ theGoblinsCaves =
     { cdCardTraits = setFromList [Cave]
     , cdShadowEffect = True
     }
+
+-- * Over the Misty Mountains Grim
+
+overhangingRock :: CardDef
+overhangingRock = (location "131068" "Overhanging Rock" OverTheMistyMountainsGrim 2 2 3) {cdCardTraits = setFromList [Mountain]}
+
+-- | X threat: given by its own modifiers.
+theHighPass :: CardDef
+theHighPass = unique (location "131069" "The High Pass" OverTheMistyMountainsGrim 1 0 5) {cdCardTraits = setFromList [Mountain]}
+
+-- * The Great Goblin
+
+frontPorch :: CardDef
+frontPorch = (location "131066" "Front Porch" TheGreatGoblin 2 4 4) {cdCardTraits = setFromList [Cave]}
+
+greatCavernRoom :: CardDef
+greatCavernRoom = (location "131067" "Great Cavern Room" TheGreatGoblin 3 2 3) {cdCardTraits = setFromList [Cave]}
