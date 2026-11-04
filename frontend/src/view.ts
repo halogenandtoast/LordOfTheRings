@@ -215,6 +215,10 @@ export const toView = (data: GameData, defs: Record<string, CardDef>, previous: 
         const host = a.placement?.tag === 'AttachedTo' ? targetCardId(a.placement.contents as Target) : null
         return host !== null && ids.has(host) ? (a.underneath ?? []).map((c) => card(c.cardCode, c.id, { attachedTo: host })) : []
       }),
+      // the cards faceup under a location sit on it, as the Warden under a Camp (The Land of Sorrow)
+      ...Object.values(entities.locations).flatMap((l) =>
+        ids.has(l.cardId) ? (l.underneath ?? []).map((c) => card(c.cardCode, c.id, { attachedTo: l.cardId })) : [],
+      ),
     ]
   }
 

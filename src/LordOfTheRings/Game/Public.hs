@@ -157,7 +157,8 @@ publicGameFor seesHand g = hideDecks $ toJSON merged
         $ KeyMap.insert "setAsideDamage" (toJSON (fromMeta "setAsideDamage" :: Map CardId Int))
         $ adjust (inside "objectives" $ overValues $ inside "underneath" $ const $ Array mempty) "entities"
         $ adjust (inside "contracts" $ overValues $ inside "underneath" $ const $ Array mempty) "entities"
-        $ adjust (inside "locations" $ overValues $ inside "underneath" $ const $ Array mempty) "entities"
+        -- the cards under a location stay hidden, unless they lie faceup, as a Camp's Warden
+        $ adjust (inside "locations" $ overValues hideFacedownUnderneath) "entities"
         $ adjust (inside "locations" $ overValues hideOtherSide) "entities"
         $ adjust (overEntries \pid -> if seesHand pid then id else hideSearch) "question"
         $ adjust (overEntries \pid -> if seesHand pid then hidePlayer else hideHand . hidePlayer) "players"
@@ -269,6 +270,9 @@ publicGameFor seesHand g = hideDecks $ toJSON merged
       | not (any seesHand (fromMaybe [] $ parseMaybe parseJSON =<< KeyMap.lookup "lookedAt" o :: [PlayerId])) ->
           Object $ KeyMap.delete "otherSide" o
     v -> v
+  hideFacedownUnderneath = \case
+    v@(Object o) | KeyMap.lookup "underneathFaceup" o == Just (Bool True) -> v
+    v -> inside "underneath" (const $ Array mempty) v
   -- the cards under a threat dial are facedown too, as Lost in the Dark places them
   hidePlayer = withSize "underThreatDial" "underThreatDialSize" . withSize "deck" "deckSize"
   hideHand = \case
