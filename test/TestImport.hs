@@ -10,7 +10,9 @@ import LordOfTheRings.Classes.HasQueue as X
 import LordOfTheRings.Card as X (Card (..), CardCode, CardDef, EncounterCard, genEncounterCard, genPlayerCard, toCardCode)
 import LordOfTheRings.Classes.Entity as X (insertEntity, overAttrs, toAttrs, toId)
 import LordOfTheRings.Campaign (CampaignLog)
-import LordOfTheRings.Scenario.Types (encounterDeckL, scenarioCampaign)
+import LordOfTheRings.Scenario.Types (encounterDeckL, scenarioCampaign, scenarioId)
+import LordOfTheRings.Saga (FellowshipSetup (..), fellowshipSetup)
+import LordOfTheRings.Card.Code (CardCode (..))
 import LordOfTheRings.Scenario as X (Scenario, escapeFromDolGuldur, journeyAlongTheAnduin, passageThroughMirkwood)
 import LordOfTheRings.Decklist as X (DeckList (..), deckList, starterDecks, starterDeck)
 import LordOfTheRings.Decklist (loadPlayer)
@@ -121,8 +123,27 @@ chooseAbility pid = chooseOptionMatching "use ability" pid \case
 flipFirstQuest :: PlayerId -> GameT ()
 flipFirstQuest pid = do
   run Setup
+  chooseBoxRingBearer pid
   chooseLabel "$label.keepHand" pid
   chooseOptionMatching "flip the quest" pid (const True)
+
+{- | When setup offers the first player a choice of Ring-bearers, take the one of the
+scenario's box: the Frodo Baggins whose code shares its box with the box's The One Ring.
+-}
+chooseBoxRingBearer :: PlayerId -> GameT ()
+chooseBoxRingBearer pid = do
+  sid <- getsGame (scenarioId . toAttrs . (.scenario))
+  getQuestion pid >>= \case
+    Just q@(QuestionLabel "$label.saga.chooseFellowshipHero" _ _ _) -> do
+      let shown = \case
+            SearchCards cs _ -> cs
+            QuestionLabel _ _ _ q' -> shown q'
+            _ -> []
+          box = take 3 . unCardCode
+          ring = maybe "" box (fellowshipRing =<< fellowshipSetup sid)
+          cards = shown q
+      for_ (find ((== ring) . box . toCardCode) cards <|> headMay cards) (chooseTarget pid . toTarget)
+    _ -> pure ()
 
 -- | Click the active stage to resolve its When Revealed effect.
 resolveWhenRevealed :: (HasCallStack) => PlayerId -> GameT ()

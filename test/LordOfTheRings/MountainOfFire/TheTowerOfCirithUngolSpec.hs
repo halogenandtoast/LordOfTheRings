@@ -340,6 +340,7 @@ spec = describe "The Tower of Cirith Ungol" do
         setUpCampaign pid = do
           withBlade pid
           run Setup
+          chooseBoxRingBearer pid
           -- the only Item boon of the seat: set aside without a question
           chooseLabel "$label.keepHand" pid
           chooseOptionMatching "flip the quest" pid (const True)
