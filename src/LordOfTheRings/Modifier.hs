@@ -854,7 +854,9 @@ data ModifierType
     ActiveLocationsAddThreat LocationMatcher
   | -- | on the game: a treachery card has been revealed this round
     TreacheryRevealedThisRound
-
+  | -- | on the game, by an effect until the end of the phase: the treachery was revealed
+    -- this phase, as "the first treachery revealed each quest phase" counts them
+    TreacheryRevealedThisPhase
   | -- | on the game: as an additional cost to bypass a quest card, each player raises his
     -- threat by this much, as Shadowed Corridor reads
     BypassCostRaisesThreat Int

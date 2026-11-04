@@ -3229,8 +3229,10 @@ runGameMessage msg g = case msg of
       TreacheryType -> do
         treachery <- newTreachery card
         -- counted as it is revealed, for "the first treachery card revealed each round"
+        -- and for the phase, as "the first treachery revealed each quest phase"
         let counted = CreateEffect $ Effect (TreacherySource $ toId treachery) GameTarget [TreacheryRevealedThisRound] UntilEndOfRound
-        pushAll . (counted :) . (<> [FinishRevelation (toId treachery), WhileInPlay (toTarget treachery) surge])
+            countedForPhase = CreateEffect $ Effect (TreacherySource $ toId treachery) GameTarget [TreacheryRevealedThisPhase] UntilEndOfPhase
+        pushAll . ([counted, countedForPhase] <>) . (<> [FinishRevelation (toId treachery), WhileInPlay (toTarget treachery) surge])
           =<< revealing (toTarget treachery)
         pure $ g & entitiesL . treacheriesL %~ insertEntity treachery
       -- a player card with the Encounter keyword, as Ranger of the North: it enters play
