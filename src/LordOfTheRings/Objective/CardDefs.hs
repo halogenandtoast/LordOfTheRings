@@ -127,6 +127,10 @@ allObjectiveCards =
       , nooseOfVines
       , porosGarrison
       , haldan
+      , durinsKey
+      , urdugsHorn
+      , urdug
+      , tiny
       ]
 
 durinsAxe :: CardDef
@@ -868,3 +872,33 @@ haldan =
     , cdKeywords = setFromList [FirstPlayerGainsControl]
     , cdOtherSide = Just "18069A"
     }
+
+-- * Roam Across Rhovanion
+
+durinsKey :: CardDef
+durinsKey = unique (objective "19036" "Durin's Key" RoamAcrossRhovanion 1) {cdCardTraits = setFromList [Artifact, Item]}
+
+urdugsHorn :: CardDef
+urdugsHorn = unique (objective "19037" "Urdug's Horn" RoamAcrossRhovanion 1) {cdCardTraits = setFromList [Artifact, Item]}
+
+-- | The objective-ally side of Urdug; his enemy side is 19053 (Hall of Beorn's numbering).
+urdug :: CardDef
+urdug =
+  unique
+    ((objective "19052" "Urdug" RoamAcrossRhovanion 1)
+        { cdCardType = ObjectiveAllyType, cdWillpower = Just 2, cdAttack = Just 3, cdDefense = Just 2, cdHitPoints = Just 5 })
+      { cdCardTraits = setFromList [Goblin, Orc]
+      , cdKeywords = setFromList [FirstPlayerGainsControl]
+      , cdOtherSide = Just "19053"
+      }
+
+-- | The objective-ally side of Tiny; his enemy side is 19055.
+tiny :: CardDef
+tiny =
+  unique
+    ((objective "19054" "Tiny" RoamAcrossRhovanion 1)
+        { cdCardType = ObjectiveAllyType, cdWillpower = Just 1, cdAttack = Just 6, cdDefense = Just 3, cdHitPoints = Just 9 })
+      { cdCardTraits = setFromList [Troll]
+      , cdKeywords = setFromList [FirstPlayerGainsControl]
+      , cdOtherSide = Just "19055"
+      }

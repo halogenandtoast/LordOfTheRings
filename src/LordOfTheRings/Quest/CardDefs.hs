@@ -351,6 +351,11 @@ allQuestCards =
       , southronPursuit
       , orcPatrols
       , battleAtTheCrossings
+      , theGoblinsTask
+      , rescueTiny
+      , retrieveUrdugsHorn
+      , findDurinsKey
+      , urdugsGambit
       ]
 
 theDrippingWalls :: CardDef
@@ -1390,3 +1395,21 @@ orcPatrols = quest "17162" "Orc Patrols" TheCrossingsOfPoros 3 15
 
 battleAtTheCrossings :: CardDef
 battleAtTheCrossings = quest "17163" "Battle at the Crossings" TheCrossingsOfPoros 4 20
+
+-- * Roam Across Rhovanion
+
+-- | No quest points: the players advance as the active location is explored.
+theGoblinsTask :: CardDef
+theGoblinsTask = (quest "19047" "The Goblin's Task" RoamAcrossRhovanion 1 0) {cdQuestPoints = Nothing}
+
+rescueTiny :: CardDef
+rescueTiny = quest "19048" "Rescue Tiny" RoamAcrossRhovanion 2 5
+
+retrieveUrdugsHorn :: CardDef
+retrieveUrdugsHorn = quest "19049" "Retrieve Urdug's Horn" RoamAcrossRhovanion 2 5
+
+findDurinsKey :: CardDef
+findDurinsKey = quest "19050" "Find Durin's Key" RoamAcrossRhovanion 2 5
+
+urdugsGambit :: CardDef
+urdugsGambit = quest "19051" "Urdug's Gambit" RoamAcrossRhovanion 3 5

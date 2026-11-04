@@ -466,6 +466,9 @@ allLocationCards =
       , crumblingCavern
       , undergroundLake
       , woodmenVillage
+      , greyMoorland
+      , deepRavine
+      , slopesOfEredMithrin
       ]
 
 drownedTreasury :: CardDef
@@ -3494,4 +3497,26 @@ woodmenVillage =
   (location "18069A" "Woodmen Village" JourneyUpTheAnduin 1 4 4)
     { cdCardTraits = setFromList [Riverland]
     , cdOtherSide = Just "18069B"
+    }
+
+-- * Roam Across Rhovanion
+
+greyMoorland :: CardDef
+greyMoorland =
+  (location "19041" "Grey Moorland" RoamAcrossRhovanion 2 3 4)
+    { cdCardTraits = setFromList [Hills]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
+    }
+
+deepRavine :: CardDef
+deepRavine = (location "19042" "Deep Ravine" RoamAcrossRhovanion 3 2 3) {cdCardTraits = setFromList [Hills], cdEasyModeQuantity = Just 2}
+
+slopesOfEredMithrin :: CardDef
+slopesOfEredMithrin =
+  (location "19043" "Slopes of Ered Mithrin" RoamAcrossRhovanion 3 2 4)
+    { cdCardTraits = setFromList [Hills]
+    , cdKeywords = setFromList [Doomed 1]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 0
     }

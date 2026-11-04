@@ -365,6 +365,9 @@ import LordOfTheRings.Treachery.Cards.DarkPlaces
 import LordOfTheRings.Treachery.Cards.EyesInTheDark
 import LordOfTheRings.Treachery.Cards.DragonBreath
 import LordOfTheRings.Treachery.Cards.DragonScales
+import LordOfTheRings.Treachery.Cards.SneakingOff
+import LordOfTheRings.Treachery.Cards.HarshWeather
+import LordOfTheRings.Treachery.Cards.WildCreatures
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -757,5 +760,8 @@ allTreacherys =
         , SomeTreacheryCard eyesInTheDark
         , SomeTreacheryCard dragonBreath
         , SomeTreacheryCard dragonScales
+        , SomeTreacheryCard sneakingOff
+        , SomeTreacheryCard harshWeather
+        , SomeTreacheryCard wildCreatures
         ]
     ]

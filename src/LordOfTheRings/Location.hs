@@ -448,6 +448,9 @@ import LordOfTheRings.Location.Cards.FrightfulDen
 import LordOfTheRings.Location.Cards.LightlessGrotto
 import LordOfTheRings.Location.Cards.CrumblingCavern
 import LordOfTheRings.Location.Cards.UndergroundLake
+import LordOfTheRings.Location.Cards.GreyMoorland
+import LordOfTheRings.Location.Cards.DeepRavine
+import LordOfTheRings.Location.Cards.SlopesOfEredMithrin
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -942,5 +945,8 @@ allLocations =
         , SomeLocationCard lightlessGrotto
         , SomeLocationCard crumblingCavern
         , SomeLocationCard undergroundLake
+        , SomeLocationCard greyMoorland
+        , SomeLocationCard deepRavine
+        , SomeLocationCard slopesOfEredMithrin
         ]
     ]
