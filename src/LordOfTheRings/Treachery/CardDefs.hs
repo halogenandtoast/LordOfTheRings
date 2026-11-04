@@ -447,6 +447,9 @@ allTreacheryCards =
       , windWhippedRain
       , moreLikeAGrocer
       , gripGrabPinchNab
+      , gallopingBoulders
+      , guffawingOfGiants
+      , chaosInTheCavern
       ]
 
 deepDeepDark :: CardDef
@@ -2809,3 +2812,16 @@ moreLikeAGrocer = (treachery "131057" "More Like a Grocer" WesternLands 1) {cdSh
 
 gripGrabPinchNab :: CardDef
 gripGrabPinchNab = (treachery "131070" "Grip, grab! Pinch, nab!" MistyMountainGoblins 3) {cdShadowEffect = True}
+
+-- * Over the Misty Mountains Grim
+
+gallopingBoulders :: CardDef
+gallopingBoulders = (treachery "131072" "Galloping Boulders" OverTheMistyMountainsGrim 4) {cdShadowEffect = True}
+
+guffawingOfGiants :: CardDef
+guffawingOfGiants = treachery "131073" "Guffawing of Giants" OverTheMistyMountainsGrim 2
+
+-- * The Great Goblin
+
+chaosInTheCavern :: CardDef
+chaosInTheCavern = (treachery "131071" "Chaos in the Cavern" TheGreatGoblin 2) {cdShadowEffect = True}
