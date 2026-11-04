@@ -211,6 +211,15 @@ spec = describe "Angmar Awakened campaign" do
       (.threat) <$> getPlayer pid `shouldReturn` threat + 3
 
   describe "The Treachery of Rhudaur" do
+    it "attaches Thaurdir's burden to him at setup while he is out of play, and to him as he enters play" . campaignTestIn theTreacheryOfRhudaur angmar {campaignLogPool = [PoolCard (toCardCode Objectives.thaurdirsLegacy) Nothing Nothing]} testDeck $ \_ -> do
+      thaurdir <- genEncounterCard Enemies.thaurdirTheTreacheryOfRhudaur
+      run $ SetAside thaurdir
+      run $ DoStep 9 Setup
+      attachedTo Objectives.thaurdirsLegacy `shouldReturn` [CardIdTarget thaurdir.id]
+      run $ AddToStaging thaurdir
+      eid <- getsGame (fromJustNote "no Thaurdir" . fmap toId . find ((== toCardCode Enemies.thaurdirTheTreacheryOfRhudaur) . toCardCode) . toList . (.entities.enemies))
+      attachedTo Objectives.thaurdirsLegacy `shouldReturn` [EnemyTarget eid]
+
     it "notes the book of each Clue a player controls, for that player" . campaignTestIn theTreacheryOfRhudaur angmar testDeck $ \_ -> do
       beravor <- getHeroWithCode "01012"
       run . (`PutObjectiveIntoPlayAttached` toTarget beravor.id) =<< genEncounterCard Objectives.heirloomOfIarchon

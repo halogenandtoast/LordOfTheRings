@@ -17,7 +17,7 @@ import LordOfTheRings.Matcher.Types (CardMatcher (AnyCard))
 import LordOfTheRings.Quest.CardDefs qualified as Quests
 import LordOfTheRings.Scenario.CardDefs qualified as Nightmare
 import LordOfTheRings.Scenario.Import.Lifted
-import LordOfTheRings.Scenario.Scenarios.AngmarAwakened (angmarSetup, thaurdirsBurdens)
+import LordOfTheRings.Scenario.Scenarios.AngmarAwakened (angmarSetup, thaurdirsBurdens, thaurdirsBurdensAtSetup)
 import LordOfTheRings.Treachery.CardDefs qualified as Treacheries
 import LordOfTheRings.Window (Window (..), WindowType (AdvancedToStage))
 
@@ -82,7 +82,7 @@ instance RunMessage TheTreacheryOfRhudaur where
     -- Campaign: what the pool brings, Thaurdir's burden on Thaurdir among it
     DoStep 9 Setup | isJust attrs.campaign -> do
       angmarSetup attrs
-      thaurdirsBurdens attrs False
+      thaurdirsBurdensAtSetup attrs
       TheTreacheryOfRhudaur <$> runMessage msg attrs
     CheckWindows _ | isJust attrs.campaign -> do
       thaurdirsBurdens attrs False
