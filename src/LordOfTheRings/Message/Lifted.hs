@@ -18,7 +18,7 @@ import LordOfTheRings.Log.Block (LogBlockKind (PlayBlock))
 import LordOfTheRings.Classes.HasQueue
 import LordOfTheRings.Effect
 import LordOfTheRings.Entities (entitiesLocations, entitiesQuests)
-import LordOfTheRings.Game.Base (gameEntities, gamePhase)
+import LordOfTheRings.Game.Base (gameEffects, gameEntities, gamePhase)
 import LordOfTheRings.Helpers.Modifiers (cardsPlayedThisRound, getModifiers, immuneToSource)
 import LordOfTheRings.Helpers.Staging (getLocationQuestPoints)
 import LordOfTheRings.Ally.Types (allyCardId)
@@ -216,6 +216,13 @@ lowerThreatBy source pid n' = do
       $ CreateEffect
       $ Effect (toSource source) (PlayerTarget pid) [ThreatReducedByPlayerCardsThisRound (min n threat)] UntilEndOfRound
     push $ CheckWindows [Window After $ ThreatReduced pid (toSource source)]
+
+-- | How much player cards have reduced the player's threat this round, as Moonlit Passage
+-- and Covered in Darkness limit it.
+getThreatReducedByPlayerCardsThisRound :: HasGame m => PlayerId -> m Int
+getThreatReducedByPlayerCardsThisRound pid = do
+  effects <- getsGame gameEffects
+  pure $ sum [n | e <- effects, effectTarget e == PlayerTarget pid, ThreatReducedByPlayerCardsThisRound n <- effectModifiers e]
 
 -- | The player draws N cards by the source's effect, unless player card effects cannot
 -- make him draw and it is a player card.

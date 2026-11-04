@@ -1,7 +1,5 @@
 module LordOfTheRings.Location.Cards.MoonlitPassage (moonlitPassage) where
 
-import LordOfTheRings.Classes.HasGame (getsGame)
-import LordOfTheRings.Game.Base (gameEffects)
 import LordOfTheRings.Location.CardDefs qualified as Cards
 import LordOfTheRings.Location.Import.Lifted
 import LordOfTheRings.Placement (Placement (StagingArea))
@@ -19,9 +17,8 @@ moonlitPassage = location MoonlitPassage Cards.moonlitPassage
 instance HasModifiersFor MoonlitPassage where
   getModifiersFor (MoonlitPassage a) = when (a.placement == StagingArea) do
     players <- getRemainingPlayers
-    effects <- getsGame gameEffects
     for_ players \p -> do
-      let reduced = sum [n | e <- effects, effectTarget e == PlayerTarget p, ThreatReducedByPlayerCardsThisRound n <- effectModifiers e]
+      reduced <- getThreatReducedByPlayerCardsThisRound p
       modified a (PlayerTarget p) [PlayerCardThreatReductionLimit (max 0 $ 1 - reduced)]
 
 -- | Shadow: Raise your threat by 1.
