@@ -1860,8 +1860,8 @@ addShadowCardToStaging eid card = do
 
 {- | Turn the card over to its other side: a location, as an Uncharted one is flipped, or a
 card whose other side is another kind of card, as Captain Sahír turns from enemy to
-objective-ally and back (under the player his objective-ally side names), all tokens
-removed.
+objective-ally and back (under the player his objective-ally side names), or Sméagol from
+hero to enemy and back (see 'Flip'), all tokens removed.
 -}
 flipOver :: (ReverseQueue m, Targetable target) => target -> m ()
 flipOver target = unlessM (elem CannotBeFlipped <$> getModifiers (toTarget target)) $ push $ Flip (toTarget target)

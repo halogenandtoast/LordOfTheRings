@@ -77,6 +77,13 @@ barredHeroes scenarioId deckLists = [t | t <- barred, t `elem` titles]
  where
   barred = case scenarioId of
     "the-fords-of-isen" -> ["Gríma"]
+    -- nor Sméagol in the Shadows of Mirkwood cycle (MEC77 rules), nor in the sagas
+    "the-hunt-for-gollum" -> ["Sméagol"]
+    "conflict-at-the-carrock" -> ["Sméagol"]
+    "a-journey-to-rhosgobel" -> ["Sméagol"]
+    "the-hills-of-emyn-muil" -> ["Sméagol"]
+    "the-dead-marshes" -> ["Sméagol"]
+    "return-to-mirkwood" -> ["Sméagol"]
     _ -> []
   titles = [title | dl <- deckLists, Just d <- map (`Map.lookup` allPlayerCards) dl.heroes, let Name title _ = d.cdName]
 

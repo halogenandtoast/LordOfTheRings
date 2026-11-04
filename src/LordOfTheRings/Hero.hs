@@ -86,6 +86,7 @@ import LordOfTheRings.Hero.Cards.GrimbeornTheOld
 import LordOfTheRings.Hero.Cards.Haldan
 import LordOfTheRings.Hero.Cards.Thranduil
 import LordOfTheRings.Hero.Cards.DainIronfootSpirit
+import LordOfTheRings.Hero.Cards.Smeagol
 import LordOfTheRings.Hero.AllyHero (allyHero)
 import LordOfTheRings.Hero.Cards.BilboBagginsTactics
 import LordOfTheRings.Hero.Cards.Radagast
@@ -205,5 +206,6 @@ allHeroes =
         , SomeHeroCard haldan
         , SomeHeroCard thranduil
         , SomeHeroCard dainIronfootSpirit
+        , SomeHeroCard smeagol
         ]
     ]

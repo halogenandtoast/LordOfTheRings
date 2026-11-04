@@ -91,6 +91,7 @@ allHeroCards =
       , haldan
       , thranduil
       , dainIronfootSpirit
+      , smeagol
       ]
 
 aragorn :: CardDef
@@ -576,4 +577,12 @@ dainIronfootSpirit :: CardDef
 dainIronfootSpirit =
   (hero "19084" "Dáin Ironfoot" Spirit 11 1 2 3 5)
     { cdCardTraits = setFromList [Dwarf, Noble, Warrior]
+    }
+
+-- | His other side is the enemy Gollum ('LordOfTheRings.Enemy.CardDefs.gollumASitE').
+smeagol :: CardDef
+smeagol =
+  (hero "21072" "Sméagol" Lore 3 2 2 2 3)
+    { cdCardTraits = setFromList [Gollum]
+    , cdOtherSide = Just "21073"
     }

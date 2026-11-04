@@ -464,6 +464,7 @@ allEnemyCards =
       , tinyEnemy
       , mirkwoodPatrol
       , ravenousSpider
+      , gollumASitE
       ]
 
 namelessThing :: CardDef
@@ -3793,3 +3794,16 @@ mirkwoodPatrol = (enemy "18034" "Mirkwood Patrol" LostInMirkwood 2 40 4 5 3 6) {
 
 ravenousSpider :: CardDef
 ravenousSpider = (enemy "18035" "Ravenous Spider" LostInMirkwood 2 36 3 4 3 5) {cdCardTraits = setFromList [Creature, Spider], cdShadowEffect = True, cdEasyModeQuantity = Just 1}
+
+-- * A Shadow in the East
+
+-- | Sméagol's other side ('LordOfTheRings.Hero.CardDefs.smeagol'): a player card, never
+-- gathered into an encounter deck.
+gollumASitE :: CardDef
+gollumASitE =
+  unique
+    (enemy "21073" "Gollum" GollumAndSmeagol 1 50 2 2 2 3)
+      { cdCardTraits = setFromList [Gollum]
+      , cdOtherSide = Just "21072"
+      }
+

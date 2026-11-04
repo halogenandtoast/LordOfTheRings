@@ -273,6 +273,13 @@ narrationFor = \case
       one $ mechanic [ikeyPart "log.guardsObjective" ["guard" ~> g, "objective" ~> o]]
   -- an enemy with two sides turns over, as Thaurdir does
   Flip (EnemyTarget eid) -> Just $ whenRef (toTarget eid) \e -> one $ mechanic [ikeyPart "log.enemyFlips" ["enemy" ~> e]]
+  -- a hero turning to its enemy side, as Sméagol to Gollum
+  Flip (HeroTarget hid) -> Just do
+    hs <- getsGame (entitiesHeroes . gameEntities)
+    case Map.lookup hid hs of
+      Just h | Just other <- cdOtherSide (toCardDef h), cdCardType (toCardDef other) == EnemyType -> whenRef (toTarget hid) \from ->
+        one $ toned Bad $ mechanic [ikeyPart "log.heroFlips" ["hero" ~> from, "card" ~> PlayerCard (MkPlayerCard (toCard h).id other (Just h.owner))]]
+      _ -> pure []
   CreatePowerOfMordorDeck -> Just $ one $ mechanic [ikeyPart "log.powerOfMordorDeckCreated" []]
   RevealTopOfPowerOfMordorDeck -> Just $ one $ toned Bad $ mechanic [ikeyPart "log.powerOfMordorReveals" []]
   -- an objective ally turning to its enemy side, as Captain Sahír's
