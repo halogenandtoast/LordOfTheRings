@@ -402,6 +402,7 @@ allTreacheryCards =
       , recurveBow
       , wearyLands
       , painfulFatigue
+      , overwhelmed
       ]
 
 deepDeepDark :: CardDef
@@ -2555,3 +2556,11 @@ wearyLands =
 
 painfulFatigue :: CardDef
 painfulFatigue = (treachery "21028" "Painful Fatigue" RollingPlains 2) {cdShadowEffect = True}
+
+overwhelmed :: CardDef
+overwhelmed =
+  (treachery "21042" "Overwhelmed" ServantsOfSauron 2)
+    { cdKeywords = setFromList [Doomed 1]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
+    }

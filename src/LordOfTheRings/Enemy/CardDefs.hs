@@ -470,6 +470,8 @@ allEnemyCards =
       , riderOfRhun
       , easterlingRaider
       , warriorOfRhun
+      , messengerFromMordor
+      , servantOfSauron
       ]
 
 namelessThing :: CardDef
@@ -3853,4 +3855,20 @@ warriorOfRhun =
     { cdCardTraits = setFromList [Easterling]
     , cdShadowEffect = True
     , cdEasyModeQuantity = Just 2
+    }
+
+messengerFromMordor :: CardDef
+messengerFromMordor =
+  (enemy "21040" "Messenger from Mordor" ServantsOfSauron 3 34 2 4 2 4)
+    { cdCardTraits = setFromList [Mordor]
+    , cdWhenRevealed = True
+    , cdShadowEffect = True
+    }
+
+servantOfSauron :: CardDef
+servantOfSauron =
+  (enemy "21041" "Servant of Sauron" ServantsOfSauron 2 36 1 2 1 3)
+    { cdCardTraits = setFromList [Mordor]
+    , cdKeywords = setFromList [Surge]
+    , cdEasyModeQuantity = Just 1
     }

@@ -314,6 +314,7 @@ import LordOfTheRings.Quest.Cards.FindDurinsKey
 import LordOfTheRings.Quest.Cards.UrdugsGambit
 import LordOfTheRings.Quest.Cards.WarriorsOfTheEast
 import LordOfTheRings.Quest.Cards.AnArduousJourney
+import LordOfTheRings.Quest.Cards.ShadowOfFearASitE
 import LordOfTheRings.Quest.Runner ()
 import LordOfTheRings.Quest.Types as X
 import LordOfTheRings.Id
@@ -660,5 +661,6 @@ allQuests =
         , SomeQuestCard urdugsGambit
         , SomeQuestCard warriorsOfTheEast
         , SomeQuestCard anArduousJourney
+        , SomeQuestCard shadowOfFearASitE
         ]
     ]

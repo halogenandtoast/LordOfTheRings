@@ -717,6 +717,7 @@ library
       LordOfTheRings.Enemy.Cards.MarshAdder
       LordOfTheRings.Enemy.Cards.MarshlandOutlaws
       LordOfTheRings.Enemy.Cards.MarshWight
+      LordOfTheRings.Enemy.Cards.MessengerFromMordor
       LordOfTheRings.Enemy.Cards.MethedrasLookout
       LordOfTheRings.Enemy.Cards.MethedrasOrc
       LordOfTheRings.Enemy.Cards.MirkwoodBats
@@ -839,6 +840,7 @@ library
       LordOfTheRings.Enemy.Cards.SerpentGuard
       LordOfTheRings.Enemy.Cards.SerpentsBlade
       LordOfTheRings.Enemy.Cards.ServantOfFlame
+      LordOfTheRings.Enemy.Cards.ServantOfSauron
       LordOfTheRings.Enemy.Cards.ServantOfTheDeceiver
       LordOfTheRings.Enemy.Cards.ShadowDweller
       LordOfTheRings.Enemy.Cards.SiegeRaft
@@ -2115,6 +2117,7 @@ library
       LordOfTheRings.Quest.Cards.SendForAid
       LordOfTheRings.Quest.Cards.SettingOut
       LordOfTheRings.Quest.Cards.SeverTheHead
+      LordOfTheRings.Quest.Cards.ShadowOfFearASitE
       LordOfTheRings.Quest.Cards.ShadowTheWarParty
       LordOfTheRings.Quest.Cards.SiftThroughTheDebris
       LordOfTheRings.Quest.Cards.SneakPastTheGuards
@@ -2598,6 +2601,7 @@ library
       LordOfTheRings.Treachery.Cards.Overgrown
       LordOfTheRings.Treachery.Cards.OverrunByOrcs
       LordOfTheRings.Treachery.Cards.OverrunDefenses
+      LordOfTheRings.Treachery.Cards.Overwhelmed
       LordOfTheRings.Treachery.Cards.PainfulFatigue
       LordOfTheRings.Treachery.Cards.Panicked
       LordOfTheRings.Treachery.Cards.ParalyzingFear

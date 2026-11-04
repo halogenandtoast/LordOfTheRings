@@ -398,6 +398,7 @@ allQuestCards =
       , urdugsGambit
       , warriorsOfTheEast
       , anArduousJourney
+      , shadowOfFearASitE
       ]
 
 theDrippingWalls :: CardDef
@@ -1608,3 +1609,11 @@ warriorsOfTheEast =
 
 anArduousJourney :: CardDef
 anArduousJourney = (encounterSideQuest "21029" "An Arduous Journey" RollingPlains 6) {cdVictoryPoints = Just 10}
+
+-- | A Shadow in the East's side quest, not Flight from Moria's treachery.
+shadowOfFearASitE :: CardDef
+shadowOfFearASitE =
+  (encounterSideQuest "21043" "Shadow of Fear" ServantsOfSauron 6)
+    { cdKeywords = setFromList [Surge]
+    , cdVictoryPoints = Just 10
+    }

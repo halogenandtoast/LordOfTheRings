@@ -2798,5 +2798,15 @@
   },
   "anArduousJourney": {
     "ready": "An Arduous Journey: you may ready a hero you control"
+  },
+  "messengerFromMordor": {
+    "choose": "Messenger from Mordor: choose one",
+    "raiseThreat": "Raise each player's threat by {n}",
+    "attack": "Messenger from Mordor attacks the first player"
+  },
+  "overwhelmed": {
+    "choose": "Overwhelmed: choose one",
+    "raiseThreat": "Raise your threat by 2",
+    "noDamage": "The attacking enemy cannot take damage this round"
   }
 }
