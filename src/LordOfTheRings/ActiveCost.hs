@@ -10,8 +10,8 @@ import LordOfTheRings.Id
 import LordOfTheRings.Json
 import LordOfTheRings.Message
 import LordOfTheRings.Prelude
-import LordOfTheRings.Effect (Effect (..), EffectDuration (UntilEndOfRound))
-import LordOfTheRings.Modifier (ModifierType (PlayedACardThisRound))
+import LordOfTheRings.Effect (Effect (..), EffectDuration (UntilEndOfPhase, UntilEndOfRound))
+import LordOfTheRings.Modifier (ModifierType (PlayedACardThisPhase, PlayedACardThisRound))
 import LordOfTheRings.Source (Source (GameSource, PlayerSource))
 import LordOfTheRings.Target (Target (PlayerTarget), toTarget)
 import LordOfTheRings.Token (Token (Resource))
@@ -99,6 +99,7 @@ instance RunMessage ActiveCost where
       case ac.activeCostCard of
         PlayerCard card -> do
           push $ CreateEffect $ Effect GameSource (PlayerTarget ac.activeCostPlayer) [PlayedACardThisRound] UntilEndOfRound
+          push $ CreateEffect $ Effect GameSource (PlayerTarget ac.activeCostPlayer) [PlayedACardThisPhase] UntilEndOfPhase
           pushAll $ maybe (playCard ac.activeCostPlayer card ac.activeCostWindows) (pure . PlayAttachmentOn ac.activeCostPlayer card) ac.activeCostHost
           push
             $ CheckWindows

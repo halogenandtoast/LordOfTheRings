@@ -406,6 +406,9 @@ data ModifierType
     CannotGainResourcesFromPlayerCardEffects
   | -- | on a player: he played a card this round, from wherever, as A Forgotten Land counts
     PlayedACardThisRound
+  | -- | on a player: he played a card this phase, as "the first card each player plays each
+    -- phase" counts (The Long Arm of Mordor)
+    PlayedACardThisPhase
   | -- | on a player: they draw this many more cards in the resource phase, in the same
     -- draw, as Bilbo Baggins reads
     AdditionalResourcePhaseDraws Int
