@@ -10,6 +10,7 @@ import LordOfTheRings.Modifier (ModifierType (ShadowCannotBeCanceled, WhenReveal
 import LordOfTheRings.Target (Target (GameTarget))
 import LordOfTheRings.Phase (Phase)
 import LordOfTheRings.Prelude
+import LordOfTheRings.Source (Source)
 import LordOfTheRings.Sphere (Sphere)
 import LordOfTheRings.Trait (Trait)
 
@@ -32,6 +33,9 @@ data Criterion
   | -- | an ally in any player's discard pile whose printed cost the player has the
     -- sphere's resources for
     AffordableAllyInDiscard PlayerId Sphere
+  | -- | as 'AffordableAllyInDiscard', an attachment with a host the player could play it on,
+    -- as Reforged needs
+    AffordableAttachmentInDiscard PlayerId Sphere
   | -- | an ally in hand affordable after a reduction, with a minimum cost
     AffordableAllyInHand PlayerId Sphere Int Int
   | -- | in the quest phase, before any character is committed
@@ -49,6 +53,8 @@ data Criterion
   | -- | the target has, or lacks, the modifier
     TargetHasModifier Target ModifierType
   | TargetLacksModifier Target ModifierType
+  | -- | a card in play has the modifier from the source, as the enemy Bilbo Baggins chose
+    ModifierFrom Source ModifierType
   | -- | at least this many characters match: heroes and allies
     CharactersAtLeast Int HeroMatcher AllyMatcher
   | -- | a different character for each pair of matchers, heroes and allies: "a Rohan

@@ -99,6 +99,8 @@ data WindowMatcher
   | -- | after an attack the character made resolved
     AttackedWindow Timing Target
   | ShadowEffectResolvedWindow Timing EnemyId
+  | -- | any enemy's shadow effect resolved, as Round Shield answers
+    AnyShadowEffectResolvedWindow Timing
   | -- | a shadow card dealt to an enemy engaged with the player
     ShadowCardDealtWindow Timing PlayerId
   | EnemyAttacksWindow Timing EnemyId
@@ -317,6 +319,8 @@ data WindowMatcher
     MatchingEnemyEngagedWindow Timing EnemyMatcher
   | -- | a matching enemy was dealt damage, as Orc Taskmaster answers a Goblin
     MatchingEnemyDealtDamageWindow Timing EnemyMatcher
+  | -- | a matching hero was dealt damage, as Loyal Hound answers a hero its player controls
+    MatchingHeroDealtDamageWindow Timing HeroMatcher
   | -- | a quest card was bypassed
     QuestBypassedWindow Timing
   | -- | the enemy was turned faceup as a hidden card, as Orc Trickster answers (The Blood of
@@ -385,6 +389,7 @@ windowMatches matcher (Window timing wType) = case (matcher, wType) of
   (CharacterLeftPlayWindow t m, CharacterLeftPlay c) -> t == timing && cardMatches m c
   (AttackedWindow t target, AttackedEnemy target' _) -> t == timing && target == target'
   (ShadowEffectResolvedWindow t eid, ShadowEffectResolved _ eid') -> t == timing && eid == eid'
+  (AnyShadowEffectResolvedWindow t, ShadowEffectResolved _ _) -> t == timing
   (ShadowCardDealtWindow t pid, ShadowCardDealt _ _ pid') -> t == timing && pid == pid'
   (EnemyAttacksWindow t eid, EnemyAttacking eid' _) -> t == timing && eid == eid'
   (EnemyDealtExcessDamageWindow t eid, AttackDealtExcessDamage eid' _ _) -> t == timing && eid == eid'
@@ -496,6 +501,7 @@ windowMatches matcher (Window timing wType) = case (matcher, wType) of
   (ObjectiveExhaustedWindow {}, _) -> False
   (MatchingEnemyEngagedWindow {}, _) -> False
   (MatchingEnemyDealtDamageWindow {}, _) -> False
+  (MatchingHeroDealtDamageWindow {}, _) -> False
   (QuestBypassedWindow t, QuestBypassed _) -> t == timing
   -- read with the player's errata in 'windowMatchesM'
   (ErrataWindow _ errata _, _) -> windowMatches errata (Window timing wType)
