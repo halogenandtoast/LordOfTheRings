@@ -21,10 +21,13 @@ throatOfTheMountain = location ThroatOfTheMountain Cards.throatOfTheMountain
 instance HasAbilities ThroatOfTheMountain where
   getAbilities (ThroatOfTheMountain a) = [mkAbility a 1 $ response $ ExploredWindow When a.id]
 
-{- | The card does not say where the main quest it replaces goes. It is not defeated, so it
-does not go to the victory display (rule sheet: "When a quest is completed, players will
-either add it to their victory display or win the game"); it goes back into the quest
-deck, which is then shuffled.
+{- | The card does not say where the main quest it replaces goes, nor do the rule sheet or
+FAQ 1.9, and no ruling was found. It is not defeated, so it does not go to the victory
+display (rule sheet: "When a quest is completed, players will either add it to their
+victory display or win the game"). A stage that leaves un-defeated, as a bypassed one,
+goes back into the quest deck side 2A up, its progress gone (rule sheet, "Bypassing a
+Quest Card"); it goes back as it is replaced, before "Shuffle the rest of the quest deck",
+so it is shuffled in with the rest.
 -}
 instance RunMessage ThroatOfTheMountain where
   runMessage msg l@(ThroatOfTheMountain a) = case msg of

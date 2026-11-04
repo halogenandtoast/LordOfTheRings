@@ -421,6 +421,8 @@ spec = describe "Mount Gundabad" do
     activeQuestCode `shouldReturn` toCardCode Quests.dagnirsWrath
     activeQuestFlipped `shouldReturn` True
     sort . map toCardCode . (.questDeck) <$> scenarioAttrs `shouldReturn` sort (map toCardCode [Quests.theLowerDeeps, Quests.frenziedWarrens])
+    -- Throat of the Mountain's own victory point, but not the stage it replaced
+    victoryCodes `shouldReturn` [toCardCode Locations.throatOfTheMountain]
 
   it "puts Wormsbane discarded from a hero still in play in the encounter discard pile, the game not lost" . gundabadTest $ \pid -> do
     setUp pid
