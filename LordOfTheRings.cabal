@@ -1944,7 +1944,10 @@ library
       LordOfTheRings.Objective.CardDefs
       LordOfTheRings.Objective.Cards.Abaan
       LordOfTheRings.Objective.Cards.AbandonedTools
+      LordOfTheRings.Objective.Cards.ADeepSack
       LordOfTheRings.Objective.Cards.Aearlang
+      LordOfTheRings.Objective.Cards.AFoulSack
+      LordOfTheRings.Objective.Cards.ALargeSack
       LordOfTheRings.Objective.Cards.AlcaronsScroll
       LordOfTheRings.Objective.Cards.Amarthiul
       LordOfTheRings.Objective.Cards.AmarthiulAcrossTheEttenmoors
@@ -1953,8 +1956,12 @@ library
       LordOfTheRings.Objective.Cards.ArnorRavaged
       LordOfTheRings.Objective.Cards.ArwenUndomielObjective
       LordOfTheRings.Objective.Cards.AScrapOfHistory
+      LordOfTheRings.Objective.Cards.ASmellySack
       LordOfTheRings.Objective.Cards.Assassination
+      LordOfTheRings.Objective.Cards.AStrongSack
       LordOfTheRings.Objective.Cards.Athelas
+      LordOfTheRings.Objective.Cards.AToughSack
+      LordOfTheRings.Objective.Cards.AWornSack
       LordOfTheRings.Objective.Cards.BannerOfTheSerpent
       LordOfTheRings.Objective.Cards.BlackKeyBurden
       LordOfTheRings.Objective.Cards.BookOfMazarbul
@@ -2042,6 +2049,8 @@ library
       LordOfTheRings.Objective.Cards.ToTheTower
       LordOfTheRings.Objective.Cards.TowerOfTheGull
       LordOfTheRings.Objective.Cards.TowerOfTheHeron
+      LordOfTheRings.Objective.Cards.TrollKey
+      LordOfTheRings.Objective.Cards.TrollPurse
       LordOfTheRings.Objective.Cards.UnderTheWatchfulEye
       LordOfTheRings.Objective.Cards.UnholyAlliance
       LordOfTheRings.Objective.Cards.UpInFlames
@@ -2571,6 +2580,7 @@ library
       LordOfTheRings.Scenario.Scenarios.UnderTheAshMountains
       LordOfTheRings.Scenario.Scenarios.UnderTheAshMountains.Helpers
       LordOfTheRings.Scenario.Scenarios.VoyageAcrossBelegaer
+      LordOfTheRings.Scenario.Scenarios.WeMustAwayEreBreakOfDay.Helpers
       LordOfTheRings.Scenario.Scenarios.WrathAndRuin
       LordOfTheRings.Scenario.Types
       LordOfTheRings.Source
