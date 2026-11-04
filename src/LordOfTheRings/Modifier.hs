@@ -294,6 +294,10 @@ data ModifierType
   | -- | on an enemy: the damage placed on it this round that counts against a limit of its
     -- own, as Dagnir's "cannot take more than X damage from non-quest effects each round"
     DamageTakenThisRound Int
+  | -- | on an enemy: it cannot take more than this much damage each round, counted against
+    -- 'DamageTakenThisRound', so the limit ends with the card that gives it, as A Haunt for
+    -- Beasts reads
+    DamageLimitEachRound Int
   | -- | on an objective ally in the staging area: it is committed to the current quest, as
     -- Celador reads
     CountsAsCommitted
