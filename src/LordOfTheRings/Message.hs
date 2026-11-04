@@ -389,6 +389,15 @@ data Message
   | -- | the top card of the Power of Mordor deck is placed faceup under the card, out of play,
     -- as The Fortress of Nurn's setup places one under each side quest
     PlaceTopOfPowerOfMordorDeckUnderneath Target
+  | -- | the cards are shuffled into the Burden deck, as Flight to the Ford's stage 1A builds
+    -- it from its burden set
+    CreateBurdenDeck [EncounterCard]
+  | -- | the top card of the Burden deck is revealed, as an encounter card is
+    RevealTopOfBurdenDeck
+  | -- | the top card of the Burden deck is shuffled into the encounter deck
+    ShuffleTopOfBurdenDeckIntoEncounterDeck
+  | -- | the top card of the Burden deck is placed on top of the encounter deck
+    PlaceTopOfBurdenDeckOnEncounterDeck
   | -- | the top card of the Evil Creatures deck enters play for the source: added to the
     -- staging area, or put into play engaged with the player (Journey Up the Anduin)
     AddFromEvilCreaturesDeck Source (Maybe PlayerId)

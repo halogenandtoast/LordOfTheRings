@@ -1770,6 +1770,27 @@ revealTopOfPowerOfMordorDeck = do
 placeTopOfPowerOfMordorDeckUnderneath :: (ReverseQueue m, Targetable target) => target -> m ()
 placeTopOfPowerOfMordorDeckUnderneath = push . PlaceTopOfPowerOfMordorDeckUnderneath . toTarget
 
+-- | Shuffle the cards into the Burden deck, as Flight to the Ford's stage 1A builds it.
+createBurdenDeck :: ReverseQueue m => [EncounterCard] -> m ()
+createBurdenDeck = push . CreateBurdenDeck
+
+-- | The Burden deck, top first.
+getBurdenDeck :: HasGame m => m [EncounterCard]
+getBurdenDeck = getsGame ((.burdenDeck) . toAttrs . (.scenario))
+
+-- | Reveal the top card of the Burden deck, resolved as if just revealed from the
+-- encounter deck, as The Last Bridge's travel cost reads.
+revealTopOfBurdenDeck :: ReverseQueue m => m ()
+revealTopOfBurdenDeck = push RevealTopOfBurdenDeck
+
+-- | Shuffle the top card of the Burden deck into the encounter deck.
+shuffleTopOfBurdenDeckIntoEncounterDeck :: ReverseQueue m => m ()
+shuffleTopOfBurdenDeckIntoEncounterDeck = push ShuffleTopOfBurdenDeckIntoEncounterDeck
+
+-- | Place the top card of the Burden deck on top of the encounter deck.
+placeTopOfBurdenDeckOnEncounterDeck :: ReverseQueue m => m ()
+placeTopOfBurdenDeckOnEncounterDeck = push PlaceTopOfBurdenDeckOnEncounterDeck
+
 -- | The top card of the Evil Creatures deck is added to the staging area, the source told
 -- of it with 'AddedFromEvilCreaturesDeck' (Journey Up the Anduin).
 addFromEvilCreaturesDeck :: (ReverseQueue m, Sourceable source) => source -> m ()

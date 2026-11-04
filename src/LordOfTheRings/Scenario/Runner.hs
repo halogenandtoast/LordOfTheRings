@@ -300,6 +300,22 @@ instance RunMessage ScenarioAttrs where
         push $ RevealCard top
         pure $ attrs & powerOfMordorDeckL .~ rest
       [] -> pure attrs
+    CreateBurdenDeck cards -> do
+      deck <- shuffleM (cards <> attrs.burdenDeck)
+      pure $ attrs & burdenDeckL .~ deck
+    RevealTopOfBurdenDeck -> case attrs.burdenDeck of
+      top : rest -> do
+        push $ RevealCard top
+        pure $ attrs & burdenDeckL .~ rest
+      [] -> pure attrs
+    ShuffleTopOfBurdenDeckIntoEncounterDeck -> case attrs.burdenDeck of
+      top : rest -> do
+        deck <- shuffleM (top : attrs.encounterDeck)
+        pure $ attrs & burdenDeckL .~ rest & encounterDeckL .~ deck
+      [] -> pure attrs
+    PlaceTopOfBurdenDeckOnEncounterDeck -> case attrs.burdenDeck of
+      top : rest -> pure $ attrs & burdenDeckL .~ rest & encounterDeckL %~ (top :)
+      [] -> pure attrs
     PlaceTopOfPowerOfMordorDeckUnderneath target -> case attrs.powerOfMordorDeck of
       top : rest -> do
         push $ PlaceUnderneath target [EncounterCard top]
