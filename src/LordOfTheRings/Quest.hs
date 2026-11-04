@@ -225,6 +225,9 @@ import LordOfTheRings.Quest.Cards.InEnemyTerritory
 import LordOfTheRings.Quest.Cards.FindWater
 import LordOfTheRings.Quest.Cards.CraftRemedy
 import LordOfTheRings.Quest.Cards.UruksOfTheEye
+import LordOfTheRings.Quest.Cards.GuardiansOfTheJungle
+import LordOfTheRings.Quest.Cards.WelcomeToTheJungle
+import LordOfTheRings.Quest.Cards.CaptureTheOliphaunts
 import LordOfTheRings.Quest.Runner ()
 import LordOfTheRings.Quest.Types as X
 import LordOfTheRings.Id
@@ -482,5 +485,8 @@ allQuests =
         , SomeQuestCard findWater
         , SomeQuestCard craftRemedy
         , SomeQuestCard uruksOfTheEye
+        , SomeQuestCard guardiansOfTheJungle
+        , SomeQuestCard welcomeToTheJungle
+        , SomeQuestCard captureTheOliphaunts
         ]
     ]

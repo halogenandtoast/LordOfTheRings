@@ -107,6 +107,10 @@ allObjectiveCards =
       , riseToPower
       , assassination
       , theCabalsChampion
+      , horseHairLasso
+      , poisonedSpear
+      , pitTrap
+      , nooseOfVines
       ]
 
 durinsAxe :: CardDef
@@ -719,3 +723,21 @@ theCabalsChampion =
     { cdCardTraits = setFromList [Title]
     , cdKeywords = setFromList [Surge, Doomed 1]
     }
+
+-- The Mûmakil
+
+-- | Capture objectives: set aside, then attached to a Wild Mûmak by Capture the Oliphaunts.
+captureObjective :: CardCode -> Name -> CardDef
+captureObjective code name = (objective code name TheMumakil 1) {cdCardTraits = setFromList [CaptureTrait], cdVictoryPoints = Just 1}
+
+horseHairLasso :: CardDef
+horseHairLasso = captureObjective "17011" "Horse-hair Lasso"
+
+poisonedSpear :: CardDef
+poisonedSpear = captureObjective "17012" "Poisoned Spear"
+
+pitTrap :: CardDef
+pitTrap = captureObjective "17013" "Pit Trap"
+
+nooseOfVines :: CardDef
+nooseOfVines = captureObjective "17014" "Noose of Vines"

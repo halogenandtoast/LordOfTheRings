@@ -419,6 +419,7 @@ allLocationCards =
       , jungleTrail
       , forestClearing
       , denseJungle
+      , mumakTrail
       ]
 
 drownedTreasury :: CardDef
@@ -3203,3 +3204,8 @@ denseJungle =
     { cdCardTraits = setFromList [Forest]
     , cdShadowEffect = True
     }
+
+-- The Mûmakil
+
+mumakTrail :: CardDef
+mumakTrail = (location "17020" "Mûmak Trail" TheMumakil 4 2 3) {cdCardTraits = setFromList [Forest]}

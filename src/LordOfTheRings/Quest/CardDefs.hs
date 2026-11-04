@@ -275,6 +275,9 @@ allQuestCards =
       , findWater
       , craftRemedy
       , uruksOfTheEye
+      , guardiansOfTheJungle
+      , welcomeToTheJungle
+      , captureTheOliphaunts
       ]
 
 theDrippingWalls :: CardDef
@@ -1152,3 +1155,14 @@ uruksOfTheEye =
     { cdVictoryPoints = Just 10
     , cdKeywords = setFromList [Surge]
     }
+
+-- The Mûmakil
+
+guardiansOfTheJungle :: CardDef
+guardiansOfTheJungle = (encounterSideQuest "17025" "Guardians of the Jungle" TheMumakil 6) {cdVictoryPoints = Just 10}
+
+welcomeToTheJungle :: CardDef
+welcomeToTheJungle = quest "17026" "Welcome to the Jungle" TheMumakil 1 12
+
+captureTheOliphaunts :: CardDef
+captureTheOliphaunts = quest "17027" "Capture the Oliphaunts" TheMumakil 2 8

@@ -343,6 +343,10 @@ allTreacheryCards =
       , sandstorm
       , heatExhaustion
       , overgrown
+      , stampedingOliphaunt
+      , theSavageSouth
+      , terribleFever
+      , bitingInsects
       , fearOfMordor
       ]
 
@@ -2210,3 +2214,23 @@ overgrown = (treachery "16059" "Overgrown" JungleForest 2) {cdKeywords = setFrom
 
 fearOfMordor :: CardDef
 fearOfMordor = (treachery "16065" "Fear of Mordor" MordorOrcs 2) {cdShadowEffect = True, cdEasyModeQuantity = Just 1}
+
+-- The Mûmakil
+
+stampedingOliphaunt :: CardDef
+stampedingOliphaunt = (treachery "17021" "Stampeding Oliphaunt" TheMumakil 2) {cdKeywords = setFromList [Doomed 1]}
+
+theSavageSouth :: CardDef
+theSavageSouth = (treachery "17022" "The Savage South" TheMumakil 2) {cdShadowEffect = True}
+
+-- | Counts as a Condition attachment.
+terribleFever :: CardDef
+terribleFever =
+  (treachery "17023" "Terrible Fever" TheMumakil 2)
+    { cdCardTraits = setFromList [Condition]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
+    }
+
+bitingInsects :: CardDef
+bitingInsects = (treachery "17024" "Biting Insects" TheMumakil 2) {cdShadowEffect = True, cdEasyModeQuantity = Just 1}

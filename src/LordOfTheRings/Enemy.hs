@@ -399,6 +399,11 @@ import LordOfTheRings.Enemy.Cards.UrukChieftain
 import LordOfTheRings.Enemy.Cards.UrukOfMordor
 import LordOfTheRings.Enemy.Cards.UrukWargRider
 import LordOfTheRings.Enemy.Cards.MordorWarg
+import LordOfTheRings.Enemy.Cards.WildMumak
+import LordOfTheRings.Enemy.Cards.HaradTiger
+import LordOfTheRings.Enemy.Cards.TerritorialApe
+import LordOfTheRings.Enemy.Cards.StranglingPython
+import LordOfTheRings.Enemy.Cards.GiantCentipede
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -824,5 +829,10 @@ allEnemys =
         , SomeEnemyCard urukOfMordor
         , SomeEnemyCard urukWargRider
         , SomeEnemyCard mordorWarg
+        , SomeEnemyCard wildMumak
+        , SomeEnemyCard haradTiger
+        , SomeEnemyCard territorialApe
+        , SomeEnemyCard stranglingPython
+        , SomeEnemyCard giantCentipede
         ]
     ]
