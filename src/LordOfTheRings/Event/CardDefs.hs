@@ -72,6 +72,9 @@ allEventCards =
       , hostOfGaladhrim
       , theMusterOfRohan
       , helmOfSecrecy
+      , theMasterRing
+      , theRulingRing
+      , theRingOfPower
       , campfireTales
       , theEaglesAreComing
       , musteringTheRohirrim
@@ -410,6 +413,15 @@ theMusterOfRohan = event "22062" "The Muster of Rohan" Spirit (StaticCost 4)
 
 helmOfSecrecy :: CardDef
 helmOfSecrecy = (event "22090" "Helm of Secrecy" Neutral (StaticCost 4)) {cdDeckLimit = 1}
+
+theMasterRing :: CardDef
+theMasterRing = (event "21009" "The Master Ring" Neutral (StaticCost 0)) {cdCardTraits = setFromList [Master]}
+
+theRulingRing :: CardDef
+theRulingRing = (event "21010" "The Ruling Ring" Neutral (StaticCost 0)) {cdCardTraits = setFromList [Master]}
+
+theRingOfPower :: CardDef
+theRingOfPower = (event "21011" "The Ring of Power" Neutral (StaticCost 0)) {cdCardTraits = setFromList [Master]}
 
 campfireTales :: CardDef
 campfireTales = event "02003" "Campfire Tales" Leadership (StaticCost 1)
