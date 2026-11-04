@@ -434,6 +434,22 @@ lookAtShadowCard pid source eid cid = push $ LookAtShadowCard pid (toSource sour
 returnFromDiscardToHand :: ReverseQueue m => PlayerId -> CardId -> m ()
 returnFromDiscardToHand pid cid = push $ ReturnFromDiscardToHand pid cid
 
+-- | The character stops attacking, as cancelling a player's attack does: it stays exhausted.
+stopAttacking :: (ReverseQueue m, Targetable target) => target -> m ()
+stopAttacking = push . StopAttacking . toTarget
+
+-- | The player may return 1 card from his discard pile to his hand, as Abandoned Camp and
+-- Iron Hills Mine read.
+mayReturnFromDiscardToHand :: (ReverseQueue m, Targetable source) => source -> PlayerId -> m ()
+mayReturnFromDiscardToHand source pid = do
+  discarded <- (.discard) <$> getPlayer pid
+  unless (null discarded) $ chooseOneM pid do
+    questionLabeled "returnFromDiscard.return"
+    causedBy source
+    showing discarded
+    targets discarded \c -> returnFromDiscardToHand pid c.id
+    labeled "returnFromDiscard.none" (pure ())
+
 {- | A shadow effect's two values: the first when the attack is undefended (no defender),
 the second otherwise.
 -}
@@ -896,7 +912,8 @@ putHeroIntoPlay :: ReverseQueue m => PlayerId -> PlayerCard -> m ()
 putHeroIntoPlay pid = push . PutHeroIntoPlay pid
 
 -- | A treachery dealt as a shadow card comes into play attached to the host.
--- | The treachery leaves the encounter discard pile attached to the host, not revealed.
+-- | The treachery leaves the encounter discard pile, or the encounter deck, attached to the
+-- host, not revealed.
 attachFromEncounterDiscard :: (ReverseQueue m, Targetable host) => EncounterCard -> host -> m ()
 attachFromEncounterDiscard card = push . AttachFromEncounterDiscard card . toTarget
 

@@ -458,6 +458,10 @@ import LordOfTheRings.Location.Cards.WoodedRiverbank
 import LordOfTheRings.Location.Cards.TownGate
 import LordOfTheRings.Location.Cards.WoodenPalisade
 import LordOfTheRings.Location.Cards.BurningWatchtower
+import LordOfTheRings.Location.Cards.DragonHoard
+import LordOfTheRings.Location.Cards.IronHillsMine
+import LordOfTheRings.Location.Cards.ContestedDepths
+import LordOfTheRings.Location.Cards.DeepChasm
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -962,5 +966,9 @@ allLocations =
         , SomeLocationCard townGate
         , SomeLocationCard woodenPalisade
         , SomeLocationCard burningWatchtower
+        , SomeLocationCard dragonHoard
+        , SomeLocationCard ironHillsMine
+        , SomeLocationCard contestedDepths
+        , SomeLocationCard deepChasm
         ]
     ]

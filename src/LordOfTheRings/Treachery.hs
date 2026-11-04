@@ -373,6 +373,7 @@ import LordOfTheRings.Treachery.Cards.DangerousCrossing
 import LordOfTheRings.Treachery.Cards.PowerfulInWrath
 import LordOfTheRings.Treachery.Cards.TheDragonsFury
 import LordOfTheRings.Treachery.Cards.BrightFlames
+import LordOfTheRings.Treachery.Cards.DenizenOfTheDeep
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -773,5 +774,6 @@ allTreacherys =
         , SomeTreacheryCard powerfulInWrath
         , SomeTreacheryCard theDragonsFury
         , SomeTreacheryCard brightFlames
+        , SomeTreacheryCard denizenOfTheDeep
         ]
     ]

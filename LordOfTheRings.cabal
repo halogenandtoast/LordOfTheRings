@@ -620,6 +620,7 @@ library
       LordOfTheRings.Enemy.Cards.FaithlessDesecrator
       LordOfTheRings.Enemy.Cards.FangOfSahir
       LordOfTheRings.Enemy.Cards.FierceVanguard
+      LordOfTheRings.Enemy.Cards.FireDrake
       LordOfTheRings.Enemy.Cards.ForestBat
       LordOfTheRings.Enemy.Cards.ForestFlies
       LordOfTheRings.Enemy.Cards.ForestSpider
@@ -1328,6 +1329,7 @@ library
       LordOfTheRings.Location.Cards.CollapsedTower
       LordOfTheRings.Location.Cards.ConcealedOrcCamp
       LordOfTheRings.Location.Cards.ConcealedWoods
+      LordOfTheRings.Location.Cards.ContestedDepths
       LordOfTheRings.Location.Cards.CormallenFields
       LordOfTheRings.Location.Cards.CorsairWaters
       LordOfTheRings.Location.Cards.CrewQuarters
@@ -1354,6 +1356,7 @@ library
       LordOfTheRings.Location.Cards.DecrepitCity
       LordOfTheRings.Location.Cards.DecrepitRemains
       LordOfTheRings.Location.Cards.DecrepitRooftops
+      LordOfTheRings.Location.Cards.DeepChasm
       LordOfTheRings.Location.Cards.DeepMines
       LordOfTheRings.Location.Cards.DenseJungle
       LordOfTheRings.Location.Cards.DenseThickets
@@ -1366,6 +1369,7 @@ library
       LordOfTheRings.Location.Cards.DevilsMirk
       LordOfTheRings.Location.Cards.DocksideStreet
       LordOfTheRings.Location.Cards.DoorsOfDurin
+      LordOfTheRings.Location.Cards.DragonHoard
       LordOfTheRings.Location.Cards.DreadfulGap
       LordOfTheRings.Location.Cards.DreamChaserLocation
       LordOfTheRings.Location.Cards.DrownedCave
@@ -1466,6 +1470,7 @@ library
       LordOfTheRings.Location.Cards.IcyCavern
       LordOfTheRings.Location.Cards.ImpassableBog
       LordOfTheRings.Location.Cards.InnerSanctum
+      LordOfTheRings.Location.Cards.IronHillsMine
       LordOfTheRings.Location.Cards.IsenRiver
       LordOfTheRings.Location.Cards.IthilienOverlook
       LordOfTheRings.Location.Cards.IthilienRoad
@@ -2055,6 +2060,7 @@ library
       LordOfTheRings.Quest.Cards.TheEphelDuath
       LordOfTheRings.Quest.Cards.TheFateOfBalin
       LordOfTheRings.Quest.Cards.TheFinalPush
+      LordOfTheRings.Quest.Cards.TheFireWorm
       LordOfTheRings.Quest.Cards.TheFordOfHarnen
       LordOfTheRings.Quest.Cards.TheGrandDesign
       LordOfTheRings.Quest.Cards.TheGrotto
@@ -2062,9 +2068,11 @@ library
       LordOfTheRings.Quest.Cards.TheHiddenWay
       LordOfTheRings.Quest.Cards.TheHillsOfEmynMuil
       LordOfTheRings.Quest.Cards.TheHuntBegins
+      LordOfTheRings.Quest.Cards.TheIronHills
       LordOfTheRings.Quest.Cards.TheLastBattle
       LordOfTheRings.Quest.Cards.TheLastStage
       LordOfTheRings.Quest.Cards.TheLeapingFishQuest
+      LordOfTheRings.Quest.Cards.TheLowerDepths
       LordOfTheRings.Quest.Cards.TheMorgulRider
       LordOfTheRings.Quest.Cards.TheMountainsPeaks
       LordOfTheRings.Quest.Cards.TheNecromancersTower
@@ -2211,6 +2219,8 @@ library
       LordOfTheRings.Scenario.Scenarios.TheHillsOfEmynMuil
       LordOfTheRings.Scenario.Scenarios.TheHuntForGollum
       LordOfTheRings.Scenario.Scenarios.TheHuntForGollum.Helpers
+      LordOfTheRings.Scenario.Scenarios.TheKingsQuest
+      LordOfTheRings.Scenario.Scenarios.TheKingsQuest.Helpers
       LordOfTheRings.Scenario.Scenarios.TheLongArmOfMordor
       LordOfTheRings.Scenario.Scenarios.TheLongArmOfMordor.Helpers
       LordOfTheRings.Scenario.Scenarios.TheLongDark
@@ -2338,6 +2348,7 @@ library
       LordOfTheRings.Treachery.Cards.DeepDeepDark
       LordOfTheRings.Treachery.Cards.DeeperIntoTheRuins
       LordOfTheRings.Treachery.Cards.DeepMaelstrom
+      LordOfTheRings.Treachery.Cards.DenizenOfTheDeep
       LordOfTheRings.Treachery.Cards.DesecratedRuins
       LordOfTheRings.Treachery.Cards.Despair
       LordOfTheRings.Treachery.Cards.DevilryOfTheDarkLand
@@ -2846,6 +2857,7 @@ test-suite LordOfTheRings-test
       LordOfTheRings.EredMithrin.TheFateOfWilderlandPlayerCardsSpec
       LordOfTheRings.EredMithrin.TheFateOfWilderlandSpec
       LordOfTheRings.EredMithrin.TheGhostOfFramsburgPlayerCardsSpec
+      LordOfTheRings.EredMithrin.TheKingsQuestSpec
       LordOfTheRings.EredMithrin.TheWildsOfRhovanionPlayerCardsSpec
       LordOfTheRings.EredMithrin.TheWitheredHeathPlayerCardsSpec
       LordOfTheRings.EredMithrinEngineSpec

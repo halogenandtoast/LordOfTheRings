@@ -383,6 +383,7 @@ allTreacheryCards =
       , powerfulInWrath
       , theDragonsFury
       , brightFlames
+      , denizenOfTheDeep
       ]
 
 deepDeepDark :: CardDef
@@ -2434,3 +2435,5 @@ theDragonsFury = (treachery "19081" "The Dragon's Fury" FireInTheNight 3) {cdSha
 
 brightFlames :: CardDef
 brightFlames = (treachery "19082" "Bright Flames" FireInTheNight 2) {cdShadowEffect = True, cdEasyModeQuantity = Just 1}
+denizenOfTheDeep :: CardDef
+denizenOfTheDeep = (treachery "18047" "Denizen of the Deep" TheKingsQuest 2) {cdShadowEffect = True, cdEasyModeQuantity = Just 1}

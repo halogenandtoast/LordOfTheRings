@@ -366,6 +366,9 @@ allQuestCards =
       , routTheGoblins
       , faceTheDragon
       , hrogarsHill
+      , theIronHills
+      , theLowerDepths
+      , theFireWorm
       ]
 
 theDrippingWalls :: CardDef
@@ -1454,3 +1457,15 @@ faceTheDragon = encounterSideQuest "19073" "Face the Dragon" FireInTheNight 10
 
 hrogarsHill :: CardDef
 hrogarsHill = quest "19083" "Hrogar's Hill" FireInTheNight 1 50
+-- | 0 quest points (Hall of Beorn): it is defeated once 3 locations with victory points
+-- are in the victory display.
+theIronHills :: CardDef
+theIronHills = quest "18078" "The Iron Hills" TheKingsQuest 1 0
+
+-- | No quest points: it advances as Dragon Hoard becomes the active location.
+theLowerDepths :: CardDef
+theLowerDepths = (quest "18079" "The Lower Depths" TheKingsQuest 2 0) {cdQuestPoints = Nothing}
+
+-- | No quest points: the players win as Fire-drake is defeated.
+theFireWorm :: CardDef
+theFireWorm = (quest "18080" "The Fire Worm" TheKingsQuest 3 0) {cdQuestPoints = Nothing}

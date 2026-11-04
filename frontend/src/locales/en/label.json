@@ -1257,7 +1257,7 @@
   "hornsCry": {
     "allEnemies": "All enemies get -1 attack until the end of the phase"
   },
-  "abandonedCamp": {
+  "returnFromDiscard": {
     "return": "Return a card from your discard pile to your hand?",
     "none": "Return nothing"
   },
@@ -2663,5 +2663,27 @@
   },
   "routTheGoblins": {
     "choose": "Rout the Goblins: choose a Goblin enemy to put into play engaged with you"
+  },
+  "dragonHoard": {
+    "choosePlayer": "Dragon Hoard: choose a player to put an Artifact attachment from his hand under its guard",
+    "chooseArtifact": "Dragon Hoard: choose the Artifact attachment it guards"
+  },
+  "contestedDepths": {
+    "choose": "Contested Depths: choose one",
+    "threat": "Raise each player's threat by {n}",
+    "replace": "Discard Contested Depths and replace it with the top card of the Caves deck"
+  },
+  "denizenOfTheDeep": {
+    "choose": "Denizen of the Deep: choose the enemy to attack the first player"
+  },
+  "theIronHills": {
+    "choose": "The Iron Hills: add the location to the staging area or raise each player's threat",
+    "staging": "Add it to the staging area",
+    "threat": "Raise each player's threat by {n}"
+  },
+  "theFireWorm": {
+    "attach": "The Fire Worm: choose the Dragon treachery to attach to Fire-drake",
+    "attackers": "The Fire Worm: remove progress from the main quest for each attacker, or cancel the attack",
+    "cancel": "Cancel the attack"
   }
 }

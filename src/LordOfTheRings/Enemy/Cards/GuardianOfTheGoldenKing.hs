@@ -32,7 +32,7 @@ instance RunMessage GuardianOfTheGoldenKing where
       chooseOrRunOneM lead do
         questionLabeled "guardianOfTheGoldenKing.remove"
         causedBy attrs
-        targets attackers \c -> push $ StopAttacking c
+        targets attackers stopAttacking
       doStep (k - 1) inner
       pure e
     _ -> GuardianOfTheGoldenKing <$> runMessage msg attrs

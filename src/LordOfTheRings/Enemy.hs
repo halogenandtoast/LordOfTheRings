@@ -437,6 +437,7 @@ import LordOfTheRings.Enemy.Cards.WargRider
 import LordOfTheRings.Enemy.Cards.Dagnir
 import LordOfTheRings.Enemy.Cards.TheDragonsThrall
 import LordOfTheRings.Enemy.Cards.OrcOfTheFlame
+import LordOfTheRings.Enemy.Cards.FireDrake
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -902,5 +903,6 @@ allEnemys =
         , SomeEnemyCard dagnir
         , SomeEnemyCard theDragonsThrall
         , SomeEnemyCard orcOfTheFlame
+        , SomeEnemyCard fireDrake
         ]
     ]

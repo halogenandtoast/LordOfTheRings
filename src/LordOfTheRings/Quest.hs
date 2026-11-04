@@ -282,6 +282,9 @@ import LordOfTheRings.Quest.Cards.DefendTheTown
 import LordOfTheRings.Quest.Cards.RoutTheGoblins
 import LordOfTheRings.Quest.Cards.FaceTheDragon
 import LordOfTheRings.Quest.Cards.HrogarsHill
+import LordOfTheRings.Quest.Cards.TheIronHills
+import LordOfTheRings.Quest.Cards.TheLowerDepths
+import LordOfTheRings.Quest.Cards.TheFireWorm
 import LordOfTheRings.Quest.Runner ()
 import LordOfTheRings.Quest.Types as X
 import LordOfTheRings.Id
@@ -596,5 +599,8 @@ allQuests =
         , SomeQuestCard routTheGoblins
         , SomeQuestCard faceTheDragon
         , SomeQuestCard hrogarsHill
+        , SomeQuestCard theIronHills
+        , SomeQuestCard theLowerDepths
+        , SomeQuestCard theFireWorm
         ]
     ]

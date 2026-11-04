@@ -446,6 +446,7 @@ allEnemyCards =
       , dagnir
       , theDragonsThrall
       , orcOfTheFlame
+      , fireDrake
       ]
 
 namelessThing :: CardDef
@@ -3649,3 +3650,7 @@ orcOfTheFlame =
     , cdWhenRevealed = True
     , cdEasyModeQuantity = Just 0
     }
+-- | X, its threat and defense, is 1 more than the number of players: printed as 0, the
+-- card adds it.
+fireDrake :: CardDef
+fireDrake = unique (enemy "18042" "Fire-drake" TheKingsQuest 1 35 0 7 0 17) {cdCardTraits = setFromList [Dragon]}
