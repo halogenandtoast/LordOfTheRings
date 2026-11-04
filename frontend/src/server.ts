@@ -165,6 +165,8 @@ export interface ServerGame {
   temperature?: number | null
   /** The side quest deck's size (Fire in the Night). */
   sideQuestDeck?: number
+  /** The damage each set-aside card keeps, by its card id, as Cold-Drake set aside by The Withered Heath's stage 3A. */
+  setAsideDamage?: Record<string, number>
   /** The Orcs' quest stage and the progress on it (Race Across Harad). */
   orcsStage?: Card | null
   orcsProgress?: number | null

@@ -1,5 +1,6 @@
 module LordOfTheRings.EredMithrin.TheWitheredHeathSpec (spec) where
 
+import Data.Aeson.Types (parseMaybe)
 import LordOfTheRings.Card (cdEncounterSet, toCardDef)
 import LordOfTheRings.Effect (Effect (..), EffectDuration (..))
 import LordOfTheRings.EncounterSet (EncounterSet (LostCaves))
@@ -20,10 +21,15 @@ import LordOfTheRings.Scenario (lookupScenario, theWitheredHeath)
 import LordOfTheRings.Scenario.Types (ScenarioAttrs (..), cavesDeckL, questDeckL, setAsideL, victoryDisplayL)
 import LordOfTheRings.Treachery.CardDefs qualified as Treacheries
 import LordOfTheRings.Window (WindowType (..), mkAfter)
+import LordOfTheRings.Game.Public (publicGameFor)
 import TestImport
 
 heathTest :: (PlayerId -> GameT ()) -> IO ()
 heathTest = gameTestIn theWitheredHeath testDeck
+
+-- | What the board is sent under this key.
+shown :: FromJSON a => PlayerId -> Key -> GameT (Maybe a)
+shown pid k = getsGame (parseMaybe (withObject "game" (.: k)) . publicGameFor (== pid))
 
 enemyOf :: CardDef -> GameT EnemyId
 enemyOf def = getsGame (fromJustNote "no such enemy" . fmap toId . lastMay . filter ((== toCardCode def) . toCardCode) . toList . (.entities.enemies))
@@ -253,6 +259,9 @@ spec = describe "The Withered Heath" do
     _ <- reachStage pid Quests.huntingTheBeast
     run $ CheckWindows [mkAfter RoundEnds]
     run $ CheckWindows [mkAfter RoundEnds]
+    -- the board shows the damage the set-aside card keeps
+    aside <- getsGame (map (.id) . scenarioSetAside . toAttrs . (.scenario))
+    shown pid "setAsideDamage" `shouldReturn` Just (mapFromList [(c, 12) | c <- aside] :: Map CardId Int)
     signsInVictoryDisplay 3
     hunt <- getActiveQuest
     next <- genEncounterCard Quests.aCorneredDragon

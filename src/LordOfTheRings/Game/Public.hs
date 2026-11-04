@@ -149,6 +149,8 @@ publicGameFor seesHand g = hideDecks $ toJSON merged
         $ KeyMap.insert "orcsProgress" (metaValue "orcsProgress")
         -- the side quest deck's size, its cards kept hidden (Fire in the Night)
         $ KeyMap.insert "sideQuestDeck" (toJSON $ length (fromMeta "sideQuestDeck" :: [Value]))
+        -- the damage a set-aside card keeps, as Cold-Drake's (The Withered Heath)
+        $ KeyMap.insert "setAsideDamage" (toJSON (fromMeta "setAsideDamage" :: Map CardId Int))
         $ adjust (inside "objectives" $ overValues $ inside "underneath" $ const $ Array mempty) "entities"
         $ adjust (inside "locations" $ overValues $ inside "underneath" $ const $ Array mempty) "entities"
         $ adjust (inside "locations" $ overValues hideOtherSide) "entities"
