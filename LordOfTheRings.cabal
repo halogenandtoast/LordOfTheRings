@@ -3091,6 +3091,7 @@ test-suite LordOfTheRings-test
       LordOfTheRings.StarterDeckSpec
       LordOfTheRings.TravelPhaseSpec
       LordOfTheRings.VengeanceOfMordor.PowerOfMordorSpec
+      LordOfTheRings.VengeanceOfMordor.SharedEncounterSetsSpec
       LordOfTheRings.VengeanceOfMordor.SmeagolSpec
       LordOfTheRings.VengeanceOfMordor.TheOneRingSpec
       LordOfTheRings.VoiceOfIsengard.IntoFangornSpec
