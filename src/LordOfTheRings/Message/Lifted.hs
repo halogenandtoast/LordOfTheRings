@@ -10,7 +10,7 @@ module LordOfTheRings.Message.Lifted (
 
 import LordOfTheRings.Attachment.CardDefs qualified as Attachments
 import LordOfTheRings.Campaign (CampaignLogUpdate)
-import LordOfTheRings.Card (Card (..), CardCode, CardDef, CardType, EncounterCard, HasCardCode (..), IsCard (..), PlayerCard, cdCardTraits, cdCardType, genEncounterCard, genPlayerCard, toCardDef)
+import LordOfTheRings.Card (Card (..), CardCode, CardDef, CardType, EncounterCard, HasCardCode (..), IsCard (..), PlayerCard, allPlayerCards, cdCardTraits, cdCardType, genEncounterCard, genPlayerCard, toCardDef)
 import LordOfTheRings.Trait (Trait (Master))
 import LordOfTheRings.Classes.Entity (Entity (toAttrs))
 import LordOfTheRings.Scenario.Types (ScenarioAttrs (scenarioSetAside))
@@ -2271,7 +2271,8 @@ setUpFellowship :: ReverseQueue m => PlayerId -> m ()
 setUpFellowship lead = do
   sid <- getsGame (scenarioId . toAttrs . gameScenario)
   for_ (fellowshipSetup sid) \fs -> do
-    heroes <- for fs.fellowshipHeroes \code -> genPlayerCard (toCardDef code) (Just lead)
+    -- a Ring-bearer whose card the game does not have yet is not offered
+    heroes <- for (filter (`member` allPlayerCards) fs.fellowshipHeroes) \code -> genPlayerCard (toCardDef code) (Just lead)
     let takeFellowshipHero :: ReverseQueue n => PlayerCard -> n ()
         takeFellowshipHero card = do
           hid <- getRandom
