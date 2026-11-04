@@ -46,6 +46,9 @@ data Keyword
     -- the other players taking no actions and triggering no responses meanwhile (The Black
     -- Riders rules insert)
     Peril
+  | -- | on an enemy: the damage its attack would deal is canceled, and the defending player
+    -- raises his threat by as much instead (The Flame of the West rules insert)
+    Phantom
   | -- | on a boon or burden: earned, it is attached to a hero the campaign log records. It
     -- cannot be discarded from that hero while the hero is in play, and is removed from the
     -- game as the hero leaves play (The Black Riders rules insert)

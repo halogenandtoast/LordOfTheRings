@@ -1616,7 +1616,9 @@ runGameMessage msg g = case msg of
     attack <- getEnemyAttack eid
     defense <- sum <$> traverse (getDefenseAgainst eid) defenders
     choices <- for defenders \d -> targetLabel d <$> attackDamage pid eid d (attack - defense)
-    push $ chooseOrRunOne pid choices
+    -- with Phantom no defender takes it, so none is chosen
+    phantom <- isPhantom eid
+    push $ chooseOrRunOne pid (if phantom then take 1 choices else choices)
     pure g
   UndefendedAttack pid eid -> do
     windows <- actionWindows
@@ -1653,9 +1655,12 @@ runGameMessage msg g = case msg of
         push $ questionLabelWith (ikey "label.undefendedDamage") (Just $ toTarget eid) [] pid options
       [] -> pure ()
     choices <- for heroes \h -> targetLabel h <$> attackDamage pid eid h attack
+    phantom <- isPhantom eid
     unless (null heroes)
       $ push
-      $ questionLabelWith (ikey "label.undefendedDamage") (Just $ toTarget eid) [] pid choices
+      $ if phantom
+        then chooseOrRunOne pid (take 1 choices)
+        else questionLabelWith (ikey "label.undefendedDamage") (Just $ toTarget eid) [] pid choices
     pure g
   PlayerAttacks pid -> do
     enemies <- engagedByCost pid
@@ -4026,6 +4031,21 @@ damage counts against the player, the threat it raises.
 -}
 attackDamage :: PlayerId -> EnemyId -> Target -> Int -> GameT [Message]
 attackDamage pid eid target n = do
+  phantom <- isPhantom eid
+  -- an enemy with Phantom deals none: the defending player raises his threat as much
+  -- (The Flame of the West rules insert, "Phantom")
+  if phantom
+    then pure $ concat [[RaiseThreat pid n, CheckWindows [mkAfter $ ThreatRaisedByEncounter pid n]] | n > 0]
+    else attackDamage' pid eid target n
+
+-- | Whether the enemy has Phantom, printed or gained, and not lost.
+isPhantom :: EnemyId -> GameT Bool
+isPhantom eid = do
+  e <- getEnemy eid
+  hasKeyword Phantom (toTarget eid) (toCardDef e)
+
+attackDamage' :: PlayerId -> EnemyId -> Target -> Int -> GameT [Message]
+attackDamage' pid eid target n = do
   mods <- getModifiers eid
   let excessToThreat = ExcessDamageToThreat `elem` mods
       excessToOthers = ExcessDamageToOtherCharacters `elem` mods
