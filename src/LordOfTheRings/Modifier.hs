@@ -720,8 +720,8 @@ data ModifierType
     GameCannotEnd
   | -- | on the game: the outcome the game ends with once it can end
     GameEndsWith Outcome
-  | -- | on a quest card: progress placed on it is reduced by this much each time, as Orc
-    -- Grunts reduces it on the current quest
+  | -- | on a quest card or a location: progress placed on it is reduced by this much each
+    -- time, as Orc Grunts reduces it on the current quest
     ProgressReducedBy Int
   | -- | on the game: shadow cards still unresolved are not discarded at the end of the
     -- combat phase, as The Clutches of Carn Dûm reads
@@ -957,7 +957,7 @@ data ModifierType
     -- reads
     ArcheryDamageToShipObjectives
   | -- | on the game: no more than 1 ally can enter play each round, however it enters, as
-    -- Corsair Waters reads
+    -- Corsair Waters reads; on a player, no more than 1 under him, as The Spider's Pass
     OneAllyEntersPlayPerRound
   | -- | on the game: no ally can enter play, however it enters, as The Crack of Doom reads
     AlliesCannotEnterPlay

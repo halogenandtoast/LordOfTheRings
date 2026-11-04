@@ -4299,5 +4299,23 @@
         "text": "Stage 2B has each player create his own staging area, with a stage 3 of his own. Players still resolve each phase in player order, starting with the first player.\n\nAfter a player commits characters to the quest at his stage, he reveals his encounter card and compares his committed willpower with the threat in his own staging area: only he places progress, or raises his threat. Each player makes engagement checks only against the enemies in his staging area, and archery is dealt separately at each stage, by the player there to characters he controls.\n\nUnlike other separate stages, the players still interact through the normal rules of the game. Cards that read “the staging area” or “the quest” mean your own, and “at this stage” means only the cards there.\n\nIf a player is eliminated while at a separate stage, that stage is discarded with all the encounter cards at it."
       }
     ]
+  },
+  "shelobs-lair": {
+    "intro": [
+      "Turned away from the Black Gate, Frodo and Sam let Sméagol lead them south through Ithilien towards a hidden pass into Mordor. Past the Morgul Vale the path climbs to Cirith Ungol, where something old and hungry waits in the dark."
+    ],
+    "setup": [
+      "Build the encounter deck from the Shelob's Lair, The Great Spider, Gollum and Morgul Nazgûl encounter sets. Cleft of Cirith Ungol, Shelob and The Great Spider are set aside for later stages."
+    ],
+    "rules": [
+      {
+        "title": "Shelob",
+        "text": "Shelob enters the staging area at stage 2A and cannot leave it during that stage. Resources placed on her raise her threat. While Cleft of Cirith Ungol is in the victory display she loses Indestructible and engages the first player."
+      },
+      {
+        "title": "Gollum's Betrayal",
+        "text": "At stage 3 Sméagol turns into Gollum. Once defeated, Gollum goes to the victory display instead of turning back over. The players win once Shelob and Gollum are both in the victory display and the stage is defeated."
+      }
+    ]
   }
 }

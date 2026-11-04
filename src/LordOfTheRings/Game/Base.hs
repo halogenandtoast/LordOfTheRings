@@ -25,7 +25,7 @@ import LordOfTheRings.Prelude
 import LordOfTheRings.Quest.Types (inEachStagingArea, isSideQuest)
 import LordOfTheRings.Question
 import LordOfTheRings.Scenario.Types
-import LordOfTheRings.Source (Source)
+import LordOfTheRings.Source (Source (PlayerSource))
 import LordOfTheRings.Target
 
 data Game = Game
@@ -351,16 +351,20 @@ barredFromPlay :: Game -> PlayerId -> Card -> Bool
 barredFromPlay g pid card =
   or [cardMatches m card | CannotPutIntoPlay m <- map modifierType (Map.findWithDefault [] (PlayerTarget pid) (gameModifiers g))]
 
--- | Whether no more allies can enter play this round: one has, while only one may, as
--- Corsair Waters reads, or none may at all, as The Crack of Doom reads.
-allyEntryBarred :: Game -> Bool
-allyEntryBarred g =
+-- | Whether no more allies can enter play under the player this round: none may at all, as
+-- The Crack of Doom reads, or one has, while only one may, as Corsair Waters reads of the
+-- game, and The Spider's Pass of each player ("each player cannot play, or put into play,
+-- more than 1 ally each round").
+allyEntryBarred :: PlayerId -> Game -> Bool
+allyEntryBarred pid g =
   AlliesCannotEnterPlay `elem` gameMods
-    || ( OneAllyEntersPlayPerRound `elem` gameMods
-           && any (\e -> isAlly (effectTarget e) && EnteredPlayThisRound `elem` effectModifiers e) (gameEffects g)
-       )
+    || (on GameTarget && notNull entered)
+    || (on (PlayerTarget pid) && any (== PlayerSource pid) entered)
  where
   gameMods = map modifierType (Map.findWithDefault [] GameTarget (gameModifiers g))
+  on t = OneAllyEntersPlayPerRound `elem` map modifierType (Map.findWithDefault [] t (gameModifiers g))
+  -- the player an ally entered play under is the source of its mark
+  entered = [effectSource e | e <- gameEffects g, isAlly (effectTarget e), EnteredPlayThisRound `elem` effectModifiers e]
   isAlly = \case
     AllyTarget _ -> True
     _ -> False

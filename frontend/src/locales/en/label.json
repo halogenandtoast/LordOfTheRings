@@ -968,7 +968,11 @@
     "removeProgress": "Remove 1 progress from To the Tower"
   },
   "morgulVale": {
-    "return": "Morgul Vale: return 1 enemy engaged with you to the staging area"
+    "return": "Morgul Vale: return 1 enemy engaged with you to the staging area",
+    "search": "Morgul Vale: choose a Morgul Wraith to add to the staging area",
+    "choose": "Morgul Vale: exhaust The One Ring, or discard 1 random card from each player's hand",
+    "exhaustTheOneRing": "Exhaust The One Ring",
+    "discard": "Discard 1 random card from each player's hand"
   },
   "impenetrableFog": {
     "choose": "Impenetrable Fog: choose one",
@@ -3850,5 +3854,35 @@
   },
   "orcHunting": {
     "discardEnemy": "Orc Hunting: discard an enemy engaged with a player"
+  },
+  "shelob": {
+    "choose": "Shelob: place 1 resource on her, or she attacks the first player",
+    "resource": "Place 1 resource on Shelob",
+    "attack": "Shelob makes an immediate attack against the first player"
+  },
+  "morgulOrc": {
+    "choose": "Morgul Orc: discard 1 random card from your hand, or reveal an additional encounter card",
+    "discard": "Discard 1 random card from your hand",
+    "reveal": "Reveal an additional encounter card"
+  },
+  "orcOfCirithUngol": {
+    "choose": "Orc of Cirith Ungol: discard 1 random card from each player's hand, or it attacks you",
+    "discard": "Discard 1 random card from each player's hand",
+    "attack": "Orc of Cirith Ungol makes an immediate attack against you"
+  },
+  "smeagolsSecretWay": {
+    "travel": "Sméagol's Secret Way: exhaust Sméagol, or discard 1 random card from each player's hand",
+    "exhaustSmeagol": "Exhaust Sméagol",
+    "discard": "Discard 1 random card from each player's hand",
+    "explored": "Sméagol's Secret Way: exhaust a character you control, or discard 1 random card from your hand",
+    "discardOne": "Discard 1 random card from your hand"
+  },
+  "shelobsPoison": {
+    "attach": "Shelob's Poison: choose a hero you control to attach it to and exhaust"
+  },
+  "lurkingMalice": {
+    "choose": "Lurking Malice: place 1 resource on Shelob, or she attacks you",
+    "resource": "Place 1 resource on Shelob",
+    "attack": "Shelob makes an immediate attack against you"
   }
 }

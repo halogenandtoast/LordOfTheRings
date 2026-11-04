@@ -376,6 +376,12 @@ import LordOfTheRings.Quest.Cards.TheTamingOfSmeagol
 import LordOfTheRings.Quest.Cards.AcrossTheMarshes
 import LordOfTheRings.Quest.Cards.DontLookAtTheLights
 import LordOfTheRings.Quest.Cards.AmbushTheMenOfHarad
+import LordOfTheRings.Quest.Cards.PassTheTwoWatchers
+import LordOfTheRings.Quest.Cards.FightingInTheTower
+import LordOfTheRings.Quest.Cards.EscapeFromCirithUngol
+import LordOfTheRings.Quest.Cards.TheStairsOfCirithUngol
+import LordOfTheRings.Quest.Cards.TheSpidersPass
+import LordOfTheRings.Quest.Cards.GollumsBetrayal
 import LordOfTheRings.Quest.Cards.IntoMirkwood
 import LordOfTheRings.Quest.Cards.LostInTheDarkFliesAndSpiders
 import LordOfTheRings.Quest.Cards.CapturedBySpiders
@@ -412,9 +418,6 @@ import LordOfTheRings.Quest.Cards.TheWhiteCityBesieged (theWhiteCityBesieged)
 import LordOfTheRings.Quest.Cards.RohanHasCome (rohanHasCome)
 import LordOfTheRings.Quest.Cards.FightingInTheFields (fightingInTheFields)
 import LordOfTheRings.Quest.Cards.AttackOnPelargir (attackOnPelargir)
-import LordOfTheRings.Quest.Cards.PassTheTwoWatchers
-import LordOfTheRings.Quest.Cards.FightingInTheTower
-import LordOfTheRings.Quest.Cards.EscapeFromCirithUngol
 import LordOfTheRings.Quest.Cards.EmbassyFromTheDarkTower
 import LordOfTheRings.Quest.Cards.TheBattleOfTheMorannon
 import LordOfTheRings.Quest.Cards.TheLandOfMordor
@@ -829,6 +832,12 @@ allQuests =
         , SomeQuestCard acrossTheMarshes
         , SomeQuestCard dontLookAtTheLights
         , SomeQuestCard ambushTheMenOfHarad
+        , SomeQuestCard passTheTwoWatchers
+        , SomeQuestCard fightingInTheTower
+        , SomeQuestCard escapeFromCirithUngol
+        , SomeQuestCard theStairsOfCirithUngol
+        , SomeQuestCard theSpidersPass
+        , SomeQuestCard gollumsBetrayal
         , SomeQuestCard intoMirkwood
         , SomeQuestCard lostInTheDarkFliesAndSpiders
         , SomeQuestCard capturedBySpiders
@@ -865,9 +874,6 @@ allQuests =
         , SomeQuestCard rohanHasCome
         , SomeQuestCard fightingInTheFields
         , SomeQuestCard attackOnPelargir
-        , SomeQuestCard passTheTwoWatchers
-        , SomeQuestCard fightingInTheTower
-        , SomeQuestCard escapeFromCirithUngol
         , SomeQuestCard embassyFromTheDarkTower
         , SomeQuestCard theBattleOfTheMorannon
         , SomeQuestCard theLandOfMordor

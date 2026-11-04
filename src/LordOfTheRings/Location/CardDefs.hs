@@ -565,6 +565,20 @@ allLocationCards =
       , foothillsOfEphelDuath
       , ithilienWoods
       , hillsOfIthilien
+      , morgulValeShelobsLair
+      , smeagolsSecretWay
+      , cleftOfCirithUngol
+      , theSpidersLair
+      , theUnderWay
+      , deepDarkPassage
+      , denOfNight
+      , blockedTunnel
+      , topmostChamber
+      , echoingPassage
+      , bloodiedCourtyard
+      , windingStairs
+      , torchLitHall
+      , theTwoWatchers
       , theSpidersGlade
       , giantWeb
       , forestStream
@@ -621,12 +635,6 @@ allLocationCards =
       , pelennorField
       , fireFilledTrench
       , siegeTower
-      , topmostChamber
-      , echoingPassage
-      , bloodiedCourtyard
-      , windingStairs
-      , torchLitHall
-      , theTwoWatchers
       , theBlackGate
       , towersOfTheTeeth
       , beleagueredHills
@@ -4112,6 +4120,44 @@ watchTowerTheLandOfSorrow =
     , cdEasyModeQuantity = Just 1
     }
 
+-- * The Tower of Cirith Ungol
+
+-- | The Ring-bearer is guarded under it from stage 1A.
+topmostChamber :: CardDef
+topmostChamber =
+  (location "146015" "Topmost Chamber" TheTowerOfCirithUngol 1 1 1)
+    { cdCardTraits = setFromList [CirithUngol]
+    , cdVictoryPoints = Just 2
+    }
+
+echoingPassage :: CardDef
+echoingPassage =
+  (location "146016" "Echoing Passage" TheTowerOfCirithUngol 3 1 5)
+    { cdCardTraits = setFromList [CirithUngol]
+    , cdEasyModeQuantity = Just 1
+    }
+
+bloodiedCourtyard :: CardDef
+bloodiedCourtyard = (location "146017" "Bloodied Courtyard" TheTowerOfCirithUngol 3 3 4) {cdCardTraits = setFromList [CirithUngol]}
+
+windingStairs :: CardDef
+windingStairs = (location "146018" "Winding Stairs" TheTowerOfCirithUngol 3 2 4) {cdCardTraits = setFromList [CirithUngol]}
+
+torchLitHall :: CardDef
+torchLitHall = (location "146019" "Torch-lit Hall" TheTowerOfCirithUngol 3 2 3) {cdCardTraits = setFromList [CirithUngol]}
+
+-- | The location side of The Two Watchers: X threat, given by its own modifiers, and no
+-- quest points. Set aside as the encounter deck is gathered, added to the staging area by
+-- stage 1A.
+theTwoWatchers :: CardDef
+theTwoWatchers =
+  unique
+    (location "146070" "The Two Watchers" TheTowerOfCirithUngol 1 0 0)
+      { cdCardTraits = setFromList [Mordor]
+      , cdQuestPoints = Nothing
+      , cdOtherSide = Just "146071"
+      }
+
 -- * The Passing of the Grey Company
 
 -- | Set aside by stage 1A, added to the staging area by stage 3A.
@@ -4404,10 +4450,6 @@ theMarish =
 
 pathlessCountryHunted :: CardDef
 pathlessCountryHunted = (location "141072" "Pathless Country" Hunted 3 2 3) {cdCardTraits = setFromList [Forest], cdShadowEffect = True}
--- * A Shadow of the Past
-
--- * Hunted
-
 -- * Flight to the Ford
 
 -- | X threat, the number of players: its card gives it. Immune to player card effects.
@@ -4499,46 +4541,6 @@ fireFilledTrench = (location "145048" "Fire-filled Trench" TheBattleOfThePelenno
 
 siegeTower :: CardDef
 siegeTower = (location "145049" "Siege Tower" TheBattleOfThePelennorFields 3 3 3) {cdCardTraits = setFromList [SiegeTrait], cdEasyModeQuantity = Just 2}
-
--- * The Tower of Cirith Ungol
-
--- | The Ring-bearer is guarded under it from stage 1A.
-topmostChamber :: CardDef
-topmostChamber =
-  (location "146015" "Topmost Chamber" TheTowerOfCirithUngol 1 1 1)
-    { cdCardTraits = setFromList [CirithUngol]
-    , cdVictoryPoints = Just 2
-    }
-
-echoingPassage :: CardDef
-echoingPassage =
-  (location "146016" "Echoing Passage" TheTowerOfCirithUngol 3 1 5)
-    { cdCardTraits = setFromList [CirithUngol]
-    , cdEasyModeQuantity = Just 1
-    }
-
-bloodiedCourtyard :: CardDef
-bloodiedCourtyard = (location "146017" "Bloodied Courtyard" TheTowerOfCirithUngol 3 3 4) {cdCardTraits = setFromList [CirithUngol]}
-
-windingStairs :: CardDef
-windingStairs = (location "146018" "Winding Stairs" TheTowerOfCirithUngol 3 2 4) {cdCardTraits = setFromList [CirithUngol]}
-
-torchLitHall :: CardDef
-torchLitHall = (location "146019" "Torch-lit Hall" TheTowerOfCirithUngol 3 2 3) {cdCardTraits = setFromList [CirithUngol]}
-
--- | The location side of The Two Watchers: X threat, given by its own modifiers, and no
--- quest points. Set aside as the encounter deck is gathered, added to the staging area by
--- stage 1A.
-theTwoWatchers :: CardDef
-theTwoWatchers =
-  unique
-    (location "146070" "The Two Watchers" TheTowerOfCirithUngol 1 0 0)
-      { cdCardTraits = setFromList [Mordor]
-      , cdQuestPoints = Nothing
-      , cdOtherSide = Just "146071"
-      }
-
--- * The Tower of Cirith Ungol
 
 -- * The Black Gate Opens
 
@@ -4685,4 +4687,40 @@ slopesOfAmonHen =
   (location "142079" "Slopes of Amon Hen" BreakingOfTheFellowship 3 3 3)
     { cdCardTraits = setFromList [Forest, Hills]
     , cdShadowEffect = True
+    }
+
+-- * Shelob's Lair
+
+-- | Made the active location by stage 1A.
+morgulValeShelobsLair :: CardDef
+morgulValeShelobsLair = unique (location "144043" "Morgul Vale" ShelobsLair 1 4 2) {cdCardTraits = setFromList [Vale], cdVictoryPoints = Just 4}
+
+-- | Added to the staging area by stage 1A.
+smeagolsSecretWay :: CardDef
+smeagolsSecretWay = unique (location "144044" "Sméagol's Secret Way" ShelobsLair 1 2 2) {cdCardTraits = setFromList [Mountain], cdVictoryPoints = Just 2}
+
+-- | Set aside by stage 1A, added to the staging area by stage 3A.
+cleftOfCirithUngol :: CardDef
+cleftOfCirithUngol = unique (location "144045" "Cleft of Cirith Ungol" ShelobsLair 1 4 4) {cdCardTraits = setFromList [Mountain], cdVictoryPoints = Just 4}
+
+theSpidersLair :: CardDef
+theSpidersLair = (location "144046" "The Spider's Lair" ShelobsLair 2 3 4) {cdCardTraits = setFromList [Underground]}
+
+theUnderWay :: CardDef
+theUnderWay = (location "144047" "The Under-way" ShelobsLair 2 2 3) {cdCardTraits = setFromList [Underground], cdShadowEffect = True, cdEasyModeQuantity = Just 1}
+
+deepDarkPassage :: CardDef
+deepDarkPassage = (location "144048" "Deep Dark Passage" ShelobsLair 3 2 5) {cdCardTraits = setFromList [Underground]}
+
+denOfNight :: CardDef
+denOfNight = (location "144049" "Den of Night" ShelobsLair 3 1 4) {cdCardTraits = setFromList [Underground]}
+
+-- * The Great Spider
+
+blockedTunnel :: CardDef
+blockedTunnel =
+  (location "144059" "Blocked Tunnel" TheGreatSpider 2 3 9)
+    { cdCardTraits = setFromList [Underground]
+    , cdWhenRevealed = True
+    , cdEasyModeQuantity = Just 1
     }

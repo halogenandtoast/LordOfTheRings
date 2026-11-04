@@ -10,7 +10,7 @@ import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Message
 import LordOfTheRings.Placement (Placement (ActiveLocation))
 import LordOfTheRings.Keyword (Keyword (Mire))
-import LordOfTheRings.Modifier (ModifierType (Blank, GainKeyword, GainTrait, NoProgressFromPlayerCards, PhaseProgressLimitOnTrait, ProgressLimit, ProgressPerRoundLimit, ProgressPlacedOnTraitThisPhase, ProgressPlacedThisRound, ProgressReducedTo))
+import LordOfTheRings.Modifier (ModifierType (Blank, GainKeyword, GainTrait, NoProgressFromPlayerCards, PhaseProgressLimitOnTrait, ProgressLimit, ProgressPerRoundLimit, ProgressPlacedOnTraitThisPhase, ProgressPlacedThisRound, ProgressReducedBy, ProgressReducedTo))
 import LordOfTheRings.Effect (Effect (..), EffectDuration (UntilEndOfPhase, UntilEndOfRound))
 import LordOfTheRings.Prelude
 import LordOfTheRings.Source
@@ -39,7 +39,9 @@ instance RunMessage LocationAttrs where
     placeProgress source n0 = do
       mods <- getModifiers attrs
       gameMods <- getModifiers GameTarget
-      let n = foldr min n0 [k | ProgressReducedTo k <- mods]
+      -- reduced by so much first, as Deep Dark Passage reduces what a location in the
+      -- staging area would take
+      let n = foldr min (max 0 $ n0 - sum [k | ProgressReducedBy k <- mods]) [k | ProgressReducedTo k <- mods]
           limits = [k | ProgressPerRoundLimit k <- mods]
           placed = sum [k | ProgressPlacedThisRound k <- mods]
           room = foldr (\k -> min (max 0 $ k - placed)) n limits

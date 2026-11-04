@@ -444,12 +444,21 @@ allTreacheryCards =
       , creepingMarshes
       , bitterReek
       , aFellLight
+      , exhalationOfDecay
+      , manyOpenings
+      , shelobsPoison
+      , lurkingMalice
+      , rageAndHunger
       , callOfTheRing
       , weHatesThem
       , theDarkLordsSummons
       , marchingUpTheRoad
       , fierceSouthrons
       , arrowsThickInTheAir
+      , orcishHowls
+      , drawnToTheRing
+      , deepShadows
+      , evilVigilance
       , caughtInWebs
       , poisonedBySpiders
       , fightingAmongFriends
@@ -508,10 +517,6 @@ allTreacheryCards =
       , spellsOfRuin
       , dreadAndDespair
       , shadowOfMordor
-      , orcishHowls
-      , drawnToTheRing
-      , deepShadows
-      , evilVigilance
       , hellHawk
       , theHourOfDoom
       , jawsOfSteel
@@ -2822,6 +2827,27 @@ crueltyOfMordor = (treachery "22132" "Cruelty of Mordor" TheLandOfSorrow 3) {cdS
 brokenCaptives :: CardDef
 brokenCaptives = (treachery "22133" "Broken Captives" TheLandOfSorrow 2) {cdShadowEffect = True, cdEasyModeQuantity = Just 1}
 
+-- * The Tower of Cirith Ungol
+
+orcishHowls :: CardDef
+orcishHowls = (treachery "146023" "Orcish Howls" TheTowerOfCirithUngol 3) {cdShadowEffect = True}
+
+-- * Deep Shadows
+
+drawnToTheRing :: CardDef
+drawnToTheRing = (treachery "146061" "Drawn to the Ring" DeepShadows 3) {cdShadowEffect = True, cdEasyModeQuantity = Just 2}
+
+deepShadows :: CardDef
+deepShadows =
+  (treachery "146062" "Deep Shadows" DeepShadows 2)
+    { cdKeywords = setFromList [Doomed 2]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
+    }
+
+evilVigilance :: CardDef
+evilVigilance = (treachery "146063" "Evil Vigilance" DeepShadows 3) {cdShadowEffect = True}
+
 -- * The Passing of the Grey Company
 
 bloodRunsChill :: CardDef
@@ -3037,10 +3063,6 @@ belchingFire = treachery "132050" "Belching Fire" TheLonelyMountain 4
 dragonSpell :: CardDef
 dragonSpell = (treachery "132051" "Dragon-Spell" TheLonelyMountain 2) {cdCardTraits = setFromList [Enchantment]}
 
--- * The Passing of the Grey Company
-
--- * The Ring Goes South
-
 -- * A Shadow of the Past
 
 crawlingTowardsHim :: CardDef
@@ -3223,31 +3245,6 @@ shadowOfMordor =
     , cdEasyModeQuantity = Just 1
     }
 
--- * The Tower of Cirith Ungol
-
-orcishHowls :: CardDef
-orcishHowls = (treachery "146023" "Orcish Howls" TheTowerOfCirithUngol 3) {cdShadowEffect = True}
-
--- * Deep Shadows
-
-drawnToTheRing :: CardDef
-drawnToTheRing = (treachery "146061" "Drawn to the Ring" DeepShadows 3) {cdShadowEffect = True, cdEasyModeQuantity = Just 2}
-
-deepShadows :: CardDef
-deepShadows =
-  (treachery "146062" "Deep Shadows" DeepShadows 2)
-    { cdKeywords = setFromList [Doomed 2]
-    , cdShadowEffect = True
-    , cdEasyModeQuantity = Just 1
-    }
-
-evilVigilance :: CardDef
-evilVigilance = (treachery "146063" "Evil Vigilance" DeepShadows 3) {cdShadowEffect = True}
-
--- * The Tower of Cirith Ungol
-
--- * Deep Shadows
-
 -- * The Black Gate Opens
 
 -- | Attached to a Nazgûl enemy, it counts as a Mount attachment.
@@ -3352,3 +3349,27 @@ illFate =
     , cdCardTraits = setFromList [Despair]
     , cdKeywords = setFromList [Peril, Surge]
     }
+
+-- * Shelob's Lair
+
+exhalationOfDecay :: CardDef
+exhalationOfDecay = (treachery "144050" "Exhalation of Decay" ShelobsLair 2) {cdShadowEffect = True}
+
+manyOpenings :: CardDef
+manyOpenings = (treachery "144051" "Many Openings" ShelobsLair 2) {cdShadowEffect = True, cdEasyModeQuantity = Just 1}
+
+-- * The Great Spider
+
+shelobsPoison :: CardDef
+shelobsPoison = (treachery "144060" "Shelob's Poison" TheGreatSpider 2) {cdShadowEffect = True, cdEasyModeQuantity = Just 1}
+
+lurkingMalice :: CardDef
+lurkingMalice =
+  (treachery "144061" "Lurking Malice" TheGreatSpider 3)
+    { cdKeywords = setFromList [Peril, Surge]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 2
+    }
+
+rageAndHunger :: CardDef
+rageAndHunger = (treachery "144062" "Rage and Hunger" TheGreatSpider 3) {cdShadowEffect = True, cdEasyModeQuantity = Just 2}

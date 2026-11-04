@@ -450,6 +450,12 @@ allQuestCards =
       , acrossTheMarshes
       , dontLookAtTheLights
       , ambushTheMenOfHarad
+      , theStairsOfCirithUngol
+      , theSpidersPass
+      , gollumsBetrayal
+      , passTheTwoWatchers
+      , fightingInTheTower
+      , escapeFromCirithUngol
       , intoMirkwood
       , lostInTheDarkFliesAndSpiders
       , capturedBySpiders
@@ -486,9 +492,6 @@ allQuestCards =
       , theWhiteCityBesieged
       , rohanHasCome
       , fightingInTheFields
-      , passTheTwoWatchers
-      , fightingInTheTower
-      , escapeFromCirithUngol
       , embassyFromTheDarkTower
       , theBattleOfTheMorannon
       , theLandOfMordor
@@ -1888,6 +1891,17 @@ slavesOfTheDarkLord = quest "22135" "Slaves of the Dark Lord" TheLandOfSorrow 1 
 leadTheRevolt :: CardDef
 leadTheRevolt = quest "22136" "Lead the Revolt" TheLandOfSorrow 2 10
 
+-- * The Tower of Cirith Ungol
+
+passTheTwoWatchers :: CardDef
+passTheTwoWatchers = quest "146066" "Pass the Two Watchers" TheTowerOfCirithUngol 1 0
+
+fightingInTheTower :: CardDef
+fightingInTheTower = quest "146067" "Fighting in the Tower" TheTowerOfCirithUngol 2 18
+
+escapeFromCirithUngol :: CardDef
+escapeFromCirithUngol = quest "146068" "Escape from Cirith Ungol" TheTowerOfCirithUngol 3 12
+
 -- * The Passing of the Grey Company
 
 -- | Its quest points are "-": it advances at the end of the planning phase.
@@ -2033,8 +2047,6 @@ aShortcutToMushrooms = quest "141023" "A Shortcut to Mushrooms" AShadowOfThePast
 -- | No quest points: the players win as Bucklebury Ferry is explored.
 escapeToBuckland :: CardDef
 escapeToBuckland = quest "141024" "Escape to Buckland" AShadowOfThePast 3 0
--- * A Shadow of the Past
-
 -- * Flight to the Ford
 
 pursuedByTheEnemy :: CardDef
@@ -2082,19 +2094,6 @@ rohanHasCome = (quest "145076" "Rohan has Come!" TheBattleOfThePelennorFields 4 
 
 fightingInTheFields :: CardDef
 fightingInTheFields = quest "145077" "Fighting in the Fields" TheBattleOfThePelennorFields 5 20
-
--- * The Tower of Cirith Ungol
-
-passTheTwoWatchers :: CardDef
-passTheTwoWatchers = quest "146066" "Pass the Two Watchers" TheTowerOfCirithUngol 1 0
-
-fightingInTheTower :: CardDef
-fightingInTheTower = quest "146067" "Fighting in the Tower" TheTowerOfCirithUngol 2 18
-
-escapeFromCirithUngol :: CardDef
-escapeFromCirithUngol = quest "146068" "Escape from Cirith Ungol" TheTowerOfCirithUngol 3 12
-
--- * The Tower of Cirith Ungol
 
 -- * The Black Gate Opens
 
@@ -2156,3 +2155,16 @@ orcHunting = quest "142066" "Orc Hunting" BreakingOfTheFellowship 3 0
 
 theRingBearerSetsOut :: CardDef
 theRingBearerSetsOut = quest "142067" "The Ring-bearer Sets Out" BreakingOfTheFellowship 4 16
+
+-- * Shelob's Lair
+
+-- | No quest points: a Forced effect advances it once Sméagol's Secret Way is in the
+-- victory display.
+theStairsOfCirithUngol :: CardDef
+theStairsOfCirithUngol = (quest "144070" "The Stairs of Cirith Ungol" ShelobsLair 1 0) {cdQuestPoints = Nothing}
+
+theSpidersPass :: CardDef
+theSpidersPass = quest "144071" "The Spider's Pass" ShelobsLair 2 16
+
+gollumsBetrayal :: CardDef
+gollumsBetrayal = quest "144072" "Gollum's Betrayal" ShelobsLair 3 8

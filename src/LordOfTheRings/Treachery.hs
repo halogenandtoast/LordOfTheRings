@@ -439,6 +439,15 @@ import LordOfTheRings.Treachery.Cards.TheDarkLordsSummons
 import LordOfTheRings.Treachery.Cards.MarchingUpTheRoad
 import LordOfTheRings.Treachery.Cards.FierceSouthrons
 import LordOfTheRings.Treachery.Cards.ArrowsThickInTheAir
+import LordOfTheRings.Treachery.Cards.DrawnToTheRing
+import LordOfTheRings.Treachery.Cards.DeepShadows
+import LordOfTheRings.Treachery.Cards.EvilVigilance
+import LordOfTheRings.Treachery.Cards.OrcishHowls
+import LordOfTheRings.Treachery.Cards.ExhalationOfDecay
+import LordOfTheRings.Treachery.Cards.ManyOpenings
+import LordOfTheRings.Treachery.Cards.ShelobsPoison
+import LordOfTheRings.Treachery.Cards.LurkingMalice
+import LordOfTheRings.Treachery.Cards.RageAndHunger
 import LordOfTheRings.Treachery.Cards.CaughtInWebs
 import LordOfTheRings.Treachery.Cards.PoisonedBySpiders
 import LordOfTheRings.Treachery.Cards.FightingAmongFriends
@@ -497,10 +506,6 @@ import LordOfTheRings.Treachery.Cards.FellFolkOfUmbar (fellFolkOfUmbar)
 import LordOfTheRings.Treachery.Cards.BlackSails (blackSails)
 import LordOfTheRings.Treachery.Cards.RaidingTheCoasts (raidingTheCoasts)
 import LordOfTheRings.Treachery.Cards.DrivenToTheBrink (drivenToTheBrink)
-import LordOfTheRings.Treachery.Cards.DrawnToTheRing
-import LordOfTheRings.Treachery.Cards.DeepShadows
-import LordOfTheRings.Treachery.Cards.EvilVigilance
-import LordOfTheRings.Treachery.Cards.OrcishHowls
 import LordOfTheRings.Treachery.Cards.HellHawk
 import LordOfTheRings.Treachery.Cards.TheHourOfDoom
 import LordOfTheRings.Treachery.Cards.JawsOfSteel
@@ -988,6 +993,15 @@ allTreacherys =
         , SomeTreacheryCard marchingUpTheRoad
         , SomeTreacheryCard fierceSouthrons
         , SomeTreacheryCard arrowsThickInTheAir
+        , SomeTreacheryCard orcishHowls
+        , SomeTreacheryCard drawnToTheRing
+        , SomeTreacheryCard deepShadows
+        , SomeTreacheryCard evilVigilance
+        , SomeTreacheryCard exhalationOfDecay
+        , SomeTreacheryCard manyOpenings
+        , SomeTreacheryCard shelobsPoison
+        , SomeTreacheryCard lurkingMalice
+        , SomeTreacheryCard rageAndHunger
         , SomeTreacheryCard caughtInWebs
         , SomeTreacheryCard poisonedBySpiders
         , SomeTreacheryCard fightingAmongFriends
@@ -1046,10 +1060,6 @@ allTreacherys =
         , SomeTreacheryCard blackSails
         , SomeTreacheryCard raidingTheCoasts
         , SomeTreacheryCard drivenToTheBrink
-        , SomeTreacheryCard orcishHowls
-        , SomeTreacheryCard drawnToTheRing
-        , SomeTreacheryCard deepShadows
-        , SomeTreacheryCard evilVigilance
         , SomeTreacheryCard hellHawk
         , SomeTreacheryCard theHourOfDoom
         , SomeTreacheryCard jawsOfSteel

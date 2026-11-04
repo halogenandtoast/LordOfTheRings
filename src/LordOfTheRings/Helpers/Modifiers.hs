@@ -191,7 +191,7 @@ cardsPlayedThisRound = getsGame \g -> [(pid, code, t) | Effect _ (PlayerTarget p
 playProhibitions :: (HasGame m) => PlayerId -> Card -> m [Modifier]
 playProhibitions pid c = do
   mods <- getsGame gameModifiers
-  entryBarred <- getsGame allyEntryBarred
+  entryBarred <- getsGame (allyEntryBarred pid)
   let on t = Map.findWithDefault [] t mods
   allyPlayed <- any (\(_, _, t) -> t == AllyType) <$> cardsPlayedThisRound
   pure

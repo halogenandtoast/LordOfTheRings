@@ -547,6 +547,20 @@ import LordOfTheRings.Location.Cards.SouthwardRoad
 import LordOfTheRings.Location.Cards.FoothillsOfEphelDuath
 import LordOfTheRings.Location.Cards.IthilienWoods
 import LordOfTheRings.Location.Cards.HillsOfIthilien
+import LordOfTheRings.Location.Cards.TopmostChamber
+import LordOfTheRings.Location.Cards.EchoingPassage
+import LordOfTheRings.Location.Cards.BloodiedCourtyard
+import LordOfTheRings.Location.Cards.WindingStairs
+import LordOfTheRings.Location.Cards.TorchLitHall
+import LordOfTheRings.Location.Cards.TheTwoWatchers
+import LordOfTheRings.Location.Cards.MorgulValeShelobsLair
+import LordOfTheRings.Location.Cards.SmeagolsSecretWay
+import LordOfTheRings.Location.Cards.CleftOfCirithUngol
+import LordOfTheRings.Location.Cards.TheSpidersLair
+import LordOfTheRings.Location.Cards.TheUnderWay
+import LordOfTheRings.Location.Cards.DeepDarkPassage
+import LordOfTheRings.Location.Cards.DenOfNight
+import LordOfTheRings.Location.Cards.BlockedTunnel
 import LordOfTheRings.Location.Cards.TheSpidersGlade
 import LordOfTheRings.Location.Cards.GiantWeb
 import LordOfTheRings.Location.Cards.ForestStream
@@ -603,12 +617,6 @@ import LordOfTheRings.Location.Cards.UmbarWarGalley (umbarWarGalley)
 import LordOfTheRings.Location.Cards.CorsairDromon (corsairDromon)
 import LordOfTheRings.Location.Cards.PortOfPelargir (portOfPelargir)
 import LordOfTheRings.Location.Cards.PelargirQuays (pelargirQuays)
-import LordOfTheRings.Location.Cards.TopmostChamber
-import LordOfTheRings.Location.Cards.EchoingPassage
-import LordOfTheRings.Location.Cards.BloodiedCourtyard
-import LordOfTheRings.Location.Cards.WindingStairs
-import LordOfTheRings.Location.Cards.TorchLitHall
-import LordOfTheRings.Location.Cards.TheTwoWatchers
 import LordOfTheRings.Location.Cards.TheBlackGate
 import LordOfTheRings.Location.Cards.TowersOfTheTeeth
 import LordOfTheRings.Location.Cards.BeleagueredHills
@@ -1228,6 +1236,20 @@ allLocations =
         , SomeLocationCard foothillsOfEphelDuath
         , SomeLocationCard ithilienWoods
         , SomeLocationCard hillsOfIthilien
+        , SomeLocationCard topmostChamber
+        , SomeLocationCard echoingPassage
+        , SomeLocationCard bloodiedCourtyard
+        , SomeLocationCard windingStairs
+        , SomeLocationCard torchLitHall
+        , SomeLocationCard theTwoWatchers
+        , SomeLocationCard morgulValeShelobsLair
+        , SomeLocationCard smeagolsSecretWay
+        , SomeLocationCard cleftOfCirithUngol
+        , SomeLocationCard theSpidersLair
+        , SomeLocationCard theUnderWay
+        , SomeLocationCard deepDarkPassage
+        , SomeLocationCard denOfNight
+        , SomeLocationCard blockedTunnel
         , SomeLocationCard theSpidersGlade
         , SomeLocationCard giantWeb
         , SomeLocationCard forestStream
@@ -1284,12 +1306,6 @@ allLocations =
         , SomeLocationCard corsairDromon
         , SomeLocationCard portOfPelargir
         , SomeLocationCard pelargirQuays
-        , SomeLocationCard topmostChamber
-        , SomeLocationCard echoingPassage
-        , SomeLocationCard bloodiedCourtyard
-        , SomeLocationCard windingStairs
-        , SomeLocationCard torchLitHall
-        , SomeLocationCard theTwoWatchers
         , SomeLocationCard theBlackGate
         , SomeLocationCard towersOfTheTeeth
         , SomeLocationCard beleagueredHills

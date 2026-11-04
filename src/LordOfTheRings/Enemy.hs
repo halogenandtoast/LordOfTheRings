@@ -518,6 +518,16 @@ import LordOfTheRings.Enemy.Cards.CaptainOfHarad
 import LordOfTheRings.Enemy.Cards.Oliphaunt
 import LordOfTheRings.Enemy.Cards.HaradrimSoldier
 import LordOfTheRings.Enemy.Cards.HaradrimArcher
+import LordOfTheRings.Enemy.Cards.OrcOfMordor
+import LordOfTheRings.Enemy.Cards.SnagaArcher
+import LordOfTheRings.Enemy.Cards.UrukSoldierOrcsOfMordor
+import LordOfTheRings.Enemy.Cards.Shagrat
+import LordOfTheRings.Enemy.Cards.Gorbag
+import LordOfTheRings.Enemy.Cards.WoundedUruk
+import LordOfTheRings.Enemy.Cards.TheTwoWatchersEnemy
+import LordOfTheRings.Enemy.Cards.Shelob
+import LordOfTheRings.Enemy.Cards.MorgulOrc
+import LordOfTheRings.Enemy.Cards.OrcOfCirithUngol
 import LordOfTheRings.Enemy.Cards.OldTomnoddy
 import LordOfTheRings.Enemy.Cards.CrazyCob
 import LordOfTheRings.Enemy.Cards.LazyLob
@@ -569,13 +579,6 @@ import LordOfTheRings.Enemy.Cards.CorsairCaptain (corsairCaptain)
 import LordOfTheRings.Enemy.Cards.CorsairOfUmbar (corsairOfUmbar)
 import LordOfTheRings.Enemy.Cards.UmbarPirateCrew (umbarPirateCrew)
 import LordOfTheRings.Enemy.Cards.HaradrimPirate (haradrimPirate)
-import LordOfTheRings.Enemy.Cards.OrcOfMordor
-import LordOfTheRings.Enemy.Cards.SnagaArcher
-import LordOfTheRings.Enemy.Cards.UrukSoldierOrcsOfMordor
-import LordOfTheRings.Enemy.Cards.Shagrat
-import LordOfTheRings.Enemy.Cards.Gorbag
-import LordOfTheRings.Enemy.Cards.WoundedUruk
-import LordOfTheRings.Enemy.Cards.TheTwoWatchersEnemy
 import LordOfTheRings.Enemy.Cards.TheMouthOfSauron
 import LordOfTheRings.Enemy.Cards.NazgulOfMordor
 import LordOfTheRings.Enemy.Cards.GorgorothHillTroll
@@ -1143,6 +1146,16 @@ allEnemys =
         , SomeEnemyCard oliphaunt
         , SomeEnemyCard haradrimSoldier
         , SomeEnemyCard haradrimArcher
+        , SomeEnemyCard shagrat
+        , SomeEnemyCard gorbag
+        , SomeEnemyCard woundedUruk
+        , SomeEnemyCard theTwoWatchersEnemy
+        , SomeEnemyCard orcOfMordor
+        , SomeEnemyCard snagaArcher
+        , SomeEnemyCard urukSoldierOrcsOfMordor
+        , SomeEnemyCard shelob
+        , SomeEnemyCard morgulOrc
+        , SomeEnemyCard orcOfCirithUngol
         , SomeEnemyCard oldTomnoddy
         , SomeEnemyCard crazyCob
         , SomeEnemyCard lazyLob
@@ -1195,13 +1208,6 @@ allEnemys =
         , SomeEnemyCard corsairOfUmbar
         , SomeEnemyCard umbarPirateCrew
         , SomeEnemyCard haradrimPirate
-        , SomeEnemyCard shagrat
-        , SomeEnemyCard gorbag
-        , SomeEnemyCard woundedUruk
-        , SomeEnemyCard theTwoWatchersEnemy
-        , SomeEnemyCard orcOfMordor
-        , SomeEnemyCard snagaArcher
-        , SomeEnemyCard urukSoldierOrcsOfMordor
         , SomeEnemyCard theMouthOfSauron
         , SomeEnemyCard nazgulOfMordor
         , SomeEnemyCard gorgorothHillTroll

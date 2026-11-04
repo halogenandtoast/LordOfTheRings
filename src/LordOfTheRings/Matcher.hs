@@ -466,7 +466,7 @@ affordableAlliesInHand pid sphere reduction minimumCost = do
       forbidden c = any (\case CannotPlay m -> cardMatches m c; _ -> False) (gameMods <> on (PlayerTarget pid))
       cost c = maybe 0 costAsResources c.cost
       reducedCost c = min (cost c) $ max minimumCost (cost c - reduction)
-  entryBarred <- getsGame allyEntryBarred
+  entryBarred <- getsGame (allyEntryBarred pid)
   allyPlayed <- any (\(_, _, t) -> t == AllyType) <$> cardsPlayedThisRound
   if (OneAllyPerRound `elem` gameMods && allyPlayed) || entryBarred
     then pure []
@@ -491,7 +491,7 @@ affordableAlliesInHandWithoutMatch pid matcher = do
       gameMods = on GameTarget
       forbidden c = any (\case CannotPlay m -> cardMatches m c; _ -> False) (gameMods <> on (PlayerTarget pid))
       cost c = maybe 0 costAsResources c.cost
-  entryBarred <- getsGame allyEntryBarred
+  entryBarred <- getsGame (allyEntryBarred pid)
   allyPlayed <- any (\(_, _, t) -> t == AllyType) <$> cardsPlayedThisRound
   if (OneAllyPerRound `elem` gameMods && allyPlayed) || entryBarred
     then pure []

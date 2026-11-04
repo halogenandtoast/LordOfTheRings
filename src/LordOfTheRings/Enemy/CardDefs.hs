@@ -527,6 +527,16 @@ allEnemyCards =
       , oliphaunt
       , haradrimSoldier
       , haradrimArcher
+      , shelob
+      , morgulOrc
+      , orcOfCirithUngol
+      , shagrat
+      , gorbag
+      , woundedUruk
+      , theTwoWatchersEnemy
+      , orcOfMordor
+      , snagaArcher
+      , urukSoldierOrcsOfMordor
       , oldTomnoddy
       , crazyCob
       , lazyLob
@@ -579,13 +589,6 @@ allEnemyCards =
       , wraithOnWings
       , theWitchKingCaptain
       , theWitchKingSorcerer
-      , shagrat
-      , gorbag
-      , woundedUruk
-      , theTwoWatchersEnemy
-      , orcOfMordor
-      , snagaArcher
-      , urukSoldierOrcsOfMordor
       , theMouthOfSauron
       , nazgulOfMordor
       , gorgorothHillTroll
@@ -4261,6 +4264,71 @@ nurnSlaver =
     , cdEasyModeQuantity = Just 3
     }
 
+-- * The Tower of Cirith Ungol
+
+-- | Set aside as stage 1A is set up, added to the staging area as the players travel to
+-- Topmost Chamber.
+shagrat :: CardDef
+shagrat =
+  unique
+    (enemy "146020" "Shagrat" TheTowerOfCirithUngol 1 46 4 5 4 6)
+      { cdCardTraits = setFromList [Orc, Uruk]
+      , cdVictoryPoints = Just 4
+      }
+
+gorbag :: CardDef
+gorbag =
+  unique
+    (enemy "146021" "Gorbag" TheTowerOfCirithUngol 1 36 3 4 3 5)
+      { cdCardTraits = setFromList [Orc, Uruk]
+      , cdVictoryPoints = Just 3
+      , cdShadowEffect = True
+      }
+
+woundedUruk :: CardDef
+woundedUruk =
+  (enemy "146022" "Wounded Uruk" TheTowerOfCirithUngol 3 34 2 3 2 4)
+    { cdCardTraits = setFromList [Orc, Uruk]
+    , cdShadowEffect = True
+    }
+
+-- | The enemy side of The Two Watchers: no copy is gathered, the location side turns over
+-- to it.
+theTwoWatchersEnemy :: CardDef
+theTwoWatchersEnemy =
+  unique
+    (enemy "146071" "The Two Watchers" TheTowerOfCirithUngol 0 50 2 5 2 4)
+      { cdCardTraits = setFromList [Mordor]
+      , cdVictoryPoints = Just 5
+      , cdOtherSide = Just "146070"
+      }
+
+-- * Orcs of Mordor
+
+orcOfMordor :: CardDef
+orcOfMordor =
+  (enemy "146058" "Orc of Mordor" OrcsOfMordor 3 28 1 3 1 3)
+    { cdCardTraits = setFromList [Orc]
+    , cdKeywords = setFromList [Surge]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 2
+    }
+
+snagaArcher :: CardDef
+snagaArcher =
+  (enemy "146059" "Snaga Archer" OrcsOfMordor 3 44 2 4 2 3)
+    { cdCardTraits = setFromList [Orc, Snaga]
+    , cdKeywords = setFromList [Archery 2]
+    , cdShadowEffect = True
+    }
+
+urukSoldierOrcsOfMordor :: CardDef
+urukSoldierOrcsOfMordor =
+  (enemy "146060" "Uruk Soldier" OrcsOfMordor 3 38 3 5 2 5)
+    { cdCardTraits = setFromList [Orc, Uruk]
+    , cdShadowEffect = True
+    }
+
 -- * The Passing of the Grey Company
 
 deadManOfDunharrow :: CardDef
@@ -4649,10 +4717,6 @@ ringwraith =
     , cdShadowEffect = True
     , cdEasyModeQuantity = Just 2
     }
--- * A Shadow of the Past
-
--- * The Nazgûl
-
 -- * Flight to the Ford
 
 fellRider :: CardDef
@@ -4789,75 +4853,6 @@ theWitchKingSorcerer =
       , cdOtherSide = Just "145079"
       }
 
--- * The Tower of Cirith Ungol
-
--- | Set aside as stage 1A is set up, added to the staging area as the players travel to
--- Topmost Chamber.
-shagrat :: CardDef
-shagrat =
-  unique
-    (enemy "146020" "Shagrat" TheTowerOfCirithUngol 1 46 4 5 4 6)
-      { cdCardTraits = setFromList [Orc, Uruk]
-      , cdVictoryPoints = Just 4
-      }
-
-gorbag :: CardDef
-gorbag =
-  unique
-    (enemy "146021" "Gorbag" TheTowerOfCirithUngol 1 36 3 4 3 5)
-      { cdCardTraits = setFromList [Orc, Uruk]
-      , cdVictoryPoints = Just 3
-      , cdShadowEffect = True
-      }
-
-woundedUruk :: CardDef
-woundedUruk =
-  (enemy "146022" "Wounded Uruk" TheTowerOfCirithUngol 3 34 2 3 2 4)
-    { cdCardTraits = setFromList [Orc, Uruk]
-    , cdShadowEffect = True
-    }
-
--- | The enemy side of The Two Watchers: no copy is gathered, the location side turns over
--- to it.
-theTwoWatchersEnemy :: CardDef
-theTwoWatchersEnemy =
-  unique
-    (enemy "146071" "The Two Watchers" TheTowerOfCirithUngol 0 50 2 5 2 4)
-      { cdCardTraits = setFromList [Mordor]
-      , cdVictoryPoints = Just 5
-      , cdOtherSide = Just "146070"
-      }
-
--- * Orcs of Mordor
-
-orcOfMordor :: CardDef
-orcOfMordor =
-  (enemy "146058" "Orc of Mordor" OrcsOfMordor 3 28 1 3 1 3)
-    { cdCardTraits = setFromList [Orc]
-    , cdKeywords = setFromList [Surge]
-    , cdShadowEffect = True
-    , cdEasyModeQuantity = Just 2
-    }
-
-snagaArcher :: CardDef
-snagaArcher =
-  (enemy "146059" "Snaga Archer" OrcsOfMordor 3 44 2 4 2 3)
-    { cdCardTraits = setFromList [Orc, Snaga]
-    , cdKeywords = setFromList [Archery 2]
-    , cdShadowEffect = True
-    }
-
-urukSoldierOrcsOfMordor :: CardDef
-urukSoldierOrcsOfMordor =
-  (enemy "146060" "Uruk Soldier" OrcsOfMordor 3 38 3 5 2 5)
-    { cdCardTraits = setFromList [Orc, Uruk]
-    , cdShadowEffect = True
-    }
-
--- * The Tower of Cirith Ungol
-
--- * Orcs of Mordor
-
 -- * The Black Gate Opens
 
 -- | Set aside by stage 1A's setup, then added to the staging area with The Black Gate.
@@ -4899,8 +4894,6 @@ warriorOfRhunTheBlackGateOpens =
     , cdWhenRevealed = True
     , cdShadowEffect = True
     }
-
--- * The Battle of the Pelennor Fields
 
 -- * Mount Doom
 
@@ -5042,6 +5035,37 @@ urukHaiHunter =
   (enemy "142072" "Uruk-hai Hunter" BreakingOfTheFellowship 3 28 2 4 1 3)
     { cdCardTraits = setFromList [Orc, UrukHai]
     , cdKeywords = setFromList [Peril, Toughness 1]
+    , cdWhenRevealed = True
+    , cdEasyModeQuantity = Just 2
+    }
+
+-- * Shelob's Lair
+
+-- | Set aside by stage 1A, added to the staging area by stage 2A.
+shelob :: CardDef
+shelob =
+  unique
+    (enemy "144040" "Shelob" ShelobsLair 1 50 4 4 4 8)
+      { cdCardTraits = setFromList [Creature, Spider]
+      , cdKeywords = setFromList [Indestructible]
+      , cdVictoryPoints = Just 8
+      }
+
+morgulOrc :: CardDef
+morgulOrc =
+  (enemy "144041" "Morgul Orc" ShelobsLair 4 35 1 3 2 3)
+    { cdCardTraits = setFromList [Orc, Uruk]
+    , cdKeywords = setFromList [Peril]
+    , cdWhenRevealed = True
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 3
+    }
+
+orcOfCirithUngol :: CardDef
+orcOfCirithUngol =
+  (enemy "144042" "Orc of Cirith Ungol" ShelobsLair 3 40 2 4 2 5)
+    { cdCardTraits = setFromList [Orc, Uruk]
+    , cdKeywords = setFromList [Peril]
     , cdWhenRevealed = True
     , cdEasyModeQuantity = Just 2
     }
