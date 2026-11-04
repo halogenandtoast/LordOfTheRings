@@ -202,6 +202,8 @@ allAttachmentCards =
       , sting
       , roundShield
       , armorOfErebor
+      , mithrilShirt
+      , radagastsStaff
       ]
 
 -- | A boon of the Revised Core campaign: Permanent, limit 1 per hero.
@@ -1368,3 +1370,18 @@ armorOfErebor =
     { cdCardTraits = setFromList [Item, Armor]
     , cdKeywords = setFromList [Restricted]
     }
+
+mithrilShirt :: CardDef
+mithrilShirt =
+  unique
+    (attachment "19152" "Mithril Shirt" Spirit (StaticCost 1))
+      { cdCardTraits = setFromList [Artifact, Item, Armor]
+      , cdKeywords = setFromList [GuardedBy [LocationType]]
+      }
+
+radagastsStaff :: CardDef
+radagastsStaff =
+  unique
+    (attachment "19154" "Radagast's Staff" Neutral (StaticCost 2))
+      { cdCardTraits = setFromList [Artifact, Item, Staff]
+      }

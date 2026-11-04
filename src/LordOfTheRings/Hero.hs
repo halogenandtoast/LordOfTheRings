@@ -82,6 +82,7 @@ import LordOfTheRings.Hero.Cards.FolcoBoffin
 import LordOfTheRings.Hero.Cards.Quickbeam
 import LordOfTheRings.Hero.AllyHero (allyHero)
 import LordOfTheRings.Hero.Cards.BilboBagginsTactics
+import LordOfTheRings.Hero.Cards.Radagast
 import LordOfTheRings.Hero.Runner ()
 import LordOfTheRings.Hero.Types as X
 import LordOfTheRings.Id
@@ -191,5 +192,6 @@ allHeroes =
         , SomeHeroCard folcoBoffin
         , SomeHeroCard quickbeam
         , SomeHeroCard bilboBagginsTactics
+        , SomeHeroCard radagast
         ]
     ]

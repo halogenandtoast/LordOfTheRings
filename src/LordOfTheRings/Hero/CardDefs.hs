@@ -84,6 +84,7 @@ allHeroCards =
       , folcoBoffin
       , quickbeam
       , bilboBagginsTactics
+      , radagast
       ]
 
 aragorn :: CardDef
@@ -526,4 +527,10 @@ bilboBagginsTactics :: CardDef
 bilboBagginsTactics =
   (hero "19112" "Bilbo Baggins" Tactics 9 1 1 2 2)
     { cdCardTraits = setFromList [Hobbit, Burglar]
+    }
+
+radagast :: CardDef
+radagast =
+  (hero "19145" "Radagast" Lore 11 2 2 3 4)
+    { cdCardTraits = setFromList [Istari]
     }

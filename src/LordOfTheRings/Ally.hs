@@ -237,6 +237,9 @@ import LordOfTheRings.Ally.Cards.PorosGarrison
 import LordOfTheRings.Ally.Cards.GreenwoodDefender
 import LordOfTheRings.Ally.Cards.GafferGamgee
 import LordOfTheRings.Ally.Cards.EreborToymaker
+import LordOfTheRings.Ally.Cards.MessengerRaven
+import LordOfTheRings.Ally.Cards.LoyalHound
+import LordOfTheRings.Ally.Cards.BywaterShirriff
 import LordOfTheRings.Ally.Runner ()
 import LordOfTheRings.Ally.Types as X
 import LordOfTheRings.Id
@@ -506,5 +509,8 @@ allAllies =
         , SomeAllyCard greenwoodDefender
         , SomeAllyCard gafferGamgee
         , SomeAllyCard ereborToymaker
+        , SomeAllyCard messengerRaven
+        , SomeAllyCard loyalHound
+        , SomeAllyCard bywaterShirriff
         ]
     ]

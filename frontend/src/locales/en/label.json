@@ -2496,5 +2496,27 @@
   },
   "elfGuide": {
     "hero": "Elf Guide: add 1 resource to a hero's pool"
+  },
+  "messengerRaven": {
+    "name": "Messenger Raven: name a card type",
+    "ally": "Ally",
+    "attachment": "Attachment",
+    "event": "Event",
+    "sideQuest": "Side quest"
+  },
+  "theKingsReturn": {
+    "choose": "The King's Return: choose a Guarded attachment to put into play",
+    "none": "Put none into play"
+  },
+  "reforged": {
+    "choose": "Reforged: choose an attachment to play for no cost, paying its cost in Spirit resources"
+  },
+  "radagastsStaff": {
+    "choose": "Radagast's Staff: choose one",
+    "reduce": "Reduce the cost of the next Creature ally you play this phase by 2",
+    "ready": "Ready a Creature ally",
+    "return": "Return a non-unique Creature enemy engaged with you to the staging area",
+    "ally": "Radagast's Staff: choose a Creature ally to ready",
+    "enemy": "Radagast's Staff: choose a Creature enemy to return to the staging area"
   }
 }

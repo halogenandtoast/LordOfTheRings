@@ -199,6 +199,10 @@ import LordOfTheRings.Event.Cards.WindFromTheSea
 import LordOfTheRings.Event.Cards.ElfGuide
 import LordOfTheRings.Event.Cards.DrinkingSong
 import LordOfTheRings.Event.Cards.TheShirefolk
+import LordOfTheRings.Event.Cards.TheKingsReturn
+import LordOfTheRings.Event.Cards.TheGreatHunt
+import LordOfTheRings.Event.Cards.GwaihirsDebt
+import LordOfTheRings.Event.Cards.Reforged
 import LordOfTheRings.Event.Types as X
 import LordOfTheRings.Id
 import LordOfTheRings.Prelude
@@ -417,5 +421,9 @@ allEvents =
         , SomeEventCard elfGuide
         , SomeEventCard drinkingSong
         , SomeEventCard theShirefolk
+        , SomeEventCard theKingsReturn
+        , SomeEventCard theGreatHunt
+        , SomeEventCard gwaihirsDebt
+        , SomeEventCard reforged
         ]
     ]
