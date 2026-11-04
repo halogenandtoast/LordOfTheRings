@@ -498,6 +498,11 @@ import LordOfTheRings.Enemy.Cards.Lorgan
 import LordOfTheRings.Enemy.Cards.Borlach
 import LordOfTheRings.Enemy.Cards.EasterlingGuard
 import LordOfTheRings.Enemy.Cards.NurnSlaver
+import LordOfTheRings.Enemy.Cards.DeadManOfDunharrow (deadManOfDunharrow)
+import LordOfTheRings.Enemy.Cards.FaithlessDead (faithlessDead)
+import LordOfTheRings.Enemy.Cards.GhostsOfMen (ghostsOfMen)
+import LordOfTheRings.Enemy.Cards.ShadowHost (shadowHost)
+import LordOfTheRings.Enemy.Cards.ArmyOfTheDead (armyOfTheDead)
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -1025,5 +1030,10 @@ allEnemys =
         , SomeEnemyCard borlach
         , SomeEnemyCard easterlingGuard
         , SomeEnemyCard nurnSlaver
+        , SomeEnemyCard deadManOfDunharrow
+        , SomeEnemyCard faithlessDead
+        , SomeEnemyCard ghostsOfMen
+        , SomeEnemyCard shadowHost
+        , SomeEnemyCard armyOfTheDead
         ]
     ]

@@ -420,6 +420,10 @@ import LordOfTheRings.Treachery.Cards.TheDarkLordsReach
 import LordOfTheRings.Treachery.Cards.OverseersWhip
 import LordOfTheRings.Treachery.Cards.CrueltyOfMordor
 import LordOfTheRings.Treachery.Cards.BrokenCaptives
+import LordOfTheRings.Treachery.Cards.BloodRunsChill (bloodRunsChill)
+import LordOfTheRings.Treachery.Cards.TheWayIsShut (theWayIsShut)
+import LordOfTheRings.Treachery.Cards.WhispersInTheDark (whispersInTheDark)
+import LordOfTheRings.Treachery.Cards.NoTurningBack (noTurningBack)
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -867,5 +871,9 @@ allTreacherys =
         , SomeTreacheryCard overseersWhip
         , SomeTreacheryCard crueltyOfMordor
         , SomeTreacheryCard brokenCaptives
+        , SomeTreacheryCard bloodRunsChill
+        , SomeTreacheryCard theWayIsShut
+        , SomeTreacheryCard whispersInTheDark
+        , SomeTreacheryCard noTurningBack
         ]
     ]

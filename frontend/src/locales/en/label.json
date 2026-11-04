@@ -3013,5 +3013,70 @@
     "choose": "Cruelty of Mordor: choose one",
     "damage": "Deal 1 damage to each damaged character you control",
     "threat": "Raise your threat by {n}, 1 for each damaged character you control"
+  },
+  "overcomeByFear": {
+    "attach": "Attach a set aside Overcome by Fear to your threat dial",
+    "discardAlly": "Choose an ally you control to discard",
+    "detach": "Overcome by Fear: you may spend 1 Fellowship resource to detach it and set it aside",
+    "spend": "Spend 1 Fellowship resource to detach Overcome by Fear"
+  },
+  "deadManOfDunharrow": {
+    "choose": "Dead Man of Dunharrow: attach Overcome by Fear, or raise your threat by 2",
+    "other": "Raise your threat by 2"
+  },
+  "faithlessDead": {
+    "choose": "Faithless Dead: choose one",
+    "raiseThreat": "Raise each player's threat by 2",
+    "reveal": "Reveal an additional encounter card"
+  },
+  "ghostsOfMen": {
+    "choose": "Ghosts of Men: attach Overcome by Fear, or it attacks you",
+    "other": "Ghosts of Men makes an immediate attack against you"
+  },
+  "shadowHost": {
+    "choose": "Shadow Host: attach Overcome by Fear, or it attacks you",
+    "other": "Shadow Host makes an immediate attack"
+  },
+  "armyOfTheDead": {
+    "choose": "Army of the Dead: attach Overcome by Fear, or discard an ally you control",
+    "other": "Discard an ally you control"
+  },
+  "theWayIsShut": {
+    "choose": "The Way is Shut: attach Overcome by Fear, or progress cannot be placed on the current quest this round",
+    "other": "Progress cannot be placed on the current quest until the end of the round"
+  },
+  "whispersInTheDark": {
+    "choose": "Whispers in the Dark: attach Overcome by Fear, or your characters get -1 willpower, attack and defense this round",
+    "other": "Each character you control gets -1 willpower, -1 attack and -1 defense until the end of the round"
+  },
+  "noTurningBack": {
+    "choose": "No Turning Back: attach Overcome by Fear, or discard an ally you control",
+    "other": "Discard an ally you control"
+  },
+  "noTurningBackShadow": {
+    "choose": "No Turning Back: attach Overcome by Fear, or the attacking enemy attacks again",
+    "other": "Attacking enemy makes an additional attack after this one"
+  },
+  "hauntedPath": {
+    "choose": "Haunted Path: choose one",
+    "raiseThreat": "Raise your threat by 2",
+    "return": "Return attacking enemy to the staging area after this attack"
+  },
+  "theForbiddenDoor": {
+    "choose": "The Forbidden Door: add 1 resource to each of your heroes' pools and raise your threat by 3?",
+    "resources": "Add 1 resource to each hero you control and raise your threat by 3"
+  },
+  "thePathsOfTheDead": {
+    "choose": "The Paths of the Dead: choose one",
+    "raiseThreat": "Raise your threat by 1",
+    "cannotPlay": "You cannot play cards this phase"
+  },
+  "theDeadAreFollowing": {
+    "choose": "The Dead are Following: raise your threat by 3 to detach Overcome by Fear?",
+    "detach": "Raise your threat by 3 to detach Overcome by Fear and set it aside"
+  },
+  "thePassingOfTheGreyCompany": {
+    "anduril": "The Passing of the Grey Company: raise each player's threat by 1 to search your deck for Andúril?",
+    "searchForAnduril": "Raise each player's threat by 1 and search your deck for Andúril"
   }
 }
