@@ -549,6 +549,9 @@ data ModifierType
   | -- | on an enemy: still in play as the phase ends, it raises the player's threat by this
     -- much, as Crazed Captive's shadow reads
     RaisesThreatAtEndOfPhase PlayerId Int
+  | -- | on an enemy: as the quest phase ends, it engages the player with the highest threat,
+    -- as Guffawing of Giants has its Stone-giant do
+    EngagesHighestThreatAtEndOfQuestPhase
   | -- | on an enemy: each hero its attack damages but does not destroy is taken prisoner, as
     -- Torture Master's shadow reads
     AttackDamageTakesPrisoner
