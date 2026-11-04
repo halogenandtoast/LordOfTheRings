@@ -387,6 +387,8 @@ allTreacheryCards =
       , abandonedRuins
       , terribleShadows
       , slammedShut
+      , wilderlandsBane
+      , suffocatingShadows
       ]
 
 deepDeepDark :: CardDef
@@ -2460,3 +2462,10 @@ slammedShut =
     , cdKeywords = setFromList [Doomed 1]
     , cdEasyModeQuantity = Just 0
     }
+-- * Mount Gundabad
+
+wilderlandsBane :: CardDef
+wilderlandsBane = (treachery "19132" "Wilderland's Bane" MountGundabad 2) {cdShadowEffect = True}
+
+suffocatingShadows :: CardDef
+suffocatingShadows = (treachery "19133" "Suffocating Shadows" MountGundabad 2) {cdShadowEffect = True}

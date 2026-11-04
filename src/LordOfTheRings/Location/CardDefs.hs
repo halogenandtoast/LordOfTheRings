@@ -485,6 +485,12 @@ allLocationCards =
       , hiddenStaircase
       , moonlitPassage
       , cursedTower
+      , theFirstForge
+      , dagnirsHoard
+      , throatOfTheMountain
+      , minesOfGundabad
+      , narrowStair
+      , desecratedRuins
       ]
 
 drownedTreasury :: CardDef
@@ -3631,6 +3637,27 @@ moonlitPassage =
     , cdEasyModeQuantity = Just 2
     }
 
+-- * Mount Gundabad. Easy mode copy counts from Hall of Beorn.
+
+theFirstForge :: CardDef
+theFirstForge = unique (location "19122" "The First Forge" MountGundabad 1 1 1) {cdCardTraits = setFromList [Underground], cdVictoryPoints = Just 1}
+
+dagnirsHoard :: CardDef
+dagnirsHoard = unique (location "19123" "Dagnir's Hoard" MountGundabad 1 7 7) {cdCardTraits = setFromList [Underground], cdVictoryPoints = Just 1}
+
+throatOfTheMountain :: CardDef
+throatOfTheMountain =
+  unique (location "19124" "Throat of the Mountain" MountGundabad 1 4 4) {cdCardTraits = setFromList [Underground, Dark], cdVictoryPoints = Just 1}
+
+minesOfGundabad :: CardDef
+minesOfGundabad =
+  (location "19129" "Mines of Gundabad" MountGundabad 3 3 3)
+    { cdCardTraits = setFromList [Underground, Dark]
+    , cdKeywords = setFromList [Deep]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 2
+    }
+
 cursedTower :: CardDef
 cursedTower =
   (location "19105" "Cursed Tower" TheGhostOfFramsburg 3 3 3)
@@ -3638,4 +3665,21 @@ cursedTower =
     , cdKeywords = setFromList [Discover 3]
     , cdShadowEffect = True
     , cdEasyModeQuantity = Just 2
+    }
+
+narrowStair :: CardDef
+narrowStair =
+  (location "19130" "Narrow Stair" MountGundabad 2 2 3)
+    { cdCardTraits = setFromList [Underground]
+    , cdKeywords = setFromList [Deep]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
+    }
+
+desecratedRuins :: CardDef
+desecratedRuins =
+  (location "19131" "Desecrated Ruins" MountGundabad 2 2 4)
+    { cdCardTraits = setFromList [Underground, Dark]
+    , cdKeywords = setFromList [Deep]
+    , cdShadowEffect = True
     }

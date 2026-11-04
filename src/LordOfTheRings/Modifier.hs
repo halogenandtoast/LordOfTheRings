@@ -260,6 +260,8 @@ data ModifierType
     CannotTakeDamage
   | -- | on an enemy: the damage of attacks on it is canceled
     CannotTakeCombatDamage
+  | -- | on an enemy: only a quest card's effects can damage it, as Dagnir's Slave gives Dagnir
+    CannotTakeNonQuestDamage
   | -- | on an enemy: characters attacking it with ranged, engaged with another player,
     -- add nothing to the attack
     ImmuneToRangedDamage

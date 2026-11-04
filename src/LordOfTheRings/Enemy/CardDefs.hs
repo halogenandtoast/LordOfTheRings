@@ -450,6 +450,10 @@ allEnemyCards =
       , framsShade
       , cryptStalker
       , evilSpectre
+      , dagnirMountGundabad
+      , guardianOfGundabad
+      , dagnirsSlave
+      , deepDweller
       ]
 
 namelessThing :: CardDef
@@ -3683,3 +3687,27 @@ evilSpectre =
     , cdShadowEffect = True
     , cdEasyModeQuantity = Just 2
     }
+-- * Mount Gundabad. Easy mode copy counts from Hall of Beorn.
+
+-- | Indestructible. Its threat is X, printed 0 here: see its card.
+dagnirMountGundabad :: CardDef
+dagnirMountGundabad =
+  unique
+    (enemy "19125" "Dagnir" MountGundabad 1 50 0 7 5 20)
+      { cdCardTraits = setFromList [Dragon]
+      , cdKeywords = setFromList [Indestructible]
+      }
+
+guardianOfGundabad :: CardDef
+guardianOfGundabad = (enemy "19126" "Guardian of Gundabad" MountGundabad 3 39 3 4 1 5) {cdCardTraits = setFromList [Orc, Goblin], cdShadowEffect = True}
+
+dagnirsSlave :: CardDef
+dagnirsSlave =
+  (enemy "19127" "Dagnir's Slave" MountGundabad 3 26 2 3 2 3)
+    { cdCardTraits = setFromList [Orc, Goblin]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 2
+    }
+
+deepDweller :: CardDef
+deepDweller = (enemy "19128" "Deep-dweller" MountGundabad 2 32 2 3 1 4) {cdCardTraits = setFromList [Creature, Spider], cdEasyModeQuantity = Just 1}

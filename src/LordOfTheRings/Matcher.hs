@@ -15,7 +15,7 @@ import LordOfTheRings.Enemy.Types hiding (enemy)
 import LordOfTheRings.Entities
 import LordOfTheRings.Game.Base
 import LordOfTheRings.Heading as X
-import LordOfTheRings.Helpers.Modifiers (cardsPlayedThisRound)
+import LordOfTheRings.Helpers.Modifiers (cardsPlayedThisRound, hitPointsOf, modifiedValue)
 import LordOfTheRings.Hero.Types hiding (hero)
 import LordOfTheRings.Id
 import LordOfTheRings.Keyword (Keyword (..))
@@ -252,6 +252,7 @@ matchEnemy matcher enemy = case matcher of
   EnemyWithAnyAttachment -> notNull <$> getAttachmentsOn (toTarget enemy)
   EnemyWithResources -> pure $ countTokens Resource (toAttrs enemy).enemyTokens > 0
   EnemyGuardingACard -> guardingACard (toCard enemy).id (toTarget enemy)
+  EnemyWithNoHitPointsRemaining -> (enemy.damage >=) <$> modifiedValue hitPointsOf (toTarget enemy) enemy.hitPoints
   EnemyGrappledWith lm -> case enemy.placement of
     AttachedTo (LocationTarget lid) -> elem lid <$> select lm
     _ -> pure False

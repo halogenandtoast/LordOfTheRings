@@ -443,6 +443,12 @@ import LordOfTheRings.Location.Cards.DarkBlackWoods
 import LordOfTheRings.Location.Cards.DarkTunnel
 import LordOfTheRings.Location.Cards.ForkedPassage
 import LordOfTheRings.Location.Cards.LostArmory
+import LordOfTheRings.Location.Cards.TheFirstForge
+import LordOfTheRings.Location.Cards.DagnirsHoard
+import LordOfTheRings.Location.Cards.ThroatOfTheMountain
+import LordOfTheRings.Location.Cards.MinesOfGundabad
+import LordOfTheRings.Location.Cards.NarrowStair
+import LordOfTheRings.Location.Cards.DesecratedRuins
 import LordOfTheRings.Location.Cards.AncientTreasury
 import LordOfTheRings.Location.Cards.FrightfulDen
 import LordOfTheRings.Location.Cards.LightlessGrotto
@@ -957,6 +963,12 @@ allLocations =
         , SomeLocationCard darkTunnel
         , SomeLocationCard forkedPassage
         , SomeLocationCard lostArmory
+        , SomeLocationCard theFirstForge
+        , SomeLocationCard dagnirsHoard
+        , SomeLocationCard throatOfTheMountain
+        , SomeLocationCard minesOfGundabad
+        , SomeLocationCard narrowStair
+        , SomeLocationCard desecratedRuins
         , SomeLocationCard ancientTreasury
         , SomeLocationCard frightfulDen
         , SomeLocationCard lightlessGrotto

@@ -9,7 +9,6 @@ module LordOfTheRings.Scenario.Scenarios.FireInTheNight.Helpers (
   dagnirAttacksHrogarsHill,
   revealSideQuest,
   sideQuestDeckOf,
-  isQuestSource,
 ) where
 
 import Data.Aeson.Types (parseMaybe)
@@ -77,10 +76,3 @@ revealSideQuest = push $ ScenarioSpecific "fireInTheNight.revealSideQuest" Null
 -- | The side quest deck the scenario's meta holds, top first.
 sideQuestDeckOf :: Value -> [EncounterCard]
 sideQuestDeckOf = fromMaybe [] . parseMaybe (withObject "meta" (.: "sideQuestDeck"))
-
--- | A quest card's effect, as Face the Dragon's, as against Dagnir's damage limit.
-isQuestSource :: Source -> Bool
-isQuestSource = \case
-  AbilitySource s _ -> isQuestSource s
-  QuestSource _ -> True
-  _ -> False

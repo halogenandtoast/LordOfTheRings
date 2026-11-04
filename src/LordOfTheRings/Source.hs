@@ -40,6 +40,13 @@ isPlayerCardSource = \case
   CardIdSource _ -> True
   _ -> False
 
+-- | Whether the source is a quest card, as "non-quest effects" reads.
+isQuestSource :: Source -> Bool
+isQuestSource = \case
+  AbilitySource s _ -> isQuestSource s
+  QuestSource _ -> True
+  _ -> False
+
 -- | Whether the source is a player event: a player card known by its card id.
 isPlayerEventSource :: Source -> Bool
 isPlayerEventSource = \case

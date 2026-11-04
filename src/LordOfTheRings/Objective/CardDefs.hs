@@ -132,6 +132,8 @@ allObjectiveCards =
       , cryptKey
       , oldLantern
       , scathasTeeth
+      , wormsbane
+      , wormsbaneReforged
       ]
 
 durinsAxe :: CardDef
@@ -905,4 +907,25 @@ scathasTeeth =
     (objective "19096" "Scatha's Teeth" TheGhostOfFramsburg 1)
       { cdCardTraits = setFromList [Artifact, Item]
       , cdKeywords = setFromList [Loot]
+      }
+
+-- | Mount Gundabad's Wormsbane, attached to a hero at setup on its Broken side; The First
+-- Forge turns it to its Reforged side ('wormsbaneReforged'). Hall of Beorn prints it as an
+-- objective. Neither side is gathered into the encounter deck.
+wormsbane :: CardDef
+wormsbane =
+  unique
+    (objective "19143A" "Wormsbane" MountGundabad 1)
+      { cdCardTraits = setFromList [Artifact, Weapon, Broken]
+      , cdKeywords = setFromList [Restricted]
+      , cdOtherSide = Just "19143B"
+      }
+
+wormsbaneReforged :: CardDef
+wormsbaneReforged =
+  unique
+    (objective "19143B" "Wormsbane" MountGundabad 1)
+      { cdCardTraits = setFromList [Artifact, Weapon, Reforged]
+      , cdKeywords = setFromList [Restricted]
+      , cdOtherSide = Just "19143A"
       }

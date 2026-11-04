@@ -372,6 +372,14 @@ allQuestCards =
       , theHauntedKeep
       , searchingTheRuins
       , theCursedShade
+      , theSideDoor
+      , theUpperLevels
+      , theLowerDeeps
+      , frenziedWarrens
+      , dagnirsWrath
+      , forebodingDarkness
+      , imminentPursuit
+      , theGreatWorm
       ]
 
 theDrippingWalls :: CardDef
@@ -1482,3 +1490,36 @@ searchingTheRuins = quest "19110" "Searching the Ruins" TheGhostOfFramsburg 2 12
 
 theCursedShade :: CardDef
 theCursedShade = quest "19111" "The Cursed Shade" TheGhostOfFramsburg 3 6
+-- * Mount Gundabad. Each stage is Victory 1 (Hall of Beorn): defeated, it goes to the
+-- victory display.
+
+-- | No quest points: the players advance at the end of the planning phase.
+theSideDoor :: CardDef
+theSideDoor = (quest "19134" "The Side Door" MountGundabad 1 0) {cdQuestPoints = Nothing, cdVictoryPoints = Just 1}
+
+-- | A Mount Gundabad stage 2: its side A, shared by all, reads "Exploring Gundabad".
+exploringGundabad :: CardCode -> Text -> Int -> CardDef
+exploringGundabad code subtitle questPoints =
+  (quest code (Name "Exploring Gundabad" (Just subtitle)) MountGundabad 2 questPoints) {cdVictoryPoints = Just 1}
+
+theUpperLevels :: CardDef
+theUpperLevels = exploringGundabad "19136" "The Upper Levels" 3
+
+theLowerDeeps :: CardDef
+theLowerDeeps = exploringGundabad "19137" "The Lower Deeps" 3
+
+frenziedWarrens :: CardDef
+frenziedWarrens = exploringGundabad "19138" "Frenzied Warrens" 5
+
+dagnirsWrath :: CardDef
+dagnirsWrath = exploringGundabad "19139" "Dagnir's Wrath" 7
+
+forebodingDarkness :: CardDef
+forebodingDarkness = exploringGundabad "19140" "Foreboding Darkness" 4
+
+imminentPursuit :: CardDef
+imminentPursuit = exploringGundabad "19141" "Imminent Pursuit" 6
+
+-- | No quest points: the players win by killing Dagnir.
+theGreatWorm :: CardDef
+theGreatWorm = (exploringGundabad "19142" "The Great Worm" 0) {cdQuestPoints = Nothing}

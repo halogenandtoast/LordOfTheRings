@@ -347,6 +347,8 @@ data WindowMatcher
   | -- | a matching character declared as an attacker against a matching enemy, as Valour
     -- of the North answers one against an enemy with an attachment
     CharacterAttackerDeclaredWindow Timing HeroMatcher AllyMatcher EnemyMatcher
+  | -- | a player's attack against a matching enemy resolved, as The Great Worm answers
+    MatchingEnemyAttackResolvedWindow Timing EnemyMatcher
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
@@ -524,6 +526,7 @@ windowMatches matcher (Window timing wType) = case (matcher, wType) of
   (AttachmentPlayedOnBareCharacterWindow {}, _) -> False
   (CharacterWithAttachmentsLeftPlayWindow {}, _) -> False
   (CharacterAttackerDeclaredWindow {}, _) -> False
+  (MatchingEnemyAttackResolvedWindow {}, _) -> False
   (QuestBypassedWindow t, QuestBypassed _) -> t == timing
   -- read with the player's errata in 'windowMatchesM'
   (ErrataWindow _ errata _, _) -> windowMatches errata (Window timing wType)

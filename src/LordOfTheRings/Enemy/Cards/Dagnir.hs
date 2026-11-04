@@ -3,7 +3,7 @@ module LordOfTheRings.Enemy.Cards.Dagnir (dagnir) where
 import LordOfTheRings.Enemy.CardDefs qualified as Cards
 import LordOfTheRings.Enemy.Import.Lifted
 import LordOfTheRings.Helpers.Modifiers (getModifiers)
-import LordOfTheRings.Scenario.Scenarios.FireInTheNight.Helpers (sideQuestX, isQuestSource)
+import LordOfTheRings.Scenario.Scenarios.FireInTheNight.Helpers (sideQuestX)
 
 newtype Dagnir = Dagnir EnemyAttrs
   deriving anyclass (IsEnemy, HasAbilities)
