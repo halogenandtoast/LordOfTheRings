@@ -1,6 +1,6 @@
 module LordOfTheRings.Treachery.Cards.GollumsBite (gollumsBite) where
 
-import LordOfTheRings.Scenario.Scenarios.ReturnToMirkwood.Helpers (getGuard, passGollum, tantrumTargets)
+import LordOfTheRings.Scenario.Scenarios.ReturnToMirkwood.Helpers (passGollum, shadowGuardTargets, tantrumTargets)
 import LordOfTheRings.Treachery.CardDefs qualified as Cards
 import LordOfTheRings.Treachery.Import.Lifted
 
@@ -20,8 +20,8 @@ instance RunMessage GollumsBite where
       traverse_ (bite 4) =<< tantrumTargets
       passGollum False
       pure t
-    ResolveShadowEffect cid _ _ _ | cid == attrs.cardId -> do
-      traverse_ (bite 2) =<< getGuard
+    ResolveShadowEffect cid eid _ _ | cid == attrs.cardId -> do
+      traverse_ (bite 2) =<< shadowGuardTargets eid
       pure t
     _ -> GollumsBite <$> runMessage msg attrs
    where

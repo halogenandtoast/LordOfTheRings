@@ -1,6 +1,6 @@
 module LordOfTheRings.Treachery.Cards.GollumsAnguish (gollumsAnguish) where
 
-import LordOfTheRings.Scenario.Scenarios.ReturnToMirkwood.Helpers (getGuard, passGollum, tantrumTargets)
+import LordOfTheRings.Scenario.Scenarios.ReturnToMirkwood.Helpers (passGollum, shadowGuardTargets, tantrumTargets)
 import LordOfTheRings.Treachery.CardDefs qualified as Cards
 import LordOfTheRings.Treachery.Import.Lifted
 
@@ -20,7 +20,7 @@ instance RunMessage GollumsAnguish where
       traverse_ (`encounterRaisesThreat` 8) =<< tantrumTargets
       passGollum False
       pure t
-    ResolveShadowEffect cid _ _ _ | cid == attrs.cardId -> do
-      traverse_ (`encounterRaisesThreat` 4) =<< getGuard
+    ResolveShadowEffect cid eid _ _ | cid == attrs.cardId -> do
+      traverse_ (`encounterRaisesThreat` 4) =<< shadowGuardTargets eid
       pure t
     _ -> GollumsAnguish <$> runMessage msg attrs
