@@ -212,6 +212,10 @@ data ModifierType
     ChoosesUpToOptions Int
   | -- | on a hero: while paying for a matching card it has the sphere's resource icon
     GainResourceIconFor CardMatcher Sphere
+  | -- | on a hero: while paying for a matching card it is considered to have the sphere's
+    -- printed resource icon, which gives a 0-cost card its resource match too, as Bard son
+    -- of Brand has for an Item attachment
+    PrintedResourceIconFor CardMatcher Sphere
   | -- | on a player: they may declare any number of defenders against each attack
     MayDeclareMultipleDefenders
   | -- | on a player
