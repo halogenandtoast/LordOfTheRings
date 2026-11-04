@@ -277,6 +277,8 @@ matchLocation matcher location = case matcher of
   LocationDiscardableByPlayerCards -> notElem CannotBeDiscardedByPlayerCards . map modifierType . Map.findWithDefault [] (toTarget location) <$> getsGame gameModifiers
   LocationCanEnterStagingArea -> notElem CannotEnterStagingArea . map modifierType . Map.findWithDefault [] (toTarget location) <$> getsGame gameModifiers
   LocationGuardingACard -> guardingACard (toCard location).id (toTarget location)
+  LocationWithPlayerCardAttachment ->
+    getsGame (any ((== AttachedTo (toTarget location)) . (.placement)) . toList . entitiesAttachments . gameEntities)
 
 -- | Not considered out of play, as Saruman's chosen card is.
 notOutOfPlay :: HasGame m => Target -> m Bool
@@ -589,6 +591,11 @@ getLocation lid =
 -- | The progress tokens on the active location, none when there is none.
 activeLocationProgress :: HasGame m => m Int
 activeLocationProgress = sum . map (.progress) <$> (traverse getLocation =<< select IsActiveLocation)
+
+-- | The attachments on the active location, as "for each attachment on the active
+-- location" reads: none without one.
+activeLocationAttachments :: HasGame m => m Int
+activeLocationAttachments = sum <$> (traverse (fmap length . getAttachmentsOn . toTarget) =<< select IsActiveLocation)
 
 -- | Whether the game is dealt in nightmare mode, for a card whose standard text the
 -- nightmare setup card changes.

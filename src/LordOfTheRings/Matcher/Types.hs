@@ -240,6 +240,8 @@ data LocationMatcher
     LocationCanEnterStagingArea
   | -- | a location guarding a card, as 'EnemyGuardingACard' (Find Durin's Key)
     LocationGuardingACard
+  | -- | a location with a player card attached to it, as South Away! reads
+    LocationWithPlayerCardAttachment
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
