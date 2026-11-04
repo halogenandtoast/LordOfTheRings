@@ -437,6 +437,9 @@ import LordOfTheRings.Treachery.Cards.NoCampfire
 import LordOfTheRings.Treachery.Cards.WindWhippedRain
 import LordOfTheRings.Treachery.Cards.MoreLikeAGrocer
 import LordOfTheRings.Treachery.Cards.GripGrabPinchNab
+import LordOfTheRings.Treachery.Cards.GallopingBoulders
+import LordOfTheRings.Treachery.Cards.GuffawingOfGiants
+import LordOfTheRings.Treachery.Cards.ChaosInTheCavern
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -901,5 +904,8 @@ allTreacherys =
         , SomeTreacheryCard windWhippedRain
         , SomeTreacheryCard moreLikeAGrocer
         , SomeTreacheryCard gripGrabPinchNab
+        , SomeTreacheryCard gallopingBoulders
+        , SomeTreacheryCard guffawingOfGiants
+        , SomeTreacheryCard chaosInTheCavern
         ]
     ]

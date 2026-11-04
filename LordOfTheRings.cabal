@@ -2756,6 +2756,7 @@ library
       LordOfTheRings.Treachery.Cards.CaveIn
       LordOfTheRings.Treachery.Cards.CenturiesOfSorrow
       LordOfTheRings.Treachery.Cards.ChanceEncounter
+      LordOfTheRings.Treachery.Cards.ChaosInTheCavern
       LordOfTheRings.Treachery.Cards.ChaosInTheNight
       LordOfTheRings.Treachery.Cards.ChillOfTheRoots
       LordOfTheRings.Treachery.Cards.ClosingIn
@@ -2855,6 +2856,7 @@ library
       LordOfTheRings.Treachery.Cards.FuriousRainstorm
       LordOfTheRings.Treachery.Cards.Fury
       LordOfTheRings.Treachery.Cards.FuryAndMalice
+      LordOfTheRings.Treachery.Cards.GallopingBoulders
       LordOfTheRings.Treachery.Cards.GatheringForces
       LordOfTheRings.Treachery.Cards.GatheringGloom
       LordOfTheRings.Treachery.Cards.GatheringGround
@@ -2865,6 +2867,7 @@ library
       LordOfTheRings.Treachery.Cards.GrabbedBySpiders
       LordOfTheRings.Treachery.Cards.Grappled
       LordOfTheRings.Treachery.Cards.GripGrabPinchNab
+      LordOfTheRings.Treachery.Cards.GuffawingOfGiants
       LordOfTheRings.Treachery.Cards.HarshWeather
       LordOfTheRings.Treachery.Cards.HatefulSearch
       LordOfTheRings.Treachery.Cards.HauntingFog
