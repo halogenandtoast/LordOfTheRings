@@ -158,6 +158,15 @@ spec = describe "Dream-chaser Nightmare mode" do
       reveal Treacheries.deepMaelstrom []
       threat pid `shouldReturn` was + 5
 
+    it "Deep Maelstrom reveals a card for each location not grappled" . nightmare theThingInTheDepths $ \_ -> do
+      run . AddToStaging =<< genEncounterCard Locations.quarterDeck
+      run . AddToStaging =<< genEncounterCard Locations.cargoHold
+      quarter <- getsGame (fromJustNote "no Quarter Deck" . fmap toId . find ((== toCardCode Locations.quarterDeck) . toCardCode) . toList . (.entities.locations))
+      spider <- staged Enemies.forestSpider
+      run $ PlaceEnemy spider (AttachedTo (LocationTarget quarter))
+      reveal Treacheries.deepMaelstrom [Locations.crewQuarters, Locations.forecastleDeck]
+      map toCardCode <$> getEncounterDeck `shouldReturn` [toCardCode Locations.forecastleDeck]
+
     it "Corsair Duelist trades a resource for its damage instead of being defeated" . nightmare theThingInTheDepths $ \pid -> do
       duelist <- engaged pid Enemies.corsairDuelist
       run $ DealDamage GameSource (EnemyTarget duelist) 3

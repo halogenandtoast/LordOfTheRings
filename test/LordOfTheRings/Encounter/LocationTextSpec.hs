@@ -85,6 +85,14 @@ fromSource (toTarget -> t) = filter ((== Just t) . sourceTarget . (.abilitySourc
 
 spec :: Spec
 spec = describe "Location card text" do
+  it "Aft Cabin has each enemy grappled with a Deck location add 3 threat to it" . gameTest $ \_ -> do
+    _ <- stagedLocation Locations.aftCabin
+    deck <- stagedLocation Locations.quarterDeck
+    spider <- staged Enemies.forestSpider
+    run $ PlaceEnemy spider (AttachedTo (LocationTarget deck))
+    run $ Run []
+    getLocationThreat deck `shouldReturn` 7
+
   it "Abandoned Camp damages each exhausted character as it leaves play, explored or not" . gameTest $ \_ -> do
     camp <- stagedLocation Locations.abandonedCampNightmare
     b <- beravor
