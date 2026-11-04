@@ -174,6 +174,12 @@
   "stormcallerAdvances": "The Stormcaller advances to {quest}",
   "stormcallerCaughtUp": "The players are at the Stormcaller's stage: the cards in its area are in the staging area",
   "stormcallerArea": "The Stormcaller's area",
+  "toOrcsArea": "{card} goes to the Orcs' area",
+  "orcsProgress": "The Orcs place {count} progress on their quest stage",
+  "orcsAdvance": "The Orcs advance to {quest}",
+  "orcsCaughtUp": "The Orcs are at the players' stage: the cards in their area are in the staging area",
+  "orcsLeftBehind": "The players leave the Orcs' stage behind: the cards of the Orcs' area go back to it",
+  "orcsArea": "The Orcs' area",
   "guardsObjective": "{guard} guards {objective}",
   "secondEncounterDeckActive": "The second encounter deck becomes the active encounter deck, the first set aside"
 }
