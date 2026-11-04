@@ -748,6 +748,7 @@ library
       LordOfTheRings.Enemy.Cards.GiantSwampAdder
       LordOfTheRings.Enemy.Cards.GoblinArcher
       LordOfTheRings.Enemy.Cards.GoblinAxeman
+      LordOfTheRings.Enemy.Cards.GoblinBentSwords
       LordOfTheRings.Enemy.Cards.GoblinDriver
       LordOfTheRings.Enemy.Cards.GoblinEagleHunter
       LordOfTheRings.Enemy.Cards.GoblinFollower
@@ -983,6 +984,7 @@ library
       LordOfTheRings.Enemy.Cards.SpidersOfMirkwood
       LordOfTheRings.Enemy.Cards.SpiritOfTheWild
       LordOfTheRings.Enemy.Cards.SpyFromMordor
+      LordOfTheRings.Enemy.Cards.StoneGiant
       LordOfTheRings.Enemy.Cards.StoneTroll
       LordOfTheRings.Enemy.Cards.Stormcaller
       LordOfTheRings.Enemy.Cards.StormcallerTheCityOfCorsairs
@@ -1012,6 +1014,7 @@ library
       LordOfTheRings.Enemy.Cards.TheBlackSerpentCrossingsOfPoros
       LordOfTheRings.Enemy.Cards.TheDragonsThrall
       LordOfTheRings.Enemy.Cards.TheGovernor
+      LordOfTheRings.Enemy.Cards.TheGreatGoblin
       LordOfTheRings.Enemy.Cards.TheHandOfCastamir
       LordOfTheRings.Enemy.Cards.TheKingsElite
       LordOfTheRings.Enemy.Cards.TheNamelessFear
@@ -2579,6 +2582,7 @@ library
       LordOfTheRings.Scenario.Scenarios.MirkwoodPaths
       LordOfTheRings.Scenario.Scenarios.MountGundabad
       LordOfTheRings.Scenario.Scenarios.MountGundabad.Helpers
+      LordOfTheRings.Scenario.Scenarios.OverTheMistyMountainsGrim.Helpers
       LordOfTheRings.Scenario.Scenarios.PassageThroughMirkwood
       LordOfTheRings.Scenario.Scenarios.PerilInPelargir
       LordOfTheRings.Scenario.Scenarios.PerilInPelargir.Helpers
