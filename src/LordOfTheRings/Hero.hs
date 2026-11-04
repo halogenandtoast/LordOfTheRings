@@ -104,8 +104,6 @@ newtype AllyHero = AllyHero HeroAttrs
   deriving anyclass (IsHero, HasAbilities, HasModifiersFor, RunMessage)
   deriving newtype (Show, Eq, ToJSON, Entity)
 
--- ponytail: the ally's own text is not carried over, as its abilities are written for an
--- ally; give AllyHero its card's abilities if a Sword-thain target ever needs them
 allyHero :: CardCode -> HeroCard AllyHero
 allyHero = HeroTypes.hero AllyHero . toCardDef
 

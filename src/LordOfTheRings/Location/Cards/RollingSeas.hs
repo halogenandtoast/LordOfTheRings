@@ -19,8 +19,6 @@ instance RunMessage RollingSeas where
     TravelTo lid | lid == a.id -> do
       shiftHeadingOffCourse a
       pure l
-    -- ponytail: read as the shadow resolves, from the attack and defense then, not off the
-    -- damage the attack goes on to deal; read the damage itself if a later effect changes it
     ResolveShadowEffect cid eid pid defenders | cid == a.cardId -> do
       ships <- map toTarget <$> shipObjectivesOf pid
       attack <- getEnemyAttack eid

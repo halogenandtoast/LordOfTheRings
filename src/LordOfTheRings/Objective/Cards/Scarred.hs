@@ -17,7 +17,6 @@ scarred = objective Scarred Cards.scarred
 instance HasAbilities Scarred where
   getAbilities (Scarred a) = [mkAbility a 1 $ forced $ CharacterDestroyedWindow After | AttachedTo (HeroTarget _) <- [a.placement]]
 
--- ponytail: "you control" read as the destroyed card's owner, the window carrying no controller
 instance RunMessage Scarred where
   runMessage msg s@(Scarred a) = case msg of
     UseCardAbility _ (isSource a -> True) 1 windows -> do

@@ -16,7 +16,6 @@ weatherDeck = location WeatherDeck Cards.weatherDeck
 
 -- | While Weather Deck is in the staging area, each other Deck location in play gains
 -- "Travel: Each player must exhaust a character he controls to travel here."
--- ponytail: only the first copy in the staging area gives it, so the cost is paid once
 gives :: HasGame m => LocationAttrs -> m Bool
 gives a
   | a.placement /= StagingArea = pure False

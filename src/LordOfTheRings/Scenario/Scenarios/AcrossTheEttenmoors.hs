@@ -56,9 +56,6 @@ instance RunMessage AcrossTheEttenmoors where
     -- Forced: At the beginning of the quest phase, place 1 resource on this card. Then, if
     -- there are 3 or more resources on it, remove 3 resources from it to reveal 1 set-aside
     -- copy of Losing Time and place it in the encounter discard pile.
-    -- ponytail: one resource a round, so every third round's quest phase reveals one, while
-    -- any of the 5 are left; the resources are counted, not shown on the card. It answers
-    -- the phase's window, before the players commit.
     CheckWindows ws | isJust attrs.campaign, Window After (PhaseBegins QuestPhase) `elem` ws -> do
       n <- getsGame gameRound
       when (n `mod` 3 == 0 && n `div` 3 <= 5) $ push . RevealCard =<< genEncounterCard Treacheries.losingTime

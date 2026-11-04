@@ -1578,7 +1578,6 @@ cancelAttack eid = lift $ withQueue_ $ mapMaybe \case
   UndefendedAttack _ e | e == eid -> Nothing
   UndefendedDamage _ e | e == eid -> Nothing
   AttackDefended _ e _ | e == eid -> Nothing
-  -- ponytail: the window after it attacks stays, so its "for this attack" effects end
   CheckWindows ws | any ending ws -> Just $ CheckWindows (filter (not . defended) ws)
   m -> Just m
  where

@@ -18,8 +18,6 @@ forageForFood = quest ForageForFood Cards.forageForFood
 -- by it, so it is taken.
 instance RunMessage ForageForFood where
   runMessage msg q@(ForageForFood attrs) = case msg of
-    -- ponytail: each spend message is one spend; a group payment that takes its resources
-    -- one at a time from the same hero deals more than 1 damage
     RemoveTokens (PlayerSource _) (HeroTarget hid) Resource n | n > 0 -> do
       unlessM (isBlank attrs) $ dealDamage attrs hid 1
       pure q

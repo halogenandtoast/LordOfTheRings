@@ -20,8 +20,6 @@ instance RunMessage TorrentOfHail where
       night <- isNight
       questing <- selectCharacters CommittedHero CommittedAlly
       for_ questing \c -> dealDamage attrs c 1
-      -- ponytail: the attachments go from each questing character, damaged as the effect
-      -- reads unless the damage was canceled
       when night $ for_ questing \c -> do
         attachments <- getAttachmentsOn c
         controller <- characterController c

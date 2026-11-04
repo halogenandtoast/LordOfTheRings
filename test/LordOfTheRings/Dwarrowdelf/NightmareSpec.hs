@@ -261,6 +261,12 @@ spec = describe "Dwarrowdelf nightmare decks" do
       run . AttachShadowCard eid =<< genEncounterCard Locations.dwarvenForge
       getEnemyAttack eid `shouldReturn` 4
 
+    it "Sentinel of the Deep stops its player drawing from any card effect" . nightmare theLongDark $ \pid -> do
+      reveal Enemies.sentinelOfTheDeep []
+      eid <- enemyOf Enemies.sentinelOfTheDeep
+      run $ EngageEnemy pid eid
+      getModifiers (PlayerTarget pid) >>= (`shouldSatisfy` elem CannotDrawCardsFromCardEffects)
+
     it "Trapdoor Spider discards the character it damages" . nightmare theLongDark $ \_ -> do
       reveal Enemies.trapdoorSpider []
       eid <- enemyOf Enemies.trapdoorSpider

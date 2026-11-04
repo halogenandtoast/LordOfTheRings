@@ -30,8 +30,6 @@ Aflame keyword are discarded, where X is the number of players in the game. Add 
 discarded Aflame location to the staging area. Then, shuffle the encounter discard pile
 back into the encounter deck. The scenario set Sahír and Na'asiyah aside as it gathered
 the encounter deck.
-ponytail: the deck is already shuffled, and what would be discarded on the way shuffled
-straight back: the first X Aflame locations from its top are taken instead.
 -}
 instance RunMessage TheCorsairsAssault where
   runMessage msg q@(TheCorsairsAssault attrs) = case msg of
@@ -45,8 +43,6 @@ instance RunMessage TheCorsairsAssault where
       let firstOf def = take 1 (filter (cardMatches $ cardIs def) deck)
           setup = concatMap firstOf [Objectives.theHavensBurn, Locations.dreamChaserLocation, Enemies.sahirsRavager]
           aflame c = cdCardType (toCardDef c) == LocationType && notNull [() | Aflame _ <- toList (cdKeywords $ toCardDef c)]
-          -- ponytail: in nightmare mode the unique ships the players may search for are
-          -- never among the discarded Aflame locations
           ships = [c | nightmare, c <- deck, cdUnique (toCardDef c), c `notElem` setup]
           burning = take players $ filter (\c -> aflame c && c `notElem` setup && c `notElem` ships) deck
       for_ (setup <> burning) \c -> do

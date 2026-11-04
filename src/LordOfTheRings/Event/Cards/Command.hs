@@ -55,8 +55,6 @@ progress on a non-unique location. • Put Spyglass into play, attached to a her
 Tactics: • A hero gets +2 attack until the end of the round. • An enemy gets -2 attack
 until the end of the round. • Deal 2 damage to an enemy. You may engage it. • Ready an
 attachment. You may move it to an eligible character.
-ponytail: the readied attachment is not moved, and the ally put into play is discarded at
-the end of the round rather than the phase.
 -}
 instance RunMessage Command where
   runMessage msg e@(Command attrs) = case msg of

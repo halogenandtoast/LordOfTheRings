@@ -21,8 +21,6 @@ instance RunMessage TheTowerBeckons where
       placeOnTower attrs 1
       doStep 1 msg
       pure t
-    -- ponytail: X is counted once the token is placed, not kept up as the tower's count
-    -- changes later this phase
     DoStep 1 (WhenRevealed (isTarget attrs -> True)) -> do
       x <- towerProgress
       when (x > 0) $ phaseModifier attrs GameTarget (StagingThreatBonus x)

@@ -387,8 +387,6 @@ windows l ws attrs = case sid attrs of
   "the-city-of-corsairs" -> keyed [Objectives.blackKeyBurden, Objectives.theBlackSword] (EnemyWithCardCode $ toCardCode Enemies.captainSahirTheCityOfCorsairs)
   -- Temple of the Deceived: Travel Action: Flip over a secret at your location. If it is a
   -- Recurring Nightmare, it engages you. If it is Starla, you gain control of her (ready).
-  -- ponytail: the secret is flipped as its Temple of the Deceived becomes the active
-  -- location, by the first player.
   "temple-of-the-deceived" -> do
     let secrets = recorded Secrets l
     temples <- traverse (\r -> fmap (.id) <$> locationAt (Pos 4 r)) [0 .. 2]

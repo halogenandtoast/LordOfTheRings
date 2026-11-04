@@ -20,8 +20,6 @@ instance HasModifiersFor CorsairSkirmisher where
 discard allies he controls with a total of at least 3 willpower to take control of
 Corsair Skirmisher as a Ship objective with willpower equal to its threat.
 
-ponytail: answered as it is destroyed, while still in play: taken, it turns over to its
-Ship objective side instead of leaving play, as a double-sided enemy flips.
 -}
 instance HasAbilities CorsairSkirmisher where
   getAbilities (CorsairSkirmisher a) = [mkAbility a 1 $ silent $ ThisEnemyDefeatedWindow When a.id]

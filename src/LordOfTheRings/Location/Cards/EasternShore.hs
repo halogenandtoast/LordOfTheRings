@@ -18,8 +18,6 @@ easternShore = location EasternShore Cards.easternShore
 -- time counter from the current quest.
 instance RunMessage EasternShore where
   runMessage msg l@(EasternShore a) = case msg of
-    -- ponytail: the bar lasts the round even if Eastern Shore leaves the staging area after
-    -- the event is played
     CheckWindows ws | a.placement == StagingArea -> do
       for_ (nub [pid | Window _ (PlayingEvent pid _) <- ws]) \pid ->
         roundModifier a (PlayerTarget pid) (CannotPlay $ CardWithType EventType)

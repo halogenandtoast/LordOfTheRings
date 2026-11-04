@@ -13,7 +13,6 @@ theWatcherNightmare :: EnemyCard TheWatcherNightmare
 theWatcherNightmare = enemy TheWatcherNightmare Cards.theWatcherNightmare
 
 -- | While The Watcher is in the staging area, it cannot be damaged by player card effects.
--- ponytail: immune to player card effects there, not only to their damage
 instance HasModifiersFor TheWatcherNightmare where
   getModifiersFor (TheWatcherNightmare a) = when (a.placement == StagingArea) $ modifySelf a [ImmuneToPlayerCardEffects]
 

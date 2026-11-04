@@ -16,7 +16,6 @@ jaggedCavern = location JaggedCavern Cards.jaggedCavern
 
 {- | While Jagged Cavern is the active location, the first treachery card revealed each
 round gains doomed 1 and surge.
-ponytail: the first one revealed while it is active, once it has been revealed
 Forced: If Jagged Cavern is the active location at the end of the quest phase, each player
 must discard each card in his or her hand. Then, you may flip Jagged Cavern to its Grotto
 side.
