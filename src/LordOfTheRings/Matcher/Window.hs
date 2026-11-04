@@ -342,6 +342,9 @@ data WindowMatcher
     MatchingEnemyRevealedWindow Timing EnemyMatcher
   | -- | the attackers against the enemy were declared, as Guardian of the Golden King answers
     AttackersDeclaredWindow Timing EnemyId
+  | -- | the attackers against a matching enemy were declared, as The Fire Worm answers
+    -- those against Fire-drake
+    MatchingAttackersDeclaredWindow Timing EnemyMatcher
   | -- | the player played an attachment on a matching character that had no other
     -- attachment, as Brand son of Bain reads "a Dale character without an attachment"
     AttachmentPlayedOnBareCharacterWindow Timing PlayerId HeroMatcher AllyMatcher
@@ -531,6 +534,7 @@ windowMatches matcher (Window timing wType) = case (matcher, wType) of
   (CharacterAttackerDeclaredWindow {}, _) -> False
   (MatchingEnemyAttackResolvedWindow {}, _) -> False
   (MatchingEnemyDefeatedWindow {}, _) -> False
+  (MatchingAttackersDeclaredWindow {}, _) -> False
   (QuestBypassedWindow t, QuestBypassed _) -> t == timing
   -- read with the player's errata in 'windowMatchesM'
   (ErrataWindow _ errata _, _) -> windowMatches errata (Window timing wType)
