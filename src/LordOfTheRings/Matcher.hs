@@ -5,6 +5,7 @@ module LordOfTheRings.Matcher (module LordOfTheRings.Matcher, module X) where
 import Data.Map.Strict qualified as Map
 import LordOfTheRings.Ability.Types (UsedAbility (..))
 import LordOfTheRings.Ally.Types hiding (ally)
+import LordOfTheRings.Attachment.CardDefs qualified as Attachments
 import LordOfTheRings.Attachment.Types
 import LordOfTheRings.Card hiding (ally, enemy, hero, location)
 import LordOfTheRings.Classes.Entity
@@ -139,6 +140,11 @@ matchHero matcher hero = case matcher of
     getsGame \g ->
       any (\a -> a.placement == AttachedTo (toTarget hero) && toCardCode a == code) (entitiesAttachments $ gameEntities g)
         || any (\o -> o.placement == AttachedTo (toTarget hero) && toCardCode o == code) (entitiesObjectives $ gameEntities g)
+  HeroWithReadyAttachment code ->
+    getsGame
+      $ any (\a -> a.placement == AttachedTo (toTarget hero) && toCardCode a == code && not (attachmentExhausted $ toAttrs a))
+      . entitiesAttachments
+      . gameEntities
   HeroWithResources -> pure $ hero.resources > 0
   HeroWithPrintedSphere sphere -> pure $ hero.sphere == sphere
   HeroWithResourcesAtLeast n -> pure $ hero.resources >= n
@@ -843,6 +849,16 @@ objectivesWithTrait trait =
 -- | Players still in the game, in turn order from the first player.
 -- | The threat at which the player is eliminated, which may move, as Double Dealings
 -- lowers it.
+-- | The One Ring in play: only one copy ever is (A Shadow in the East rules, "The One
+-- Ring & The Master Trait").
+getTheOneRing :: HasGame m => m (Maybe AttachmentId)
+getTheOneRing = getsGame (fmap toId . find ((== toCardCode Attachments.theOneRing) . toCardCode) . toList . entitiesAttachments . gameEntities)
+
+-- | Whether the player controls The One Ring, as Master cards may only be used by him.
+-- It is controlled by whoever controls the hero it is attached to (FAQ 1.38).
+controlsTheOneRing :: HasGame m => PlayerId -> m Bool
+controlsTheOneRing pid = selectAny (heroWithTheOneRing <> HeroControlledBy (PlayerWithId pid))
+
 getEliminationLevel :: HasGame m => PlayerId -> m Int
 getEliminationLevel pid = do
   mods <- map modifierType . Map.findWithDefault [] (PlayerTarget pid) <$> getsGame gameModifiers

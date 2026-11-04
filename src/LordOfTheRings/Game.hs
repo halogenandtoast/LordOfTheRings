@@ -2409,9 +2409,8 @@ runGameMessage msg g = case msg of
         pure g
   UseAbility pid ab windows -> do
     pushAll
-      =<< inLogBlock
-        (AbilityBlock pid ab.abilitySource (isForcedAbility ab))
-        (payCost pid (abilityCost ab) [UseCardAbility pid ab.abilitySource ab.abilityIndex windows])
+      =<< inLogBlock (AbilityBlock pid ab.abilitySource (isForcedAbility ab))
+      =<< payCost pid (abilityCost ab) [UseCardAbility pid ab.abilitySource ab.abilityIndex windows]
     pure g
   PlayEvent pid card _ -> do
     for_ (lookupEvent (toCardCode card) card.id pid) $ void . runEach msg

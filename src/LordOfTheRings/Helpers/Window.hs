@@ -1,5 +1,6 @@
 module LordOfTheRings.Helpers.Window (module LordOfTheRings.Helpers.Window) where
 
+import Data.Foldable (foldrM)
 import Data.Map.Strict qualified as Map
 import LordOfTheRings.Ability
 import LordOfTheRings.Ally.Types (allyTokens)
@@ -395,6 +396,7 @@ canPay = \case
   SpendResourcesCost sphere n -> do
     pid <- getsGame gameActivePlayer
     (>= n) <$> getResourcesOfSphere pid sphere
+  ExhaustTheOneRingCost -> selectAny (heroWithReadyOneRing <> HeroControlledBy ActivePlayer)
 
 -- | As 'canPay', for the player paying, whom 'ActivePlayer' matches.
 canPayFor :: HasGame m => PlayerId -> AbilityCost -> m Bool
@@ -419,13 +421,14 @@ exhaustableCharacters hm am = filterM (fmap (notElem CannotExhaust) . getModifie
 {- | The messages that pay the cost, then the rest: a cost paid by a choice holds the rest
 until it is made.
 -}
-payCost :: PlayerId -> AbilityCost -> [Message] -> [Message]
+payCost :: HasGame m => PlayerId -> AbilityCost -> [Message] -> m [Message]
 payCost pid cost rest = case cost of
-  ExhaustHeroCost m -> [PayExhaustHeroCost pid m rest]
-  DamageHeroCost m n -> [PayDamageHeroCost pid m n rest]
-  ExhaustCharacterCost hm am -> [PayExhaustCharacterCost pid hm am rest]
-  Costs cs -> foldr (payCost pid) rest cs
-  _ -> costMessages (PlayerSource pid) cost <> rest
+  ExhaustHeroCost m -> pure [PayExhaustHeroCost pid m rest]
+  DamageHeroCost m n -> pure [PayDamageHeroCost pid m n rest]
+  ExhaustCharacterCost hm am -> pure [PayExhaustCharacterCost pid hm am rest]
+  Costs cs -> foldrM (payCost pid) rest cs
+  ExhaustTheOneRingCost -> maybe rest (\aid -> Exhaust (AttachmentTarget aid) : rest) <$> getTheOneRing
+  _ -> pure $ costMessages (PlayerSource pid) cost <> rest
 
 costMessages :: Source -> AbilityCost -> [Message]
 costMessages source = \case
@@ -443,6 +446,7 @@ costMessages source = \case
   DamageHeroCost _ _ -> []
   Costs cs -> concatMap (costMessages source) cs
   ExhaustCharacterCost _ _ -> []
+  ExhaustTheOneRingCost -> [] -- found as it is paid, by 'payCost'
   SpendResourcesCost sphere n -> case source of
     PlayerSource pid -> [SpendResources pid sphere n]
     _ -> []

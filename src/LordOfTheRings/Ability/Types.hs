@@ -31,6 +31,8 @@ data AbilityCost
   | -- | as 'SphereResourceCost', spent by whichever player uses the ability, as The Old
     -- Bridge's any player may
     SpendResourcesCost Sphere Int
+  | -- | the paying player exhausts The One Ring, which he controls, as Master cards read
+    ExhaustTheOneRingCost
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

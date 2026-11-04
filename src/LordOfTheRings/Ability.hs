@@ -39,6 +39,11 @@ response w = ResponseAbility w Free
 exhaustCost :: (Targetable a) => a -> AbilityCost
 exhaustCost = ExhaustCost . toTarget
 
+-- | "Exhaust The One Ring and raise your threat by 1", the cost every Master card's
+-- ability reads.
+theOneRingCost :: AbilityCost
+theOneRingCost = Costs [ExhaustTheOneRingCost, RaiseThreatCost 1]
+
 -- | After the card enters play.
 entersPlay :: (Targetable a) => a -> WindowMatcher
 entersPlay = EntersPlayWindow After . toTarget
