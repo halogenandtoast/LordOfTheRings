@@ -239,6 +239,32 @@ import LordOfTheRings.Attachment.Cards.EsquireOfGondor
 import LordOfTheRings.Attachment.Cards.OrcDisguise
 import LordOfTheRings.Attachment.Cards.Guthwine
 import LordOfTheRings.Attachment.Cards.FriendOfFriends
+import LordOfTheRings.Attachment.Cards.HobbitCloak
+import LordOfTheRings.Attachment.Cards.DaggerOfWesternesse
+import LordOfTheRings.Attachment.Cards.HobbitPipe
+import LordOfTheRings.Attachment.Cards.ElfStone
+import LordOfTheRings.Attachment.Cards.MrUnderhill
+import LordOfTheRings.Attachment.Cards.TirelessRanger
+import LordOfTheRings.Attachment.Cards.SkilledHealer
+import LordOfTheRings.Attachment.Cards.ValiantWarrior
+import LordOfTheRings.Attachment.Cards.NobleHero
+import LordOfTheRings.Attachment.Cards.GandalfsStaff
+import LordOfTheRings.Attachment.Cards.WizardPipe
+import LordOfTheRings.Attachment.Cards.FellowshipOfTheRing
+import LordOfTheRings.Attachment.Cards.PhialOfGaladriel
+import LordOfTheRings.Attachment.Cards.ThreeGoldenHairs
+import LordOfTheRings.Attachment.Cards.LorienRope
+import LordOfTheRings.Attachment.Cards.LeafWrappedLembas
+import LordOfTheRings.Attachment.Cards.Arod
+import LordOfTheRings.Attachment.Cards.EntDraught
+import LordOfTheRings.Attachment.Cards.Herugrim
+import LordOfTheRings.Attachment.Cards.Shadowfax
+import LordOfTheRings.Attachment.Cards.Intimidation
+import LordOfTheRings.Attachment.Cards.HandsOfAHealer
+import LordOfTheRings.Attachment.Cards.Forewarned
+import LordOfTheRings.Attachment.Cards.LeaderOfMen
+import LordOfTheRings.Attachment.Cards.BeyondAllHope
+import LordOfTheRings.Attachment.Cards.PalantirOfOrthanc
 import LordOfTheRings.Attachment.Runner ()
 import LordOfTheRings.Attachment.Types as X
 import LordOfTheRings.Id
@@ -515,5 +541,31 @@ allAttachments =
         , SomeAttachmentCard orcDisguise
         , SomeAttachmentCard guthwine
         , SomeAttachmentCard friendOfFriends
+        , SomeAttachmentCard hobbitCloak
+        , SomeAttachmentCard daggerOfWesternesse
+        , SomeAttachmentCard hobbitPipe
+        , SomeAttachmentCard elfStone
+        , SomeAttachmentCard mrUnderhill
+        , SomeAttachmentCard tirelessRanger
+        , SomeAttachmentCard skilledHealer
+        , SomeAttachmentCard valiantWarrior
+        , SomeAttachmentCard nobleHero
+        , SomeAttachmentCard gandalfsStaff
+        , SomeAttachmentCard wizardPipe
+        , SomeAttachmentCard fellowshipOfTheRing
+        , SomeAttachmentCard phialOfGaladriel
+        , SomeAttachmentCard threeGoldenHairs
+        , SomeAttachmentCard lorienRope
+        , SomeAttachmentCard leafWrappedLembas
+        , SomeAttachmentCard arod
+        , SomeAttachmentCard entDraught
+        , SomeAttachmentCard herugrim
+        , SomeAttachmentCard shadowfax
+        , SomeAttachmentCard intimidation
+        , SomeAttachmentCard handsOfAHealer
+        , SomeAttachmentCard forewarned
+        , SomeAttachmentCard leaderOfMen
+        , SomeAttachmentCard beyondAllHope
+        , SomeAttachmentCard palantirOfOrthanc
         ]
     ]

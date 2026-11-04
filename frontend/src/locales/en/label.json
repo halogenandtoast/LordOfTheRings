@@ -3250,5 +3250,72 @@
   },
   "theBattleOfTheMorannon": {
     "search": "The Battle of the Morannon: choose an Orc, Troll or Nazgûl enemy of a title no other player chose to add to the staging area"
+  },
+  "merryTheBlackRiders": {
+    "ready": "Merry: choose another character that took part in the attack to ready"
+  },
+  "fattyBolger": {
+    "chooseEnemy": "Fatty Bolger: choose an enemy in the staging area: raise your threat by its threat, and it does not contribute its threat this phase"
+  },
+  "aragornTheTreasonOfSaruman": {
+    "ready": "Aragorn: choose a hero to ready"
+  },
+  "farmerMaggot": {
+    "damage": "Farmer Maggot: choose an enemy engaged with you to deal 1 damage to (2 if its engagement cost is higher than your threat)"
+  },
+  "galadrielTheRoadDarkens": {
+    "choose": "Galadriel: choose an attachment of cost 3 or less from the top 5 cards of your deck to put into play",
+    "none": "Put none into play"
+  },
+  "elrondTheRoadDarkens": {
+    "chooseOne": "Elrond: choose one",
+    "heal": "Heal all damage on a hero",
+    "hero": "Elrond: choose a hero to heal all damage on",
+    "discard": "Discard a Condition attachment",
+    "condition": "Elrond: choose a Condition attachment to discard",
+    "draw": "Each player draws 1 card"
+  },
+  "elfStone": {
+    "use": "Elf-stone: the first player may put 1 ally into play from his hand",
+    "putIntoPlay": "Put an ally into play",
+    "ally": "Elf-stone: choose an ally in your hand to put into play",
+    "skip": "Do not use Elf-stone"
+  },
+  "mrUnderhill": {
+    "enemy": "Mr. Underhill: choose an enemy engaged with you: it cannot attack you this round"
+  },
+  "gandalfsStaff": {
+    "chooseOne": "Gandalf's Staff: choose one",
+    "draw": "Choose a player to draw 1 card",
+    "resource": "Add 1 resource to a hero's resource pool",
+    "shadow": "Discard a shadow card from a non-unique enemy",
+    "discardShadow": "Gandalf's Staff: choose a shadow card to discard"
+  },
+  "wizardPipe": {
+    "exchange": "Wizard Pipe: choose a card in your hand to exchange with the top card of your deck"
+  },
+  "arod": {
+    "location": "Arod: choose a location to place 1 progress on"
+  },
+  "forewarned": {
+    "discardShadow": "Forewarned: choose a shadow card to discard"
+  },
+  "palantirOfOrthanc": {
+    "use": "Palantír of Orthanc: add it to the victory display and remove it from the campaign pool?",
+    "spend": "Add it to the victory display: a player reveals 1 fewer encounter card this phase",
+    "keep": "Keep Palantír of Orthanc"
+  },
+  "halflingDetermination": {
+    "choose": "Halfling Determination: choose a Hobbit character to get +2 willpower, attack and defense"
+  },
+  "flameOfAnor": {
+    "choose": "Flame of Anor: choose an Istari character you control to ready"
+  },
+  "helmHelm": {
+    "ally": "Helm! Helm!: choose a Rohan ally you control to exhaust and discard",
+    "enemy": "Helm! Helm!: choose a non-unique enemy engaged with you to discard"
+  },
+  "theThreeHunters": {
+    "choose": "The Three Hunters: choose a hero committed to the quest"
   }
 }

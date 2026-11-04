@@ -146,7 +146,7 @@ matchHero matcher hero = case matcher of
     getsGame \g ->
       any (\a -> a.placement == AttachedTo (toTarget hero) && toCardCode a == code) (entitiesAttachments $ gameEntities g)
         || any (\o -> o.placement == AttachedTo (toTarget hero) && toCardCode o == code) (entitiesObjectives $ gameEntities g)
-  -- an objective too, as a saga's The One Ring is
+  -- an objective attached counts, as the saga's The One Ring on the Ring-bearer
   HeroWithReadyAttachment code ->
     getsGame \g ->
       any (\a -> a.placement == AttachedTo (toTarget hero) && toCardCode a == code && not (attachmentExhausted $ toAttrs a)) (entitiesAttachments $ gameEntities g)

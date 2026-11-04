@@ -79,6 +79,15 @@ reveal defs = do
   run RevealEncounterCard
   resolveRevealed
 
+-- | Set the scenario up with The Road Darkens' Frodo Baggins as the Ring-bearer, keep the
+-- hand and flip the first stage.
+flipSouthQuest :: PlayerId -> GameT ()
+flipSouthQuest pid = do
+  run Setup
+  chooseRingBearer pid (toCardCode Heroes.frodoBagginsTheRoadDarkens)
+  chooseLabel "$label.keepHand" pid
+  chooseOptionMatching "flip the quest" pid (const True)
+
 frodo :: GameT Hero
 frodo = getHeroWithCode (toCardCode Heroes.frodoBagginsTheRoadDarkens)
 
@@ -101,7 +110,7 @@ openLabel pid = getQuestion pid <&> \case
 -- | Setup, with the stage given in play, flipped and its When Revealed resolved.
 atStage :: PlayerId -> CardDef -> GameT ()
 atStage pid def = do
-  flipFirstQuest pid
+  flipSouthQuest pid
   atStage' pid def
 
 -- | Advance from the stage in play to the stage given, its When Revealed resolved.
@@ -120,7 +129,7 @@ spec = describe "The Ring Goes South" do
 
   describe "setup" do
     it "sets Lust for the Ring, Redhorn Pass, Doors of Durin and Watcher in the Water aside, Frodo in play with The One Ring" . southTest $ \pid -> do
-      flipFirstQuest pid
+      flipSouthQuest pid
       attrs <- scenarioAttrs
       sort (map toCardCode attrs.scenarioSetAside)
         `shouldBe` sort (map toCardCode [Treacheries.lustForTheRing, Locations.redhornPass, Locations.doorsOfDurinTheRingGoesSouth, Enemies.watcherInTheWater])
@@ -147,7 +156,7 @@ spec = describe "The Ring Goes South" do
 
   describe "The Council of Elrond" do
     it "lays out 4 cards at the end of the planning phase, each given its fate, then raises threat by 5 and advances" . southTest $ \pid -> do
-      flipFirstQuest pid
+      flipSouthQuest pid
       deck0 <- length . (.deck) <$> getPlayer pid
       hand0 <- length . (.hand) <$> getPlayer pid
       -- 4 Guards of the Citadel on top of the deck, for the 4 faceup cards
@@ -173,7 +182,7 @@ spec = describe "The Ring Goes South" do
       activeQuestCode `shouldReturn` toCardCode Quests.theNineWalkers
 
     it "may shuffle Lust for the Ring into the encounter deck instead" . southTest $ \pid -> do
-      flipFirstQuest pid
+      flipSouthQuest pid
       run $ CheckWindows [mkWhen $ PhaseEnds PlanningPhase]
       useForcedAbilities pid
       let assignAll = openLabel pid >>= \case
@@ -186,7 +195,7 @@ spec = describe "The Ring Goes South" do
 
   describe "The Nine Walkers" do
     it "makes Redhorn Pass active and reveals until there is twice the players' count in threat" . southTest $ \pid -> do
-      flipFirstQuest pid
+      flipSouthQuest pid
       _ <- setEncounterDeck [Locations.hillsOfHollin, Locations.eregion]
       atStage' pid Quests.theNineWalkers
       redhorn <- locationOf Locations.redhornPass
@@ -208,7 +217,7 @@ spec = describe "The Ring Goes South" do
 
   describe "The Hunt is Up!" do
     it "has the first player find Great Warg Chief and damages each location entering play" . southTest $ \pid -> do
-      flipFirstQuest pid
+      flipSouthQuest pid
       _ <- setEncounterDeck [Enemies.howlingWarg, Enemies.greatWargChief]
       atStage' pid Quests.theHuntIsUp
       -- only Great Warg Chief may be chosen
@@ -221,7 +230,7 @@ spec = describe "The Ring Goes South" do
 
   describe "The Gates of Moria" do
     it "puts the Ring-bearer facedown under Watcher in the Water, Doors of Durin active" . southTest $ \pid -> do
-      flipFirstQuest pid
+      flipSouthQuest pid
       f0 <- frodo
       run $ PlaceTokens GameSource (toTarget f0.id) Damage 1
       run $ PlaceTokens GameSource (toTarget f0.id) Resource 2
@@ -240,7 +249,7 @@ spec = describe "The Ring Goes South" do
       getModifiers (EnemyTarget watcher) >>= (`shouldSatisfy` \ms -> all (`elem` ms) [ImmuneToPlayerCardEffects, CannotLeaveStagingArea, EngagedWithEachPlayer AnyPlayer])
 
     it "frees the Ring-bearer to the first player, exhausted with 1 damage, at the Watcher's 6th damage" . southTest $ \pid -> do
-      flipFirstQuest pid
+      flipSouthQuest pid
       atStage' pid Quests.theGatesOfMoria
       watcher <- enemyOf Enemies.watcherInTheWater
       run $ PlaceTokens GameSource (EnemyTarget watcher) Damage 5
@@ -256,7 +265,7 @@ spec = describe "The Ring Goes South" do
       getModifiers (LocationTarget doors.id) >>= (`shouldSatisfy` notElem (ProgressLimit 0))
 
     it "fills the other active location first, then the Doors, and wins as the Doors are explored" . southTest $ \pid -> do
-      flipFirstQuest pid
+      flipSouthQuest pid
       atStage' pid Quests.theGatesOfMoria
       watcher <- enemyOf Enemies.watcherInTheWater
       run $ PlaceTokens GameSource (EnemyTarget watcher) Damage 6
@@ -272,7 +281,7 @@ spec = describe "The Ring Goes South" do
       getsGame (.outcome) `shouldReturn` Just Won
 
     it "loses the game with 9 damage on the Doors, and damages each active location as an enemy engages" . southTest $ \pid -> do
-      flipFirstQuest pid
+      flipSouthQuest pid
       atStage' pid Quests.theGatesOfMoria
       doors <- locationOf Locations.doorsOfDurinTheRingGoesSouth
       eid <- stage Enemies.howlingWarg
@@ -360,7 +369,7 @@ spec = describe "The Ring Goes South" do
 
   describe "Lust for the Ring" do
     it "attaches to a non-Fellowship hero, raising threat and zeroing its willpower as The One Ring exhausts" . southTest $ \pid -> do
-      flipFirstQuest pid
+      flipSouthQuest pid
       beravor <- getHeroWithCode "01012"
       reveal [Treacheries.lustForTheRing, Locations.eregion]
       chooseTarget pid beravor.id

@@ -188,9 +188,15 @@ runPlayer msg player = case msg of
       pure player
     -- from hand, or from the discard pile for a card that may be played from there
     PlayCardInWindow pid cid windows | pid == player.id -> do
-      card <- maybe (error "not able to find card") pure $ find ((== cid) . (.id)) (player.hand <> player.discard)
-      let fromHand = cid `elem` map (.id) player.hand
+      fromTop <- topOfDeckPlayers player
+      let deckTop = [c | not (null fromTop), c <- take 1 player.deck]
+      card <- maybe (error "not able to find card") pure $ find ((== cid) . (.id)) (player.hand <> player.discard <> deckTop)
+      let fromDeck = cid `elem` map (.id) deckTop
+          -- played from the top of the deck as if it was in hand, as Gandalf lets it be
+          fromHand = cid `elem` map (.id) player.hand || fromDeck
           ownDiscard = cdPlayableFrom (toCardDef card) `elem` [FromHandOrDiscard, FromDiscardOnly]
+      -- the card that let it be played has been used for the phase
+      pushAll [CreateEffect $ Effect source t [PlayedTopOfDeckThisPhase] UntilEndOfPhase | fromDeck, source <- fromTop, Just t <- [sourceTarget source]]
       -- a card in the discard pile a Record lets be played: the Record is discarded for it,
       -- and the card goes to the bottom of the deck after
       records <- if fromHand || ownDiscard then pure [] else discardPlayers pid card
@@ -201,7 +207,7 @@ runPlayer msg player = case msg of
       push $ case records of
         [] -> Run played
         _ -> chooseOrRunOne pid [targetLabel r (Discard r : played <> [PutDiscardOnBottomOfDeck pid cid]) | r <- records]
-      pure $ player & handL %~ filter ((/= cid) . (.id)) & discardL %~ filter ((/= cid) . (.id))
+      pure $ player & handL %~ filter ((/= cid) . (.id)) & discardL %~ filter ((/= cid) . (.id)) & deckL %~ filter ((/= cid) . (.id))
     PutAllyIntoPlay pid cid | pid == player.id -> do
       takeFromHand cid >>= \case
         PlayerCard card -> do
@@ -520,11 +526,21 @@ playableCards p = do
   viaRecord <- traverse (discardPlayers p.id) p.discard
   -- no card leaves a discard pile The Power of Angmar holds, played or not
   locked <- elem DiscardPilesLocked <$> getModifiers GameTarget
+  fromTop <- topOfDeckPlayers p
   filterM (canPlay p)
     $ filter (from [FromHand, FromHandOrDiscard]) p.hand
     <> [c | not locked, (c, rs) <- zip p.discard viaRecord, from [FromHandOrDiscard, FromDiscardOnly] c || notNull rs]
+    -- the top card of the deck, as if it was in hand, as Gandalf lets it be
+    <> [c | not (null fromTop), c <- take 1 p.deck, from [FromHand, FromHandOrDiscard] c]
  where
   from zones c = cdPlayableFrom (toCardDef c) `elem` zones
+
+-- | The sources of the 'MayPlayTopOfDeck' the player has: he may play the top card of his
+-- deck as if it was in his hand.
+topOfDeckPlayers :: HasGame m => Player -> m [Source]
+topOfDeckPlayers p = do
+  mods <- getsGame (Map.findWithDefault [] (PlayerTarget p.id) . gameModifiers)
+  pure [source | Modifier source MayPlayTopOfDeck <- mods]
 
 -- | The cards whose 'MayPlayFromDiscard' lets the player play the card from their discard
 -- pile, as a Record's Action does.
@@ -705,7 +721,7 @@ iconFor c sphere h =
 -- for the card.
 printedIconFor :: HasGame m => Card -> Sphere -> Hero -> m Bool
 printedIconFor c sphere h =
-  any (\case PrintedResourceIconFor m s -> s == sphere && cardMatches m c; _ -> False) <$> getModifiers h
+  any (\case PrintedResourceIconFor m s -> s == sphere && cardMatches m c; PrintedResourceIconForCard cid s -> s == sphere && cid == c.id; _ -> False) <$> getModifiers h
 
 -- | Whether the card's cost may be paid with resources of any sphere.
 noMatchNeeded :: HasGame m => Card -> m Bool
