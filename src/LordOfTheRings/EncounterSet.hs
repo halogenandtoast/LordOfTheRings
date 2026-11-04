@@ -176,5 +176,26 @@ data EncounterSet
   | TheDungeonsOfCirithGurat
   | TheLongArmOfMordor
   | TheMumakil
+  -- the Ered Mithrin cycle's
+  | AfraidOfTheDark
+  | DarkWoods
+  | DeepUnderground
+  | DragonMight
+  | FellBeasts
+  | FireInTheNight
+  | GatheringGloom
+  | GreyMountainGoblins
+  | HillsOfWilderland
+  | JourneyUpTheAnduin
+  | LostCaves
+  | LostInMirkwood
+  | LostInWilderland
+  | MountGundabad
+  | RoamAcrossRhovanion
+  | TheFateOfWilderland
+  | TheGhostOfFramsburg
+  | TheKingsQuest
+  | TheWitheredHeath
+  | WildCreatures
   deriving stock (Show, Eq, Ord, Generic)
   deriving anyclass (ToJSON, FromJSON)
