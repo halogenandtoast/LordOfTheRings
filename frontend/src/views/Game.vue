@@ -44,6 +44,8 @@ const {
 const leavePublicDialog = useTemplateRef<InstanceType<typeof ConfirmDelete>>('leavePublicDialog')
 // the server held back a debug message or an undo: ask before it takes the deal out
 watch(leavingPublic, (held) => held && leavePublicDialog.value?.open())
+const resetDialog = useTemplateRef<InstanceType<typeof ConfirmDelete>>('resetDialog')
+const askReset = () => resetDialog.value?.open()
 // With friends you play your own seats; otherwise every seat is yours.
 const withFriends = computed(() => table.value?.withFriends ?? false)
 const guest = computed(() => withFriends.value && table.value?.owner !== currentUser.value?.id)
@@ -169,7 +171,9 @@ const heroes = (player: PlayerView) =>
 const inPlay = (player: PlayerView) =>
   withAttachments(player.inPlay, player.inPlay.filter((card) => card.type !== 'Hero' && card.attachedTo === null))
 
-// Cmd/Ctrl+Z steps back one answer and D toggles debug mode, unless you are typing somewhere.
+// Cmd/Ctrl+Z steps back one answer, D toggles debug mode and Ctrl+Alt+R asks to restart,
+// unless you are typing somewhere. Restart takes the real Ctrl key, not Cmd, as Cmd+Option+R
+// reloads in Safari, and matches the R key by code because Option turns event.key into ®.
 const onKeydown = (event: KeyboardEvent) => {
   if (spectate) return
   const typing = event.target instanceof HTMLInputElement || event.target instanceof HTMLTextAreaElement
@@ -179,6 +183,10 @@ const onKeydown = (event: KeyboardEvent) => {
   if (!typing && (event.metaKey || event.ctrlKey) && !event.shiftKey && event.key.toLowerCase() === 'z' && canUndo.value) {
     event.preventDefault()
     undo()
+  }
+  if (!typing && !guest.value && event.ctrlKey && event.altKey && !event.metaKey && event.code === 'KeyR') {
+    event.preventDefault()
+    askReset()
   }
   if (!typing && event.key === ' ' && !event.metaKey && !event.ctrlKey && !event.altKey) {
     const next = spaceChoice.value
@@ -270,7 +278,7 @@ watch(question, (asked) => {
     :spectate="spectate"
     :guest="guest"
     :has-story="hasStoryPart('intro') || hasStoryPart('resolution')"
-    @reset="reset"
+    @reset="askReset"
     @undo="undo($event)"
     @export="exportGame(route.params.id as string)"
     @file-bug="fileBugAbout()"
@@ -286,6 +294,12 @@ watch(question, (asked) => {
     @confirm="confirmLeavingPublic"
     @close="cancelLeavingPublic"
   >{{ $t('game.leavePublic.body') }}</ConfirmDelete>
+  <ConfirmDelete
+    ref="resetDialog"
+    :title="$t('game.reset.title')"
+    :confirm-label="$t('game.reset.confirm')"
+    @confirm="reset"
+  >{{ $t('game.reset.body') }}</ConfirmDelete>
   <FileBug :open="filingBug" :game-id="route.params.id as string" :description="bugDescription" @close="filingBug = false" />
   <div class="layout" :class="{ 'no-sidebar': !showSidebar }">
     <CardOverlay />
