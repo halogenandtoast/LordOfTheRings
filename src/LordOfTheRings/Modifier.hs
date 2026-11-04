@@ -364,6 +364,13 @@ data ModifierType
     ThreatReducedByPlayerCardsThisRound Int
   | -- | as 'ThreatReducedByPlayerCardsThisRound', by non-boon player cards, for Dire's limit
     ThreatReducedByNonBoonPlayerCardsThisRound Int
+  | -- | on a hero: it cannot commit to Fortitude tests, as Heavy and Tired's host
+    CannotCommitToFortitudeTests
+  | -- | on the game: Eye icons added to each Fortitude test, as Brake of Thorns adds
+    FortitudeTestEyes Int
+  | -- | on a player, by an effect until the end of the round: he failed a Fortitude test
+    -- this round
+    FailedFortitudeTestThisRound
   | -- | on the game: every character must commit to the quest
     MustCommitAll
   | -- | on the game: each card dealt for an escape test adds this much more
@@ -847,6 +854,7 @@ data ModifierType
     ActiveLocationsAddThreat LocationMatcher
   | -- | on the game: a treachery card has been revealed this round
     TreacheryRevealedThisRound
+
   | -- | on the game: as an additional cost to bypass a quest card, each player raises his
     -- threat by this much, as Shadowed Corridor reads
     BypassCostRaisesThreat Int

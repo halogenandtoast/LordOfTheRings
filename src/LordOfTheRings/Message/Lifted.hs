@@ -1198,6 +1198,29 @@ escapeTest pid source n stat onFail onPass = do
   passed <- capture onPass
   push $ MakeEscapeTest $ EscapeTest pid (toSource source) n stat [] failed passed []
 
+{- | The player makes a Fortitude test (The Mountain of Fire rules insert); what follows a
+failure and a pass are actions of their own.
+-}
+fortitudeTest
+  :: (ReverseQueue m, Sourceable source)
+  => PlayerId -> source -> QueueT Message m () -> QueueT Message m () -> m ()
+fortitudeTest pid source = fortitudeTestWith pid source id
+
+-- | As 'fortitudeTest', the test changed first, as The Lidless Eye adds Eye icons to it.
+fortitudeTestWith
+  :: (ReverseQueue m, Sourceable source)
+  => PlayerId -> source -> (FortitudeTest -> FortitudeTest) -> QueueT Message m () -> QueueT Message m () -> m ()
+fortitudeTestWith pid source f onFail onPass = do
+  failed <- capture onFail
+  passed <- capture onPass
+  push $ MakeFortitudeTest $ f $ FortitudeTest pid (toSource source) [] 0 0 [] [] failed passed
+
+-- | The player failed a Fortitude test this round, as Plain of Gorgoroth reads.
+failedFortitudeTestThisRound :: HasGame m => PlayerId -> m Bool
+failedFortitudeTestThisRound pid = do
+  effects <- getsGame gameEffects
+  pure $ any (\e -> effectTarget e == PlayerTarget pid && FailedFortitudeTestThisRound `elem` effectModifiers e) effects
+
 {- | The party makes an escape test: each player still in the game, from the first player,
 commits their characters in turn.
 -}

@@ -316,6 +316,8 @@ data WindowMatcher
     PlayerCardPlacedProgressWindow Timing LocationMatcher
   | -- | a matching player raised his threat, as Sam Gamgee answers "a player"
     ThreatRaisedWindow Timing PlayerMatcher
+  | -- | a matching player failed a Fortitude test, as Ringwraith of Sauron answers
+    FailedFortitudeTestWindow Timing PlayerMatcher
   | -- | a shadow card's effect raised an enemy's attack, as Tides of Fate reads
     ShadowIncreasedAttackWindow Timing
   | -- | an enemy's attack destroyed a character with the trait defending it, as Last Stand
@@ -569,6 +571,7 @@ windowMatches matcher (Window timing wType) = case (matcher, wType) of
   (DiscoverResolvedWindow t lid, DiscoverResolved lid' _) -> t == timing && lid == lid'
   (PlayerCardPlacedProgressWindow {}, _) -> False
   (ThreatRaisedWindow {}, _) -> False
+  (FailedFortitudeTestWindow {}, _) -> False
   (MatchingThreatRaisedByDoomedWindow {}, _) -> False
   (PlayedCardWithDoomedWindow {}, _) -> False
   (DefenderWithTraitDestroyedWindow {}, _) -> False

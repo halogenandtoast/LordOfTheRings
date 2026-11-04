@@ -369,6 +369,16 @@ narrationFor = \case
       $ if escape > total
         then toned Bad $ test [ikeyPart "log.escapeFails" [], versus]
         else toned Good $ test [ikeyPart "log.escapePasses" [], versus]
+  ResolveFortitudeTest -> Just $ getsGame gameFortitudeTests >>= \case
+    t : _ -> do
+      (willpower, eyes) <- fortitudeTestTotals t
+      let versus = ikeyPart "log.fortitudeVersus" ["willpower" ~> willpower, "eyes" ~> eyes, "cards" ~> map EncounterCard t.fortitudeDiscarded]
+      withPlayer t.fortitudePlayer \_ who ->
+        one
+          $ if willpower > eyes
+            then toned Good $ test [ikeyPart "log.fortitudePasses" ["player" ~> who], versus]
+            else toned Bad $ test [ikeyPart "log.fortitudeFails" ["player" ~> who], versus]
+    [] -> pure []
   CompleteQuest qid -> Just $ whenRef (toTarget qid) \q -> one $ toned Good $ mechanic [ikeyPart "log.questComplete" ["quest" ~> q]]
   SetCurrentQuest t -> Just $ whenRef t \q -> one $ mechanic [ikeyPart "log.currentQuest" ["quest" ~> q]]
   ShuffleIntoQuestDeck card -> Just $ one $ mechanic [ikeyPart "log.shuffledIntoQuestDeck" ["card" ~> EncounterCard card]]

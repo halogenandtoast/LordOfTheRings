@@ -73,6 +73,8 @@ data Game = Game
   , gamePeril :: Maybe PlayerId
   -- ^ The player resolving the staging of a card with the Peril keyword on his own: no
   -- other player may respond until it has resolved.
+  , gameFortitudeTests :: [FortitudeTest]
+  -- ^ The Fortitude tests under way, their cards discarded, the latest first.
   }
   deriving stock (Show, Generic)
 

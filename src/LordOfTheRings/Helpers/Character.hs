@@ -1,10 +1,11 @@
 module LordOfTheRings.Helpers.Character (module LordOfTheRings.Helpers.Character) where
 
+import Data.Map.Strict qualified as Map
 import LordOfTheRings.Card hiding (enemy)
 import LordOfTheRings.Classes.Entity (toAttrs)
-import LordOfTheRings.Entities (entitiesObjectives)
+import LordOfTheRings.Entities (entitiesHeroes, entitiesObjectives)
 import LordOfTheRings.Game.Base (gameEntities, gameScenario)
-import LordOfTheRings.Message (EscapeStat (..), EscapeTest (..))
+import LordOfTheRings.Message (EscapeStat (..), EscapeTest (..), FortitudeTest (..))
 import LordOfTheRings.Scenario.Types (scenarioEncounterDeck)
 import LordOfTheRings.Classes.HasGame
 import LordOfTheRings.Helpers.Modifiers
@@ -110,6 +111,17 @@ getCommittedCharacters = do
   characters <- selectCharacters CommittedHero CommittedAlly
   objectives <- getsGame (map toTarget . toList . entitiesObjectives . gameEntities)
   (characters <>) <$> filterM (fmap (elem CountsAsCommitted) . getModifiers) objectives
+
+{- | A Fortitude test's committed willpower, and the Eye icons on the cards discarded for it,
+those whose icons are ignored left out, with any added to the test, as by Brake of Thorns.
+-}
+fortitudeTestTotals :: (HasGame m) => FortitudeTest -> m (Int, Int)
+fortitudeTestTotals t = do
+  heroes <- getsGame (entitiesHeroes . gameEntities)
+  willpower <- sum <$> traverse (getWillpower . HeroTarget) (filter (`Map.member` heroes) t.fortitudeCommitted)
+  mods <- getModifiers GameTarget
+  let printed = sum [cdEyeIcons (toCardDef c) | c <- t.fortitudeDiscarded, c.id `notElem` t.fortitudeIgnored]
+  pure (willpower, printed + t.fortitudeEyes + sum [n | FortitudeTestEyes n <- mods])
 
 -- | An escape test's committed total, and the escape value of the cards it would deal
 -- from the encounter deck as it stands.

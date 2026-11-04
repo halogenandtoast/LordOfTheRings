@@ -1,6 +1,6 @@
 module LordOfTheRings.Window (module LordOfTheRings.Window, module X) where
 
-import LordOfTheRings.Card (Card, PlayerCard)
+import LordOfTheRings.Card (Card, EncounterCard, PlayerCard)
 import LordOfTheRings.Card.Code (CardCode)
 import LordOfTheRings.Id
 import LordOfTheRings.Phase
@@ -192,6 +192,11 @@ data WindowType
     QuestBypassed Target
   | -- | the character was committed to an escape test, as Things in the Pools answers
     CommittedToEscapeTest Target
+  | -- | the cards were discarded from the encounter deck for the player's Fortitude test, as
+    -- Gollum answers
+    DiscardedForFortitudeTest PlayerId [EncounterCard]
+  | -- | the player failed a Fortitude test
+    FailedFortitudeTest PlayerId
   | -- | the guarded character went free of encounters, back under its owner's control
     CharacterRescued Target
   | -- | the hidden card was turned faceup: the enemy it put into play (The Blood of Gondor)

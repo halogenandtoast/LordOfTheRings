@@ -72,6 +72,8 @@ data CardDef = CardDef
   -- ^ what the card adds to an escape test it is dealt for
   , cdSailingIcons :: Int
   -- ^ the sailing success icons printed on the encounter card, found by a Sailing test
+  , cdEyeIcons :: Int
+  -- ^ the Eye of Sauron icons printed on the encounter card, counted by a Fortitude test
   , cdRacingResult :: Maybe RacingResult
   -- ^ the racing test result printed on the encounter card, found by a racing test
   , cdDeckLimit :: Int
@@ -156,6 +158,7 @@ emptyCardDef cCode name cType =
     , cdSinglePayer = False
     , cdEscape = Nothing
     , cdSailingIcons = 0
+    , cdEyeIcons = 0
     , cdRacingResult = Nothing
     , cdDeckLimit = 3
     , cdLimitOnePerHost = False
