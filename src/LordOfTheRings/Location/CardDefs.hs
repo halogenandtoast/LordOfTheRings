@@ -515,6 +515,10 @@ allLocationCards =
       , twistedTunnel
       , narrowOpening
       , crumblingPassage
+      , theKingsLawn
+      , guardedArchway
+      , crowdedMarket
+      , streetsOfUlfast
       ]
 
 drownedTreasury :: CardDef
@@ -3833,4 +3837,24 @@ crumblingPassage =
     { cdCardTraits = setFromList [Underground]
     , cdWhenRevealed = True
     , cdEasyModeQuantity = Just 1
+    }
+
+-- * The City of Ulfast
+
+theKingsLawn :: CardDef
+theKingsLawn = (location "22041" "The King's Lawn" TheCityOfUlfast 2 3 5) {cdCardTraits = setFromList [City]}
+
+guardedArchway :: CardDef
+guardedArchway = (location "22042" "Guarded Archway" TheCityOfUlfast 3 2 4) {cdCardTraits = setFromList [City], cdEasyModeQuantity = Just 2}
+
+crowdedMarket :: CardDef
+crowdedMarket = (location "22043" "Crowded Market" TheCityOfUlfast 2 2 2) {cdCardTraits = setFromList [City]}
+
+-- | Its threat is X, printed 0 here: see its card.
+streetsOfUlfast :: CardDef
+streetsOfUlfast =
+  (location "22044" "Streets of Ulfast" TheCityOfUlfast 3 0 5)
+    { cdCardTraits = setFromList [City]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 2
     }

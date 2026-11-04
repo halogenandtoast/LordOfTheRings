@@ -401,6 +401,11 @@ allQuestCards =
       , shadowOfFearASitE
       , unwelcomeTravelers
       , lostInTheDark
+      , catAndMouse
+      , searchingForUlchor
+      , tryingToBlendIn
+      , drawingAttention
+      , ulchorsTrap
       ]
 
 theDrippingWalls :: CardDef
@@ -1629,3 +1634,20 @@ lostInTheDark =
     { cdVictoryPoints = Just 10
     , cdWhenRevealed = True
     }
+
+-- * The City of Ulfast
+
+catAndMouse :: CardDef
+catAndMouse = (encounterSideQuest "22048" "Cat and Mouse" TheCityOfUlfast 10) {cdVictoryPoints = Just 10}
+
+searchingForUlchor :: CardDef
+searchingForUlchor = quest "22050" "Searching for Ulchor" TheCityOfUlfast 1 5
+
+tryingToBlendIn :: CardDef
+tryingToBlendIn = quest "22051" "Trying to Blend In" TheCityOfUlfast 2 10
+
+drawingAttention :: CardDef
+drawingAttention = quest "22052" "Drawing Attention" TheCityOfUlfast 3 15
+
+ulchorsTrap :: CardDef
+ulchorsTrap = quest "22053" "Ulchor's Trap" TheCityOfUlfast 4 20

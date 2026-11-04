@@ -475,6 +475,10 @@ allEnemyCards =
       , rhunBackstabber
       , treacherousEasterling
       , ulchorsGuard
+      , cityGuard
+      , ulfastSentry
+      , theKingsElite
+      , ulchorsAgent
       ]
 
 namelessThing :: CardDef
@@ -3888,4 +3892,40 @@ ulchorsGuard =
     { cdCardTraits = setFromList [Easterling]
     , cdShadowEffect = True
     , cdEasyModeQuantity = Just 3
+    }
+
+-- * The City of Ulfast. Easy mode copy counts from Hall of Beorn.
+
+-- | Indestructible. Its threat is X, printed 0 here: see its card.
+cityGuard :: CardDef
+cityGuard =
+  unique
+    (enemy "22037" "City Guard" TheCityOfUlfast 1 45 0 9 4 20)
+      { cdCardTraits = setFromList [Easterling]
+      , cdKeywords = setFromList [Indestructible]
+      , cdVictoryPoints = Just 5
+      }
+
+-- | Its attack is X, printed 0 here: see its card.
+ulfastSentry :: CardDef
+ulfastSentry =
+  (enemy "22038" "Ulfast Sentry" TheCityOfUlfast 3 25 2 0 1 3)
+    { cdCardTraits = setFromList [Easterling]
+    , cdEasyModeQuantity = Just 2
+    }
+
+theKingsElite :: CardDef
+theKingsElite =
+  (enemy "22039" "The King's Elite" TheCityOfUlfast 2 30 3 5 2 5)
+    { cdCardTraits = setFromList [Easterling]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
+    }
+
+ulchorsAgent :: CardDef
+ulchorsAgent =
+  (enemy "22040" "Ulchor's Agent" TheCityOfUlfast 2 32 3 3 2 4)
+    { cdCardTraits = setFromList [Mordor]
+    , cdWhenRevealed = True
+    , cdShadowEffect = True
     }

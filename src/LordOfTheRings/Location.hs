@@ -497,6 +497,10 @@ import LordOfTheRings.Location.Cards.Catacombs
 import LordOfTheRings.Location.Cards.TwistedTunnel
 import LordOfTheRings.Location.Cards.NarrowOpening
 import LordOfTheRings.Location.Cards.CrumblingPassage
+import LordOfTheRings.Location.Cards.TheKingsLawn
+import LordOfTheRings.Location.Cards.GuardedArchway
+import LordOfTheRings.Location.Cards.CrowdedMarket
+import LordOfTheRings.Location.Cards.StreetsOfUlfast
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -1040,5 +1044,9 @@ allLocations =
         , SomeLocationCard twistedTunnel
         , SomeLocationCard narrowOpening
         , SomeLocationCard crumblingPassage
+        , SomeLocationCard theKingsLawn
+        , SomeLocationCard guardedArchway
+        , SomeLocationCard crowdedMarket
+        , SomeLocationCard streetsOfUlfast
         ]
     ]

@@ -317,6 +317,11 @@ import LordOfTheRings.Quest.Cards.AnArduousJourney
 import LordOfTheRings.Quest.Cards.ShadowOfFearASitE
 import LordOfTheRings.Quest.Cards.UnwelcomeTravelers
 import LordOfTheRings.Quest.Cards.LostInTheDark
+import LordOfTheRings.Quest.Cards.CatAndMouse
+import LordOfTheRings.Quest.Cards.SearchingForUlchor
+import LordOfTheRings.Quest.Cards.TryingToBlendIn
+import LordOfTheRings.Quest.Cards.DrawingAttention
+import LordOfTheRings.Quest.Cards.UlchorsTrap
 import LordOfTheRings.Quest.Runner ()
 import LordOfTheRings.Quest.Types as X
 import LordOfTheRings.Id
@@ -666,5 +671,10 @@ allQuests =
         , SomeQuestCard shadowOfFearASitE
         , SomeQuestCard unwelcomeTravelers
         , SomeQuestCard lostInTheDark
+        , SomeQuestCard catAndMouse
+        , SomeQuestCard searchingForUlchor
+        , SomeQuestCard tryingToBlendIn
+        , SomeQuestCard drawingAttention
+        , SomeQuestCard ulchorsTrap
         ]
     ]
