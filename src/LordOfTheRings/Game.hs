@@ -3038,8 +3038,9 @@ runGameMessage msg g = case msg of
       EventType | any (any ((== card.id) . (.id)) . (.setAsideCards)) (toList g.players) -> do
         pushAll =<< revealing (CardIdTarget card.id)
         pure g
+      -- its doomed keyword resolves too, as Covered in Darkness's
       t | t `elem` [ObjectiveType, ObjectiveAllyType] -> do
-        pushAll . (<> surge) =<< inLogBlock (RevealBlock card) [PutObjectiveIntoPlay card]
+        pushAll . (<> doomed <> surge) =<< inLogBlock (RevealBlock card) [PutObjectiveIntoPlay card]
         pure g
       -- an encounter side quest goes to the staging area, where the players may quest
       -- against it
