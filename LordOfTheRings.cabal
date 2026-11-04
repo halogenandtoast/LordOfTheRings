@@ -3172,6 +3172,7 @@ test-suite LordOfTheRings-test
       LordOfTheRings.VengeanceOfMordor.AShadowInTheEastPlayerCardsSpec
       LordOfTheRings.VengeanceOfMordor.ChallengeOfTheWainridersPlayerCardsSpec
       LordOfTheRings.VengeanceOfMordor.ContractsSpec
+      LordOfTheRings.VengeanceOfMordor.DangerInDorwinionSpec
       LordOfTheRings.VengeanceOfMordor.PowerOfMordorSpec
       LordOfTheRings.VengeanceOfMordor.SharedEncounterSetsSpec
       LordOfTheRings.VengeanceOfMordor.SmeagolSpec
