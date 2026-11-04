@@ -5,7 +5,7 @@ import LordOfTheRings.Quest.Import.Lifted
 import LordOfTheRings.Scenario.Scenarios.TheNinInEilph.Helpers (runWanderingStage, wanderingStage)
 
 newtype ThroughTheMarshAnArduousJourney = ThroughTheMarshAnArduousJourney QuestAttrs
-  deriving anyclass (IsQuest, HasModifiersFor)
+  deriving anyclass IsQuest
   deriving newtype (Show, Eq, ToJSON, Entity)
 
 throughTheMarshAnArduousJourney :: QuestCard ThroughTheMarshAnArduousJourney
@@ -18,9 +18,8 @@ instance HasAbilities ThroughTheMarshAnArduousJourney where
 -- Allies enter play exhausted.
 -- Forced: When the players defeat this stage, advance to a random stage 3A (the scenario
 -- picks it).
+instance HasModifiersFor ThroughTheMarshAnArduousJourney where
+  getModifiersFor (ThroughTheMarshAnArduousJourney a) = when a.flipped $ modified a GameTarget [AlliesEnterPlayExhausted]
+
 instance RunMessage ThroughTheMarshAnArduousJourney where
-  runMessage msg (ThroughTheMarshAnArduousJourney attrs) = case msg of
-    CheckWindows ws | attrs.flipped -> do
-      for_ [t | Window After (AllyEnteredPlay t _ _) <- ws] exhaust
-      ThroughTheMarshAnArduousJourney <$> runWanderingStage msg attrs
-    _ -> ThroughTheMarshAnArduousJourney <$> runWanderingStage msg attrs
+  runMessage msg (ThroughTheMarshAnArduousJourney attrs) = ThroughTheMarshAnArduousJourney <$> runWanderingStage msg attrs

@@ -34,6 +34,11 @@ instance HasModifiersFor DefendTheShip where
 -- | When Revealed: Discard cards from the top of the encounter deck until X Tentacle
 -- enemies are discarded, where X is 1 more than the number of players in the game. Resolve
 -- the Grapple keyword on each of those enemies.
+-- As many are discarded as the deck holds before the Xth Tentacle enemy. Change of Plans
+-- has just shuffled the discard pile and The Thing in the Depths set in, so the deck holds
+-- every Tentacle enemy not in play.
+-- At the end of the round, if the total threat of any one Ship location is 9 or higher,
+-- the Stormcaller is destroyed, and the players lose the game.
 -- When The Thing in the Depths is destroyed, the players win the game.
 instance RunMessage DefendTheShip where
   runMessage msg q@(DefendTheShip attrs) = case msg of

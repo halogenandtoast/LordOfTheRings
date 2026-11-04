@@ -188,6 +188,8 @@ instance HasField "victoryDisplay" ScenarioAttrs [Card] where
 instance HasField "victoryPoints" ScenarioAttrs Int where
   getField a = sum . mapMaybe (cdVictoryPoints . toCardDef) . filter counts $ scenarioVictoryDisplay a
    where
+    -- The one setup card that touches scoring is named here: the score is read from the
+    -- scenario alone, where no modifier can be seen.
     noPlayerCards = a.nightmare && fmap nightmareSet a.nightmareDeck == Just TheSiegeOfCairAndrosNightmare
     counts = \case
       PlayerCard _ -> not noPlayerCards

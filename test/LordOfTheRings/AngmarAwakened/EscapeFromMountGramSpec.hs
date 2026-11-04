@@ -4,6 +4,7 @@ import LordOfTheRings.Ally.CardDefs qualified as Allies
 import LordOfTheRings.Card (CardDef (cdCardType, cdCost), CardType (AllyType, HeroType), costAsResources, toCard, toCardDef)
 import LordOfTheRings.Decklist (loadPlayer)
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
+import LordOfTheRings.Hero.CardDefs qualified as Heroes
 import LordOfTheRings.Helpers.Staging (getEngagementCost, getEnemyAttack, getLocationThreat)
 import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Matcher (getEnemy, getTimeCounters)
@@ -159,6 +160,13 @@ spec = describe "Escape from Mount Gram" do
     _ <- captureAlly pid Allies.silverlodeArcher (toTarget guard')
     run $ Destroy GameSource (toTarget guard')
     (.placement) <$> getEnemy jailor `shouldReturn` EngagedWith pid
+
+  it "has Raid Golfimbul's Vault discard each card rescued from it but Items, a hero too" . gramTest $ \pid -> do
+    vault <- EncounterCard <$> genEncounterCard Quests.raidGolfimbulsVault
+    aragorn <- genPlayerCard Heroes.aragorn (Just pid)
+    run $ ScenarioSpecific "mountGram.rescue" (toJSON (vault, [aragorn]))
+    heroCodes >>= (`shouldSatisfy` notElem (toCardCode Heroes.aragorn))
+    map toCardCode . (.discard) <$> getPlayer pid >>= (`shouldSatisfy` elem (toCardCode Heroes.aragorn))
 
   it "lets the players put a card rescued from Dungeon Guard into play" . gramTest $ \pid -> do
     staged Enemies.dungeonGuard

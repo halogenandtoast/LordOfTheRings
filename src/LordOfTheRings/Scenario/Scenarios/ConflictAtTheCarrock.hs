@@ -63,7 +63,7 @@ instance HasModifiersFor ConflictAtTheCarrock where
           [HitPointModifier n | let n = shown Enemies.savageHillTroll, n > 0]
             <> (if shown Enemies.morrisNightmare > 0 then [AttackModifier 1, ImmuneToPlayerEvents] else [])
             <> [CannotHaveDefenseReduced | shown Enemies.rupertNightmare > 0]
-            <> (if shown Enemies.stuartNightmare > 0 then [DefenseModifier 1, CannotHaveAttachments] else [])
+            <> (if shown Enemies.stuartNightmare > 0 then [DefenseModifier 1, CannotHavePlayerAttachments] else [])
     unless (null mods) do
       trolls <- select (EnemyWithTrait Troll)
       for_ trolls \t -> modified a t mods

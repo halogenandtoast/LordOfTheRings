@@ -218,6 +218,16 @@ spec = describe "Dream-chaser Nightmare mode" do
       heading `shouldReturn` Just Rainy
       getCharacterDamage dreamChaser `shouldReturn` 1
 
+    it "Broken Rudder, discarded by a Sailing test, attaches to the Ship objective committed to it" . nightmare aStormOnCobasHaven $ \pid -> do
+      dreamChaser <- ship pid Objectives.dreamChaser
+      setHeading Rainy
+      _ <- setEncounterDeck [Treacheries.brokenRudder]
+      run SailingTest
+      commitAll pid [dreamChaser]
+      chooseLabel "$label.continue" pid
+      rudders <- getsGame (filter ((== toCardCode Treacheries.brokenRudder) . toCardCode) . toList . (.entities.treacheries))
+      map (.placement) rudders `shouldBe` [AttachedTo dreamChaser]
+
   describe "The City of Corsairs" do
     it "builds the nightmare deck: the City of Corsairs icon's cards in the second deck" . nightmare theCityOfCorsairs $ \_ -> do
       run $ DoStep 1 Setup

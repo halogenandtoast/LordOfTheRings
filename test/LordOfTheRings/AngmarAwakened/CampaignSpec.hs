@@ -13,9 +13,10 @@ import LordOfTheRings.Objective.CardDefs qualified as Objectives
 import LordOfTheRings.Outcome (Outcome (..))
 import LordOfTheRings.Phase (Phase (QuestPhase, RefreshPhase))
 import LordOfTheRings.Quest.CardDefs qualified as Quests
-import LordOfTheRings.Scenario.Types (GameMode (NightmareMode), scenarioMode)
+import LordOfTheRings.Scenario.Types (GameMode (NightmareMode), scenarioMode, scenarioSetAside)
 import LordOfTheRings.Scenario (acrossTheEttenmoors, deadmensDike, intrudersInChetwood, theBattleOfCarnDum, theDreadRealm, theTreacheryOfRhudaur, theWastesOfEriador, theWeatherHills)
 import LordOfTheRings.Treachery.CardDefs qualified as Treacheries
+import LordOfTheRings.Window (WindowType (PhaseBegins), mkAfter)
 import TestImport
 
 angmar :: CampaignLog
@@ -184,12 +185,16 @@ spec = describe "Angmar Awakened campaign" do
       getDamage beravor `shouldReturn` 2
 
   describe "Across the Ettenmoors" do
-    it "reveals Losing Time every third quest phase" . campaignTestIn acrossTheEttenmoors angmar testDeck $ \pid -> do
-      g <- getGame
-      putGame g {gameRound = 3}
+    it "reveals a set-aside Losing Time once the campaign card has 3 resources" . campaignTestIn acrossTheEttenmoors angmar testDeck $ \pid -> do
+      run $ DoStep 9 Setup
+      let aside = getsGame (length . filter ((== toCardCode Treacheries.losingTime) . toCardCode) . scenarioSetAside . toAttrs . (.scenario))
+      aside `shouldReturn` 5
       threat <- (.threat) <$> getPlayer pid
-      run $ BeginPhase QuestPhase
+      replicateM_ 2 $ run $ CheckWindows [mkAfter $ PhaseBegins QuestPhase]
+      aside `shouldReturn` 5
+      run $ CheckWindows [mkAfter $ PhaseBegins QuestPhase]
       resolveRevealed
+      aside `shouldReturn` 4
       chooseLabel "$label.losingTime.raiseThreat" pid
       (.threat) <$> getPlayer pid `shouldReturn` threat + 3
 
@@ -206,11 +211,18 @@ spec = describe "Angmar Awakened campaign" do
       (.threat) <$> getPlayer pid `shouldReturn` threat + 3
 
   describe "The Treachery of Rhudaur" do
-    it "adds the book of each Clue a player controls to the pool, for their deck" . campaignTestIn theTreacheryOfRhudaur angmar testDeck $ \_ -> do
+    it "notes the book of each Clue a player controls, for that player" . campaignTestIn theTreacheryOfRhudaur angmar testDeck $ \_ -> do
       beravor <- getHeroWithCode "01012"
       run . (`PutObjectiveIntoPlayAttached` toTarget beravor.id) =<< genEncounterCard Objectives.heirloomOfIarchon
       run $ GameOver Won
+      Map.lookup BooksEarned . (.counts) <$> getCampaignLog `shouldReturn` Just (Map.singleton (toCardCode Attachments.heirloomOfIarchon) 0)
+      (.pool) <$> getCampaignLog `shouldReturn` []
+
+    it "lets the player add the book to the pool, or not, as the next scenario is set up" . campaignTestIn theBattleOfCarnDum (recordCount BooksEarned (toCardCode Attachments.heirloomOfIarchon) 0 angmar) testDeck $ \pid -> do
+      run $ DoStep 9 Setup
+      chooseLabel "$label.campaign.addBookToDeck" pid
       (.pool) <$> getCampaignLog `shouldReturn` [PoolCard (toCardCode Attachments.heirloomOfIarchon) (Just 0) Nothing]
+      Map.member BooksEarned . (.counts) <$> getCampaignLog `shouldReturn` False
 
   describe "The Battle of Carn Dûm and The Dread Realm" do
     it "notes the damage on each hero" . campaignTestIn theBattleOfCarnDum angmar testDeck $ \_ -> do

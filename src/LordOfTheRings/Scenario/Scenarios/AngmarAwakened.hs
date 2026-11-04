@@ -106,6 +106,19 @@ angmarSetup attrs = for_ attrs.campaign \l -> do
     let noted = recordedCount ProtectTheInnocentDamage (toCardCode Quests.protectTheInnocent) l
     when (noted > 0) $ placeTokens attrs (CardIdTarget card.id) Damage noted
   when (inPool Attachments.amarthiulsCourage l) courageOnAmarthiul
+  -- The Treachery of Rhudaur's resolution: "For each Clue a player controls, that player
+  -- may add the book with the same name to the Campaign Pool and their deck."
+  let books = Map.toList $ Map.findWithDefault mempty BooksEarned l.counts
+  unless (null books) do
+    updateCampaignLog (Unrecord BooksEarned)
+    order <- getsGame (.playerOrder)
+    for_ books \(code, seat) -> for_ (atMay order seat) \p -> do
+      card <- genPlayerCard (toCardDef code) (Just p)
+      chooseOneM p do
+        questionLabeled "campaign.addBook"
+        showing [PlayerCard card]
+        labeled "campaign.addBookToDeck" $ updateCampaignLog $ AddToPool $ PoolCard code (Just seat) Nothing
+        labeled "pass" $ pure ()
   when (Map.member ChoosePendantOrCourage l.notes) do
     lead <- getLead
     updateCampaignLog (Unrecord ChoosePendantOrCourage)

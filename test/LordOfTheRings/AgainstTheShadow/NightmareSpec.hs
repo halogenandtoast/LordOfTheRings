@@ -15,7 +15,7 @@ import LordOfTheRings.Scenario.Scenarios.TheStewardsFear.Helpers (Meta (..), get
 import LordOfTheRings.Scenario.Scenarios.EncounterAtAmonDin.Helpers (deadVillagerCount, getVillagers, rescuedVillagerCount)
 import LordOfTheRings.Scenario.CardDefs qualified as Nightmare
 import LordOfTheRings.Scenario.Scenarios.TheMorgulVale.Helpers (towerProgress)
-import LordOfTheRings.Scenario.Types (GameMode (..), ScenarioAttrs (scenarioSetAside), metaL, modeL, victoryDisplayL)
+import LordOfTheRings.Scenario.Types (GameMode (..), ScenarioAttrs (scenarioSetAside, scenarioVictoryDisplay), metaL, modeL, victoryDisplayL)
 import LordOfTheRings.Treachery.CardDefs qualified as Treacheries
 import LordOfTheRings.Window (Timing (When), Window (..), WindowType (AdvancedToStage, PhaseBegins, PhaseEnds, RoundEnds), mkAfter)
 import TestImport
@@ -543,3 +543,10 @@ spec = describe "Against the Shadow nightmare decks" do
       bandit <- staged Enemies.lossarnachBandit
       run $ DealDamage GameSource (toTarget bandit) 5
       map toCardCode . (.underworldDeck) <$> fearMeta `shouldReturn` [toCardCode Enemies.lossarnachBandit]
+
+    it "shuffles a destroyed enemy with victory points into the underworld deck from the victory display" . nightmare theStewardsFear $ \_ -> do
+      _ <- setUnderworld []
+      troll <- staged Enemies.hillTroll
+      run $ DealDamage GameSource (toTarget troll) 9
+      map toCardCode . (.underworldDeck) <$> fearMeta `shouldReturn` [toCardCode Enemies.hillTroll]
+      getsGame (scenarioVictoryDisplay . toAttrs . (.scenario)) `shouldReturn` []
