@@ -239,6 +239,14 @@ allAllyCards =
       , soldierOfErebor
       , mirkwoodHunter
       , descendantOfGirion
+      , merryLeadership
+      , pippinTactics
+      , faramirLore
+      , derufin
+      , cautiousHalfling
+      , tomBombadil
+      , woodlandSentry
+      , knightOfBelfalas
       ]
 
 guardOfTheCitadel :: CardDef
@@ -1686,4 +1694,62 @@ descendantOfGirion :: CardDef
 descendantOfGirion =
   (ally "19091" "Descendant of Girion" Spirit (StaticCost 4) 2 2 2 2)
     { cdCardTraits = setFromList [Dale]
+    }
+
+merryLeadership :: CardDef
+merryLeadership =
+  unique
+    (ally "21003" "Merry" Leadership (StaticCost 2) 2 0 0 2)
+      { cdCardTraits = setFromList [Hobbit]
+      }
+
+pippinTactics :: CardDef
+pippinTactics =
+  unique
+    (ally "21004" "Pippin" Tactics (StaticCost 2) 2 0 0 2)
+      { cdCardTraits = setFromList [Hobbit]
+      }
+
+faramirLore :: CardDef
+faramirLore =
+  unique
+    (ally "21005" "Faramir" Lore (StaticCost 4) 2 1 2 3)
+      { cdCardTraits = setFromList [Gondor, Noble, Ranger]
+      }
+
+derufin :: CardDef
+derufin =
+  unique
+    (ally "21006" "Derufin" Spirit (StaticCost 3) 1 2 1 2)
+      { cdCardTraits = setFromList [Gondor, Warrior]
+      , cdKeywords = setFromList [Ranged]
+      }
+
+cautiousHalfling :: CardDef
+cautiousHalfling =
+  (ally "22004" "Cautious Halfling" Lore (StaticCost 2) 1 0 1 2)
+    { cdCardTraits = setFromList [Hobbit]
+    }
+
+-- | Encounter: set aside out of the deck, shuffled in by Tom Bombadillo!.
+tomBombadil :: CardDef
+tomBombadil =
+  unique
+    (ally "22010" "Tom Bombadil" Neutral (StaticCost 0) 3 3 3 6)
+      { cdCost = Nothing
+      , cdCardTraits = setFromList [Legend]
+      , cdKeywords = setFromList [Encounter]
+      , cdWhenRevealed = True
+      }
+
+woodlandSentry :: CardDef
+woodlandSentry =
+  (ally "22030" "Woodland Sentry" Lore (StaticCost 3) 1 1 1 2)
+    { cdCardTraits = setFromList [Silvan]
+    }
+
+knightOfBelfalas :: CardDef
+knightOfBelfalas =
+  (ally "22034" "Knight of Belfalas" Spirit (StaticCost 2) 1 2 0 2)
+    { cdCardTraits = setFromList [Gondor, Warrior]
     }

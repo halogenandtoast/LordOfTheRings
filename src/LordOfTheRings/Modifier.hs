@@ -214,6 +214,9 @@ data ModifierType
     ReduceCostToAttach CardMatcher Int
   | -- | on an enemy: any player's characters may attack it, wherever it is
     AttackableByAnyCharacter
+  | -- | on an enemy: the player attacks it as if it were engaged with him, wherever it is,
+    -- as Charge into Battle reads
+    AttackedAsIfEngagedWith PlayerId
   | -- | when attacking an enemy with the trait, attack is raised by this much
     AttackBonusAgainst Trait Int
   | -- | the hero may attack an enemy in the staging area when attacking alone
@@ -576,6 +579,9 @@ data ModifierType
     -- effect's source deals it the first amount of damage, the second instead if it is
     -- guarding a card, as Bilbo Baggins's (Tactics) reads
     DamageIfQuestSuccessful Int Int
+  | -- | on a player, until the end of the phase: if the players quest successfully, the
+    -- effect's source reduces his threat by this much, as Frodo Baggins's (Leadership) reads
+    LowerThreatIfQuestSuccessful Int
   | -- | on the game: it cannot end, a win or loss waiting until nothing gives this, as
     -- Ghulat reads
     GameCannotEnd

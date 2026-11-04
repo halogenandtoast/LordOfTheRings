@@ -94,6 +94,8 @@ allHeroCards =
       , thranduil
       , dainIronfootSpirit
       , smeagol
+      , frodoBagginsLeadership
+      , thorinStonehelm
       ]
 
 aragorn :: CardDef
@@ -599,4 +601,16 @@ smeagol =
   (hero "21072" "Sméagol" Lore 3 2 2 2 3)
     { cdCardTraits = setFromList [Gollum]
     , cdOtherSide = Just "21073"
+    }
+
+frodoBagginsLeadership :: CardDef
+frodoBagginsLeadership =
+  (hero "21002" "Frodo Baggins" Leadership 7 2 1 2 2)
+    { cdCardTraits = setFromList [Hobbit]
+    }
+
+thorinStonehelm :: CardDef
+thorinStonehelm =
+  (hero "22001" "Thorin Stonehelm" Tactics 9 1 3 1 4)
+    { cdCardTraits = setFromList [Dwarf, Noble, Warrior]
     }

@@ -222,6 +222,9 @@ import LordOfTheRings.Event.Cards.HornsHornsHorns
 import LordOfTheRings.Event.Cards.FarSighted
 import LordOfTheRings.Event.Cards.RecklessAttack
 import LordOfTheRings.Event.Cards.DefiantChallenge
+import LordOfTheRings.Event.Cards.TheGatheringStorm
+import LordOfTheRings.Event.Cards.TomBombadillo
+import LordOfTheRings.Event.Cards.ChargeIntoBattle
 import LordOfTheRings.Event.Types as X
 import LordOfTheRings.Id
 import LordOfTheRings.Prelude
@@ -463,5 +466,8 @@ allEvents =
         , SomeEventCard farSighted
         , SomeEventCard recklessAttack
         , SomeEventCard defiantChallenge
+        , SomeEventCard theGatheringStorm
+        , SomeEventCard tomBombadillo
+        , SomeEventCard chargeIntoBattle
         ]
     ]

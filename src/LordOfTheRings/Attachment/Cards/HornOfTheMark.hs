@@ -11,13 +11,15 @@ newtype HornOfTheMark = HornOfTheMark AttachmentAttrs
 hornOfTheMark :: AttachmentCard HornOfTheMark
 hornOfTheMark =
   attachment HornOfTheMark Cards.hornOfTheMark
-    & attachTo (AttachToHero $ HeroMatchAny [HeroWithTrait Rohan, HeroWithTitle "Merry"])
+    & attachTo (AttachToCharacterMatching (HeroMatchAny [HeroWithTrait Rohan, HeroWithTitle "Merry"]) (AllyWithTitle "Merry"))
 
--- | Response: When a character leaves play, if that character shares at least one trait
+-- | Attach to a Rohan hero or Merry: the Merry ally (A Shadow in the East) too.
+--
+-- Response: When a character leaves play, if that character shares at least one trait
 -- with the attached hero, exhaust Horn of the Mark to draw 1 card.
 instance HasAbilities HornOfTheMark where
   getAbilities (HornOfTheMark a) =
-    [mkAbility a 1 $ ResponseAbility (LeftPlaySharingTraitWindow When host) (exhaustCost a) | AttachedTo host@(HeroTarget _) <- [a.placement]]
+    [mkAbility a 1 $ ResponseAbility (LeftPlaySharingTraitWindow When host) (exhaustCost a) | AttachedTo host <- [a.placement]]
 
 instance RunMessage HornOfTheMark where
   runMessage msg s@(HornOfTheMark a) = case msg of

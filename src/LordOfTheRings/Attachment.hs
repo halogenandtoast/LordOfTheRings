@@ -213,6 +213,10 @@ import LordOfTheRings.Attachment.Cards.RingOfThror
 import LordOfTheRings.Attachment.Cards.GoldenBelt
 import LordOfTheRings.Attachment.Cards.SarumansStaff
 import LordOfTheRings.Attachment.Cards.StoneOfElostirion
+import LordOfTheRings.Attachment.Cards.PutOffPursuit
+import LordOfTheRings.Attachment.Cards.DurinsAxeTactics
+import LordOfTheRings.Attachment.Cards.SilverCirclet
+import LordOfTheRings.Attachment.Cards.KeenLongbow
 import LordOfTheRings.Attachment.Runner ()
 import LordOfTheRings.Attachment.Types as X
 import LordOfTheRings.Id
@@ -463,5 +467,9 @@ allAttachments =
         , SomeAttachmentCard goldenBelt
         , SomeAttachmentCard sarumansStaff
         , SomeAttachmentCard stoneOfElostirion
+        , SomeAttachmentCard putOffPursuit
+        , SomeAttachmentCard durinsAxeTactics
+        , SomeAttachmentCard silverCirclet
+        , SomeAttachmentCard keenLongbow
         ]
     ]

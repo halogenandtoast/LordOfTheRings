@@ -239,6 +239,9 @@ allEventCards =
       , manTheWalls
       , familiarLands
       , swiftAndStrong
+      , theGatheringStorm
+      , tomBombadillo
+      , chargeIntoBattle
       ]
 
 everVigilant :: CardDef
@@ -968,3 +971,15 @@ swiftAndStrong =
   (event "19090" "Swift and Strong" Tactics (StaticCost 1))
     { cdCardTraits = setFromList [Song]
     }
+
+theGatheringStorm :: CardDef
+theGatheringStorm = event "21007" "The Gathering Storm" Leadership (StaticCost 0)
+
+tomBombadillo :: CardDef
+tomBombadillo =
+  (event "22005" "Tom Bombadillo!" Lore (StaticCost 2))
+    { cdCardTraits = setFromList [Song]
+    }
+
+chargeIntoBattle :: CardDef
+chargeIntoBattle = event "22007" "Charge into Battle" Tactics (StaticCost 5)

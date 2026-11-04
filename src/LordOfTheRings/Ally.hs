@@ -267,6 +267,14 @@ import LordOfTheRings.Ally.Cards.RohirrimScout
 import LordOfTheRings.Ally.Cards.WanderingExile
 import LordOfTheRings.Ally.Cards.NorthernBowmaster
 import LordOfTheRings.Ally.Cards.OdoProudfoot
+import LordOfTheRings.Ally.Cards.MerryLeadership
+import LordOfTheRings.Ally.Cards.PippinTactics
+import LordOfTheRings.Ally.Cards.FaramirLore
+import LordOfTheRings.Ally.Cards.Derufin
+import LordOfTheRings.Ally.Cards.CautiousHalfling
+import LordOfTheRings.Ally.Cards.TomBombadil
+import LordOfTheRings.Ally.Cards.WoodlandSentry
+import LordOfTheRings.Ally.Cards.KnightOfBelfalas
 import LordOfTheRings.Ally.Runner ()
 import LordOfTheRings.Ally.Types as X
 import LordOfTheRings.Id
@@ -566,5 +574,13 @@ allAllies =
         , SomeAllyCard wanderingExile
         , SomeAllyCard northernBowmaster
         , SomeAllyCard odoProudfoot
+        , SomeAllyCard merryLeadership
+        , SomeAllyCard pippinTactics
+        , SomeAllyCard faramirLore
+        , SomeAllyCard derufin
+        , SomeAllyCard cautiousHalfling
+        , SomeAllyCard tomBombadil
+        , SomeAllyCard woodlandSentry
+        , SomeAllyCard knightOfBelfalas
         ]
     ]

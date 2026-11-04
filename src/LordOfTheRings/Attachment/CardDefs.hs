@@ -231,6 +231,10 @@ allAttachmentCards =
       , warriorSword
       , valiantDetermination
       , ringOfThror
+      , putOffPursuit
+      , durinsAxeTactics
+      , silverCirclet
+      , keenLongbow
       ]
 
 -- | A boon of the Revised Core campaign: Permanent, limit 1 per hero.
@@ -1611,3 +1615,34 @@ ringOfThror =
       { cdCardTraits = setFromList [Artifact, Ring]
       , cdKeywords = setFromList [GuardedBy [EnemyType, LocationType]]
       }
+
+putOffPursuit :: CardDef
+putOffPursuit =
+  (attachment "21008" "Put Off Pursuit" Lore (StaticCost 1))
+    { cdCardTraits = setFromList [Condition]
+    , cdLimitOnePerHost = True
+    }
+
+durinsAxeTactics :: CardDef
+durinsAxeTactics =
+  unique
+    (attachment "22006" "Durin's Axe" Tactics (StaticCost 1))
+      { cdCardTraits = setFromList [Artifact, Item, Weapon]
+      , cdKeywords = setFromList [GuardedBy [EnemyType], Restricted]
+      }
+
+silverCirclet :: CardDef
+silverCirclet =
+  (attachment "22008" "Silver Circlet" Spirit (StaticCost 2))
+    { cdCardTraits = setFromList [Item]
+    , cdKeywords = setFromList [Restricted]
+    , cdLimitOnePerHost = True
+    }
+
+keenLongbow :: CardDef
+keenLongbow =
+  (attachment "22031" "Keen Longbow" Lore (StaticCost 2))
+    { cdCardTraits = setFromList [Item, Weapon]
+    , cdKeywords = setFromList [Restricted]
+    , cdLimitOnePerHost = True
+    }

@@ -92,6 +92,8 @@ import LordOfTheRings.Hero.Cards.BilboBagginsTactics
 import LordOfTheRings.Hero.Cards.Radagast
 import LordOfTheRings.Hero.Cards.SarumanLore
 import LordOfTheRings.Hero.Cards.GildorInglorionLeadership
+import LordOfTheRings.Hero.Cards.FrodoBagginsLeadership
+import LordOfTheRings.Hero.Cards.ThorinStonehelm
 import LordOfTheRings.Hero.Runner ()
 import LordOfTheRings.Hero.Types as X
 import LordOfTheRings.Id
@@ -211,5 +213,7 @@ allHeroes =
         , SomeHeroCard smeagol
         , SomeHeroCard sarumanLore
         , SomeHeroCard gildorInglorionLeadership
+        , SomeHeroCard frodoBagginsLeadership
+        , SomeHeroCard thorinStonehelm
         ]
     ]

@@ -44,7 +44,8 @@ import LordOfTheRings.Log.Refs (cardTitle, sendLogInOpenBlock, sourceCardTitle)
 import LordOfTheRings.Matcher
 import LordOfTheRings.Matcher.Window (windowMatches)
 import LordOfTheRings.Message
-import LordOfTheRings.Message.Lifted (choosePlayerM, drawCards, raiseThreatFromDoomed, setUpTheOneRing, shuffleIntoDeck)
+import LordOfTheRings.Message.Lifted (choosePlayerM, drawCards, lowerThreatBy, raiseThreatFromDoomed, setUpTheOneRing, shuffleIntoDeck)
+import LordOfTheRings.Message.Lifted.Queue (capture)
 import LordOfTheRings.Modifier
 import LordOfTheRings.Objective
 import LordOfTheRings.Contract
@@ -1666,7 +1667,7 @@ runGameMessage msg g = case msg of
     pure g
   DeclareAttackers pid eid -> do
     -- then other players' ranged characters may join an attack on an enemy engaged with them
-    engaged <- selectAny (EnemyWithId eid <> EnemyEngagedWith (PlayerWithId pid))
+    engaged <- engagedForAttack pid eid
     alone <- elem OnlyEngagedPlayerFights <$> getModifiers eid
     others <- if engaged && not alone then filter (/= pid) <$> getPlayerOrder else pure []
     attackers <- ownAttackers pid eid
@@ -2120,11 +2121,15 @@ runGameMessage msg g = case msg of
               EnemyTarget eid -> selectAny (EnemyWithId eid <> EnemyGuardingACard)
               _ -> pure False
             pure $ DealDamage (effectSource e) (effectTarget e) (if guarding then m else n)
+          lowered <-
+            concat <$> for [(e, pid, n) | e <- gameEffects g, PlayerTarget pid <- [effectTarget e], LowerThreatIfQuestSuccessful n <- effectModifiers e] \(e, pid, n) ->
+              capture $ lowerThreatBy (effectSource e) pid n
           -- what questing successfully triggers resolves before the progress is placed
           -- (FAQ 1.24), as The Hunt Begins' Forced effect
           pushAll
             $ CreateEffect (Effect GameSource GameTarget [QuestedSuccessfullyThisPhase] UntilEndOfPhase)
             : delayed
+            <> lowered
             <> [ CheckWindows [mkAfter QuestedSuccessfully]
                , PlaceProgressOnQuest (willpower - threat)
                , CheckWindows [mkAfter PlacedProgressFromQuesting]
@@ -3970,7 +3975,9 @@ ownAttackers pid eid = do
   -- one engaged with the player from the staging area, as Durin's Bane, is attacked as engaged
   staged <- selectAny (EnemyWithId eid <> EnemyInStagingArea <> not_ (EnemyEngagedWith $ PlayerWithId pid))
   mods <- getModifiers eid
-  let open' = AttackableByAnyCharacter `elem` mods
+  -- one attacked as if it were engaged with him, as Charge into Battle's, is attacked as
+  -- engaged too
+  let open' = AttackableByAnyCharacter `elem` mods || AttackedAsIfEngagedWith pid `elem` mods
       fromStaging cs = (<>) <$> stagingAttackers cs <*> if AttackableInStagingAreaByRanged `elem` mods then withKeyword Ranged cs else pure []
   -- one who does not exhaust to attack is still declared only once
   attacking <- selectCharacters AttackingHero AttackingAlly
@@ -3994,13 +4001,18 @@ mayAttack pid eid = do
 mayAttack' :: PlayerId -> EnemyId -> GameT [Target]
 mayAttack' pid eid = do
   own <- ownAttackers pid eid
-  engaged <- selectAny (EnemyWithId eid <> EnemyEngagedWith (PlayerWithId pid))
+  engaged <- engagedForAttack pid eid
   mods <- getModifiers eid
   others <- if engaged then filter (\p -> p /= pid && CannotBeAttackedByCharactersOf p `notElem` mods) <$> getPlayerOrder else pure []
   ranged <- filterM (canAttack eid) =<< withKeyword Ranged . concat =<< traverse readyAttackers others
   -- none with a keyword it bars, as Pitch-dark Thicket's shadow bars ranged
   let barred = [k | CannotBeAttackedByKeyword k <- mods]
   filterM (\c -> characterCardDef c >>= \def -> not <$> anyM (\k -> hasKeyword k c def) barred) (own <> ranged)
+
+-- | The enemy is engaged with the player, or attacked as if it were (Charge into Battle).
+engagedForAttack :: PlayerId -> EnemyId -> GameT Bool
+engagedForAttack pid eid =
+  orM [selectAny (EnemyWithId eid <> EnemyEngagedWith (PlayerWithId pid)), elem (AttackedAsIfEngagedWith pid) <$> getModifiers eid]
 
 -- | An action window for each player, in turn order, asked only of those with an action.
 actionWindows :: GameT [Message]

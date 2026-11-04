@@ -39,6 +39,9 @@ data WindowMatcher
     the character was among
     -}
     EnemyOfOtherPlayerDestroyedByAttackWindow Timing PlayerId Target
+  | -- | an enemy engaged with any player destroyed by an attack the character was among, as
+    -- Derufin answers
+    EngagedEnemyDestroyedByAttackWindow Timing Target
   | CharacterDestroyedWindow Timing
   | HeroDestroyedWindow Timing
   | AllyDestroyedWindow Timing
@@ -395,6 +398,7 @@ windowMatches matcher (Window timing wType) = case (matcher, wType) of
   (EnemyWithTraitDestroyedByAttackWindow t trait who, EnemyDestroyedByAttack _ attackers traits) ->
     t == timing && trait `member` traits && who `elem` attackers
   (EnemyOfOtherPlayerDestroyedByAttackWindow t pid who, EngagedEnemyDestroyedByAttack pid' attackers) -> t == timing && pid /= pid' && who `elem` attackers
+  (EngagedEnemyDestroyedByAttackWindow t who, EngagedEnemyDestroyedByAttack _ attackers) -> t == timing && who `elem` attackers
   (CharacterDestroyedWindow t, CharacterDestroyed _ _) -> t == timing
   (HeroDestroyedWindow t, CharacterDestroyed (HeroTarget _) _) -> t == timing
   (AllyDestroyedWindow t, CharacterDestroyed (AllyTarget _) _) -> t == timing
