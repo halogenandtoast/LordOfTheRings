@@ -122,6 +122,7 @@ export interface ScenarioView {
   sideQuestDeck: number
   /** The Evil Creatures deck's size, while there is one, and its discard pile (Journey Up the Anduin). */
   evilCreaturesDeck: number | null
+  powerOfMordorDeck: number
   evilCreaturesDiscard: CardView[]
   /** The Stormcaller's quest stage, with its progress, and the cards in its area (Flight of the Stormcaller). */
   /** In campaign mode, the campaign card next to the quest deck. */

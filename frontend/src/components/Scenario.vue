@@ -42,6 +42,8 @@ const settings = ['sunny', 'cloudy', 'rainy', 'stormy'].map((key) => ({
     </template>
     <!-- the Caves deck beside the encounter deck (Ered Mithrin) -->
     <CardBack v-if="scenario.cavesDeck > 0" :count="scenario.cavesDeck" back="encounter" :title="$t('log.cavesDeck', { count: scenario.cavesDeck })" data-pile="deck-caves" />
+    <!-- the Power of Mordor deck beside the quest deck (The Temple of Doom, The Fortress of Nurn) -->
+    <CardBack v-if="scenario.powerOfMordorDeck > 0" :count="scenario.powerOfMordorDeck" back="encounter" :title="$t('log.powerOfMordorDeck', { count: scenario.powerOfMordorDeck })" data-pile="deck-power-of-mordor" />
     <!-- the side quest deck (Fire in the Night) -->
     <CardBack v-if="scenario.sideQuestDeck > 0" :count="scenario.sideQuestDeck" back="encounter" :title="$t('log.sideQuestDeck', { count: scenario.sideQuestDeck })" data-pile="deck-side-quest" />
     <!-- the Evil Creatures deck, with its own discard pile (Journey Up the Anduin) -->

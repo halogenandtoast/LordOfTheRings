@@ -339,6 +339,11 @@ data Message
   | -- | the card leaves the Caves deck, as a search takes it
     TakeFromCavesDeck EncounterCard
   | ShuffleCavesDeck
+  | -- | the Power of Mordor deck is built from its encounter set and shuffled (The Temple of
+    -- Doom, The Fortress of Nurn)
+    CreatePowerOfMordorDeck
+  | -- | the top card of the Power of Mordor deck is revealed, as an encounter card is
+    RevealTopOfPowerOfMordorDeck
   | -- | the top card of the Evil Creatures deck enters play for the source: added to the
     -- staging area, or put into play engaged with the player (Journey Up the Anduin)
     AddFromEvilCreaturesDeck Source (Maybe PlayerId)

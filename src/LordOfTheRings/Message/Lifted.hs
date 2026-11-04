@@ -1595,6 +1595,23 @@ takeFromCavesDeck = push . TakeFromCavesDeck
 shuffleCavesDeck :: ReverseQueue m => m ()
 shuffleCavesDeck = push ShuffleCavesDeck
 
+-- | Build the Power of Mordor deck from The Power of Mordor encounter set, shuffled, as The
+-- Forgotten Temple's setup reads; the scenario leaves the set out of its encounter deck.
+createPowerOfMordorDeck :: ReverseQueue m => m ()
+createPowerOfMordorDeck = push CreatePowerOfMordorDeck
+
+-- | The Power of Mordor deck, top first.
+getPowerOfMordorDeck :: HasGame m => m [EncounterCard]
+getPowerOfMordorDeck = getsGame ((.powerOfMordorDeck) . toAttrs . (.scenario))
+
+-- | Reveal the top card of the Power of Mordor deck, and whether there was one to reveal,
+-- as Tribute to Mordor loses the game when there is not.
+revealTopOfPowerOfMordorDeck :: ReverseQueue m => m Bool
+revealTopOfPowerOfMordorDeck = do
+  deck <- getPowerOfMordorDeck
+  unless (null deck) $ push RevealTopOfPowerOfMordorDeck
+  pure $ notNull deck
+
 -- | The top card of the Evil Creatures deck is added to the staging area, the source told
 -- of it with 'AddedFromEvilCreaturesDeck' (Journey Up the Anduin).
 addFromEvilCreaturesDeck :: (ReverseQueue m, Sourceable source) => source -> m ()

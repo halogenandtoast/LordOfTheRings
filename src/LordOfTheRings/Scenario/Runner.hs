@@ -7,7 +7,7 @@ import LordOfTheRings.Card hiding (hero)
 import LordOfTheRings.Classes.HasGame (getsGame)
 import LordOfTheRings.Classes.HasQueue
 import LordOfTheRings.Classes.RunMessage
-import LordOfTheRings.EncounterSet (EncounterSet)
+import LordOfTheRings.EncounterSet (EncounterSet (ThePowerOfMordor))
 import LordOfTheRings.I18n
 import LordOfTheRings.Keyword (Keyword (Encounter, Guarded, GuardedBy))
 import LordOfTheRings.Matcher
@@ -263,6 +263,16 @@ instance RunMessage ScenarioAttrs where
     ShuffleCavesDeck -> do
       deck <- shuffleM attrs.cavesDeck
       pure $ attrs & cavesDeckL .~ deck
+    CreatePowerOfMordorDeck -> do
+      deck <- shuffleM =<< gatherEncounterSet attrs ThePowerOfMordor
+      pure $ attrs & powerOfMordorDeckL .~ deck
+    -- revealed as the top card of the encounter deck is: an enemy or location to the
+    -- staging area, an objective into play, a When Revealed resolved
+    RevealTopOfPowerOfMordorDeck -> case attrs.powerOfMordorDeck of
+      top : rest -> do
+        push $ RevealCard top
+        pure $ attrs & powerOfMordorDeckL .~ rest
+      [] -> pure attrs
     -- the Evil Creatures discard pile is shuffled back in once the deck is empty, as the
     -- last card leaves it (Journey Up the Anduin rules)
     AddFromEvilCreaturesDeck source engaging -> case attrs.evilCreaturesDeck of

@@ -273,6 +273,8 @@ narrationFor = \case
       one $ mechanic [ikeyPart "log.guardsObjective" ["guard" ~> g, "objective" ~> o]]
   -- an enemy with two sides turns over, as Thaurdir does
   Flip (EnemyTarget eid) -> Just $ whenRef (toTarget eid) \e -> one $ mechanic [ikeyPart "log.enemyFlips" ["enemy" ~> e]]
+  CreatePowerOfMordorDeck -> Just $ one $ mechanic [ikeyPart "log.powerOfMordorDeckCreated" []]
+  RevealTopOfPowerOfMordorDeck -> Just $ one $ toned Bad $ mechanic [ikeyPart "log.powerOfMordorReveals" []]
   -- an objective ally turning to its enemy side, as Captain Sahír's
   Flip (AllyTarget aid) -> Just $ whenRef (toTarget aid) \a -> one $ mechanic [ikeyPart "log.allyFlips" ["ally" ~> a]]
   -- a location turns over, as an Uncharted one does: the side it turns to is named
