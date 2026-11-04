@@ -3174,6 +3174,7 @@ test-suite LordOfTheRings-test
       LordOfTheRings.TravelPhaseSpec
       LordOfTheRings.VengeanceOfMordor.AShadowInTheEastPlayerCardsSpec
       LordOfTheRings.VengeanceOfMordor.ChallengeOfTheWainridersPlayerCardsSpec
+      LordOfTheRings.VengeanceOfMordor.ChallengeOfTheWainridersSpec
       LordOfTheRings.VengeanceOfMordor.ContractsSpec
       LordOfTheRings.VengeanceOfMordor.PowerOfMordorSpec
       LordOfTheRings.VengeanceOfMordor.SharedEncounterSetsSpec
