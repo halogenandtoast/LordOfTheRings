@@ -4039,5 +4039,23 @@
     "setup": [
       "“The Tower of Cirith Ungol” is played with an encounter deck built with all the cards from the following encounter sets: The Tower of Cirith Ungol, Orcs of Mordor, and Deep Shadows. Aragorn cannot be used while playing The Tower of Cirith Ungol."
     ]
+  },
+  "the-black-gate-opens": {
+    "intro": [
+      "With no hope of victory by arms, Aragorn leads the Host of the West to the gates of Mordor to draw the Dark Lord's gaze away from the Ring-bearer. A messenger of Barad-dûr rides out to meet them, and behind him the Black Gate begins to open. The longer the captains hold, the more time Frodo has to reach the Mountain of Fire."
+    ],
+    "setup": [
+      "The encounter deck is built from The Black Gate Opens and Orcs of Mordor encounter sets. The first player takes control of the Fellowship sphere Aragorn. Frodo Baggins cannot be used while playing The Black Gate Opens."
+    ],
+    "rules": [
+      {
+        "title": "Dire",
+        "text": "While the main quest has the dire keyword, each player's threat elimination level is 99, and each player's threat cannot be reduced by more than 1 each round by non-boon player card effects. Valour effects trigger at 80 threat instead of 40."
+      },
+      {
+        "title": "The Battle of the Morannon",
+        "text": "Stage 2B cannot be defeated: the scenario cannot be won. In campaign mode its campaign card resolves once the players are defeated, recording the resources on The Black Gate for Mount Doom."
+      }
+    ]
   }
 }

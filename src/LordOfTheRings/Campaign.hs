@@ -87,6 +87,9 @@ data CampaignLogKey
   | -- | the players have lost the campaign, as Mount Doom's resolution may have them: no
     -- scenario follows
     CampaignLost
+  | -- | the resources on The Black Gate as The Black Gate Opens ends ('counted', by The
+    -- Black Gate's code): Mount Doom's campaign card places as many on itself
+    BlackGateResources
   | -- | Angmar Awakened: the books The Treachery of Rhudaur's resolution lets each player
     -- add for a Clue they control, by the seat of that player ('counted'), offered as the
     -- next scenario is set up
