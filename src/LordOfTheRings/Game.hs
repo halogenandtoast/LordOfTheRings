@@ -3022,6 +3022,15 @@ runGameMessage msg g = case msg of
         pushAll $ discardAttached g (AllyTarget aid)
         let thisEnemy = overAttrs (\e -> e {enemyPlacement = StagingArea}) $ lookupEnemy other (toCard a).id (EnemyId $ unAllyId aid)
         pure $ g & entitiesL . alliesL %~ Map.delete aid & entitiesL . enemiesL %~ insertEntity thisEnemy
+  -- a location whose other side is an objective ally, as Woodmen Village's Haldan, turns
+  -- over out of the locations: the effect turning it puts that side where it says, under
+  -- the location's card id
+  Flip target@(LocationTarget lid)
+    | Just l <- Map.lookup lid g.entities.locations
+    , Just other <- cdOtherSide (toCardDef l)
+    , cdCardType (toCardDef other) == ObjectiveAllyType -> do
+        pushAll $ discardAttached g target
+        pure $ g & entitiesL . locationsL %~ Map.delete lid
   -- a double-sided location turns over, as an Uncharted location does
   Flip (LocationTarget lid) | Just l <- turnLocationOver =<< Map.lookup lid g.entities.locations -> do
     pushAll $ [ArrangeIslandMap | isJust l.position] <> [CheckWindows [mkAfter $ LocationFlipped lid]]
