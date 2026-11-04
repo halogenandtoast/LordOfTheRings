@@ -523,6 +523,13 @@ allEnemyCards =
       , fatSpider
       , wickedSpider
       , darkBats
+      , bolg
+      , bodyguardOfBolg
+      , gundabadWolfRider
+      , gundabadClimber
+      , vanguardOfBolg
+      , gundabadArcher
+      , ravenousWarg
       ]
 
 namelessThing :: CardDef
@@ -4294,3 +4301,39 @@ wickedSpider = (mirkwoodSpider "132032" "Wicked Spider" 5 25 1 4 1 3) {cdShadowE
 
 darkBats :: CardDef
 darkBats = (enemy "132036" "Dark Bats" Wilderland 3 15 2 2 0 1) {cdCardTraits = setFromList [Creature], cdShadowEffect = True}
+
+-- * The Battle of Five Armies
+
+-- | A Goblin Orc of Bolg's army.
+bolgsGoblin :: CardCode -> Name -> Int -> Int -> Int -> Int -> Int -> Int -> CardDef
+bolgsGoblin code name quantity engagementCost threat attack defense hitPoints =
+  (enemy code name TheBattleOfFiveArmies quantity engagementCost threat attack defense hitPoints)
+    { cdCardTraits = setFromList [Goblin, Orc]
+    }
+
+-- | His threat, X, is the number of players: the card adds it.
+bolg :: CardDef
+bolg = unique $ bolgsGoblin "132053" "Bolg" 1 50 0 6 3 8
+
+bodyguardOfBolg :: CardDef
+bodyguardOfBolg = bolgsGoblin "132054" "Bodyguard of Bolg" 4 35 2 4 2 5
+
+gundabadWolfRider :: CardDef
+gundabadWolfRider = (bolgsGoblin "132055" "Gundabad Wolf Rider" 3 15 1 3 0 3) {cdShadowEffect = True}
+
+gundabadClimber :: CardDef
+gundabadClimber = (bolgsGoblin "132056" "Gundabad Climber" 4 33 1 2 2 2) {cdWhenRevealed = True}
+
+vanguardOfBolg :: CardDef
+vanguardOfBolg = (bolgsGoblin "132057" "Vanguard of Bolg" 4 20 1 1 1 4) {cdShadowEffect = True, cdEasyModeQuantity = Just 3}
+
+gundabadArcher :: CardDef
+gundabadArcher = (bolgsGoblin "132058" "Gundabad Archer" 2 40 2 2 1 3) {cdWhenRevealed = True, cdShadowEffect = True}
+
+ravenousWarg :: CardDef
+ravenousWarg =
+  (enemy "132059" "Ravenous Warg" TheBattleOfFiveArmies 3 30 2 3 1 3)
+    { cdCardTraits = setFromList [Creature]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
+    }

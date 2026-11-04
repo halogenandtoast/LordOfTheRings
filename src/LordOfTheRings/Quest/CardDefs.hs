@@ -450,6 +450,11 @@ allQuestCards =
       , lostInTheDarkFliesAndSpiders
       , capturedBySpiders
       , battleWithTheSpiders
+      , theGatheringOfTheClouds
+      , theEasternSpur
+      , battleInTheDale
+      , theDefenseOfRavenhill
+      , theCloudsBurst
       ]
 
 theDrippingWalls :: CardDef
@@ -1876,3 +1881,22 @@ capturedBySpiders = quest "132069" "Captured by Spiders" FliesAndSpiders 3 11
 
 battleWithTheSpiders :: CardDef
 battleWithTheSpiders = quest "132070" "Battle with the Spiders" FliesAndSpiders 4 3
+
+-- * The Battle of Five Armies
+
+-- | No quest points on side B: its When Revealed puts stages 2 to 4 in its place.
+theGatheringOfTheClouds :: CardDef
+theGatheringOfTheClouds = (quest "132075" "The Gathering of the Clouds" TheBattleOfFiveArmies 1 0) {cdQuestPoints = Nothing}
+
+theEasternSpur :: CardDef
+theEasternSpur = quest "132076" "The Eastern Spur" TheBattleOfFiveArmies 2 8
+
+battleInTheDale :: CardDef
+battleInTheDale = (quest "132077" "Battle in the Dale" TheBattleOfFiveArmies 3 8) {cdKeywords = setFromList [Battle]}
+
+theDefenseOfRavenhill :: CardDef
+theDefenseOfRavenhill = (quest "132078" "The Defense of Ravenhill" TheBattleOfFiveArmies 4 8) {cdKeywords = setFromList [Siege]}
+
+-- | Progress cannot be placed on it: Bolg's destruction wins the game.
+theCloudsBurst :: CardDef
+theCloudsBurst = (quest "132079" "The Clouds Burst" TheBattleOfFiveArmies 5 0) {cdQuestPoints = Nothing}

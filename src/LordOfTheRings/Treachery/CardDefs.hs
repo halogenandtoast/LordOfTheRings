@@ -443,6 +443,9 @@ allTreacheryCards =
       , poisonedBySpiders
       , fightingAmongFriends
       , weighedDownWilderland
+      , hatredRekindledTheBattleOfFiveArmies
+      , goblinsAreUponYou
+      , heedlessOfOrder
       ]
 
 deepDeepDark :: CardDef
@@ -2791,3 +2794,14 @@ fightingAmongFriends = (treachery "132037" "Fighting Among Friends" Wilderland 2
 
 weighedDownWilderland :: CardDef
 weighedDownWilderland = (treachery "132038" "Weighed Down" Wilderland 2) {cdShadowEffect = True, cdEasyModeQuantity = Just 1}
+
+-- * The Battle of Five Armies
+
+hatredRekindledTheBattleOfFiveArmies :: CardDef
+hatredRekindledTheBattleOfFiveArmies = (treachery "132064" "Hatred Rekindled" TheBattleOfFiveArmies 2) {cdShadowEffect = True, cdEasyModeQuantity = Just 1}
+
+goblinsAreUponYou :: CardDef
+goblinsAreUponYou = (treachery "132065" "Goblins are Upon You!" TheBattleOfFiveArmies 2) {cdShadowEffect = True}
+
+heedlessOfOrder :: CardDef
+heedlessOfOrder = (treachery "132066" "Heedless of Order" TheBattleOfFiveArmies 2) {cdKeywords = setFromList [Surge]}

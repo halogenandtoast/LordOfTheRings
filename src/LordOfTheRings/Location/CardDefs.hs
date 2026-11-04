@@ -558,6 +558,10 @@ allLocationCards =
       , giantWeb
       , forestStream
       , hiddenPath
+      , northernSlopes
+      , ruinsOfDale
+      , ravenhill
+      , theFrontGate
       ]
 
 drownedTreasury :: CardDef
@@ -4082,3 +4086,26 @@ forestStream = (location "132027" "Forest Stream" FliesAndSpiders 2 2 4) {cdCard
 
 hiddenPath :: CardDef
 hiddenPath = (location "132035" "Hidden Path" Wilderland 3 3 1) {cdCardTraits = setFromList [Forest, Mountain]}
+
+-- * The Battle of Five Armies
+
+northernSlopes :: CardDef
+northernSlopes = (location "132060" "Northern Slopes" TheBattleOfFiveArmies 3 3 3) {cdCardTraits = setFromList [Mountain], cdEasyModeQuantity = Just 2}
+
+-- | One of the three places each tied to a quest stage, its progress drained each round.
+battlefieldLocation :: CardCode -> Name -> [Trait] -> CardDef
+battlefieldLocation code name traits =
+  unique
+    $ (location code name TheBattleOfFiveArmies 1 2 2)
+      { cdCardTraits = setFromList traits
+      , cdVictoryPoints = Just 3
+      }
+
+ruinsOfDale :: CardDef
+ruinsOfDale = battlefieldLocation "132061" "Ruins of Dale" [Ruins, Valley]
+
+ravenhill :: CardDef
+ravenhill = battlefieldLocation "132062" "Ravenhill" [Ruins, Mountain]
+
+theFrontGate :: CardDef
+theFrontGate = battlefieldLocation "132063" "The Front Gate" [Ruins, Mountain]
