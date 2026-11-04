@@ -2482,6 +2482,7 @@ test-suite LordOfTheRings-test
       LordOfTheRings.Encounter.ScriptedCardsSpec
       LordOfTheRings.EncounterPhaseSpec
       LordOfTheRings.EndGameSpec
+      LordOfTheRings.Haradrim.EscapeFromUmbarSpec
       LordOfTheRings.Haradrim.SharedEncounterSetsSpec
       LordOfTheRings.HaradrimEngineSpec
       LordOfTheRings.HeirsOfNumenor.IntoIthilienSpec
