@@ -242,8 +242,10 @@ instance RunMessage ScenarioAttrs where
     AddToEncounterDiscard cards -> do
       owned <- for cards \c -> (c,) <$> if cdCardType (toCardDef c) == EventType then pure Nothing else setAsideOwner c.id
       pushAll [PutInDiscard (MkPlayerCard c.id (toCardCode c) (Just owner)) | (c, Just owner) <- owned]
-      -- a card of the Corsair deck goes to its own discard pile, while there is one
-      pure $ foldr discardEncounterCard attrs [c | (c, Nothing) <- owned]
+      -- a card of the Corsair deck goes to its own discard pile, while there is one; a
+      -- set-aside card discarded is part of the encounter deck from then on (MEC61 rules)
+      pure $ foldr discardEncounterCard attrs [c | (c, Nothing) <- owned] & setAsideL %~ filter (`notElem` cards)
+    RemoveSetAsideFromGame cards -> pure $ attrs & setAsideL %~ filter (`notElem` cards)
     -- a set-aside card with the Encounter keyword, as Ranger Summons shuffles one in
     ShuffleIntoEncounterDeck (CardIdTarget cid) -> do
       owned <- getsGame (concatMap (.setAsideCards) . toList . gamePlayers)

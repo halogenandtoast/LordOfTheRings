@@ -345,6 +345,8 @@ data Message
   | ShuffleEncounterDiscardIntoDeck CardMatcher
   | -- | set-aside cards are shuffled into the encounter deck
     ShuffleSetAsideIntoEncounterDeck [EncounterCard]
+  | -- | set-aside cards are removed from the game, as an encounter set a scenario stops using
+    RemoveSetAsideFromGame [EncounterCard]
   | -- | matching encounter cards in the victory display are shuffled into the encounter deck
     ShuffleVictoryDisplayIntoEncounterDeck CardMatcher
   | -- | an objective ally in play joins the player as an ally
