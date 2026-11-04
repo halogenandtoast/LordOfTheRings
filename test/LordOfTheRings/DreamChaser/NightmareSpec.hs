@@ -1,13 +1,17 @@
 module LordOfTheRings.DreamChaser.NightmareSpec (spec) where
 
 import LordOfTheRings.Ally.CardDefs qualified as Allies
+import LordOfTheRings.Effect (Effect (..), EffectDuration (UntilEndOfAttack, UntilEndOfPhase, UntilEndOfRound))
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
+import LordOfTheRings.Enemy.Types (enemyTokens)
 import LordOfTheRings.Heading (Heading (..))
+import LordOfTheRings.Phase (Phase (QuestPhase))
+import LordOfTheRings.Helpers.Character (getWillpower)
 import LordOfTheRings.Helpers.Modifiers (getModifiers, preloadModifiers)
-import LordOfTheRings.Helpers.Staging (getEnemyAttack, getStagingThreat)
+import LordOfTheRings.Helpers.Staging (getEnemyAttack, getEnemyThreat, getStagingThreat)
 import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Location.Grid (Pos (..))
-import LordOfTheRings.Matcher (getEnemy)
+import LordOfTheRings.Matcher (EnemyMatcher (EnemyInStagingArea, EnemyInStormcallerArea), getEnemy, select)
 import LordOfTheRings.Modifier (ModifierType (..))
 import LordOfTheRings.Objective.CardDefs qualified as Objectives
 import LordOfTheRings.Scenario (aStormOnCobasHaven, flightOfTheStormcaller, templeOfTheDeceived, theCityOfCorsairs, theDrownedRuins, theThingInTheDepths)
@@ -53,6 +57,19 @@ staged :: CardDef -> GameT EnemyId
 staged def = do
   run . AddToStaging =<< genEncounterCard def
   enemyOf def
+
+-- | The enemy attacks the player with the shadow card dealt it, undefended, its damage
+-- going to the character.
+undefendedAttackWith :: PlayerId -> EnemyId -> CardDef -> Target -> GameT ()
+undefendedAttackWith pid eid shadow' character = do
+  _ <- setEncounterDeck [shadow']
+  run $ DealShadowCard eid
+  run $ EnemyAttack pid eid
+  passActions pid
+  chooseLabel "$label.takeAttackUndefended" pid
+  passActions pid
+  chooseTarget pid character
+  passActions pid
 
 ship :: PlayerId -> CardDef -> GameT Target
 ship pid def = do
@@ -117,6 +134,21 @@ spec = describe "Dream-chaser Nightmare mode" do
       getEnemyAttack tide `shouldReturn` 5
       getStagingThreat `shouldReturn` 5
 
+    it "Tide-runner off-course is in the staging area and the Stormcaller's area, wherever it is" . nightmare flightOfTheStormcaller $ \pid -> do
+      setHeading Rainy
+      tide <- engaged pid Enemies.tideRunner
+      run $ Run []
+      select EnemyInStagingArea `shouldReturn` [tide]
+      select EnemyInStormcallerArea `shouldReturn` [tide]
+      getStagingThreat `shouldReturn` 4
+      -- Raider of the Storm has it add its threat too: it adds it once
+      _ <- engaged pid Enemies.raiderOfTheStorm
+      getStagingThreat `shouldReturn` 5
+      setHeading Sunny
+      run $ Run []
+      select EnemyInStagingArea `shouldReturn` []
+      select EnemyInStormcallerArea `shouldReturn` []
+
     it "Cliffside Inlet's travel puts the first Ship enemy discarded into the Stormcaller's area" . nightmare flightOfTheStormcaller $ \_ -> do
       run . AddToStaging =<< genEncounterCard Locations.cliffsideInlet
       inlet <- getsGame (fromJustNote "no inlet" . fmap toId . headMay . toList . (.entities.locations))
@@ -140,6 +172,15 @@ spec = describe "Dream-chaser Nightmare mode" do
       was <- threat pid
       reveal Treacheries.deepMaelstrom []
       threat pid `shouldReturn` was + 5
+
+    it "Deep Maelstrom reveals a card for each location not grappled" . nightmare theThingInTheDepths $ \_ -> do
+      run . AddToStaging =<< genEncounterCard Locations.quarterDeck
+      run . AddToStaging =<< genEncounterCard Locations.cargoHold
+      quarter <- getsGame (fromJustNote "no Quarter Deck" . fmap toId . find ((== toCardCode Locations.quarterDeck) . toCardCode) . toList . (.entities.locations))
+      spider <- staged Enemies.forestSpider
+      run $ PlaceEnemy spider (AttachedTo (LocationTarget quarter))
+      reveal Treacheries.deepMaelstrom [Locations.crewQuarters, Locations.forecastleDeck]
+      map toCardCode <$> getEncounterDeck `shouldReturn` [toCardCode Locations.forecastleDeck]
 
     it "Corsair Duelist trades a resource for its damage instead of being defeated" . nightmare theThingInTheDepths $ \pid -> do
       duelist <- engaged pid Enemies.corsairDuelist
@@ -166,6 +207,28 @@ spec = describe "Dream-chaser Nightmare mode" do
       soldier <- staged Enemies.cursedSoldier
       getEnemyAttack soldier `shouldReturn` 6
 
+    it "King's Knight's shadow reads the attack's damage once it is over" . nightmare templeOfTheDeceived $ \pid -> do
+      wargs <- engaged pid Enemies.wargs
+      run . AttachShadowCard wargs =<< genEncounterCard Enemies.kingsKnight
+      b <- beravor
+      run $ EnemyAttack pid wargs
+      passActions pid
+      chooseTarget pid b
+      -- its attack raised once the shadow has resolved, it deals damage after all
+      run $ CreateEffect $ Effect GameSource (EnemyTarget wargs) [AttackModifier 2] UntilEndOfAttack
+      passActions pid
+      enemyPlacement Enemies.wargs `shouldReturn` Just (EngagedWith pid)
+
+    it "King's Knight returns to the staging area after an attack that dealt no damage" . nightmare templeOfTheDeceived $ \pid -> do
+      knight <- engaged pid Enemies.kingsKnight
+      run $ CreateEffect $ Effect GameSource (EnemyTarget knight) [AttackModifier (-2)] UntilEndOfRound
+      b <- beravor
+      run $ EnemyAttack pid knight
+      passActions pid
+      chooseTarget pid b
+      passActions pid
+      enemyPlacement Enemies.kingsKnight `shouldReturn` Just StagingArea
+
   describe "The Drowned Ruins" do
     it "builds the nightmare deck and Grotto deck" . nightmare theDrownedRuins $ \_ -> do
       run $ DoStep 1 Setup
@@ -186,9 +249,37 @@ spec = describe "Dream-chaser Nightmare mode" do
       run $ DealDamage GameSource (EnemyTarget shark) 2
       (.damage) <$> getEnemy shark `shouldReturn` 0
 
+    it "Pit into the Depths gives each ally -1 willpower this quest phase, one entering play later too" . nightmare theDrownedRuins $ \pid -> do
+      putGame . (phaseL .~ QuestPhase) =<< getGame
+      held <- putAllyIntoPlay pid Allies.wanderingTook
+      base <- getWillpower held
+      reveal Treacheries.pitIntoTheDepths []
+      getWillpower held `shouldReturn` base - 1
+      later <- putAllyIntoPlay pid Allies.wanderingTook
+      getWillpower later `shouldReturn` base - 1
+
+    it "Undersea Cave Troll's excess damage may discard an objective-ally's resource" . nightmare theDrownedRuins $ \pid -> do
+      troll <- engaged pid Enemies.underseaCaveTroll
+      calphon <- ship pid Objectives.calphon
+      run $ PlaceTokens GameSource calphon Resource 2
+      b <- beravor
+      run $ AttackDamage troll b
+      getsGame (fmap (.resources) . find ((== toCardCode Objectives.calphon) . toCardCode) . toList . (.entities.allies)) `shouldReturn` Just 1
+
     it "Sulfur Cloud gains surge when the active location is not Underwater" . nightmare theDrownedRuins $ \_ -> do
       reveal Treacheries.sulfurCloud [Enemies.greatShark]
       enemyPlacement Enemies.greatShark `shouldReturn` Just StagingArea
+
+    it "Sulfur Cloud limits the progress placed on all Underwater locations together this phase" . nightmare theDrownedRuins $ \pid -> do
+      run . PutIntoPlayAsActiveLocation =<< genEncounterCard Locations.jaggedCavern
+      run . AddToStaging =<< genEncounterCard Locations.jaggedCavern
+      reveal Treacheries.sulfurCloud []
+      -- choose 1: no more than 2 progress on Underwater locations this phase
+      void $ answerQuestion pid 1
+      [active, staged'] <- getsGame (sortOn (\l -> l.placement /= ActiveLocation) . toList . (.entities.locations))
+      run $ PlaceTokens GameSource (toTarget active) Progress 2
+      run $ PlaceTokens GameSource (toTarget staged') Progress 1
+      (.progress) <$> getLocation (toId staged') `shouldReturn` 0
 
   describe "A Storm on Cobas Haven" do
     it "builds the nightmare deck, Aearlang and the Docks among the Dol Amroth objectives" . nightmare aStormOnCobasHaven $ \_ -> do
@@ -197,6 +288,15 @@ spec = describe "Dream-chaser Nightmare mode" do
       map (`copies` deck)
         [Objectives.aearlang, Objectives.docksOfDolAmroth, Locations.belfalasIslet, Locations.cobasHaven, Enemies.umbarRaider, Enemies.rammingShip, Treacheries.rammingSpeed]
         `shouldBe` [1, 1, 0, 0, 2, 2, 1]
+
+    it "Ramming Ship's shadow deals the Corsair it brings out a shadow card" . nightmare aStormOnCobasHaven $ \pid -> do
+      _ <- setEncounterDeck [Enemies.southronSailor, Treacheries.rammingSpeed]
+      run PrepareCorsairDeck
+      wargs <- engaged pid Enemies.wargs
+      run . AttachShadowCard wargs =<< genEncounterCard Enemies.rammingShip
+      run $ ResolveShadow wargs pid []
+      sailor <- enemyOf Enemies.southronSailor
+      length . (.shadowCards) <$> getEnemy sailor `shouldReturn` 1
 
     it "Grappled! keeps its Ship objective from readying" . nightmare aStormOnCobasHaven $ \pid -> do
       dreamChaser <- ship pid Objectives.dreamChaser
@@ -217,6 +317,16 @@ spec = describe "Dream-chaser Nightmare mode" do
       heading `shouldReturn` Just Rainy
       getCharacterDamage dreamChaser `shouldReturn` 1
 
+    it "Broken Rudder, discarded by a Sailing test, attaches to the Ship objective committed to it" . nightmare aStormOnCobasHaven $ \pid -> do
+      dreamChaser <- ship pid Objectives.dreamChaser
+      setHeading Rainy
+      _ <- setEncounterDeck [Treacheries.brokenRudder]
+      run SailingTest
+      commitAll pid [dreamChaser]
+      chooseLabel "$label.continue" pid
+      rudders <- getsGame (filter ((== toCardCode Treacheries.brokenRudder) . toCardCode) . toList . (.entities.treacheries))
+      map (.placement) rudders `shouldBe` [AttachedTo dreamChaser]
+
   describe "The City of Corsairs" do
     it "builds the nightmare deck: the City of Corsairs icon's cards in the second deck" . nightmare theCityOfCorsairs $ \_ -> do
       run $ DoStep 1 Setup
@@ -226,6 +336,20 @@ spec = describe "Dream-chaser Nightmare mode" do
       secondDeck <- scenarioSetAside <$> scenarioAttrs
       map (`copies` secondDeck) [Enemies.umbarPatrolNightmare, Objectives.theCursedSword, Locations.streetsOfUmbar, Enemies.patrolShip]
         `shouldBe` [3, 1, 2, 0]
+
+    it "The Cursed Sword gives its enemy the excess damage of its attack as resources, once a round" . gameTest $ \_ -> do
+      eowyn <- toTarget <$> getHeroWithCode "01007"
+      theodred <- toTarget <$> getHeroWithCode "01002"
+      _ <- setEncounterDeck [Enemies.hillTroll]
+      run RevealEncounterCard
+      eid <- getsGame (fromJustNote "no enemy" . headMay . map toId . toList . (.entities.enemies))
+      run . (`PutObjectiveIntoPlayAttached` EnemyTarget eid) =<< genEncounterCard Objectives.theCursedSword
+      let resources = countTokens Resource . enemyTokens . toAttrs <$> getEnemy eid
+      -- 6 attack, Éowyn's 1 defense against her 3 hit points
+      run $ AttackDamage eid eowyn
+      resources `shouldReturn` 2
+      run $ AttackDamage eid theodred
+      resources `shouldReturn` 2
 
     it "leaves a standard game's second deck alone" . gameTestIn theCityOfCorsairs testDeck $ \_ -> do
       run $ DoStep 1 Setup
@@ -269,6 +393,45 @@ spec = describe "Dream-chaser Nightmare mode" do
       raider <- enemyOf Enemies.umbarRaider
       e <- getEnemy raider
       (e.placement, e.resources) `shouldBe` (StagingArea, 3)
+
+    it "Raise the Alarm!'s shadow adds a resource per damage the attack dealt, none when it is prevented" . nightmare theCityOfCorsairs $ \pid -> do
+      raider <- engaged pid Enemies.umbarRaider
+      hero <- getsGame (toTarget . fromJustNote "no hero" . headMay . toList . (.entities.heroes))
+      run $ CreateEffect $ Effect GameSource hero [CannotTakeDamage] UntilEndOfPhase
+      held <- (.resources) <$> getEnemy raider
+      undefendedAttackWith pid raider Treacheries.raiseTheAlarm hero
+      (.resources) <$> getEnemy raider `shouldReturn` held
+
+    it "Raise the Alarm!'s shadow adds a resource per damage the attack dealt" . nightmare theCityOfCorsairs $ \pid -> do
+      raider <- engaged pid Enemies.umbarRaider
+      hero <- getsGame (toTarget . fromJustNote "no hero" . headMay . toList . (.entities.heroes))
+      held <- (.resources) <$> getEnemy raider
+      attack <- getEnemyAttack raider
+      undefendedAttackWith pid raider Treacheries.raiseTheAlarm hero
+      (.resources) <$> getEnemy raider `shouldReturn` held + attack
+
+    it "Slave Trade pays a Raider the cost of an ally its damage destroys" . nightmare theCityOfCorsairs $ \pid -> do
+      raider <- staged Enemies.umbarRaider
+      held <- (.resources) <$> getEnemy raider
+      _ <- putAllyIntoPlay pid Allies.lorienGuide
+      reveal Treacheries.slaveTrade []
+      (.resources) <$> getEnemy raider `shouldReturn` held + 3
+
+    it "Slave Trade pays nothing for an ally the damage does not destroy" . nightmare theCityOfCorsairs $ \pid -> do
+      raider <- staged Enemies.umbarRaider
+      held <- (.resources) <$> getEnemy raider
+      guide <- putAllyIntoPlay pid Allies.lorienGuide
+      run $ CreateEffect $ Effect GameSource guide [CannotTakeDamage] UntilEndOfPhase
+      reveal Treacheries.slaveTrade []
+      (.resources) <$> getEnemy raider `shouldReturn` held
+
+    it "Foes of Ecthelion gives a Raider +1 threat per resource, counted as they change" . nightmare theCityOfCorsairs $ \_ -> do
+      raider <- staged Enemies.umbarRaider
+      base <- getEnemyThreat raider
+      reveal Treacheries.foesOfEcthelion []
+      getEnemyThreat raider `shouldReturn` base + 2
+      run $ PlaceTokens GameSource (toTarget raider) Resource 1
+      getEnemyThreat raider `shouldReturn` base + 3
 
   it "keeps the deck static" $ io do
     map (fmap nightmareSetupCard . (.nightmareDeck) . toAttrs) [flightOfTheStormcaller, theThingInTheDepths, templeOfTheDeceived, theDrownedRuins, aStormOnCobasHaven, theCityOfCorsairs]

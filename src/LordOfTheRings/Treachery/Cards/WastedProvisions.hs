@@ -1,6 +1,6 @@
 module LordOfTheRings.Treachery.Cards.WastedProvisions (wastedProvisions) where
 
-import LordOfTheRings.Scenario.Scenarios.ReturnToMirkwood.Helpers (getGuard, passGollum, tantrumTargets)
+import LordOfTheRings.Scenario.Scenarios.ReturnToMirkwood.Helpers (passGollum, shadowGuardTargets, tantrumTargets)
 import LordOfTheRings.Treachery.CardDefs qualified as Cards
 import LordOfTheRings.Treachery.Import.Lifted
 
@@ -20,7 +20,7 @@ instance RunMessage WastedProvisions where
       traverse_ (`discardTopOfDeck` 10) =<< tantrumTargets
       passGollum False
       pure t
-    ResolveShadowEffect cid _ _ _ | cid == attrs.cardId -> do
-      traverse_ (`discardTopOfDeck` 5) =<< getGuard
+    ResolveShadowEffect cid eid _ _ | cid == attrs.cardId -> do
+      traverse_ (`discardTopOfDeck` 5) =<< shadowGuardTargets eid
       pure t
     _ -> WastedProvisions <$> runMessage msg attrs

@@ -69,6 +69,9 @@ instance RunMessage TheCityOfCorsairs where
         & questDeckL .~ laterStages
         & setAsideL .~ secondDeck
     ScenarioSpecific "cityOfCorsairs.stormcallerDestroyed" _ -> pure $ TheCityOfCorsairs $ attrs & metaL .~ toJSON True
+    -- The old encounter deck and discard pile are set aside inactive. Nothing in the
+    -- scenario makes them active again, so they are let go rather than kept with the
+    -- set-aside cards, where effects reading set-aside cards would find them.
     ScenarioSpecific "cityOfCorsairs.switchEncounterDeck" _ -> do
       -- Nightmare: "also search the encounter deck and discard pile for each copy of Umbar
       -- Bridge and each copy of Inspiring Fury and shuffle them into the second encounter

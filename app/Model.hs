@@ -68,6 +68,14 @@ LotrGame sql=lotr_games
   nightmare Bool default=false
   -- | the campaign the game is a scenario of, in campaign mode
   campaignId LotrCampaignId Maybe OnDeleteSetNull
+  -- | chosen when the game is made: each deal counts toward everyone's statistics until a
+  -- debug message or an undo past something revealed takes that deal out
+  publicScoring Bool default=false
+  -- | the deal being played still counts; dealing again restores it from publicScoring
+  countsPublicly Bool default=false
+  -- | the latest step whose answer brought hidden cards into view; undoing to before it
+  -- takes the deal out of public statistics
+  revealedStep Int default=0
   createdAt UTCTime
   updatedAt UTCTime
   deriving Show
@@ -80,6 +88,8 @@ LotrCampaign sql=lotr_campaigns
   userId UserId OnDeleteCascade
   name Text
   log Value
+  -- | whether each scenario's game counts toward public statistics, as a game's does
+  publicScoring Bool default=false
   createdAt UTCTime
   updatedAt UTCTime
   deriving Show
@@ -121,6 +131,30 @@ LotrLogEntry sql=lotr_log_entries
   payload Value
   createdAt UTCTime
   UniqueLogSeq gameId seq
+  deriving Show
+
+-- | One deal of a game, kept for statistics after the game is dealt again or deleted.
+-- The result is filled in as the game ends, and taken out again by an undo past the end.
+LotrPlay sql=lotr_plays
+  Id UUID default=gen_random_uuid()
+  gameId LotrGameId Maybe OnDeleteSetNull
+  userId UserId OnDeleteCascade
+  scenario Text
+  -- | the GameMode shown: NormalMode, EasyMode or NightmareMode
+  mode Text
+  campaign Bool
+  -- | counted in everyone's statistics: the game was made to be, and this deal has had no
+  -- debug message nor an undo past something revealed
+  public Bool default=false
+  -- | the deck lists played, in seat order
+  decks Value
+  -- | Won or Lost; none while the game goes on, or after it was dealt again unfinished
+  outcome Text Maybe
+  -- | the group score, only of a victory
+  score Int Maybe
+  rounds Int Maybe
+  startedAt UTCTime
+  endedAt UTCTime Maybe
   deriving Show
 
 -- | An imported deck list. Slots name our card code when the importer could place

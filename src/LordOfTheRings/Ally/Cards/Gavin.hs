@@ -23,6 +23,8 @@ gavin = ally Gavin Cards.gavin
 deck.
 When Revealed: Put Gavin into play under any player's control committed to the quest. Add
 1 resource to Lanwyn's resource pool, if able.
+Revealed outside the quest phase there is no quest to commit him to, so he only comes into
+play.
 -}
 instance HasAbilities Gavin where
   getAbilities (Gavin a) =
@@ -37,7 +39,7 @@ sendsForHelp = map toCardCode [Treacheries.sendForHelpLeadership, Treacheries.se
 instance RunMessage Gavin where
   runMessage msg s@(Gavin a) = case msg of
     UseCardAbility _ (isSource a -> True) 1 _ -> do
-      discard a.id
+      discard a
       putOnTopOfEncounterDeck =<< genEncounterCard Cards.gavin
       helps <- getsGame (filter ((`elem` sendsForHelp) . toCardCode) . scenarioSetAside . toAttrs . gameScenario)
       unless (null helps) do
@@ -47,7 +49,7 @@ instance RunMessage Gavin where
       pure s
     UseCardAbility _ (isSource a -> True) 2 _ -> do
       phase <- getsGame gamePhase
-      when (phase == QuestPhase) $ commitToQuest a.id
+      when (phase == QuestPhase) $ commitToQuest a
       lanwyns <- select (HeroWithTitle "Lanwyn")
       for_ lanwyns \h -> placeResources a h 1
       pure s

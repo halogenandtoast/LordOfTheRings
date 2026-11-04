@@ -6,6 +6,8 @@ module LordOfTheRings.Helpers.Campaign (
   campaignUpgraded,
   campaignPartNumber,
   campaignCardResources,
+  templeSecrets,
+  getTempleSecrets,
 ) where
 
 import LordOfTheRings.Campaign
@@ -13,8 +15,9 @@ import LordOfTheRings.Card.Code (CardCode, HasCardCode (..))
 import LordOfTheRings.Classes.Entity (toAttrs)
 import LordOfTheRings.Classes.HasGame (HasGame, getsGame)
 import LordOfTheRings.Game.Base (gameScenario)
+import LordOfTheRings.Location.Grid (Pos (..))
 import LordOfTheRings.Prelude
-import LordOfTheRings.Scenario.Types (scenarioCampaign, scenarioId)
+import LordOfTheRings.Scenario.Types (ScenarioAttrs, scenarioCampaign, scenarioId)
 
 getCampaignLog :: HasGame m => m (Maybe CampaignLog)
 getCampaignLog = getsGame (scenarioCampaign . toAttrs . gameScenario)
@@ -35,3 +38,20 @@ campaignPartNumber = do
 
 campaignCardResources :: HasGame m => m Int
 campaignCardResources = maybe 0 (.cardResources) <$> getCampaignLog
+
+{- | Temple of the Deceived's secrets still facedown, each by where the Temple of the
+Deceived location it lies under is on the Island Map: the rightmost column (the sixth in
+nightmare mode, the fifth otherwise), the secrets recorded row by row.
+-}
+templeSecrets :: ScenarioAttrs -> [(Pos, CardCode)]
+templeSecrets attrs =
+  [ (Pos column r, code)
+  | Just l <- [attrs.campaign]
+  , (r, code) <- zip [0 ..] (recorded Secrets l)
+  , code /= ""
+  ]
+ where
+  column = if attrs.nightmare then 5 else 4
+
+getTempleSecrets :: HasGame m => m [(Pos, CardCode)]
+getTempleSecrets = getsGame (templeSecrets . toAttrs . gameScenario)

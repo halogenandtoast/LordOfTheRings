@@ -14,6 +14,7 @@ import LordOfTheRings.Hero.Types (HeroAttrs (..))
 import LordOfTheRings.Id
 import LordOfTheRings.Log
 import LordOfTheRings.Log.Block
+import LordOfTheRings.Name (Name (..))
 import LordOfTheRings.Phase
 import LordOfTheRings.Prelude
 import LordOfTheRings.Source
@@ -63,6 +64,28 @@ findCard cid g = find ((== cid) . (.id)) everywhere
     concatMap (\p -> p.hand <> p.deck <> p.discard) players
       <> map EncounterCard (scenario.encounterDeck <> scenario.encounterDiscard)
       <> map EncounterCard (concatMap (.shadowCards) (toList g.entities.enemies))
+
+-- | The title of the card behind a source, in play or not, as "a card effect other than
+-- Athelas" reads it.
+sourceCardTitle :: Game -> Source -> Maybe Text
+sourceCardTitle g = fmap cardTitle . (lookupCardDef <=< code)
+ where
+  es = g.entities
+  code = \case
+    AbilitySource s _ -> code s
+    HeroSource i -> toCardCode <$> Map.lookup i es.heroes
+    AllySource i -> toCardCode <$> Map.lookup i es.allies
+    AttachmentSource i -> toCardCode <$> Map.lookup i es.attachments
+    ObjectiveSource i -> toCardCode <$> Map.lookup i es.objectives
+    LocationSource i -> toCardCode <$> Map.lookup i es.locations
+    TreacherySource i -> toCardCode <$> Map.lookup i es.treacheries
+    QuestSource i -> toCardCode <$> Map.lookup i es.quests
+    CardIdSource cid -> toCardCode <$> findCard cid g
+    CardCodeSource c -> Just c
+    _ -> Nothing
+
+cardTitle :: CardDef -> Text
+cardTitle def = case cdName def of Name t _ -> t
 
 -- | Send an entry, filed under whatever block is open, and stamped with where in the game
 -- it happened. An entry that already names its group keeps it: a block's own header and

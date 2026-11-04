@@ -1,15 +1,18 @@
 module LordOfTheRings.Modifier (module LordOfTheRings.Modifier) where
 
+import LordOfTheRings.Campaign (CampaignLogKey)
 import LordOfTheRings.Card.CardType (CardType)
 import LordOfTheRings.Card.Code (CardCode)
 import LordOfTheRings.Id (PlayerId)
 import LordOfTheRings.Keyword (Keyword)
-import LordOfTheRings.Matcher.Types (CardMatcher, EnemyMatcher, PlayerMatcher)
+import LordOfTheRings.Matcher.Types (CardMatcher, EnemyMatcher, LocationMatcher, PlayerMatcher)
 import LordOfTheRings.Outcome (Outcome)
+import LordOfTheRings.Placement (Placement)
 import LordOfTheRings.Prelude
 import LordOfTheRings.Source
 import LordOfTheRings.Sphere
 import LordOfTheRings.Target (Target)
+import LordOfTheRings.Token (Token)
 import LordOfTheRings.Trait
 
 data ModifierType
@@ -28,6 +31,14 @@ data ModifierType
   | GainTrait Trait
   | GainResourceIcon Sphere
   | ReturnToHandAtEndOfPhase
+  | -- | on an ally, or its card id: it is discarded at the end of the phase, as Command's
+    DiscardAtEndOfPhase
+  | -- | on a character, until the end of the phase: the modifier applies to its next attack
+    -- only, as Tides of Fate's "+3 attack for its next attack this phase"
+    ForNextAttack ModifierType
+  | -- | on the game: if the players win the scenario, the card is recorded under the key in
+    -- the campaign log, as Determination marks its character "determined"
+    RecordedIfWon CampaignLogKey CardCode
   | ShuffleIntoDeckAtEndOfPhase
   | -- | a card in the staging area adds nothing to the staging total
     DoesNotContributeThreat
@@ -47,7 +58,8 @@ data ModifierType
     CannotAttack
   | -- | on a character: it does not exhaust, so cannot commit, attack or defend
     CannotExhaust
-  | CannotReady
+  | -- | on a character; on the game, no character readies, as Enfeebled reads
+    CannotReady
   | -- | on an enemy: characters with ranged may attack it in the staging area
     AttackableInStagingAreaByRanged
   | -- | on an enemy: it cannot attack that player, though it may attack others
@@ -115,10 +127,37 @@ data ModifierType
     DoesNotCountAttack
   | -- | on an enemy: its attack is undefended, no character may defend against it
     CannotBeDefended
-  | -- | on a location: at most this much more progress can be placed on it now
+  | -- | on a location or quest card: at most this much more progress can be placed on it
+    -- now, as a stage that "cannot have more than 15 progress tokens on it" gives itself
     ProgressLimit Int
+  | -- | on a quest card: it is not defeated, whatever its progress; once nothing gives it
+    -- this, it is checked again, as "the players cannot defeat this stage while..." reads
+    CannotBeDefeated
   | -- | on a character committed to the quest: its willpower does not count toward it
     DoesNotCountWillpower
+  | -- | on a character: its willpower is reduced to 0, whatever else modifies it, as A Fell
+    -- Dread reads; one whose willpower cannot be reduced keeps it
+    WillpowerReducedToZero
+  | -- | on an enemy: it gets +1 threat for each token of the kind on it, counted as they
+    -- change, as Foes of Ecthelion reads for resources
+    ThreatPerToken Token
+  | -- | on the game: the total threat in the staging area is raised by 1 for each token of
+    -- the kind on the card, counted as they change, as The Tower Beckons reads
+    StagingThreatPerToken Target Token
+  | -- | on the game: each ally in play takes the modifier, one that enters play later too,
+    -- for as long as the effect lasts, as Pit into the Depths reads
+    EachAlly ModifierType
+  | -- | on an enemy: it has attacked this phase, as Howling of Wargs reads
+    AttackedThisPhase
+  | -- | on the game: no more than this much progress may be placed on locations with the
+    -- trait this phase, all of them together, as Sulfur Cloud reads for Underwater
+    PhaseProgressLimitOnTrait Trait Int
+  | -- | on the game, by an effect until the end of the phase: this much progress was placed
+    -- on locations with the trait (see 'PhaseProgressLimitOnTrait')
+    ProgressPlacedOnTraitThisPhase Trait Int
+  | -- | on an enemy: each character its excess damage goes to, as
+    -- 'ExcessDamageToOtherCharacters' sends it, is exhausted, as Terrible Strength reads
+    ExhaustsCharactersDamagedByExcess
   | -- | on a character: it is discarded from play once its willpower is 0, as The
     -- Mountains' Peaks reads
     DiscardedAtNoWillpower
@@ -127,6 +166,9 @@ data ModifierType
     MustBeTraveledTo
   | LeavesPlayToTopOfEncounterDeck
   | ShuffledIntoEncounterDeckWhenDefeated
+  | -- | on an encounter card: as it leaves play the first player shuffles it into any
+    -- player's deck, as Recurring Nightmare reads
+    LeavesPlayToAnyPlayersDeck
   | ReturnToTopOfEncounterDeckAfterCombat
   | -- | on a location: the players cannot travel there now (its travel cost cannot be paid)
     CannotBeTraveledTo
@@ -234,12 +276,17 @@ data ModifierType
     DoesNotExhaustToCommit
   | -- | on the game: no player card may cancel an encounter card's effects
     CannotCancelEncounterEffects
-  | -- | on an encounter card: its When Revealed effect cannot be canceled
+  | -- | on an encounter card: its When Revealed effect cannot be canceled; on the game:
+    -- no encounter card's can be
     WhenRevealedCannotBeCanceled
+  | -- | on a shadow card: its shadow effect cannot be canceled
+    ShadowCannotBeCanceled
   | -- | on the game: matching cards cost this much more to play from hand
     IncreaseCost CardMatcher Int
   | -- | on a player: matching cards they play from hand cost this much less
     ReduceCostOf CardMatcher Int
+  | -- | as 'ReduceCostOf', to no less than 1, as Master of Lore's
+    ReduceCostOfToMinimumOne CardMatcher Int
   | -- | on a card in hand, as its card id: it costs this much more to play (less, when
     -- negative)
     CostModifier Int
@@ -257,6 +304,8 @@ data ModifierType
     IgnoresDefenseWhenAttackingAlone
   | -- | on a player: an enemy engaged them this round
     EngagedAnEnemyThisRound
+  | -- | on an enemy: it engaged a player this round, as Nowhere to Hide's shadow reads
+    EngagedThisRound
   | -- | on a player: they played a copy of the card this phase
     PlayedThisPhase CardCode
   | -- | on a card: the card type its controller named
@@ -275,6 +324,9 @@ data ModifierType
   | -- | on a quest card, by an effect until the end of the round: this much progress was
     -- placed on it this round (see 'progressPlacedThisRound')
     ProgressPlacedThisRound Int
+  | -- | on a quest card, by an effect until the end of the phase: this much progress was
+    -- placed on it this phase (see 'progressPlacedThisPhase')
+    ProgressPlacedThisPhase Int
   | -- | on the game: the next enemy to enter the staging area takes the modifier instead,
     -- for as long as the effect lasts
     NextEnemyInStaging ModifierType
@@ -283,6 +335,10 @@ data ModifierType
     CannotLeavePlay
   | -- | on a character or enemy: any amount of damage dealt to it is reduced to this much
     DamageReducedTo Int
+  | -- | the card is considered to be there too, wherever it is, as Tide-runner off-course is
+    -- in the staging area and the Stormcaller's area: what reads where it is reads that, but
+    -- it does not move there
+    ConsideredIn Placement
   | -- | on the game: matching enemies engaged with players add their threat to the staging
     -- area too, as Conflict at the Crossroads reads
     EngagedEnemiesAddThreat EnemyMatcher
@@ -330,6 +386,9 @@ data ModifierType
     ResourcePhaseDraws Int
   | -- | on a player: their threat cannot be reduced, as The Empty Mug reads
     CannotReduceThreat
+  | -- | on a player: a player card reduces their threat by at most this much, as Mines of
+    -- Cirith Gurat's "reduce that amount to 1" reads
+    PlayerCardThreatReductionLimit Int
   | -- | on a player: the threat at which they are eliminated, 50, moves by this much, as
     -- Double Dealings lowers it by 10
     EliminationThreatModifier Int
@@ -398,13 +457,22 @@ data ModifierType
     -- much by 'ProgressCanceled'
     QuestProgressCanceledBy Source
   | -- | on a location in the staging area: nothing moves it out, to be active, to a deck or
-    -- out of the game, as The Crossing at Tharbad reads; explored, it still leaves play
+    -- out of the game, as The Crossing at Tharbad reads; explored, it still leaves play. On
+    -- an enemy there: it is not engaged, moved or discarded, as The Black Serpent reads;
+    -- give it 'CannotBeOptionallyEngagedBy' too, for the players not to be offered it.
+    -- On a card in the Orcs' area, the same holds of that area (Race Across Harad)
     CannotLeaveStagingArea
   | -- | on a hero: player card effects cannot give it resources, as No End in Sight reads;
     -- encounter card effects still may
     CannotGainResourcesFromPlayerCardEffects
   | -- | on a player: he played a card this round, from wherever, as A Forgotten Land counts
     PlayedACardThisRound
+  | -- | on a player: he played a card this phase, as "the first card each player plays each
+    -- phase" counts (The Long Arm of Mordor)
+    PlayedACardThisPhase
+  | -- | on a player: he played a card of the type this round, from wherever, as The Storm
+    -- Comes reads "the first ally played by each player each round"
+    PlayedCardTypeThisRound CardType
   | -- | on a player: they draw this many more cards in the resource phase, in the same
     -- draw, as Bilbo Baggins reads
     AdditionalResourcePhaseDraws Int
@@ -470,6 +538,9 @@ data ModifierType
   | -- | on a character: committed to a Sailing test it counts as this many characters, as
     -- the Dream-chaser counts as 2
     CountsAsSailingCharacters Int
+  | -- | on a character: committed to a Sailing test it counts as this many characters more,
+    -- as Enlarged Quarters' "1 additional character"
+    AdditionalSailingCharacters Int
   | -- | on a Ship enemy: its Boarding X is raised (lowered, when negative) by this much,
     -- as Cobas Haven reduces it
     BoardingModifier Int
@@ -538,6 +609,19 @@ data ModifierType
     ExcessDamageTo Target
   | -- | on a player: they cannot discard cards from their hand, as Isen River reads
     CannotDiscardFromHand
+  | -- | on a player: he cannot have more than this many cards in hand, discarding down to
+    -- it at once, as In Enemy Territory reads
+    HandSizeLimit Int
+  | -- | on an objective: the first player claims it as soon as nothing guards it, attaching
+    -- it to a hero he controls, as The Black Serpent's stages read of each Harad objective
+    -- that is not attached
+    FirstPlayerClaimsWhenFree
+  | -- | on the game, or a character: player card effects cannot ready it, as Find Water
+    -- reads; the refresh phase still does
+    CannotBeReadiedByPlayerCards
+  | -- | on a character: it cannot defend against matching enemies, as Uruk of Mordor reads
+    -- for allies with less willpower than its threat
+    CannotDefendAgainst EnemyMatcher
   | -- | on a character: it cannot attack or defend against matching enemies, as Cursed
     -- Burden reads
     CannotFight EnemyMatcher
@@ -601,6 +685,78 @@ data ModifierType
   | -- | on a player: card effects draw him no cards, the resource phase's draw still does, as
     -- Isolated reads
     CannotDrawCardsFromCardEffects
+  | -- | on a card: it is considered to have no resources, as Captain's Quarters reads of
+    -- Raider characters
+    HasNoResources
+  | -- | on the game: archery damage must be dealt to Ship objectives, as City Under Siege
+    -- reads
+    ArcheryDamageToShipObjectives
+  | -- | on the game: no more than 1 ally can enter play each round, however it enters, as
+    -- Corsair Waters reads
+    OneAllyEntersPlayPerRound
+  | -- | on the game: no player card may cancel a When Revealed effect, as Decrepit City
+    -- reads
+    CannotCancelWhenRevealedEffects
+  | -- | on the game: no player card may cancel a shadow effect, as Stronghold Tower and
+    -- Dark and Stormy read
+    CannotCancelShadowEffects
+  | -- | on a player: he has played an event this round
+    PlayedEventThisRound
+  | -- | on the game: the players have played an ally this round
+    PlayedAnAllyThisRound
+  | -- | on the game: the matching active location adds its threat to the staging area, as
+    -- Flooded Ruins reads
+    ActiveLocationsAddThreat LocationMatcher
+  | -- | on the game: a treachery card has been revealed this round
+    TreacheryRevealedThisRound
+  | -- | on the game: as an additional cost to bypass a quest card, each player raises his
+    -- threat by this much, as Shadowed Corridor reads
+    BypassCostRaisesThreat Int
+  | -- | on a location: it cannot enter the staging area, as Shrine to Morgoth reads
+    CannotEnterStagingArea
+  | -- | on a character: card effects cannot ready it, the refresh phase still does, as
+    -- Twisting Hollow reads
+    CannotReadyFromCardEffects
+  | -- | on a character: the refresh phase is readying it, not a card effect
+    ReadiedByRefresh
+  | -- | on a quest card: this much progress that would have been placed on it was canceled
+    -- this round
+    ProgressCanceledThisRound Int
+  | -- | on a card in play: player card effects cannot damage it, as The Watcher's in the
+    -- staging area; its other effects still reach it
+    CannotBeDamagedByPlayerCardEffects
+  | -- | on an enemy: the player's card effects cannot damage it, as Marshland Outlaws bars
+    -- them from other enemies
+    CannotBeDamagedByEffectsOf PlayerId
+  | -- | on an enemy: the damage its attacks deal goes to one of these instead, as Orc
+    -- Saboteur's goes to a Battleground location
+    AttackDamageRedirectedTo Target
+  | -- | on a card in play: no player attachment can be attached to it; encounter cards
+    -- still may, as Stuart's Trolls
+    CannotHavePlayerAttachments
+  | -- | on an enemy in the staging area: it attacks matching players during the combat
+    -- phase, as if engaged with them, without counting as engaged, as Snow-Giant
+    AttacksAsIfEngagedWith PlayerMatcher
+  | -- | on a player: no card he controls can ready, as Ungoliant's Brood reads
+    ControlledCardsCannotReady
+  | -- | on an enemy: no more than this many characters can attack it each round, as Graxar
+    AttackersPerRoundLimit Int
+  | -- | on an enemy, by an effect until the end of the round: a character was declared as
+    -- an attacker against it, for 'AttackersPerRoundLimit' to count
+    DeclaredAttackerThisRound
+  | -- | on an enemy: if its attack deals damage, the target gets the modifier until the end
+    -- of the round, as Giant Scorpion's shadow bars the defender from readying
+    AttackDamageModifiesUntilEndOfRound Target ModifierType
+  | -- | on the game: allies enter play exhausted, as Flight to Gondor reads
+    AlliesEnterPlayExhausted
+  | -- | in a lasting effect: its modifiers apply only while the card shows the side of this
+    -- code, as Lost Underground blanks On Track's Forced effects and not Off Track's
+    WhileShowing CardCode
+  | -- | on the game: progress cannot be placed on quest cards, as Chaos in the Night reads
+    NoProgressOnQuestCards
+  | -- | on the game: the total threat of the cards in the Orcs' area is added to the staging
+    -- area's, as Howling at their Heels reads (Race Across Harad)
+    OrcsAreaThreatAddsToStaging
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
@@ -610,3 +766,8 @@ data Modifier = Modifier
   }
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
+
+-- | How many characters a character committed to a Sailing test counts as, by its
+-- modifiers: 1, or as many as it counts as, plus any additional.
+sailingCharacters :: [ModifierType] -> Int
+sailingCharacters ms = fromMaybe 1 (headMay [n | CountsAsSailingCharacters n <- ms]) + sum [n | AdditionalSailingCharacters n <- ms]

@@ -25,7 +25,7 @@ import LordOfTheRings.Window (WindowType (PhaseEnds), mkWhen)
 import TestImport
 
 -- | Two seats: the test deck (Beravor, Éowyn, Théodred) first, then the Dwarves of Durin
--- (with Bifur, a Lore hero).
+-- (with Dáin Ironfoot, a Leadership hero, and Bifur, a Lore one).
 table :: Scenario -> (PlayerId -> PlayerId -> GameT ()) -> IO ()
 table scenario body = do
   seats <- traverse (fmap (either (error . show) id) . uncurry loadPlayer) (("one", testDeck) :| [("two", coreDeck "dwarves-of-durin")])
@@ -68,15 +68,15 @@ spec = describe "Player choices" do
     getHeroResources beravor.id `shouldReturn` 0
     getHeroResources bifur.id `shouldReturn` 1
 
-  it "lets any player spend Lore on Grimbeorn the Old" . table conflictAtTheCarrock $ \_ two -> do
+  it "lets any player spend Leadership on Grimbeorn the Old" . table conflictAtTheCarrock $ \_ two -> do
     run . AddToStaging =<< genEncounterCard Objectives.grimbeornTheOld
     grimbeorn <- getsGame (toTarget . fromJustNote "no Grimbeorn" . headMay . toList . (.entities.objectives))
-    bifur <- hero "03002"
-    run $ PlaceTokens GameSource (toTarget bifur) Resource 1
+    dain <- hero "02116"
+    run $ PlaceTokens GameSource (toTarget dain) Resource 1
     run $ ActionWindow two
     chooseAbilityOf two grimbeorn
     getsGame (sum . map (.resources) . toList . (.entities.objectives)) `shouldReturn` 1
-    getHeroResources bifur.id `shouldReturn` 0
+    getHeroResources dain.id `shouldReturn` 0
 
   it "lowers the next Silvan ally any player plays after O Lórien!" . table passageThroughMirkwood $ \one two -> do
     eowyn <- hero "01007"

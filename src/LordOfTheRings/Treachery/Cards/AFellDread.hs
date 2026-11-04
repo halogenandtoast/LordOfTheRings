@@ -14,7 +14,7 @@ aFellDread = treachery AFellDread Cards.aFellDread
 to 0. During the quest phase, attached hero must commit to the quest, if able."
 -}
 instance HasModifiersFor AFellDread where
-  getModifiersFor (AFellDread a) = withHost a \host -> modified a host [DoesNotCountWillpower, MustCommitToQuest]
+  getModifiersFor (AFellDread a) = withHost a \host -> modified a host [WillpowerReducedToZero, MustCommitToQuest]
 
 -- | When Revealed: The player with the highest threat must attach A Fell Dread to a hero
 -- he controls without A Fell Dread attached. With a tie the first player chooses which of

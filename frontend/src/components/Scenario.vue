@@ -46,6 +46,10 @@ const settings = ['sunny', 'cloudy', 'rainy', 'stormy'].map((key) => ({
         <li v-for="s in settings" :key="s.key" :class="{ current: s.key === scenario.heading }"><span class="icon" :style="s.icon" /></li>
       </ol>
     </div>
+    <div v-if="scenario.temperature != null" class="heading" data-tracker="temperature">
+      <span class="heading-label">{{ $t('game.temperature') }}</span>
+      <span class="temperature">{{ scenario.temperature }}</span>
+    </div>
     <GameCard v-if="scenario.nightmareCard" :card="scenario.nightmareCard" :choices="choices" @choose="emit('choose', $event)" />
     <!-- in campaign mode, the campaign card next to the quest deck -->
     <GameCard v-if="scenario.campaignCard" :card="scenario.campaignCard" :choices="choices" @choose="emit('choose', $event)" />
@@ -104,6 +108,21 @@ const settings = ['sunny', 'cloudy', 'rainy', 'stormy'].map((key) => ({
         />
       </div>
     </div>
+    <!-- the Orcs' area: their own quest stage, and the cards not in the staging area -->
+    <div v-if="scenario.orcsStage" class="stormcaller-area">
+      <span class="heading-label">{{ $t('log.orcsArea') }}</span>
+      <div class="stormcaller-cards">
+        <GameCard :card="scenario.orcsStage" rotated :choices="choices" @choose="emit('choose', $event)" />
+        <GameCard
+          v-for="c in scenario.orcsArea"
+          :key="c.id"
+          :card="c"
+          :choices="choices"
+          :flipping="isFlipping(c)"
+          @choose="emit('choose', $event)"
+        />
+      </div>
+    </div>
   </section>
 </template>
 
@@ -111,6 +130,7 @@ const settings = ['sunny', 'cloudy', 'rainy', 'stormy'].map((key) => ({
 .scenario { flex: 0 0 auto; }
 .deck { display: flex; flex-direction: column; gap: 4px; }
 .heading { display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: 0.6rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); }
+.temperature { font-size: 1.2rem; color: var(--text); }
 .heading-track { display: flex; flex-direction: column; gap: 2px; margin: 0; padding: 0; list-style: none; }
 .heading-track li { width: 1.6rem; height: 1.6rem; display: grid; place-items: center; border: 1px solid var(--line-strong); border-radius: 4px; font-size: 0.9rem; opacity: 0.4; }
 .heading-track li.current { opacity: 1; border-color: currentColor; color: var(--text); }

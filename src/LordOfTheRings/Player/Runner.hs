@@ -96,15 +96,19 @@ runPlayer msg player = case msg of
           [ Label (ikey "label.keepHand") []
           , Label (ikey "label.mulligan") [Mulligan player.id]
           ]
+      -- a card a hero's Setup put in hand stays there, as Thurindir's side quest (Caleb's
+      -- ruling: it is searched for before the setup hand, and kept through a mulligan)
       let (hand, deck) = splitAt startingHandSize player.deck
-      pure $ player & handL .~ hand & deckL .~ deck
+      pure $ player & handL <>~ hand & deckL .~ deck
     DiscardEventsFromHand pid | pid == player.id -> do
       let (events, rest) = partition ((== EventType) . (.cardType)) player.hand
       pure $ player & handL .~ rest & discardL %~ (events <>)
     Mulligan pid | pid == player.id -> do
-      send $ ShuffleIntoDeck $ map (.id) player.hand
-      (hand, deck) <- splitAt startingHandSize <$> shuffleM (player.hand <> player.deck)
-      pure $ player & handL .~ hand & deckL .~ deck
+      -- only the setup hand, the last cards in hand, goes back
+      let (kept, drawn) = splitAt (length player.hand - startingHandSize) player.hand
+      send $ ShuffleIntoDeck $ map (.id) drawn
+      (hand, deck) <- splitAt startingHandSize <$> shuffleM (drawn <> player.deck)
+      pure $ player & handL .~ kept <> hand & deckL .~ deck
     -- a raise opens a window before it, as Harbor Thug's Forced effect answers
     RaiseThreat pid n | pid == player.id, n > 0 -> do
       pushAll [CheckWindows [mkWhen $ ThreatRaised pid], DoRaiseThreat pid n]
@@ -139,15 +143,16 @@ runPlayer msg player = case msg of
               . gameEntities
           )
       pushAll [Discard (toTarget t) | t <- take 1 shackles]
+      unless (blocked || notNull shackles) $ push $ DoDrawCards drawing
+      pure player
+    DoDrawCards drawing | drawing.player == player.id -> do
       let (cards, deck) = splitAt drawing.count player.deck
           -- a hero in the deck was shuffled in by Lost and Alone, and is put into play as drawn
           (heroes, drawn) = partition ((== HeroType) . (.cardType)) cards
-      if blocked || notNull shackles
-        then pure player
-        else do
-          pushAll [PutHeroIntoPlay player.id pc | PlayerCard pc <- heroes]
-          pushWhen (notNull cards) $ CheckWindows [mkAfter $ CardsDrawn player.id (length cards)]
-          pure $ player & handL <>~ drawn & deckL .~ deck
+      pushAll [PutHeroIntoPlay player.id pc | PlayerCard pc <- heroes]
+      pushAll [EncounterCardEnteredHand player.id ec | EncounterCard ec <- drawn]
+      pushWhen (notNull cards) $ CheckWindows [mkAfter $ CardsDrawn player.id (length cards)]
+      pure $ player & handL <>~ drawn & deckL .~ deck
     WithTarget (isTarget player -> True) (DoPhase PlanningPhase) -> do
       actionWindow (ikey "label.planningActions") (ikey "label.donePlanning") (Just QuestPhase)
         $ WithTarget (toTarget player) (DoPhase PlanningPhase)
@@ -208,10 +213,12 @@ runPlayer msg player = case msg of
       | pid == player.id
       , cdCardType (toCardDef card) == EventType
       , cdCost (toCardDef card) == Just DynamicCost -> do
-          push $ CheckWindows [mkAfter $ PlayedCard pid (toCardCode card)]
+          push $ CheckWindows [mkAfter $ PlayedCard pid card]
           pure $ player & discardL %~ (PlayerCard card :)
     PlayAtNoCost pid card | pid == player.id -> do
-      pushAll $ playCard pid card [] <> [CheckWindows [mkAfter $ PlayedCard pid (toCardCode card)]]
+      -- played from wherever, it counts as one paid for does, as Silent Guardian reads
+      push $ CreateEffect $ Effect GameSource (PlayerTarget pid) [PlayedCardTypeThisRound (cdCardType $ toCardDef card)] UntilEndOfRound
+      pushAll $ playCard pid card [] <> [CheckWindows [mkAfter $ PlayedCard pid card]]
       pure player
     PlayFromHandAtNoCost pid cid | pid == player.id -> case find ((== cid) . (.id)) player.hand of
       Just card@(PlayerCard pc) -> do
@@ -252,6 +259,21 @@ runPlayer msg player = case msg of
       let (moved, kept) = partition ((== cid) . (.id)) player.deck
       pure $ player & deckL .~ moved <> kept
     RemoveFromDiscard pid cid | pid == player.id -> pure $ player & discardL %~ filter ((/= cid) . (.id))
+    -- of the attachments it may go on, those the player can afford to play there
+    PlayAttachmentFromDiscardOn pid source host | pid == player.id -> do
+      playable <- flip filterM [pc | PlayerCard pc <- player.discard, cdCardType (toCardDef pc) == AttachmentType] \pc -> do
+        let card = PlayerCard pc
+        discount <- attachDiscount card host
+        andM [elem host <$> cardHosts (toCardCode pc), passesUnique card, not <$> cannotPlay pid card, canAffordWith discount player card]
+      choices <- for playable \pc ->
+        targetLabel (CardIdTarget pc.id)
+          <$> inLogBlock (PlayBlock pid (PlayerCard pc)) [RemoveFromDiscard pid pc.id, PayToAttach pid (PlayerCard pc) False [] host]
+      pushWhen (notNull choices)
+        $ Ask pid
+        $ QuestionLabel (ikey "label.playAttachmentFromDiscard") (sourceTarget source) [host]
+        $ SearchCards (map PlayerCard playable)
+        $ ChooseOne choices
+      pure player
     -- a card placed underneath another leaves wherever its owner had it
     PlaceUnderneath _ cards -> do
       let gone c = c.id `elem` map (.id) cards
@@ -261,8 +283,10 @@ runPlayer msg player = case msg of
       pure $ player & deckL .~ deck & discardL .~ []
     TakeFromDeck pid cid | pid == player.id -> do
       let (taken, kept) = partition ((== cid) . (.id)) player.deck
+      pushAll [EncounterCardEnteredHand pid ec | EncounterCard ec <- taken]
       pure $ player & deckL .~ kept & handL <>~ taken
     DebugSearchDeck pid | pid == player.id -> do
+      -- not shuffled after: a debug search leaves the rest of the deck in its order
       push
         $ Ask pid
         $ QuestionLabel (ikey "label.takeCardIntoHand") Nothing []
@@ -319,7 +343,10 @@ runPlayer msg player = case msg of
     DiscardTopOfDeck pid n | pid == player.id -> do
       let (discarded, deck) = splitAt n player.deck
       pushWhen (notNull discarded) $ CheckWindows [mkAfter $ DiscardedFromDeck pid c.id | c <- discarded]
-      pure $ player & deckL .~ deck & discardL %~ (discarded <>)
+      -- an encounter card in the deck goes to the encounter discard pile
+      let encounter = [ec | EncounterCard ec <- discarded]
+      pushWhen (notNull encounter) $ AddToEncounterDiscard encounter
+      pure $ player & deckL .~ deck & discardL %~ ([c | c@(PlayerCard _) <- discarded] <>)
     SwapHandWithDeck pid fromHand fromDeck | pid == player.id -> do
       let swap c
             | c.id == fromHand = fromMaybe c $ find ((== fromDeck) . (.id)) player.deck
@@ -340,6 +367,9 @@ runPlayer msg player = case msg of
       let (moved, kept) = partition ((== cid) . (.id)) player.discard
       deck <- shuffleM (moved <> player.deck)
       pure $ player & discardL .~ kept & deckL .~ deck
+    ShuffleCardIntoDeck pid card | pid == player.id -> do
+      deck <- shuffleM (card : player.deck)
+      pure $ player & deckL .~ deck
     ShufflePlayerDeck pid | pid == player.id -> do
       deck <- shuffleM player.deck
       pure $ player & deckL .~ deck
@@ -400,18 +430,14 @@ runPlayer msg player = case msg of
     SpendResources pid sphere n | pid == player.id && n > 0 -> do
       heroes <- traverse getHero =<< select (HeroControlledBy $ PlayerWithId player.id)
       payers <- filterM (paysFor sphere) heroes
-      case filter ((> 0) . (.resources)) payers of
-        [x] -> push $ RemoveTokens (toSource player) (toTarget x) Resource n
-        xs ->
-          push
-            $ questionLabel
-              (ikeyWith "label.payMore" [intVar "count" n])
-              pid
-              [ targetLabel
-                  x
-                  [RemoveTokens (toSource player) (toTarget x) Resource 1, SpendResources pid sphere (n - 1)]
-              | x <- xs
-              ]
+      push $ case filter ((> 0) . (.resources)) payers of
+        [x] -> RemoveTokens (toSource player) (toTarget x) Resource n
+        _ -> SpendResourcesChosen pid False sphere n []
+      pure player
+    SpendResourcesChosen pid False sphere n chosen | pid == player.id -> do
+      heroes <- traverse getHero =<< select (HeroControlledBy $ PlayerWithId player.id)
+      payers <- filterM (paysFor sphere) heroes
+      push $ spendChosen (toSource player) pid False sphere n chosen [(h.id, h.resources) | h <- payers]
       pure player
     _ -> pure player
    where
@@ -462,23 +488,32 @@ discardPlayers pid c = do
   pure [t | Modifier source (MayPlayFromDiscard m) <- mods, cardMatches m c, Just t <- [sourceTarget source]]
 
 canPlay :: HasGame m => Player -> Card -> m Bool
-canPlay p c = andM [canAfford p c, passesUnique c, correctPhase c, hasHost c, pure (canPayAdditional p c), not <$> cannotPlay p.id c]
+canPlay p c = andM [canAfford p c, passesUnique c, correctPhase c, hasHost c, canPayAdditional p c, not <$> cannotPlay p.id c]
 
--- | Whether the player has what the card costs from hand besides its resources.
-canPayAdditional :: Player -> Card -> Bool
+-- | Whether the player has what the card costs from hand besides its resources, and may
+-- pay it: one who cannot discard from hand, as Isen River bars, cannot pay a discard.
+canPayAdditional :: HasGame m => Player -> Card -> m Bool
 canPayAdditional p c = case cdAdditionalCost (toCardDef c) of
-  Just (DiscardCardsFromHand n) | c.id `elem` map (.id) p.hand -> length [x | x <- discardableHand p, x.id /= c.id] >= n
-  _ -> True
+  Just (DiscardCardsFromHand n) | c.id `elem` map (.id) p.hand -> do
+    barred <- elem CannotDiscardFromHand <$> getModifiers (PlayerTarget p.id)
+    pure $ not barred && length [x | x <- discardableHand p, x.id /= c.id] >= n
+  _ -> pure True
 
 -- | Whether the game forbids playing the card.
 cannotPlay :: HasGame m => PlayerId -> Card -> m Bool
 cannotPlay pid c = notNull <$> playProhibitions pid c
 
 canAfford :: HasGame m => Player -> Card -> m Bool
-canAfford p c = case (c.cost, c.sphere) of
+canAfford p c = do
+  -- an attachment costs what the host that lowers it most leaves
+  discount <- foldr max 0 <$> (traverse (attachDiscount c) =<< attachableHosts c)
+  canAffordWith discount p c
+
+-- | Whether the player can afford the card with its cost lowered by so much, as the host
+-- it is to go on lowers it.
+canAffordWith :: HasGame m => Int -> Player -> Card -> m Bool
+canAffordWith discount p c = case (c.cost, c.sphere) of
   (Just cost, Just sphere) -> do
-    -- an attachment costs what the host that lowers it most leaves
-    discount <- foldr max 0 <$> (traverse (attachDiscount c) =<< attachableHosts c)
     extra <- subtract discount <$> costModifier p.id c
     heroes <- traverse getHero =<< select (HeroControlledBy $ PlayerWithId p.id)
     payers <-
@@ -516,6 +551,7 @@ costModifier pid c = do
   pure $ subtract (secrecy + sum exhaustable) $ sum $ flip mapMaybe mods \case
     IncreaseCost m n | cardMatches m c -> Just n
     ReduceCostOf m n | cardMatches m c -> Just (negate n)
+    ReduceCostOfToMinimumOne m n | cardMatches m c -> Just (negate $ min n $ maybe 0 (max 0 . subtract 1 . costAsResources) c.cost)
     CostModifier n -> Just n
     -- an optional reduction counts toward whether the card can be afforded
     ReducedByDiscardingFromDeck n -> Just (negate n)
@@ -531,7 +567,7 @@ payingHeroes sphere player = do
 
 hasHost :: HasGame m => Card -> m Bool
 hasHost c
-  | c.cardType == AttachmentType, PlayIntoStagingArea <- attachMatcherFor (toCardCode c) = pure True
+  | c.cardType == AttachmentType, attachMatcherFor (toCardCode c) `elem` [PlayIntoStagingArea, PlayIntoPlayArea] = pure True
   -- an attachment's play criteria are checked here too, with its hosts
   | PlayerCard pc <- c
   , c.cardType == AttachmentType =

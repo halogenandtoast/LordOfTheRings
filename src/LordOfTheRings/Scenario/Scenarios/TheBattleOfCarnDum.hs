@@ -13,7 +13,7 @@ import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Quest.CardDefs qualified as Quests
 import LordOfTheRings.Scenario.CardDefs qualified as Nightmare
 import LordOfTheRings.Scenario.Import.Lifted
-import LordOfTheRings.Scenario.Scenarios.AngmarAwakened (angmarSetup, chooseBoonForHand, thaurdirsBurdens)
+import LordOfTheRings.Scenario.Scenarios.AngmarAwakened (angmarSetup, chooseBoonForHand, thaurdirsBurdens, thaurdirsBurdensAtSetup)
 import LordOfTheRings.Treachery.CardDefs qualified as Treacheries
 
 newtype TheBattleOfCarnDum = TheBattleOfCarnDum ScenarioAttrs
@@ -60,7 +60,7 @@ instance RunMessage TheBattleOfCarnDum where
     -- cards to the Campaign Pool.
     DoStep 9 Setup | isJust attrs.campaign -> do
       angmarSetup attrs
-      thaurdirsBurdens attrs False
+      thaurdirsBurdensAtSetup attrs
       chooseBoonForHand [Allies.elrondsChampion, Events.loreOfAncientArnor, Attachments.raimentOfTheSecondAge, Allies.rivendellSkirmishers]
       TheBattleOfCarnDum <$> runMessage msg attrs
     CheckWindows _ | isJust attrs.campaign -> do

@@ -17,9 +17,9 @@ floodedRuinsNightmare :: LocationCard FloodedRuins
 floodedRuinsNightmare = location FloodedRuins Cards.floodedRuinsNightmare
 
 -- | While Flooded Ruins is the active location, it contributes its threat to the staging
--- area.
+-- area, as modified.
 instance HasModifiersFor FloodedRuins where
-  getModifiersFor (FloodedRuins a) = when (a.placement == ActiveLocation) $ modified a GameTarget [StagingThreatBonus a.threat]
+  getModifiersFor (FloodedRuins a) = when (a.placement == ActiveLocation) $ modified a GameTarget [ActiveLocationsAddThreat (LocationWithId a.id)]
 
 instance RunMessage FloodedRuins where
   runMessage msg (FloodedRuins a) = FloodedRuins <$> runMessage msg a

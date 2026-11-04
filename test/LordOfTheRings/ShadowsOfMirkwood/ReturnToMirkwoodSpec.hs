@@ -1,8 +1,10 @@
 module LordOfTheRings.ShadowsOfMirkwood.ReturnToMirkwoodSpec (spec) where
 
 import LordOfTheRings.Ally.CardDefs qualified as Allies
+import LordOfTheRings.Decklist (loadPlayer)
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Event.CardDefs qualified as Events
+import LordOfTheRings.Helpers.Staging (getEnemyAttack)
 import LordOfTheRings.Objective.CardDefs qualified as Objectives
 import LordOfTheRings.Outcome
 import LordOfTheRings.Phase
@@ -27,6 +29,26 @@ guardGollum pid = do
     _ -> pure ()
   pure g
 
+-- | A table of two in Return to Mirkwood, both with the test deck.
+mirkwoodTable :: (PlayerId -> PlayerId -> GameT ()) -> IO ()
+mirkwoodTable body = do
+  seats <- traverse (fmap (either (error . show) id) . uncurry loadPlayer) (("one", testDeck) :| [("two", testDeck)])
+  env <- newGameEnv (newTableIn returnToMirkwood seats) (const $ pure ()) 1
+  runGameT env do
+    order <- getsGame (.playerOrder)
+    case order of
+      [one, two] -> body one two
+      _ -> error "two players"
+
+-- | Ambushing Orcs engaged with the player, dealt the shadow card, which resolves.
+ambushShadow :: PlayerId -> CardDef -> GameT EnemyId
+ambushShadow pid def = do
+  run . PutEnemyIntoPlayEngaged pid =<< genEncounterCard Enemies.ambushingOrcs
+  orcs <- getsGame (fromJustNote "no orcs" . fmap toId . find ((== toCardCode Enemies.ambushingOrcs) . toCardCode) . toList . (.entities.enemies))
+  run . AttachShadowCard orcs =<< genEncounterCard def
+  run $ ResolveShadow orcs pid []
+  pure orcs
+
 offers :: PlayerId -> Target -> GameT Bool
 offers pid t = maybe False (any \case TargetLabel t' _ -> t == t'; _ -> False) . fmap questionChoices <$> getQuestion pid
 
@@ -50,6 +72,18 @@ spec = describe "Return to Mirkwood" do
     attercop <- getsGame (fromJustNote "no Attercop" . headMay . map toId . toList . (.entities.enemies))
     run $ UndefendedDamage pid attercop
     getsGame (.outcome) `shouldReturn` Just Lost
+
+  it "has a shadow card on Ambushing Orcs that targets the guard target each other player too" . mirkwoodTable $ \one two -> do
+    _ <- guardGollum one
+    threats <- traverse (fmap (.threat) . getPlayer) [one, two]
+    _ <- ambushShadow two Treacheries.gollumsAnguish
+    traverse (fmap (.threat) . getPlayer) [one, two] `shouldReturn` map (+ 4) threats
+
+  it "resolves a shadow card on Ambushing Orcs that targets no player once" . mirkwoodTable $ \one _ -> do
+    _ <- guardGollum one
+    orcs <- ambushShadow one Enemies.wargs
+    -- undefended, +2 attack, once
+    getEnemyAttack orcs `shouldReturn` 6
 
   it "raises the guard's threat by 8 with Gollum's Anguish" . mirkwoodTest $ \pid -> do
     _ <- guardGollum pid

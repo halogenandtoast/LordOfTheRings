@@ -38,6 +38,8 @@ intoThePit = Scenario $ scenario (IntoThePit . (nightmareDeckL ?~ nightmare)) "i
 -- | Nightmare: "Forced: After Cave Torch exhausts, place 1 damage token on this card.
 -- Then, if there are 5 or more damage tokens on this card, remove Cave Torch from the
 -- game."
+-- The setup card's damage is kept in the scenario's meta. The board does not show it; the
+-- setup card would need tokens of its own for that.
 instance HasAbilities IntoThePit where
   getAbilities (IntoThePit a) = [mkAbility a 1 $ forced caveTorchExhausts | a.nightmare]
 

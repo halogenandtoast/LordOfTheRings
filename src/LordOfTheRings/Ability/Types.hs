@@ -21,6 +21,9 @@ data AbilityCost
   | -- | the player exhausts a hero the matcher picks out, chosen as they pay, as Arkham's
     -- ExhaustAssetCost; 'ActivePlayer' in it is the player paying
     ExhaustHeroCost HeroMatcher
+  | -- | the player deals this much damage to a hero the matcher picks out, chosen as they
+    -- pay, as Gladden Marshlands' action; 'ActivePlayer' in it is the player paying
+    DamageHeroCost HeroMatcher Int
   | Costs [AbilityCost]
   | -- | as 'ExhaustHeroCost', a hero or an ally the matchers pick out, as "Exhaust a Ranger
     -- character"

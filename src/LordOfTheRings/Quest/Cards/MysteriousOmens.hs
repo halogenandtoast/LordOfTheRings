@@ -2,7 +2,7 @@ module LordOfTheRings.Quest.Cards.MysteriousOmens (mysteriousOmens) where
 
 import LordOfTheRings.Attachment.CardDefs qualified as Attachments
 import LordOfTheRings.Campaign (CampaignLogUpdate (..), PoolCard (..))
-import LordOfTheRings.Card (Card (PlayerCard), genPlayerCard, toCardCode)
+import LordOfTheRings.Card (toCardCode)
 import LordOfTheRings.Quest.CardDefs qualified as Cards
 import LordOfTheRings.Quest.Import.Lifted
 
@@ -21,7 +21,7 @@ Forced: When Mysterious Omens is defeated, remove it from the Campaign Pool. The
 player may choose 1 of the following boons and attach it to a hero they control: Cunning,
 Hardy, Resolute, Ruthless, or Stalwart. Each boon chosen joins the Campaign Pool on that
 hero, as a Permanent card.
-
+The players choose in turn order, each boon taken once (the box has 1 of each).
 -}
 instance RunMessage MysteriousOmens where
   runMessage msg (MysteriousOmens attrs) = case msg of
@@ -30,19 +30,16 @@ instance RunMessage MysteriousOmens where
       MysteriousOmens <$> runMessage msg attrs
     CompleteQuest qid | qid == attrs.id -> do
       updateCampaignLog $ RemoveFromPool $ toCardCode Cards.mysteriousOmens
-      eachPlayer \p -> do
-        boons <- traverse (`genPlayerCard` Just p) [Attachments.cunning, Attachments.hardy, Attachments.resolute, Attachments.ruthless, Attachments.stalwart]
-        heroes <- traverse getHero =<< select (HeroControlledBy $ PlayerWithId p)
-        chooseOneM p do
-          questionLabeled "mysteriousOmens.chooseBoon"
-          causedBy attrs
-          showing (map PlayerCard boons)
-          labeled "pass" $ pure ()
-          for_ boons \boon -> targeting (CardIdTarget boon.id) do
-            chooseOrRunOneM p do
-              questionLabeled "campaign.attachTo"
-              targets heroes \h -> do
-                attachOutOfPlay p boon h.id
-                updateCampaignLog $ AddToPool $ PoolCard (toCardCode boon) Nothing (Just $ toCardCode h)
+      eachPlayerMayTakeOneOf
+        "mysteriousOmens.chooseBoon"
+        (Just $ toTarget attrs)
+        [Attachments.cunning, Attachments.hardy, Attachments.resolute, Attachments.ruthless, Attachments.stalwart]
+        \p boon -> do
+          heroes <- traverse getHero =<< select (HeroControlledBy $ PlayerWithId p)
+          chooseOrRunOneM p do
+            questionLabeled "campaign.attachTo"
+            targets heroes \h -> do
+              attachOutOfPlay p boon h.id
+              updateCampaignLog $ AddToPool $ PoolCard (toCardCode boon) Nothing (Just $ toCardCode h)
       MysteriousOmens <$> runMessage msg attrs
     _ -> MysteriousOmens <$> runMessage msg attrs

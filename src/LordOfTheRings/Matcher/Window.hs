@@ -1,6 +1,5 @@
 module LordOfTheRings.Matcher.Window (module LordOfTheRings.Matcher.Window) where
 
-import LordOfTheRings.Card (Card (PlayerCard))
 import LordOfTheRings.Card.Code (CardCode)
 import LordOfTheRings.Id
 import LordOfTheRings.Matcher.Types (AllyMatcher, CardMatcher, EnemyMatcher, HeroMatcher, LocationMatcher, PlayerMatcher, cardMatches)
@@ -59,6 +58,18 @@ data WindowMatcher
     SideQuestRevealedWindow Timing
   | ShadowEffectWindow Timing
   | ExploredWindow Timing LocationId
+  | -- | the location left play, however it did, for its own abilities to answer
+    LocationLeftPlayWindow Timing LocationId
+  | -- | a matching enemy entered play, however it did, as "after a Spider enemy enters
+    -- play" reads
+    MatchingEnemyEntersPlayWindow Timing EnemyMatcher
+  | -- | a player looked at one or more cards in the encounter deck, as Hideous Depths reads
+    LookedAtEncounterDeckWindow Timing
+  | -- | a player turned 1 or more hidden cards faceup (The Blood of Gondor)
+    TurnedHiddenCardsFaceupWindow Timing
+  | -- | any number of time counters removed from a matching enemy, as Sacred Forest's
+    -- Guardians read
+    TimeCountersRemovedFromEnemyWindow Timing EnemyMatcher
   | -- | any location worth no victory points explored
     ExploredWithoutVictoryWindow Timing
   | PhaseEndsWindow Timing Phase
@@ -70,9 +81,15 @@ data WindowMatcher
     StagingStepEndsWindow
   | ProgressPlacedWindow Timing Target
   | QuestedUnsuccessfullyWindow Timing
+  | -- | a guarded character, or the given one, was rescued (see 'GuardCharacter')
+    CharacterRescuedWindow Timing (Maybe Target)
   | QuestedSuccessfullyWindow Timing
+  | -- | after the progress from questing successfully is placed, as Surprise Attack reads
+    PlacedProgressFromQuestingWindow Timing
   | -- | after an attack the character, or any character, defended
     DefendedAttackWindow Timing (Maybe Target)
+  | -- | after an attack by the enemy was defended, as Noose of Vines reads
+    DefendedAttackAgainstWindow Timing EnemyId
   | PlayedFromHandWindow Timing Target
   | LocationRevealedWindow Timing
   | ShadowEffectAgainstWindow Timing Target
@@ -85,11 +102,15 @@ data WindowMatcher
   | -- | a shadow card dealt to an enemy engaged with the player
     ShadowCardDealtWindow Timing PlayerId
   | EnemyAttacksWindow Timing EnemyId
+  | -- | the enemy's attack dealt excess damage, as The Cursed Sword reads
+    EnemyDealtExcessDamageWindow Timing EnemyId
   | -- | characters attack the enemy, as "when it is attacked" reads
     EnemyAttackedWindow Timing EnemyId
   | -- | an encounter card revealed from the encounter deck with a When Revealed effect
     -- that can be canceled
     CardRevealedWindow Timing
+  | -- | as 'CardRevealedWindow', an enemy, as Dúnedain Lookout answers
+    EnemyCardRevealedWindow Timing
   | -- | a character, or any character, declared as a defender
     DefenderDeclaredWindow Timing (Maybe Target)
   | -- | a character declared as a defender against the enemy, as Snow Warg reads
@@ -135,6 +156,10 @@ data WindowMatcher
   | ChangedControlWindow Timing Target
   | -- | any player plays an event
     EventPlayedWindow Timing
+  | -- | the player plays an event, as Steward of Orthanc answers "when you play an event"
+    PlayerPlayingEventWindow Timing PlayerId
+  | -- | an enemy's attack dealt the card damage, as Dwarven Shield's attached hero
+    DamagedByEnemyAttackWindow Timing Target
   | -- | an attack with a character of the trait among its attackers dealt damage
     AttackDealtDamageWithTraitWindow Timing Trait
   | -- | a location entered play, in the staging area
@@ -207,8 +232,11 @@ data WindowMatcher
     QuestDefeatedWindow Timing Target
   | -- | any quest card was defeated, as Mendor reads
     AnyQuestDefeatedWindow Timing
-  | -- | a character the player owns was destroyed, as Scarred reads "you control"
+  | -- | a character the player controlled was destroyed
     OwnCharacterDestroyedWindow Timing PlayerId
+  | -- | a character the controller of the host (a hero) controlled was destroyed, as
+    -- Scarred reads "you control" of the hero it is attached to
+    HostControllersCharacterDestroyedWindow Timing Target
   | -- | a card effect discarded an ally with the trait from play, as Éothain reads
     AllyWithTraitDiscardedByCardEffectWindow Timing Trait
   | -- | an attack the character took part in destroyed an enemy with at least this many
@@ -220,6 +248,14 @@ data WindowMatcher
     ExploredMatchingWindow Timing CardMatcher
   | -- | a card discarded from the player's hand, as Silver Harp answers
     DiscardedFromHandWindow Timing PlayerId
+  | -- | the card discarded from the player's hand, as Starla answers her own discard
+    CardDiscardedFromHandWindow Timing PlayerId CardId
+  | -- | a card discarded from the encounter deck, as Calaerion answers
+    DiscardedFromEncounterDeckWindow Timing
+  | -- | any player's threat reduced, by anything, as Mail of Earnur answers
+    ThreatReducedWindow Timing
+  | -- | any of the windows, as "discarded from your hand or deck" reads
+    AnyWindowOf [WindowMatcher]
   | -- | the card readied, by anything, as Wellinghall Preserver answers
     BecameReadyWindow Timing Target
   | -- | a matching hero declared as a defender, as Dori answers another hero
@@ -229,6 +265,9 @@ data WindowMatcher
     RevealedTitleInVictoryDisplayWindow Timing
   | -- | it became Day or Night, as "when it becomes Night" reads
     BecomesWindow TimeOfDay
+  | -- | a card turned over to the side with this code, as "after the Search objective is
+    -- flipped to Off Track" reads
+    FlippedToWindow Timing CardCode
   | -- | any captured cards rescued (Escape from Mount Gram)
     CapturedCardsRescuedWindow Timing
   | -- | the player drew cards at the beginning of the resource phase, as Círdan the
@@ -286,6 +325,8 @@ data WindowMatcher
   | -- | a matching enemy revealed from the encounter deck, as Concealed Woods reads one with
     -- ambush
     MatchingEnemyRevealedWindow Timing EnemyMatcher
+  | -- | the attackers against the enemy were declared, as Guardian of the Golden King answers
+    AttackersDeclaredWindow Timing EnemyId
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
@@ -304,6 +345,7 @@ windowMatches matcher (Window timing wType) = case (matcher, wType) of
   (DealtDamageWindow t target, DealtDamage target' _) -> t == timing && target == target'
   (TraveledWindow t lid, Traveled lid') -> t == timing && lid == lid'
   (ExhaustedWindow t target, Exhausted target') -> t == timing && target == target'
+  (AttackersDeclaredWindow t eid, AttackersDeclared eid') -> t == timing && eid == eid'
   (AnyTraveledWindow t, Traveled _) -> t == timing
   (DefenderDeclaredWindow t who, DeclaredAsDefender target _) -> t == timing && maybe True (== target) who
   (DefenderDeclaredAgainstWindow t eid, DeclaredAsDefender _ eid') -> t == timing && eid == eid'
@@ -320,23 +362,32 @@ windowMatches matcher (Window timing wType) = case (matcher, wType) of
   (SideQuestRevealedWindow t, Revealed (QuestTarget _)) -> t == timing
   (ShadowEffectWindow t, ShadowEffectTriggered _ _) -> t == timing
   (ExploredWindow t lid, Explored lid') -> t == timing && lid == lid'
+  (LocationLeftPlayWindow t lid, LocationLeftPlay lid') -> t == timing && lid == lid'
+  (LookedAtEncounterDeckWindow t, LookedAtEncounterDeck _) -> t == timing
+  (TurnedHiddenCardsFaceupWindow t, TurnedHiddenCardsFaceup _) -> t == timing
+  (MatchingEnemyEntersPlayWindow {}, _) -> False
+  (TimeCountersRemovedFromEnemyWindow {}, _) -> False
   (PhaseEndsWindow t phase, PhaseEnds phase') -> t == timing && phase == phase'
   (RoundEndsWindow, RoundEnds) -> True
   (StagingStepBeginsWindow, StagingStepBegins) -> True
   (StagingStepEndsWindow, StagingStepEnds) -> True
   (ProgressPlacedWindow t target, ProgressPlaced target' _) -> t == timing && target == target'
   (QuestedUnsuccessfullyWindow t, QuestedUnsuccessfully) -> t == timing
+  (CharacterRescuedWindow t mt, CharacterRescued c) -> t == timing && maybe True (== c) mt
   (QuestedSuccessfullyWindow t, QuestedSuccessfully) -> t == timing
+  (PlacedProgressFromQuestingWindow t, PlacedProgressFromQuesting) -> t == timing
   (DefendedAttackWindow t who, DefendedAttack target _) -> t == timing && maybe True (== target) who
+  (DefendedAttackAgainstWindow t eid, DefendedAttack _ eid') -> t == timing && eid == eid'
   (PlayedFromHandWindow t target, PlayedFromHand target') -> t == timing && target == target'
   (LocationRevealedWindow t, Revealed (LocationTarget _)) -> t == timing
-  (ShadowEffectAgainstWindow t target, ShadowEffectAgainst target') -> t == timing && target == target'
+  (ShadowEffectAgainstWindow t target, ShadowEffectAgainst _ target') -> t == timing && target == target'
   (AnyEnemyAttacksWindow t, EnemyAttacking _ _) -> t == timing
   (CharacterLeftPlayWindow t m, CharacterLeftPlay c) -> t == timing && cardMatches m c
   (AttackedWindow t target, AttackedEnemy target' _) -> t == timing && target == target'
   (ShadowEffectResolvedWindow t eid, ShadowEffectResolved _ eid') -> t == timing && eid == eid'
   (ShadowCardDealtWindow t pid, ShadowCardDealt _ _ pid') -> t == timing && pid == pid'
   (EnemyAttacksWindow t eid, EnemyAttacking eid' _) -> t == timing && eid == eid'
+  (EnemyDealtExcessDamageWindow t eid, AttackDealtExcessDamage eid' _ _) -> t == timing && eid == eid'
   (EnemyAttackedWindow t eid, EnemyAttacked eid') -> t == timing && eid == eid'
   (AllyLeftPlayWindow t, LeftPlay (AllyTarget _) _ _) -> t == timing
   (AttackerDeclaredWindow t who, DeclaredAsAttacker target _) -> t == timing && maybe True (== target) who
@@ -356,8 +407,10 @@ windowMatches matcher (Window timing wType) = case (matcher, wType) of
   (OtherPlayerEngagedEnemyWindow t pid, EnemyEngaged _ pid') -> t == timing && pid /= pid'
   (ChangedControlWindow t target, ChangedControl target') -> t == timing && target == target'
   (EventPlayedWindow t, PlayingEvent _ _) -> t == timing
+  (PlayerPlayingEventWindow t pid, PlayingEvent pid' _) -> t == timing && pid == pid'
+  (DamagedByEnemyAttackWindow t target, DamagedByEnemyAttack target' _) -> t == timing && target == target'
   (LocationEntersPlayWindow t, EntersStagingArea (LocationTarget _)) -> t == timing
-  (CardPlayedWindow t m, PlayedCard _ code) -> t == timing && cardMatches m code
+  (CardPlayedWindow t m, PlayedCard _ card) -> t == timing && cardMatches m card
   (EnemyOptionallyEngagedWindow t eid, OptionallyEngaged eid' _) -> t == timing && eid == eid'
   (AttackUndefendedWindow t pid, AttackUndefended pid' _) -> t == timing && pid == pid'
   (EnemyDefeatedWindow t, EnemyDefeated _) -> t == timing
@@ -380,12 +433,18 @@ windowMatches matcher (Window timing wType) = case (matcher, wType) of
   (EliminatedByThreatWindow t pid, EliminatedByThreat pid') -> t == timing && pid == pid'
   (QuestDefeatedWindow t target, QuestDefeated target') -> t == timing && target == target'
   (AnyQuestDefeatedWindow t, QuestDefeated _) -> t == timing
-  (OwnCharacterDestroyedWindow t pid, CharacterDestroyed _ (PlayerCard pc)) -> t == timing && pc.owner == Just pid
+  (OwnCharacterDestroyedWindow t pid, CharacterDestroyedUnder pid' _) -> t == timing && pid == pid'
   (AllyWithTraitDiscardedByCardEffectWindow t trait, AllyDiscardedByCardEffect _ traits) -> t == timing && trait `member` traits
   (EnemyDestroyedWindow t m, EnemyDestroyed card) -> t == timing && cardMatches m card
   (DiscardedFromHandWindow t pid, DiscardedFromHand pid' _) -> t == timing && pid == pid'
+  (CardDiscardedFromHandWindow t pid cid, DiscardedFromHand pid' cid') -> t == timing && pid == pid' && cid == cid'
+  (DiscardedFromEncounterDeckWindow t, DiscardedFromEncounterDeck _) -> t == timing
+  (ThreatReducedWindow t, ThreatReduced _ _) -> t == timing
+  (ActiveLocationExploredWindow t, ActiveLocationExplored _) -> t == timing
+  (AnyWindowOf ms, _) -> any (\m -> windowMatches m (Window timing wType)) ms
   (BecameReadyWindow t target, BecameReady target') -> t == timing && target == target'
   (BecomesWindow time, Became time') -> time == time'
+  (FlippedToWindow t code, FlippedTo _ code') -> t == timing && code == code'
   (TreacheryWhenRevealedCanceledWindow t, WhenRevealedCanceled (TreacheryTarget _)) -> t == timing
   (CapturedCardsRescuedWindow t, CapturedCardsRescued {}) -> t == timing
   (DrewForResourcePhaseWindow t pid, DrewForResourcePhase pid' _) -> t == timing && pid == pid'
@@ -409,12 +468,12 @@ windowMatches matcher (Window timing wType) = case (matcher, wType) of
   (EnemyWithTraitEntersStagingAreaWindow {}, _) -> False
   (EnemyWithModifierEngagedWindow {}, _) -> False
   (CardRevealedWindow {}, _) -> False
+  (EnemyCardRevealedWindow {}, _) -> False
   (AttackDealtDamageWithTraitWindow {}, _) -> False
   (TraveledToWindow {}, _) -> False
   (AttachmentPlayedOnHeroWindow {}, _) -> False
   (EnemyAttacksPlayerWindow {}, _) -> False
   (ExploredWithoutVictoryWindow {}, _) -> False
-  (ActiveLocationExploredWindow {}, _) -> False
   (CharacterWithTraitDealtDamageWindow {}, _) -> False
   (HeroGainedResourcesWindow {}, _) -> False
   (SurgeCardRevealedWindow {}, _) -> False
@@ -422,6 +481,8 @@ windowMatches matcher (Window timing wType) = case (matcher, wType) of
   (AttackDealtDamageByWindow {}, _) -> False
   (MatchingEnemyAttacksWindow {}, _) -> False
   (EnemyWithPrintedHitPointsDestroyedByAttackWindow {}, _) -> False
+  -- after it left play, read from its card
+  (ExploredMatchingWindow t m, ExploredCard c) -> t == timing && cardMatches m c
   (ExploredMatchingWindow {}, _) -> False
   (HeroDeclaredAsDefenderWindow {}, _) -> False
   (RevealedTitleInVictoryDisplayWindow {}, _) -> False

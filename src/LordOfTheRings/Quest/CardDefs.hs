@@ -12,7 +12,7 @@ import LordOfTheRings.Trait (Trait (Burden))
 
 -- | Side quests from players' decks: player cards, built as quests once played.
 allPlayerSideQuestCards :: Map CardCode CardDef
-allPlayerSideQuestCards = Map.fromList $ map (\def -> (cdCardCode def, def)) [gatherInformation, doubleBack, delayTheEnemy, sendForAid, scoutAhead]
+allPlayerSideQuestCards = Map.fromList $ map (\def -> (cdCardCode def, def)) [gatherInformation, doubleBack, delayTheEnemy, sendForAid, scoutAhead, theStormComes, prepareForBattle, exploreSecretWays, keepWatch, rallyTheWest]
 
 scoutAhead :: CardDef
 scoutAhead =
@@ -48,6 +48,41 @@ sendForAid =
   (playerSideQuest "10086" "Send for Aid" Leadership (StaticCost 1) 6)
     { cdVictoryPoints = Just 1
     , cdDeckLimit = 1
+    }
+
+theStormComes :: CardDef
+theStormComes =
+  (playerSideQuest "16013" "The Storm Comes" Neutral (StaticCost 0) 5)
+    { cdVictoryPoints = Just 1
+    , cdLimitOneInVictoryDisplay = True
+    }
+
+prepareForBattle :: CardDef
+prepareForBattle =
+  (playerSideQuest "17003" "Prepare for Battle" Leadership (StaticCost 1) 6)
+    { cdVictoryPoints = Just 1
+    , cdLimitOneInVictoryDisplay = True
+    }
+
+exploreSecretWays :: CardDef
+exploreSecretWays =
+  (playerSideQuest "17036" "Explore Secret Ways" Lore (StaticCost 1) 6)
+    { cdVictoryPoints = Just 1
+    , cdLimitOneInVictoryDisplay = True
+    }
+
+keepWatch :: CardDef
+keepWatch =
+  (playerSideQuest "17059" "Keep Watch" Tactics (StaticCost 1) 6)
+    { cdVictoryPoints = Just 1
+    , cdLimitOneInVictoryDisplay = True
+    }
+
+rallyTheWest :: CardDef
+rallyTheWest =
+  (playerSideQuest "17087" "Rally the West" Spirit (StaticCost 1) 6)
+    { cdVictoryPoints = Just 1
+    , cdLimitOneInVictoryDisplay = True
     }
 
 allQuestCards :: Map CardCode CardDef
@@ -270,6 +305,52 @@ allQuestCards =
       , rallyTheFighters
       , severTheHead
       , theWitchKingsGift
+      , southronChampion
+      , inEnemyTerritory
+      , findWater
+      , craftRemedy
+      , uruksOfTheEye
+      , surpriseAttack
+      , findTheOthers
+      , freeTheCaptives
+      , escapeIntoTheJungle
+      , lostUnderground
+      , searchingTheCaves
+      , gettingCloser
+      , theSpidersHive
+      , seekShade
+      , theDesertOfHarad
+      , underTheMercilessSun
+      , beastsOfLegend
+      , strandedInUmbar
+      , fleeTheCity
+      , settingOut
+      , racingNorth
+      , huntedInHarad
+      , theFordOfHarnen
+      , settingOutOrcs
+      , racingNorthOrcs
+      , huntedInHaradOrcs
+      , theFordOfHarnenOrcs
+      , dontLetThemEscape
+      , theCrossroadsFort
+      , battleInTheCamp
+      , defeatTheSerpent
+      , capturedCirithGurat
+      , rescueThePrisoners
+      , sneakPastTheGuards
+      , fightYourWayOut
+      , guardiansOfTheJungle
+      , welcomeToTheJungle
+      , captureTheOliphaunts
+      , findAWayDown
+      , flightToGondor
+      , theDesertPath
+      , theEphelDuath
+      , deadlyCreatures
+      , southronPursuit
+      , orcPatrols
+      , battleAtTheCrossings
       ]
 
 theDrippingWalls :: CardDef
@@ -1118,3 +1199,194 @@ theWitchKingsGift =
   (encounterSideQuest "the-dread-realm-nightmare-the-dread-realm-009" "The Witch-king's Gift" TheDreadRealmNightmare 8)
     { cdKeywords = setFromList [Time 5]
     }
+
+-- * The Sands of Harad: the shared encounter sets' side quests
+
+southronChampion :: CardDef
+southronChampion =
+  (encounterSideQuest "16040" "Southron Champion" HaradSoldiers 4)
+    { cdVictoryPoints = Just 10
+    , cdWhenRevealed = True
+    }
+
+inEnemyTerritory :: CardDef
+inEnemyTerritory =
+  (encounterSideQuest "16045" "In Enemy Territory" HaradTerritory 8)
+    { cdVictoryPoints = Just 10
+    , cdKeywords = setFromList [Surge]
+    }
+
+findWater :: CardDef
+findWater = (encounterSideQuest "16048" "Find Water" DesertSands 6) {cdVictoryPoints = Just 10}
+
+craftRemedy :: CardDef
+craftRemedy = (encounterSideQuest "16053" "Craft Remedy" DesertCreatures 6) {cdVictoryPoints = Just 10}
+
+uruksOfTheEye :: CardDef
+uruksOfTheEye =
+  (encounterSideQuest "16060" "Uruks of the Eye" MordorOrcs 5)
+    { cdVictoryPoints = Just 10
+    , cdKeywords = setFromList [Surge]
+    }
+
+-- * The Long Arm of Mordor
+
+-- | No quest points: its Forced effect advances after questing successfully.
+surpriseAttack :: CardDef
+surpriseAttack = (quest "16071" "Surprise Attack" TheLongArmOfMordor 1 0) {cdQuestPoints = Nothing}
+
+findTheOthers :: CardDef
+findTheOthers = quest "16072" "Find the Others" TheLongArmOfMordor 2 5
+
+freeTheCaptives :: CardDef
+freeTheCaptives = quest "16073" "Free the Captives" TheLongArmOfMordor 3 10
+
+escapeIntoTheJungle :: CardDef
+escapeIntoTheJungle = quest "16074" "Escape into the Jungle" TheLongArmOfMordor 4 15
+-- * Beneath the Sands
+
+lostUnderground :: CardDef
+lostUnderground =
+  (encounterSideQuest "17075" "Lost Underground" BeneathTheSands 5)
+    { cdVictoryPoints = Just 10
+    , cdWhenRevealed = True
+    }
+
+searchingTheCaves :: CardDef
+searchingTheCaves = quest "17076" "Searching the Caves" BeneathTheSands 1 5
+
+gettingCloser :: CardDef
+gettingCloser = quest "17077" "Getting Closer" BeneathTheSands 2 5
+
+theSpidersHive :: CardDef
+theSpidersHive = quest "17078" "The Spiders' Hive" BeneathTheSands 3 5
+
+-- * Desert Crossing (The Sands of Harad)
+
+seekShade :: CardDef
+seekShade =
+  (encounterSideQuest "16022" "Seek Shade" DesertCrossing 6)
+    { cdVictoryPoints = Just 10
+    , cdKeywords = setFromList [Surge]
+    }
+
+theDesertOfHarad :: CardDef
+theDesertOfHarad = quest "16068" "The Desert of Harad" DesertCrossing 1 8
+
+underTheMercilessSun :: CardDef
+underTheMercilessSun = quest "16069" "Under the Merciless Sun" DesertCrossing 2 14
+
+beastsOfLegend :: CardDef
+beastsOfLegend = quest "16070" "Beasts of Legend" DesertCrossing 3 16
+
+-- * Escape from Umbar
+
+strandedInUmbar :: CardDef
+strandedInUmbar = quest "16066" "Stranded in Umbar" EscapeFromUmbar 1 15
+
+fleeTheCity :: CardDef
+fleeTheCity = quest "16067" "Flee the City" EscapeFromUmbar 2 15
+
+-- * Race Across Harad
+
+-- | No quest points: its When Revealed effect advances to stage 2A.
+settingOut :: CardDef
+settingOut = quest "17047" "Setting Out" RaceAcrossHarad 1 0
+
+racingNorth :: CardDef
+racingNorth = quest "17048" "Racing North" RaceAcrossHarad 2 15
+
+huntedInHarad :: CardDef
+huntedInHarad = quest "17049" "Hunted in Harad" RaceAcrossHarad 3 20
+
+theFordOfHarnen :: CardDef
+theFordOfHarnen = quest "17050" "The Ford of Harnen" RaceAcrossHarad 4 20
+
+-- | The Orcs' quest deck, stages 1C to 4C: the scenario plays their text.
+settingOutOrcs :: CardDef
+settingOutOrcs = quest "17051" "Setting Out" RaceAcrossHarad 1 10
+
+racingNorthOrcs :: CardDef
+racingNorthOrcs = quest "17052" "Racing North" RaceAcrossHarad 2 15
+
+huntedInHaradOrcs :: CardDef
+huntedInHaradOrcs = quest "17053" "Hunted in Harad" RaceAcrossHarad 3 20
+
+theFordOfHarnenOrcs :: CardDef
+theFordOfHarnenOrcs = quest "17054" "The Ford of Harnen" RaceAcrossHarad 4 20
+
+-- * The Black Serpent: its side quest and stages. Stage 1's B side is printed as 17106.
+
+dontLetThemEscape :: CardDef
+dontLetThemEscape = (encounterSideQuest "17104" "Don't Let Them Escape!" TheBlackSerpent 6) {cdVictoryPoints = Just 10}
+
+theCrossroadsFort :: CardDef
+theCrossroadsFort = quest "17105" "The Crossroads Fort" TheBlackSerpent 1 6
+
+battleInTheCamp :: CardDef
+battleInTheCamp = quest "17107" "Battle in the Camp" TheBlackSerpent 2 6
+
+defeatTheSerpent :: CardDef
+defeatTheSerpent = quest "17108" "Defeat the Serpent" TheBlackSerpent 3 6
+
+-- The Dungeons of Cirith Gurat (17131-17134)
+
+-- | "Captured!", the encounter side quest; The Blood of Gondor's stage is 'captured'.
+capturedCirithGurat :: CardDef
+capturedCirithGurat =
+  (encounterSideQuest "17131" "Captured!" TheDungeonsOfCirithGurat 5)
+    { cdVictoryPoints = Just 10
+    , cdWhenRevealed = True
+    }
+
+rescueThePrisoners :: CardDef
+rescueThePrisoners = quest "17132" "Rescue the Prisoners" TheDungeonsOfCirithGurat 1 10
+
+sneakPastTheGuards :: CardDef
+sneakPastTheGuards = quest "17133" "Sneak Past the Guards" TheDungeonsOfCirithGurat 2 15
+
+fightYourWayOut :: CardDef
+fightYourWayOut = quest "17134" "Fight Your Way Out" TheDungeonsOfCirithGurat 3 10
+
+-- The Mûmakil
+
+guardiansOfTheJungle :: CardDef
+guardiansOfTheJungle = (encounterSideQuest "17025" "Guardians of the Jungle" TheMumakil 6) {cdVictoryPoints = Just 10}
+
+welcomeToTheJungle :: CardDef
+welcomeToTheJungle = quest "17026" "Welcome to the Jungle" TheMumakil 1 12
+
+captureTheOliphaunts :: CardDef
+captureTheOliphaunts = quest "17027" "Capture the Oliphaunts" TheMumakil 2 8
+
+-- * The Crossings of Poros: its two encounter sets, The Crossings of Poros and Mountains of
+-- Shadow. Easy mode copy counts from Hall of Beorn's scenario page.
+
+findAWayDown :: CardDef
+findAWayDown =
+  (encounterSideQuest "17156" "Find a Way Down" MountainsOfShadow 6)
+    { cdVictoryPoints = Just 10
+    , cdKeywords = setFromList [Surge]
+    }
+
+-- | No quest points: the players advance at the end of the planning phase.
+flightToGondor :: CardDef
+flightToGondor = (quest "17157" "Flight to Gondor" TheCrossingsOfPoros 1 0) {cdQuestPoints = Nothing}
+
+theDesertPath :: CardDef
+theDesertPath = quest "17158" "The Desert Path" TheCrossingsOfPoros 2 10
+
+theEphelDuath :: CardDef
+theEphelDuath = quest "17159" "The Ephel Dúath" TheCrossingsOfPoros 2 10
+
+deadlyCreatures :: CardDef
+deadlyCreatures = quest "17160" "Deadly Creatures" TheCrossingsOfPoros 3 15
+
+southronPursuit :: CardDef
+southronPursuit = quest "17161" "Southron Pursuit" TheCrossingsOfPoros 3 15
+
+orcPatrols :: CardDef
+orcPatrols = quest "17162" "Orc Patrols" TheCrossingsOfPoros 3 15
+
+battleAtTheCrossings :: CardDef
+battleAtTheCrossings = quest "17163" "Battle at the Crossings" TheCrossingsOfPoros 4 20

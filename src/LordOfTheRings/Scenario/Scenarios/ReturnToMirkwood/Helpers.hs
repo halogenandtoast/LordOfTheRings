@@ -2,6 +2,7 @@
 module LordOfTheRings.Scenario.Scenarios.ReturnToMirkwood.Helpers (
   getGollum,
   getGuard,
+  shadowGuardTargets,
   tantrumTargets,
   passGollum,
 ) where
@@ -9,7 +10,8 @@ module LordOfTheRings.Scenario.Scenarios.ReturnToMirkwood.Helpers (
 import LordOfTheRings.Card (toCardCode)
 import LordOfTheRings.Classes.Entity (toId)
 import LordOfTheRings.Classes.HasGame
-import LordOfTheRings.Id (ObjectiveId, PlayerId)
+import LordOfTheRings.Enemy.CardDefs qualified as Enemies
+import LordOfTheRings.Id (EnemyId, ObjectiveId, PlayerId)
 import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Matcher
 import LordOfTheRings.Message.Lifted
@@ -36,6 +38,19 @@ getGollum = fmap fst <$> gollum
 
 getGuard :: HasGame m => m (Maybe PlayerId)
 getGuard = (>>= snd) <$> gollum
+
+{- | The players a shadow effect on the player guarding Gollum reaches, for the attack of
+the enemy it was dealt to: the guard, and each other player too when that enemy is
+Ambushing Orcs, whose shadow cards that target the guard target each other player.
+-}
+shadowGuardTargets :: HasGame m => EnemyId -> m [PlayerId]
+shadowGuardTargets eid =
+  getGuard >>= \case
+    Nothing -> pure []
+    Just guard' -> do
+      ambushing <- selectAny (EnemyWithId eid <> EnemyWithCardCode (toCardCode Enemies.ambushingOrcs))
+      others <- if ambushing then filter (/= guard') <$> getRemainingPlayers else pure []
+      pure $ guard' : others
 
 {- | The players a Tantrum card's effect reaches: the player guarding Gollum, or every
 player while Dry Watercourse is the active location.

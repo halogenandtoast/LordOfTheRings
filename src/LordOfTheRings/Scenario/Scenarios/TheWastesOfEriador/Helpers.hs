@@ -67,8 +67,9 @@ discardUntilWargs x = when (x > 0) do
       discarded = map fst $ takeWhile ((< x) . snd) counted <> take 1 (dropWhile ((< x) . snd) counted)
   -- one at a time, so a deck emptied partway is reset from the cards discarded before
   for_ discarded \c -> do
-    removeFromEncounterDeck c
-    if cardMatches (CardWithType EnemyType) c then addToStaging c else push $ AddToEncounterDiscard [c]
+    if cardMatches (CardWithType EnemyType) c
+      then removeFromEncounterDeck c >> addToStaging c
+      else discardFromEncounterDeck c
 
 {- | The player searches the encounter deck and discard pile for a Warg enemy, reveals it
 and adds it to the staging area, or puts it into play engaged with him; then the

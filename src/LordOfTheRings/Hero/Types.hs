@@ -2,6 +2,7 @@
 
 module LordOfTheRings.Hero.Types (module LordOfTheRings.Hero.Types) where
 
+import LordOfTheRings.Ally.Types (Ally)
 import LordOfTheRings.Card
 import LordOfTheRings.Classes.Entity
 import LordOfTheRings.Classes.HasAbilities
@@ -27,6 +28,12 @@ class
   , EntityAttrs a ~ HeroAttrs
   )
   => IsHero a
+  where
+  -- | The ally a hero's text is read through, as an ally given the hero card type by
+  -- Sword-thain: what is asked of the ally by its id, as its own text's "exists (AllyWithId
+  -- a.id <> ExhaustedAlly)", is asked of it.
+  heroAsAlly :: a -> Maybe Ally
+  heroAsAlly _ = Nothing
 
 type HeroCard a = CardBuilder (HeroId, PlayerId) a
 
@@ -45,6 +52,10 @@ data HeroAttrs = HeroAttrs
   , heroAttacking :: Bool
   , heroPrisoner :: Bool
   -- ^ face down: it cannot be used, cannot be damaged and collects no resources
+  , heroGuardedBy :: Maybe CardId
+  -- ^ the encounter card it is a captive of, as a guarded objective (see 'GuardCharacter')
+  , heroInStagingArea :: Bool
+  -- ^ in play in the staging area under no player's control (The Long Arm of Mordor)
   }
   deriving stock (Show, Eq, Generic)
 
@@ -54,7 +65,7 @@ instance ToJSON HeroAttrs where
   toJSON = genericToJSON (aesonOptions $ Just "hero")
 
 instance FromJSON HeroAttrs where
-  parseJSON = genericParseJSON (aesonOptions $ Just "hero") . withDefaults [("prisoner", Bool False)]
+  parseJSON = genericParseJSON (aesonOptions $ Just "hero") . withDefaults [("prisoner", Bool False), ("guardedBy", Null), ("inStagingArea", Bool False)]
 
 hero :: (HeroAttrs -> a) -> CardDef -> HeroCard a
 hero f cardDef =
@@ -72,6 +83,8 @@ hero f cardDef =
             , heroCommitted = False
             , heroAttacking = False
             , heroPrisoner = False
+            , heroGuardedBy = Nothing
+            , heroInStagingArea = False
             }
     }
 
@@ -89,6 +102,9 @@ instance Entity Hero where
   toAttrs (Hero a) = toAttrs a
   overAttrs f (Hero a) = Hero $ overAttrs f a
 
+instance HasField "asAlly" Hero (Maybe Ally) where
+  getField (Hero a) = heroAsAlly a
+
 instance HasModifiersFor Hero where
   getModifiersFor (Hero a) = getModifiersFor a
 
@@ -101,8 +117,11 @@ instance Show Hero where
 instance ToJSON Hero where
   toJSON (Hero a) = toJSON a
 
+-- | An objective-hero is an encounter card, and leaves play to the encounter discard pile.
 instance IsCard HeroAttrs where
-  toCard a = PlayerCard $ MkPlayerCard {pcId = heroCardId a, pcCardCode = heroCardCode a, pcOwner = Just (heroOwner a)}
+  toCard a
+    | cdCardType (toCardDef a) == ObjectiveHeroType = EncounterCard $ MkEncounterCard {ecId = heroCardId a, ecCardCode = heroCardCode a}
+    | otherwise = PlayerCard $ MkPlayerCard {pcId = heroCardId a, pcCardCode = heroCardCode a, pcOwner = Just (heroOwner a)}
 
 instance IsCard Hero where
   toCard = toCard . toAttrs

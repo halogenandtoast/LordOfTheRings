@@ -21,7 +21,7 @@ instance HasModifiersFor AftCabin where
     when (minimumMay cabins == Just a.id) do
       decks <- select (LocationWithTrait Deck)
       for_ decks \l -> do
-        n <- length . filter ((== AttachedTo (LocationTarget l)) . (.placement)) <$> (traverse getEnemy =<< select AnyEnemy)
+        n <- selectCount (EnemyGrappledWith (LocationWithId l))
         when (n > 0) $ modified a l [ThreatModifier n]
 
 -- | Forced: After an enemy is detached from Aft Cabin, that enemy gets +3 attack until the

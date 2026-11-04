@@ -18,6 +18,10 @@ sendForAid = quest SendForAid Cards.sendForAid
 instance RunMessage SendForAid where
   runMessage msg (SendForAid attrs) = case msg of
     CompleteQuest qid | qid == attrs.id -> do
-      eachPlayer \pid -> searchDeckIntoPlay pid attrs 10 (CardWithType AllyType) 1 []
+      eachPlayer \pid -> chooseOneM pid do
+        questionLabeled "sendForAid.search"
+        causedBy attrs
+        labeled "sendForAid.searchDeck" $ searchDeckIntoPlay pid attrs 10 (CardWithType AllyType) 1 []
+        labeled "pass" $ pure ()
       SendForAid <$> runMessage msg attrs
     _ -> SendForAid <$> runMessage msg attrs

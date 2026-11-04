@@ -14,6 +14,7 @@ module LordOfTheRings.Campaign (module LordOfTheRings.Campaign) where
 import Data.List (elemIndex)
 import Data.Map.Strict qualified as Map
 import LordOfTheRings.Campaign.CardDefs qualified as Cards
+import LordOfTheRings.Card (allPlayerCards)
 import LordOfTheRings.Card.CardDef (CardDef, cdCardCode)
 import LordOfTheRings.Card.Code
 import LordOfTheRings.Hero.CardDefs qualified as Heroes
@@ -27,8 +28,9 @@ newtype CampaignId = CampaignId {unCampaignId :: Text}
 
 -- | A boon or burden earned (Revised Core rulebook, "The Campaign Pool"). Whether it is a
 -- boon or a burden its card says, by its trait. A player card goes to its seat's deck, an
--- encounter card into the encounter deck; one with the Permanent keyword is attached to
--- the hero recorded with it instead.
+-- encounter card into the encounter deck, or with a seat into that seat's deck once its
+-- starting hand is drawn, as Recurring Nightmare; one with the Permanent keyword is
+-- attached to the hero recorded with it instead.
 data PoolCard = PoolCard
   { poolCardCode :: CardCode
   , poolCardSeat :: Maybe Int
@@ -63,6 +65,9 @@ data CampaignLogKey
     Secrets
   | -- | the secrets flipped over
     RevealedSecrets
+  | -- | the Recurring Nightmares Temple of the Deceived's resolution adds to the Campaign
+    -- Pool, each for a player the first player chooses as the next scenario is set up
+    RecurringNightmares
   | -- | Angmar Awakened: the damage on Protect the Innocent, later Arnor Ravaged, as its
     -- campaign cards note it ('counted')
     ProtectTheInnocentDamage
@@ -77,6 +82,10 @@ data CampaignLogKey
   | -- | Angmar Awakened: Deadmen's Dike's resolution has the players choose Iârion's
     -- Pendant or Amarthiúl's Courage, which they do as the next scenario is set up
     ChoosePendantOrCourage
+  | -- | Angmar Awakened: the books The Treachery of Rhudaur's resolution lets each player
+    -- add for a Clue they control, by the seat of that player ('counted'), offered as the
+    -- next scenario is set up
+    BooksEarned
   deriving stock (Show, Eq, Ord, Generic, Enum, Bounded)
   deriving anyclass (ToJSON, FromJSON)
 
@@ -250,6 +259,8 @@ data XpCard = XpCard
 instance ToJSON XpCard where
   toJSON = genericToJSON (aesonOptions $ Just "xp")
 
+-- | The checkboxes by each title on the Dream-chaser Campaign Log sheet (Dream-chaser
+-- Campaign Expansion rules, p. 31).
 xpCards :: CampaignLog -> [XpCard]
 xpCards l = case l.campaign of
   "dream-chaser" ->
@@ -257,7 +268,9 @@ xpCards l = case l.campaign of
       -- the Grey Havens' and the cycle's own cards, their Upgraded sides the expansion's
       <> [XpCard "11080" 4 (Just "DCC136U"), XpCard "11081" 4 (Just "DCC137U"), XpCard "11082" 4 (Just "DCC140U"), XpCard "11083" 4 (Just "DCC141U"), XpCard "12071" 2 (Just "DCC078U")]
       <> [XpCard code 5 Nothing | code <- scalable]
-      <> [XpCard "DCC211" 3 Nothing, XpCard "DCC212" 3 Nothing, XpCard "DCC213" 3 Nothing, XpCard "DCC214" 3 Nothing]
+      <> [XpCard code 4 Nothing | code <- command]
+      -- Send for Help: Leadership 3, Tactics 2, Spirit 4, Lore 3
+      <> [XpCard "DCC211" 3 Nothing, XpCard "DCC212" 2 Nothing, XpCard "DCC213" 4 Nothing, XpCard "DCC214" 3 Nothing]
       -- "Gavin returned", once A Storm on Cobas Haven is won
       <> [XpCard "DCC210" 4 Nothing | "a-storm-on-cobas-haven" `elem` map completedScenario l.completed]
   _ -> []
@@ -268,15 +281,17 @@ xpCards l = case l.campaign of
     , ("DCC180", 3), ("DCC183", 4), ("DCC189", 5), ("DCC190", 5)
     , ("DCC192", 5), ("DCC193", 5)
     ]
-  -- Galdor's Counsel, Come Together, Starla, Command and Círdan's Blessing
-  scalable = ["DCC184", "DCC185", "DCC186", "DCC187", "DCC195", "DCC198", "DCC201", "DCC202", "DCC203", "DCC204", "DCC205", "DCC206", "DCC207", "DCC208"]
+  -- Galdor's Counsel, Come Together, Starla and Círdan's Blessing
+  scalable = ["DCC184", "DCC185", "DCC186", "DCC187", "DCC195", "DCC198", "DCC205", "DCC206", "DCC207", "DCC208"]
+  command = ["DCC201", "DCC202", "DCC203", "DCC204"]
 
 marked :: CardCode -> CampaignLog -> Int
 marked code = Map.findWithDefault 0 code . (.marked)
 
--- | A scalable card's level: the boxes marked by its title.
+-- | A scalable card's level: the boxes marked by its title, 0 with none ("A scalable
+-- card is leveled up for each checkbox marked by its title").
 level :: CardCode -> CampaignLog -> Int
-level code l = max 1 (marked code l)
+level = marked
 
 isUpgraded :: CardCode -> CampaignLog -> Bool
 isUpgraded code l = any (\x -> xpCard x == code && marked code l >= xpBoxes x) (xpCards l)
@@ -347,9 +362,9 @@ seatDeck :: Int -> CampaignLog -> [(CardCode, Int)] -> [(CardCode, Int)]
 seatDeck seat l cards = filter ((`notElem` recorded LostInMountGram l) . fst) cards <> [(c, 1) | c <- seatPoolCards seat l]
 
 -- | Each seat's boons and burdens that are player cards, to shuffle into its deck: those
--- not attached to a hero.
+-- not attached to a hero. (An encounter card for its deck the scenario shuffles in.)
 seatPoolCards :: Int -> CampaignLog -> [CardCode]
-seatPoolCards seat l = [p.code | p <- l.pool, p.seat == Just seat, isNothing p.attachedTo]
+seatPoolCards seat l = [p.code | p <- l.pool, p.seat == Just seat, isNothing p.attachedTo, Map.member p.code allPlayerCards]
 
 instance HasField "code" PoolCard CardCode where
   getField = poolCardCode
@@ -403,4 +418,4 @@ updateLog = \case
   RemoveFromPool code -> \l -> l {campaignLogPool = filter ((/= code) . (.code)) l.pool}
   AdjustThreatPenalty n -> \l -> l {campaignLogThreatPenalty = l.threatPenalty + n}
   Record key cards -> record key cards
-  Unrecord key -> \l -> l {campaignLogNotes = Map.delete key l.notes}
+  Unrecord key -> \l -> l {campaignLogNotes = Map.delete key l.notes, campaignLogCounts = Map.delete key l.counts}

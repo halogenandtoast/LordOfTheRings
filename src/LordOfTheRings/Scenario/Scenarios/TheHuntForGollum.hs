@@ -84,4 +84,12 @@ instance RunMessage TheHuntForGollum where
     LookAtTopOfEncounterDeck pid _ _ | top : rest <- attrs.encounterDeck, toCardCode top == toCardCode Enemies.ravenousHawk -> do
       putEnemyIntoPlayEngaged pid top
       pure $ TheHuntForGollum $ attrs & encounterDeckL .~ rest
+    -- among the top cards looked at: it goes, and the player looks at the others
+    RevealOneOfTopEncounterCards pid source n toBottom
+      | (top, rest) <- splitAt n attrs.encounterDeck
+      , hawks@(_ : _) <- filter ((== toCardCode Enemies.ravenousHawk) . toCardCode) top -> do
+          for_ hawks (putEnemyIntoPlayEngaged pid)
+          let others = filter (`notElem` hawks) top
+          unless (null others) $ push $ RevealOneOfTopEncounterCards pid source (length others) toBottom
+          pure $ TheHuntForGollum $ attrs & encounterDeckL .~ others <> rest
     _ -> TheHuntForGollum <$> runMessage msg attrs

@@ -100,14 +100,16 @@ spec = describe "The Drowned Ruins" do
     map locationCardCode <$> locations `shouldReturn` [toCardCode Locations.cursedCaverns]
     grottoDeck `shouldReturn` []
 
-  it "shuffles an explored Grotto location back into the Grotto deck, Grotto side up" . ruinsTest $ \_ -> do
+  it "shuffles an explored Grotto location back into the Grotto deck, Grotto side up, where The Grotto may draw it again" . ruinsTest $ \_ -> do
     q <- putQuestStage Quests.theGrotto
     run $ Flip q
     setGrottoDeck []
     lid <- activate Locations.waterLoggedHalls
     run $ PlaceTokens GameSource (toTarget lid) Progress 4
-    grottoDeck `shouldReturn` [toCardCode Locations.waterLoggedHalls]
     victoryDisplay `shouldReturn` []
+    -- The Grotto answers after it is explored: the top of the Grotto deck is the card itself
+    grottoDeck `shouldReturn` []
+    map locationCardCode <$> locations `shouldReturn` [toCardCode Locations.waterLoggedHalls]
 
   it "adds the top of the Grotto deck to the staging area Underwater side up as Ancient Depths is revealed" . ruinsTest $ \_ -> do
     setGrottoDeck [Locations.cursedCaverns]

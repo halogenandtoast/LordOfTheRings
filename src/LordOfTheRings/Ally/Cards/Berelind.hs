@@ -18,7 +18,7 @@ instance HasAbilities Berelind where
 
 instance RunMessage Berelind where
   runMessage msg s@(Berelind a) = case msg of
-    UseCardAbility _ (isSource a -> True) 1 _ -> do
-      placeProgressOnQuest a 1
+    UseCardAbility pid (isSource a -> True) 1 _ -> do
+      placeProgressOnAQuestCard pid a 1
       pure s
     _ -> Berelind <$> runMessage msg a

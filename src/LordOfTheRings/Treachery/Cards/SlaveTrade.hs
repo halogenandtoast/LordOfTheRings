@@ -2,7 +2,6 @@ module LordOfTheRings.Treachery.Cards.SlaveTrade (slaveTrade) where
 
 import LordOfTheRings.Card (cdCost, costAsResources, toCardDef)
 import LordOfTheRings.Classes.HasGame (getsGame)
-import LordOfTheRings.Helpers.Character (getHitPoints)
 import LordOfTheRings.Placement (Placement (AttachedTo))
 import LordOfTheRings.Trait (Trait (Raider))
 import LordOfTheRings.Treachery.CardDefs qualified as Cards
@@ -39,10 +38,14 @@ instance RunMessage SlaveTrade where
           questionLabeled "slaveTrade.ally"
           causedBy attrs
           targets allies \x -> do
-            remaining <- (-) <$> getHitPoints (toTarget x) <*> getDamage (toTarget x)
             cost <- printedCostOf <$> getAlly x
             dealDamage attrs x 2
-            when (remaining <= 2) $ onARaider attrs cost
+            doStep cost (CheckDefeated (toSource attrs) (toTarget x))
+      pure t
+    -- the ally gone from play once the damage is dealt was destroyed by it
+    DoStep cost (CheckDefeated (isSource attrs -> True) (AllyTarget aid)) -> do
+      destroyed <- selectNone (AllyWithId aid)
+      when destroyed $ onARaider attrs cost
       pure t
     ResolveShadowEffect cid eid pid _ | cid == attrs.cardId -> do
       attachments <- getsGame (toList . (.entities.attachments))

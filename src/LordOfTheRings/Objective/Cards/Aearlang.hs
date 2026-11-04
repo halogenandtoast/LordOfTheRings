@@ -27,6 +27,6 @@ instance RunMessage Aearlang where
       chooseOrRunOneM pid do
         questionLabeled "aearlang.ready"
         causedBy attrs
-        targets heroes ready
+        targets heroes encounterReadies
       pure o
     _ -> Aearlang <$> runMessage msg attrs

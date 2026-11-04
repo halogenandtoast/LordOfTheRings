@@ -28,6 +28,7 @@ instance HasModifiersFor TakeTheShip where
 
 -- | Forced: At the end of the round, if Captain Sahír and Na'asiyah are not in play, add 1
 -- resource to each of them.
+-- The resources go on their set-aside cards, coming with them into play.
 instance HasAbilities TakeTheShip where
   getAbilities (TakeTheShip a) =
     [restricted a 1 (Criteria $ map (NotCriterion . EnemyExists) elite) $ forced RoundEndsWindow | a.flipped]
@@ -57,12 +58,8 @@ instance RunMessage TakeTheShip where
         then TakeTheShip <$> runMessage msg attrs
         else pure q
     UseCardAbility _ (isSource attrs -> True) 1 _ -> do
-      placeResources attrs attrs 1
+      aside <- getsGame ((.scenarioSetAside) . toAttrs . gameScenario)
+      for_ [c | c <- aside, toCardCode c `elem` map toCardCode [Enemies.captainSahir, Enemies.naasiyah]] \c ->
+        placeResourcesOutOfPlay c.id 1
       pure q
-    CheckWindows ws | attrs.flipped, n > 0 -> do
-      for_ [eid | Window After (EntersStagingArea (EnemyTarget eid)) <- ws] \eid ->
-        whenM (anyM (selectAny . (EnemyWithId eid <>)) elite) $ placeResources attrs eid n
-      TakeTheShip <$> runMessage msg attrs
-     where
-      n = countTokens Resource attrs.questTokens
     _ -> TakeTheShip <$> runMessage msg attrs

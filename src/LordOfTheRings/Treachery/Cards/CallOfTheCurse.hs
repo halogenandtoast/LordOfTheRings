@@ -24,6 +24,8 @@ curse source = do
 
 -- | When Revealed: the curse. If X is 0 or 1, Call of the Curse gains surge.
 -- Shadow: Resolve the 'when revealed' effect of Call of the Curse.
+-- As a shadow it gains no surge: surge resolves only as a card is revealed from the
+-- encounter deck (FAQ 1.01), which a shadow card is not.
 instance RunMessage CallOfTheCurse where
   runMessage msg t@(CallOfTheCurse attrs) = case msg of
     WhenRevealed (isTarget attrs -> True) -> do

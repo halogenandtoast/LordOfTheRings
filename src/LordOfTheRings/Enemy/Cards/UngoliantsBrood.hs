@@ -21,7 +21,7 @@ instance RunMessage UngoliantsBrood where
   runMessage msg e@(UngoliantsBrood attrs) = case msg of
     UseCardAbility _ (isSource attrs -> True) 1 _ -> do
       for_ [p | EngagedWith p <- [attrs.placement]] \pid ->
-        traverse_ (\c -> roundModifier attrs c CannotReady) =<< charactersControlledBy pid
+        roundModifier attrs (PlayerTarget pid) ControlledCardsCannotReady
       pure e
     ResolveShadowEffect cid _ pid defender | cid == attrs.cardId -> do
       when (null defender) $ traverse_ exhaust =<< charactersControlledBy pid

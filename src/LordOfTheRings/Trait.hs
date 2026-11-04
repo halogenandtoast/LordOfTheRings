@@ -1,5 +1,6 @@
 module LordOfTheRings.Trait (module LordOfTheRings.Trait) where
 
+import Data.Char (isUpper)
 import LordOfTheRings.Prelude
 
 data Trait
@@ -27,6 +28,8 @@ data Trait
   | Captain
   | Captive
   | Captured
+  | -- | the Capture trait, named apart from the keyword (The Mûmakil)
+    CaptureTrait
   | CarnDum
   | Cave
   | Champion
@@ -42,6 +45,7 @@ data Trait
   | Cursed
   | Dale
   | Dark
+  | Desert
   | Deck
   | DeadMarshes
   | Disaster
@@ -96,6 +100,7 @@ data Trait
   | Mount
   | MountGram
   | Mountain
+  | Mumak
   | Nameless
   | Nazgul
   | Noble
@@ -107,6 +112,7 @@ data Trait
   | Outlands
   | Panic
   | Pipe
+  | Pipeweed
   | Plains
   | Plot
   | Raider
@@ -124,6 +130,8 @@ data Trait
   | Scheme
   | Scout
   | Scroll
+  | -- | the Search trait, named apart from the message (Beneath the Sands)
+    SearchTrait
   | Shadow
   | Ship
   | Shirriff
@@ -164,6 +172,7 @@ data Trait
   | Upgraded
   | Uruk
   | Valley
+  | Village
   | Villain
   | Warg
   | Warrior
@@ -178,5 +187,11 @@ data Trait
   | Woodman
   | Wose
   | Wraith
-  deriving stock (Show, Eq, Ord, Generic)
+  deriving stock (Show, Eq, Ord, Enum, Bounded, Generic)
   deriving anyclass (ToJSON, FromJSON)
+
+-- | The trait as a player reads it, its words apart: "Carn Dûm"'s accents aside.
+traitName :: Trait -> Text
+traitName = \case
+  WilderlandsTrait -> "Wilderlands"
+  t -> pack $ unwords $ words $ concatMap (\c -> if isUpper c then [' ', c] else [c]) (show t)

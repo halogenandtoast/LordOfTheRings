@@ -13,9 +13,10 @@ import LordOfTheRings.Objective.CardDefs qualified as Objectives
 import LordOfTheRings.Outcome (Outcome (..))
 import LordOfTheRings.Phase (Phase (QuestPhase, RefreshPhase))
 import LordOfTheRings.Quest.CardDefs qualified as Quests
-import LordOfTheRings.Scenario.Types (GameMode (NightmareMode), scenarioMode)
+import LordOfTheRings.Scenario.Types (GameMode (NightmareMode), scenarioMode, scenarioSetAside)
 import LordOfTheRings.Scenario (acrossTheEttenmoors, deadmensDike, intrudersInChetwood, theBattleOfCarnDum, theDreadRealm, theTreacheryOfRhudaur, theWastesOfEriador, theWeatherHills)
 import LordOfTheRings.Treachery.CardDefs qualified as Treacheries
+import LordOfTheRings.Window (WindowType (PhaseBegins), mkAfter)
 import TestImport
 
 angmar :: CampaignLog
@@ -120,6 +121,17 @@ spec = describe "Angmar Awakened campaign" do
       map toCardCode <$> getEncounterDeck >>= (`shouldSatisfy` elem (toCardCode Quests.mysteriousOmens))
       map (.code) . (.pool) <$> getCampaignLog >>= (`shouldSatisfy` elem (toCardCode Quests.mysteriousOmens))
 
+  describe "Loot the Dungeons" do
+    it "is in each player's staging area while the players are separated" . twoPlayerTest (coreDeck "tactics") $ \one two -> do
+      run . AddToStaging =<< genEncounterCard Quests.lootTheDungeons
+      let loot = getsGame (any ((== toCardCode Quests.lootTheDungeons) . toCardCode) . toList . (.entities.quests))
+      run $ SeparatePlayers [[one], [two]]
+      loot `shouldReturn` True
+      run $ FocusArea two
+      loot `shouldReturn` True
+      run $ FocusArea one
+      loot `shouldReturn` True
+
   describe "Mysterious Omens" do
     it "leaves the pool once defeated, and its boon joins it on the hero" . campaignTestIn theWeatherHills angmar {campaignLogPool = [PoolCard (toCardCode Quests.mysteriousOmens) Nothing Nothing]} testDeck $ \pid -> do
       run . AddToStaging =<< genEncounterCard Quests.mysteriousOmens
@@ -131,6 +143,18 @@ spec = describe "Angmar Awakened campaign" do
       chooseTarget pid eowyn.id
       attachedTo Attachments.hardy `shouldReturn` [toTarget eowyn.id]
       (.pool) <$> getCampaignLog `shouldReturn` [PoolCard (toCardCode Attachments.hardy) Nothing (Just "01007")]
+
+    it "offers the second player only the boons the first did not take" . twoPlayerCampaignTestIn theWeatherHills angmar (coreDeck "tactics") $ \one two -> do
+      run . AddToStaging =<< genEncounterCard Quests.mysteriousOmens
+      q <- questOf Quests.mysteriousOmens
+      run $ CompleteQuest q.id
+      getQuestion two >>= (`shouldSatisfy` isNothing)
+      -- pass, then Cunning
+      void $ answerQuestion one 1
+      eowyn <- getHeroWithCode "01007"
+      chooseTarget one eowyn.id
+      offered <- maybe [] questionChoices <$> getQuestion two
+      length [() | TargetLabel {} <- offered] `shouldBe` 4
 
   describe "Deadmen's Dike" do
     it "attaches a random burden to Thaurdir as he enters play, for the pool" . campaignTestIn deadmensDike angmar testDeck $ \_ -> do
@@ -172,12 +196,16 @@ spec = describe "Angmar Awakened campaign" do
       getDamage beravor `shouldReturn` 2
 
   describe "Across the Ettenmoors" do
-    it "reveals Losing Time every third quest phase" . campaignTestIn acrossTheEttenmoors angmar testDeck $ \pid -> do
-      g <- getGame
-      putGame g {gameRound = 3}
+    it "reveals a set-aside Losing Time once the campaign card has 3 resources" . campaignTestIn acrossTheEttenmoors angmar testDeck $ \pid -> do
+      run $ DoStep 9 Setup
+      let aside = getsGame (length . filter ((== toCardCode Treacheries.losingTime) . toCardCode) . scenarioSetAside . toAttrs . (.scenario))
+      aside `shouldReturn` 5
       threat <- (.threat) <$> getPlayer pid
-      run $ BeginPhase QuestPhase
+      replicateM_ 2 $ run $ CheckWindows [mkAfter $ PhaseBegins QuestPhase]
+      aside `shouldReturn` 5
+      run $ CheckWindows [mkAfter $ PhaseBegins QuestPhase]
       resolveRevealed
+      aside `shouldReturn` 4
       chooseLabel "$label.losingTime.raiseThreat" pid
       (.threat) <$> getPlayer pid `shouldReturn` threat + 3
 
@@ -194,11 +222,27 @@ spec = describe "Angmar Awakened campaign" do
       (.threat) <$> getPlayer pid `shouldReturn` threat + 3
 
   describe "The Treachery of Rhudaur" do
-    it "adds the book of each Clue a player controls to the pool, for their deck" . campaignTestIn theTreacheryOfRhudaur angmar testDeck $ \_ -> do
+    it "attaches Thaurdir's burden to him at setup while he is out of play, and to him as he enters play" . campaignTestIn theTreacheryOfRhudaur angmar {campaignLogPool = [PoolCard (toCardCode Objectives.thaurdirsLegacy) Nothing Nothing]} testDeck $ \_ -> do
+      thaurdir <- genEncounterCard Enemies.thaurdirTheTreacheryOfRhudaur
+      run $ SetAside thaurdir
+      run $ DoStep 9 Setup
+      attachedTo Objectives.thaurdirsLegacy `shouldReturn` [CardIdTarget thaurdir.id]
+      run $ AddToStaging thaurdir
+      eid <- getsGame (fromJustNote "no Thaurdir" . fmap toId . find ((== toCardCode Enemies.thaurdirTheTreacheryOfRhudaur) . toCardCode) . toList . (.entities.enemies))
+      attachedTo Objectives.thaurdirsLegacy `shouldReturn` [EnemyTarget eid]
+
+    it "notes the book of each Clue a player controls, for that player" . campaignTestIn theTreacheryOfRhudaur angmar testDeck $ \_ -> do
       beravor <- getHeroWithCode "01012"
       run . (`PutObjectiveIntoPlayAttached` toTarget beravor.id) =<< genEncounterCard Objectives.heirloomOfIarchon
       run $ GameOver Won
+      Map.lookup BooksEarned . (.counts) <$> getCampaignLog `shouldReturn` Just (Map.singleton (toCardCode Attachments.heirloomOfIarchon) 0)
+      (.pool) <$> getCampaignLog `shouldReturn` []
+
+    it "lets the player add the book to the pool, or not, as the next scenario is set up" . campaignTestIn theBattleOfCarnDum (recordCount BooksEarned (toCardCode Attachments.heirloomOfIarchon) 0 angmar) testDeck $ \pid -> do
+      run $ DoStep 9 Setup
+      chooseLabel "$label.campaign.addBookToDeck" pid
       (.pool) <$> getCampaignLog `shouldReturn` [PoolCard (toCardCode Attachments.heirloomOfIarchon) (Just 0) Nothing]
+      Map.member BooksEarned . (.counts) <$> getCampaignLog `shouldReturn` False
 
   describe "The Battle of Carn Dûm and The Dread Realm" do
     it "notes the damage on each hero" . campaignTestIn theBattleOfCarnDum angmar testDeck $ \_ -> do

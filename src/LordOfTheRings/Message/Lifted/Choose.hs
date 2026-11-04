@@ -17,13 +17,15 @@ import LordOfTheRings.Helpers.Modifiers (getModifiers)
 import LordOfTheRings.I18n
 import LordOfTheRings.Modifier (ModifierType (ImmuneToPlayerCardEffects, ImmuneToPlayerEvents))
 import LordOfTheRings.Id
-import LordOfTheRings.Matcher (PlayerMatcher (PlayerWithId, PlayerWithThreatAtLeast), selectAny)
+import LordOfTheRings.Matcher (PlayerMatcher (PlayerWithId, PlayerWithThreatAtLeast), getMainQuestProgress, getMainQuests, selectAny)
 import LordOfTheRings.Message
 import LordOfTheRings.Message.Lifted.Queue
 import LordOfTheRings.Prelude
 import LordOfTheRings.Queue
 import LordOfTheRings.Question
+import LordOfTheRings.Source (Sourceable (..))
 import LordOfTheRings.Target
+import LordOfTheRings.Token (Token (Progress))
 
 data ChooseState = ChooseState
   { chooseLabel :: Maybe Text
@@ -133,6 +135,22 @@ valourLabeled :: (ReverseQueue m) => PlayerId -> QueueT Message m () -> ChooseT 
 valourLabeled pid action = do
   high <- lift $ selectAny (PlayerWithId pid <> PlayerWithThreatAtLeast 40)
   when high $ labeled "valour" action
+
+{- | "Either remove N progress from the main quest, or ..." as a choice, offered only while
+the main quest has the N to remove: the option chosen must be performed in full, if able
+(FAQ 1.44).
+
+> chooseOrRunOneM pid do
+>   removeMainQuestProgressLabeled attrs 2
+>   labeled "southronSoldier.attack" $ immediateAttack pid attrs.id
+-}
+removeMainQuestProgressLabeled :: (ReverseQueue m, Sourceable source) => source -> Int -> ChooseT m ()
+removeMainQuestProgressLabeled source n = do
+  progress <- lift getMainQuestProgress
+  quests <- lift getMainQuests
+  when (progress >= n)
+    $ labeledWith "removeMainQuestProgress" [intVar "n" n]
+    $ for_ quests \q -> push (RemoveTokens (toSource source) q Progress n)
 
 -- | A choice made by clicking the target. A card immune to player card effects is not
 -- offered when a player card, the one 'causedBy' names, is causing the question, nor one

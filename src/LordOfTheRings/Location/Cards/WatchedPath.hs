@@ -17,7 +17,7 @@ instance HasModifiersFor WatchedPath where
   getModifiersFor (WatchedPath a) = do
     clued <- playersWithClues
     players <- getRemainingPlayers
-    for_ (filter (`notElem` clued) players) \p -> modified a p [CannotDrawCardsFromPlayerCardEffects]
+    for_ (filter (`notElem` clued) players) \p -> modified a p [CannotDrawCardsFromCardEffects]
 
 -- | Shadow: If you do not control at least 1 Clue card, discard all cards from your hand.
 instance RunMessage WatchedPath where

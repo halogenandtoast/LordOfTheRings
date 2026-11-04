@@ -276,6 +276,11 @@ spec = describe "Khazad-dûm Nightmare mode" do
       enemies `shouldReturn` sort (codes [Enemies.goblinScout, Enemies.pitGoblin])
       length <$> getEncounterDeck `shouldReturn` 1
 
+    it "Beats and Echoes reveals each enemy, its surge revealing the next card" . nightmare theSeventhLevel $ \_ -> do
+      reveal Treacheries.beatsAndEchoes [Enemies.mirkwoodBats, Locations.upperHall, Enemies.pitGoblin, Enemies.goblinScout]
+      enemies `shouldReturn` sort (codes [Enemies.mirkwoodBats, Enemies.pitGoblin, Enemies.goblinScout])
+      getEncounterDeck `shouldReturn` []
+
   describe "Flight from Moria" do
     it "builds the nightmare deck, with the 3 nightmare stages in the quest deck" . nightmare flightFromMoria $ \_ -> do
       run $ DoStep 1 Setup

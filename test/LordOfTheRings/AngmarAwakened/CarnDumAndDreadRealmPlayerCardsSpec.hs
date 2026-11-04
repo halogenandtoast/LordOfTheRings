@@ -4,10 +4,11 @@ import LordOfTheRings.Ally.CardDefs qualified as Allies
 import LordOfTheRings.Attachment.CardDefs qualified as Attachments
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Event.CardDefs qualified as Events
-import LordOfTheRings.Helpers.Character (getAttack, getDefense)
+import LordOfTheRings.Helpers.Character (getAttack, getDefense, getWillpower)
 import LordOfTheRings.Helpers.Modifiers (getModifiers)
 import LordOfTheRings.Location.CardDefs qualified as Locations
-import LordOfTheRings.Modifier (ModifierType (DoesNotExhaustToAttack, GainResourceIcon))
+import LordOfTheRings.Matcher (AllyMatcher (AllyControlledBy), HeroMatcher (HeroControlledBy), PlayerMatcher (PlayerWithId), select)
+import LordOfTheRings.Modifier (ModifierType (AttackModifier, DoesNotExhaustToAttack, GainResourceIcon, WillpowerModifier))
 import LordOfTheRings.Phase
 import LordOfTheRings.Quest.CardDefs qualified as Quests
 import LordOfTheRings.Sphere (Sphere (Tactics))
@@ -312,7 +313,94 @@ spec = describe "The Battle of Carn Dûm and The Dread Realm player cards" do
       run $ Discard sword
       allies <- getsGame (toList . (.entities.allies))
       map toCardCode allies `shouldBe` [toCardCode Allies.lindir]
+
+    it "keeps the ally's action ability, exhausting the hero to pay for it" . gameTest $ \pid -> do
+      faramir <- swordThained pid Allies.faramir
+      run $ ActionWindow pid
+      chooseAbilityOf pid faramir
+      exhausted faramir `shouldReturn` True
+      eowyn <- hero eowynCode
+      getModifiers eowyn >>= (`shouldSatisfy` elem (WillpowerModifier 1))
+
+    it "keeps the ally's constant modifiers, given to the hero" . gameTest $ \pid -> do
+      ingold <- swordThained pid Allies.ingold
+      was <- stat getWillpower ingold
+      run $ PlaceTokens GameSource ingold Resource 1
+      stat getWillpower ingold `shouldReturn` (was + 1)
+
+    it "keeps the ally's responses" . gameTest $ \pid -> do
+      sam <- swordThained pid Allies.samGamgee
+      run $ Exhaust sam
+      fund eowynCode 1
+      run $ RaiseThreat pid 1
+      chooseAbilityOf pid sam
+      exhausted sam `shouldReturn` False
+      getModifiers sam >>= (`shouldSatisfy` elem (AttackModifier 1))
+
+    it "is a hero its controller controls, and not an ally" . gameTest $ \pid -> do
+      faramir <- swordThained pid Allies.faramir
+      map toTarget <$> select (HeroControlledBy $ PlayerWithId pid) >>= (`shouldSatisfy` elem faramir)
+      select (AllyControlledBy $ PlayerWithId pid) `shouldReturn` []
+
+    it "keeps another copy of it from being played, as unique" . gameTest $ \pid -> do
+      _ <- swordThained pid Allies.faramir
+      fund theodredCode 4
+      card <- putCardIntoHand pid Allies.faramir
+      run $ BeginPhase PlanningPhase
+      Just question <- getQuestion pid
+      [t | TargetLabel t _ <- questionChoices question] `shouldSatisfy` notElem (CardIdTarget card.id)
+
+    it "goes to its owner's discard pile as it leaves play" . gameTest $ \pid -> do
+      faramir <- swordThained pid Allies.faramir
+      run $ Discard faramir
+      getsGame (length . (.entities.heroes)) `shouldReturn` 3
+      map toCardCode . (.discard) <$> getPlayer pid >>= (`shouldSatisfy` elem (toCardCode Allies.faramir))
+
+    it "keeps Beechbone's response, reading the damage on the hero" . gameTest $ \pid -> do
+      beechbone <- swordThained pid Allies.beechbone
+      eid <- engagedEnemy pid Enemies.hillTroll
+      run $ DealDamage GameSource beechbone 1
+      run $ CheckWindows [mkAfter $ DeclaredAsAttacker beechbone eid]
+      chooseAbilityOf pid beechbone
+      getDamage beechbone `shouldReturn` 2
+      getDamage (toTarget eid) `shouldReturn` 2
+
+    it "keeps Éothain's response while the hero is exhausted, as its text asks of it by its id" . gameTest $ \pid -> do
+      eothain <- swordThained pid Allies.eothain
+      finest <- putAllyIntoPlay pid Allies.theRiddermarksFinest
+      run . AddToStaging =<< genEncounterCard Locations.oldForestRoad
+      run $ Exhaust eothain
+      run $ ActionWindow pid
+      chooseAbilityOf pid finest
+      chooseAbilityOf pid eothain
+      exhausted eothain `shouldReturn` False
+
+    it "keeps Riddermark Knight's response, discarding the hero after its attack" . gameTest $ \pid -> do
+      spider <- engagedEnemy pid Enemies.forestSpider
+      AllyTarget knight <- putAllyIntoPlay pid Allies.riddermarkKnight
+      -- the knight is not unique, so made a hero as Sword-thain makes one
+      run $ AllyBecomesHero knight
+      asHero <- toTarget <$> getHeroWithCode (toCardCode Allies.riddermarkKnight)
+      run $ PlayerAttacks pid
+      chooseTarget pid asHero
+      chooseAbilityOf pid asHero
+      chooseLabel "$label.doneAttacking" pid
+      passResponses pid
+      passActions pid
+      getDamage (toTarget spider) `shouldReturn` 3
+      getsGame (map toCardCode . toList . (.entities.heroes)) >>= (`shouldSatisfy` notElem (toCardCode Allies.riddermarkKnight))
  where
+  -- the unique ally put into play, then made a hero by Sword-thain
+  swordThained pid def = do
+    ally' <- putAllyIntoPlay pid def
+    card <- genPlayerCard Attachments.swordThain (Just pid)
+    run $ PlayAttachmentOn pid card ally'
+    toTarget <$> getHeroWithCode (toCardCode def)
+  passResponses pid =
+    getQuestion pid >>= \case
+      Just (QuestionLabel "$label.useResponse" _ _ _) -> chooseLabel "$label.pass" pid >> passResponses pid
+      _ -> pure ()
+  exhausted t = getsGame (maybe False (heroExhausted . toAttrs) . find ((== t) . toTarget) . toList . (.entities.heroes))
   longDefeat = getsGame (toTarget . fromJustNote "The Long Defeat" . find ((== toCardCode Attachments.theLongDefeat) . toCardCode) . toList . (.entities.attachments))
   questIdOf = \case
     QuestTarget qid -> Just qid

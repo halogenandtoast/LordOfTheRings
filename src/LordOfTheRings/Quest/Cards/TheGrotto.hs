@@ -24,7 +24,7 @@ instance HasModifiersFor TheGrotto where
 -- | Forced: After a double-sided location is explored, add the top location from the
 -- Grotto deck to the staging area, Grotto side faceup.
 instance HasAbilities TheGrotto where
-  getAbilities (TheGrotto a) = [mkAbility a 1 $ forced $ ExploredMatchingWindow When doubleSided | a.flipped]
+  getAbilities (TheGrotto a) = [mkAbility a 1 $ forced $ ExploredMatchingWindow After doubleSided | a.flipped]
    where
     doubleSided = CardMatchAny [CardWithTrait Grotto, CardWithTrait Underwater <> NotCard (cardIs Locations.drownedCave)]
 
