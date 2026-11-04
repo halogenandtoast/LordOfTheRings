@@ -373,6 +373,8 @@ allTreacheryCards =
       , afraidOfTheDark
       , darkPlaces
       , eyesInTheDark
+      , dragonBreath
+      , dragonScales
       ]
 
 deepDeepDark :: CardDef
@@ -2379,3 +2381,9 @@ darkPlaces = (treachery "18056" "Dark Places" DeepUnderground 3) {cdShadowEffect
 
 eyesInTheDark :: CardDef
 eyesInTheDark = (treachery "18057" "Eyes in the Dark" AfraidOfTheDark 3) {cdKeywords = setFromList [Doomed 1], cdShadowEffect = True}
+
+dragonBreath :: CardDef
+dragonBreath = (treachery "18058" "Dragon Breath" DragonMight 2) {cdCardTraits = setFromList [Dragon], cdKeywords = setFromList [Surge]}
+
+dragonScales :: CardDef
+dragonScales = (treachery "18059" "Dragon Scales" DragonMight 2) {cdCardTraits = setFromList [Dragon], cdKeywords = setFromList [Surge]}

@@ -2521,5 +2521,11 @@
     "discard": "Discard a questing character you control",
     "character": "Eyes in the Dark: choose a questing character to discard",
     "discardAlly": "Eyes in the Dark: choose an ally to discard"
+  },
+  "dragonBreath": {
+    "attach": "Choose a Dragon enemy to attach Dragon Breath to"
+  },
+  "dragonScales": {
+    "attach": "Choose a Dragon enemy to attach Dragon Scales to"
   }
 }

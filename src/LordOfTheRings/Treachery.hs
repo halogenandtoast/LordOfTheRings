@@ -363,6 +363,8 @@ import LordOfTheRings.Treachery.Cards.SwarmOfBats
 import LordOfTheRings.Treachery.Cards.AfraidOfTheDark
 import LordOfTheRings.Treachery.Cards.DarkPlaces
 import LordOfTheRings.Treachery.Cards.EyesInTheDark
+import LordOfTheRings.Treachery.Cards.DragonBreath
+import LordOfTheRings.Treachery.Cards.DragonScales
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -753,5 +755,7 @@ allTreacherys =
         , SomeTreacheryCard afraidOfTheDark
         , SomeTreacheryCard darkPlaces
         , SomeTreacheryCard eyesInTheDark
+        , SomeTreacheryCard dragonBreath
+        , SomeTreacheryCard dragonScales
         ]
     ]
