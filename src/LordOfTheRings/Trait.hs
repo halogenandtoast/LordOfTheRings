@@ -5,6 +5,7 @@ import LordOfTheRings.Prelude
 
 data Trait
   = Archer
+  | Assault
   | Attack
   | Armor
   | Arnor
@@ -23,7 +24,9 @@ data Trait
   | Boon
   | Bridge
   | Brigand
+  | Broken
   | Burden
+  | Burglar
   | CairAndros
   | Captain
   | Captive
@@ -45,12 +48,14 @@ data Trait
   | Cursed
   | Dale
   | Dark
+  | Defense
   | Desert
   | Deck
   | DeadMarshes
   | Disaster
   | DolAmroth
   | DolGuldur
+  | Dragon
   | Dunedain
   | Dungeon
   | Dunland
@@ -61,10 +66,12 @@ data Trait
   | Enedwaith
   | Ent
   | Escape
+  | Esgaroth
   | Ettenmoors
   | Flame
   | Forest
   | Fornost
+  | Fortification
   | Gate
   | Giant
   | Goblin
@@ -88,6 +95,7 @@ data Trait
   | Item
   | Ithilien
   | Key
+  | Lair
   | Light
   | Marsh
   | Marshland
@@ -121,6 +129,7 @@ data Trait
   | Raven
   | RavenClan
   | Record
+  | Reforged
   | Ring
   | River
   | Riverland
@@ -148,6 +157,7 @@ data Trait
     SpiritTrait
   | Snaga
   | Spy
+  | Staff
   | Stair
   | Steward
   | Stronghold
@@ -161,6 +171,7 @@ data Trait
     TimeTrait
   | Title
   | Tools
+  | Town
   | Traitor
   | Trap
   | Troll
