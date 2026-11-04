@@ -405,6 +405,8 @@ import LordOfTheRings.Enemy.Cards.SpiderBroodling
 import LordOfTheRings.Enemy.Cards.WereWorm
 import LordOfTheRings.Enemy.Cards.CarrionBird
 import LordOfTheRings.Enemy.Cards.UmbarSentry
+import LordOfTheRings.Enemy.Cards.UrukPursuer
+import LordOfTheRings.Enemy.Cards.RacingWarg
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -836,5 +838,7 @@ allEnemys =
         , SomeEnemyCard wereWorm
         , SomeEnemyCard carrionBird
         , SomeEnemyCard umbarSentry
+        , SomeEnemyCard urukPursuer
+        , SomeEnemyCard racingWarg
         ]
     ]

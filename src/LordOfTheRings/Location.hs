@@ -415,6 +415,10 @@ import LordOfTheRings.Location.Cards.UmbarStreet
 import LordOfTheRings.Location.Cards.UmbarSquare
 import LordOfTheRings.Location.Cards.PortOfHarad
 import LordOfTheRings.Location.Cards.HaradrimEstate
+import LordOfTheRings.Location.Cards.RiverHarnen
+import LordOfTheRings.Location.Cards.ExpanseOfHarad
+import LordOfTheRings.Location.Cards.BlisteringErg
+import LordOfTheRings.Location.Cards.HaradRoad
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -876,5 +880,9 @@ allLocations =
         , SomeLocationCard umbarSquare
         , SomeLocationCard portOfHarad
         , SomeLocationCard haradrimEstate
+        , SomeLocationCard riverHarnen
+        , SomeLocationCard expanseOfHarad
+        , SomeLocationCard blisteringErg
+        , SomeLocationCard haradRoad
         ]
     ]

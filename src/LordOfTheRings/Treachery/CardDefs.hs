@@ -350,6 +350,8 @@ allTreacheryCards =
       , unbearableHeat
       , scorchingSun
       , enemyPursuit
+      , pursuersFromMordor
+      , howlingAtTheirHeels
       ]
 
 deepDeepDark :: CardDef
@@ -2247,3 +2249,11 @@ scorchingSun =
 
 enemyPursuit :: CardDef
 enemyPursuit = (treachery "16021" "Enemy Pursuit" EscapeFromUmbar 2) {cdShadowEffect = True}
+
+-- * Race Across Harad
+
+pursuersFromMordor :: CardDef
+pursuersFromMordor = (treachery "17045" "Pursuers from Mordor" RaceAcrossHarad 2) {cdKeywords = setFromList [Doomed 2], cdShadowEffect = True}
+
+howlingAtTheirHeels :: CardDef
+howlingAtTheirHeels = (treachery "17046" "Howling at their Heels" RaceAcrossHarad 3) {cdShadowEffect = True}

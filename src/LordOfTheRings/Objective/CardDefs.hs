@@ -110,6 +110,7 @@ allObjectiveCards =
       , offTrack
       , onTrack
       , seizeThem
+      , tamedMumak
       ]
 
 durinsAxe :: CardDef
@@ -738,3 +739,12 @@ onTrack = (objective "17080" "On Track" BeneathTheSands 0) {cdCardTraits = setFr
 
 seizeThem :: CardDef
 seizeThem = objective "16014" "Seize Them!" EscapeFromUmbar 1
+
+-- * Race Across Harad
+
+tamedMumak :: CardDef
+tamedMumak =
+  ((objective "17038" "Tamed Mumak" RaceAcrossHarad 4)
+      { cdCardType = ObjectiveAllyType, cdWillpower = Just 2, cdAttack = Just 5, cdDefense = Just 2, cdHitPoints = Just 8 })
+    { cdCardTraits = setFromList [Creature]
+    }

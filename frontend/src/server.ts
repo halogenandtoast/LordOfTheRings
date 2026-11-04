@@ -150,6 +150,9 @@ export interface ServerGame {
   stormcallerProgress?: number | null
   /** The heat tracker's temperature (Desert Crossing). */
   temperature?: number | null
+  /** The Orcs' quest stage and the progress on it (Race Across Harad). */
+  orcsStage?: Card | null
+  orcsProgress?: number | null
   lastCommittedWillpower: number | null
   /** What each target is modified by, as [target, modifiers] pairs. */
   modifiers?: [Target, { modifierType: { tag: string; contents?: unknown } }[]][]

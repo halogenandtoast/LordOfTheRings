@@ -142,6 +142,9 @@ publicGameFor seesHand g = hideDecks $ toJSON merged
         $ KeyMap.insert "stormcallerProgress" (metaValue "stormcallerProgress")
         -- the heat tracker's temperature (Desert Crossing)
         $ KeyMap.insert "temperature" (metaValue "temperature")
+        -- the Orcs' quest stage and its progress (Race Across Harad)
+        $ KeyMap.insert "orcsStage" (metaValue "orcsStage")
+        $ KeyMap.insert "orcsProgress" (metaValue "orcsProgress")
         $ adjust (inside "objectives" $ overValues $ inside "underneath" $ const $ Array mempty) "entities"
         $ adjust (inside "locations" $ overValues $ inside "underneath" $ const $ Array mempty) "entities"
         $ adjust (inside "locations" $ overValues hideOtherSide) "entities"

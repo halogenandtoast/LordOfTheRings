@@ -105,6 +105,7 @@ const implemented: Record<string, Gateable & { nightmare?: boolean }> = {
   'beneath-the-sands': { alpha: true },
   'desert-crossing': { alpha: true },
   'escape-from-umbar': { alpha: true },
+  'race-across-harad': { alpha: true },
 }
 
 const campaign = (id: string, name: string, code: string, scenarios: ScenarioOption[]): Campaign => ({

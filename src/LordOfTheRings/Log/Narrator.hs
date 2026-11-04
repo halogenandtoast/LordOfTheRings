@@ -380,6 +380,15 @@ narrationFor = \case
   ScenarioSpecific "stormcaller.advanced" (parseMaybe parseJSON -> Just card) ->
     Just $ one $ toned Bad $ structure [ikeyPart "log.stormcallerAdvances" ["quest" ~> EncounterCard card]]
   ScenarioSpecific "stormcaller.join" _ -> Just $ one $ toned Good $ mechanic [ikeyPart "log.stormcallerCaughtUp" []]
+  -- \* The Orcs' area and their quest stage (Race Across Harad)
+  PlaceEnemy eid OrcsArea -> Just $ whenRef (toTarget eid) \e -> one $ mechanic [ikeyPart "log.toOrcsArea" ["card" ~> e]]
+  PlaceLocation lid OrcsArea -> Just $ whenRef (toTarget lid) \l -> one $ mechanic [ikeyPart "log.toOrcsArea" ["card" ~> l]]
+  ScenarioSpecific "orcs.progress" (parseMaybe parseJSON -> Just (n :: Int)) ->
+    Just $ one $ toned Bad $ mechanic [ikeyPart "log.orcsProgress" ["count" ~> n]]
+  ScenarioSpecific "orcs.advanced" (parseMaybe parseJSON -> Just card) ->
+    Just $ one $ toned Bad $ structure [ikeyPart "log.orcsAdvance" ["quest" ~> EncounterCard card]]
+  ScenarioSpecific "orcs.join" _ -> Just $ one $ toned Bad $ mechanic [ikeyPart "log.orcsCaughtUp" []]
+  ScenarioSpecific "orcs.split" _ -> Just $ one $ toned Good $ mechanic [ikeyPart "log.orcsLeftBehind" []]
   -- \* Locations the players control, as Osgiliath's
   PlaceLocation lid placement -> Just $ whenRef (toTarget lid) \l -> do
     from <- maybe Unplaced (.placement) . Map.lookup lid <$> getsGame (entitiesLocations . gameEntities)

@@ -412,6 +412,8 @@ allEnemyCards =
       , wereWorm
       , carrionBird
       , umbarSentry
+      , urukPursuer
+      , racingWarg
       ]
 
 namelessThing :: CardDef
@@ -3359,4 +3361,22 @@ umbarSentry =
     { cdCardTraits = setFromList [Harad]
     , cdKeywords = setFromList [Surge, Archery 1]
     , cdEasyModeQuantity = Just 4
+    }
+
+-- * Race Across Harad
+
+urukPursuer :: CardDef
+urukPursuer =
+  (enemy "17043" "Uruk Pursuer" RaceAcrossHarad 4 20 2 3 2 3)
+    { cdCardTraits = setFromList [Orc, Uruk]
+    , cdWhenRevealed = True
+    , cdShadowEffect = True
+    }
+
+racingWarg :: CardDef
+racingWarg =
+  (enemy "17044" "Racing Warg" RaceAcrossHarad 3 10 1 1 1 1)
+    { cdCardTraits = setFromList [Creature]
+    , cdKeywords = setFromList [Surge]
+    , cdWhenRevealed = True
     }

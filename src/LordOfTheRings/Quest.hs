@@ -238,6 +238,10 @@ import LordOfTheRings.Quest.Cards.UnderTheMercilessSun
 import LordOfTheRings.Quest.Cards.BeastsOfLegend
 import LordOfTheRings.Quest.Cards.StrandedInUmbar
 import LordOfTheRings.Quest.Cards.FleeTheCity
+import LordOfTheRings.Quest.Cards.SettingOut
+import LordOfTheRings.Quest.Cards.RacingNorth
+import LordOfTheRings.Quest.Cards.HuntedInHarad
+import LordOfTheRings.Quest.Cards.TheFordOfHarnen
 import LordOfTheRings.Quest.Runner ()
 import LordOfTheRings.Quest.Types as X
 import LordOfTheRings.Id
@@ -508,5 +512,9 @@ allQuests =
         , SomeQuestCard beastsOfLegend
         , SomeQuestCard strandedInUmbar
         , SomeQuestCard fleeTheCity
+        , SomeQuestCard settingOut
+        , SomeQuestCard racingNorth
+        , SomeQuestCard huntedInHarad
+        , SomeQuestCard theFordOfHarnen
         ]
     ]

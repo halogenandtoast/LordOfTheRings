@@ -222,6 +222,7 @@ import LordOfTheRings.Ally.Cards.KahlielsTribesman
 import LordOfTheRings.Ally.Cards.DunedainPathfinder
 import LordOfTheRings.Ally.Cards.ErynGalenSettler
 import LordOfTheRings.Ally.Cards.StewardOfOrthanc
+import LordOfTheRings.Ally.Cards.TamedMumak
 import LordOfTheRings.Ally.Runner ()
 import LordOfTheRings.Ally.Types as X
 import LordOfTheRings.Id
@@ -476,5 +477,6 @@ allAllies =
         , SomeAllyCard dunedainPathfinder
         , SomeAllyCard erynGalenSettler
         , SomeAllyCard stewardOfOrthanc
+        , SomeAllyCard tamedMumak
         ]
     ]

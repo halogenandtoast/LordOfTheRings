@@ -121,6 +121,9 @@ export interface ScenarioView {
   stormcallerArea: CardView[]
   /** The heat tracker's temperature (Desert Crossing). */
   temperature?: number | null
+  /** The Orcs' quest stage, with its progress, and the cards in their area (Race Across Harad). */
+  orcsStage: CardView | null
+  orcsArea: CardView[]
 }
 
 export interface IslandMapCell {

@@ -2283,5 +2283,13 @@
     "choose": "Enemy Pursuit: choose one",
     "removeProgress": "Remove all progress from the main quest",
     "damage": "Assign 1 damage among characters in play for each progress on the main quest"
+  },
+  "racingNorth": {
+    "choose": "Racing North: choose where Uruk Warg-rider goes",
+    "staging": "The staging area",
+    "orcsArea": "The Orcs' area"
+  },
+  "racingWarg": {
+    "attach": "Racing Warg: choose the Orc enemy to attach it to"
   }
 }

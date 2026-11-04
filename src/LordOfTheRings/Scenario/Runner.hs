@@ -225,6 +225,9 @@ instance RunMessage ScenarioAttrs where
     RevealCard card -> pure $ attrs & setAsideL %~ filter (/= card)
     -- a set-aside card added to the staging area, as Orc Trail adds one out-of-play Orc
     AddToStaging card -> pure $ attrs & setAsideL %~ filter (/= card)
+    -- or made an enemy where its card puts it, as Racing North adds Uruk Warg-rider to the
+    -- Orcs' area
+    CreateEnemy _ card -> pure $ attrs & setAsideL %~ filter (/= card)
     -- a set-aside card put into play, as The Seething Lake makes Doors of Durin active
     PutIntoPlayAsActiveLocation card -> pure $ attrs & setAsideL %~ filter (/= card)
     ShuffleSetAsideIntoEncounterDeck cards -> do
