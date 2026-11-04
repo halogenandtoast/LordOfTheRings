@@ -3600,5 +3600,49 @@
       "One of the heroes clasped hands with the Woodman and said, “Thank you for your help. You are a brave man, Haldan. I wish you safe travel on your return journey.”",
       "With that, the heroes climbed aboard the Bardings’ boat and sailed north as Haldan waved goodbye from the shore."
     ]
+  },
+  "the-city-of-ulfast": {
+    "intro": [
+      "On the southern shore of the Sea of Rhûn, a tall man knelt down next to his horse to examine the ground.",
+      "“Here is the trail we seek,” he proclaimed to his mounted companions, pointing to the obvious trampling of booted feet in the soft earth. “See how it hugs the shore? Just as I thought it would.”",
+      "“How did you know that Ulchor would travel East and not South toward Mordor?” asked one of the companions as the tall man mounted his horse.",
+      "“That was not an army of Orcs he led into Dorwinion, but Easterlings,” answered the man. “And their armor bore the sigil of Ulfast, their King. I suspect that Ulchor went to Ulfast after we drove him from the Hills of Rhûn and demanded that the King provide him with an army in the name of Mordor.”",
+      "“How do you think the King will respond when Ulchor returns with only a remnant of his army?”",
+      "“He will be furious, I am sure,” replied the man. “But he dare not rebuke an emissary of the Dark Lord. In the past, the Easterlings worshipped Sauron as The Lord of Middle-earth. You saw evidence of that in the temple they built. Even if they no longer worship him, the Easterlings fear the power of Mordor too much to refuse Ulchor.”",
+      "“Then how will we reach Ulchor if he has the King’s support?”",
+      "“Ulfast is a big city, somewhat akin to Pelargir. The Easterlings conduct trade with ships sailing down the Sea of Rhûn, so foreigners are not uncommon there. If we sneak in by night, we should be able to blend in and search for Ulchor discretely.”",
+      "“Then let us ride straightaway for Ulfast. The blood of Dorwinion yet cries for justice, and I would see it done.”"
+    ],
+    "setup": [
+      "“The City of Ulfast” is played with an encounter deck built with all the cards from the following encounter sets: The City of Ulfast, Servants of Sauron, and Under Guard. (Servants of Sauron and Under Guard can be found in A Shadow in the East deluxe expansion to The Lord of the Rings: The Card Game.)"
+    ],
+    "rules": [
+      {
+        "title": "Indestructible",
+        "text": "An enemy with the Indestructible keyword cannot be destroyed by damage, even when it has damage on it equal to its hit points."
+      },
+      {
+        "title": "Strategy Tip",
+        "text": "While you are searching for Ulchor in the city of Ulfast, you will have to tread carefully to avoid being detected by the City Guard, an imposing enemy with 8 attack strength!\n\nThe City Guard cannot leave the staging area, but it is considered to be engaged with each player whose threat is equal to or higher than its engagement cost of 45. While that may not seem like a problem, each quest stage will reduce the City Guard’s engagement cost by 5 for each round that you linger there.\n\nThat means it will only take a few rounds for the City Guard’s engagement cost to be reduced to a point where it ends up considered to be engaged with you. When that happens, the City Guard will make attacks against you like any other enemy that is engaged with you. So manage your threat with care and move quickly to avoid being defeated!"
+      }
+    ],
+    "resolution": [
+      "The heroes were disarmed and led to the throne room of King Ulfast. There they saw the king, a strong man with a discerning gaze. About him were his palace guards. Upon his head was a golden crown, and on his lap rested the Sceptre of Ulfast. From his high seat upon the dais, the Easterling king looked down upon them and studied them thoughtfully. Standing next to the King with his hand upon the back of the throne was the Black Númenórean, Ulchor. His guards also stood nearby.",
+      "The Thane of Nurn smiled cruelly at the heroes. They had come to Ulfast to capture him, but had ended up being captured themselves. Just as Ulchor had intended it when he alerted the King to their presence in the city.",
+      "“You see, your majesty,” said Ulchor pointing at the companions, “Here is your true enemy. They have violated your law by trespassing in your city, and they have broken your peace by fighting with your city guard. They are thieves and killers. You should deal with them accordingly.”",
+      "The King stroked his beard thoughtfully as he listened to all Ulchor had to say. Then he motioned to the heroes and said, “What have you to say in your defense?”",
+      "One of the heroes stepped forward and answered, “Great King. It is true that we did come to your city uninvited, but we beg you, please: hear our full tale before passing judgment. We did not make the long journey here to do you harm, but to seek justice for those lost in Dorwinion and to rescue Ulfast from the yoke of Mordor.”",
+      "Ulchor laughed. “Yoke! What yoke? Mordor has ever been a friend and ally to you, King Ulfast,” he said. “Sauron the Great has...”",
+      "“Sauron the Deceiver has no friends or allies,” proclaimed the hero, interrupting Ulchor. “The Dark Lord seeks dominion over all of Middle-earth, East and West alike. To him we are all but pawns to be used or destroyed as he sees fit. Tell me Great King, would you see more of your soldiers die needlessly fighting his wars?”",
+      "The king pondered these words silently, but Ulchor glowered and said to the king, “My lord, do not let these liars deceive you. Have them taken away.”",
+      "“No,” said the king, stroking his beard. “I will hear their tale first.”",
+      "“But you cannot listen to them!” urged Ulchor.",
+      "The king looked sharply at him and said, “You do not rule here. I am king of Ulfast, and I will decide what can or cannot be done regarding those under my rule.”",
+      "Ulchor recoiled, releasing his grip on the throne. His face was twisted with terrible wrath. “You rule only by the will of Sauron,” he hissed. Then, he gave his guards a look and shouted, “As the Dark Lord gives, he can also take away!” Ulchor’s men drew their weapons and attacked the palace guards.",
+      "The throne room erupted into a fierce melee. Ulfast’s guards rushed to the throne to protect their king, but many were cut down by Ulchor’s men. The heroes lifted the weapons of the fallen and joined the fray with shouts of “Dorwinion!” At their coming, Ulchor retreated, and they pursued him into the courtyard. But they were stopped by more of Ulfast’s guards who knew nothing of what had happened inside. The heroes threw down their weapons at spearpoint and watched helplessly as Ulchor and his men galloped away on horseback.",
+      "Moments later, they were brought back to the throne room where King Ulfast addressed them once more. “You came to my city seeking vengeance on Ulchor. Now it seems your goal and mine are the same. But I cannot move openly against Mordor. Here, then, is my judgment: For saving my life just now, I will spare yours, so long as you pursue the traitor Ulchor. Bring him to justice, and you shall have the friendship of Ulfast.”",
+      "The heroes bowed low, and thanked the king. Ulfast returned to them their weapons and gear, and also furnished them with fresh horses and supplies. Then, they set out once more in pursuit of Ulchor.",
+      "The story continues in “Challenge of the Wainriders,” the third Adventure Pack in “The Vengeance of Mordor” cycle."
+    ]
   }
 }
