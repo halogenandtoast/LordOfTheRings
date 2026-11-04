@@ -21,8 +21,6 @@ instance HasModifiersFor SnowyBadlands where
 
 -- | Travel: Each player deals 1 damage to an exhausted character he controls to travel here
 -- (2 damage instead if it is Night).
--- ponytail: paid as the players travel, not checked first; a player with no exhausted
--- character pays nothing.
 instance RunMessage SnowyBadlands where
   runMessage msg l@(SnowyBadlands a) = case msg of
     TravelTo lid | lid == a.id -> do

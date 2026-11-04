@@ -56,7 +56,6 @@ conflictAtTheCarrock =
 -- Morris: "each Troll enemy gets +1 attack and gains 'Immune to player events.'"
 -- Rupert: "the defense of each Troll enemy cannot be reduced."
 -- Stuart: "each Troll enemy gets +1 defense and gains 'Cannot have player attachments.'"
--- ponytail: "cannot have player attachments" keeps every attachment off, as Stuart's own
 instance HasModifiersFor ConflictAtTheCarrock where
   getModifiersFor (ConflictAtTheCarrock a) = do
     let shown def = length $ filter ((== toCardCode def) . toCardCode) a.victoryDisplay

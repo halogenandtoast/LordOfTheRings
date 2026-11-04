@@ -22,7 +22,6 @@ instance RunMessage MasterOfLore where
   runMessage msg s@(MasterOfLore a) = case msg of
     UseCardAbility pid (isSource a -> True) 1 _ -> do
       errata <- playsWithErrata a.owner
-      -- ponytail: as printed it may lower a 1-cost card to 0; give ReduceCostOf a floor if that matters
       let lower t = phaseModifier a (PlayerTarget pid) $ (if errata then ReduceNextCostOf else ReduceCostOf) (CardWithType t <> CardWithSphere Lore) 1
       chooseOneM pid do
         questionLabeled "masterOfLore.name"

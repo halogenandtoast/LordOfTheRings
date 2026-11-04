@@ -13,8 +13,6 @@ corsairWaters = location CorsairWaters Cards.corsairWaters
 
 -- | While Corsair Waters is the active location, no more than 1 ally can enter play each
 -- round.
--- ponytail: as the players playing no more than 1 ally each round; an ally put into play
--- by a card effect is not counted.
 instance HasModifiersFor CorsairWaters where
   getModifiersFor (CorsairWaters a) = when (a.placement == ActiveLocation) $ modified a GameTarget [OneAllyPerRound]
 

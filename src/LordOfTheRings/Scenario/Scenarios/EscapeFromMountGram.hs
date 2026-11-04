@@ -169,7 +169,6 @@ instance RunMessage EscapeFromMountGram where
       -- Raid Golfimbul's Vault: "Forced: When the captured cards underneath Raid
       -- Golfimbul's Vault are rescued, put each rescued Item card into its owner's hand and
       -- discard the rest."
-      -- ponytail: a hero rescued from it still comes back into play, not discarded
       let vault = toCardCode host == toCardCode Quests.raidGolfimbulsVault
       for_ cards \pc -> case cdCardType (toCardDef pc) of
         HeroType -> putIntoPlayAtNoCost pc

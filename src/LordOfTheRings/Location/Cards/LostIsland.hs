@@ -17,7 +17,6 @@ lostIslandTempleOfTheDeceived :: LocationCard LostIsland
 lostIslandTempleOfTheDeceived = location LostIsland Cards.lostIslandTempleOfTheDeceived
 
 -- | Cannot have player card attachments.
--- ponytail: no attachment at all, as no encounter card attaches to one
 instance HasModifiersFor LostIsland where
   getModifiersFor (LostIsland a) = modifySelf a [CannotHaveAttachments]
 

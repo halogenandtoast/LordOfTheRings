@@ -15,8 +15,6 @@ foesOfEcthelion = treachery FoesOfEcthelion Cards.foesOfEcthelion
 -- | When Revealed: Add 2 resources to a Raider enemy in the staging area. Each Raider enemy
 -- in the staging area gets +1 threat for each resource on it until the end of the phase.
 -- If there are no Raider enemies in the staging area, Foes of Ecthelion gains surge.
--- ponytail: the threat is counted from the resources on each as it resolves, not kept up
--- as they change during the phase.
 instance RunMessage FoesOfEcthelion where
   runMessage msg t@(FoesOfEcthelion attrs) = case msg of
     WhenRevealed (isTarget attrs -> True) -> do

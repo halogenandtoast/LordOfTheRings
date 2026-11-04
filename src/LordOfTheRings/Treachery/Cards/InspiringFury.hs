@@ -17,7 +17,6 @@ inspiringFury = treachery InspiringFury Cards.inspiringFury
 -- card: discarded as it resolves, it leaves the discard pile for that enemy.
 -- Shadow: Shuffle the encounter discard pile into the encounter deck and deal attacking
 -- enemy 3 additional shadow cards. During this attack, shadow effects cannot be canceled.
--- ponytail: no encounter card effect can be canceled during this attack
 instance RunMessage InspiringFury where
   runMessage msg t@(InspiringFury attrs) = case msg of
     WhenRevealed (isTarget attrs -> True) -> do

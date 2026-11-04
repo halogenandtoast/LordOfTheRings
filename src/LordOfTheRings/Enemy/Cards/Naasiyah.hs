@@ -46,7 +46,6 @@ instance RunMessage Naasiyah where
       strengthen
       afterAttack attrs.id [RemoveTokens (toSource attrs) (toTarget attrs) Resource 1]
       pure e
-    -- ponytail: the resource goes as she defends, the bonus already fixed for the attack
     UseCardAbility _ (isSource attrs -> True) 3 _ -> do
       strengthen
       removeTokens attrs attrs Resource 1

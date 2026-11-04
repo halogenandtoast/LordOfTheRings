@@ -14,6 +14,7 @@ import LordOfTheRings.Classes.Entity (Entity (toAttrs))
 import LordOfTheRings.Scenario.Types (ScenarioAttrs (scenarioSetAside))
 import LordOfTheRings.Classes.HasGame (HasGame, getsGame)
 import LordOfTheRings.Frontend (Frontend)
+import LordOfTheRings.Log.Block (LogBlockKind (PlayBlock))
 import LordOfTheRings.Classes.HasQueue
 import LordOfTheRings.Effect
 import LordOfTheRings.Entities (entitiesLocations, entitiesQuests)
@@ -266,6 +267,11 @@ roundModifiers source target modifiers = createEffect source target modifiers Un
 roundModifier
   :: (ReverseQueue m, Sourceable source, Targetable target) => source -> target -> ModifierType -> m ()
 roundModifier source target = roundModifiers source target . pure
+
+-- | After the current phase there is an additional instance of each phase, in the order
+-- given, before the round goes on, as Send for Help reads.
+additionalPhases :: ReverseQueue m => [Phase] -> m ()
+additionalPhases = push . AdditionalPhases
 
 -- | For each player still in the game, in turn order from the first player.
 eachPlayer :: ReverseQueue m => (PlayerId -> m ()) -> m ()
@@ -977,6 +983,13 @@ from hand.
 playFromHandAtNoCost :: ReverseQueue m => PlayerId -> CardId -> m ()
 playFromHandAtNoCost pid cid = push $ PlayFromHandAtNoCost pid cid
 
+-- | The card leaves the player's deck and is played without paying its cost, as Send for
+-- Help's search lets one be.
+playFromDeckAtNoCost :: ReverseQueue m => PlayerId -> PlayerCard -> m ()
+playFromDeckAtNoCost pid card = do
+  removeFromDeck pid card.id
+  pushAll =<< inLogBlock (PlayBlock pid (PlayerCard card)) [PlayAtNoCost pid card]
+
 {- | The character attacks the enemy, wherever it is, as an effect declares it an
 attacker; its attack raised by the bonus for that attack alone.
 -}
@@ -1578,7 +1591,6 @@ cancelAttack eid = lift $ withQueue_ $ mapMaybe \case
   UndefendedAttack _ e | e == eid -> Nothing
   UndefendedDamage _ e | e == eid -> Nothing
   AttackDefended _ e _ | e == eid -> Nothing
-  -- ponytail: the window after it attacks stays, so its "for this attack" effects end
   CheckWindows ws | any ending ws -> Just $ CheckWindows (filter (not . defended) ws)
   m -> Just m
  where

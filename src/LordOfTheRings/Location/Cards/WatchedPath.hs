@@ -13,7 +13,6 @@ watchedPath = location WatchedPath Cards.watchedPath
 
 -- | Each player who does not control at least 1 Clue card cannot draw cards through card
 -- effects.
--- ponytail: only player card effects are barred; no encounter card here makes players draw
 instance HasModifiersFor WatchedPath where
   getModifiersFor (WatchedPath a) = do
     clued <- playersWithClues

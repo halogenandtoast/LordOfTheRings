@@ -13,8 +13,6 @@ deepMines = location DeepMines Cards.deepMines
 
 -- | Forced: When a Goblin enemy enters play, add 1 resource to that enemy if Deep-mines is
 -- in the staging area.
--- ponytail: read as a Goblin entering the staging area, the way encounter enemies enter
--- play; one put into play engaged takes none.
 instance HasAbilities DeepMines where
   getAbilities (DeepMines a) =
     [ restricted a 1 (exists $ LocationWithId a.id <> LocationInStagingArea)
