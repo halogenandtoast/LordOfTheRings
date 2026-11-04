@@ -449,6 +449,8 @@ allQuestCards =
       , threeIsCompany
       , aShortcutToMushrooms
       , escapeToBuckland
+      , pursuedByTheEnemy
+      , raceToRivendell
       ]
 
 theDrippingWalls :: CardDef
@@ -1872,3 +1874,12 @@ aShortcutToMushrooms = quest "141023" "A Shortcut to Mushrooms" AShadowOfThePast
 -- | No quest points: the players win as Bucklebury Ferry is explored.
 escapeToBuckland :: CardDef
 escapeToBuckland = quest "141024" "Escape to Buckland" AShadowOfThePast 3 0
+
+-- * Flight to the Ford
+
+pursuedByTheEnemy :: CardDef
+pursuedByTheEnemy = quest "141028" "Pursued by the Enemy" FlightToTheFord 1 15
+
+-- | +15 quest points while a Nazgûl enemy is in play: its card gives them.
+raceToRivendell :: CardDef
+raceToRivendell = quest "141029" "Race to Rivendell" FlightToTheFord 2 15

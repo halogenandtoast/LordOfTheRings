@@ -161,6 +161,7 @@ allObjectiveCards =
       , gildorInglorionObjective
       , gandalfsDelay
       , theOneRingTheBlackRiders
+      , anEvilWound
       ]
 
 durinsAxe :: CardDef
@@ -1148,3 +1149,9 @@ theOneRingTheBlackRiders =
   unique (emptyCardDef "141085" "The One Ring" ObjectiveType)
     { cdCardTraits = setFromList [Artifact, Item, Ring]
     }
+
+-- * Flight to the Ford
+
+-- | Attach to the Ring-bearer: stage 1A's setup attaches it.
+anEvilWound :: CardDef
+anEvilWound = (objective "141057" "An Evil Wound" FlightToTheFord 1) {cdCardTraits = setFromList [Morgul]}

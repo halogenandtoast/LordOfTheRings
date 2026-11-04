@@ -521,6 +521,7 @@ allEnemyCards =
       , evilCrowAShadowOfThePast
       , theWitchKing
       , ringwraith
+      , fellRider
       ]
 
 namelessThing :: CardDef
@@ -4288,3 +4289,8 @@ ringwraith =
     , cdShadowEffect = True
     , cdEasyModeQuantity = Just 2
     }
+
+-- * Flight to the Ford
+
+fellRider :: CardDef
+fellRider = (enemy "141063" "Fell Rider" FlightToTheFord 4 30 2 4 3 6) {cdCardTraits = setFromList [Nazgul]}
