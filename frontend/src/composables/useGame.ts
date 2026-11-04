@@ -225,6 +225,7 @@ export const useGame = (gameId: string, spectate = false) => {
     },
     say: (text: string) => post('/chat', { text }),
     reset: () => post('/reset'),
+    surrender: () => post('/surrender'),
     // answered as the seat it was asked of
     answer: (askId: number, choice: number, player: string) =>
       post('', { choice, questionVersion: askId, player }),

@@ -6,9 +6,10 @@ const undoShortcut = mac ? '⌘Z' : 'Ctrl+Z'
 const resetShortcut = mac ? '⌃⌥R' : 'Ctrl+Alt+R'
 
 // a guest at a friend's game can undo and export, but restarting and debugging are the owner's
-defineProps<{ canUndo: boolean; showSidebar: boolean; debugging: boolean; spectate: boolean; guest?: boolean; hasStory?: boolean }>()
+defineProps<{ canUndo: boolean; showSidebar: boolean; debugging: boolean; spectate: boolean; guest?: boolean; hasStory?: boolean; over?: boolean }>()
 const emit = defineEmits<{
   reset: []
+  surrender: []
   undo: [to?: 'phase' | 'round']
   export: []
   fileBug: []
@@ -42,6 +43,12 @@ const emit = defineEmits<{
           </svg>
           {{ $t('game.bar.restartScenario') }}
           <span class="shortcut">{{ resetShortcut }}</span>
+        </button>
+        <button v-if="!over" type="button" @click="emit('surrender')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+          </svg>
+          {{ $t('game.bar.surrender') }}
         </button>
         </template>
         <div class="menu-section">{{ $t('game.bar.file') }}</div>

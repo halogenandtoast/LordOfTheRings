@@ -38,7 +38,7 @@ const tr = useServerText()
 const spectate = route.meta.spectate === true
 const {
   error, game, log, hasOlder, loadOlder, say, undoTo, flipping,
-  started, question: asked, scenario, players, table, outcome, answer, reset, undo, canUndo, debug, join, leave, start,
+  started, question: asked, scenario, players, table, outcome, answer, reset, surrender, undo, canUndo, debug, join, leave, start,
   campaignId, leavingPublic, confirmLeavingPublic, cancelLeavingPublic,
 } = useGame(route.params.id as string, spectate)
 const leavePublicDialog = useTemplateRef<InstanceType<typeof ConfirmDelete>>('leavePublicDialog')
@@ -46,6 +46,8 @@ const leavePublicDialog = useTemplateRef<InstanceType<typeof ConfirmDelete>>('le
 watch(leavingPublic, (held) => held && leavePublicDialog.value?.open())
 const resetDialog = useTemplateRef<InstanceType<typeof ConfirmDelete>>('resetDialog')
 const askReset = () => resetDialog.value?.open()
+const surrenderDialog = useTemplateRef<InstanceType<typeof ConfirmDelete>>('surrenderDialog')
+const askSurrender = () => surrenderDialog.value?.open()
 // With friends you play your own seats; otherwise every seat is yours.
 const withFriends = computed(() => table.value?.withFriends ?? false)
 const guest = computed(() => withFriends.value && table.value?.owner !== currentUser.value?.id)
@@ -278,7 +280,9 @@ watch(question, (asked) => {
     :spectate="spectate"
     :guest="guest"
     :has-story="hasStoryPart('intro') || hasStoryPart('resolution')"
+    :over="outcome !== null"
     @reset="askReset"
+    @surrender="askSurrender"
     @undo="undo($event)"
     @export="exportGame(route.params.id as string)"
     @file-bug="fileBugAbout()"
@@ -300,6 +304,12 @@ watch(question, (asked) => {
     :confirm-label="$t('game.reset.confirm')"
     @confirm="reset"
   >{{ $t('game.reset.body') }}</ConfirmDelete>
+  <ConfirmDelete
+    ref="surrenderDialog"
+    :title="$t('game.surrender.title')"
+    :confirm-label="$t('game.surrender.confirm')"
+    @confirm="surrender"
+  >{{ $t('game.surrender.body') }}</ConfirmDelete>
   <FileBug :open="filingBug" :game-id="route.params.id as string" :description="bugDescription" @close="filingBug = false" />
   <div class="layout" :class="{ 'no-sidebar': !showSidebar }">
     <CardOverlay />

@@ -25,6 +25,7 @@
   },
   "bar": {
     "restartScenario": "Restart scenario",
+    "surrender": "Surrender",
     "file": "File",
     "exportGame": "Export game",
     "fileBug": "File bug",
@@ -54,6 +55,11 @@
     "title": "Restart scenario?",
     "body": "The scenario is dealt again from a fresh shuffle, and this game's undo history is lost.",
     "confirm": "Restart"
+  },
+  "surrender": {
+    "title": "Surrender?",
+    "body": "The game ends as a loss and counts toward your statistics.",
+    "confirm": "Surrender"
   },
   "leavePublic": {
     "title": "Leave public statistics?",
