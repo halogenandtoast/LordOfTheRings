@@ -223,6 +223,7 @@ import LordOfTheRings.Attachment.Cards.SparePipe
 import LordOfTheRings.Attachment.Cards.ShiningShield
 import LordOfTheRings.Attachment.Cards.TirelessThoroughbred
 import LordOfTheRings.Attachment.Cards.Thorongil
+import LordOfTheRings.Attachment.Cards.BilbosMagicRing
 import LordOfTheRings.Attachment.Runner ()
 import LordOfTheRings.Attachment.Types as X
 import LordOfTheRings.Id
@@ -483,5 +484,6 @@ allAttachments =
         , SomeAttachmentCard shiningShield
         , SomeAttachmentCard tirelessThoroughbred
         , SomeAttachmentCard thorongil
+        , SomeAttachmentCard bilbosMagicRing
         ]
     ]

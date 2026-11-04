@@ -105,6 +105,7 @@ import LordOfTheRings.Hero.Cards.FrodoBagginsLeadership
 import LordOfTheRings.Hero.Cards.ThorinStonehelm
 import LordOfTheRings.Hero.Cards.GwaihirTheLandOfSorrow
 import LordOfTheRings.Hero.Cards.AragornSpirit
+import LordOfTheRings.Hero.Cards.BilboBagginsOnTheDoorstep
 import LordOfTheRings.Hero.Runner ()
 import LordOfTheRings.Hero.Types as X
 import LordOfTheRings.Id
@@ -272,5 +273,6 @@ allHeroes =
         , SomeHeroCard thorinStonehelm
         , SomeHeroCard gwaihirTheLandOfSorrow
         , SomeHeroCard aragornSpirit
+        , SomeHeroCard bilboBagginsOnTheDoorstep
         ]
     ]

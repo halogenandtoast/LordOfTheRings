@@ -98,6 +98,7 @@ allHeroCards =
       , thorinStonehelm
       , gwaihirTheLandOfSorrow
       , aragornSpirit
+      , bilboBagginsOnTheDoorstep
       ]
 
 aragorn :: CardDef
@@ -629,4 +630,13 @@ aragornSpirit =
   (hero "22137" "Aragorn" Spirit 12 2 3 2 5)
     { cdCardTraits = setFromList [Dunedain, Ranger, Scout]
     , cdKeywords = setFromList [Sentinel]
+    }
+
+-- | The Baggins sphere Bilbo Baggins of On the Doorstep, whom the first player takes
+-- control of as its scenarios are set up (rules insert, "Setting Up the Game").
+bilboBagginsOnTheDoorstep :: CardDef
+bilboBagginsOnTheDoorstep =
+  (hero "132001" "Bilbo Baggins" Baggins 0 1 1 1 3)
+    { cdCardTraits = setFromList [Hobbit, Burglar]
+    , cdKeywords = setFromList [FirstPlayerGainsControl]
     }

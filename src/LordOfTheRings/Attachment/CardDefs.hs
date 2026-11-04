@@ -4,6 +4,7 @@ import Data.Map.Strict qualified as Map
 import LordOfTheRings.Card.CardDef
 import LordOfTheRings.Card.CardType (CardType (..))
 import LordOfTheRings.Card.Code
+import LordOfTheRings.EncounterSet (EncounterSet (FliesAndSpiders))
 import LordOfTheRings.Keyword
 import LordOfTheRings.Name (Name)
 import LordOfTheRings.Prelude
@@ -241,6 +242,7 @@ allAttachmentCards =
       , shiningShield
       , tirelessThoroughbred
       , thorongil
+      , bilbosMagicRing
       ]
 
 -- | A boon of the Revised Core campaign: Permanent, limit 1 per hero.
@@ -1693,4 +1695,14 @@ thorongil =
   unique
     (attachment "22146" "Thorongil" Neutral (StaticCost 3))
       { cdCardTraits = setFromList [Title]
+      }
+
+-- | A treasure, discovered in Flies and Spiders.
+bilbosMagicRing :: CardDef
+bilbosMagicRing =
+  unique
+    (attachment "132019" "Bilbo's Magic Ring" Neutral (StaticCost 0))
+      { cdCardTraits = setFromList [Artifact, Item, Ring]
+      , cdTreasure = True
+      , cdSetIcon = Just FliesAndSpiders
       }

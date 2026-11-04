@@ -313,6 +313,7 @@ library
       LordOfTheRings.Attachment.Cards.Asfaloth
       LordOfTheRings.Attachment.Cards.Athelas
       LordOfTheRings.Attachment.Cards.Ballista
+      LordOfTheRings.Attachment.Cards.BilbosMagicRing
       LordOfTheRings.Attachment.Cards.BlackKey
       LordOfTheRings.Attachment.Cards.BladeOfGondolin
       LordOfTheRings.Attachment.Cards.BloodOfNumenor
@@ -1315,6 +1316,7 @@ library
       LordOfTheRings.Hero.Cards.Beregond
       LordOfTheRings.Hero.Cards.Bifur
       LordOfTheRings.Hero.Cards.BilboBaggins
+      LordOfTheRings.Hero.Cards.BilboBagginsOnTheDoorstep
       LordOfTheRings.Hero.Cards.BilboBagginsTactics
       LordOfTheRings.Hero.Cards.Boromir
       LordOfTheRings.Hero.Cards.BoromirTactics
