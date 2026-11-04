@@ -142,6 +142,9 @@ removedBurdenSets = \case
   "the-road-to-isengard" -> [AShadowOfThePast, FlightToTheFord, TheRingGoesSouth]
   "the-passage-of-the-marshes" -> [HelmsDeep, TheRoadToIsengard]
   "journey-to-the-cross-roads" -> [HelmsDeep, TheRoadToIsengard]
+  -- the card prints "RD, RtI"; Hall of Beorn's text reads Helm's Deep and The Road to
+  -- Isengard, as the box's other two cards: no burden set is RD
+  "shelobs-lair" -> [HelmsDeep, TheRoadToIsengard]
   "the-tower-of-cirith-ungol" -> [HelmsDeep, TheRoadToIsengard, ThePassingOfTheGreyCompany]
   "the-black-gate-opens" -> [AShadowOfThePast, FlightToTheFord, TheRingGoesSouth, ThePassageOfTheMarshes, ShelobsLair]
   "mount-doom" -> [HelmsDeep, TheRoadToIsengard, ThePassingOfTheGreyCompany]
