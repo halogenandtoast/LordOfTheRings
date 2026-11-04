@@ -22,8 +22,8 @@ instance HasAbilities HalflingBounder where
 
 instance RunMessage HalflingBounder where
   runMessage msg s@(HalflingBounder a) = case msg of
-    UseCardAbility _ (isSource a -> True) 1 windows -> do
+    UseCardAbility pid (isSource a -> True) 1 windows -> do
       discard a
-      for_ [t | Window _ (Revealed t) <- windows] cancelWhenRevealed
+      for_ [t | Window _ (Revealed t) <- windows] (cancelWhenRevealed pid)
       pure s
     _ -> HalflingBounder <$> runMessage msg a

@@ -437,14 +437,14 @@ cancelMatching = lift . void . popMessagesMatching
 {- | Cancel the When Revealed effects of a card just revealed, and with them the lead's
 click to resolve them.
 -}
-cancelWhenRevealed :: (MonadTrans t, HasQueue Message m, HasQueue Message (t m)) => Target -> t m ()
-cancelWhenRevealed t = do
+cancelWhenRevealed :: (MonadTrans t, HasQueue Message m, HasQueue Message (t m)) => PlayerId -> Target -> t m ()
+cancelWhenRevealed pid t = do
   canceled <- lift $ popMessagesMatching \case
     WhenRevealed t' -> t == t'
     AskToResolveWhenRevealed t' _ -> t == t'
     _ -> False
   -- the window after it, as Ruins of Arnor answers
-  pushWhen (notNull canceled) $ CheckWindows [Window After $ WhenRevealedCanceled t]
+  pushWhen (notNull canceled) $ CheckWindows [Window After $ WhenRevealedCanceled pid t]
 
 {- | Cancel damage about to be dealt to the target, from the window before it is dealt, as
 "before Patrol Leader is dealt damage ... cancel that damage" reads.

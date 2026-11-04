@@ -28,9 +28,9 @@ instance HasAbilities IarionsPendant where
 
 instance RunMessage IarionsPendant where
   runMessage msg s@(IarionsPendant a) = case msg of
-    UseCardAbility _ (isSource a -> True) 1 windows -> do
+    UseCardAbility pid (isSource a -> True) 1 windows -> do
       addToVictoryDisplay a
-      for_ [t | Window _ (Revealed t) <- windows] cancelWhenRevealed
+      for_ [t | Window _ (Revealed t) <- windows] (cancelWhenRevealed pid)
       pure s
     UseCardAbility _ (isSource a -> True) 2 windows -> do
       addToVictoryDisplay a

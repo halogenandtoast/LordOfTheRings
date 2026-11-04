@@ -18,9 +18,9 @@ theDoorIsClosed =
 
 instance RunMessage TheDoorIsClosed where
   runMessage msg e@(TheDoorIsClosed attrs) = case msg of
-    PlayEvent _ card windows | card.id == toId attrs -> do
+    PlayEvent pid card windows | card.id == toId attrs -> do
       for_ (take 1 [t | Window _ (Revealed t) <- windows]) \t -> do
-        cancelWhenRevealed t
+        cancelWhenRevealed pid t
         -- what it keeps in play, its surge and doomed, goes with it as it is discarded
         cancelMatching \case
           FinishRevelation tid -> TreacheryTarget tid == t

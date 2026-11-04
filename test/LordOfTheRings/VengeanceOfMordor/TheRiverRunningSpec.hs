@@ -294,15 +294,15 @@ spec = describe "The River Running" do
       placementOfEnemy raider `shouldReturn` StagingArea
       getModifiers GameTarget >>= (`shouldSatisfy` notElem (CannotBeOptionallyEngagedBy AnyPlayer))
 
-    it "places a resource on Easterling Pursuit as a when revealed effect is canceled while Exposed Riverbank is staged, and to travel there" . riverTest $ \_ -> do
+    it "places a resource on Easterling Pursuit as a when revealed effect is canceled while Exposed Riverbank is staged, and to travel there" . riverTest $ \pid -> do
       _ <- pursuitWith 0
       bank <- stageLocation Locations.exposedRiverbank
       plains <- stageLocation Locations.rollingPlains
-      run $ CheckWindows [mkAfter $ WhenRevealedCanceled (LocationTarget plains)]
+      run $ CheckWindows [mkAfter $ WhenRevealedCanceled pid (LocationTarget plains)]
       pursuitResources `shouldReturn` 1
       run $ TravelTo bank
       pursuitResources `shouldReturn` 2
-      run $ CheckWindows [mkAfter $ WhenRevealedCanceled (LocationTarget plains)]
+      run $ CheckWindows [mkAfter $ WhenRevealedCanceled pid (LocationTarget plains)]
       pursuitResources `shouldReturn` 2
 
     it "places a resource on Easterling Pursuit with Enemies Close Behind, then raises threat by 1 for each" . riverTest $ \pid -> do

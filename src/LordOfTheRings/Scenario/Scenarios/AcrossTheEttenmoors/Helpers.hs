@@ -76,7 +76,7 @@ runSafe :: Message -> LocationAttrs -> QueueT Message GameT ()
 runSafe msg a = case msg of
   TravelTo lid | isTarget a (LocationTarget lid) -> returnEngagedEnemiesToStaging
   UseCardAbility _ (isSource a -> True) 101 _ -> addToVictoryDisplay a
-  UseCardAbility _ (isSource a -> True) 102 ws -> for_ [t | Window _ (Revealed t) <- ws] cancelWhenRevealed
+  UseCardAbility pid (isSource a -> True) 102 ws -> for_ [t | Window _ (Revealed t) <- ws] (cancelWhenRevealed pid)
   _ -> pure ()
 
 -- | Discard cards from the top of the encounter deck until a side quest is discarded, or
