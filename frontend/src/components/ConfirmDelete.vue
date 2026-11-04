@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useTemplateRef } from 'vue'
+import { showModal } from '../composables/useViewTransition'
 
 // Asks before deleting something: a native dialog, so Escape closes it, and Delete has
 // the focus, so Enter confirms. What is to be deleted goes in the slot.
@@ -14,7 +15,7 @@ const close = () => dialog.value?.close()
 const onBackdrop = (event: MouseEvent) => {
   if (event.target === dialog.value) close()
 }
-defineExpose({ open: () => dialog.value?.showModal() })
+defineExpose({ open: () => dialog.value && showModal(dialog.value) })
 </script>
 
 <template>
