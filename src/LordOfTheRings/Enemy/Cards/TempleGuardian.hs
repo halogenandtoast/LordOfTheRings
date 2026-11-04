@@ -1,9 +1,8 @@
-module LordOfTheRings.Enemy.Cards.TempleGuardian (templeGuardian) where
+module LordOfTheRings.Enemy.Cards.TempleGuardian (templeGuardian, templeGuardianCampaign) where
 
 import LordOfTheRings.Card (toCardCode)
 import LordOfTheRings.Enemy.CardDefs qualified as Cards
 import LordOfTheRings.Enemy.Import.Lifted
-import LordOfTheRings.Helpers.Campaign (getCampaignLog)
 import LordOfTheRings.Keyword (Keyword (Archery))
 import LordOfTheRings.Location.CardDefs qualified as Locations
 
@@ -14,22 +13,23 @@ newtype TempleGuardian = TempleGuardian EnemyAttrs
 templeGuardian :: EnemyCard TempleGuardian
 templeGuardian = enemy TempleGuardian Cards.templeGuardian
 
+-- | Its Campaign Mode only side, which the Dream-chaser campaign plays.
+templeGuardianCampaign :: EnemyCard TempleGuardian
+templeGuardianCampaign = enemy TempleGuardian Cards.templeGuardianCampaign
+
 -- | X is the number of players in the game. Immune to player card effects. Cannot be
 -- optionally engaged.
 -- Temple Guardian gets -50 engagement cost while Cursed Temple is the active location.
--- The Dream-chaser campaign uses its Campaign Mode only side.
--- That side is played as the printed side's card with modifiers bringing it to its
--- values: the board still shows the printed face, as no card def holds the other side.
+-- Its Campaign Mode only side has defense X and archery X too.
 instance HasModifiersFor TempleGuardian where
   getModifiersFor (TempleGuardian a) = do
     players <- length <$> getRemainingPlayers
     cursed <- selectAny (IsActiveLocation <> LocationWithCardCode (toCardCode Locations.cursedTemple))
-    campaign <- isJust <$> getCampaignLog
+    let campaign = toCardCode a == toCardCode Cards.templeGuardianCampaign
     modifySelf a
       $ [ThreatModifier players, ImmuneToPlayerCardEffects, CannotBeOptionallyEngagedBy AnyPlayer]
       <> [EngagementCostModifier (-50) | cursed]
-      -- its Campaign Mode only side: 5 attack, defense X, archery X
-      <> [m | campaign, m <- [AttackModifier (-1), DefenseModifier (players - 4), GainKeyword (Archery players)]]
+      <> [m | campaign, m <- [DefenseModifier players, GainKeyword (Archery players)]]
 
 instance RunMessage TempleGuardian where
   runMessage msg (TempleGuardian attrs) = TempleGuardian <$> runMessage msg attrs

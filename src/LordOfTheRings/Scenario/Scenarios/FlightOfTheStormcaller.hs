@@ -51,7 +51,7 @@ flightOfTheStormcaller =
 instance HasModifiersFor FlightOfTheStormcaller where
   getModifiersFor (FlightOfTheStormcaller a) = when a.nightmare do
     whenM atStormcallersStage do
-      stormcallers <- select (EnemyWithCardCode $ toCardCode Enemies.stormcaller)
+      stormcallers <- selectStormcaller
       x <- sum <$> for stormcallers \e -> (-) <$> getEnemyHitPoints e <*> ((.damage) <$> getEnemy e)
       quests <- getMainQuests
       for_ quests \q -> modified a q [QuestPointModifier x]
@@ -67,6 +67,8 @@ instance RunMessage FlightOfTheStormcaller where
         gatherEncounterSets
           attrs
           [EncounterSet.FlightOfTheStormcaller, EncounterSet.VastOceans, EncounterSet.StormyWeather, EncounterSet.CorsairPirates]
+      -- in campaign mode, turned over to its Campaign Mode only side (campaign setup)
+      side <- stormcallerSide
       let (stormcaller, encounterDeck) = partition (cardMatches $ cardIs Enemies.stormcaller) cards
       firstStage <- genEncounterCard Quests.swiftDeparture
       laterStages <- traverse genEncounterCard [Quests.fullSailAhead, Quests.theWeatherTurnsFoul, Quests.theCapeOfAndrast]
@@ -75,7 +77,7 @@ instance RunMessage FlightOfTheStormcaller where
         $ FlightOfTheStormcaller
         $ attrs
         & encounterDeckL .~ encounterDeck
-        & setAsideL .~ stormcaller
+        & setAsideL .~ map (\c -> c {ecCardCode = toCardCode side}) stormcaller
         & questDeckL .~ laterStages
     -- the Stormcaller's area: its quest deck, stage 2C on top, and the Stormcaller
     ScenarioSpecific "stormcaller.prepare" _ -> do
@@ -93,7 +95,7 @@ instance RunMessage FlightOfTheStormcaller where
       FlightOfTheStormcaller <$> runMessage msg attrs
     -- Sahír's Escort in the Stormcaller's area adds its threat too
     DiscardedTopOfEncounterDeck ScenarioSource ScenarioTarget discarded -> do
-      stormcallers <- select (EnemyWithCardCode $ toCardCode Enemies.stormcaller)
+      stormcallers <- selectStormcaller
       escorts <- filter ((== StormcallerArea) . (.placement)) <$> (traverse getEnemy =<< select (EnemyWithCardCode $ toCardCode Enemies.sahirsEscort))
       threat <- sum <$> traverse getEnemyThreat (stormcallers <> map toId escorts)
       placeStormcallerProgress $ threat + sum (mapMaybe (cdThreat . toCardDef) discarded)

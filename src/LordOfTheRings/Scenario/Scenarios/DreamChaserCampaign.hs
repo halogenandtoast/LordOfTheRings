@@ -168,7 +168,7 @@ setup l attrs = case sid attrs of
   -- it. Modifications, Thunderstruck and Crowley as Voyage Across Belegaer's. Put Calaerion
   -- into play under the control of the player with the Dream-chaser.
   "flight-of-the-stormcaller" -> do
-    burdenOn l (EnemyWithCardCode $ toCardCode Enemies.stormcaller)
+    burdenOn l (EnemyWithCardCode $ toCardCode Enemies.stormcallerCampaign)
     modifications l
     calaerionJoins l
     shipBurdens l attrs []
@@ -467,7 +467,7 @@ resolve l attrs = do
         )
     "flight-of-the-stormcaller" ->
       pure
-        ( common + xpIf onCourse 1 + xpIf (2 `elem` stages) 1 + xpIf (has Enemies.stormcaller) 2 + xpIf (has Enemies.crowley) 1
+        ( common + xpIf onCourse 1 + xpIf (2 `elem` stages) 1 + xpIf (has Enemies.stormcallerCampaign) 2 + xpIf (has Enemies.crowley) 1
             + xpIf (has Enemies.thunderstruck) 2 + xpIf noDamage 1
         , l
         )
@@ -489,7 +489,7 @@ resolve l attrs = do
             [PoolCard (toCardCode Allies.starla) seat Nothing | seat <- take 1 starlaSeat]
               <> replicate (max 0 nightmares) (PoolCard (toCardCode Enemies.recurringNightmare) leadSeat Nothing)
       pure
-        ( common + resources3 + length halls + xpIf (length faceupUncharted <= 4) 1 + xpIf (has Enemies.templeGuardian) 1 + xpIf threats40 1
+        ( common + resources3 + length halls + xpIf (length faceupUncharted <= 4) 1 + xpIf (has Enemies.templeGuardianCampaign) 1 + xpIf threats40 1
         , foldl' (flip addToPool) l earned
         )
     "the-drowned-ruins" -> do

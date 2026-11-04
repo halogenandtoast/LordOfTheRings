@@ -258,6 +258,7 @@ allEnemyCards =
       , corsairArsonist
       , sahirsRavager
       , stormcaller
+      , stormcallerCampaign
       , sahirsEscort
       , swiftRaider
       , corsairSkiff
@@ -272,6 +273,7 @@ allEnemyCards =
       , seaScorpion
       , caveEel
       , templeGuardian
+      , templeGuardianCampaign
       , faithlessDesecrator
       , islandWatcher
       , profaneDead
@@ -1969,6 +1971,17 @@ stormcaller =
       , cdVictoryPoints = Just 10
       }
 
+-- | The Stormcaller's Campaign Mode only side (Dream-chaser Campaign Expansion 42), which
+-- the Dream-chaser campaign plays in its place.
+stormcallerCampaign :: CardDef
+stormcallerCampaign =
+  unique
+    (enemy "DCC042" "Stormcaller" DreamChaserCampaign 0 50 2 7 6 20)
+      { cdCardTraits = setFromList [Corsair, Ship]
+      , cdKeywords = setFromList [Boarding 2]
+      , cdVictoryPoints = Just 15
+      }
+
 sahirsEscort :: CardDef
 sahirsEscort =
   (enemy "12020" "Sahír's Escort" FlightOfTheStormcaller 3 46 2 4 3 6)
@@ -2070,6 +2083,17 @@ templeGuardian =
     (enemy "12070" "Temple Guardian" TempleOfTheDeceived 1 50 0 6 4 10)
       { cdCardTraits = setFromList [Undead]
       , cdVictoryPoints = Just 4
+      }
+
+-- | Temple Guardian's Campaign Mode only side (Dream-chaser Campaign Expansion 77), which
+-- the Dream-chaser campaign plays in its place. X threat, X defense and archery X, X the
+-- number of players: its card gives itself those.
+templeGuardianCampaign :: CardDef
+templeGuardianCampaign =
+  unique
+    (enemy "DCC077" "Temple Guardian" DreamChaserCampaign 0 50 0 5 0 10)
+      { cdCardTraits = setFromList [Undead]
+      , cdVictoryPoints = Just 5
       }
 
 faithlessDesecrator :: CardDef

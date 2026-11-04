@@ -16,6 +16,7 @@ import LordOfTheRings.Quest.CardDefs qualified as Quests
 import LordOfTheRings.Scenario.CardDefs qualified as Nightmare
 import LordOfTheRings.Scenario.Import.Lifted
 import LordOfTheRings.Scenario.Scenarios.DreamChaserCampaign (runDreamChaserCampaign)
+import LordOfTheRings.Scenario.Scenarios.TempleOfTheDeceived.Helpers (templeGuardianSide)
 import LordOfTheRings.Timing (Timing (When))
 import LordOfTheRings.Treachery.CardDefs qualified as Treacheries
 import LordOfTheRings.Window (Window (..), WindowType (Explored))
@@ -75,7 +76,10 @@ instance RunMessage TempleOfTheDeceived where
         gatherEncounterSets
           attrs
           [EncounterSet.TempleOfTheDeceived, EncounterSet.RuinsOfNumenor, EncounterSet.DrownedDead]
-      let (locations, encounterDeck) = partition ((== LocationType) . cdCardType . toCardDef) cards
+      -- in campaign mode, Temple Guardian turned over to its Campaign Mode only side
+      guardian <- templeGuardianSide
+      let turned c = if toCardCode c == toCardCode Enemies.templeGuardian then c {ecCardCode = toCardCode guardian} else c
+          (locations, encounterDeck) = partition ((== LocationType) . cdCardType . toCardDef) (map turned cards)
           (temple, rest) = partition (cardIsAny [Locations.theGrottosEntrance, Locations.templeHalls]) locations
           (edges, islands) = partition ((== Just EncounterSet.TempleOfTheDeceivedNightmare) . cdEncounterSet . toCardDef) rest
           islandColumns = if attrs.nightmare then 3 else 4

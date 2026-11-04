@@ -1,9 +1,9 @@
-module LordOfTheRings.Enemy.Cards.Stormcaller (stormcaller) where
+module LordOfTheRings.Enemy.Cards.Stormcaller (stormcaller, stormcallerCampaign) where
 
+import LordOfTheRings.Card (toCardCode)
 import LordOfTheRings.Classes.HasGame (getsGame)
 import LordOfTheRings.Enemy.CardDefs qualified as Cards
 import LordOfTheRings.Enemy.Import.Lifted
-import LordOfTheRings.Helpers.Campaign (getCampaignLog)
 import LordOfTheRings.Placement (Placement (StormcallerArea))
 import LordOfTheRings.Scenario.Scenarios.FlightOfTheStormcaller.Helpers
 
@@ -14,24 +14,22 @@ newtype Stormcaller = Stormcaller EnemyAttrs
 stormcaller :: EnemyCard Stormcaller
 stormcaller = enemy Stormcaller Cards.stormcaller
 
+-- | Its Campaign Mode only side, which the Dream-chaser campaign plays.
+stormcallerCampaign :: EnemyCard Stormcaller
+stormcallerCampaign = enemy Stormcaller Cards.stormcallerCampaign
+
 {- | Boarding 2. Cannot have attachments.
 While the players are not at its stage, the cards in the Stormcaller's area, the Stormcaller
 among them, are immune to player card effects (Flight of the Stormcaller rules).
 Stages 2C and 3C: If the players are off-course, the Stormcaller gets +2 threat. No more than
 4 damage (8 at stage 3C) may be placed on the Stormcaller each round.
 -}
--- Campaign Mode only side (the Dream-chaser campaign): 7 attack, 20 hit points, no word
--- against attachments, and: If you are at the Stormcaller's stage, no more than 9 progress
--- can be placed on your quest each round.
--- That side is played as the printed side's card with modifiers bringing it to those
--- values: the board still shows the printed face, as no card def holds the other side.
+-- Campaign Mode only side: no word against attachments, and: If you are at the
+-- Stormcaller's stage, no more than 9 progress can be placed on your quest each round.
 instance HasModifiersFor Stormcaller where
   getModifiersFor (Stormcaller a) = do
-    campaign <- isJust <$> getCampaignLog
-    if campaign
-      then do
-        modifySelf a [AttackModifier 1, HitPointModifier 2]
-        whenM atStormcallersStage $ traverse_ (\q -> modified a q [ProgressPerRoundLimit 9]) =<< getMainQuests
+    if toCardCode a == toCardCode Cards.stormcallerCampaign
+      then whenM atStormcallersStage $ traverse_ (\q -> modified a q [ProgressPerRoundLimit 9]) =<< getMainQuests
       else modifySelf a [CannotHaveAttachments]
     enemies <- getsGame (filter ((== StormcallerArea) . (.placement)) . toList . (.entities.enemies))
     for_ enemies \e -> modified a (toTarget e) [ImmuneToPlayerCardEffects]
