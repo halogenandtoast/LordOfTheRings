@@ -155,9 +155,10 @@ allObjectiveCards =
       , farin
       , overcomeByFear
       , armyOfTheDeadBoon
+      , theOneRingTheBlackRiders
+      , theOneRingTheRoadDarkens
       , theOneRingTheLandOfShadow
       , theOneRingTheMountainOfFire
-      , theOneRingTheRoadDarkens
       , frodosChoice
       ]
 
@@ -1087,6 +1088,7 @@ armyOfTheDeadBoon =
     , cdKeywords = setFromList [FirstPlayerGainsControl]
     , cdOtherSide = Just "145067"
     }
+
 -- * The Lord of the Rings saga
 
 {- | A box's One Ring: put into play attached to the Ring-bearer as the scenario is set up
@@ -1106,14 +1108,11 @@ theOneRingTheLandOfShadow = sagaOneRing "144063"
 theOneRingTheMountainOfFire :: CardDef
 theOneRingTheMountainOfFire = sagaOneRing "146065"
 
--- | The Road Darkens' The One Ring: in no encounter set, the game attaches it to the
--- Ring-bearer at setup (see 'LordOfTheRings.Saga.fellowshipSetup').
+theOneRingTheBlackRiders :: CardDef
+theOneRingTheBlackRiders = sagaOneRing "141085"
+
 theOneRingTheRoadDarkens :: CardDef
-theOneRingTheRoadDarkens =
-  (emptyCardDef "142091" "The One Ring" ObjectiveType)
-    { cdUnique = True
-    , cdCardTraits = setFromList [Artifact, Item, Ring]
-    }
+theOneRingTheRoadDarkens = sagaOneRing "142091"
 
 -- * Breaking of the Fellowship
 

@@ -1497,8 +1497,16 @@ runGameMessage msg g = case msg of
     order <- getPlayerOrder
     -- sharing the game split between staging areas, archery is resolved at each stage
     let archery = maybe [ResolveArchery] (\groups -> concat [[FocusArea lead, ResolveArchery] | (lead, _) <- groups] <> [FocusArea g.firstPlayer]) (stageGroups g)
-    pushAll $ archery <> (ResolveHinder : DealShadowCards
-      : map ActionWindow order <> map EnemyAttacks order <> map PlayerAttacks order)
+    pushAll
+      $ archery
+      <> ( ResolveHinder
+             : DealShadowCards
+             : map ActionWindow order
+             <> map EnemyAttacks order
+             -- the resolving enemy attacks step is complete, as Helm! Helm! reads
+             <> [CreateEffect $ Effect GameSource GameTarget [EnemyAttacksStepComplete] UntilEndOfPhase]
+             <> map PlayerAttacks order
+         )
     pure $ g & phaseL .~ CombatPhase
   ResolveArchery -> do
     total <- getArcheryTotal
@@ -1703,6 +1711,7 @@ runGameMessage msg g = case msg of
             $ [targetLabel d (defend d) | d <- sentinels]
             <> [Label (ikey "label.doNotDefend") [DeclareSentinels pid eid chosen rest]]
     pure g
+  DefendedByMany _ eid _ | dealsNoDamage g eid -> pure g
   DefendedByMany pid eid (filter (inPlay g) -> []) -> g <$ push (UndefendedDamage pid eid)
   DefendedByMany pid eid (filter (inPlay g) -> defenders) -> do
     attack <- getEnemyAttack eid
@@ -1948,6 +1957,8 @@ runGameMessage msg g = case msg of
       CheckWindows ws -> CheckWindows (filter (not . attacking) ws)
       m -> m
     pure g
+  -- an attack that deals no damage, as Frodo Baggins (The Road Darkens) makes one
+  AttackDamage eid _ | dealsNoDamage g eid -> pure g
   -- an attack turned on another enemy, as Small Target's, deals that enemy its damage
   AttackDamage eid target@(EnemyTarget other) -> do
     when (inPlay g target) do
@@ -2248,16 +2259,23 @@ runGameMessage msg g = case msg of
     order <- filterM (fmap (not . (.eliminated)) . getPlayer) =<< getStagePlayers
     let players = length order
         reveals = max 0 $ max 1 (players + extra) - fewer
+    -- a player revealing fewer, as Palantír of Orthanc has one
+    playerFewer <- for order \pid -> (pid,) . (\ms -> sum [n | FewerStagingReveals n <- ms]) <$> getModifiers (PlayerTarget pid)
     -- in The Lord of the Rings saga each player reveals his own card in turn order, the
     -- first player any more the step reveals
-    let revealing
+    let withoutFewer = \case
+          [] -> const []
+          pid : rest -> \counts -> case lookup pid counts of
+            Just n | n > 0 -> withoutFewer rest [(p, if p == pid then n - 1 else k) | (p, k) <- counts]
+            _ -> pid : withoutFewer rest counts
+        revealing
           | revealsIndividually (scenarioId $ toAttrs g.scenario) =
               concat
                 [ [SetRevealer (Just pid), RevealEncounterCard]
-                | pid <- take reveals (order <> replicate reveals (fromMaybe g.firstPlayer $ headMay order))
+                | pid <- withoutFewer (take reveals (order <> replicate reveals (fromMaybe g.firstPlayer $ headMay order))) playerFewer
                 ]
                 <> [SetRevealer Nothing]
-          | otherwise = replicate reveals RevealEncounterCard
+          | otherwise = replicate (max 0 $ reveals - sum (map snd playerFewer)) RevealEncounterCard
     -- what is played "after the staging step", as Elevenses, waits for its end
     pushAll
       $ ( if SkipStagingStep `elem` mods
@@ -3638,6 +3656,10 @@ runGameMessage msg g = case msg of
         %~ insertEntity (overAttrs (\a -> a {objectivePlacement = StagingArea}) thisObjective)
   _ -> pure g
 
+-- | The enemy's attack deals no damage, as Frodo Baggins (The Road Darkens) makes it.
+dealsNoDamage :: Game -> EnemyId -> Bool
+dealsNoDamage g eid = AttackDealsNoDamage `elem` map modifierType (Map.findWithDefault [] (EnemyTarget eid) (gameModifiers g))
+
 -- | An objective ally that a player gains control of as it enters play.
 gainsController :: CardDef -> Bool
 gainsController def = any (`member` cdKeywords def) [FirstPlayerGainsControl, LastPlayerGainsControl]
@@ -4035,13 +4057,16 @@ allyEntersPlay pid a =
     ]
 
 {- | Cards in a player's hand that can be played or put into play in response to the
-windows: response events, and allies like Brok Ironfist.
+windows: response events, and allies like Brok Ironfist. A response event on top of his
+deck too, while he may play that card as if it was in his hand, as Gandalf lets him.
 -}
 handResponses :: PlayerId -> [Window] -> Message -> GameT [UI Message]
 handResponses pid windows continue = do
   player <- getPlayer pid
+  fromTop <- elem MayPlayTopOfDeck <$> getModifiers (PlayerTarget pid)
   let matches = maybe (pure False) (\w -> anyM (windowMatchesM w) windows)
-  fmap catMaybes $ for player.hand \case
+      deckTop = [c | fromTop, c@(PlayerCard pc) <- take 1 player.deck, cdCardType (toCardDef pc) == EventType]
+  fmap catMaybes $ for (player.hand <> deckTop) \case
     card@(PlayerCard pc) -> case cdCardType (toCardDef pc) of
       EventType
         | Just e <- lookupEvent (toCardCode pc) pc.id pid -> do

@@ -1,32 +1,50 @@
 {- | What The Lord of the Rings saga's Fellowship cards share: The One Ring objective of
-each box, the Ring-bearer, and the cards whose leaving play loses the game.
+each box ('LordOfTheRings.Saga.oneRings'), the Ring-bearer, and the cards whose leaving
+play loses the game.
 -}
 module LordOfTheRings.Helpers.Fellowship (module LordOfTheRings.Helpers.Fellowship) where
 
 import LordOfTheRings.Card (toCardCode)
-import LordOfTheRings.Card.Code (CardCode)
 import LordOfTheRings.Classes.Entity (toId)
 import LordOfTheRings.Classes.HasGame
+import LordOfTheRings.Criteria (Criterion (HeroExists))
 import LordOfTheRings.Entities (entitiesObjectives)
 import LordOfTheRings.Game.Base (gameEntities)
 import LordOfTheRings.Id
 import LordOfTheRings.Matcher
 import LordOfTheRings.Message (Message (..))
+import LordOfTheRings.Message.Lifted (exhaust)
+import LordOfTheRings.Message.Lifted.Queue (ReverseQueue)
 import LordOfTheRings.Objective.Types (Objective)
 import LordOfTheRings.Placement (Placement (AttachedTo))
 import LordOfTheRings.Prelude
+import LordOfTheRings.Saga (oneRings)
 import LordOfTheRings.Target
 import LordOfTheRings.Trait (Trait (RingBearer))
-
--- | The One Ring objectives of The Black Riders, The Road Darkens, The Land of Shadow and
--- The Mountain of Fire, attached to the Ring-bearer at setup.
-sagaOneRings :: [CardCode]
-sagaOneRings = ["141085", "142091", "144063", "146065"]
 
 -- | The hero with the Ring-bearer trait, printed or gained, as "Attach to the
 -- Ring-bearer" reads.
 ringBearer :: HeroMatcher
 ringBearer = HeroWithTrait RingBearer
+
+-- | The hero The One Ring is attached to, the ring ready.
+heroWithReadyTheOneRing :: HeroMatcher
+heroWithReadyTheOneRing = HeroMatchAny [HeroWithReadyAttachment code | code <- oneRings]
+
+-- | "Exhaust The One Ring" can be paid.
+sagaOneRingReady :: Criterion
+sagaOneRingReady = HeroExists heroWithReadyTheOneRing
+
+-- | Exhaust The One Ring, as a cost paid as the effect resolves, its criteria
+-- ('sagaOneRingReady') having checked it is ready.
+exhaustTheOneRing :: ReverseQueue m => m ()
+exhaustTheOneRing = do
+  rings <- getsGame (filter isReadyRing . toList . entitiesObjectives . gameEntities)
+  for_ (take 1 [r | r <- rings, isAttached r.placement]) \r -> exhaust (ObjectiveTarget r.id)
+ where
+  isAttached = \case
+    AttachedTo _ -> True
+    _ -> False
 
 -- | The saga One Ring the player controls, ready to exhaust: it is controlled by whoever
 -- controls the hero it is attached to (FAQ 1.38).
@@ -36,13 +54,13 @@ readySagaOneRing pid = do
   fmap (fmap toId . headMay) $ flip filterM rings \o -> case o.placement of
     AttachedTo (HeroTarget hid) -> selectAny (HeroWithId hid <> HeroControlledBy (PlayerWithId pid))
     _ -> pure False
- where
-  isReadyRing :: Objective -> Bool
-  isReadyRing o = toCardCode o `elem` sagaOneRings && not o.exhausted
+
+isReadyRing :: Objective -> Bool
+isReadyRing o = toCardCode o `elem` oneRings && not o.exhausted
 
 {- | Whether the message takes the card out of play, however it goes: discarded, as a hero
-destroyed is, removed from the game, or returned to a hand or a deck. "If Aragorn leaves
-play, the players lose the game" reads each of these.
+destroyed is, removed from the game, returned to a hand, shuffled or put into a deck, or set
+aside. "If X leaves play, the players lose the game" reads each of these.
 -}
 leavesPlay :: Target -> Message -> Bool
 leavesPlay t = \case
@@ -51,6 +69,8 @@ leavesPlay t = \case
   ReturnToHand t' -> t == t'
   ShuffleIntoOwnersDeck t' -> t == t'
   PutOnBottomOfOwnersDeck t' -> t == t'
+  ShuffleIntoEncounterDeck t' -> t == t'
   ReturnToTopOfEncounterDeck t' -> t == t'
   ReturnToBottomOfEncounterDeck t' -> t == t'
+  SetAsideHero hid -> t == HeroTarget hid
   _ -> False

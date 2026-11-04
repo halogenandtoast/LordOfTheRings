@@ -242,6 +242,8 @@ data WindowMatcher
     DefendedWithoutDamageWindow Timing Target
   | -- | a player card effect reduced any player's threat, as The Empty Mug reads
     ThreatReducedByPlayerCardWindow Timing
+  | -- | an event card's effect reduced the player's threat, as Hobbit Pipe answers
+    ThreatReducedByEventWindow Timing PlayerId
   | -- | the card entered the staging area, as Ruined Plaza reads
     CardEntersStagingAreaWindow Timing Target
   | -- | the players advanced to a quest stage, as Fen of Reeds reads
@@ -497,6 +499,7 @@ windowMatches matcher (Window timing wType) = case (matcher, wType) of
   (EncounterCardRevealedWindow t, Revealed _) -> t == timing
   (DefendedWithoutDamageWindow t target, DefendedWithoutDamage target' _) -> t == timing && target == target'
   (ThreatReducedByPlayerCardWindow t, ThreatReduced _ source) -> t == timing && isPlayerCardSource source
+  (ThreatReducedByEventWindow t pid, ThreatReduced pid' source) -> t == timing && pid == pid' && isPlayerEventSource source
   (CardEntersStagingAreaWindow t target, EntersStagingArea target') -> t == timing && target == target'
   (AdvancedToStageWindow t, AdvancedToStage) -> t == timing
   (EliminatedByThreatWindow t pid, EliminatedByThreat pid') -> t == timing && pid == pid'

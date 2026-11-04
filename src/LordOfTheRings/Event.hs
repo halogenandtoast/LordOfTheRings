@@ -238,6 +238,14 @@ import LordOfTheRings.Event.Cards.SternerThanSteel
 import LordOfTheRings.Event.Cards.DesperateDefense
 import LordOfTheRings.Event.Cards.CaptainsOfTheWest
 import LordOfTheRings.Event.Cards.RaiseTheShire
+import LordOfTheRings.Event.Cards.HalflingDetermination
+import LordOfTheRings.Event.Cards.SmokeRings
+import LordOfTheRings.Event.Cards.TakeNoNotice
+import LordOfTheRings.Event.Cards.FrodosIntuition
+import LordOfTheRings.Event.Cards.FlameOfAnor
+import LordOfTheRings.Event.Cards.Entmoot
+import LordOfTheRings.Event.Cards.HelmHelm
+import LordOfTheRings.Event.Cards.TheThreeHunters
 import LordOfTheRings.Event.Types as X
 import LordOfTheRings.Id
 import LordOfTheRings.Prelude
@@ -495,5 +503,13 @@ allEvents =
         , SomeEventCard desperateDefense
         , SomeEventCard captainsOfTheWest
         , SomeEventCard raiseTheShire
+        , SomeEventCard halflingDetermination
+        , SomeEventCard smokeRings
+        , SomeEventCard takeNoNotice
+        , SomeEventCard frodosIntuition
+        , SomeEventCard flameOfAnor
+        , SomeEventCard entmoot
+        , SomeEventCard helmHelm
+        , SomeEventCard theThreeHunters
         ]
     ]

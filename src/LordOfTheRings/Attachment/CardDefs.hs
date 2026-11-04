@@ -34,10 +34,6 @@ allAttachmentCards =
       , mithrilShirtTheRoadDarkens
       , glamdringTheRoadDarkens
       , andurilTheRoadDarkens
-      , phialOfGaladriel
-      , threeGoldenHairs
-      , lorienRope
-      , leafWrappedLembas
       , valor
       , appointedByFate
       , celebriansStone
@@ -261,6 +257,32 @@ allAttachmentCards =
       , orcDisguise
       , guthwine
       , friendOfFriends
+      , hobbitCloak
+      , daggerOfWesternesse
+      , hobbitPipe
+      , elfStone
+      , mrUnderhill
+      , tirelessRanger
+      , skilledHealer
+      , valiantWarrior
+      , nobleHero
+      , gandalfsStaff
+      , wizardPipe
+      , fellowshipOfTheRing
+      , phialOfGaladriel
+      , threeGoldenHairs
+      , lorienRope
+      , leafWrappedLembas
+      , arod
+      , entDraught
+      , herugrim
+      , shadowfax
+      , intimidation
+      , handsOfAHealer
+      , forewarned
+      , leaderOfMen
+      , beyondAllHope
+      , palantirOfOrthanc
       ]
 
 -- | A boon of the Revised Core campaign: Permanent, limit 1 per hero.
@@ -1808,7 +1830,7 @@ friendOfFriends =
     { cdCardTraits = setFromList [Condition]
     }
 
--- * The Road Darkens' boons, earned at The Ring Goes South's setup: stats only
+-- * The Road Darkens' boons, earned at The Ring Goes South's setup
 
 stingTheRoadDarkens :: CardDef
 stingTheRoadDarkens = restrictedBoon "142011" "Sting" 2 [Artifact, Item, Weapon]
@@ -1826,27 +1848,189 @@ glamdringTheRoadDarkens = restrictedBoon "142013" "Glamdring" 2 [Artifact, Item,
 andurilTheRoadDarkens :: CardDef
 andurilTheRoadDarkens = restrictedBoon "142014" "Andúril" 3 [Artifact, Item, Weapon]
 
-{- | The Gift boons of Breaking of the Fellowship: earned in the campaign, each is attached
-to a hero at setup (Setup: Attach to a hero in play).
--}
-giftBoon :: CardCode -> Name -> CardDef
-giftBoon code name =
+hobbitCloak :: CardDef
+hobbitCloak =
+  (attachment "141013" "Hobbit Cloak" Leadership (StaticCost 1))
+    { cdCardTraits = setFromList [Item]
+    }
+
+daggerOfWesternesse :: CardDef
+daggerOfWesternesse =
+  (attachment "141014" "Dagger of Westernesse" Tactics (StaticCost 1))
+    { cdCardTraits = setFromList [Artifact, Item, Weapon]
+    }
+
+hobbitPipe :: CardDef
+hobbitPipe =
+  (attachment "141015" "Hobbit Pipe" Spirit (StaticCost 0))
+    { cdCardTraits = setFromList [Item, Pipe]
+    }
+
+elfStone :: CardDef
+elfStone =
   unique
-    (attachment code name Neutral (StaticCost 0))
-      { cdCardTraits = setFromList [Item, Gift, Boon]
-      , cdVictoryPoints = Just 3
-      , cdSetupAttach = True
-      , cdDeckLimit = 1
+    (attachment "141016" "Elf-stone" Lore (StaticCost 1))
+      { cdCardTraits = setFromList [Artifact, Item]
       }
 
+mrUnderhill :: CardDef
+mrUnderhill =
+  unique
+    (attachment "141017" "Mr. Underhill" Neutral (StaticCost 0))
+      { cdCardTraits = setFromList [Title, Boon]
+      , cdVictoryPoints = Just 1
+      }
+
+tirelessRanger :: CardDef
+tirelessRanger =
+  unique
+    (attachment "141018" "Tireless Ranger" Neutral (StaticCost 0))
+      { cdCardTraits = setFromList [Title, Boon]
+      }
+
+skilledHealer :: CardDef
+skilledHealer =
+  unique
+    (attachment "141019" "Skilled Healer" Neutral (StaticCost 0))
+      { cdCardTraits = setFromList [Title, Boon]
+      }
+
+valiantWarrior :: CardDef
+valiantWarrior =
+  unique
+    (attachment "141020" "Valiant Warrior" Neutral (StaticCost 0))
+      { cdCardTraits = setFromList [Title, Boon]
+      }
+
+nobleHero :: CardDef
+nobleHero =
+  unique
+    (attachment "141021" "Noble Hero" Neutral (StaticCost 0))
+      { cdCardTraits = setFromList [Title, Boon]
+      }
+
+gandalfsStaff :: CardDef
+gandalfsStaff =
+  unique
+    (attachment "142008" "Gandalf's Staff" Neutral (StaticCost 2))
+      { cdCardTraits = setFromList [Artifact, Item, Staff]
+      }
+
+wizardPipe :: CardDef
+wizardPipe =
+  (attachment "142009" "Wizard Pipe" Neutral (StaticCost 1))
+    { cdCardTraits = setFromList [Item, Pipe]
+    }
+
+fellowshipOfTheRing :: CardDef
+fellowshipOfTheRing =
+  unique
+    (attachment "142010" "Fellowship of the Ring" Fellowship (StaticCost 2))
+      { cdCardTraits = setFromList [FellowshipTrait]
+      }
+
+
+
+
+
 phialOfGaladriel :: CardDef
-phialOfGaladriel = giftBoon "142015" "Phial of Galadriel"
+phialOfGaladriel =
+  unique
+    (attachment "142015" "Phial of Galadriel" Neutral (StaticCost 0))
+      { cdCardTraits = setFromList [Item, Gift, Boon]
+      , cdVictoryPoints = Just 3
+      }
 
 threeGoldenHairs :: CardDef
-threeGoldenHairs = giftBoon "142016" "Three Golden Hairs"
+threeGoldenHairs =
+  unique
+    (attachment "142016" "Three Golden Hairs" Neutral (StaticCost 0))
+      { cdCardTraits = setFromList [Item, Gift, Boon]
+      , cdVictoryPoints = Just 3
+      }
 
 lorienRope :: CardDef
-lorienRope = giftBoon "142017" "Lórien Rope"
+lorienRope =
+  unique
+    (attachment "142017" "Lórien Rope" Neutral (StaticCost 0))
+      { cdCardTraits = setFromList [Item, Gift, Boon]
+      , cdVictoryPoints = Just 3
+      }
 
 leafWrappedLembas :: CardDef
-leafWrappedLembas = giftBoon "142018" "Leaf-wrapped Lembas"
+leafWrappedLembas =
+  unique
+    (attachment "142018" "Leaf-wrapped Lembas" Neutral (StaticCost 0))
+      { cdCardTraits = setFromList [Item, Gift, Boon]
+      , cdVictoryPoints = Just 3
+      }
+
+arod :: CardDef
+arod =
+  unique
+    (attachment "143008" "Arod" Tactics (StaticCost 1))
+      { cdCardTraits = setFromList [Mount]
+      }
+
+entDraught :: CardDef
+entDraught =
+  (attachment "143009" "Ent Draught" Lore (StaticCost 1))
+    { cdCardTraits = setFromList [Item, Ent]
+    }
+
+herugrim :: CardDef
+herugrim =
+  unique
+    (attachment "143010" "Herugrim" Spirit (StaticCost 3))
+      { cdCardTraits = setFromList [Item, Weapon]
+      }
+
+shadowfax :: CardDef
+shadowfax =
+  unique
+    (attachment "143014" "Shadowfax" Neutral (StaticCost 3))
+      { cdCardTraits = setFromList [Mount, Mearas]
+      }
+
+intimidation :: CardDef
+intimidation =
+  (attachment "143015" "Intimidation" Neutral (StaticCost 0))
+    { cdCardTraits = setFromList [Skill, Boon]
+    , cdKeywords = setFromList [Permanent]
+    }
+
+handsOfAHealer :: CardDef
+handsOfAHealer =
+  (attachment "143016" "Hands of a Healer" Neutral (StaticCost 0))
+    { cdCardTraits = setFromList [Skill, Boon]
+    , cdKeywords = setFromList [Permanent]
+    }
+
+forewarned :: CardDef
+forewarned =
+  (attachment "143017" "Forewarned" Neutral (StaticCost 0))
+    { cdCardTraits = setFromList [Skill, Boon]
+    , cdKeywords = setFromList [Permanent]
+    }
+
+leaderOfMen :: CardDef
+leaderOfMen =
+  (attachment "143018" "Leader of Men" Neutral (StaticCost 0))
+    { cdCardTraits = setFromList [Skill, Boon]
+    , cdKeywords = setFromList [Permanent]
+    }
+
+beyondAllHope :: CardDef
+beyondAllHope =
+  (attachment "143019" "Beyond All Hope" Neutral (StaticCost 0))
+    { cdCardTraits = setFromList [Favor, Boon]
+    , cdKeywords = setFromList [Permanent]
+    }
+
+palantirOfOrthanc :: CardDef
+palantirOfOrthanc =
+  unique
+    (attachment "143020" "Palantír of Orthanc" Neutral (StaticCost 0))
+      { cdCardTraits = setFromList [Artifact, Item, Boon]
+      , cdVictoryPoints = Just 5
+      }

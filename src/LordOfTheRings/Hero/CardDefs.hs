@@ -109,6 +109,15 @@ allHeroCards =
       , eomerLeadership
       , tomCotton
       , frodoBagginsTheRoadDarkens
+      , frodoBagginsTheBlackRiders
+      , samGamgeeTheBlackRiders
+      , merryTheBlackRiders
+      , pippinTheBlackRiders
+      , fattyBolger
+      , gandalfTheRoadDarkens
+      , aragornTheTreasonOfSaruman
+      , theodenTheTreasonOfSaruman
+      , treebeardTheTreasonOfSaruman
       ]
 
 aragorn :: CardDef
@@ -709,10 +718,63 @@ tomCotton =
     { cdCardTraits = setFromList [Hobbit]
     }
 
--- | The Road Darkens' Ring-bearer, a Fellowship sphere hero with no threat cost: the game
--- gives him to the first player at setup (see 'LordOfTheRings.Saga.fellowshipSetup').
+frodoBagginsTheBlackRiders :: CardDef
+frodoBagginsTheBlackRiders =
+  (fellowshipHero "141001" "Frodo Baggins" 2 1 2 2)
+    { cdCardTraits = setFromList [Hobbit, RingBearer]
+    }
+
+samGamgeeTheBlackRiders :: CardDef
+samGamgeeTheBlackRiders =
+  (hero "141002" "Sam Gamgee" Leadership 8 3 1 1 3)
+    { cdCardTraits = setFromList [Hobbit]
+    }
+
+merryTheBlackRiders :: CardDef
+merryTheBlackRiders =
+  (hero "141003" "Merry" Tactics 6 2 0 1 2)
+    { cdCardTraits = setFromList [Hobbit]
+    }
+
+pippinTheBlackRiders :: CardDef
+pippinTheBlackRiders =
+  (hero "141004" "Pippin" Lore 6 2 1 1 2)
+    { cdCardTraits = setFromList [Hobbit]
+    }
+
+fattyBolger :: CardDef
+fattyBolger =
+  (hero "141005" "Fatty Bolger" Spirit 7 1 1 2 3)
+    { cdCardTraits = setFromList [Hobbit]
+    }
+
 frodoBagginsTheRoadDarkens :: CardDef
 frodoBagginsTheRoadDarkens =
-  (hero "142001" "Frodo Baggins" Fellowship 0 2 1 2 2)
+  (fellowshipHero "142001" "Frodo Baggins" 2 1 2 2)
     { cdCardTraits = setFromList [Hobbit, RingBearer]
+    }
+
+gandalfTheRoadDarkens :: CardDef
+gandalfTheRoadDarkens =
+  (hero "142002" "Gandalf" Neutral 14 3 3 3 5)
+    { cdCardTraits = setFromList [Istari]
+    }
+
+aragornTheTreasonOfSaruman :: CardDef
+aragornTheTreasonOfSaruman =
+  (fellowshipHero "143001" "Aragorn" 2 3 2 5)
+    { cdCardTraits = setFromList [Dunedain, Noble, Ranger]
+    , cdKeywords = setFromList [FirstPlayerGainsControl]
+    }
+
+theodenTheTreasonOfSaruman :: CardDef
+theodenTheTreasonOfSaruman =
+  (hero "143002" "Théoden" Spirit 12 2 3 2 4)
+    { cdCardTraits = setFromList [Rohan, Noble, Warrior]
+    }
+
+treebeardTheTreasonOfSaruman :: CardDef
+treebeardTheTreasonOfSaruman =
+  (hero "143003" "Treebeard" Lore 13 2 3 3 5)
+    { cdCardTraits = setFromList [Ent]
     }

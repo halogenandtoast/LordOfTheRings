@@ -2,14 +2,16 @@ module LordOfTheRings.Attachment.Cards.MithrilShirtTheRoadDarkens (mithrilShirtT
 
 import LordOfTheRings.Attachment.CardDefs qualified as Cards
 import LordOfTheRings.Attachment.Import.Lifted
+import LordOfTheRings.Trait (Trait (RingBearer))
 
 newtype MithrilShirtTheRoadDarkens = MithrilShirtTheRoadDarkens AttachmentAttrs
-  deriving anyclass (IsAttachment, HasModifiersFor, HasAbilities)
+  deriving anyclass (IsAttachment, HasAbilities, RunMessage)
   deriving newtype (Show, Eq, ToJSON, Entity)
 
--- | A boon of The Lord of the Rings campaign, from The Ring Goes South.
+-- | A boon of The Road Darkens. Attach to the Ring-bearer.
 mithrilShirtTheRoadDarkens :: AttachmentCard MithrilShirtTheRoadDarkens
-mithrilShirtTheRoadDarkens = attachment MithrilShirtTheRoadDarkens Cards.mithrilShirtTheRoadDarkens
+mithrilShirtTheRoadDarkens = attachment MithrilShirtTheRoadDarkens Cards.mithrilShirtTheRoadDarkens & attachTo (AttachToHero $ HeroWithTrait RingBearer)
 
-instance RunMessage MithrilShirtTheRoadDarkens where
-  runMessage msg (MithrilShirtTheRoadDarkens a) = MithrilShirtTheRoadDarkens <$> runMessage msg a
+-- | Attached hero gets +1 [defense] and +1 hit point.
+instance HasModifiersFor MithrilShirtTheRoadDarkens where
+  getModifiersFor (MithrilShirtTheRoadDarkens a) = withHost a \host -> modified a host [DefenseModifier 1, HitPointModifier 1]

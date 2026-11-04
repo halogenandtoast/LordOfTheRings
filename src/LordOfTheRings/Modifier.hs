@@ -3,7 +3,7 @@ module LordOfTheRings.Modifier (module LordOfTheRings.Modifier) where
 import LordOfTheRings.Campaign (CampaignLogKey)
 import LordOfTheRings.Card.CardType (CardType)
 import LordOfTheRings.Card.Code (CardCode)
-import LordOfTheRings.Id (PlayerId)
+import LordOfTheRings.Id (CardId, PlayerId)
 import LordOfTheRings.Keyword (Keyword)
 import LordOfTheRings.Matcher.Types (CardMatcher, EnemyMatcher, LocationMatcher, PlayerMatcher)
 import LordOfTheRings.Outcome (Outcome)
@@ -87,6 +87,8 @@ data ModifierType
   | -- | on an enemy: allies cannot defend while it attacks, as Snow Warg's
     CannotBeDefendedByAllies
   | CannotHaveAttachments
+  | -- | on a character: no treachery card can be attached to it, as Beyond All Hope reads
+    CannotHaveTreacheryAttachments
   | -- | no player attachment without the trait can be attached to it, as a Nazgûl's
     -- "Cannot have non-Morgul attachments" reads
     CannotHaveAttachmentsWithoutTrait Trait
@@ -122,7 +124,9 @@ data ModifierType
     CannotGainResourcesFromCardEffects
   | -- | on the game: reveal this many more encounter cards during staging
     AdditionalStagingReveals Int
-  | -- | on the game: reveal fewer encounter cards, allowing staging to reveal none
+  | -- | on the game: reveal fewer encounter cards, allowing staging to reveal none; on a
+    -- player, where each player reveals his own (The Lord of the Rings saga), he reveals
+    -- fewer, as Palantír of Orthanc reads
     FewerStagingReveals Int
   | NoEngagementChecks
   | -- | on an enemy: it makes no engagement checks against the player, though he may still
@@ -461,6 +465,19 @@ data ModifierType
     -- by discarding the modifier's source, then go to the bottom of their deck, as a
     -- Record's Action reads
     MayPlayFromDiscard CardMatcher
+  | -- | on a player: he plays with the top card of his deck faceup, as Gandalf (The Road
+    -- Darkens) reads
+    TopOfDeckFaceup
+  | -- | on a player: he may play the top card of his deck as if it was in his hand, the
+    -- modifier's source then given 'PlayedTopOfDeckThisPhase', as Gandalf (The Road Darkens)
+    -- lets him once per phase
+    MayPlayTopOfDeck
+  | -- | on a card: a card was played from the top of a deck by the 'MayPlayTopOfDeck' it
+    -- gives, this phase
+    PlayedTopOfDeckThisPhase
+  | -- | on a hero: it is considered to have the sphere's printed resource icon while paying
+    -- for this card, as Gandalf (The Road Darkens) for the top card of the deck
+    PrintedResourceIconForCard CardId Sphere
   | -- | on an enemy: it cannot engage the player, by engagement check or choice, as
     -- Pippin's
     CannotEngagePlayer PlayerId
@@ -661,6 +678,9 @@ data ModifierType
   | -- | on the game: the resolving enemy attacks step of the combat phase has begun, as
     -- Tireless Hunters reads
     ResolvingEnemyAttacks
+  | -- | on the game: the resolving enemy attacks step of the combat phase is complete, as
+    -- Helm! Helm! reads
+    EnemyAttacksStepComplete
   | -- | on the game: each ally that leaves play goes to its owner's hand instead of the
     -- discard pile, as Rallying Cry's Valour Action reads
     AlliesLeavePlayToHand
@@ -726,6 +746,9 @@ data ModifierType
   | -- | on the game: each character defending the attack that takes no damage from it
     -- readies, as Hold the Line reads
     ReadyUndamagedDefenders
+  | -- | on an enemy, for an attack: the attack deals no damage, though it resolves, its
+    -- shadow cards too, as Frodo Baggins (The Road Darkens) makes it
+    AttackDealsNoDamage
   | -- | on a player: he is eliminated at the end of the round, as Justice Shall Be Done reads
     EliminatedAtEndOfRound
   | -- | on a player: he draws 1 card each time he attacks and destroys an enemy, as

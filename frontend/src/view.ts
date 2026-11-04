@@ -261,6 +261,7 @@ export const toView = (data: GameData, defs: Record<string, CardDef>, previous: 
         ...Object.values(entities.attachments).filter((a) => a.owner === pid && a.placement?.tag === 'Unplaced').map((a) => card(a.cardCode, a.cardId, { playing: true })),
       ]),
       discard: p.discard.map((c) => card(c.cardCode, c.id)),
+      deckTop: game.deckTops?.[pid] ? card(game.deckTops[pid].cardCode, game.deckTops[pid].id) : null,
       // a condition on top of their deck, as Iron Shackles
       onDeck: placed('treacheries', onPlayer),
       // hidden cards lie facedown in the player's play area (The Blood of Gondor)
