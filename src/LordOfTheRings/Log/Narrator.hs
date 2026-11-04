@@ -31,7 +31,7 @@ import LordOfTheRings.Log
 import LordOfTheRings.Log.Block
 import LordOfTheRings.Log.Refs
 import LordOfTheRings.Helpers.Modifiers (getModifiers, immuneToSource)
-import LordOfTheRings.Matcher (getArcheryTotal, getDamage, getTimeCounters)
+import LordOfTheRings.Matcher (getArcheryTotal, getDamage, getDiscoverValue, getTimeCounters)
 import LordOfTheRings.Modifier (ModifierType (CannotRemoveTimeCounters))
 import LordOfTheRings.Message
 import LordOfTheRings.Outcome
@@ -234,6 +234,13 @@ narrationFor = \case
   TriggerLostEffects _ -> Just $ one $ toned Bad $ mechanic [ikeyPart "log.lostEffects" []]
   PutObjectiveIntoPlay card -> Just $ one $ mechanic [ikeyPart "log.placedInStaging" ["card" ~> EncounterCard card]]
   PutObjectiveIntoPlayGuardedBy card _ -> Just $ one $ mechanic [ikeyPart "log.placedInStaging" ["card" ~> EncounterCard card]]
+  -- \* The Discover and Loot keywords (MEC69 rules)
+  ResolveDiscover pid lid -> Just $ getDiscoverValue lid >>= \case
+    Just x -> whenRef (toTarget lid) \l -> do
+      who <- playerRefFor pid
+      one $ mechanic [ikeyPart "log.resolvesDiscover" ["player" ~> who, "location" ~> l, "count" ~> x]]
+    Nothing -> pure []
+  DiscardLoot card -> Just $ one $ mechanic [ikeyPart "log.lootDiscarded" ["card" ~> EncounterCard card]]
   EngageOrcGuard pid _ -> Just do
     who <- playerRefFor pid
     one $ mechanic [ikeyPart "log.orcGuardEngages" ["player" ~> who]]

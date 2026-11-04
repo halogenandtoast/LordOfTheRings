@@ -288,6 +288,11 @@ data WindowMatcher
     LocationFlippedWindow Timing LocationMatcher
   | -- | a matching location became the active location
     LocationBecameActiveWindow Timing LocationMatcher
+  | -- | the Discover keyword of the location resolved, as Hidden Staircase reads
+    DiscoverResolvedWindow Timing LocationId
+  | -- | a player card effect placed progress on a matching location, as Haunted Hall reads
+    -- "a player places any amount of progress"
+    PlayerCardPlacedProgressWindow Timing LocationMatcher
   | -- | a matching player raised his threat, as Sam Gamgee answers "a player"
     ThreatRaisedWindow Timing PlayerMatcher
   | -- | a shadow card's effect raised an enemy's attack, as Tides of Fate reads
@@ -506,6 +511,8 @@ windowMatches matcher (Window timing wType) = case (matcher, wType) of
   (PlayerDiscardedFromDeckWindow {}, _) -> False
   (LocationFlippedWindow {}, _) -> False
   (LocationBecameActiveWindow {}, _) -> False
+  (DiscoverResolvedWindow t lid, DiscoverResolved lid' _) -> t == timing && lid == lid'
+  (PlayerCardPlacedProgressWindow {}, _) -> False
   (ThreatRaisedWindow {}, _) -> False
   (DefenderWithTraitDestroyedWindow {}, _) -> False
   (PlayerCommittedCharactersWindow {}, _) -> False

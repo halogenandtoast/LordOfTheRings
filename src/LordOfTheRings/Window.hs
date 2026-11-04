@@ -169,6 +169,10 @@ data WindowType
     LocationFlipped LocationId
   | -- | a location became the active location, however it did
     BecameActiveLocation LocationId
+  | -- | the Discover keyword of the location resolved: whether it revealed a Hazard card
+    DiscoverResolved LocationId Bool
+  | -- | the source placed progress on the location, read once it is placed
+    ProgressPlacedOnLocationBy Source LocationId
   | -- | the shadow card's effect raised its enemy's attack
     ShadowIncreasedAttack CardId EnemyId
   | -- | the player spent this many resources from the pools of characters he controls, as

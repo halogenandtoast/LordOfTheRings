@@ -285,6 +285,9 @@ import LordOfTheRings.Quest.Cards.HrogarsHill
 import LordOfTheRings.Quest.Cards.TheIronHills
 import LordOfTheRings.Quest.Cards.TheLowerDepths
 import LordOfTheRings.Quest.Cards.TheFireWorm
+import LordOfTheRings.Quest.Cards.TheHauntedKeep
+import LordOfTheRings.Quest.Cards.SearchingTheRuins
+import LordOfTheRings.Quest.Cards.TheCursedShade
 import LordOfTheRings.Quest.Runner ()
 import LordOfTheRings.Quest.Types as X
 import LordOfTheRings.Id
@@ -602,5 +605,8 @@ allQuests =
         , SomeQuestCard theIronHills
         , SomeQuestCard theLowerDepths
         , SomeQuestCard theFireWorm
+        , SomeQuestCard theHauntedKeep
+        , SomeQuestCard searchingTheRuins
+        , SomeQuestCard theCursedShade
         ]
     ]

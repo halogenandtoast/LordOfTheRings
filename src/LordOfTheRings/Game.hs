@@ -59,7 +59,7 @@ import LordOfTheRings.Scenario.Sailing (discardEncounterCard)
 import LordOfTheRings.Source
 import LordOfTheRings.Target
 import LordOfTheRings.Token
-import LordOfTheRings.Trait (Trait (Grotto))
+import LordOfTheRings.Trait (Trait (Grotto, Hazard))
 import LordOfTheRings.Treachery hiding (treachery)
 import LordOfTheRings.Window
 
@@ -510,7 +510,12 @@ runGame msg g = case msg of
               | otherwise = x
         g' <- runGame'' msg (if onMap then g & entitiesL . locationsL %~ fmap leave else g)
         -- the enemies grappling it let go first (The Thing in the Depths)
-        pushAll $ letGoOf g lid <> [ArrangeIslandMap | onMap] <> [CheckWindows [mkWhen $ BecameActiveLocation lid], CheckWindows [mkAfter $ BecameActiveLocation lid]]
+        -- the Discover keyword resolves as it becomes the active location (MEC69 rules)
+        lead <- getLead
+        pushAll
+          $ letGoOf g lid
+          <> [ArrangeIslandMap | onMap]
+          <> [CheckWindows [mkWhen $ BecameActiveLocation lid], ResolveDiscover lead lid, CheckWindows [mkAfter $ BecameActiveLocation lid]]
         pure g'
   -- and as it is explored, before it leaves play
   CheckWindows ws | explored@(_ : _) <- [lid | Window When (Explored lid) <- ws] -> do
@@ -1058,11 +1063,13 @@ runGameMessage msg g = case msg of
         card = EncounterCard ec
         -- what a player's attack destroyed, for the attack to read as it resolves
         recorded = attackDestroyedL %~ (<> [AttackDestroyed source target Nothing card Nothing | PlayerAttackSource _ <- [source]])
-        -- one of the Evil Creatures deck goes to its discard pile, even with victory
-        -- points (Journey Up the Anduin rules)
-        victory = cdVictoryPoints (toCardDef enemy) <* guard (not $ isEvilCreaturesCard (toAttrs g.scenario) ec)
     push $ CheckWindows [mkAfter $ EnemyDefeated eid, mkAfter $ EnemyDestroyed card]
     -- one that stays in play for its own effect was still destroyed by the attack
+    gained <- headMay . (\ms -> [n | GainVictory n <- ms]) <$> getModifiers target
+    -- one of the Evil Creatures deck goes to its discard pile, even with victory points
+    -- (Journey Up the Anduin rules)
+    let victory = (cdVictoryPoints (toCardDef enemy) <|> gained) <* guard (not $ isEvilCreaturesCard (toAttrs g.scenario) ec)
+        gainedL = maybe id (\n -> gainedVictoryPointsL %~ Map.insert card.id n) (guard (isNothing $ cdVictoryPoints $ toCardDef enemy) *> gained)
     if stays then pure (recorded g) else recorded <$> case victory of
       Just _ -> do
         -- what is attached to it is discarded, an objective it guarded as a Key of The Three
@@ -1074,7 +1081,7 @@ runGameMessage msg g = case msg of
           . enemiesL
           %~ Map.delete eid
           & scenarioL
-          %~ overAttrs (victoryDisplayL %~ (card :))
+          %~ overAttrs (gainedL . (victoryDisplayL %~ (card :)))
       Nothing -> discardTarget target g
   -- an objective ally destroyed in the staging area goes to the encounter discard pile
   Destroy _ (ObjectiveTarget oid) | Just o <- Map.lookup oid g.entities.objectives -> do
@@ -1147,8 +1154,9 @@ runGameMessage msg g = case msg of
             <> [Label (ikey "label.doNotTravel") []]
         else questionLabel (ikey "label.mustTravel") lead [targetLabel lid [TravelTo lid] | lid <- forced]
     pure g
+  -- "when the players travel", as Crypt Key answers, comes before the location is active
   DoStep 1 (TravelTo lid) -> do
-    pushAll [PlaceLocation lid ActiveLocation, CheckWindows [mkAfter $ Traveled lid], ResolveDeep lid]
+    pushAll [CheckWindows [mkWhen $ Traveled lid], PlaceLocation lid ActiveLocation, CheckWindows [mkAfter $ Traveled lid], ResolveDeep lid]
     pure g
   -- a Deep location, still the active location after the windows of traveling to it, is
   -- replaced by the top card of the Caves deck, unless that deck is empty (MEC65 rules)
@@ -1159,6 +1167,48 @@ runGameMessage msg g = case msg of
       $ ReplaceWithTopOfCavesDeck lid
     pure g
   ResolveDeep _ -> pure g
+  -- the Discover keyword: the player looks at the top X encounter cards, the discard pile
+  -- shuffled in should the deck run short. He attaches a Loot objective among them to the
+  -- location as a guarded objective, reveals one of their Hazard cards at random and adds
+  -- it to the staging area, and discards the rest (MEC69 rules). A change to X made for
+  -- this resolution, as Crypt Key's, is spent by it.
+  ResolveDiscover pid lid | Just l <- Map.lookup lid g.entities.locations -> do
+    value <- discoverValue (toTarget l) (toCardDef l)
+    let spent e = effectDuration e == UntilSpent && effectTarget e == toTarget lid && any isDiscoverValueModifier (effectModifiers e)
+        g' = g & effectsL %~ filter (not . spent)
+        s = toAttrs g.scenario
+    case value of
+      Nothing -> pure g'
+      Just x -> do
+        let (top, rest) = splitAt x s.encounterDeck
+        (looked, deck, discarded) <-
+          if length top < x && notNull s.encounterDiscard
+            then do
+              shuffled <- shuffleM s.encounterDiscard
+              let (more, rest') = splitAt (x - length top) shuffled
+              pure (top <> more, rest', [])
+            else pure (top, rest, s.encounterDiscard)
+        hazard <- headMay <$> shuffleM (filter ((Hazard `member`) . cdCardTraits . toCardDef) looked)
+        let loot = filter ((Loot `member`) . cdKeywords . toCardDef) looked
+            resolve chosen =
+              let others = [c | c <- looked, Just c /= chosen, Just c /= hazard]
+               in [PutObjectiveIntoPlayGuardedBy c (toCard l).id | Just c <- [chosen]]
+                    <> [RevealCard h | Just h <- [hazard]]
+                    <> [AddToEncounterDiscard others | notNull others]
+                    <> [CheckWindows [mkAfter $ DiscoverResolved lid (isJust hazard)]]
+        pushWhen (notNull looked) $ CheckWindows [mkAfter $ LookedAtEncounterDeck pid]
+        push $ case loot of
+          _ : _ : _ ->
+            Ask pid
+              $ QuestionLabel (ikey "label.discoverChooseLoot") (Just $ toTarget lid) []
+              $ SearchCards (map EncounterCard looked)
+              $ ChooseOne [targetLabel c (resolve $ Just c) | c <- loot]
+          _ -> Run $ resolve (headMay loot)
+        pure $ g' & scenarioL %~ overAttrs (\a -> a & encounterDeckL .~ deck & encounterDiscardL .~ discarded)
+  ResolveDiscover _ _ -> pure g
+  -- a Loot objective revealed from the encounter deck is discarded, and another card
+  -- revealed in its place: it enters play only by the Discover keyword (MEC69 rules)
+  DiscardLoot card -> g <$ pushAll [AddToEncounterDiscard [card], RevealEncounterCard]
   -- a location becomes the active location, opening its windows; a Dragon Sign, or another
   -- objective, goes to the staging area and resolves its guarded keyword (MEC66 rules)
   ReplaceWithTopOfCavesDeck lid -> case (toAttrs g.scenario).cavesDeck of
@@ -2862,6 +2912,7 @@ runGameMessage msg g = case msg of
   PutQuestIntoPlay card -> do
     thisQuest <- newQuest card
     pure $ g & entitiesL . questsL %~ insertEntity thisQuest
+  (revealedCard -> Just (_, card)) | Loot `member` cdKeywords (toCardDef card) -> g <$ push (DiscardLoot card)
   -- the next card revealed is discarded unresolved if it is of the type named, as Minas
   -- Tirith Lampwright reads; either way the effect is spent
   (revealedCard -> Just (_, card))
@@ -4084,6 +4135,11 @@ revealedCard = \case
   RevealCard card -> Just (Nothing, card)
   RevealCardEngaged pid card -> Just (Just pid, card)
   _ -> Nothing
+
+isDiscoverValueModifier :: ModifierType -> Bool
+isDiscoverValueModifier = \case
+  DiscoverValueModifier _ -> True
+  _ -> False
 
 isDiscardNextRevealed :: ModifierType -> Bool
 isDiscardNextRevealed = \case

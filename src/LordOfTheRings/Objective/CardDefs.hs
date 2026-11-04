@@ -129,6 +129,9 @@ allObjectiveCards =
       , haldan
       , theGoblinsAssault
       , theHeroesDefense
+      , cryptKey
+      , oldLantern
+      , scathasTeeth
       ]
 
 durinsAxe :: CardDef
@@ -878,3 +881,28 @@ theGoblinsAssault = (objective "19155" "The Goblins' Assault" TheFateOfWilderlan
 
 theHeroesDefense :: CardDef
 theHeroesDefense = (objective "19156" "The Heroes' Defense" TheFateOfWilderland 1) {cdCardTraits = setFromList [Defense]}
+-- * The Ghost of Framsburg (19094-19111)
+
+cryptKey :: CardDef
+cryptKey =
+  unique
+    (objective "19094" "Crypt Key" TheGhostOfFramsburg 1)
+      { cdCardTraits = setFromList [Artifact, Item]
+      , cdKeywords = setFromList [Loot]
+      }
+
+oldLantern :: CardDef
+oldLantern =
+  unique
+    (objective "19095" "Old Lantern" TheGhostOfFramsburg 1)
+      { cdCardTraits = setFromList [Artifact, Item]
+      , cdKeywords = setFromList [Loot]
+      }
+
+scathasTeeth :: CardDef
+scathasTeeth =
+  unique
+    (objective "19096" "Scatha's Teeth" TheGhostOfFramsburg 1)
+      { cdCardTraits = setFromList [Artifact, Item]
+      , cdKeywords = setFromList [Loot]
+      }

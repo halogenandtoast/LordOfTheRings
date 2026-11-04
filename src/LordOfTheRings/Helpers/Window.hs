@@ -145,6 +145,8 @@ windowMatchesM matcher w@(Window timing wType) = case (matcher, wType) of
   (TraveledToWindow t m, Traveled lid) | t == timing -> selectAny (LocationWithId lid <> m)
   (LocationFlippedWindow t m, LocationFlipped lid) | t == timing -> selectAny (LocationWithId lid <> m)
   (LocationBecameActiveWindow t m, BecameActiveLocation lid) | t == timing -> selectAny (LocationWithId lid <> m)
+  (PlayerCardPlacedProgressWindow t m, ProgressPlacedOnLocationBy source lid) | t == timing ->
+    andM [isJust <$> playerCardController source, selectAny (LocationWithId lid <> m)]
   (EnemyAttacksPlayerWindow t pid m, EnemyAttacking eid pid') | t == timing && pid == pid' -> selectAny (EnemyWithId eid <> m)
   (MatchingEnemyAttacksWindow t m, EnemyAttacking eid _) | t == timing -> selectAny (EnemyWithId eid <> m)
   (MatchingEnemyRevealedWindow t m, Revealed (EnemyTarget eid)) | t == timing -> selectAny (EnemyWithId eid <> m)

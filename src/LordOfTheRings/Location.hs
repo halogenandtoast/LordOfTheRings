@@ -462,6 +462,12 @@ import LordOfTheRings.Location.Cards.DragonHoard
 import LordOfTheRings.Location.Cards.IronHillsMine
 import LordOfTheRings.Location.Cards.ContestedDepths
 import LordOfTheRings.Location.Cards.DeepChasm
+import LordOfTheRings.Location.Cards.TheCursedTomb
+import LordOfTheRings.Location.Cards.ForgottenCrypt
+import LordOfTheRings.Location.Cards.HauntedHall
+import LordOfTheRings.Location.Cards.HiddenStaircase
+import LordOfTheRings.Location.Cards.MoonlitPassage
+import LordOfTheRings.Location.Cards.CursedTower
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -970,5 +976,11 @@ allLocations =
         , SomeLocationCard ironHillsMine
         , SomeLocationCard contestedDepths
         , SomeLocationCard deepChasm
+        , SomeLocationCard theCursedTomb
+        , SomeLocationCard forgottenCrypt
+        , SomeLocationCard hauntedHall
+        , SomeLocationCard hiddenStaircase
+        , SomeLocationCard moonlitPassage
+        , SomeLocationCard cursedTower
         ]
     ]

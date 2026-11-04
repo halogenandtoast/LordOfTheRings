@@ -210,6 +210,11 @@ lowerThreatBy source pid n' = do
   threat <- (.threat) <$> getPlayer pid
   unless (barred || n <= 0 || threat <= 0) do
     push $ LowerThreat pid n
+    -- counted for the round, as Moonlit Passage limits it
+    when (isPlayerCardSource (toSource source))
+      $ push
+      $ CreateEffect
+      $ Effect (toSource source) (PlayerTarget pid) [ThreatReducedByPlayerCardsThisRound (min n threat)] UntilEndOfRound
     push $ CheckWindows [Window After $ ThreatReduced pid (toSource source)]
 
 -- | The player draws N cards by the source's effect, unless player card effects cannot
@@ -932,6 +937,7 @@ the players have traveled there.
 -}
 travelWithoutCost :: ReverseQueue m => LocationId -> m ()
 travelWithoutCost lid = do
+  push $ CheckWindows [Window When (Traveled lid)]
   makeActive lid
   push $ CheckWindows [Window After (Traveled lid)]
 
@@ -1583,6 +1589,11 @@ getCavesDeck = getsGame ((.cavesDeck) . toAttrs . (.scenario))
 -- Contested Depths reads; with the deck empty nothing happens.
 replaceWithTopOfCavesDeck :: ReverseQueue m => LocationId -> m ()
 replaceWithTopOfCavesDeck = push . ReplaceWithTopOfCavesDeck
+
+-- | The player resolves the Discover keyword of the location, as Abandoned Ruins reads; a
+-- location without it does nothing (MEC69 rules).
+resolveDiscover :: ReverseQueue m => PlayerId -> LocationId -> m ()
+resolveDiscover pid = push . ResolveDiscover pid
 
 {- | The player looks at the top 2 cards of the Caves deck and puts 1 on top and the other
 on the bottom, as Forked Passage and The Lower Depths read.

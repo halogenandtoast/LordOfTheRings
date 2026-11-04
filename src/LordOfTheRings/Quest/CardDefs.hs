@@ -369,6 +369,9 @@ allQuestCards =
       , theIronHills
       , theLowerDepths
       , theFireWorm
+      , theHauntedKeep
+      , searchingTheRuins
+      , theCursedShade
       ]
 
 theDrippingWalls :: CardDef
@@ -1469,3 +1472,13 @@ theLowerDepths = (quest "18079" "The Lower Depths" TheKingsQuest 2 0) {cdQuestPo
 -- | No quest points: the players win as Fire-drake is defeated.
 theFireWorm :: CardDef
 theFireWorm = (quest "18080" "The Fire Worm" TheKingsQuest 3 0) {cdQuestPoints = Nothing}
+-- * The Ghost of Framsburg (19094-19111)
+
+theHauntedKeep :: CardDef
+theHauntedKeep = quest "19109" "The Haunted Keep" TheGhostOfFramsburg 1 6
+
+searchingTheRuins :: CardDef
+searchingTheRuins = quest "19110" "Searching the Ruins" TheGhostOfFramsburg 2 12
+
+theCursedShade :: CardDef
+theCursedShade = quest "19111" "The Cursed Shade" TheGhostOfFramsburg 3 6

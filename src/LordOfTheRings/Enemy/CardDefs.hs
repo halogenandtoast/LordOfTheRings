@@ -447,6 +447,9 @@ allEnemyCards =
       , theDragonsThrall
       , orcOfTheFlame
       , fireDrake
+      , framsShade
+      , cryptStalker
+      , evilSpectre
       ]
 
 namelessThing :: CardDef
@@ -3642,6 +3645,24 @@ theDragonsThrall =
     , cdEasyModeQuantity = Just 1
     }
 
+-- * The Ghost of Framsburg (19094-19111)
+
+framsShade :: CardDef
+framsShade =
+  unique
+    (enemy "19098" "Fram's Shade" TheGhostOfFramsburg 1 30 3 3 3 6)
+      { cdCardTraits = setFromList [Undead, Wight, Hazard]
+      }
+
+-- | X threat, attack and defense: its card gives itself X.
+cryptStalker :: CardDef
+cryptStalker =
+  (enemy "19099" "Crypt Stalker" TheGhostOfFramsburg 2 40 0 0 0 5)
+    { cdCardTraits = setFromList [Undead, Hazard]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
+    }
+
 orcOfTheFlame :: CardDef
 orcOfTheFlame =
   (enemy "19076" "Orc of the Flame" FireInTheNight 4 25 2 2 2 3)
@@ -3654,3 +3675,11 @@ orcOfTheFlame =
 -- card adds it.
 fireDrake :: CardDef
 fireDrake = unique (enemy "18042" "Fire-drake" TheKingsQuest 1 35 0 7 0 17) {cdCardTraits = setFromList [Dragon]}
+-- | Its engagement cost is Hall of Beorn's 35, read from the card.
+evilSpectre :: CardDef
+evilSpectre =
+  (enemy "19100" "Evil Spectre" TheGhostOfFramsburg 3 35 2 4 2 4)
+    { cdCardTraits = setFromList [Undead, Hazard]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 2
+    }

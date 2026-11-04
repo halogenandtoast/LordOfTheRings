@@ -23,9 +23,16 @@ instance RunMessage LocationAttrs where
     -- tokens a player card would place or remove do not reach an immune location
     PlaceTokens source (isTarget attrs -> True) _ _ | source /= GameSource -> unlessImmune source
     RemoveTokens source (isTarget attrs -> True) _ _ | source /= GameSource -> unlessImmune source
+    PlaceTokens source (isTarget attrs -> True) Progress n0 | n0 > 0 -> placeProgress source n0
+    PlaceTokens source (isTarget attrs -> True) token n -> placeTokens source token n
+    PlaceUnderneath (isTarget attrs -> True) cards -> pure $ attrs & underneathL <>~ cards
+    RemoveTokens _ (isTarget attrs -> True) token n -> do
+      pure $ attrs & tokensL %~ subtractTokens token n
+    _ -> pure attrs
+   where
     -- a location takes no more progress than it may this round, as The Hills of Emyn
     -- Muil's nightmare text limits the staging area's, and keeps count of what it took
-    PlaceTokens source (isTarget attrs -> True) Progress n0 | n0 > 0 -> do
+    placeProgress source n0 = do
       mods <- getModifiers attrs
       gameMods <- getModifiers GameTarget
       let n = foldr min n0 [k | ProgressReducedTo k <- mods]
@@ -41,24 +48,20 @@ instance RunMessage LocationAttrs where
             , trait `member` traits
             ]
           room' = foldr (min . snd) room shared
-          record = [CreateEffect $ Effect source GameTarget [ProgressPlacedOnTraitThisPhase trait room'] UntilEndOfPhase | (trait, _) <- shared, room' > 0]
+          record = [CreateEffect $ Effect GameSource GameTarget [ProgressPlacedOnTraitThisPhase trait room'] UntilEndOfPhase | (trait, _) <- shared, room' > 0]
       if
-        | null limits && null shared -> placeTokens Progress n
+        | null limits && null shared -> placeTokens source Progress n
         | room' <= 0 -> pure attrs
         | otherwise -> do
             pushAll
-              $ [CreateEffect $ Effect source (toTarget attrs) [ProgressPlacedThisRound room'] UntilEndOfRound | notNull limits]
+              $ [CreateEffect $ Effect GameSource (toTarget attrs) [ProgressPlacedThisRound room'] UntilEndOfRound | notNull limits]
               <> record
-            placeTokens Progress room'
-    PlaceTokens _ (isTarget attrs -> True) token n -> placeTokens token n
-    PlaceUnderneath (isTarget attrs -> True) cards -> pure $ attrs & underneathL <>~ cards
-    RemoveTokens _ (isTarget attrs -> True) token n -> do
-      pure $ attrs & tokensL %~ subtractTokens token n
-    _ -> pure attrs
-   where
-    placeTokens token n = do
+            placeTokens source Progress room'
+    placeTokens source token n = do
       let attrs' = attrs & tokensL %~ addTokens token n
       questPoints <- modifiedQuestPoints attrs attrs'.questPoints
+      -- who placed it, as Haunted Hall reads "a player places any amount of progress"
+      when (token == Progress && n > 0) $ push $ CheckWindows [mkAfter $ ProgressPlacedOnLocationBy source attrs.id]
       -- a location with as much progress as its quest points is explored, but one on the
       -- Island Map stays in its place (Temple of the Deceived)
       when (token == Progress && questPoints > 0 && attrs'.progress >= questPoints && isNothing attrs.position)
@@ -84,8 +87,12 @@ instance RunMessage LocationAttrs where
             PlaceTokens _ _ Progress _ -> ProgressLimit 0 `elem` mods
             _ -> False
       immune <- (|| noMore || (isPlayerCardSource source && barred)) <$> immuneToSource source attrs
-      -- the message again, from a source the guard lets by
-      if immune then pure attrs else runMessage (asGame msg) attrs
+      -- the message again, from a source the guard lets by; progress still told as the
+      -- source's
+      if
+        | immune -> pure attrs
+        | PlaceTokens _ _ Progress n <- msg, n > 0 -> placeProgress source n
+        | otherwise -> runMessage (asGame msg) attrs
     asGame = \case
       PlaceTokens _ t token n -> PlaceTokens GameSource t token n
       RemoveTokens _ t token n -> RemoveTokens GameSource t token n

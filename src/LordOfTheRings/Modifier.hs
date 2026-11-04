@@ -290,6 +290,18 @@ data ModifierType
     BlankAttachments
   | -- | on the game: the Deep keyword is ignored, as The Fire Worm reads
     IgnoreDeep
+  | -- | on a location: its Discover value moves by this much, as Hidden Staircase's X and
+    -- Crypt Key's 1 read
+    DiscoverValueModifier Int
+  | -- | on an enemy with no victory points printed: it has this many, and goes to the
+    -- victory display as it is defeated, as The Cursed Shade gives Fram's Shade victory 6
+    GainVictory Int
+  | -- | on an enemy: it is dealt this many shadow cards whenever it is dealt one, as Fram's
+    -- Shade reads
+    ShadowCardsDealt Int
+  | -- | on a player, by an effect until the end of the round: player card effects reduced
+    -- his threat by this much this round, for Moonlit Passage's limit to count
+    ThreatReducedByPlayerCardsThisRound Int
   | -- | on the game: every character must commit to the quest
     MustCommitAll
   | -- | on the game: each card dealt for an escape test adds this much more

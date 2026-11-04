@@ -81,6 +81,14 @@ data Keyword
   | -- | on a location: after the players travel to it, it is discarded and the top card of
     -- the Caves deck takes its place as the active location (Ered Mithrin rules)
     Deep
+  | -- | on a location: as it becomes the active location, the first player looks at this
+    -- many encounter cards, attaches a Loot objective among them to it as a guarded
+    -- objective, reveals a random Hazard card among them, and discards the rest (MEC69
+    -- rules)
+    Discover Int
+  | -- | on an objective: one revealed from the encounter deck is discarded and another card
+    -- revealed; it enters play only by the Discover keyword (MEC69 rules)
+    Loot
   deriving stock (Show, Eq, Ord, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

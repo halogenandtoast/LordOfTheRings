@@ -438,6 +438,9 @@ import LordOfTheRings.Enemy.Cards.Dagnir
 import LordOfTheRings.Enemy.Cards.TheDragonsThrall
 import LordOfTheRings.Enemy.Cards.OrcOfTheFlame
 import LordOfTheRings.Enemy.Cards.FireDrake
+import LordOfTheRings.Enemy.Cards.FramsShade
+import LordOfTheRings.Enemy.Cards.CryptStalker
+import LordOfTheRings.Enemy.Cards.EvilSpectre
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -904,5 +907,8 @@ allEnemys =
         , SomeEnemyCard theDragonsThrall
         , SomeEnemyCard orcOfTheFlame
         , SomeEnemyCard fireDrake
+        , SomeEnemyCard framsShade
+        , SomeEnemyCard cryptStalker
+        , SomeEnemyCard evilSpectre
         ]
     ]

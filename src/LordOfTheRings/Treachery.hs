@@ -374,6 +374,9 @@ import LordOfTheRings.Treachery.Cards.PowerfulInWrath
 import LordOfTheRings.Treachery.Cards.TheDragonsFury
 import LordOfTheRings.Treachery.Cards.BrightFlames
 import LordOfTheRings.Treachery.Cards.DenizenOfTheDeep
+import LordOfTheRings.Treachery.Cards.AbandonedRuins
+import LordOfTheRings.Treachery.Cards.TerribleShadows
+import LordOfTheRings.Treachery.Cards.SlammedShut
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -775,5 +778,8 @@ allTreacherys =
         , SomeTreacheryCard theDragonsFury
         , SomeTreacheryCard brightFlames
         , SomeTreacheryCard denizenOfTheDeep
+        , SomeTreacheryCard abandonedRuins
+        , SomeTreacheryCard terribleShadows
+        , SomeTreacheryCard slammedShut
         ]
     ]

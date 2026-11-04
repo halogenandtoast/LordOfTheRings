@@ -384,6 +384,9 @@ allTreacheryCards =
       , theDragonsFury
       , brightFlames
       , denizenOfTheDeep
+      , abandonedRuins
+      , terribleShadows
+      , slammedShut
       ]
 
 deepDeepDark :: CardDef
@@ -2430,6 +2433,19 @@ powerfulInWrath =
     , cdEasyModeQuantity = Just 0
     }
 
+-- * The Ghost of Framsburg (19094-19111)
+
+abandonedRuins :: CardDef
+abandonedRuins = (treachery "19106" "Abandoned Ruins" TheGhostOfFramsburg 2) {cdShadowEffect = True, cdEasyModeQuantity = Just 1}
+
+terribleShadows :: CardDef
+terribleShadows =
+  (treachery "19107" "Terrible Shadows" TheGhostOfFramsburg 2)
+    { cdCardTraits = setFromList [Hazard]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 0
+    }
+
 theDragonsFury :: CardDef
 theDragonsFury = (treachery "19081" "The Dragon's Fury" FireInTheNight 3) {cdShadowEffect = True, cdEasyModeQuantity = Just 1}
 
@@ -2437,3 +2453,10 @@ brightFlames :: CardDef
 brightFlames = (treachery "19082" "Bright Flames" FireInTheNight 2) {cdShadowEffect = True, cdEasyModeQuantity = Just 1}
 denizenOfTheDeep :: CardDef
 denizenOfTheDeep = (treachery "18047" "Denizen of the Deep" TheKingsQuest 2) {cdShadowEffect = True, cdEasyModeQuantity = Just 1}
+slammedShut :: CardDef
+slammedShut =
+  (treachery "19108" "Slammed Shut" TheGhostOfFramsburg 3)
+    { cdCardTraits = setFromList [Hazard]
+    , cdKeywords = setFromList [Doomed 1]
+    , cdEasyModeQuantity = Just 0
+    }

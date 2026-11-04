@@ -316,6 +316,11 @@ data Message
     AttachFreedCard PlayerId PlayerCard
   | -- | the Deep keyword, after the players travel to the location (Ered Mithrin)
     ResolveDeep LocationId
+  | -- | the player resolves the Discover keyword of the location, if it has it (MEC69 rules)
+    ResolveDiscover PlayerId LocationId
+  | -- | a Loot objective revealed from the encounter deck is discarded, and another card
+    -- revealed in its place (MEC69 rules)
+    DiscardLoot EncounterCard
   | -- | the location is discarded and the top card of the Caves deck takes its place
     ReplaceWithTopOfCavesDeck LocationId
   | -- | the card, taken from where it was, is shuffled into the Caves deck
