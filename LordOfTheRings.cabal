@@ -3048,6 +3048,7 @@ test-suite LordOfTheRings-test
       LordOfTheRings.Starter.RidersOfRohanSpec
       LordOfTheRings.StarterDeckSpec
       LordOfTheRings.TravelPhaseSpec
+      LordOfTheRings.VengeanceOfMordor.TheOneRingSpec
       LordOfTheRings.VoiceOfIsengard.IntoFangornSpec
       LordOfTheRings.VoiceOfIsengard.NightmareSpec
       LordOfTheRings.VoiceOfIsengard.PlayerCardsSpec
