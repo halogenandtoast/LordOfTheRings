@@ -2364,6 +2364,11 @@ runGameMessage msg g = case msg of
     -- an enemy still in play raises a player's threat, as Crazed Captive's shadow reads
     raising <- for (toList g.entities.enemies) \e -> (\ms -> [(p, n) | RaisesThreatAtEndOfPhase p n <- ms]) <$> getModifiers e
     pushAll $ concat [[RaiseThreat p n, CheckWindows [mkAfter $ ThreatRaisedByEncounter p n]] | (p, n) <- concat raising]
+    -- each enemy in the staging area engages the first player, as The Ring Draws Them reads
+    drawn <- elem StagingEnemiesEngageFirstPlayerAtEndOfPhase <$> getModifiers GameTarget
+    when drawn do
+      staging <- select EnemyInStagingArea
+      pushAll [EngageEnemy g.firstPlayer e | e <- staging]
     -- at the end of each refresh phase each card with Time X loses 1 time counter, if able
     when (phase == RefreshPhase) do
       let es = g.entities

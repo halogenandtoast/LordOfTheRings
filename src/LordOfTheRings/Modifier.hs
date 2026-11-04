@@ -537,6 +537,9 @@ data ModifierType
   | -- | on an enemy: still in play as the phase ends, it raises the player's threat by this
     -- much, as Crazed Captive's shadow reads
     RaisesThreatAtEndOfPhase PlayerId Int
+  | -- | on the game: as the phase ends, each enemy in the staging area engages the first
+    -- player, as The Ring Draws Them reads
+    StagingEnemiesEngageFirstPlayerAtEndOfPhase
   | -- | on an enemy: each hero its attack damages but does not destroy is taken prisoner, as
     -- Torture Master's shadow reads
     AttackDamageTakesPrisoner
