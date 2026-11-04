@@ -401,6 +401,12 @@ allQuestCards =
       , shadowOfFearASitE
       , unwelcomeTravelers
       , lostInTheDark
+      , tributeToMordor
+      , theForgottenTemple
+      , theLegacyOfMordor
+      , memoryOfTheDarkYears
+      , shrineToSauron
+      , theLordOfMiddleEarth
       ]
 
 theDrippingWalls :: CardDef
@@ -1629,3 +1635,23 @@ lostInTheDark =
     { cdVictoryPoints = Just 10
     , cdWhenRevealed = True
     }
+
+-- | 12 quest points, as the card prints (Hall of Beorn lists none).
+tributeToMordor :: CardDef
+tributeToMordor = (encounterSideQuest "21053" "Tribute to Mordor" TheTempleOfDoom 12) {cdVictoryPoints = Just 10}
+
+theForgottenTemple :: CardDef
+theForgottenTemple = (quest "21080" "The Forgotten Temple" TheTempleOfDoom 1 0) {cdQuestPoints = Nothing, cdVictoryPoints = Just 10}
+
+theLegacyOfMordor :: CardDef
+theLegacyOfMordor = (quest "21081" "The Legacy of Mordor" TheTempleOfDoom 2 8) {cdVictoryPoints = Just 1}
+
+memoryOfTheDarkYears :: CardDef
+memoryOfTheDarkYears = (quest "21083" "Memory of the Dark Years" TheTempleOfDoom 2 12) {cdVictoryPoints = Just 1}
+
+shrineToSauron :: CardDef
+shrineToSauron = (quest "21084" "Shrine to Sauron" TheTempleOfDoom 2 16) {cdVictoryPoints = Just 1}
+
+-- | 0 quest points printed, +4 per player from its own modifiers.
+theLordOfMiddleEarth :: CardDef
+theLordOfMiddleEarth = (quest "21085" "The Lord of Middle-earth" TheTempleOfDoom 2 0) {cdVictoryPoints = Just 1}

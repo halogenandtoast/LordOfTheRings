@@ -515,6 +515,8 @@ allLocationCards =
       , twistedTunnel
       , narrowOpening
       , crumblingPassage
+      , templeOfSauron
+      , hallOfHorrors
       ]
 
 drownedTreasury :: CardDef
@@ -3834,3 +3836,15 @@ crumblingPassage =
     , cdWhenRevealed = True
     , cdEasyModeQuantity = Just 1
     }
+
+templeOfSauron :: CardDef
+templeOfSauron =
+  (location "21055" "Temple of Sauron" TheTempleOfDoom 2 4 1)
+    { cdCardTraits = setFromList [Underground]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
+    }
+
+-- | Its threat is X, given by its own modifiers.
+hallOfHorrors :: CardDef
+hallOfHorrors = (location "21056" "Hall of Horrors" TheTempleOfDoom 3 0 5) {cdCardTraits = setFromList [Underground], cdEasyModeQuantity = Just 2}

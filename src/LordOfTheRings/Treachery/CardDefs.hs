@@ -408,6 +408,7 @@ allTreacheryCards =
       , ulchorsRage
       , fanaticism
       , fearfulShadows
+      , placeOfEvil
       ]
 
 deepDeepDark :: CardDef
@@ -2589,3 +2590,6 @@ fearfulShadows =
     , cdShadowEffect = True
     , cdEasyModeQuantity = Just 1
     }
+
+placeOfEvil :: CardDef
+placeOfEvil = (treachery "21057" "Place of Evil" TheTempleOfDoom 3) {cdShadowEffect = True, cdEasyModeQuantity = Just 1}
