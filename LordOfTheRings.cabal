@@ -3175,6 +3175,7 @@ test-suite LordOfTheRings-test
       LordOfTheRings.VengeanceOfMordor.TheFortressOfNurnPlayerCardsSpec
       LordOfTheRings.VengeanceOfMordor.TheLandOfSorrowPlayerCardsSpec
       LordOfTheRings.VengeanceOfMordor.TheOneRingSpec
+      LordOfTheRings.VengeanceOfMordor.TheTempleOfDoomSpec
       LordOfTheRings.VengeanceOfMordor.UnderTheAshMountainsPlayerCardsSpec
       LordOfTheRings.VengeanceOfMordor.WrathAndRuinPlayerCardsSpec
       LordOfTheRings.VoiceOfIsengard.IntoFangornSpec
