@@ -1152,7 +1152,7 @@ runGameMessage msg g = case msg of
   DefendWith pid eid defender -> do
     windows <- actionWindows
     pushAll
-      $ [ defendingEffect defender
+      $ [ defendingEffect eid defender
         , CheckWindows [mkAfter $ DeclaredAsDefender defender eid]
         ]
       <> windows
@@ -1184,7 +1184,7 @@ runGameMessage msg g = case msg of
           questionLabelWith (ikeyWith "label.declareDefenders" enemyName) (Just $ toTarget eid) chosen pid
             $ [ targetLabel d
                   $ exhaust' d
-                  <> [ defendingEffect d
+                  <> [ defendingEffect eid d
                      , CheckWindows [mkAfter $ DeclaredAsDefender d eid]
                      , DeclareDefenders pid eid (chosen <> [d])
                      ]
@@ -1204,7 +1204,7 @@ runGameMessage msg g = case msg of
     undefendable <- elem CannotBeDefended <$> getModifiers eid
     able <- canFight eid d
     unless (undefendable || not able) do
-      pushAll [defendingEffect d, CheckWindows [mkAfter $ DeclaredAsDefender d eid]]
+      pushAll [defendingEffect eid d, CheckWindows [mkAfter $ DeclaredAsDefender d eid]]
       -- the declaration still to come is the card's instead
       withQueue_ \q -> case break pending q of
         (before, DeclareDefenders _ _ chosen : after) -> before <> (DeclareSentinels pid eid (chosen <> [d]) [] : after)
@@ -1246,7 +1246,7 @@ runGameMessage msg g = case msg of
         defend d
           | many =
               exhaust' d
-                <> [ defendingEffect d
+                <> [ defendingEffect eid d
                    , CheckWindows [mkAfter $ DeclaredAsDefender d eid]
                    , DeclareSentinels pid eid (chosen <> [d]) (other : rest)
                    ]
@@ -3128,8 +3128,10 @@ leftPlayWindows g target = case target of
     pure [LeftPlay target pid (cdCardTraits def <> gained), CharacterLeftPlay card]
 
 -- | The character is defending the attack being resolved.
-defendingEffect :: Target -> Message
-defendingEffect d = CreateEffect $ Effect GameSource d [Defending] UntilEndOfAttack
+-- | The character defends the enemy's attack, the effect's source the attack, for what
+-- reads the defender of one enemy's attack (see 'getDefendersAgainst').
+defendingEffect :: EnemyId -> Target -> Message
+defendingEffect eid d = CreateEffect $ Effect (EnemyAttackSource eid) d [Defending] UntilEndOfAttack
 
 gainedTraits :: Target -> GameT (Set Trait)
 gainedTraits target = setFromList . mapMaybe (\case GainTrait t -> Just t; _ -> Nothing) <$> getModifiers target
