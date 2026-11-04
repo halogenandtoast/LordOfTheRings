@@ -275,6 +275,10 @@ allQuestCards =
       , findWater
       , craftRemedy
       , uruksOfTheEye
+      , capturedCirithGurat
+      , rescueThePrisoners
+      , sneakPastTheGuards
+      , fightYourWayOut
       ]
 
 theDrippingWalls :: CardDef
@@ -1152,3 +1156,22 @@ uruksOfTheEye =
     { cdVictoryPoints = Just 10
     , cdKeywords = setFromList [Surge]
     }
+
+-- The Dungeons of Cirith Gurat (17131-17134)
+
+-- | "Captured!", the encounter side quest; The Blood of Gondor's stage is 'captured'.
+capturedCirithGurat :: CardDef
+capturedCirithGurat =
+  (encounterSideQuest "17131" "Captured!" TheDungeonsOfCirithGurat 5)
+    { cdVictoryPoints = Just 10
+    , cdWhenRevealed = True
+    }
+
+rescueThePrisoners :: CardDef
+rescueThePrisoners = quest "17132" "Rescue the Prisoners" TheDungeonsOfCirithGurat 1 10
+
+sneakPastTheGuards :: CardDef
+sneakPastTheGuards = quest "17133" "Sneak Past the Guards" TheDungeonsOfCirithGurat 2 15
+
+fightYourWayOut :: CardDef
+fightYourWayOut = quest "17134" "Fight Your Way Out" TheDungeonsOfCirithGurat 3 10

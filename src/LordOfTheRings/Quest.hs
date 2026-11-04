@@ -225,6 +225,10 @@ import LordOfTheRings.Quest.Cards.InEnemyTerritory
 import LordOfTheRings.Quest.Cards.FindWater
 import LordOfTheRings.Quest.Cards.CraftRemedy
 import LordOfTheRings.Quest.Cards.UruksOfTheEye
+import LordOfTheRings.Quest.Cards.CapturedCirithGurat
+import LordOfTheRings.Quest.Cards.RescueThePrisoners
+import LordOfTheRings.Quest.Cards.SneakPastTheGuards
+import LordOfTheRings.Quest.Cards.FightYourWayOut
 import LordOfTheRings.Quest.Runner ()
 import LordOfTheRings.Quest.Types as X
 import LordOfTheRings.Id
@@ -482,5 +486,9 @@ allQuests =
         , SomeQuestCard findWater
         , SomeQuestCard craftRemedy
         , SomeQuestCard uruksOfTheEye
+        , SomeQuestCard capturedCirithGurat
+        , SomeQuestCard rescueThePrisoners
+        , SomeQuestCard sneakPastTheGuards
+        , SomeQuestCard fightYourWayOut
         ]
     ]

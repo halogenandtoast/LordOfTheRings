@@ -215,6 +215,7 @@ import LordOfTheRings.Ally.Cards.Calaerion
 import LordOfTheRings.Ally.Cards.Gavin
 import LordOfTheRings.Ally.Cards.Starla
 import LordOfTheRings.Ally.Cards.CaptiveVillager
+import LordOfTheRings.Ally.Cards.Abaan
 import LordOfTheRings.Ally.Runner ()
 import LordOfTheRings.Ally.Types as X
 import LordOfTheRings.Id
@@ -462,5 +463,6 @@ allAllies =
         , SomeAllyCard silverWingUpgraded
         , SomeAllyCard narelenyaUpgraded
         , SomeAllyCard captiveVillager
+        , SomeAllyCard abaan
         ]
     ]

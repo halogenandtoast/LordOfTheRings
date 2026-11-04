@@ -2245,5 +2245,33 @@
   },
   "mordorWarg": {
     "attach": "Mordor Warg: choose the Orc enemy to attach it to"
+  },
+  "theDungeonsOfCirithGurat": {
+    "attachCaptive": "Choose the encounter card to attach it to as a captive"
+  },
+  "abaan": {
+    "choose": "Abaan: choose a Harad character to get +1 willpower, +1 attack and +1 defense"
+  },
+  "jailerOfCirithGurat": {
+    "attach": "Jailer of Cirith Gurat: choose an ally to attach to it"
+  },
+  "dungeonWarg": {
+    "attack": "Dungeon Warg: choose the player it attacks"
+  },
+  "gateOfIron": {
+    "choose": "Gate of Iron: discard a card from your hand with a higher cost, or raise each player's threat by 3",
+    "raiseThreat": "Raise each player's threat by 3"
+  },
+  "takenPrisoner": {
+    "ally": "Taken Prisoner: choose an ally to attach"
+  },
+  "capturedCirithGurat": {
+    "ally": "Captured!: choose an ally to attach to this stage"
+  },
+  "rescueThePrisoners": {
+    "searchOrc": "Rescue the Prisoners: choose a different Orc enemy to add to the staging area"
+  },
+  "fightYourWayOut": {
+    "hero": "Fight Your Way Out: choose a hero to attach as a captive"
   }
 }

@@ -402,6 +402,11 @@ import LordOfTheRings.Location.Cards.DesertOasis
 import LordOfTheRings.Location.Cards.JungleTrail
 import LordOfTheRings.Location.Cards.ForestClearing
 import LordOfTheRings.Location.Cards.DenseJungle
+import LordOfTheRings.Location.Cards.GateOfIron
+import LordOfTheRings.Location.Cards.DungeonCell
+import LordOfTheRings.Location.Cards.UrukGuardroom
+import LordOfTheRings.Location.Cards.MinesOfCirithGurat
+import LordOfTheRings.Location.Cards.TortureRoom
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -850,5 +855,10 @@ allLocations =
         , SomeLocationCard jungleTrail
         , SomeLocationCard forestClearing
         , SomeLocationCard denseJungle
+        , SomeLocationCard gateOfIron
+        , SomeLocationCard dungeonCell
+        , SomeLocationCard urukGuardroom
+        , SomeLocationCard minesOfCirithGurat
+        , SomeLocationCard tortureRoom
         ]
     ]

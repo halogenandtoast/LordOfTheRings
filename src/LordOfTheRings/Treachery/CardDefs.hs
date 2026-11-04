@@ -344,6 +344,8 @@ allTreacheryCards =
       , heatExhaustion
       , overgrown
       , fearOfMordor
+      , takenPrisoner
+      , tormentedByOrcs
       ]
 
 deepDeepDark :: CardDef
@@ -2210,3 +2212,11 @@ overgrown = (treachery "16059" "Overgrown" JungleForest 2) {cdKeywords = setFrom
 
 fearOfMordor :: CardDef
 fearOfMordor = (treachery "16065" "Fear of Mordor" MordorOrcs 2) {cdShadowEffect = True, cdEasyModeQuantity = Just 1}
+
+-- The Dungeons of Cirith Gurat (17129-17130)
+
+takenPrisoner :: CardDef
+takenPrisoner = (treachery "17129" "Taken Prisoner" TheDungeonsOfCirithGurat 2) {cdShadowEffect = True, cdEasyModeQuantity = Just 1}
+
+tormentedByOrcs :: CardDef
+tormentedByOrcs = (treachery "17130" "Tormented by Orcs" TheDungeonsOfCirithGurat 3) {cdShadowEffect = True}
