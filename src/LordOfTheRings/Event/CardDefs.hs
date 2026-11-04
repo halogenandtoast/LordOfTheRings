@@ -247,6 +247,14 @@ allEventCards =
       , knowledgeOfTheEnemy
       , woodmanLore
       , aDesperatePath
+      , halflingDetermination
+      , smokeRings
+      , takeNoNotice
+      , frodosIntuition
+      , flameOfAnor
+      , entmoot
+      , helmHelm
+      , theThreeHunters
       ]
 
 everVigilant :: CardDef
@@ -1007,3 +1015,34 @@ woodmanLore =
 aDesperatePath :: CardDef
 aDesperatePath =
   event "22145" "A Desperate Path" Spirit (StaticCost 2)
+
+halflingDetermination :: CardDef
+halflingDetermination = event "141009" "Halfling Determination" Tactics (StaticCost 1)
+
+smokeRings :: CardDef
+smokeRings = event "141010" "Smoke Rings" Spirit (StaticCost 2)
+
+takeNoNotice :: CardDef
+takeNoNotice = event "141011" "Take No Notice" Lore (StaticCost 3)
+
+frodosIntuition :: CardDef
+frodosIntuition = event "141012" "Frodo's Intuition" Fellowship (StaticCost 2)
+
+flameOfAnor :: CardDef
+flameOfAnor =
+  (event "142007" "Flame of Anor" Neutral (StaticCost 1))
+    { cdCardTraits = setFromList [Spell]
+    , cdVictoryPoints = Just 1
+    }
+
+entmoot :: CardDef
+entmoot =
+  (event "143011" "Entmoot" Lore (StaticCost 0))
+    { cdCardTraits = setFromList [Ent]
+    }
+
+helmHelm :: CardDef
+helmHelm = event "143012" "Helm! Helm!" Spirit (StaticCost 2)
+
+theThreeHunters :: CardDef
+theThreeHunters = event "143013" "The Three Hunters" Fellowship (StaticCost 3)

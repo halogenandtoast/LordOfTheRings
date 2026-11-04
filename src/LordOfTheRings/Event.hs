@@ -230,6 +230,14 @@ import LordOfTheRings.Event.Cards.SmokeAndThink
 import LordOfTheRings.Event.Cards.KnowledgeOfTheEnemy
 import LordOfTheRings.Event.Cards.WoodmanLore
 import LordOfTheRings.Event.Cards.ADesperatePath
+import LordOfTheRings.Event.Cards.HalflingDetermination
+import LordOfTheRings.Event.Cards.SmokeRings
+import LordOfTheRings.Event.Cards.TakeNoNotice
+import LordOfTheRings.Event.Cards.FrodosIntuition
+import LordOfTheRings.Event.Cards.FlameOfAnor
+import LordOfTheRings.Event.Cards.Entmoot
+import LordOfTheRings.Event.Cards.HelmHelm
+import LordOfTheRings.Event.Cards.TheThreeHunters
 import LordOfTheRings.Event.Types as X
 import LordOfTheRings.Id
 import LordOfTheRings.Prelude
@@ -479,5 +487,13 @@ allEvents =
         , SomeEventCard knowledgeOfTheEnemy
         , SomeEventCard woodmanLore
         , SomeEventCard aDesperatePath
+        , SomeEventCard halflingDetermination
+        , SomeEventCard smokeRings
+        , SomeEventCard takeNoNotice
+        , SomeEventCard frodosIntuition
+        , SomeEventCard flameOfAnor
+        , SomeEventCard entmoot
+        , SomeEventCard helmHelm
+        , SomeEventCard theThreeHunters
         ]
     ]

@@ -1151,6 +1151,7 @@ library
       LordOfTheRings.Event.Cards.ElrondsCounsel
       LordOfTheRings.Event.Cards.ElvenLight
       LordOfTheRings.Event.Cards.ElwingsFlight
+      LordOfTheRings.Event.Cards.Entmoot
       LordOfTheRings.Event.Cards.EverOnward
       LordOfTheRings.Event.Cards.EverVigilant
       LordOfTheRings.Event.Cards.ExpertTrackers
@@ -1160,6 +1161,7 @@ library
       LordOfTheRings.Event.Cards.FeignedVoices
       LordOfTheRings.Event.Cards.Feint
       LordOfTheRings.Event.Cards.FierceDefense
+      LordOfTheRings.Event.Cards.FlameOfAnor
       LordOfTheRings.Event.Cards.FlightOfTheEagles
       LordOfTheRings.Event.Cards.FlightToTheSea
       LordOfTheRings.Event.Cards.FoeHammer
@@ -1170,6 +1172,7 @@ library
       LordOfTheRings.Event.Cards.FortuneOrFate
       LordOfTheRings.Event.Cards.FreeToChoose
       LordOfTheRings.Event.Cards.FreshTracks
+      LordOfTheRings.Event.Cards.FrodosIntuition
       LordOfTheRings.Event.Cards.GainingStrength
       LordOfTheRings.Event.Cards.GaldorsCounsel
       LordOfTheRings.Event.Cards.GandalfsSearch
@@ -1179,11 +1182,13 @@ library
       LordOfTheRings.Event.Cards.GrimResolve
       LordOfTheRings.Event.Cards.GwaihirsDebt
       LordOfTheRings.Event.Cards.HailOfStones
+      LordOfTheRings.Event.Cards.HalflingDetermination
       LordOfTheRings.Event.Cards.HandsUponTheBow
       LordOfTheRings.Event.Cards.HastyStroke
       LordOfTheRings.Event.Cards.HeavyStroke
       LordOfTheRings.Event.Cards.HeedTheDream
       LordOfTheRings.Event.Cards.HeirsOfEarendil
+      LordOfTheRings.Event.Cards.HelmHelm
       LordOfTheRings.Event.Cards.HelmOfSecrecy
       LordOfTheRings.Event.Cards.HiddenCache
       LordOfTheRings.Event.Cards.HobbitSense
@@ -1263,6 +1268,7 @@ library
       LordOfTheRings.Event.Cards.SkywardVolley
       LordOfTheRings.Event.Cards.SmallTarget
       LordOfTheRings.Event.Cards.SmokeAndThink
+      LordOfTheRings.Event.Cards.SmokeRings
       LordOfTheRings.Event.Cards.SneakAttack
       LordOfTheRings.Event.Cards.SouthAway
       LordOfTheRings.Event.Cards.StandAndFight
@@ -1273,6 +1279,7 @@ library
       LordOfTheRings.Event.Cards.SwiftAndSilent
       LordOfTheRings.Event.Cards.SwiftAndStrong
       LordOfTheRings.Event.Cards.SwiftStrike
+      LordOfTheRings.Event.Cards.TakeNoNotice
       LordOfTheRings.Event.Cards.TakingInitiative
       LordOfTheRings.Event.Cards.TaleOfTinuviel
       LordOfTheRings.Event.Cards.TerribleToBehold
@@ -1295,6 +1302,7 @@ library
       LordOfTheRings.Event.Cards.TheRulingRing
       LordOfTheRings.Event.Cards.TheSeeingStone
       LordOfTheRings.Event.Cards.TheShirefolk
+      LordOfTheRings.Event.Cards.TheThreeHunters
       LordOfTheRings.Event.Cards.TheTreePeople
       LordOfTheRings.Event.Cards.TheWhiteCouncil
       LordOfTheRings.Event.Cards.TheWizardsVoice
