@@ -3723,7 +3723,7 @@ caveEntrance =
     }
 
 creatureDen :: CardDef
-creatureDen = (location "19018" "Creature Den" TheWitheredHeath 2 4 4) {cdCardTraits = setFromList [Mountain, Dark]}
+creatureDen = (location "19018" "Creature Den" TheWitheredHeath 2 4 4) {cdCardTraits = setFromList [Mountain], cdVictoryPoints = Just 4}
 
 -- | X threat: the number of locations in the staging area.
 highFalls :: CardDef

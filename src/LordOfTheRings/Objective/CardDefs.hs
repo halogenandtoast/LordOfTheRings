@@ -943,7 +943,6 @@ dragonSign =
   (objective "19012" "Dragon Sign" TheWitheredHeath 4)
     { cdCardTraits = setFromList [Clue]
     , cdKeywords = setFromList [GuardedBy [EnemyType]]
-    , cdVictoryPoints = Just 1
     }
 -- * Roam Across Rhovanion
 
