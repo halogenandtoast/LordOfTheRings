@@ -3400,6 +3400,7 @@ test-suite LordOfTheRings-test
       LordOfTheRings.HeirsOfNumenor.PlayerCardsSpec
       LordOfTheRings.HeirsOfNumenor.TheSiegeOfCairAndrosSpec
       LordOfTheRings.Hero.HeroAbilitiesSpec
+      LordOfTheRings.Hobbit.OverTheMistyMountainsGrimSpec
       LordOfTheRings.Hobbit.WeMustAwayEreBreakOfDaySpec
       LordOfTheRings.KeywordSpec
       LordOfTheRings.KhazadDum.FlightFromMoriaSpec
