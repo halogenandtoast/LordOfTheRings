@@ -379,7 +379,12 @@ costMessages source = \case
 
 -- | The player who controls an ability's source, if anyone does.
 abilityController :: HasGame m => Ability -> m (Maybe PlayerId)
-abilityController ab = go ab.abilitySource
+abilityController ab = sourceController ab.abilitySource
+
+-- | The player who controls the source, if anyone does: an encounter card's, the first
+-- player.
+sourceController :: HasGame m => Source -> m (Maybe PlayerId)
+sourceController = go
  where
   go = \case
     AbilitySource s _ -> go s
@@ -404,6 +409,17 @@ abilityController ab = go ab.abilitySource
     Just (AttachedTo host@(HeroTarget _)) -> characterController host
     Just (AttachedTo host@(AllyTarget _)) -> characterController host
     _ -> Just <$> getLead
+
+{- | The player whose player card the source is: who controls the hero, ally or attachment,
+or who holds the event, as its card id, in hand, deck or discard pile.
+-}
+playerCardController :: HasGame m => Source -> m (Maybe PlayerId)
+playerCardController = \case
+  AbilitySource s _ -> playerCardController s
+  CardIdSource cid ->
+    fmap (.id) . find (\p -> any ((== cid) . (.id)) (p.hand <> p.deck <> p.discard)) . toList <$> getsGame gamePlayers
+  source | isPlayerCardSource source -> sourceController source
+  _ -> pure Nothing
 
 -- | The Action abilities a player can use right now.
 getActionAbilities :: HasGame m => PlayerId -> m [Ability]

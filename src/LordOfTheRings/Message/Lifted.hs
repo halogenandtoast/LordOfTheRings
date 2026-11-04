@@ -642,6 +642,14 @@ afterAttack eid msgs = lift $ insertAfterMatching msgs \case
   CheckWindows ws -> any (\case Window After (EnemyAttacking eid' _) -> eid == eid'; _ -> False) ws
   _ -> False
 
+{- | Messages to run once the characters' attack on the enemy has resolved, as "after this
+attack" reads for an enemy defending: after what the attack's damage step pushes.
+-}
+afterAttackOn :: (MonadTrans t, HasQueue Message m) => EnemyId -> [Message] -> t m ()
+afterAttackOn eid msgs = lift $ insertAfterMatching msgs \case
+  DoStep 1 (ResolveAttack _ eid') -> eid == eid'
+  _ -> False
+
 {- | "If this attack destroys a character": the shadow's next step, 'DoStep' 1 of its
 'ResolveShadowEffect', once the enemy's attack is over, if its damage destroyed one. The
 shadow card, built again, resolves it then, and may read what was destroyed with
@@ -1498,6 +1506,15 @@ putShipIntoPlayUnder pid = push . PutObjectiveAllyIntoPlayUnder pid
 -- | The player reveals the top card of the Corsair deck and engages it, for the source.
 revealFromCorsairDeck :: (ReverseQueue m, Sourceable source) => source -> PlayerId -> m ()
 revealFromCorsairDeck source pid = push $ RevealFromCorsairDeck (toSource source) pid
+
+-- | As 'revealFromCorsairDeck', the enemy put into play dealt a shadow card.
+revealFromCorsairDeckWithShadow :: (ReverseQueue m, Sourceable source) => source -> PlayerId -> m ()
+revealFromCorsairDeckWithShadow source pid = push $ RevealFromCorsairDeckWithShadow (toSource source) pid
+
+-- | The enemy goes to the staging area the player shares, his area's while the players are
+-- separated.
+placeInStagingAreaOf :: ReverseQueue m => PlayerId -> EnemyId -> m ()
+placeInStagingAreaOf pid eid = push $ PlaceInStagingAreaOf pid eid
 
 -- | The player moves 1 resource from one of his heroes' pools to the card, as Umbar Raider
 -- takes it; nothing, with no resources to move.

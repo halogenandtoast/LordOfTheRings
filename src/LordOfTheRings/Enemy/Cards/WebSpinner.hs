@@ -2,7 +2,7 @@ module LordOfTheRings.Enemy.Cards.WebSpinner (webSpinner) where
 
 import LordOfTheRings.Enemy.CardDefs qualified as Cards
 import LordOfTheRings.Enemy.Import.Lifted
-import LordOfTheRings.Scenario.Scenarios.ReturnToMirkwood.Helpers (getGuard)
+import LordOfTheRings.Scenario.Scenarios.ReturnToMirkwood.Helpers (getGuard, shadowGuardTargets)
 
 newtype WebSpinner = WebSpinner EnemyAttrs
   deriving anyclass (IsEnemy, HasAbilities, HasModifiersFor)
@@ -27,7 +27,7 @@ instance RunMessage WebSpinner where
             targets heroes exhaust
             labeled "webSpinner.surge" revealEncounterCard
       pure e
-    ResolveShadowEffect cid _ _ _ | cid == attrs.cardId -> do
-      getGuard >>= traverse_ \guard' -> chooseAndExhaust attrs guard' 1
+    ResolveShadowEffect cid eid _ _ | cid == attrs.cardId -> do
+      shadowGuardTargets eid >>= traverse_ \guard' -> chooseAndExhaust attrs guard' 1
       pure e
     _ -> WebSpinner <$> runMessage msg attrs

@@ -301,6 +301,8 @@ data WindowMatcher
   | -- | a matching enemy revealed from the encounter deck, as Concealed Woods reads one with
     -- ambush
     MatchingEnemyRevealedWindow Timing EnemyMatcher
+  | -- | the attackers against the enemy were declared, as Guardian of the Golden King answers
+    AttackersDeclaredWindow Timing EnemyId
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
@@ -319,6 +321,7 @@ windowMatches matcher (Window timing wType) = case (matcher, wType) of
   (DealtDamageWindow t target, DealtDamage target' _) -> t == timing && target == target'
   (TraveledWindow t lid, Traveled lid') -> t == timing && lid == lid'
   (ExhaustedWindow t target, Exhausted target') -> t == timing && target == target'
+  (AttackersDeclaredWindow t eid, AttackersDeclared eid') -> t == timing && eid == eid'
   (AnyTraveledWindow t, Traveled _) -> t == timing
   (DefenderDeclaredWindow t who, DeclaredAsDefender target _) -> t == timing && maybe True (== target) who
   (DefenderDeclaredAgainstWindow t eid, DeclaredAsDefender _ eid') -> t == timing && eid == eid'

@@ -215,6 +215,8 @@ runPlayer msg player = case msg of
           push $ CheckWindows [mkAfter $ PlayedCard pid card]
           pure $ player & discardL %~ (PlayerCard card :)
     PlayAtNoCost pid card | pid == player.id -> do
+      -- played from wherever, it counts as one paid for does, as Silent Guardian reads
+      push $ CreateEffect $ Effect GameSource (PlayerTarget pid) [PlayedCardTypeThisRound (cdCardType $ toCardDef card)] UntilEndOfRound
       pushAll $ playCard pid card [] <> [CheckWindows [mkAfter $ PlayedCard pid card]]
       pure player
     PlayFromHandAtNoCost pid cid | pid == player.id -> case find ((== cid) . (.id)) player.hand of

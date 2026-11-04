@@ -100,6 +100,15 @@ spec = describe "Foundations of Stone" do
     deck `shouldSatisfy` all ((/= Just FoundationsOfStone) . cdEncounterSet . toCardDef)
     questDeck `shouldReturn` map cdCardCode [Quests.theWatersEdge, Quests.washedAway, Quests.outOfTheDepths]
 
+  it "sends Giant Cave Centipede to a different player's own staging area while the players are separated" . fosTwoPlayerTest $ \one two -> do
+    separateEach one two
+    run . PutEnemyIntoPlayEngaged one =<< genEncounterCard Enemies.giantCaveCentipede
+    eid <- enemyOf Enemies.giantCaveCentipede
+    run $ UseCardAbility one (EnemySource eid) 1 []
+    enemyCodes `shouldReturn` []
+    held <- getsGame \g -> [e.placement | Just s <- [gameSeparation g], a <- separationAreas s, two `elem` areaPlayers a, e <- toList (areaHeldEntities a).enemies]
+    held `shouldBe` [StagingArea]
+
   it "has a Nameless Thing take the top 2 cards of the engaged player's deck, its X their printed cost" . fosTest $ \pid -> do
     reveal [Enemies.namelessThing]
     eid <- enemyOf Enemies.namelessThing

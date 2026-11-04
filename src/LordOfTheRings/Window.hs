@@ -170,6 +170,8 @@ data WindowType
     CharacterRescued Target
   | -- | the hidden card was turned faceup: the enemy it put into play (The Blood of Gondor)
     HiddenCardTurnedFaceup Target
+  | -- | the attackers against the enemy are declared, before the attack resolves
+    AttackersDeclared EnemyId
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

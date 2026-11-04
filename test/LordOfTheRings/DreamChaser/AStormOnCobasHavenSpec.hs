@@ -161,6 +161,17 @@ spec = describe "A Storm on Cobas Haven" do
       for_ taken \s -> getWillpower (toTarget s) `shouldReturn` 3
       getsGame (toList . (.entities.enemies)) >>= (`shouldSatisfy` null)
 
+    it "Corsair Skirmisher is offered once it is destroyed, and declined goes to the discard pile" . cobasTest $ \pid -> do
+      _ <- putAllyIntoPlay pid Allies.gildorInglorion
+      skirmisher <- staged Enemies.corsairSkirmisher
+      run $ PlaceEnemy skirmisher (EngagedWith pid)
+      run $ Destroy GameSource (EnemyTarget skirmisher)
+      -- asked after it is destroyed, not as it is about to be
+      peekQueue >>= (`shouldSatisfy` not . any (\case DoStep 1 (Destroy _ _) -> True; _ -> False))
+      chooseLabel "$label.corsairSkirmisher.decline" pid
+      getsGame (toList . (.entities.enemies)) >>= (`shouldSatisfy` null)
+      map toCardCode <$> getEncounterDiscard `shouldReturn` [toCardCode Enemies.corsairSkirmisher]
+
     it "The Beacon gives a set-aside Dol Amroth Warship to the player who triggers it" . cobasTest $ \pid -> do
       warship <- genEncounterCard Objectives.dolAmrothWarship
       g <- getGame

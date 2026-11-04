@@ -2,6 +2,7 @@ module LordOfTheRings.Core.NightmareSpec (spec) where
 
 import Data.Aeson (Result (..))
 import Data.Aeson.KeyMap qualified as KeyMap
+import LordOfTheRings.Ally.CardDefs qualified as Allies
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Helpers.Modifiers (getModifiers)
 import LordOfTheRings.Helpers.Staging (getEnemyAttack, getStagingThreat)
@@ -9,6 +10,7 @@ import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Modifier (ModifierType (..))
 import LordOfTheRings.Outcome (Outcome (Lost))
 import LordOfTheRings.Phase
+import LordOfTheRings.Quest.CardDefs qualified as Quests
 import LordOfTheRings.Scenario.CardDefs qualified as Nightmare
 import LordOfTheRings.Scenario.Types (GameMode (..), ScenarioAttrs, modeL, scenarioMode)
 import LordOfTheRings.Treachery.CardDefs qualified as Treacheries
@@ -93,6 +95,19 @@ spec = describe "Nightmare mode" do
       locations <- getsGame (map toCardCode . toList . (.entities.locations))
       locations `shouldBe` [toCardCode Locations.abandonedCampNightmare]
 
+    it "Ungoliant's Brood keeps its player's cards from readying this round, those entering play too" . nightmare passageThroughMirkwood $ \pid -> do
+      run . AddToStaging =<< genEncounterCard Enemies.ungoliantsBrood
+      brood <- theEnemy
+      run $ EngageEnemy pid brood
+      eowyn <- toTarget <$> getHeroWithCode "01007"
+      run $ Exhaust eowyn
+      run $ Ready eowyn
+      getsGame (fmap (heroExhausted . toAttrs) . find ((== "01007") . toCardCode) . toList . (.entities.heroes)) `shouldReturn` Just True
+      ally <- putAllyIntoPlay pid Allies.silverlodeArcher
+      run $ Exhaust ally
+      run $ Ready ally
+      getsGame (fmap (allyExhausted . toAttrs) . headMay . toList . (.entities.allies)) `shouldReturn` Just True
+
     it "The Spider's Web damages its hero each time it readies" . nightmare passageThroughMirkwood $ \pid -> do
       reveal Treacheries.theSpidersWeb []
       eowyn <- toTarget <$> getHeroWithCode "01007"
@@ -130,6 +145,27 @@ spec = describe "Nightmare mode" do
       eid <- theEnemy
       run $ DealDamage GameSource (toTarget eid) 3
       getsGame (length . (.entities.enemies)) `shouldReturn` 1
+
+    it "Brown Water Rats leave once the last enemy without the Rat trait leaves play at stage 3" . nightmare journeyAlongTheAnduin $ \_ -> do
+      _ <- putQuestStage Quests.ambushOnTheShore
+      run . AddToStaging =<< genEncounterCard Enemies.brownWaterRats
+      run . AddToStaging =<< genEncounterCard Enemies.hillTroll
+      troll <- getsGame (fromJustNote "no troll" . fmap toId . find ((== toCardCode Enemies.hillTroll) . toCardCode) . toList . (.entities.enemies))
+      getsGame (length . (.entities.enemies)) `shouldReturn` 2
+      run $ Discard (toTarget troll)
+      getsGame (length . (.entities.enemies)) `shouldReturn` 0
+
+    it "Marshland Outlaws keeps its player's card effects from damaging other enemies" . nightmare journeyAlongTheAnduin $ \pid -> do
+      reveal Enemies.marshlandOutlaws []
+      outlaws <- theEnemy
+      run $ EngageEnemy pid outlaws
+      run . AddToStaging =<< genEncounterCard Enemies.hillTroll
+      troll <- getsGame (fromJustNote "no troll" . fmap toId . find ((== toCardCode Enemies.hillTroll) . toCardCode) . toList . (.entities.enemies))
+      eowyn <- getHeroWithCode "01007"
+      run $ DealDamage (HeroSource eowyn.id) (toTarget troll) 2
+      getDamage (toTarget troll) `shouldReturn` 0
+      run $ DealDamage (HeroSource eowyn.id) (toTarget outlaws) 2
+      getDamage (toTarget outlaws) `shouldReturn` 2
 
     it "Pursuit on the Shore returns the strongest enemy from the discard pile" . nightmare journeyAlongTheAnduin $ \_ -> do
       cards <- traverse genEncounterCard [Enemies.wargs, Enemies.hillTroll]
