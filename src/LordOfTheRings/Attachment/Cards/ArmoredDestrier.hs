@@ -31,12 +31,12 @@ instance RunMessage ArmoredDestrier where
         defending <- placementController . (.placement) <$> getEnemy eid
         for_ defending \p -> do
           others <- select (EnemyEngagedWith (PlayerWithId p) <> not_ (EnemyWithId eid))
-          shadowed <- filterM (fmap (notNull . (.shadowCards)) . getEnemy) others
+          shadowed <- filterM (fmap notNull . (shadowsPlayerCardsCanAffect <=< getEnemy)) others
           chooseOrRunOneM pid do
             questionLabeled "armoredDestrier.enemy"
             causedBy a
             targets shadowed \e -> do
-              shadows <- (.shadowCards) <$> getEnemy e
+              shadows <- shadowsPlayerCardsCanAffect =<< getEnemy e
               chooseOrRunOneM pid do
                 questionLabeled "armoredDestrier.shadow"
                 causedBy a

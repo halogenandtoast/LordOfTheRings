@@ -24,6 +24,6 @@ instance RunMessage RivendellSkirmishers where
         nonUnique <- selectAny (EnemyWithId eid <> not_ UniqueEnemy)
         when nonUnique do
           e <- getEnemy eid
-          for_ e.shadowCards (discardShadowCard eid)
+          traverse_ (discardShadowCard eid) =<< shadowsPlayerCardsCanAffect e
       pure s
     _ -> RivendellSkirmishers <$> runMessage msg a

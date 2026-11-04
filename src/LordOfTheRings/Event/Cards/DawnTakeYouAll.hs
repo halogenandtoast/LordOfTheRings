@@ -22,11 +22,12 @@ instance RunMessage DawnTakeYouAll where
   runMessage msg e@(DawnTakeYouAll attrs) = case msg of
     PlayEvent _ card _ | card.id == toId attrs -> do
       eachPlayer \p -> do
-        enemies <- filter (notNull . (.shadowCards)) <$> (traverse getEnemy =<< select (EnemyEngagedWith $ PlayerWithId p))
+        enemies <- traverse getEnemy =<< select (EnemyEngagedWith $ PlayerWithId p)
+        shadowed <- for enemies \en -> (en,) <$> shadowsPlayerCardsCanAffect en
         chooseOneM p do
           questionLabeled "dawnTakeYouAll.discard"
           causedBy attrs
-          for_ enemies \en -> for_ (take 1 [s | s <- en.shadowCards, s.id `notElem` (toAttrs en).enemyShadowRevealed]) \s ->
+          for_ shadowed \(en, shadows) -> for_ (take 1 [s | s <- shadows, s.id `notElem` (toAttrs en).enemyShadowRevealed]) \s ->
             targeting en $ discardShadowCard en.id s
           labeled "pass" $ pure ()
       pure e

@@ -32,7 +32,7 @@ instance RunMessage Spyglass where
   runMessage msg s@(Spyglass a) = case msg of
     UseCardAbility pid (isSource a -> True) 1 _ -> do
       let up = isUpgradedSide a
-      shadowed <- traverse getEnemy =<< select EnemyWithFacedownShadow
+      shadowed <- traverse (\e -> (e,) <$> shadowsPlayerCardsCanAffect e) =<< traverse getEnemy =<< select EnemyWithFacedownShadow
       locations <- traverse getLocation =<< select LocationNotImmuneToPlayerCards
       players <- if up then getRemainingPlayers else pure [pid]
       chooseOneM pid do
@@ -41,7 +41,7 @@ instance RunMessage Spyglass where
         unless (null shadowed) $ labeled "spyglass.shadow" $ chooseOneM pid do
           questionLabeled "spyglass.whichShadow"
           causedBy a
-          for_ shadowed \e -> for_ e.shadowCards \c -> targeting (toId e) do
+          for_ shadowed \(e, shadows) -> for_ shadows \c -> targeting (toId e) do
             lookAtShadowCard pid a (toId e) c.id
             when up $ chooseOneM pid do
               questionLabeled "spyglass.discardShadow"

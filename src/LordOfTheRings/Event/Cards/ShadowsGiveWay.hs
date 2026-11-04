@@ -16,6 +16,6 @@ instance RunMessage ShadowsGiveWay where
   runMessage msg e@(ShadowsGiveWay attrs) = case msg of
     PlayEvent _ card _ | card.id == toId attrs -> do
       enemies <- traverse getEnemy =<< select AnyEnemy
-      for_ enemies \enemy -> for_ enemy.shadowCards (discardShadowCard enemy.id)
+      for_ enemies \enemy -> traverse_ (discardShadowCard enemy.id) =<< shadowsPlayerCardsCanAffect enemy
       pure e
     _ -> ShadowsGiveWay <$> runMessage msg attrs

@@ -37,7 +37,8 @@ instance RunMessage Eldahir where
         causedBy a
         targets enemies \eid -> do
           enemy <- getEnemy eid
-          let facedown = [c | c <- enemy.shadowCards, c.id `notElem` enemyShadowRevealed (toAttrs enemy)]
+          shadows <- shadowsPlayerCardsCanAffect enemy
+          let facedown = [c | c <- shadows, c.id `notElem` enemyShadowRevealed (toAttrs enemy)]
           chooseOrRunOneM pid do
             questionLabeled "eldahir.shadow"
             causedBy a
