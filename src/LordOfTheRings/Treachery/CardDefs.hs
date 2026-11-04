@@ -430,6 +430,16 @@ allTreacheryCards =
       , overseersWhip
       , crueltyOfMordor
       , brokenCaptives
+      , crawlingTowardsHim
+      , huntingForTheRing
+      , haveYouSeenBaggins
+      , paleBlade
+      , powerInTheirTerror
+      , piercingCry
+      , blackSteed
+      , rodeLikeAGale
+      , lureOfTheRing
+      , theRingDrawsThem
       ]
 
 deepDeepDark :: CardDef
@@ -2718,3 +2728,71 @@ crueltyOfMordor = (treachery "22132" "Cruelty of Mordor" TheLandOfSorrow 3) {cdS
 
 brokenCaptives :: CardDef
 brokenCaptives = (treachery "22133" "Broken Captives" TheLandOfSorrow 2) {cdShadowEffect = True, cdEasyModeQuantity = Just 1}
+
+-- * A Shadow of the Past
+
+crawlingTowardsHim :: CardDef
+crawlingTowardsHim =
+  (treachery "141041" "Crawling Towards Him" AShadowOfThePast 3)
+    { cdKeywords = setFromList [Peril, Hide 2]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 2
+    }
+
+huntingForTheRing :: CardDef
+huntingForTheRing = (treachery "141042" "Hunting for the Ring" AShadowOfThePast 3) {cdKeywords = setFromList [Doomed 2]}
+
+haveYouSeenBaggins :: CardDef
+haveYouSeenBaggins = (treachery "141043" "Have You Seen Baggins?" AShadowOfThePast 2) {cdKeywords = setFromList [Peril, Surge]}
+
+-- | A burden of the A Shadow of the Past burden set: in the encounter deck only once
+-- earned, or as the scenario's campaign card shuffles it in.
+theRingDrawsThem :: CardDef
+theRingDrawsThem =
+  (treachery "141079" "The Ring Draws Them" AShadowOfThePast 1)
+    { cdEncounterSet = Nothing
+    , cdSetIcon = Just AShadowOfThePast
+    , cdCardTraits = setFromList [Burden]
+    , cdKeywords = setFromList [Surge]
+    }
+
+-- * The Nazgûl
+
+paleBlade :: CardDef
+paleBlade =
+  (treachery "141070" "Pale Blade" TheNazgul 3)
+    { cdCardTraits = setFromList [Morgul]
+    , cdKeywords = setFromList [Surge]
+    , cdEasyModeQuantity = Just 1
+    }
+
+powerInTheirTerror :: CardDef
+powerInTheirTerror = (treachery "141071" "Power in their Terror" TheNazgul 3) {cdShadowEffect = True, cdEasyModeQuantity = Just 1}
+
+-- * Hunted
+
+piercingCry :: CardDef
+piercingCry =
+  (treachery "141073" "Piercing Cry" Hunted 3)
+    { cdKeywords = setFromList [Peril]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
+    }
+
+-- * The Black Riders
+
+blackSteed :: CardDef
+blackSteed =
+  (treachery "141074" "Black Steed" TheBlackRiders 3)
+    { cdCardTraits = setFromList [Morgul]
+    , cdKeywords = setFromList [Surge]
+    , cdEasyModeQuantity = Just 1
+    }
+
+rodeLikeAGale :: CardDef
+rodeLikeAGale = (treachery "141075" "Rode Like a Gale" TheBlackRiders 2) {cdShadowEffect = True}
+
+-- * The Ring
+
+lureOfTheRing :: CardDef
+lureOfTheRing = (treachery "141076" "Lure of the Ring" TheRing 3) {cdKeywords = setFromList [Surge], cdShadowEffect = True}

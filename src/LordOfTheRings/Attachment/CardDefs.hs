@@ -241,6 +241,7 @@ allAttachmentCards =
       , shiningShield
       , tirelessThoroughbred
       , thorongil
+      , mrUnderhill
       ]
 
 -- | A boon of the Revised Core campaign: Permanent, limit 1 per hero.
@@ -1694,3 +1695,13 @@ thorongil =
     (attachment "22146" "Thorongil" Neutral (StaticCost 3))
       { cdCardTraits = setFromList [Title]
       }
+
+-- | A boon: "Setup: Attach to the Ring-bearer." A Shadow of the Past's campaign card
+-- attaches it; earned, it is recorded on the Ring-bearer.
+mrUnderhill :: CardDef
+mrUnderhill =
+  (unique $ attachment "141017" "Mr. Underhill" Neutral (StaticCost 0))
+    { cdCardTraits = setFromList [Title, Boon]
+    , cdKeywords = setFromList [Permanent]
+    , cdVictoryPoints = Just 1
+    }

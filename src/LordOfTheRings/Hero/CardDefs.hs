@@ -98,6 +98,7 @@ allHeroCards =
       , thorinStonehelm
       , gwaihirTheLandOfSorrow
       , aragornSpirit
+      , frodoBagginsFellowship
       ]
 
 aragorn :: CardDef
@@ -629,4 +630,12 @@ aragornSpirit =
   (hero "22137" "Aragorn" Spirit 12 2 3 2 5)
     { cdCardTraits = setFromList [Dunedain, Ranger, Scout]
     , cdKeywords = setFromList [Sentinel]
+    }
+
+-- | The Black Riders' Ring-bearer, of the Fellowship sphere: the game gives him to the
+-- first player as its scenarios are set up.
+frodoBagginsFellowship :: CardDef
+frodoBagginsFellowship =
+  (hero "141001" "Frodo Baggins" Fellowship 0 2 1 2 2)
+    { cdCardTraits = setFromList [Hobbit, RingBearer]
     }

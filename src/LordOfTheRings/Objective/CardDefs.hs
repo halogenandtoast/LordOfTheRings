@@ -153,6 +153,9 @@ allObjectiveCards =
       , edrahil
       , arador
       , farin
+      , gildorInglorionObjective
+      , gandalfsDelay
+      , theOneRingTheBlackRiders
       ]
 
 durinsAxe :: CardDef
@@ -1053,3 +1056,35 @@ arador = captive "22125" "Arador" Gondor 0 1 3 5
 
 farin :: CardDef
 farin = captive "22126" "Farin" Dwarf 1 3 0 4
+
+-- * A Shadow of the Past
+
+-- | A boon with an encounter card back: earned, it is shuffled into the encounter deck
+-- (The Black Riders rules insert, "Boons & Burdens").
+gildorInglorionObjective :: CardDef
+gildorInglorionObjective =
+  ((objective "141077" "Gildor Inglorion" AShadowOfThePast 1)
+      { cdCardType = ObjectiveAllyType, cdWillpower = Just 3, cdAttack = Just 2, cdDefense = Just 3, cdHitPoints = Just 3 })
+    { cdUnique = True
+    , cdEncounterSet = Nothing
+    , cdSetIcon = Just AShadowOfThePast
+    , cdCardTraits = setFromList [Noldor, Boon]
+    , cdKeywords = setFromList [FirstPlayerGainsControl]
+    }
+
+-- | A burden: "Setup: Add Gandalf's Delay to the staging area."
+gandalfsDelay :: CardDef
+gandalfsDelay =
+  (objective "141078" "Gandalf's Delay" AShadowOfThePast 1)
+    { cdEncounterSet = Nothing
+    , cdSetIcon = Just AShadowOfThePast
+    , cdCardTraits = setFromList [Burden]
+    }
+
+-- | The Black Riders' The One Ring, which the game attaches to the Ring-bearer as each of
+-- its scenarios is set up (see 'LordOfTheRings.Saga.fellowshipSetup').
+theOneRingTheBlackRiders :: CardDef
+theOneRingTheBlackRiders =
+  unique (emptyCardDef "141085" "The One Ring" ObjectiveType)
+    { cdCardTraits = setFromList [Artifact, Item, Ring]
+    }

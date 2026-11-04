@@ -543,6 +543,15 @@ allLocationCards =
       , theStorehouse
       , workingFields
       , watchTowerTheLandOfSorrow
+      , bagEnd
+      , woodyEnd
+      , stockBrook
+      , bamfurlong
+      , buckleburyFerry
+      , greenHillCountry
+      , stockRoad
+      , theMarish
+      , pathlessCountryHunted
       ]
 
 drownedTreasury :: CardDef
@@ -4001,3 +4010,45 @@ watchTowerTheLandOfSorrow =
     { cdCardTraits = setFromList [Plains]
     , cdEasyModeQuantity = Just 1
     }
+
+-- * A Shadow of the Past
+
+bagEnd :: CardDef
+bagEnd = unique (location "141031" "Bag End" AShadowOfThePast 1 0 3) {cdCardTraits = setFromList [Shire], cdVictoryPoints = Just 1}
+
+woodyEnd :: CardDef
+woodyEnd = unique (location "141032" "Woody End" AShadowOfThePast 1 1 1) {cdCardTraits = setFromList [Forest], cdVictoryPoints = Just 1}
+
+stockBrook :: CardDef
+stockBrook =
+  unique (location "141033" "Stock-brook" AShadowOfThePast 1 1 5)
+    { cdCardTraits = setFromList [Forest, Stream]
+    , cdVictoryPoints = Just 1
+    , cdWhenRevealed = True
+    }
+
+bamfurlong :: CardDef
+bamfurlong = unique (location "141034" "Bamfurlong" AShadowOfThePast 1 2 2) {cdCardTraits = setFromList [Shire], cdVictoryPoints = Just 1}
+
+-- | Set aside by stage 1A, added to the staging area by stage 3A.
+buckleburyFerry :: CardDef
+buckleburyFerry = unique (location "141035" "Bucklebury Ferry" AShadowOfThePast 1 3 9) {cdCardTraits = setFromList [River]}
+
+greenHillCountry :: CardDef
+greenHillCountry = (location "141036" "Green Hill Country" AShadowOfThePast 3 2 3) {cdCardTraits = setFromList [Forest], cdShadowEffect = True}
+
+stockRoad :: CardDef
+stockRoad = (location "141037" "Stock Road" AShadowOfThePast 3 3 3) {cdCardTraits = setFromList [Road], cdEasyModeQuantity = Just 1}
+
+theMarish :: CardDef
+theMarish =
+  (location "141038" "The Marish" AShadowOfThePast 2 3 4)
+    { cdCardTraits = setFromList [Marshland]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
+    }
+
+-- * Hunted
+
+pathlessCountryHunted :: CardDef
+pathlessCountryHunted = (location "141072" "Pathless Country" Hunted 3 2 3) {cdCardTraits = setFromList [Forest], cdShadowEffect = True}

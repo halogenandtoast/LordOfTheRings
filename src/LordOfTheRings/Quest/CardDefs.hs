@@ -439,6 +439,9 @@ allQuestCards =
       , stormTheCastleStrongholdOfMordor
       , slavesOfTheDarkLord
       , leadTheRevolt
+      , threeIsCompany
+      , aShortcutToMushrooms
+      , escapeToBuckland
       ]
 
 theDrippingWalls :: CardDef
@@ -1821,3 +1824,15 @@ slavesOfTheDarkLord = quest "22135" "Slaves of the Dark Lord" TheLandOfSorrow 1 
 -- | 10 quest points, and 10 more per player from its own modifiers.
 leadTheRevolt :: CardDef
 leadTheRevolt = quest "22136" "Lead the Revolt" TheLandOfSorrow 2 10
+
+-- * A Shadow of the Past
+
+threeIsCompany :: CardDef
+threeIsCompany = quest "141022" "Three is Company" AShadowOfThePast 1 1
+
+aShortcutToMushrooms :: CardDef
+aShortcutToMushrooms = quest "141023" "A Shortcut to Mushrooms" AShadowOfThePast 2 14
+
+-- | No quest points: the players win as Bucklebury Ferry is explored.
+escapeToBuckland :: CardDef
+escapeToBuckland = quest "141024" "Escape to Buckland" AShadowOfThePast 3 0
