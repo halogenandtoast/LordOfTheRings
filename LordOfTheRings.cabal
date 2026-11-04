@@ -3324,6 +3324,7 @@ test-suite LordOfTheRings-test
       LordOfTheRings.KhazadDum.TheSeventhLevelSpec
       LordOfTheRings.KhazadDumEngineSpec
       LordOfTheRings.LogSpec
+      LordOfTheRings.LordOfTheRingsSaga.PlayerCardsASpec
       LordOfTheRings.LostRealm.DeadmensDikeSpec
       LordOfTheRings.LostRealm.IntrudersInChetwoodSpec
       LordOfTheRings.LostRealm.LostRealmPlayerCardsSpec
