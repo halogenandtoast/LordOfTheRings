@@ -134,6 +134,14 @@ thaneDef = find (cardMatches $ CardWithTitle "Thane Ulchor") (toList Enemies.all
 withThane :: (CardDef -> PlayerId -> GameT ()) -> IO ()
 withThane body = maybe (pendingWith "no version of Thane Ulchor is defined yet") (gameTest . body) thaneDef
 
+-- | A version of Thane Ulchor a player can engage: Wrath and Ruin's cannot leave the
+-- staging area.
+withEngageableThane :: (CardDef -> PlayerId -> GameT ()) -> IO ()
+withEngageableThane body =
+  maybe (pendingWith "no version of Thane Ulchor that can be engaged is defined yet") (gameTest . body)
+    $ find ((/= toCardCode Enemies.thaneUlchorWrathAndRuin) . toCardCode)
+    $ filter (cardMatches $ CardWithTitle "Thane Ulchor") (toList Enemies.allEnemyCards)
+
 spec :: Spec
 spec = describe "A Shadow in the East's shared encounter sets" do
   describe "Riders of Rhûn" do
@@ -503,7 +511,7 @@ spec = describe "A Shadow in the East's shared encounter sets" do
       discardCodes `shouldReturn` [toCardCode Locations.rollingPlains]
 
   describe "Ulchor's Guard" do
-    it "has Ulchor's Guard engage the player Thane Ulchor is engaged with" $ withThane \thane pid -> do
+    it "has Ulchor's Guard engage the player Thane Ulchor is engaged with" $ withEngageableThane \thane pid -> do
       t <- stage thane
       run $ PlaceEnemy t (EngagedWith pid)
       guard' <- stage Enemies.ulchorsGuard
@@ -523,6 +531,7 @@ spec = describe "A Shadow in the East's shared encounter sets" do
       _ <- setEncounterDeck [Treacheries.ulchorsRage, Locations.oldForestRoad, Locations.oldForestRoad]
       run RevealEncounterCard
       resolveRevealed
+      passActions pid
       Just (QuestionLabel _ source _ _) <- getQuestion pid
       source `shouldBe` Just (toTarget t)
 

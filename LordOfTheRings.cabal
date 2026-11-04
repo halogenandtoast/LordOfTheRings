@@ -3182,6 +3182,7 @@ test-suite LordOfTheRings-test
       LordOfTheRings.VengeanceOfMordor.TheOneRingSpec
       LordOfTheRings.VengeanceOfMordor.UnderTheAshMountainsPlayerCardsSpec
       LordOfTheRings.VengeanceOfMordor.WrathAndRuinPlayerCardsSpec
+      LordOfTheRings.VengeanceOfMordor.WrathAndRuinSpec
       LordOfTheRings.VoiceOfIsengard.IntoFangornSpec
       LordOfTheRings.VoiceOfIsengard.NightmareSpec
       LordOfTheRings.VoiceOfIsengard.PlayerCardsSpec
