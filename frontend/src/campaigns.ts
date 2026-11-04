@@ -145,6 +145,7 @@ const implemented: Record<string, Gateable & { nightmare?: boolean }> = {
   'the-siege-of-gondor': { beta: true },
   'the-tower-of-cirith-ungol': { beta: true },
   'the-black-gate-opens': { beta: true },
+  'mount-doom': { beta: true },
 }
 
 const campaign = (id: string, name: string, code: string, scenarios: ScenarioOption[]): Campaign => ({

@@ -86,6 +86,29 @@ data HideTest = HideTest
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
+{- | A Fortitude test (The Mountain of Fire rules insert): the player commits heroes by
+exhausting them, then discards the top X cards of the encounter deck, X the tens digit of
+his threat, and passes if the committed willpower is greater than the Eye of Sauron icons
+on the discarded cards; ties fail.
+-}
+data FortitudeTest = FortitudeTest
+  { fortitudePlayer :: PlayerId
+  , fortitudeSource :: Source
+  , fortitudeCommitted :: [HeroId]
+  , fortitudeExtraCards :: Int
+  -- ^ cards discarded beyond X, as The Crack of Doom's "1 extra encounter card for each
+  -- player"
+  , fortitudeEyes :: Int
+  -- ^ Eye icons added to the test, as The Lidless Eye adds 2
+  , fortitudeDiscarded :: [EncounterCard]
+  , fortitudeIgnored :: [CardId]
+  -- ^ discarded cards whose Eye icons are ignored, as Gollum's choice
+  , fortitudeOnFail :: [Message]
+  , fortitudeOnPass :: [Message]
+  }
+  deriving stock (Show, Eq, Generic)
+  deriving anyclass (ToJSON, FromJSON)
+
 data Message
   = Setup
   | BeginPhase Phase
@@ -558,6 +581,13 @@ data Message
   | -- | the player has failed a Hide test: what happens as he does, before the Forced
     -- effects after it, as each Nazgûl in the staging area engaging him at stage 1B
     FailHideTest PlayerId
+  | -- | the player commits heroes to the Fortitude test, one at a time
+    MakeFortitudeTest FortitudeTest
+  | -- | the cards are discarded for the test, which is then under way until resolved
+    DiscardForFortitudeTest FortitudeTest
+  | -- | the discarded card's Eye icons are ignored for the test under way
+    IgnoreFortitudeEyeIcons CardId
+  | ResolveFortitudeTest
   | {- | a locate test (The Long Dark): the top card of the encounter deck is discarded, and
     the test is passed if it carries the pass icon; the messages for a fail, then a pass
     -}

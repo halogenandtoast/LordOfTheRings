@@ -396,6 +396,13 @@ data ModifierType
   | -- | on a player, by an effect until the end of the round: player card effects reduced
     -- his threat by this much this round, for Moonlit Passage's limit to count
     ThreatReducedByPlayerCardsThisRound Int
+  | -- | on a hero: it cannot commit to Fortitude tests, as Heavy and Tired's host
+    CannotCommitToFortitudeTests
+  | -- | on the game: Eye icons added to each Fortitude test, as Brake of Thorns adds
+    FortitudeTestEyes Int
+  | -- | on a player, by an effect until the end of the round: he failed a Fortitude test
+    -- this round
+    FailedFortitudeTestThisRound
   | -- | on the game: every character must commit to the quest
     MustCommitAll
   | -- | on the game: each card dealt for an escape test adds this much more
@@ -946,11 +953,16 @@ data ModifierType
   | -- | on the game: no more than 1 ally can enter play each round, however it enters, as
     -- Corsair Waters reads
     OneAllyEntersPlayPerRound
+  | -- | on the game: no ally can enter play, however it enters, as The Crack of Doom reads
+    AlliesCannotEnterPlay
   | -- | on the game: the matching active location adds its threat to the staging area, as
     -- Flooded Ruins reads
     ActiveLocationsAddThreat LocationMatcher
   | -- | on the game: a treachery card has been revealed this round
     TreacheryRevealedThisRound
+  | -- | on the game, by an effect until the end of the phase: the treachery was revealed
+    -- this phase, as "the first treachery revealed each quest phase" counts them
+    TreacheryRevealedThisPhase
   | -- | on the game: as an additional cost to bypass a quest card, each player raises his
     -- threat by this much, as Shadowed Corridor reads
     BypassCostRaisesThreat Int

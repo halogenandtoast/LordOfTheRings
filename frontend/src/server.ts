@@ -175,8 +175,9 @@ export interface ServerGame {
   capturedDecks?: Record<string, number>
   /** The top card of each deck played faceup, by player id, as Gandalf (The Road Darkens) has it. */
   deckTops?: Record<string, Card>
-  /** In campaign mode, the campaign card next to the quest deck, turned over once read. */
-  campaignCard?: { code: string; flipped: boolean } | null
+  /** In campaign mode, the campaign card next to the quest deck, turned over once read,
+   * and the resource tokens on it, as Mount Doom's. */
+  campaignCard?: { code: string; flipped: boolean; resources?: number } | null
   /** The Stormcaller's quest stage and the progress on it (Flight of the Stormcaller). */
   stormcallerStage?: Card | null
   stormcallerProgress?: number | null

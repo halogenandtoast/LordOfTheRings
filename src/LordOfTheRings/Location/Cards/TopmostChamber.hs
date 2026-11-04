@@ -3,7 +3,7 @@ module LordOfTheRings.Location.Cards.TopmostChamber (topmostChamber) where
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Location.CardDefs qualified as Cards
 import LordOfTheRings.Location.Import.Lifted
-import LordOfTheRings.Scenario.Scenarios.TheTowerOfCirithUngol.Helpers (atStage)
+import LordOfTheRings.Scenario.Scenarios.TheMountainOfFire.Helpers (atStage)
 
 newtype TopmostChamber = TopmostChamber LocationAttrs
   deriving anyclass (IsLocation, HasAbilities)

@@ -610,6 +610,12 @@ import LordOfTheRings.Location.Cards.WasteOfDagorlad
 import LordOfTheRings.Location.Cards.SlopesOfCirithGorgor
 import LordOfTheRings.Location.Cards.ReekingMoat
 import LordOfTheRings.Location.Cards.WallOfMorannon
+import LordOfTheRings.Location.Cards.MountDoom
+import LordOfTheRings.Location.Cards.OrcHold
+import LordOfTheRings.Location.Cards.MordorRoad
+import LordOfTheRings.Location.Cards.PlainOfGorgoroth
+import LordOfTheRings.Location.Cards.BrakeOfThorns
+import LordOfTheRings.Location.Cards.OldWaterCourse
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -1266,5 +1272,11 @@ allLocations =
         , SomeLocationCard slopesOfCirithGorgor
         , SomeLocationCard reekingMoat
         , SomeLocationCard wallOfMorannon
+        , SomeLocationCard mountDoom
+        , SomeLocationCard orcHold
+        , SomeLocationCard mordorRoad
+        , SomeLocationCard plainOfGorgoroth
+        , SomeLocationCard brakeOfThorns
+        , SomeLocationCard oldWaterCourse
         ]
     ]

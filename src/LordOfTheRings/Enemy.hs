@@ -576,6 +576,11 @@ import LordOfTheRings.Enemy.Cards.NazgulOfMordor
 import LordOfTheRings.Enemy.Cards.GorgorothHillTroll
 import LordOfTheRings.Enemy.Cards.EasterlingBowman
 import LordOfTheRings.Enemy.Cards.WarriorOfRhunTheBlackGateOpens
+import LordOfTheRings.Enemy.Cards.GollumMountDoom
+import LordOfTheRings.Enemy.Cards.RingwraithOfSauron
+import LordOfTheRings.Enemy.Cards.OrcCaptain
+import LordOfTheRings.Enemy.Cards.BigUruk
+import LordOfTheRings.Enemy.Cards.LittleSnufflerMountDoom
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -1182,5 +1187,10 @@ allEnemys =
         , SomeEnemyCard gorgorothHillTroll
         , SomeEnemyCard easterlingBowman
         , SomeEnemyCard warriorOfRhunTheBlackGateOpens
+        , SomeEnemyCard gollumMountDoom
+        , SomeEnemyCard ringwraithOfSauron
+        , SomeEnemyCard orcCaptain
+        , SomeEnemyCard bigUruk
+        , SomeEnemyCard littleSnufflerMountDoom
         ]
     ]

@@ -247,5 +247,8 @@
   "burdenPlacedOnEncounterDeck": "The top card of the Burden deck is placed on the encounter deck",
   "ringBearersLifeSet": "The Ring-bearer's life is set at {life}",
   "ringBearersLifeReduced": "The Ring-bearer's life is reduced by {count} to {life}",
-  "burdenDeck": "Burden deck: {count} cards"
+  "burdenDeck": "Burden deck: {count} cards",
+  "fortitudePasses": "{player} passes the Fortitude test",
+  "fortitudeFails": "{player} fails the Fortitude test",
+  "fortitudeVersus": "{willpower} willpower against {eyes} Eye icons, discarding {cards}"
 }

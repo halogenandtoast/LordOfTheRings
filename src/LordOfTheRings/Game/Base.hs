@@ -73,6 +73,8 @@ data Game = Game
   , gamePeril :: Maybe PlayerId
   -- ^ The player resolving the staging of a card with the Peril keyword on his own: no
   -- other player may respond until it has resolved.
+  , gameFortitudeTests :: [FortitudeTest]
+  -- ^ The Fortitude tests under way, their cards discarded, the latest first.
   }
   deriving stock (Show, Generic)
 
@@ -269,12 +271,15 @@ barredFromPlay g pid card =
   or [cardMatches m card | CannotPutIntoPlay m <- map modifierType (Map.findWithDefault [] (PlayerTarget pid) (gameModifiers g))]
 
 -- | Whether no more allies can enter play this round: one has, while only one may, as
--- Corsair Waters reads.
+-- Corsair Waters reads, or none may at all, as The Crack of Doom reads.
 allyEntryBarred :: Game -> Bool
 allyEntryBarred g =
-  OneAllyEntersPlayPerRound `elem` map modifierType (Map.findWithDefault [] GameTarget (gameModifiers g))
-    && any (\e -> isAlly (effectTarget e) && EnteredPlayThisRound `elem` effectModifiers e) (gameEffects g)
+  AlliesCannotEnterPlay `elem` gameMods
+    || ( OneAllyEntersPlayPerRound `elem` gameMods
+           && any (\e -> isAlly (effectTarget e) && EnteredPlayThisRound `elem` effectModifiers e) (gameEffects g)
+       )
  where
+  gameMods = map modifierType (Map.findWithDefault [] GameTarget (gameModifiers g))
   isAlly = \case
     AllyTarget _ -> True
     _ -> False

@@ -502,6 +502,10 @@ import LordOfTheRings.Treachery.Cards.TheHourOfDoom
 import LordOfTheRings.Treachery.Cards.JawsOfSteel
 import LordOfTheRings.Treachery.Cards.RageFilledHim
 import LordOfTheRings.Treachery.Cards.OnslaughtOfMordor
+import LordOfTheRings.Treachery.Cards.WickedMaster
+import LordOfTheRings.Treachery.Cards.TheLidlessEye
+import LordOfTheRings.Treachery.Cards.FoulFumes
+import LordOfTheRings.Treachery.Cards.HeavyAndTired
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -1031,5 +1035,9 @@ allTreacherys =
         , SomeTreacheryCard jawsOfSteel
         , SomeTreacheryCard rageFilledHim
         , SomeTreacheryCard onslaughtOfMordor
+        , SomeTreacheryCard wickedMaster
+        , SomeTreacheryCard theLidlessEye
+        , SomeTreacheryCard foulFumes
+        , SomeTreacheryCard heavyAndTired
         ]
     ]

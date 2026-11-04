@@ -490,6 +490,10 @@ allQuestCards =
       , escapeFromCirithUngol
       , embassyFromTheDarkTower
       , theBattleOfTheMorannon
+      , theLandOfMordor
+      , theRoadToIsenmouthe
+      , theLastGasp
+      , theCrackOfDoom
       ]
 
 theDrippingWalls :: CardDef
@@ -2085,3 +2089,17 @@ embassyFromTheDarkTower = (quest "146072" "Embassy from the Dark Tower" TheBlack
 -- | No quest points: it cannot be defeated.
 theBattleOfTheMorannon :: CardDef
 theBattleOfTheMorannon = (quest "146073" "The Battle of the Morannon" TheBlackGateOpens 2 0) {cdKeywords = setFromList [Dire]}
+
+-- * Mount Doom
+
+theLandOfMordor :: CardDef
+theLandOfMordor = (quest "146075" "The Land of Mordor" MountDoom 1 4) {cdKeywords = setFromList [Dire]}
+
+theRoadToIsenmouthe :: CardDef
+theRoadToIsenmouthe = (quest "146076" "The Road to Isenmouthe" MountDoom 2 0) {cdQuestPoints = Nothing, cdKeywords = setFromList [Dire]}
+
+theLastGasp :: CardDef
+theLastGasp = (quest "146077" "The Last Gasp" MountDoom 3 20) {cdKeywords = setFromList [Dire]}
+
+theCrackOfDoom :: CardDef
+theCrackOfDoom = (quest "146078" "The Crack of Doom" MountDoom 4 0) {cdQuestPoints = Nothing, cdKeywords = setFromList [Dire]}

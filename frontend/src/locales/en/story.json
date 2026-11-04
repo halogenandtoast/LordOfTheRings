@@ -4251,5 +4251,23 @@
         "text": "Stage 2B cannot be defeated: the scenario cannot be won. In campaign mode its campaign card resolves once the players are defeated, recording the resources on The Black Gate for Mount Doom."
       }
     ]
+  },
+  "mount-doom": {
+    "intro": [
+      "While the armies of the West draw Sauron's gaze to the Black Gate, Frodo and Sam struggle across the ash and fumes of Gorgoroth toward the fiery mountain. Every step is watched for, and the Ring grows heavier with each one."
+    ],
+    "setup": [
+      "Shuffle the Mount Doom and Deep Shadows sets into the encounter deck. The first player takes a Fellowship Ring-bearer carrying The One Ring; Aragorn is fighting elsewhere."
+    ],
+    "rules": [
+      {
+        "title": "Fortitude Tests",
+        "text": "Exhaust heroes to commit their willpower, then discard encounter cards equal to the tens digit of your threat. Beat the Eye icons shown to pass; a tie fails. Players may act once the icons are known."
+      },
+      {
+        "title": "Dire",
+        "text": "A dire main quest raises elimination to 99 threat and moves Valour to 80. Non-boon player cards can lower a player's threat by only 1 a round."
+      }
+    ]
   }
 }

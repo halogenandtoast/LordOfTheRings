@@ -628,6 +628,12 @@ allLocationCards =
       , slopesOfCirithGorgor
       , reekingMoat
       , wallOfMorannon
+      , mountDoom
+      , orcHold
+      , mordorRoad
+      , plainOfGorgoroth
+      , brakeOfThorns
+      , oldWaterCourse
       ]
 
 drownedTreasury :: CardDef
@@ -4502,3 +4508,29 @@ reekingMoat = (location "146029" "Reeking Moat" TheBlackGateOpens 3 2 4) {cdCard
 
 wallOfMorannon :: CardDef
 wallOfMorannon = (location "146030" "Wall of Morannon" TheBlackGateOpens 2 5 5) {cdCardTraits = setFromList [Plains], cdEasyModeQuantity = Just 1}
+
+-- * Mount Doom
+
+-- | Its threat is X, the tens digit of the first player's threat (its card gives it).
+mountDoom :: CardDef
+mountDoom =
+  unique
+    (location "146043" "Mount Doom" MountDoom 1 0 9)
+      { cdCardTraits = setFromList [Mordor]
+      , cdVictoryPoints = Just 9
+      }
+
+orcHold :: CardDef
+orcHold = (location "146044" "Orc-hold" MountDoom 3 3 4) {cdCardTraits = setFromList [Mordor], cdEasyModeQuantity = Just 2, cdEyeIcons = 1}
+
+mordorRoad :: CardDef
+mordorRoad = (location "146045" "Mordor Road" MountDoom 2 1 5) {cdCardTraits = setFromList [Mordor], cdEasyModeQuantity = Just 1, cdEyeIcons = 1}
+
+plainOfGorgoroth :: CardDef
+plainOfGorgoroth = (location "146046" "Plain of Gorgoroth" MountDoom 4 2 4) {cdCardTraits = setFromList [Mordor]}
+
+brakeOfThorns :: CardDef
+brakeOfThorns = (location "146047" "Brake of Thorns" MountDoom 3 3 3) {cdCardTraits = setFromList [Mordor], cdEasyModeQuantity = Just 2, cdEyeIcons = 1}
+
+oldWaterCourse :: CardDef
+oldWaterCourse = (location "146048" "Old Water-course" MountDoom 1 2 5) {cdCardTraits = setFromList [Mordor], cdVictoryPoints = Just 2}

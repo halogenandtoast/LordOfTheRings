@@ -513,6 +513,10 @@ allTreacheryCards =
       , jawsOfSteel
       , rageFilledHim
       , onslaughtOfMordor
+      , wickedMaster
+      , theLidlessEye
+      , foulFumes
+      , heavyAndTired
       ]
 
 deepDeepDark :: CardDef
@@ -3232,3 +3236,18 @@ rageFilledHim = (treachery "146039" "Rage Filled Him" TheBlackGateOpens 3) {cdKe
 
 onslaughtOfMordor :: CardDef
 onslaughtOfMordor = (treachery "146040" "Onslaught of Mordor" TheBlackGateOpens 3) {cdShadowEffect = True, cdEasyModeQuantity = Just 2}
+
+-- * Mount Doom
+
+wickedMaster :: CardDef
+wickedMaster = (treachery "146054" "Wicked Master!" MountDoom 1) {cdCardTraits = setFromList [Gollum], cdShadowEffect = True, cdEyeIcons = 3}
+
+theLidlessEye :: CardDef
+theLidlessEye = (treachery "146055" "The Lidless Eye" MountDoom 4) {cdKeywords = setFromList [Peril], cdShadowEffect = True, cdEasyModeQuantity = Just 3, cdEyeIcons = 2}
+
+foulFumes :: CardDef
+foulFumes = (treachery "146056" "Foul Fumes" MountDoom 2) {cdShadowEffect = True, cdEasyModeQuantity = Just 1, cdEyeIcons = 2}
+
+-- | Attached to a hero, it counts as a Condition attachment.
+heavyAndTired :: CardDef
+heavyAndTired = (treachery "146057" "Heavy and Tired" MountDoom 2) {cdCardTraits = setFromList [Condition], cdEasyModeQuantity = Just 1, cdEyeIcons = 1}

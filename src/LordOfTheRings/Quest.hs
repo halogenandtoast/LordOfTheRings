@@ -406,6 +406,10 @@ import LordOfTheRings.Quest.Cards.FightingInTheTower
 import LordOfTheRings.Quest.Cards.EscapeFromCirithUngol
 import LordOfTheRings.Quest.Cards.EmbassyFromTheDarkTower
 import LordOfTheRings.Quest.Cards.TheBattleOfTheMorannon
+import LordOfTheRings.Quest.Cards.TheLandOfMordor
+import LordOfTheRings.Quest.Cards.TheRoadToIsenmouthe
+import LordOfTheRings.Quest.Cards.TheLastGasp
+import LordOfTheRings.Quest.Cards.TheCrackOfDoom
 import LordOfTheRings.Quest.Runner ()
 import LordOfTheRings.Quest.Types as X
 import LordOfTheRings.Id
@@ -844,5 +848,9 @@ allQuests =
         , SomeQuestCard escapeFromCirithUngol
         , SomeQuestCard embassyFromTheDarkTower
         , SomeQuestCard theBattleOfTheMorannon
+        , SomeQuestCard theLandOfMordor
+        , SomeQuestCard theRoadToIsenmouthe
+        , SomeQuestCard theLastGasp
+        , SomeQuestCard theCrackOfDoom
         ]
     ]

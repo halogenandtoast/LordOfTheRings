@@ -33,9 +33,7 @@ instance RunMessage DrawnToTheRing where
       pure t
     DiscardedTopOfEncounterDeck (isSource attrs -> True) _ cards -> do
       lead <- getLead
-      for_ (find (cardMatches $ CardWithType EnemyType) cards) \card -> do
-        removeFromEncounterDiscard card
-        putEnemyIntoPlayEngaged lead card
+      for_ (find (cardMatches $ CardWithType EnemyType) cards) (putEnemyIntoPlayEngagedFromDiscard lead)
       pure t
     ResolveShadowEffect cid _ pid _ | cid == attrs.cardId -> do
       discardNonObjectiveAttachment (CardIdTarget cid) pid

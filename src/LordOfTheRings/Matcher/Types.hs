@@ -24,6 +24,8 @@ data PlayerMatcher
   | -- | a player who may resolve a Valour trigger: his threat is 40 or higher, 80 or higher
     -- while the main quest has the dire keyword
     PlayerAtValourThreat
+  | -- | the player who controls the hero, as "you" reads on a condition attached to it
+    ControllerOfHero HeroId
   | PlayerWithCardsInHand Int
   | PlayerMatchAll [PlayerMatcher]
   | -- | a player with a hidden card in their play area, as The Blood of Gondor deals them

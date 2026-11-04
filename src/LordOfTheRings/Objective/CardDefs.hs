@@ -178,9 +178,11 @@ allObjectiveCards =
       , theCorsairFleet
       , minasTirith
       , theCorsairFleetGondor
+      , theOneRingTheRoadDarkens
       , lastOfTheCompany
       , aHeavyBurden
       , gwaihirTheBlackGateOpens
+      , theTowerOfBaradDurMountDoom
       ]
 
 durinsAxe :: CardDef
@@ -1298,3 +1300,8 @@ gwaihirTheBlackGateOpens =
     , cdWhenRevealed = True
     , cdShadowEffect = True
     }
+
+-- * Mount Doom
+
+theTowerOfBaradDurMountDoom :: CardDef
+theTowerOfBaradDurMountDoom = unique (objective "146042" "The Tower of Barad-dûr" MountDoom 1) {cdCardTraits = setFromList [Mordor]}

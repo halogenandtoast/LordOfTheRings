@@ -106,6 +106,7 @@ newTableIn gameScenario seats@((player, _) :| _) =
     , gameResumeAfter = Nothing
     , gameRevealer = Nothing
     , gamePeril = Nothing
+    , gameFortitudeTests = []
     }
 
 answerQuestion :: PlayerId -> Int -> GameT Game
@@ -315,7 +316,7 @@ instance FromJSON Entities where
 instance FromJSON Game where
   parseJSON =
     genericParseJSON (aesonOptions $ Just "game")
-      . withDefaults [("logBlocks", toJSON ([] :: [Value])), ("leftPlay", object []), ("leftPlayLocations", object []), ("attackDestroyed", toJSON ([] :: [Value])), ("damageDealt", toJSON ([] :: [Value])), ("separation", Null), ("additionalPhases", toJSON ([] :: [Value])), ("resumeAfter", Null), ("revealer", Null), ("peril", Null)]
+      . withDefaults [("logBlocks", toJSON ([] :: [Value])), ("leftPlay", object []), ("leftPlayLocations", object []), ("attackDestroyed", toJSON ([] :: [Value])), ("damageDealt", toJSON ([] :: [Value])), ("separation", Null), ("additionalPhases", toJSON ([] :: [Value])), ("resumeAfter", Null), ("revealer", Null), ("peril", Null), ("fortitudeTests", toJSON ([] :: [Value]))]
 
 instance FromJSON Separation where
   parseJSON = genericParseJSON (aesonOptions $ Just "separation")
@@ -3142,6 +3143,63 @@ runGameMessage msg g = case msg of
     let (dealt, rest) = splitAt t.escapeCards (toAttrs g.scenario).encounterDeck
     pushAll $ if escape > total then t.escapeOnFail else t.escapeOnPass
     pure $ g & scenarioL %~ overAttrs ((encounterDeckL .~ rest) . (encounterDiscardL %~ (dealt <>)))
+  -- he may exhaust any number of heroes he controls to commit them to the test (The
+  -- Mountain of Fire rules insert, "Fortitude Tests")
+  MakeFortitudeTest t -> do
+    heroes <- select (HeroControlledBy (PlayerWithId t.fortitudePlayer) <> ReadyHero)
+    ready <- filterM (fmap (notElem CannotCommitToFortitudeTests) . getModifiers . HeroTarget) (filter (`notElem` t.fortitudeCommitted) heroes)
+    push
+      $ questionLabelWith
+        (ikey "label.fortitudeTest")
+        (sourceTarget t.fortitudeSource)
+        (map HeroTarget t.fortitudeCommitted)
+        t.fortitudePlayer
+      $ [ targetLabel (HeroTarget h) [Exhaust (HeroTarget h), MakeFortitudeTest t {fortitudeCommitted = t.fortitudeCommitted <> [h]}]
+        | h <- ready
+        ]
+      <> [Label (ikey "label.doneCommittingToFortitudeTest") [DiscardForFortitudeTest t]]
+    pure g
+  -- he discards the top X cards of the encounter deck, X the tens digit of his threat,
+  -- the discard pile shuffled back in should the deck run out; the players may then act,
+  -- the test's action window, once the Eye icons are known
+  DiscardForFortitudeTest t -> do
+    threat <- getThreat t.fortitudePlayer
+    let s = toAttrs g.scenario
+        x = threat `div` 10 + t.fortitudeExtraCards
+        (top, rest) = splitAt x s.encounterDeck
+    (discarded, deck, pile) <-
+      if length top < x && notNull s.encounterDiscard
+        then do
+          shuffled <- shuffleM s.encounterDiscard
+          let (more, rest') = splitAt (x - length top) shuffled
+          pure (top <> more, rest', [])
+        else pure (top, rest, s.encounterDiscard)
+    order <- getPlayerOrder
+    pushAll
+      $ [CheckWindows [mkAfter $ DiscardedForFortitudeTest t.fortitudePlayer discarded] | notNull discarded]
+      <> map OptionalActionWindow order
+      <> [ResolveFortitudeTest]
+    pure
+      $ g
+      & fortitudeTestsL %~ (t {fortitudeDiscarded = discarded} :)
+      & scenarioL %~ overAttrs (\a -> a & encounterDeckL .~ deck & encounterDiscardL .~ (reverse discarded <> pile))
+  IgnoreFortitudeEyeIcons cid -> pure $ g & fortitudeTestsL %~ \case
+    t : ts -> t {fortitudeIgnored = t.fortitudeIgnored <> [cid]} : ts
+    [] -> []
+  -- passed if the committed heroes' willpower is greater than the Eye icons; ties fail
+  ResolveFortitudeTest -> case gameFortitudeTests g of
+    t : ts -> do
+      (willpower, eyes) <- fortitudeTestTotals t
+      let pid = t.fortitudePlayer
+      pushAll
+        $ if willpower > eyes
+          then t.fortitudeOnPass
+          else
+            CreateEffect (Effect t.fortitudeSource (PlayerTarget pid) [FailedFortitudeTestThisRound] UntilEndOfRound)
+              : t.fortitudeOnFail
+              <> [CheckWindows [mkAfter $ FailedFortitudeTest pid]]
+      pure $ g & fortitudeTestsL .~ ts
+    [] -> pure g
   -- a shadow card that is a location becomes the active location
   PutShadowLocationIntoPlay host cid -> do
     for_ (Map.lookup host g.entities.enemies) \hostEnemy ->
@@ -3355,8 +3413,10 @@ runGameMessage msg g = case msg of
       TreacheryType -> do
         treachery <- newTreachery card
         -- counted as it is revealed, for "the first treachery card revealed each round"
+        -- and for the phase, as "the first treachery revealed each quest phase"
         let counted = CreateEffect $ Effect (TreacherySource $ toId treachery) GameTarget [TreacheryRevealedThisRound] UntilEndOfRound
-        pushAll . (counted :) . (<> [FinishRevelation (toId treachery), WhileInPlay (toTarget treachery) surge])
+            countedForPhase = CreateEffect $ Effect (TreacherySource $ toId treachery) GameTarget [TreacheryRevealedThisPhase] UntilEndOfPhase
+        pushAll . ([counted, countedForPhase] <>) . (<> [FinishRevelation (toId treachery), WhileInPlay (toTarget treachery) surge])
           =<< revealing (toTarget treachery)
         pure $ g & entitiesL . treacheriesL %~ insertEntity treachery
       -- a player card with the Encounter keyword, as Ranger of the North: it enters play

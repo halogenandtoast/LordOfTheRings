@@ -52,6 +52,7 @@ matchPlayer matcher player = case matcher of
   PlayerAtValourThreat -> do
     dire <- mainQuestIsDire
     (>= if dire then 80 else 40) <$> getThreat player.id
+  ControllerOfHero hid -> selectAny (HeroWithId hid <> HeroControlledBy (PlayerWithId player.id))
   PlayerWithCardsInHand n -> pure $ length player.hand >= n
   PlayerMatchAll ms -> allM (`matchPlayer` player) ms
   PlayerWithCardsInDeck n -> pure $ length player.deck >= n
@@ -929,7 +930,9 @@ getEliminationLevel pid = do
 
 -- | The main quest has the dire keyword (The Mountain of Fire rules insert, "Dire").
 mainQuestIsDire :: HasGame m => m Bool
-mainQuestIsDire = getsGame (any ((Dire `member`) . cdKeywords . toCardDef) . filter (not . isSideQuest) . toList . entitiesQuests . gameEntities)
+mainQuestIsDire = do
+  quests <- getsGame (filter (not . isSideQuest) . toList . entitiesQuests . gameEntities)
+  anyM (\q -> hasKeyword Dire (toTarget q) (toCardDef q)) quests
 
 getRemainingPlayers :: HasGame m => m [PlayerId]
 getRemainingPlayers = filterM (fmap (not . (.eliminated)) . getPlayer) =<< getPlayerOrder
