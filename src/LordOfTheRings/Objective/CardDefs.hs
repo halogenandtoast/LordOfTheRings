@@ -155,6 +155,7 @@ allObjectiveCards =
       , farin
       , overcomeByFear
       , armyOfTheDeadBoon
+      , theCorsairFleet
       ]
 
 durinsAxe :: CardDef
@@ -1083,3 +1084,10 @@ armyOfTheDeadBoon =
     , cdKeywords = setFromList [FirstPlayerGainsControl]
     , cdOtherSide = Just "145067"
     }
+
+-- * The Siege of Gondor
+
+-- | Its Corsair side: set aside by the scenario, added to the staging area by stage 1A. Its
+-- Gondor side (145072) is played in The Battle of the Pelennor Fields.
+theCorsairFleet :: CardDef
+theCorsairFleet = unique (objective "145071" "The Corsair Fleet" TheSiegeOfGondor 1) {cdCardTraits = setFromList [Corsair]}

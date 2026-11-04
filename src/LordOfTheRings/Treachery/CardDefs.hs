@@ -434,6 +434,10 @@ allTreacheryCards =
       , theWayIsShut
       , whispersInTheDark
       , noTurningBack
+      , fellFolkOfUmbar
+      , blackSails
+      , raidingTheCoasts
+      , drivenToTheBrink
       ]
 
 deepDeepDark :: CardDef
@@ -2741,3 +2745,22 @@ whispersInTheDark = (treachery "145028" "Whispers in the Dark" ThePassingOfTheGr
 
 noTurningBack :: CardDef
 noTurningBack = (treachery "145029" "No Turning Back" ThePassingOfTheGreyCompany 2) {cdShadowEffect = True, cdEasyModeQuantity = Just 1}
+
+-- * The Siege of Gondor
+
+fellFolkOfUmbar :: CardDef
+fellFolkOfUmbar = (treachery "145039" "Fell Folk of Umbar" TheSiegeOfGondor 2) {cdKeywords = setFromList [Peril]}
+
+blackSails :: CardDef
+blackSails = (treachery "145040" "Black Sails" TheSiegeOfGondor 3) {cdKeywords = setFromList [Doomed 1]}
+
+raidingTheCoasts :: CardDef
+raidingTheCoasts = (treachery "145041" "Raiding the Coasts" TheSiegeOfGondor 2) {cdShadowEffect = True, cdEasyModeQuantity = Just 1}
+
+drivenToTheBrink :: CardDef
+drivenToTheBrink =
+  (treachery "145042" "Driven to the Brink" TheSiegeOfGondor 2)
+    { cdKeywords = setFromList [Peril]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
+    }
