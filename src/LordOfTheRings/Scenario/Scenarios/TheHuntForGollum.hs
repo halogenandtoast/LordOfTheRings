@@ -81,7 +81,6 @@ instance RunMessage TheHuntForGollum where
     -- Ravenous Hawk: "Forced: When a card effect instructs a player to "look" at cards in
     -- the encounter deck and Ravenous Hawk is among those cards, that player must put
     -- Ravenous Hawk into play engaged with him."
-    -- ponytail: only the look at the top card; looks at several cards are not watched
     LookAtTopOfEncounterDeck pid _ _ | top : rest <- attrs.encounterDeck, toCardCode top == toCardCode Enemies.ravenousHawk -> do
       putEnemyIntoPlayEngaged pid top
       pure $ TheHuntForGollum $ attrs & encounterDeckL .~ rest

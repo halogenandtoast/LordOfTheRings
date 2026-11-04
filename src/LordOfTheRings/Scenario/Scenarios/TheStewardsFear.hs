@@ -163,8 +163,6 @@ instance RunMessage TheStewardsFear where
     -- Nightmare: "Forced: After an enemy is destroyed, shuffle it into the underworld deck
     -- if you are not at stage 3." "Forced: At the beginning of the refresh phase, if there
     -- is a Clue card in the staging area, shuffle it back into the underworld deck."
-    -- ponytail: an enemy is taken from the encounter discard pile; one with victory points
-    -- stays in the victory display
     nightmareWindows ws = do
       stage <- getMainStage
       when (stage /= 3) $ for_ [c | Window After (EnemyDestroyed (EncounterCard c)) <- ws] (reclaim True)

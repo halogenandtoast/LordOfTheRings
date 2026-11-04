@@ -18,7 +18,6 @@ theCursedSword = objective TheCursedSword Cards.theCursedSword
 -- | The Cursed Sword counts as a Weapon attachment with the text: "Forced: After Captain
 -- Sahír attacks and deals excess damage, assign that excess damage to Captain Sahír as
 -- resources. (Limit once per round.)"
--- ponytail: no limit, and the excess is read as the damage is dealt to a defender
 instance RunMessage TheCursedSword where
   runMessage msg (TheCursedSword attrs) = case msg of
     AttackDamage eid defender

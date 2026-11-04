@@ -83,9 +83,26 @@ the rest goes to the quest (FAQ 2.02). An active location immune to the card ign
 and none of it reaches the quest (FAQ 2.41).
 -}
 placeProgressOnQuest :: (ReverseQueue m, Sourceable source) => source -> Int -> m ()
-placeProgressOnQuest source n =
+placeProgressOnQuest source n = placeProgressPastActiveLocation source n (placeProgressOnCurrentQuest source)
+
+{- | Progress a card places on a quest card of the player's choice, as "place 1 progress
+on a quest card in play" reads: the active location takes it first, as for the current
+quest (FAQ 1.00), and the player chooses the quest card for the rest.
+-}
+placeProgressOnAQuestCard :: (ReverseQueue m, Sourceable source) => PlayerId -> source -> Int -> m ()
+placeProgressOnAQuestCard pid source n = placeProgressPastActiveLocation source n \k -> do
+  quests <- getQuestCards
+  chooseOrRunOneM pid do
+    questionLabeled "placeProgressOnQuestCard"
+    targets quests \q -> placeProgress source q k
+
+-- | The active location takes the progress first, then what is left goes on to the quest
+-- by the continuation; an active location immune to the source takes it all.
+placeProgressPastActiveLocation
+  :: (ReverseQueue m, Sourceable source) => source -> Int -> (Int -> m ()) -> m ()
+placeProgressPastActiveLocation source n onQuest =
   select IsActiveLocation >>= \case
-    [] -> placeProgressOnCurrentQuest source n
+    [] -> onQuest n
     lid : _ -> do
       immune <- immuneToSource (toSource source) lid
       unless immune do
@@ -93,7 +110,7 @@ placeProgressOnQuest source n =
         room <- max 0 . subtract l.progress <$> getLocationQuestPoints lid
         let k = min n room
         when (k > 0) $ placeProgress source lid k
-        when (n > k) $ placeProgressOnCurrentQuest source (n - k)
+        when (n > k) $ onQuest (n - k)
 
 -- | Place time counters on the card, as "place 3 time counters on this stage" reads.
 placeTimeCounters
@@ -1578,7 +1595,6 @@ cancelAttack eid = lift $ withQueue_ $ mapMaybe \case
   UndefendedAttack _ e | e == eid -> Nothing
   UndefendedDamage _ e | e == eid -> Nothing
   AttackDefended _ e _ | e == eid -> Nothing
-  -- ponytail: the window after it attacks stays, so its "for this attack" effects end
   CheckWindows ws | any ending ws -> Just $ CheckWindows (filter (not . defended) ws)
   m -> Just m
  where

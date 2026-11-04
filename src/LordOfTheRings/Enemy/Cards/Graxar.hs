@@ -13,7 +13,6 @@ graxar = enemy Graxar Cards.graxar
 
 -- | Immune to player card effects. No more than 1 character can attack Graxar each round.
 -- Graxar gets +1 attack for each damage on him and +1 defense for each resource on him.
--- ponytail: the engine has no limit on attackers; more than one may still attack Graxar.
 instance HasModifiersFor Graxar where
   getModifiersFor (Graxar a) =
     modifySelf a $ ImmuneToPlayerCardEffects : [AttackModifier a.damage | a.damage > 0] <> [DefenseModifier r | let r = countTokens Resource (enemyTokens a), r > 0]

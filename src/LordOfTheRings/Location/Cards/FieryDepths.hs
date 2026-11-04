@@ -22,7 +22,6 @@ instance HasModifiersFor FieryDepths where
     modified a a $ [ProgressLimit 0 | a.placement == StagingArea] <> [CannotBeTraveledTo | damage < players]
 
 -- | Travel: Each player must move 1 damage from Durin's Bane to a hero to travel here.
--- ponytail: the damage moved is dealt to the hero
 instance RunMessage FieryDepths where
   runMessage msg (FieryDepths a) = case msg of
     TravelTo lid | lid == a.id -> do

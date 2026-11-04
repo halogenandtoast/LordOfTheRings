@@ -28,7 +28,6 @@ onARaider source n = when (n > 0) do
 -- | When Revealed: Each player deals 2 damage to an ally he or she controls. For each ally
 -- destroyed by this effect, place resources on a Raider enemy in play equal to that ally's
 -- resource cost.
--- ponytail: an ally with 2 or fewer hit points left counts as destroyed by it
 -- Shadow: Discard an attachment you control. If attacking enemy is a Raider, add resources
 -- to it equal to that attachment's printed cost.
 instance RunMessage SlaveTrade where

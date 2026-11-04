@@ -14,8 +14,6 @@ terribleStrength = treachery TerribleStrength Cards.terribleStrength
 -- | Shadow: For each excess point of combat damage dealt by this attack (damage that is
 -- dealt beyond the remaining hit points of the character damaged by this attack) you must
 -- damage another character you control. Exhaust all characters damaged by this effect.
--- ponytail: the characters it damages are not exhausted; a modifier on the damage it
--- passes on when that matters
 instance RunMessage TerribleStrength where
   runMessage msg t@(TerribleStrength attrs) = case msg of
     ResolveShadowEffect cid eid _ _ | cid == attrs.cardId -> do

@@ -250,8 +250,6 @@ data XpCard = XpCard
 instance ToJSON XpCard where
   toJSON = genericToJSON (aesonOptions $ Just "xp")
 
--- ponytail: the Campaign Log sheet's checkbox counts are not to hand; an upgradable card
--- has as many as the XP cost printed on its Upgraded side, a scalable card 5.
 xpCards :: CampaignLog -> [XpCard]
 xpCards l = case l.campaign of
   "dream-chaser" ->
@@ -277,8 +275,6 @@ marked :: CardCode -> CampaignLog -> Int
 marked code = Map.findWithDefault 0 code . (.marked)
 
 -- | A scalable card's level: the boxes marked by its title.
--- ponytail: a card with none marked plays at level 1, so a boon taken before XP is spent
--- on it still does something.
 level :: CardCode -> CampaignLog -> Int
 level code l = max 1 (marked code l)
 

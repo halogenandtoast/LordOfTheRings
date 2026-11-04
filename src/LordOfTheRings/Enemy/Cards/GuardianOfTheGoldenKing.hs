@@ -14,7 +14,6 @@ guardianOfTheGoldenKing = enemy GuardianOfTheGoldenKing Cards.guardianOfTheGolde
 -- King, look at the bottom card of the first player's deck. Choose and remove characters
 -- from the attack until only X or fewer characters are attacking, where X is the
 -- looked-at card's printed cost (those characters do not ready).
--- ponytail: answered as it is attacked, once every attacker is declared
 instance HasAbilities GuardianOfTheGoldenKing where
   getAbilities (GuardianOfTheGoldenKing a) = [mkAbility a 1 $ forced $ EnemyAttackedWindow When a.id]
 

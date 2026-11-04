@@ -13,7 +13,6 @@ edgeOfTheTemple :: LocationCard EdgeOfTheTemple
 edgeOfTheTemple = location EdgeOfTheTemple Cards.edgeOfTheTemple
 
 -- | Cannot have player card attachments.
--- ponytail: no attachment at all, as Lost Island
 instance HasModifiersFor EdgeOfTheTemple where
   getModifiersFor (EdgeOfTheTemple a) = modifySelf a [CannotHaveAttachments]
 

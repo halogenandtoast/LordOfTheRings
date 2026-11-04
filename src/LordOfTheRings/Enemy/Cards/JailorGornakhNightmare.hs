@@ -22,7 +22,6 @@ instance HasAbilities JailorGornakhNightmare where
     , mkAbility a 2 $ forced $ CapturedCardsRescuedWindow After
     ]
 
--- | ponytail: the owners of the cards rescued are the players who rescued them.
 instance RunMessage JailorGornakhNightmare where
   runMessage msg e@(JailorGornakhNightmare attrs) = case msg of
     UseCardAbility _ (isSource attrs -> True) 1 _ -> do

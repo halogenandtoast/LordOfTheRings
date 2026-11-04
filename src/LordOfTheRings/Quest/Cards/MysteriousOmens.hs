@@ -22,7 +22,6 @@ player may choose 1 of the following boons and attach it to a hero they control:
 Hardy, Resolute, Ruthless, or Stalwart. Each boon chosen joins the Campaign Pool on that
 hero, as a Permanent card.
 
-ponytail: the players choose at once, so two may pick the same boon, of which the box has 1
 -}
 instance RunMessage MysteriousOmens where
   runMessage msg (MysteriousOmens attrs) = case msg of

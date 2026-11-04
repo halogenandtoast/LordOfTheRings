@@ -32,7 +32,6 @@ instance RunMessage MethedrasLookout where
         questionLabeled "methedrasLookout.choose"
         causedBy attrs
         unless (null characters) $ labeled "methedrasLookout.exhaust" $ chooseAndExhaust attrs pid 1
-        -- ponytail: returned once the attack resolves, so the attack under way is not broken off
         labeled "methedrasLookout.return" $ returnToStagingAfterAttack eid
       pure e
     _ -> MethedrasLookout <$> runMessage msg attrs

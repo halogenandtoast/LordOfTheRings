@@ -21,7 +21,6 @@ raiderCard = CardWithType EnemyType <> CardWithTrait Raider
 -- discarded. Add that enemy to the staging area and place 3 resources on it.
 -- Shadow: If attacking enemy is a Raider, after this attack ends, add 1 resource to
 -- attacking enemy for each damage dealt by this attack.
--- ponytail: the damage is the attack's as the shadow resolves, less the defense
 instance RunMessage RaiseTheAlarm where
   runMessage msg t@(RaiseTheAlarm attrs) = case msg of
     WhenRevealed (isTarget attrs -> True) -> do

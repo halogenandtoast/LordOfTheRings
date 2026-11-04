@@ -16,7 +16,6 @@ paralyzingFear = treachery ParalyzingFear Cards.paralyzingFear
 -- of his deck."
 -- The hero cannot ready, but while the resource the discard puts on this card for its one
 -- Ready is there.
--- ponytail: the resource on it marks the paid Ready, there being no state of its own
 instance HasModifiersFor ParalyzingFear where
   getModifiersFor (ParalyzingFear a) =
     when (paid a == 0) $ withHost a \host -> modified a host [CannotReady]

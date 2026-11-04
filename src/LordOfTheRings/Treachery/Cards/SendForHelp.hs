@@ -48,10 +48,6 @@ Lore: When Revealed: Search the players' collections for Gandalf ally (Core Set 
 put him into play under any player's control, ignoring uniqueness. If upgraded, that
 player chooses up to 3 of Gandalf's options instead of 1.
 
-ponytail: the card found by Leadership is drawn, never played at no cost. Tactics' heroes
-are the Core Set's, and stay in play. Spirit's extra phase is its effect resolved at once:
-a resource phase's resource on each hero and card drawn, or a refresh phase's readying,
-the planning and combat phases not offered. Lore's upgraded Gandalf chooses one option.
 -}
 instance RunMessage SendForHelp where
   runMessage msg t@(SendForHelp attrs) = case msg of

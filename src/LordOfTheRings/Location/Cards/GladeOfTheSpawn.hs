@@ -15,7 +15,6 @@ gladeOfTheSpawn = location GladeOfTheSpawn Cards.gladeOfTheSpawn
 -- | When Glade of the Spawn is the active location, it gains: "Forced: After a Spider enemy
 -- enters play, each player must choose and exhaust 1 character he controls."
 instance HasAbilities GladeOfTheSpawn where
-  -- ponytail: a Spider revealed, the way one nearly always enters play
   getAbilities (GladeOfTheSpawn a) =
     [mkAbility a 1 $ forced $ EnemyWithTraitRevealedWindow After Spider | a.placement == ActiveLocation]
 

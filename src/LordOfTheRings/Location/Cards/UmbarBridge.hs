@@ -16,8 +16,6 @@ umbarBridge = location UmbarBridge Cards.umbarBridge
 -- | While Umbar Bridge is in the staging area, cancel the first X progress that would be
 -- placed on the current quest each round, where X is the highest number of resources on a
 -- Raider enemy in play.
--- ponytail: each placement on the quest is reduced by X less the progress it took this
--- round, so progress already canceled is canceled again
 instance HasModifiersFor UmbarBridge where
   getModifiersFor (UmbarBridge a) = when (a.placement == StagingArea) do
     raiders <- traverse getEnemy =<< select (EnemyWithTrait Raider)
