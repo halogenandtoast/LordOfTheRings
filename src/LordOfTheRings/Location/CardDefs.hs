@@ -465,6 +465,7 @@ allLocationCards =
       , lightlessGrotto
       , crumblingCavern
       , undergroundLake
+      , woodmenVillage
       ]
 
 drownedTreasury :: CardDef
@@ -3485,3 +3486,12 @@ crumblingCavern = (location "18064" "Crumbling Cavern" LostCaves 1 6 6) {cdCardT
 -- | X threat and X quest points, as Hills of Wilderland's.
 undergroundLake :: CardDef
 undergroundLake = (location "18065" "Underground Lake" LostCaves 1 0 0) {cdCardTraits = setFromList [Underground, Dark], cdVictoryPoints = Just 1}
+
+-- | Journey Up the Anduin's Woodmen Village, whose other side is Haldan (18069B). What it
+-- does is the scenario's.
+woodmenVillage :: CardDef
+woodmenVillage =
+  (location "18069A" "Woodmen Village" JourneyUpTheAnduin 1 4 4)
+    { cdCardTraits = setFromList [Riverland]
+    , cdOtherSide = Just "18069B"
+    }
