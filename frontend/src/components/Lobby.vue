@@ -4,10 +4,10 @@ import DeckPicker from './DeckPicker.vue'
 import { fetchDecks } from '../browser/lib/api'
 import type { DeckSummary } from '../browser/types/deck'
 import { currentUser } from '../auth'
-import { contracts, toDeckChoice, type DeckFace, type DeckKey } from '../deckChoice'
+import { toDeckChoice, type DeckFace, type DeckKey } from '../deckChoice'
 import type { DeckList } from '../browser/types/deck'
 import type { DeckChoice } from '../api'
-import type { Table } from '../server'
+import type { CardDef, Table } from '../server'
 
 // A game before it is dealt: who has sat down, the link to send friends, and a seat to
 // take with a deck. The owner may take several. Taking the last seat deals the game.
@@ -40,6 +40,21 @@ const refresh = async () => {
   }
 }
 onMounted(refresh)
+
+// the contracts a deck may be played with, named from the game's cards; the deck's own,
+// from its list, is played if none is chosen
+const contracts = ref<{ code: string; name: string }[]>([])
+onMounted(async () => {
+  try {
+    const cards = (await (await fetch('/api/cards')).json()) as Record<string, CardDef>
+    contracts.value = Object.values(cards)
+      .filter((c) => c.cardType === 'ContractType')
+      .map((c) => ({ code: c.cardCode, name: c.name }))
+      .sort((a, b) => a.code.localeCompare(b.code))
+  } catch {
+    // without them the deck's own contract is played
+  }
+})
 
 // a deck loaded for this game alone, not kept
 const loaded = ref<{ face: DeckFace; list: DeckList } | null>(null)
@@ -82,7 +97,7 @@ const choice = (): DeckChoice => ({
         <span class="track" aria-hidden="true" />
         {{ $t('game.lobby.errata') }}
       </label>
-      <label v-if="!loading" class="contract">
+      <label v-if="!loading && contracts.length" class="contract">
         {{ $t('game.lobby.contract') }}
         <select v-model="contract">
           <option value="">{{ $t('game.lobby.deckContract') }}</option>
