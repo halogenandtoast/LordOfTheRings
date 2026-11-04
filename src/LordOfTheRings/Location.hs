@@ -501,6 +501,10 @@ import LordOfTheRings.Location.Cards.RiverRunning
 import LordOfTheRings.Location.Cards.ExposedRiverbank
 import LordOfTheRings.Location.Cards.TempleOfSauron
 import LordOfTheRings.Location.Cards.HallOfHorrors
+import LordOfTheRings.Location.Cards.TheKingsLawn
+import LordOfTheRings.Location.Cards.GuardedArchway
+import LordOfTheRings.Location.Cards.CrowdedMarket
+import LordOfTheRings.Location.Cards.StreetsOfUlfast
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -1048,5 +1052,9 @@ allLocations =
         , SomeLocationCard exposedRiverbank
         , SomeLocationCard templeOfSauron
         , SomeLocationCard hallOfHorrors
+        , SomeLocationCard theKingsLawn
+        , SomeLocationCard guardedArchway
+        , SomeLocationCard crowdedMarket
+        , SomeLocationCard streetsOfUlfast
         ]
     ]

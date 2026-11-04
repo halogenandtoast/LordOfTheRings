@@ -400,6 +400,9 @@ import LordOfTheRings.Treachery.Cards.Fanaticism
 import LordOfTheRings.Treachery.Cards.FearfulShadows
 import LordOfTheRings.Treachery.Cards.EnemiesCloseBehind
 import LordOfTheRings.Treachery.Cards.PlaceOfEvil
+import LordOfTheRings.Treachery.Cards.ExtraVigil
+import LordOfTheRings.Treachery.Cards.WeveBeenSeen
+import LordOfTheRings.Treachery.Cards.PatrollingTheStreets
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -827,5 +830,8 @@ allTreacherys =
         , SomeTreacheryCard fearfulShadows
         , SomeTreacheryCard enemiesCloseBehind
         , SomeTreacheryCard placeOfEvil
+        , SomeTreacheryCard extraVigil
+        , SomeTreacheryCard weveBeenSeen
+        , SomeTreacheryCard patrollingTheStreets
         ]
     ]

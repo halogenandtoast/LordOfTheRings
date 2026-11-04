@@ -325,6 +325,11 @@ import LordOfTheRings.Quest.Cards.TheLegacyOfMordor
 import LordOfTheRings.Quest.Cards.MemoryOfTheDarkYears
 import LordOfTheRings.Quest.Cards.ShrineToSauron
 import LordOfTheRings.Quest.Cards.TheLordOfMiddleEarth
+import LordOfTheRings.Quest.Cards.CatAndMouse
+import LordOfTheRings.Quest.Cards.SearchingForUlchor
+import LordOfTheRings.Quest.Cards.TryingToBlendIn
+import LordOfTheRings.Quest.Cards.DrawingAttention
+import LordOfTheRings.Quest.Cards.UlchorsTrap
 import LordOfTheRings.Quest.Runner ()
 import LordOfTheRings.Quest.Types as X
 import LordOfTheRings.Id
@@ -682,5 +687,10 @@ allQuests =
         , SomeQuestCard memoryOfTheDarkYears
         , SomeQuestCard shrineToSauron
         , SomeQuestCard theLordOfMiddleEarth
+        , SomeQuestCard catAndMouse
+        , SomeQuestCard searchingForUlchor
+        , SomeQuestCard tryingToBlendIn
+        , SomeQuestCard drawingAttention
+        , SomeQuestCard ulchorsTrap
         ]
     ]

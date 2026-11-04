@@ -29,6 +29,9 @@ data PlayerMatcher
     PlayerWithCardsInDeck Int
   | -- | a player whose cards follow the FAQ's errata
     PlayerUsingErrata
+  | -- | a player whose threat is equal to or higher than the enemy's engagement cost, as City
+    -- Guard is "considered to be engaged with" each
+    PlayerWithThreatAtLeastEngagementCostOf EnemyId
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

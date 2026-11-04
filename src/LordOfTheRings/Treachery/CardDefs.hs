@@ -410,6 +410,9 @@ allTreacheryCards =
       , fearfulShadows
       , enemiesCloseBehind
       , placeOfEvil
+      , extraVigil
+      , weveBeenSeen
+      , patrollingTheStreets
       ]
 
 deepDeepDark :: CardDef
@@ -2598,3 +2601,13 @@ enemiesCloseBehind :: CardDef
 enemiesCloseBehind = (treachery "21016" "Enemies Close Behind" TheRiverRunning 2) {cdShadowEffect = True}
 placeOfEvil :: CardDef
 placeOfEvil = (treachery "21057" "Place of Evil" TheTempleOfDoom 3) {cdShadowEffect = True, cdEasyModeQuantity = Just 1}
+-- * The City of Ulfast
+
+extraVigil :: CardDef
+extraVigil = (treachery "22045" "Extra Vigil" TheCityOfUlfast 2) {cdShadowEffect = True}
+
+weveBeenSeen :: CardDef
+weveBeenSeen = (treachery "22046" "We've Been Seen" TheCityOfUlfast 3) {cdShadowEffect = True, cdEasyModeQuantity = Just 1}
+
+patrollingTheStreets :: CardDef
+patrollingTheStreets = (treachery "22047" "Patrolling the Streets" TheCityOfUlfast 3) {cdShadowEffect = True}

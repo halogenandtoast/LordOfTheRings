@@ -994,8 +994,10 @@ runGameMessage msg g = case msg of
     -- Mocking each choosing the other's hero
     let dealTo t = do
           mods' <- getModifiers t
-          -- damage reduced to at most so much, as Nazgûl of Minas Morgul's to 1
-          let n' = foldr min n [k | DamageReducedTo k <- mods']
+          damage <- getDamage t
+          -- damage reduced to at most so much, as Nazgûl of Minas Morgul's to 1, and none past
+          -- what the card can have, as City Guard's
+          let n' = foldr min n $ [k | DamageReducedTo k <- mods'] <> [max 0 (k - damage) | MaxDamage k <- mods']
               combat = case source of
                 PlayerAttackSource _ -> True
                 _ -> False
@@ -1004,6 +1006,7 @@ runGameMessage msg g = case msg of
                   || maybe False (\p -> CannotBeDamagedByEffectsOf p `elem` mods') controller
           pure
             $ if CannotTakeDamage `elem` mods'
+              || n' <= 0
               || (CannotTakeNonCombatDamage `elem` mods' && not combat)
               || (CannotTakeNonQuestDamage `elem` mods' && not (isQuestSource source))
               || barred
@@ -1755,6 +1758,8 @@ runGameMessage msg g = case msg of
         -- what a lone attack deals beyond the enemy's remaining hit points, as Firefoot reads
         let excess = if asProgress then 0 else max 0 $ attack - defense - (hitPoints - enemy'.damage)
             damaging = CannotTakeCombatDamage `notElem` mods && not asProgress
+            -- what the attack deals an enemy that cannot have more than N damage, as City Guard
+            dealt = foldr min (attack - defense) [max 0 (k - enemy'.damage) | MaxDamage k <- mods]
         if null attackers
           then pure ()
           else
@@ -1768,8 +1773,8 @@ runGameMessage msg g = case msg of
                        , attack > defense
                        , CannotTakeCombatDamage `notElem` mods
                        ]
-                    <> [ CheckWindows [mkAfter $ AttackDealtDamage eid attackers (attack - defense)]
-                       | attack > defense
+                    <> [ CheckWindows [mkAfter $ AttackDealtDamage eid attackers dealt]
+                       | dealt > 0
                        , damaging
                        ]
                     <> [ AttackResolved eid (placementController enemy'.placement) attackers traits

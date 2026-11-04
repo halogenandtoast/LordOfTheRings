@@ -2915,5 +2915,33 @@
   },
   "theLordOfMiddleEarth": {
     "discard": "The Lord of Middle-earth: choose a card to discard from your hand"
+  },
+  "ulfastSentry": {
+    "choose": "Ulfast Sentry: choose one",
+    "resource": "Place 1 resource on the main quest",
+    "attack": "Ulfast Sentry makes an attack against you"
+  },
+  "weveBeenSeen": {
+    "choose": "We've Been Seen: choose one",
+    "attack": "City Guard makes an attack against you",
+    "threat": "Raise your threat by {n}"
+  },
+  "patrollingTheStreets": {
+    "choose": "Patrolling the Streets: choose one",
+    "noProgress": "Progress cannot be placed on the current quest this phase",
+    "threat": "Raise each player's threat by {n}"
+  },
+  "catAndMouse": {
+    "discard": "Cat and Mouse: you may discard a non-unique enemy engaged with you"
+  },
+  "tryingToBlendIn": {
+    "choose": "Trying to Blend In: choose one",
+    "threat": "Raise your threat by 5",
+    "reveal": "Reveal an encounter card"
+  },
+  "drawingAttention": {
+    "choose": "Drawing Attention: choose one",
+    "threat": "Raise your threat by 5",
+    "attack": "City Guard makes an immediate attack against you"
   }
 }

@@ -468,6 +468,10 @@ import LordOfTheRings.Enemy.Cards.TreacherousEasterling
 import LordOfTheRings.Enemy.Cards.UlchorsGuard
 import LordOfTheRings.Enemy.Cards.EasterlingOutrider
 import LordOfTheRings.Enemy.Cards.ThaneUlchorTheTempleOfDoom
+import LordOfTheRings.Enemy.Cards.CityGuard
+import LordOfTheRings.Enemy.Cards.UlfastSentry
+import LordOfTheRings.Enemy.Cards.TheKingsElite
+import LordOfTheRings.Enemy.Cards.UlchorsAgent
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -964,5 +968,9 @@ allEnemys =
         , SomeEnemyCard ulchorsGuard
         , SomeEnemyCard easterlingOutrider
         , SomeEnemyCard thaneUlchorTheTempleOfDoom
+        , SomeEnemyCard cityGuard
+        , SomeEnemyCard ulfastSentry
+        , SomeEnemyCard theKingsElite
+        , SomeEnemyCard ulchorsAgent
         ]
     ]

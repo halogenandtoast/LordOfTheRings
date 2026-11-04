@@ -409,6 +409,11 @@ allQuestCards =
       , memoryOfTheDarkYears
       , shrineToSauron
       , theLordOfMiddleEarth
+      , catAndMouse
+      , searchingForUlchor
+      , tryingToBlendIn
+      , drawingAttention
+      , ulchorsTrap
       ]
 
 theDrippingWalls :: CardDef
@@ -1664,3 +1669,19 @@ shrineToSauron = (quest "21084" "Shrine to Sauron" TheTempleOfDoom 2 16) {cdVict
 -- | 0 quest points printed, +4 per player from its own modifiers.
 theLordOfMiddleEarth :: CardDef
 theLordOfMiddleEarth = (quest "21085" "The Lord of Middle-earth" TheTempleOfDoom 2 0) {cdVictoryPoints = Just 1}
+-- * The City of Ulfast
+
+catAndMouse :: CardDef
+catAndMouse = (encounterSideQuest "22048" "Cat and Mouse" TheCityOfUlfast 10) {cdVictoryPoints = Just 10}
+
+searchingForUlchor :: CardDef
+searchingForUlchor = quest "22050" "Searching for Ulchor" TheCityOfUlfast 1 5
+
+tryingToBlendIn :: CardDef
+tryingToBlendIn = quest "22051" "Trying to Blend In" TheCityOfUlfast 2 10
+
+drawingAttention :: CardDef
+drawingAttention = quest "22052" "Drawing Attention" TheCityOfUlfast 3 15
+
+ulchorsTrap :: CardDef
+ulchorsTrap = quest "22053" "Ulchor's Trap" TheCityOfUlfast 4 20

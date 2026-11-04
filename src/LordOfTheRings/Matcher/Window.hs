@@ -374,6 +374,9 @@ data WindowMatcher
   | -- | a character came under the player's control: an ally or a hero entered play under
     -- him, or he took control of one, as Fellowship's side A counts his characters then
     CharacterEnteredPlayUnderWindow Timing PlayerId
+  | -- | an attack made by characters a matching player controls dealt a matching enemy
+    -- damage, as Extra Vigil's "after you attack and damage City Guard" answers
+    PlayerAttackDealtDamageToWindow Timing PlayerMatcher EnemyMatcher
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
@@ -559,6 +562,7 @@ windowMatches matcher (Window timing wType) = case (matcher, wType) of
   (CharacterWithAttachmentsLeftPlayWindow {}, _) -> False
   (CharacterAttackerDeclaredWindow {}, _) -> False
   (MatchingEnemyAttackResolvedWindow {}, _) -> False
+  (PlayerAttackDealtDamageToWindow {}, _) -> False
   (MatchingEnemyDefeatedWindow {}, _) -> False
   (MatchingAttackersDeclaredWindow {}, _) -> False
   (QuestBypassedWindow t, QuestBypassed _) -> t == timing
