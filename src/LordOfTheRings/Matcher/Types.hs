@@ -161,6 +161,8 @@ data AttachMatcher
 data EnemyMatcher
   = EnemyWithId EnemyId
   | EnemyInStagingArea
+  | -- | an enemy in the Stormcaller's area, or considered to be (Flight of the Stormcaller)
+    EnemyInStormcallerArea
   | EnemyWithTrait Trait
   | EnemyWithCardCode CardCode
   | EnemyEngagedWith PlayerMatcher
@@ -179,6 +181,9 @@ data EnemyMatcher
     EnemyWithEngagementCostAboveThreatOf PlayerId
   | -- | an enemy with at least 1 resource token on it, as The Shattered Monument reads
     EnemyWithResources
+  | -- | an enemy attached to a matching location by the Grapple keyword (The Thing in the
+    -- Depths)
+    EnemyGrappledWith LocationMatcher
   | AnyEnemy
   | NotEnemy EnemyMatcher
   | EnemyMatchAll [EnemyMatcher]

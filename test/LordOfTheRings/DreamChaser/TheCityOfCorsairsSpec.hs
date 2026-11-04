@@ -1,5 +1,6 @@
 module LordOfTheRings.DreamChaser.TheCityOfCorsairsSpec (spec) where
 
+import LordOfTheRings.Ally.CardDefs qualified as Allies
 import LordOfTheRings.Card (CardDef (..), CardType (EnemyType), toCardDef)
 import LordOfTheRings.EncounterSet (EncounterSet (TheCityOfCorsairs))
 import LordOfTheRings.Enemy (EnemyAttrs (..))
@@ -16,6 +17,7 @@ import LordOfTheRings.Outcome (Outcome (Won))
 import LordOfTheRings.Quest.CardDefs qualified as Quests
 import LordOfTheRings.Scenario (lookupScenario, theCityOfCorsairs)
 import LordOfTheRings.Scenario.Types (ScenarioAttrs (..), corsairDeckL, corsairDiscardL, encounterDeckL, encounterDiscardL, headingL, questDeckL, setAsideL)
+import LordOfTheRings.Sphere (Sphere (Neutral))
 import LordOfTheRings.Trait (Trait (Ship))
 import LordOfTheRings.Treachery.CardDefs qualified as Treacheries
 import TestImport
@@ -93,6 +95,26 @@ spec = describe "The City of Corsairs" do
     corsairs `shouldSatisfy` all (\c -> Ship `notMember` cdCardTraits (toCardDef c))
     s.encounterDeck `shouldSatisfy` all (\c -> cdCardType (toCardDef c) /= EnemyType || Ship `member` cdCardTraits (toCardDef c))
     map toCardCode s.questDeck `shouldBe` map toCardCode [Quests.fateOfTheDreamChaser, Quests.theHavenOfUmbar, Quests.finalConfrontation]
+
+  describe "Umbar Slaver" do
+    it "takes 1 resource for each payment the engaged player makes, however many heroes pay it" . corsairsTest $ \pid -> do
+      slaver <- staged Enemies.umbarSlaver
+      run $ PlaceEnemy slaver (EngagedWith pid)
+      heroes <- getsGame (map toTarget . toList . (.entities.heroes))
+      for_ heroes \h -> run $ PlaceTokens GameSource h Resource 2
+      run $ SpendResourcesFromDistinctHeroes pid Neutral 2 []
+      for_ (take 2 heroes) $ chooseTarget pid
+      resourcesOn Enemies.umbarSlaver `shouldReturn` 1
+      -- only the third hero has 2 left, and pays unasked
+      run $ SpendResourcesFromOneHero pid Neutral 2
+      resourcesOn Enemies.umbarSlaver `shouldReturn` 2
+
+    it "takes 1 resource for a card's cost, paid as one payment" . corsairsTest $ \pid -> do
+      slaver <- staged Enemies.umbarSlaver
+      run $ PlaceEnemy slaver (EngagedWith pid)
+      _ <- playWith pid "01007" 2 Allies.wanderingTook
+      map toCardCode . toList <$> getsGame (.entities.allies) `shouldReturn` [toCardCode Allies.wanderingTook]
+      resourcesOn Enemies.umbarSlaver `shouldReturn` 1
 
   describe "The Coast of Umbar" do
     it "takes no progress while off-course" . corsairsTest $ \_ -> do

@@ -59,6 +59,10 @@ data AllyAttrs = AllyAttrs
   -- ^ cards attached facedown, as Eagles of the Misty Mountains takes them
   , allyDiscardWindow :: Maybe WindowMatcher
   -- ^ a window in which the ally can be put into play from its owner's discard pile
+  , allyAsHero :: Bool
+  -- ^ the ally's text read for the hero it has become, as Sword-thain makes it: it is the
+  -- hero, sharing its id, and the hero's attrs keep its state (see
+  -- 'LordOfTheRings.Hero.AllyHero')
   }
   deriving stock (Show, Eq, Generic)
 
@@ -68,7 +72,7 @@ instance ToJSON AllyAttrs where
   toJSON = genericToJSON (aesonOptions $ Just "ally")
 
 instance FromJSON AllyAttrs where
-  parseJSON = genericParseJSON (aesonOptions $ Just "ally") . withDefaults [("facedown", toJSON ([] :: [PlayerCard])), ("handAction", toJSON (Nothing :: Maybe Criterion)), ("handCriteria", toJSON NoCriteria)]
+  parseJSON = genericParseJSON (aesonOptions $ Just "ally") . withDefaults [("facedown", toJSON ([] :: [PlayerCard])), ("handAction", toJSON (Nothing :: Maybe Criterion)), ("handCriteria", toJSON NoCriteria), ("asHero", Bool False)]
 
 ally :: (AllyAttrs -> a) -> CardDef -> AllyCard a
 ally f cardDef =
@@ -91,6 +95,7 @@ ally f cardDef =
             , allyHandAction = Nothing
             , allyFacedown = []
             , allyDiscardWindow = Nothing
+            , allyAsHero = False
             }
     }
 
@@ -135,14 +140,19 @@ instance HasCardDef AllyAttrs where
 instance HasCardDef Ally where
   toCardDef = toCardDef . toAttrs
 
+-- | An ally that has become a hero is the hero.
 instance Targetable AllyAttrs where
-  toTarget = AllyTarget . allyId
+  toTarget a
+    | allyAsHero a = HeroTarget $ HeroId $ unAllyId $ allyId a
+    | otherwise = AllyTarget $ allyId a
 
 instance Targetable Ally where
   toTarget = toTarget . toAttrs
 
 instance Sourceable AllyAttrs where
-  toSource = AllySource . allyId
+  toSource a = case toTarget a of
+    HeroTarget hid -> HeroSource hid
+    _ -> AllySource $ allyId a
   isSource attrs (AbilitySource source _) = isSource attrs source
   isSource attrs source = toSource attrs == source
 

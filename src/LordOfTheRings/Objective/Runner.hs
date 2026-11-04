@@ -3,7 +3,7 @@
 module LordOfTheRings.Objective.Runner (module X) where
 
 import LordOfTheRings.Card (cdCardType, cdKeywords, toCardDef)
-import LordOfTheRings.Classes.HasQueue (push, pushWhen)
+import LordOfTheRings.Classes.HasQueue (pushAll, pushWhen)
 import LordOfTheRings.Classes.RunMessage
 import LordOfTheRings.Keyword (Keyword (GuardedBy))
 import LordOfTheRings.Matcher (getLead)
@@ -39,8 +39,9 @@ instance RunMessage ObjectiveAttrs where
       claimObjective lead attrs
       pure attrs
     Exhaust (isTarget attrs -> True) | not attrs.exhausted -> do
-      push $ CheckWindows [mkAfter $ Exhausted (toTarget attrs)]
-      pure $ attrs & exhaustedL .~ True
+      pushAll $ doFrame msg (Exhausted $ toTarget attrs)
+      pure attrs
+    Do (Exhaust (isTarget attrs -> True)) -> pure $ attrs & exhaustedL .~ True
     Ready (isTarget attrs -> True) -> pure $ attrs & exhaustedL .~ False
     PlaceUnderneath (isTarget attrs -> True) cards -> pure $ attrs & underneathL <>~ cards
     PlaceTokens _ (isTarget attrs -> True) token n -> do

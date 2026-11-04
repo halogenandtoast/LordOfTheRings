@@ -69,6 +69,7 @@ runCampaign :: CampaignLog -> Message -> ScenarioAttrs -> QueueT Message GameT S
 runCampaign l msg attrs = case msg of
   DoStep 9 Setup -> do
     graxarsReward l
+    nightmaresShuffledIn l
     attrs' <- setup l attrs
     runMessage msg attrs'
   ScenarioSpecific "campaign.pool" (parseMaybe parseJSON -> Just p) -> pure $ withLog (addToPool p) attrs
@@ -303,6 +304,23 @@ eachChoosesOne key raisesX (pid : rest) cards = do
       eachChoosesOne key raisesX rest (filter ((/= c.id) . (.id)) cards)
     labeled "dreamChaserCampaign.decline" $ eachChoosesOne key raisesX rest cards
 
+{- | Temple of the Deceived's resolution: each Recurring Nightmare not a secret joins the
+Campaign Pool for a player the first player chooses, who for the remainder of the campaign
+shuffles it into their deck after they draw their starting hand. This setup is past the
+starting hands, so the first one is shuffled in here; the scenario runner does it after.
+-}
+nightmaresShuffledIn :: ReverseQueue m => CampaignLog -> m ()
+nightmaresShuffledIn l = do
+  let nightmares = recorded RecurringNightmares l
+  when (notNull nightmares) $ updateCampaignLog (Unrecord RecurringNightmares)
+  lead <- getLead
+  for_ nightmares \code -> do
+    card <- genEncounterCard (toCardDef code)
+    choosePlayerM lead (EncounterCard card) \pid -> do
+      seat <- seatOf pid
+      updateCampaignLog $ AddToPool $ PoolCard code seat Nothing
+      shuffleIntoDeck pid card
+
 seatOf :: HasGame m => PlayerId -> m (Maybe Int)
 seatOf pid = getsGame (elemIndex pid . gamePlayerOrder)
 
@@ -481,16 +499,17 @@ resolve l attrs = do
     "temple-of-the-deceived" -> do
       starlas <- traverse getAlly =<< select (AllyWithCardCode $ toCardCode Allies.starla)
       starlaSeat <- traverse seatOf (mapMaybe (placementController . (.placement)) starlas)
-      leadSeat <- seatOf =<< getLead
       halls <- select (LocationWithCardCode $ toCardCode Locations.templeHalls)
       faceupUncharted <- select (LocationWithKeyword Uncharted)
-      let nightmares = length (filter (== toCardCode Enemies.recurringNightmare) (recorded RevealedSecrets l))
-          earned =
-            [PoolCard (toCardCode Allies.starla) seat Nothing | seat <- take 1 starlaSeat]
-              <> replicate (max 0 nightmares) (PoolCard (toCardCode Enemies.recurringNightmare) leadSeat Nothing)
+      -- Resolution: If Starla is under a player's control, add her to the Campaign Pool.
+      -- For each Recurring Nightmare that is not a secret, add it to the Campaign Pool and
+      -- choose a player. (The game is over as it resolves: the player is chosen as the next
+      -- scenario is set up.)
+      let nightmares = filter (== toCardCode Enemies.recurringNightmare) (recorded RevealedSecrets l)
+          earned = [PoolCard (toCardCode Allies.starla) seat Nothing | seat <- take 1 starlaSeat]
       pure
         ( common + resources3 + length halls + xpIf (length faceupUncharted <= 4) 1 + xpIf (has Enemies.templeGuardianCampaign) 1 + xpIf threats40 1
-        , foldl' (flip addToPool) l earned
+        , (if null nightmares then id else record RecurringNightmares nightmares) $ foldl' (flip addToPool) l earned
         )
     "the-drowned-ruins" -> do
       let underwater = length [() | c <- victory, Underwater `member` cdCardTraits (toCardDef c)]

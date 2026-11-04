@@ -2,6 +2,7 @@
 
 module LordOfTheRings.Hero.Types (module LordOfTheRings.Hero.Types) where
 
+import LordOfTheRings.Ally.Types (Ally)
 import LordOfTheRings.Card
 import LordOfTheRings.Classes.Entity
 import LordOfTheRings.Classes.HasAbilities
@@ -27,6 +28,12 @@ class
   , EntityAttrs a ~ HeroAttrs
   )
   => IsHero a
+  where
+  -- | The ally a hero's text is read through, as an ally given the hero card type by
+  -- Sword-thain: what is asked of the ally by its id, as its own text's "exists (AllyWithId
+  -- a.id <> ExhaustedAlly)", is asked of it.
+  heroAsAlly :: a -> Maybe Ally
+  heroAsAlly _ = Nothing
 
 type HeroCard a = CardBuilder (HeroId, PlayerId) a
 
@@ -49,6 +56,9 @@ data HeroAttrs = HeroAttrs
   -- ^ the encounter card it is a captive of, as a guarded objective (see 'GuardCharacter')
   , heroInStagingArea :: Bool
   -- ^ in play in the staging area under no player's control (The Long Arm of Mordor)
+  , heroFacedown :: [PlayerCard]
+  -- ^ cards attached facedown, as an ally made a hero by Sword-thain keeps them (Eagles of
+  -- the Misty Mountains)
   }
   deriving stock (Show, Eq, Generic)
 
@@ -58,7 +68,7 @@ instance ToJSON HeroAttrs where
   toJSON = genericToJSON (aesonOptions $ Just "hero")
 
 instance FromJSON HeroAttrs where
-  parseJSON = genericParseJSON (aesonOptions $ Just "hero") . withDefaults [("prisoner", Bool False), ("guardedBy", Null), ("inStagingArea", Bool False)]
+  parseJSON = genericParseJSON (aesonOptions $ Just "hero") . withDefaults [("prisoner", Bool False), ("guardedBy", Null), ("inStagingArea", Bool False), ("facedown", toJSON ([] :: [PlayerCard]))]
 
 hero :: (HeroAttrs -> a) -> CardDef -> HeroCard a
 hero f cardDef =
@@ -78,6 +88,7 @@ hero f cardDef =
             , heroPrisoner = False
             , heroGuardedBy = Nothing
             , heroInStagingArea = False
+            , heroFacedown = []
             }
     }
 
@@ -94,6 +105,9 @@ instance Entity Hero where
   toId = toId . toAttrs
   toAttrs (Hero a) = toAttrs a
   overAttrs f (Hero a) = Hero $ overAttrs f a
+
+instance HasField "asAlly" Hero (Maybe Ally) where
+  getField (Hero a) = heroAsAlly a
 
 instance HasModifiersFor Hero where
   getModifiersFor (Hero a) = getModifiersFor a

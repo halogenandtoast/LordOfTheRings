@@ -2,6 +2,7 @@ module LordOfTheRings.DreamChaser.CampaignSpec (spec) where
 
 import Data.Map.Strict qualified as Map
 import LordOfTheRings.Ally (Ally)
+import LordOfTheRings.Ally.CardDefs qualified as Allies
 import LordOfTheRings.Attachment (AttachmentAttrs (..))
 import LordOfTheRings.Attachment.CardDefs qualified as Attachments
 import LordOfTheRings.Campaign
@@ -16,7 +17,6 @@ import LordOfTheRings.Scenario.Types (GameMode (NightmareMode), scenarioCampaign
 import LordOfTheRings.Window (WindowType (..), mkAfter)
 import Data.Aeson.Types (parseMaybe)
 import LordOfTheRings.Treachery.CardDefs qualified as Treacheries
-import LordOfTheRings.Ally.CardDefs qualified as Allies
 import LordOfTheRings.Helpers.Window (getActionAbilities)
 import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Location.Grid (Pos (..))
@@ -235,6 +235,54 @@ spec = describe "Dream-chaser campaign" do
       sort (map toCardCode attached) `shouldBe` sort [toCardCode Objectives.blackKeyBurden, toCardCode Objectives.theBlackSword]
       swords <- getsGame (filter ((== toCardCode Objectives.theBlackSword) . toCardCode) . toList . (.entities.objectives))
       map (countTokens Resource . objectiveTokens . toAttrs) swords `shouldBe` [3]
+
+  describe "Recurring Nightmare" do
+    let nightmare = toCardCode Enemies.recurringNightmare
+        deckCodes pid = map toCardCode . (.deck) <$> getPlayer pid
+        nightmares = getsGame (filter ((== nightmare) . toCardCode) . toList . (.entities.enemies))
+    pureIt "stays out of the seat's deck list, the scenario shuffling it in" do
+      seatDeck 0 dc {campaignLogPool = [PoolCard nightmare (Just 0) Nothing]} [("01013", 3)] `shouldBe` [("01013", 3)]
+
+    it "is shuffled into a player's deck as it leaves play, and added to the staging area as it is drawn" . campaignTestIn templeOfTheDeceived seated starterDeck $ \pid -> do
+      card <- genEncounterCard Enemies.recurringNightmare
+      run $ AddToStaging card
+      run . Destroy GameSource . toTarget . fromJustNote "no nightmare" . headMay =<< nightmares
+      length <$> nightmares `shouldReturn` 0
+      deckCodes pid >>= (`shouldSatisfy` elem nightmare)
+      getsGame ((.encounterDiscard) . toAttrs . (.scenario)) `shouldReturn` []
+      run $ MoveToTopOfDeck pid card.id
+      run $ DrawCards (Drawing pid 1)
+      map (.placement) <$> nightmares `shouldReturn` [StagingArea]
+      map toCardCode . (.hand) <$> getPlayer pid >>= (`shouldSatisfy` notElem nightmare)
+      deckCodes pid >>= (`shouldSatisfy` notElem nightmare)
+
+    it "goes to the encounter discard pile discarded from a player's deck" . campaignTestIn templeOfTheDeceived seated starterDeck $ \pid -> do
+      card <- genEncounterCard Enemies.recurringNightmare
+      run $ ShuffleCardIntoDeck pid (EncounterCard card)
+      run $ MoveToTopOfDeck pid card.id
+      run $ DiscardTopOfDeck pid 1
+      getsGame (map toCardCode . (.encounterDiscard) . toAttrs . (.scenario)) `shouldReturn` [nightmare]
+      map toCardCode . (.discard) <$> getPlayer pid `shouldReturn` []
+
+    it "is noted by Temple of the Deceived's resolution for each one not a secret" . campaignTestIn templeOfTheDeceived seated {campaignLogNotes = Map.fromList [(RevealedSecrets, [nightmare, toCardCode Allies.starla])]} starterDeck $ \_ -> do
+      run $ GameOver Won
+      l <- getCampaignLog
+      recorded RecurringNightmares l `shouldBe` [nightmare]
+      map (.code) l.pool `shouldSatisfy` notElem nightmare
+
+    it "joins the pool for the chosen player as the next scenario is set up, into their deck" . campaignTestIn theThingInTheDepths seated {campaignLogNotes = Map.fromList [(RecurringNightmares, [nightmare])]} starterDeck $ \pid -> do
+      run $ DoStep 9 Setup
+      l <- getCampaignLog
+      l.pool `shouldBe` [PoolCard nightmare (Just 0) Nothing]
+      Map.member RecurringNightmares l.notes `shouldBe` False
+      deckCodes pid >>= (`shouldSatisfy` elem nightmare)
+
+    it "is shuffled into its player's deck after the starting hand, not the encounter deck" . campaignTestIn theThingInTheDepths seated {campaignLogPool = [PoolCard nightmare (Just 0) Nothing]} starterDeck $ \pid -> do
+      run $ DoStep 2 Setup
+      encounterDeckCodes >>= (`shouldSatisfy` notElem nightmare)
+      deckCodes pid >>= (`shouldSatisfy` notElem nightmare)
+      run $ DoStep 6 Setup
+      deckCodes pid >>= (`shouldSatisfy` elem nightmare)
 
   describe "in nightmare mode" do
     it "keys Captain Sahír in The Thing in the Depths past the nightmare deck's own Forced effects" . campaignTestIn (overAttrs (\a -> a {scenarioMode = NightmareMode}) theThingInTheDepths) seated starterDeck $ \_ -> do

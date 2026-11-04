@@ -31,8 +31,8 @@ instance HasModifiersFor Stormcaller where
     if toCardCode a == toCardCode Cards.stormcallerCampaign
       then whenM atStormcallersStage $ traverse_ (\q -> modified a q [ProgressPerRoundLimit 9]) =<< getMainQuests
       else modifySelf a [CannotHaveAttachments]
-    enemies <- getsGame (filter ((== StormcallerArea) . (.placement)) . toList . (.entities.enemies))
-    for_ enemies \e -> modified a (toTarget e) [ImmuneToPlayerCardEffects]
+    enemies <- select EnemyInStormcallerArea
+    for_ enemies \e -> modified a e [ImmuneToPlayerCardEffects]
     locations <- getsGame (filter ((== StormcallerArea) . (.placement)) . toList . (.entities.locations))
     for_ locations \l -> modified a (toTarget l) [ImmuneToPlayerCardEffects]
     stage <- getStormcallerStage

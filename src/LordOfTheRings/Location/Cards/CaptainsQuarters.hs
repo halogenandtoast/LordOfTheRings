@@ -1,14 +1,10 @@
 module LordOfTheRings.Location.Cards.CaptainsQuarters (captainsQuarters) where
 
 import LordOfTheRings.Card (toCardCode)
-import LordOfTheRings.Classes.HasGame (getsGame)
-import LordOfTheRings.Entities (entitiesEnemies)
-import LordOfTheRings.Game.Base (gameEntities)
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Location.CardDefs qualified as Cards
 import LordOfTheRings.Location.Import.Lifted
 import LordOfTheRings.Objective.CardDefs qualified as Objectives
-import LordOfTheRings.Placement (Placement (AttachedTo))
 import LordOfTheRings.Trait (Trait (Raider))
 
 newtype CaptainsQuarters = CaptainsQuarters LocationAttrs
@@ -23,9 +19,7 @@ captainsQuarters = location CaptainsQuarters Cards.captainsQuarters
 -- the scenario's cards read the resources on its Raider enemies.
 instance HasModifiersFor CaptainsQuarters where
   getModifiersFor (CaptainsQuarters a) = do
-    -- a grappling enemy is attached to it, which 'select' passes over
-    grappled <- getsGame (any ((== AttachedTo (toTarget a)) . (.placement)) . toList . entitiesEnemies . gameEntities)
-    when grappled do
+    whenM (selectAny $ EnemyGrappledWith (LocationWithId a.id)) do
       enemies <- select (EnemyWithTrait Raider)
       allies <- select (AllyWithTrait Raider)
       for_ enemies \e -> modified a e [HasNoResources]

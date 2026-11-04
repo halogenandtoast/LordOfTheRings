@@ -31,7 +31,7 @@ instance RunMessage Bifur where
         questionLabeled "bifur.pay"
         causedBy attrs
         targets heroes \payer -> do
-          removeTokens attrs payer Resource 1
+          spendResourcesFrom pid payer 1
           placeResources attrs attrs 1
       pure h
     _ -> Bifur <$> runMessage msg attrs

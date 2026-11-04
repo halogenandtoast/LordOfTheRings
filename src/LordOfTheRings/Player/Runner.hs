@@ -46,7 +46,7 @@ import LordOfTheRings.Token
 import LordOfTheRings.Treachery.Types ()
 import LordOfTheRings.Window (
   Window (Window),
-  WindowType (CardsDrawn, DiscardedFromDeck, DrewForResourcePhase, SetupHandDrawn, DiscardedFromHand, EnemyAttacking, PlayedCard, PlayedCardFromHand, PlayedFromHand, ThreatRaised),
+  WindowType (CardsDrawn, DiscardedFromDeck, DrewForResourcePhase, SetupHandDrawn, DiscardedFromHand, EnemyAttacking, PlayedCard, PlayedCardFromHand, PlayedFromHand, ResourcesSpent, ThreatRaised),
   Timing (After),
   mkAfter,
   mkWhen,
@@ -150,6 +150,7 @@ runPlayer msg player = case msg of
           -- a hero in the deck was shuffled in by Lost and Alone, and is put into play as drawn
           (heroes, drawn) = partition ((== HeroType) . (.cardType)) cards
       pushAll [PutHeroIntoPlay player.id pc | PlayerCard pc <- heroes]
+      pushAll [EncounterCardEnteredHand player.id ec | EncounterCard ec <- drawn]
       pushWhen (notNull cards) $ CheckWindows [mkAfter $ CardsDrawn player.id (length cards)]
       pure $ player & handL <>~ drawn & deckL .~ deck
     WithTarget (isTarget player -> True) (DoPhase PlanningPhase) -> do
@@ -281,6 +282,7 @@ runPlayer msg player = case msg of
       pure $ player & deckL .~ deck & discardL .~ []
     TakeFromDeck pid cid | pid == player.id -> do
       let (taken, kept) = partition ((== cid) . (.id)) player.deck
+      pushAll [EncounterCardEnteredHand pid ec | EncounterCard ec <- taken]
       pure $ player & deckL .~ kept & handL <>~ taken
     DebugSearchDeck pid | pid == player.id -> do
       -- not shuffled after: a debug search leaves the rest of the deck in its order
@@ -340,7 +342,10 @@ runPlayer msg player = case msg of
     DiscardTopOfDeck pid n | pid == player.id -> do
       let (discarded, deck) = splitAt n player.deck
       pushWhen (notNull discarded) $ CheckWindows [mkAfter $ DiscardedFromDeck pid c.id | c <- discarded]
-      pure $ player & deckL .~ deck & discardL %~ (discarded <>)
+      -- an encounter card in the deck goes to the encounter discard pile
+      let encounter = [ec | EncounterCard ec <- discarded]
+      pushWhen (notNull encounter) $ AddToEncounterDiscard encounter
+      pure $ player & deckL .~ deck & discardL %~ ([c | c@(PlayerCard _) <- discarded] <>)
     SwapHandWithDeck pid fromHand fromDeck | pid == player.id -> do
       let swap c
             | c.id == fromHand = fromMaybe c $ find ((== fromDeck) . (.id)) player.deck
@@ -361,6 +366,9 @@ runPlayer msg player = case msg of
       let (moved, kept) = partition ((== cid) . (.id)) player.discard
       deck <- shuffleM (moved <> player.deck)
       pure $ player & discardL .~ kept & deckL .~ deck
+    ShuffleCardIntoDeck pid card | pid == player.id -> do
+      deck <- shuffleM (card : player.deck)
+      pure $ player & deckL .~ deck
     ShufflePlayerDeck pid | pid == player.id -> do
       deck <- shuffleM player.deck
       pure $ player & deckL .~ deck
@@ -399,36 +407,44 @@ runPlayer msg player = case msg of
     CheckWindows ws | notNull [() | Window After (EnemyAttacking _ _) <- ws] ->
       pure $ player & usedAbilitiesL %~ filter ((/= PerAttack) . (.usedAbilityLimitType))
     EndRound -> pure $ player & usedAbilitiesL %~ filter ((/= PerRound) . (.usedAbilityLimitType))
-    SpendResourcesFromDistinctHeroes pid sphere n used | pid == player.id && n > 0 -> do
+    -- the heroes are picked one by one, then pay together, as one payment
+    SpendResourcesFromDistinctHeroes pid sphere n used | pid == player.id -> do
       payers <- filter ((`notElem` used) . (.id)) <$> payingHeroes sphere player
       push
-        $ questionLabel
-          (ikeyWith "label.payFromDifferentHero" [intVar "count" n])
-          pid
-          [ targetLabel
-              x
-              [ RemoveTokens (toSource player) (toTarget x) Resource 1
-              , SpendResourcesFromDistinctHeroes pid sphere (n - 1) (x.id : used)
-              ]
-          | x <- payers
-          ]
+        $ if n <= 0 || null payers
+          then SpendResourcesFrom pid [(HeroTarget h, 1) | h <- reverse used]
+          else
+            questionLabel
+              (ikeyWith "label.payFromDifferentHero" [intVar "count" n])
+              pid
+              [targetLabel x [SpendResourcesFromDistinctHeroes pid sphere (n - 1) (x.id : used)] | x <- payers]
       pure player
     SpendResourcesFromOneHero pid sphere n | pid == player.id && n > 0 -> do
       payers <- filter ((>= n) . (.resources)) <$> payingHeroes sphere player
       push
-        $ chooseOrRunOne pid [targetLabel x [RemoveTokens (toSource player) (toTarget x) Resource n] | x <- payers]
+        $ chooseOrRunOne pid [targetLabel x [SpendResourcesFrom pid [(toTarget x, n)]] | x <- payers]
+      pure player
+    SpendResourcesFrom pid pools | pid == player.id -> do
+      let paid = [(t, k) | (t, k) <- pools, k > 0]
+      pushAll [RemoveTokens (toSource player) t Resource k | (t, k) <- paid]
+      -- a card's cost opens the window once it is paid, as 'PaidCost'
+      payingForCard <- any ((== pid) . (.activeCostPlayer)) <$> getsGame gameActiveCosts
+      unless payingForCard do
+        spent <- for paid \(t, k) -> (,k) . fromMaybe pid <$> characterController t
+        pushWhen (notNull spent)
+          $ CheckWindows [mkAfter $ ResourcesSpent p (sum ks) | (p, ks) <- Map.toList (Map.fromListWith (<>) [(p, [k]) | (p, k) <- spent])]
       pure player
     SpendResources pid sphere n | pid == player.id && n > 0 -> do
       heroes <- traverse getHero =<< select (HeroControlledBy $ PlayerWithId player.id)
       payers <- filterM (paysFor sphere) heroes
       push $ case filter ((> 0) . (.resources)) payers of
-        [x] -> RemoveTokens (toSource player) (toTarget x) Resource n
+        [x] -> SpendResourcesFrom pid [(toTarget x, n)]
         _ -> SpendResourcesChosen pid False sphere n []
       pure player
     SpendResourcesChosen pid False sphere n chosen | pid == player.id -> do
       heroes <- traverse getHero =<< select (HeroControlledBy $ PlayerWithId player.id)
       payers <- filterM (paysFor sphere) heroes
-      push $ spendChosen (toSource player) pid False sphere n chosen [(h.id, h.resources) | h <- payers]
+      push $ spendChosen pid False sphere n chosen [(h.id, h.resources) | h <- payers]
       pure player
     _ -> pure player
    where

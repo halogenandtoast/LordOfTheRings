@@ -64,7 +64,7 @@ instance RunMessage GateKey where
       for_ [h | AttachedTo h@(HeroTarget _) <- [attrs.placement]] \h -> do
         exhaust attrs
         exhaust h
-        unless (upgraded attrs) $ removeTokens attrs h Resource 3
+        unless (upgraded attrs) $ spendResourcesFrom pid h 3
         temples <- select (LocationWithCardCode $ toCardCode Locations.templeOfTheDeceived)
         secrets <- if upgraded attrs then getTempleSecrets else pure []
         under <- concat <$> for secrets \(pos, code) -> map (,code) <$> select (LocationAtPosition pos)

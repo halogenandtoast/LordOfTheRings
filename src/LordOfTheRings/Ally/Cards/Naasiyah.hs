@@ -33,7 +33,7 @@ instance HasAbilities Naasiyah where
 instance RunMessage Naasiyah where
   runMessage msg s@(Naasiyah a) = case msg of
     UseCardAbility pid (isSource a -> True) 1 _ -> do
-      removeTokens a a Resource 1
+      spendResourcesFrom pid a 1
       chooseOneM pid do
         questionLabeled "naasiyah.choose"
         causedBy a

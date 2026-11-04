@@ -25,7 +25,7 @@ instance RunMessage Fanuidhol where
           questionLabeled "fanuidhol.pay"
           causedBy a
           aimedAt [hero]
-          labeled "fanuidhol.spend" $ removeTokens a hero Resource 1
+          labeled "fanuidhol.spend" $ spendResourcesFrom h.owner hero 1
           labeled "fanuidhol.decline" $ phaseModifier a hero DoesNotCountWillpower
         else phaseModifier a hero DoesNotCountWillpower
       Fanuidhol <$> runMessage msg a

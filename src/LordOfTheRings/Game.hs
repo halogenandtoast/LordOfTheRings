@@ -44,7 +44,7 @@ import LordOfTheRings.Log.Refs (cardTitle, sendLogInOpenBlock, sourceCardTitle)
 import LordOfTheRings.Matcher
 import LordOfTheRings.Matcher.Window (windowMatches)
 import LordOfTheRings.Message
-import LordOfTheRings.Message.Lifted (drawCards, raiseThreatFromDoomed)
+import LordOfTheRings.Message.Lifted (choosePlayerM, drawCards, raiseThreatFromDoomed, shuffleIntoDeck)
 import LordOfTheRings.Modifier
 import LordOfTheRings.Objective
 import LordOfTheRings.Outcome
@@ -298,7 +298,7 @@ instance FromJSON Separation where
   parseJSON = genericParseJSON (aesonOptions $ Just "separation")
 
 instance FromJSON Area where
-  parseJSON = genericParseJSON (aesonOptions $ Just "area")
+  parseJSON = genericParseJSON (aesonOptions $ Just "area") . withDefaults [("heldModifiers", toJSON (mempty :: Map Target [Modifier]))]
 
 {- | The players split into areas, one for each group: each player takes his cards in
 play, those engaged with him and those attached to them, and the encounter cards no
@@ -336,6 +336,7 @@ separate groups g
             , entitiesObjectives = Map.filterWithKey (\k _ -> inGroup (toTarget k)) es.objectives
             }
       , areaHeldEffects = filter (\e -> maybe True (== i) (effectGroup e)) (gameEffects g)
+      , areaHeldModifiers = gameModifiers g
       , areaStatus = AreaStarted
       , areaJoining = False
       }
@@ -1133,7 +1134,7 @@ runGameMessage msg g = case msg of
   -- a player who may engage an additional enemy, as Halbarad lets, is asked again once
   (optionalEngagement -> Just (pid, first)) -> do
     again <- (first &&) . elem OptionallyEngagesAdditionalEnemy <$> getModifiers (PlayerTarget pid)
-    staged <- select EnemyInStagingArea
+    staged <- engageableFromStaging
     -- some enemies may only be engaged once they are alone in the staging area
     barredBy <- (\ms -> [m | CannotBeOptionallyEngagedBy m <- ms]) <$> getModifiers GameTarget
     resources <- getResourcesOfSphere pid Neutral
@@ -1166,7 +1167,7 @@ runGameMessage msg g = case msg of
     order <- getPlayerOrder
     let next = seatAfter order pid
     threat <- getEngagementThreat pid
-    candidates <- traverse (\eid -> (eid,) <$> getEngagementCost eid) =<< select EnemyInStagingArea
+    candidates <- traverse (\eid -> (eid,) <$> getEngagementCost eid) =<< engageableFromStaging
     -- an enemy can be spared engagement checks against it, as a trap does
     checked <- filterM (fmap (\ms -> NoEngagementChecks `notElem` ms && CannotEngagePlayer pid `notElem` ms) . getModifiers . fst) candidates
     -- its cost against this player, as Hunting Pack's is lowered by his damaged characters
@@ -1815,14 +1816,14 @@ runGameMessage msg g = case msg of
   SpendResourcesChosen pid True sphere n chosen -> do
     heroes <- traverse getHero =<< select AnyHero
     payers <- filterM (heroPaysFor sphere) heroes
-    push $ spendChosen (PlayerSource pid) pid True sphere n chosen [(h.id, h.resources) | h <- payers]
+    push $ spendChosen pid True sphere n chosen [(h.id, h.resources) | h <- payers]
     pure g
   DiscardGroupResources pid n | n > 0 -> do
     heroes <- filter ((> 0) . (.resources)) <$> (traverse getHero =<< select AnyHero)
     unless (null heroes)
       $ push
       $ questionLabel (ikeyWith "label.discardMore" [intVar "count" n]) pid
-      $ [ targetLabel h [RemoveTokens (PlayerSource pid) (toTarget h) Resource 1, DiscardGroupResources pid (n - 1)]
+      $ [ targetLabel h [RemoveTokens GameSource (toTarget h) Resource 1, DiscardGroupResources pid (n - 1)]
         | h <- heroes
         ]
     pure g
@@ -2754,9 +2755,10 @@ runGameMessage msg g = case msg of
         $ if toTarget new `elem` hosts then AttachCard (toId a) (toTarget new) else Discard (toTarget a)
     pushAll $ moves <> [CheckWindows [mkAfter $ EntersPlay $ toTarget new]]
     getGame
+  -- the card keeps its id under the other card type, as its own text finds it by
   AllyBecomesHero aid | Just a <- Map.lookup aid g.entities.allies -> do
-    hid <- getRandom
-    let attrs = toAttrs a
+    let hid = HeroId (unAllyId aid)
+        attrs = toAttrs a
         controller = fromMaybe attrs.allyOwner (placementController a.placement)
         new =
           overAttrs
@@ -2766,13 +2768,14 @@ runGameMessage msg g = case msg of
                   , heroExhausted = allyExhausted attrs
                   , heroCommitted = allyCommitted attrs
                   , heroAttacking = allyAttacking attrs
+                  , heroFacedown = allyFacedown attrs
                   }
             )
             $ lookupHero (toCardCode a) attrs.allyCardId hid controller
     pure $ retargetCharacter (toTarget a) (toTarget new) $ g & entitiesL . alliesL %~ Map.delete aid & entitiesL . heroesL %~ insertEntity new
   HeroBecomesAlly hid | Just h <- Map.lookup hid g.entities.heroes, cdCardType (toCardDef h) == AllyType -> do
-    aid <- getRandom
-    let attrs = toAttrs h
+    let aid = AllyId (unHeroId hid)
+        attrs = toAttrs h
         new =
           overAttrs
             ( \a ->
@@ -2782,6 +2785,7 @@ runGameMessage msg g = case msg of
                   , allyExhausted = heroExhausted attrs
                   , allyCommitted = heroCommitted attrs
                   , allyAttacking = heroAttacking attrs
+                  , allyFacedown = heroFacedown attrs
                   }
             )
             $ lookupAlly (toCardCode h) attrs.heroCardId aid attrs.heroOwner
@@ -3094,8 +3098,19 @@ runGameMessage msg g = case msg of
       <> attachedEnemies g target
       <> [AddToEncounterDiscard e.shadowCards | notNull e.shadowCards]
       <> freeGuarded g target
-    deck <- shuffleM (MkEncounterCard (enemyCardId $ toAttrs e) (toCardCode e) : (toAttrs g.scenario).encounterDeck)
-    pure $ g & entitiesL . enemiesL %~ Map.delete eid & scenarioL %~ overAttrs (encounterDeckL .~ deck)
+    let card = MkEncounterCard (enemyCardId $ toAttrs e) (toCardCode e)
+        removed = g & entitiesL . enemiesL %~ Map.delete eid
+    toPlayersDeck <- elem LeavesPlayToAnyPlayersDeck <$> getModifiers target
+    if toPlayersDeck
+      then removed <$ toAnyPlayersDeck g card
+      else do
+        deck <- shuffleM (card : (toAttrs g.scenario).encounterDeck)
+        pure $ removed & scenarioL %~ overAttrs (encounterDeckL .~ deck)
+  -- an encounter card drawn into a hand is answered by its card, out of play, as Recurring
+  -- Nightmare's Forced effect (as Arkham's drawn encounter cards resolve their revelations)
+  EncounterCardEnteredHand _ card | cdCardType (toCardDef card) == EnemyType -> do
+    _ <- runEach msg . createEnemy card =<< getRandom
+    pure g
   AddToStaging card | gainsController (toCardDef card) -> do
     thisObjective <- newObjective card
     controller <- objectiveAllyController (toCardDef card)
@@ -3233,6 +3248,8 @@ discardFromPlay target g = case target of
           waiting ec e = effectTarget e == CardIdTarget ec.id && LeavesPlayToTopOfEncounterDeck `elem` effectModifiers e
           orcGuards = (toAttrs g.scenario).scenarioOrcGuards
       case toCard entity of
+        EncounterCard ec
+          | LeavesPlayToAnyPlayersDeck `elem` mods -> removed <$ toAnyPlayersDeck g ec
         -- an Orc Guard leaves its player card in that player's discard pile
         EncounterCard ec
           | Just pc <- Map.lookup ec.id orcGuards ->
@@ -3265,6 +3282,11 @@ discardFromPlay target g = case target of
     -- a card of the Corsair deck to its own discard pile (Dream-chaser rules)
     EncounterCard ec -> scenarioL %~ overAttrs (discardEncounterCard ec)
     _ -> id
+
+-- | As it leaves play, the first player shuffles the card into any player's deck, as
+-- Recurring Nightmare reads.
+toAnyPlayersDeck :: Game -> EncounterCard -> GameT ()
+toAnyPlayersDeck g card = runQueueT $ choosePlayerM g.firstPlayer (EncounterCard card) (`shuffleIntoDeck` card)
 
 -- | The enemies grappling the location let go of it, for the staging area (The Thing in
 -- the Depths).
@@ -3543,6 +3565,11 @@ byCost enemies = do
 -- engaged with him, and those in the staging area that attack him as if engaged.
 attacksOf :: PlayerId -> GameT [EnemyId]
 attacksOf pid = byCost . ordNub =<< (<>) <$> select (EnemyEngagedWith $ PlayerWithId pid) <*> attacksAsIfEngaged pid
+
+-- | The enemies the players may engage from the staging area: those there, not one only
+-- considered to be, as Tide-runner engaged or in the Stormcaller's area.
+engageableFromStaging :: GameT [EnemyId]
+engageableFromStaging = filterM (fmap ((== StagingArea) . (.placement)) . getEnemy) =<< select EnemyInStagingArea
 
 -- | The enemies in the staging area that attack the player as if engaged, as Snow-Giant.
 attacksAsIfEngaged :: PlayerId -> GameT [EnemyId]
@@ -3864,7 +3891,7 @@ payFor g pid card fromHand windows host discount = do
             questionLabel (ikey "label.payFromAlly") pid
               $ [ targetLabel
                     aid
-                    [ RemoveTokens (PlayerSource pid) (toTarget aid) Resource k
+                    [ SpendResourcesFrom pid [(toTarget aid, k)]
                     , ReduceActiveCost costId k
                     , PayCost costId
                     ]

@@ -96,8 +96,8 @@ instance RunMessage FlightOfTheStormcaller where
     -- Sahír's Escort in the Stormcaller's area adds its threat too
     DiscardedTopOfEncounterDeck ScenarioSource ScenarioTarget discarded -> do
       stormcallers <- selectStormcaller
-      escorts <- filter ((== StormcallerArea) . (.placement)) <$> (traverse getEnemy =<< select (EnemyWithCardCode $ toCardCode Enemies.sahirsEscort))
-      threat <- sum <$> traverse getEnemyThreat (stormcallers <> map toId escorts)
+      escorts <- select (EnemyWithCardCode (toCardCode Enemies.sahirsEscort) <> EnemyInStormcallerArea)
+      threat <- sum <$> traverse getEnemyThreat (stormcallers <> escorts)
       placeStormcallerProgress $ threat + sum (mapMaybe (cdThreat . toCardDef) discarded)
       FlightOfTheStormcaller <$> runMessage msg attrs
     ScenarioSpecific "stormcaller.progress" (parseMaybe parseJSON -> Just n) -> case meta.stormcallerStage of

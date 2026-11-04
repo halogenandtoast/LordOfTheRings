@@ -4,7 +4,7 @@ module LordOfTheRings.Attachment.Runner (module X) where
 
 import LordOfTheRings.Attachment.Types as X
 import LordOfTheRings.Card (cdCardTraits, toCardDef)
-import LordOfTheRings.Classes.HasQueue (push, pushWhen)
+import LordOfTheRings.Classes.HasQueue (push, pushAll, pushWhen)
 import LordOfTheRings.Classes.RunMessage
 import LordOfTheRings.Helpers.Modifiers (getModifiers)
 import LordOfTheRings.Matcher (characterController)
@@ -40,7 +40,10 @@ instance RunMessage AttachmentAttrs where
           eligible <- notElem CannotHaveAttachments <$> getModifiers eid
           pushWhen eligible $ AttachCard attrs.id (toTarget eid)
           pure attrs
-    Exhaust (isTarget attrs -> True) -> pure $ attrs & exhaustedL .~ True
+    Exhaust (isTarget attrs -> True) -> do
+      unless attrs.attachmentExhausted $ pushAll $ doFrame msg (Exhausted $ toTarget attrs)
+      pure attrs
+    Do (Exhaust (isTarget attrs -> True)) -> pure $ attrs & exhaustedL .~ True
     Ready (isTarget attrs -> True) -> do
       -- its controller's cards may be kept from readying, as Ungoliant's Brood's
       blocked <- elem ControlledCardsCannotReady <$> getModifiers (PlayerTarget attrs.controller)

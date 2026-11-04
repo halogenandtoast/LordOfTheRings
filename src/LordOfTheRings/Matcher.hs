@@ -150,8 +150,14 @@ instance Query AllyMatcher where
   select matcher = do
     -- a captive guarded by an encounter card is a guarded objective, not an ally
     allies <- getsGame (filter (not . guardedAlly) . toList . entitiesAllies . gameEntities)
-    map toId <$> filterM (matchAlly matcher) allies
+    -- an ally that has become a hero is still found by its id, as its own text asks after it
+    asHeroes <- getsGame (filter (pins matcher . toId) . mapMaybe (.asAlly) . toList . entitiesHeroes . gameEntities)
+    map toId <$> filterM (matchAlly matcher) (allies <> asHeroes)
    where
+    pins m aid = case m of
+      AllyWithId i -> i == aid
+      AllyMatchAll ms -> any (`pins` aid) ms
+      _ -> False
     guardedAlly a = case a.placement of
       AttachedTo (CardIdTarget _) -> True
       _ -> False
@@ -188,18 +194,27 @@ matchAlly matcher ally = case matcher of
 instance Query EnemyMatcher where
   type QueryElement EnemyMatcher = EnemyId
   select matcher = do
-    -- an enemy attached to a character, as Grasping Tentacle becomes, is an attachment
+    -- an enemy attached to a character, as Grasping Tentacle becomes, is an attachment; one
+    -- grappled with a location is still an enemy (The Thing in the Depths rules)
     enemies <- getsGame (filter (not . attached . (.placement)) . toList . entitiesEnemies . gameEntities)
     map toId <$> filterM (\e -> andM [notOutOfPlay (toTarget e), matchEnemy matcher e]) enemies
    where
     attached = \case
+      AttachedTo (LocationTarget _) -> False
       AttachedTo _ -> True
       _ -> False
+
+-- | Whether the enemy is there, or considered to be, as Tide-runner off-course.
+enemyIn :: HasGame m => Placement -> Enemy -> m Bool
+enemyIn p enemy
+  | enemy.placement == p = pure True
+  | otherwise = elem (ConsideredIn p) . map modifierType . Map.findWithDefault [] (toTarget enemy) <$> getsGame gameModifiers
 
 matchEnemy :: HasGame m => EnemyMatcher -> Enemy -> m Bool
 matchEnemy matcher enemy = case matcher of
   EnemyWithId eid -> pure $ enemy.id == eid
-  EnemyInStagingArea -> pure $ enemy.placement == StagingArea
+  EnemyInStagingArea -> enemyIn StagingArea enemy
+  EnemyInStormcallerArea -> enemyIn StormcallerArea enemy
   EnemyWithTrait trait -> hasTrait trait (toTarget enemy) (toCardDef enemy)
   EnemyWithCardCode code -> pure $ toCardCode enemy == code
   EnemyWithFacedownShadow -> pure $ any ((`notElem` (toAttrs enemy).enemyShadowRevealed) . (.id)) enemy.shadowCards
@@ -217,6 +232,9 @@ matchEnemy matcher enemy = case matcher of
   EnemyNotImmuneToPlayerCards -> not <$> immuneToPlayerCards (toTarget enemy)
   EnemyWithAnyAttachment -> notNull <$> getAttachmentsOn (toTarget enemy)
   EnemyWithResources -> pure $ countTokens Resource (toAttrs enemy).enemyTokens > 0
+  EnemyGrappledWith lm -> case enemy.placement of
+    AttachedTo (LocationTarget lid) -> elem lid <$> select lm
+    _ -> pure False
   EnemyWithEngagementCostAboveThreatOf pid -> do
     mods <- map modifierType . Map.findWithDefault [] (toTarget enemy) <$> getsGame gameModifiers
     threat <- getThreat pid

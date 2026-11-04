@@ -7,6 +7,7 @@ import LordOfTheRings.Id (PlayerId)
 import LordOfTheRings.Keyword (Keyword)
 import LordOfTheRings.Matcher.Types (CardMatcher, EnemyMatcher, LocationMatcher, PlayerMatcher)
 import LordOfTheRings.Outcome (Outcome)
+import LordOfTheRings.Placement (Placement)
 import LordOfTheRings.Prelude
 import LordOfTheRings.Source
 import LordOfTheRings.Sphere
@@ -168,6 +169,9 @@ data ModifierType
     MustBeTraveledTo
   | LeavesPlayToTopOfEncounterDeck
   | ShuffledIntoEncounterDeckWhenDefeated
+  | -- | on an encounter card: as it leaves play the first player shuffles it into any
+    -- player's deck, as Recurring Nightmare reads
+    LeavesPlayToAnyPlayersDeck
   | ReturnToTopOfEncounterDeckAfterCombat
   | -- | on a location: the players cannot travel there now (its travel cost cannot be paid)
     CannotBeTraveledTo
@@ -328,6 +332,10 @@ data ModifierType
     CannotLeavePlay
   | -- | on a character or enemy: any amount of damage dealt to it is reduced to this much
     DamageReducedTo Int
+  | -- | the card is considered to be there too, wherever it is, as Tide-runner off-course is
+    -- in the staging area and the Stormcaller's area: what reads where it is reads that, but
+    -- it does not move there
+    ConsideredIn Placement
   | -- | on the game: matching enemies engaged with players add their threat to the staging
     -- area too, as Conflict at the Crossroads reads
     EngagedEnemiesAddThreat EnemyMatcher

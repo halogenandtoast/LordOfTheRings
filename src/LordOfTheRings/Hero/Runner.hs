@@ -24,6 +24,12 @@ instance RunMessage HeroAttrs where
       unless (attrs.heroPrisoner || attrs.heroInStagingArea || CannotCollectResources `elem` mods) $ push $ PlaceTokens GameSource (toTarget attrs) Resource collected
       pure attrs
     TakePrisoner hid | hid == attrs.heroId -> pure $ attrs & prisonerL .~ True
+    AttachFacedown (isTarget attrs -> True) card -> pure $ attrs & facedownL %~ (card :)
+    -- the cards facedown under it go to their owners' discard piles as it leaves play
+    Discard (isTarget attrs -> True) -> leaving
+    ReturnToHand (isTarget attrs -> True) -> leaving
+    ShuffleIntoOwnersDeck (isTarget attrs -> True) -> leaving
+    PutOnBottomOfOwnersDeck (isTarget attrs -> True) -> leaving
     RescuePrisoner hid | hid == attrs.heroId -> do
       push $ PlaceTokens GameSource (toTarget attrs) Damage 1
       pure $ attrs & prisonerL .~ False
@@ -41,6 +47,7 @@ instance RunMessage HeroAttrs where
     Exhaust (isTarget attrs -> True) -> do
       blocked <- elem CannotExhaust <$> getModifiers attrs
       exhausting (not blocked) attrs
+    Do (Exhaust (isTarget attrs -> True)) -> pure $ attrs & exhaustedL .~ True
     AttackWith (isTarget attrs -> True) -> do
       spared <- elem DoesNotExhaustToAttack <$> getModifiers attrs
       (attackingL .~ True) <$> exhausting (not spared) attrs
@@ -70,11 +77,13 @@ instance RunMessage HeroAttrs where
     RemoveTokens _ (isTarget attrs -> True) token n -> do
       pure $ attrs & tokensL %~ subtractTokens token n
     _ -> pure attrs
+   where
+    leaving = do
+      pushAll $ map PutInDiscard attrs.heroFacedown
+      pure $ attrs & facedownL .~ []
 
--- | The character exhausts, when it does, opening the window for responses to it exhausting.
+-- | The character exhausts, its When and After windows framing it.
 exhausting :: HasQueue Message m => Bool -> HeroAttrs -> m HeroAttrs
-exhausting exhausts attrs
-  | exhausts && not attrs.heroExhausted = do
-      push $ CheckWindows [mkAfter $ Exhausted (toTarget attrs)]
-      pure $ attrs & exhaustedL .~ True
-  | otherwise = pure attrs
+exhausting exhausts attrs = do
+  when (exhausts && not attrs.heroExhausted) $ pushAll $ doFrame (Exhaust $ toTarget attrs) (Exhausted $ toTarget attrs)
+  pure attrs

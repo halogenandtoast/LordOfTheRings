@@ -1753,13 +1753,17 @@ discardEventsFromHand = push . DiscardEventsFromHand
 
 -- | The player spends 1 resource, of any sphere, from a hero he controls, as "Spend 1
 -- resource from a hero you control" reads.
-spendResourceFromAHero :: (ReverseQueue m, Sourceable source, Targetable source) => PlayerId -> source -> m ()
+spendResourceFromAHero :: (ReverseQueue m, Targetable source) => PlayerId -> source -> m ()
 spendResourceFromAHero pid source = do
   heroes <- filterM (heroCanSpend <=< getHero) =<< select (HeroControlledBy (PlayerWithId pid) <> HeroWithResources)
   chooseOrRunOneM pid do
     questionLabeled "spendResourceFromAHero"
     causedBy source
-    targets heroes \h -> removeTokens source h Resource 1
+    targets heroes \h -> spendResourcesFrom pid h 1
+
+-- | The player spends resources from the pool of a character he controls, as one payment.
+spendResourcesFrom :: (ReverseQueue m, Targetable target) => PlayerId -> target -> Int -> m ()
+spendResourcesFrom pid target n = push $ SpendResourcesFrom pid [(toTarget target, n)]
 {- | The players as a group may spend resources of the sphere for what follows, the player
 asked; without enough among them, they cannot.
 -}
@@ -1863,12 +1867,15 @@ putObjectiveAllyIntoPlayUnder pid = push . PutObjectiveAllyIntoPlayUnder pid
 updateCampaignLog :: ReverseQueue m => CampaignLogUpdate -> m ()
 updateCampaignLog = push . UpdateCampaignLog
 
--- | The player card, from out of play, is shuffled into its owner's deck, as Iârion's
--- Pendant once the players choose it.
-shuffleIntoDeck :: ReverseQueue m => PlayerId -> PlayerCard -> m ()
-shuffleIntoDeck pid card = do
-  putInHand card
-  push $ ShuffleFromHandIntoOwnersDeck pid card.id
+-- | The card, from out of play, is shuffled into the player's deck, as Iârion's Pendant
+-- once the players choose it, or Recurring Nightmare.
+shuffleIntoDeck :: (ReverseQueue m, IsCard card) => PlayerId -> card -> m ()
+shuffleIntoDeck pid = push . ShuffleCardIntoDeck pid . toCard
+
+-- | The card leaves the player's hand for out of play, as Recurring Nightmare does for
+-- the staging area.
+removeFromHand :: (ReverseQueue m, HasField "id" card CardId) => PlayerId -> card -> m ()
+removeFromHand pid card = push $ RemoveFromHand pid card.id
 -- | The shadow card dealt to the enemy is shuffled into the encounter deck, as "Shadow:
 -- Shuffle Shadow Dweller back into the encounter deck" reads.
 shuffleShadowCardIntoEncounterDeck :: ReverseQueue m => EnemyId -> EncounterCard -> m ()
