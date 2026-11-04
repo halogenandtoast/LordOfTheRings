@@ -54,7 +54,7 @@ stagedLocation def = do
 
 -- | The player plays an event this round, as far as the round's count of them goes.
 playedEvent :: PlayerId -> GameT ()
-playedEvent pid = run $ CreateEffect $ Effect GameSource (PlayerTarget pid) [PlayedCardTypeThisRound EventType] UntilEndOfRound
+playedEvent pid = run $ CreateEffect $ Effect GameSource (PlayerTarget pid) [PlayedCardThisRound "event" EventType] UntilEndOfRound
 
 -- | Use every forced ability offered, one at a time, then pass the responses offered.
 resolveForced :: PlayerId -> GameT ()
@@ -488,7 +488,7 @@ spec = describe "Angmar Awakened Nightmare mode" do
 
     it "Stronghold Tower deals each player 2 damage to travel there" . nightmare theBattleOfCarnDum $ \pid -> do
       tower <- stagedLocation Locations.strongholdTower
-      getModifiers GameTarget >>= (`shouldSatisfy` elem CannotCancelShadowEffects)
+      getModifiers GameTarget >>= (`shouldSatisfy` elem ShadowCannotBeCanceled)
       run $ TravelTo tower
       eowyn <- toTarget <$> getHeroWithCode "01007"
       chooseTarget pid eowyn

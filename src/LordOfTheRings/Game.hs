@@ -1174,7 +1174,7 @@ runGameMessage msg g = case msg of
     skip <- elem NoEngagementChecks <$> getModifiers GameTarget
     order <- getPlayerOrder
     let next = seatAfter order pid
-    threat <- getThreat pid
+    threat <- getEngagementThreat pid
     candidates <- traverse (\eid -> (eid,) <$> getEngagementCost eid) =<< engageableFromStaging
     -- an enemy can be spared engagement checks against it, as a trap does
     checked <- filterM (fmap (\ms -> NoEngagementChecks `notElem` ms && CannotEngagePlayer pid `notElem` ms) . getModifiers . fst) candidates
@@ -1194,10 +1194,9 @@ runGameMessage msg g = case msg of
     mods <- getModifiers eid
     when (NoEngagementChecks `notElem` (gameMods <> mods)) do
       cost <- getEngagementCost eid
-      -- its cost against each player, as for an engagement check, as Captive Villager's
-      -- controller is considered to have more threat
+      -- its cost against each player, as for an engagement check
       let costFor p = cost + sum [n | EngagementCostAgainst p' n <- mods, p' == p]
-      players <- traverse (\p -> (p,) <$> getThreat p) =<< getPlayerOrder
+      players <- traverse (\p -> (p,) <$> getEngagementThreat p) =<< getPlayerOrder
       for_ (find (\(p, threat) -> threat >= costFor p && CannotEngagePlayer p `notElem` mods) players) \(p, _) -> push (EngageEnemy p eid)
     pure g
   EngageEnemy pid eid -> do
@@ -2181,10 +2180,6 @@ runGameMessage msg g = case msg of
       & damageDealtL %~ filter (\(s, _, _) -> case s of EnemyAttackSource _ -> True; _ -> False)
   PlayAlly pid card -> do
     thisAlly <- entering =<< newAlly pid card
-    limited' <- elem OneAllyPerRound <$> getModifiers GameTarget
-    pushWhen limited'
-      $ CreateEffect
-      $ Effect GameSource GameTarget [AllyPlayedThisRound] UntilEndOfRound
     push $ enteredPlayThisRound thisAlly
     push $ allyEntersPlay pid thisAlly
     pure

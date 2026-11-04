@@ -20,7 +20,7 @@ instance HasModifiersFor LostSoulOfLorien where
   getModifiersFor (LostSoulOfLorien a) = case a.placement of
     AttachedTo host -> do
       modifySelf a [GainTrait Condition]
-      modified a host [WillpowerModifier (-99)]
+      modified a host [WillpowerReducedToZero]
     _ -> modifySelf a [StaysInPlayWhenDefeated]
 
 {- | Forced: After Lost Soul of Lórien is destroyed, attach it to a hero with 1 or more

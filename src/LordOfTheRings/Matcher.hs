@@ -15,6 +15,7 @@ import LordOfTheRings.Enemy.Types hiding (enemy)
 import LordOfTheRings.Entities
 import LordOfTheRings.Game.Base
 import LordOfTheRings.Heading as X
+import LordOfTheRings.Helpers.Modifiers (cardsPlayedThisRound)
 import LordOfTheRings.Hero.Types hiding (hero)
 import LordOfTheRings.Id
 import LordOfTheRings.Keyword (Keyword (..))
@@ -323,23 +324,18 @@ getDefendersAgainst :: HasGame m => EnemyId -> m [Target]
 getDefendersAgainst eid = getsGame \g ->
   [t | (t, ms) <- Map.toList (gameModifiers g), any (\m -> m.modifierType == Defending && m.modifierSource == EnemyAttackSource eid) ms]
 
--- | A printed trait, or one a modifier grants.
+-- | A printed trait, or one a modifier grants, unless it lost it, as Shot from the Sky
+-- takes the Eagle trait.
 hasTrait :: HasGame m => Trait -> Target -> CardDef -> m Bool
-hasTrait trait target def = do
-  mods <- map modifierType . Map.findWithDefault [] target <$> getsGame gameModifiers
-  -- one it lost, as Shot from the Sky takes the Eagle trait, it no longer has
-  pure $ LoseTrait trait `notElem` mods && (trait `member` cdCardTraits def || GainTrait trait `elem` mods)
+hasTrait trait target def = member trait <$> getTraits target def
 
 -- | The character's traits: its printed ones and those a modifier grants, less those it
 -- lost.
 characterTraits :: HasGame m => Target -> m (Set Trait)
-characterTraits target = do
-  printed <- case target of
-    HeroTarget hid -> cdCardTraits . toCardDef <$> getHero hid
-    AllyTarget aid -> cdCardTraits . toCardDef <$> getAlly aid
-    _ -> pure mempty
-  mods <- map modifierType . Map.findWithDefault [] target <$> getsGame gameModifiers
-  pure $ (printed <> setFromList [t | GainTrait t <- mods]) `difference` setFromList [t | LoseTrait t <- mods]
+characterTraits target = case target of
+  HeroTarget hid -> getTraits target . toCardDef =<< getHero hid
+  AllyTarget aid -> getTraits target . toCardDef =<< getAlly aid
+  _ -> pure mempty
 
 {- | Whether the hero's resources can pay for a card or cost of the sphere: its own
 sphere's, one a gained resource icon gives it, or any while the game lets resources be
@@ -405,7 +401,8 @@ affordableAlliesInHand pid sphere reduction minimumCost = do
       cost c = maybe 0 costAsResources c.cost
       reducedCost c = min (cost c) $ max minimumCost (cost c - reduction)
   entryBarred <- getsGame allyEntryBarred
-  if (OneAllyPerRound `elem` gameMods && AllyPlayedThisRound `elem` gameMods) || entryBarred
+  allyPlayed <- any (\(_, _, t) -> t == AllyType) <$> cardsPlayedThisRound
+  if (OneAllyPerRound `elem` gameMods && allyPlayed) || entryBarred
     then pure []
     else filterM passesUnique
       [ c
@@ -542,6 +539,15 @@ getThreat pid = do
   threat <- (.threat) <$> getPlayer pid
   mods <- map modifierType . Map.findWithDefault [] (PlayerTarget pid) <$> getsGame gameModifiers
   pure $ foldr min threat [n | ThreatCountsAsAtMost n <- mods]
+
+-- | The player's threat as an engagement check reads it, an enemy's in the discard pile
+-- too: more by what he is considered to have for engagement checks, as Vicious Trackers
+-- reads.
+getEngagementThreat :: HasGame m => PlayerId -> m Int
+getEngagementThreat pid = do
+  threat <- getThreat pid
+  mods <- map modifierType . Map.findWithDefault [] (PlayerTarget pid) <$> getsGame gameModifiers
+  pure $ threat + sum [n | ThreatForEngagementChecks n <- mods]
 
 -- | The player whose set-aside cards hold the card, as a Ranger of the North shuffled
 -- into the encounter deck stays its owner's.

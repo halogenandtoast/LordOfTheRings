@@ -19,7 +19,7 @@ import LordOfTheRings.Classes.HasQueue
 import LordOfTheRings.Effect
 import LordOfTheRings.Entities (entitiesLocations, entitiesQuests)
 import LordOfTheRings.Game.Base (gameEntities, gamePhase)
-import LordOfTheRings.Helpers.Modifiers (getModifiers, immuneToSource)
+import LordOfTheRings.Helpers.Modifiers (cardsPlayedThisRound, getModifiers, immuneToSource)
 import LordOfTheRings.Helpers.Staging (getLocationQuestPoints)
 import LordOfTheRings.Ally.Types (allyCardId)
 import LordOfTheRings.Hero.Types (heroCardId)
@@ -1440,10 +1440,10 @@ Silent reads: the event, already in its owner's discard pile, goes back to his h
 -}
 returnIfFirstCopyThisRound :: ReverseQueue m => PlayerId -> PlayerCard -> m ()
 returnIfFirstCopyThisRound pid card = do
-  played <- elem (PlayedThisRound $ toCardCode card) <$> getModifiers (PlayerTarget pid)
+  -- this play is already among those marked
+  copies <- length . filter (\(p, c, _) -> p == pid && c == toCardCode card) <$> cardsPlayedThisRound
   threat <- (.threat) <$> getPlayer pid
-  roundModifier (CardIdSource card.id) (PlayerTarget pid) (PlayedThisRound $ toCardCode card)
-  when (not played && threat <= 20) $ returnFromDiscardToHand pid card.id
+  when (copies <= 1 && threat <= 20) $ returnFromDiscardToHand pid card.id
 
 {- | The player looks at the top card of the encounter deck and, if it is of the type, may
 discard it, as Ithilien Lookout reads for an enemy.

@@ -28,6 +28,9 @@ data ModifierType
   | -- | on an enemy: its engagement cost is this much higher as the player makes an
     -- engagement check against it, as Hunting Pack's is lower
     EngagementCostAgainst PlayerId Int
+  | -- | on a player: he is considered to have this much more threat for engagement checks
+    -- only, as Vicious Trackers reads; read with 'getEngagementThreat'
+    ThreatForEngagementChecks Int
   | GainTrait Trait
   | GainResourceIcon Sphere
   | ReturnToHandAtEndOfPhase
@@ -102,9 +105,9 @@ data ModifierType
   | SkipStagingStep
   | -- | on the game: the players, as a group, cannot play more than 1 ally each round
     OneAllyPerRound
-  | AllyPlayedThisRound
-  | -- | on the game: a copy of the card was played this round
-    PlayedThisRound CardCode
+  | -- | on the game or a card: a once-per-round effect keyed by the code was used, any
+    -- copy counting, as Steward of Orthanc reads. A card played is 'PlayedCardThisRound'
+    UsedThisRound CardCode
   | -- | on an ally: it entered play this round
     EnteredPlayThisRound
   | -- | damage an attack deals past the character's remaining hit points raises threat
@@ -279,7 +282,9 @@ data ModifierType
   | -- | on an encounter card: its When Revealed effect cannot be canceled; on the game:
     -- no encounter card's can be
     WhenRevealedCannotBeCanceled
-  | -- | on a shadow card: its shadow effect cannot be canceled
+  | -- | on a shadow card: its shadow effect cannot be canceled, as Deadly Waters makes a
+    -- treachery's; on the game: no shadow card's can be, as Stronghold Tower reads. A card
+    -- whose own text says so has 'cdShadowCannotBeCanceled', as Blazing Grip
     ShadowCannotBeCanceled
   | -- | on the game: matching cards cost this much more to play from hand
     IncreaseCost CardMatcher Int
@@ -465,14 +470,12 @@ data ModifierType
   | -- | on a hero: player card effects cannot give it resources, as No End in Sight reads;
     -- encounter card effects still may
     CannotGainResourcesFromPlayerCardEffects
-  | -- | on a player: he played a card this round, from wherever, as A Forgotten Land counts
-    PlayedACardThisRound
+  | -- | on a player: he played the card this round, from wherever, paid for or not; one
+    -- per card played. Read them with 'cardsPlayedThisRound'
+    PlayedCardThisRound CardCode CardType
   | -- | on a player: he played a card this phase, as "the first card each player plays each
     -- phase" counts (The Long Arm of Mordor)
     PlayedACardThisPhase
-  | -- | on a player: he played a card of the type this round, from wherever, as The Storm
-    -- Comes reads "the first ally played by each player each round"
-    PlayedCardTypeThisRound CardType
   | -- | on a player: they draw this many more cards in the resource phase, in the same
     -- draw, as Bilbo Baggins reads
     AdditionalResourcePhaseDraws Int
@@ -694,16 +697,6 @@ data ModifierType
   | -- | on the game: no more than 1 ally can enter play each round, however it enters, as
     -- Corsair Waters reads
     OneAllyEntersPlayPerRound
-  | -- | on the game: no player card may cancel a When Revealed effect, as Decrepit City
-    -- reads
-    CannotCancelWhenRevealedEffects
-  | -- | on the game: no player card may cancel a shadow effect, as Stronghold Tower and
-    -- Dark and Stormy read
-    CannotCancelShadowEffects
-  | -- | on a player: he has played an event this round
-    PlayedEventThisRound
-  | -- | on the game: the players have played an ally this round
-    PlayedAnAllyThisRound
   | -- | on the game: the matching active location adds its threat to the staging area, as
     -- Flooded Ruins reads
     ActiveLocationsAddThreat LocationMatcher

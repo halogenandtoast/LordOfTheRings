@@ -12,8 +12,8 @@ import LordOfTheRings.Objective.CardDefs qualified as Objectives
 import LordOfTheRings.Objective.Types (objectiveTokens)
 import LordOfTheRings.Outcome (Outcome (Won))
 import LordOfTheRings.Quest.CardDefs qualified as Quests
-import LordOfTheRings.Scenario (raidOnTheGreyHavens, templeOfTheDeceived, theCityOfCorsairs, theFateOfNumenor, theThingInTheDepths, voyageAcrossBelegaer)
-import LordOfTheRings.Scenario.Types (GameMode (NightmareMode), scenarioCampaignCardFlipped, scenarioMode, victoryDisplayL)
+import LordOfTheRings.Scenario (flightOfTheStormcaller, raidOnTheGreyHavens, templeOfTheDeceived, theCityOfCorsairs, theFateOfNumenor, theThingInTheDepths, voyageAcrossBelegaer)
+import LordOfTheRings.Scenario.Types (GameMode (NightmareMode), scenarioCampaignCardFlipped, scenarioMode, scenarioSetAside, victoryDisplayL)
 import LordOfTheRings.Window (WindowType (..), mkAfter)
 import Data.Aeson.Types (parseMaybe)
 import LordOfTheRings.Treachery.CardDefs qualified as Treacheries
@@ -181,6 +181,18 @@ spec = describe "Dream-chaser campaign" do
       hand <- map toCardCode . (.hand) <$> getPlayer pid
       hand `shouldSatisfy` elem (toCardCode Events.comeTogether)
       recorded ChosenDuringSetup <$> getCampaignLog `shouldReturn` [toCardCode Events.comeTogether]
+
+  describe "Campaign Mode only sides" do
+    it "sets aside the Stormcaller's Campaign Mode only side" . campaignTestIn flightOfTheStormcaller seated starterDeck $ \_ -> do
+      run $ DoStep 1 Setup
+      getsGame (map toCardCode . scenarioSetAside . toAttrs . (.scenario)) `shouldReturn` [toCardCode Enemies.stormcallerCampaign]
+
+    it "plays Temple Guardian's Campaign Mode only side" . campaignTestIn templeOfTheDeceived seated starterDeck $ \_ -> do
+      run $ DoStep 1 Setup
+      deck <- encounterDeckCodes
+      enemies <- getsGame (map toCardCode . toList . (.entities.enemies))
+      filter (`elem` map toCardCode [Enemies.templeGuardian, Enemies.templeGuardianCampaign]) (deck <> enemies)
+        `shouldBe` [toCardCode Enemies.templeGuardianCampaign]
 
   describe "Temple of the Deceived" do
     let secrets = record Secrets [toCardCode Allies.starla, toCardCode Enemies.recurringNightmare, toCardCode Enemies.recurringNightmare] seated

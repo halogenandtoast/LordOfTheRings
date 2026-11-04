@@ -3,6 +3,7 @@
 module LordOfTheRings.Scenario.Scenarios.TempleOfTheDeceived.Helpers (
   getGateKey,
   gateKeyReady,
+  templeGuardianSide,
   templeGuardianReturns,
 ) where
 
@@ -17,6 +18,8 @@ import LordOfTheRings.Objective.CardDefs qualified as Objectives
 import LordOfTheRings.Objective.Types (ObjectiveAttrs (..))
 import LordOfTheRings.Placement (Placement (AttachedTo))
 import LordOfTheRings.Prelude
+import LordOfTheRings.Card.CardDef (CardDef)
+import LordOfTheRings.Helpers.Campaign (campaignSide)
 import LordOfTheRings.Scenario.Types (ScenarioAttrs (..))
 import LordOfTheRings.Target
 
@@ -31,11 +34,16 @@ gateKeyReady = maybe False usable <$> getGateKey
     AttachedTo (HeroTarget _) -> True
     _ -> False
 
+-- | The Temple Guardian the game plays: in campaign mode its Campaign Mode only side.
+templeGuardianSide :: HasGame m => m CardDef
+templeGuardianSide = campaignSide Enemies.templeGuardian Enemies.templeGuardianCampaign
+
 -- | Put Temple Guardian into play from the victory display, engaged with the player with
 -- the highest threat.
 templeGuardianReturns :: (ReverseQueue m, Targetable source) => source -> m ()
 templeGuardianReturns source = do
   victory <- getsGame (scenarioVictoryDisplay . toAttrs . (.scenario))
-  for_ [c | EncounterCard c <- victory, toCardCode c == toCardCode Enemies.templeGuardian] \card -> do
+  guardian <- templeGuardianSide
+  for_ [c | EncounterCard c <- victory, toCardCode c == toCardCode guardian] \card -> do
     removeFromVictoryDisplay (EncounterCard card)
     withHighestThreatPlayer source \pid -> putEnemyIntoPlayEngaged pid card

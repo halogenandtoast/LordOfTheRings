@@ -8,7 +8,7 @@ import LordOfTheRings.Enemy (EnemyAttrs (..))
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Event.CardDefs qualified as Events
 import LordOfTheRings.Helpers.Character (getAttack, getWillpower)
-import LordOfTheRings.Helpers.Modifiers (getModifiers)
+import LordOfTheRings.Helpers.Modifiers (cardsPlayedThisRound, getModifiers)
 import LordOfTheRings.Hero.CardDefs qualified as Heroes
 import LordOfTheRings.Modifier (ModifierType (..))
 import LordOfTheRings.Phase
@@ -146,7 +146,7 @@ spec = describe "Elves of Lórien" do
       passResponses pid
       alliesInPlay `shouldReturn` [toCardCode Allies.greenwoodArcher]
       -- the ally was not played, so another may still be
-      getModifiers GameTarget >>= (`shouldSatisfy` notElem AllyPlayedThisRound)
+      cardsPlayedThisRound `shouldReturn` []
 
     it "puts an attachment into play on a host its player chooses" . elvesTest $ \pid -> do
       elrond <- elrondInPlay pid

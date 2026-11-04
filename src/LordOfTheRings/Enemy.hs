@@ -659,6 +659,7 @@ allEnemys =
         , SomeEnemyCard captainSahir
         , SomeEnemyCard naasiyah
         , SomeEnemyCard stormcaller
+        , SomeEnemyCard stormcallerCampaign
         , SomeEnemyCard sahirsEscort
         , SomeEnemyCard swiftRaider
         , SomeEnemyCard corsairSkiff
@@ -673,6 +674,7 @@ allEnemys =
         , SomeEnemyCard seaScorpion
         , SomeEnemyCard caveEel
         , SomeEnemyCard templeGuardian
+        , SomeEnemyCard templeGuardianCampaign
         , SomeEnemyCard faithlessDesecrator
         , SomeEnemyCard islandWatcher
         , SomeEnemyCard profaneDead

@@ -13,7 +13,7 @@ import LordOfTheRings.Entities
 import LordOfTheRings.Game.Base
 import LordOfTheRings.Campaign (recorded)
 import LordOfTheRings.Helpers.Campaign (getCampaignLog)
-import LordOfTheRings.Helpers.Modifiers (getModifiers)
+import LordOfTheRings.Helpers.Modifiers (cardsPlayedThisRound, getModifiers)
 import LordOfTheRings.Helpers.Staging (getLocationQuestPoints)
 import LordOfTheRings.Location.Grid (distance)
 import LordOfTheRings.Id
@@ -223,13 +223,13 @@ windowMatchesM matcher w@(Window timing wType) = case (matcher, wType) of
 
 {- | Whether this shadow card's effect can be canceled: not one whose own text says it
 cannot, as Blazing Grip's, nor one a card has made so ('ShadowCannotBeCanceled', as Lost in
-the Swanfleet's Deadly Waters does a treachery's). An effect barring every shadow cancel, as
-Dark and Stormy's, is the 'shadowEffectsCancelable' criterion's.
+the Swanfleet's Deadly Waters does a treachery's), nor any while the game bars them all, as
+Dark and Stormy does.
 -}
 shadowCardCancelable :: HasGame m => CardId -> m Bool
 shadowCardCancelable cid = do
   shadows <- getsGame (concatMap (.shadowCards) . toList . (.enemies) . gameEntities)
-  barred <- elem ShadowCannotBeCanceled <$> getModifiers (CardIdTarget cid)
+  barred <- elem ShadowCannotBeCanceled . concat <$> traverse getModifiers [CardIdTarget cid, GameTarget]
   pure $ not barred && not (any (\c -> ecId c == cid && cdShadowCannotBeCanceled (toCardDef c)) shadows)
 
 {- | Whether an ability's limit leaves it a use: its controller's uses for a player
@@ -314,6 +314,7 @@ passesCriteria = \case
   NotCriterion c -> not <$> passesCriteria c
   TargetHasModifier t m -> elem m <$> getModifiers t
   TargetLacksModifier t m -> notElem m <$> getModifiers t
+  CardPlayedThisRound code -> any (\(_, c, _) -> c == code) <$> cardsPlayedThisRound
   CharactersAtLeast n heroes allies -> (>= n) . length <$> selectCharacters heroes allies
   DistinctCharacters characterPairs -> distinct [] <$> traverse (uncurry selectCharacters) characterPairs
   CardInVictoryDisplay m -> getsGame (any (cardMatches m) . (.victoryDisplay) . toAttrs . gameScenario)

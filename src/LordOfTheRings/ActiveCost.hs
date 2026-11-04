@@ -11,9 +11,9 @@ import LordOfTheRings.Json
 import LordOfTheRings.Message
 import LordOfTheRings.Prelude
 import LordOfTheRings.Effect (Effect (..), EffectDuration (UntilEndOfPhase, UntilEndOfRound))
-import LordOfTheRings.Modifier (ModifierType (PlayedACardThisPhase, PlayedACardThisRound, PlayedAnAllyThisRound, PlayedCardTypeThisRound, PlayedEventThisRound))
+import LordOfTheRings.Modifier (ModifierType (PlayedACardThisPhase, PlayedCardThisRound))
 import LordOfTheRings.Source (Source (GameSource, PlayerSource))
-import LordOfTheRings.Target (Target (GameTarget, PlayerTarget), toTarget)
+import LordOfTheRings.Target (Target (PlayerTarget), toTarget)
 import LordOfTheRings.Token (Token (Resource))
 import LordOfTheRings.Window
 
@@ -98,8 +98,7 @@ instance RunMessage ActiveCost where
     PaidCost acId | acId == ac.activeCostId -> do
       case ac.activeCostCard of
         PlayerCard card -> do
-          push $ CreateEffect $ Effect GameSource (PlayerTarget ac.activeCostPlayer) [PlayedACardThisRound, PlayedCardTypeThisRound (cdCardType $ toCardDef card)] UntilEndOfRound
-          push $ CreateEffect $ Effect GameSource (PlayerTarget ac.activeCostPlayer) [PlayedACardThisPhase] UntilEndOfPhase
+          pushAll $ markPlayed ac.activeCostPlayer card
           pushAll $ maybe (playCard ac.activeCostPlayer card ac.activeCostWindows) (pure . PlayAttachmentOn ac.activeCostPlayer card) ac.activeCostHost
           push
             $ CheckWindows
@@ -112,15 +111,22 @@ instance RunMessage ActiveCost where
       pure ac
     _ -> pure ac
 
+-- | Marks the card as played by the player this round and this phase, however it was
+-- played: paid for, or at no cost.
+markPlayed :: PlayerId -> PlayerCard -> [Message]
+markPlayed pid card =
+  [ CreateEffect $ Effect GameSource (PlayerTarget pid) [PlayedCardThisRound (toCardCode card) (cdCardType $ toCardDef card)] UntilEndOfRound
+  , CreateEffect $ Effect GameSource (PlayerTarget pid) [PlayedACardThisPhase] UntilEndOfPhase
+  ]
+
 -- | A card, its cost paid, played into play or resolved.
 playCard :: PlayerId -> PlayerCard -> [Window] -> [Message]
 playCard pid card windows = case cdCardType (toCardDef card) of
-  AllyType -> [CreateEffect $ Effect GameSource GameTarget [PlayedAnAllyThisRound] UntilEndOfRound, PlayAlly pid card]
+  AllyType -> [PlayAlly pid card]
   AttachmentType -> [PlayAttachment pid card]
   -- the When window comes first, for an effect that cancels it, as Counter-Spell's
   EventType ->
     [ CheckWindows [mkWhen $ PlayingEvent pid card.id]
-    , CreateEffect $ Effect GameSource (PlayerTarget pid) [PlayedEventThisRound] UntilEndOfRound
     , PlayEvent pid card windows
     ]
   PlayerSideQuestType -> [PutSideQuestIntoPlay pid card]

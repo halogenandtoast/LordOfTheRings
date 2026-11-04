@@ -2,6 +2,7 @@
 -- campaign's scalable and upgradable cards do.
 module LordOfTheRings.Helpers.Campaign (
   getCampaignLog,
+  campaignSide,
   campaignLevel,
   campaignUpgraded,
   campaignPartNumber,
@@ -11,6 +12,7 @@ module LordOfTheRings.Helpers.Campaign (
 ) where
 
 import LordOfTheRings.Campaign
+import LordOfTheRings.Card.CardDef (CardDef)
 import LordOfTheRings.Card.Code (CardCode, HasCardCode (..))
 import LordOfTheRings.Classes.Entity (toAttrs)
 import LordOfTheRings.Classes.HasGame (HasGame, getsGame)
@@ -21,6 +23,11 @@ import LordOfTheRings.Scenario.Types (ScenarioAttrs, scenarioCampaign, scenarioI
 
 getCampaignLog :: HasGame m => m (Maybe CampaignLog)
 getCampaignLog = getsGame (scenarioCampaign . toAttrs . gameScenario)
+
+-- | The side of a card the game plays: in campaign mode its Campaign Mode only side, as
+-- the Dream-chaser campaign turns the Stormcaller over to it.
+campaignSide :: HasGame m => CardDef -> CardDef -> m CardDef
+campaignSide standard side = maybe standard (const side) <$> getCampaignLog
 
 -- | The card's level, 1 outside campaign mode.
 campaignLevel :: (HasGame m, HasCardCode c) => c -> m Int

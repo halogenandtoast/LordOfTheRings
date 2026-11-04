@@ -8,6 +8,8 @@ Stormcaller returns to its area as it advances.
 -}
 module LordOfTheRings.Scenario.Scenarios.FlightOfTheStormcaller.Helpers (
   Meta (..),
+  stormcallerSide,
+  selectStormcaller,
   getMeta,
   getStormcallerMeta,
   getStormcallerStage,
@@ -20,7 +22,7 @@ module LordOfTheRings.Scenario.Scenarios.FlightOfTheStormcaller.Helpers (
 ) where
 
 import Data.Aeson.Types (parseMaybe)
-import LordOfTheRings.Card (EncounterCard, cdStage, toCardDef)
+import LordOfTheRings.Card (EncounterCard, cdStage, toCardCode, toCardDef)
 import LordOfTheRings.Classes.Entity (toAttrs)
 import LordOfTheRings.Classes.HasGame
 import LordOfTheRings.Classes.HasQueue (push)
@@ -28,6 +30,11 @@ import LordOfTheRings.Message
 import LordOfTheRings.Message.Lifted (ReverseQueue, removeTokens)
 import LordOfTheRings.Placement (Placement (StormcallerArea))
 import LordOfTheRings.Prelude
+import LordOfTheRings.Card.CardDef (CardDef)
+import LordOfTheRings.Enemy.CardDefs qualified as Enemies
+import LordOfTheRings.Helpers.Campaign (campaignSide)
+import LordOfTheRings.Id (EnemyId)
+import LordOfTheRings.Matcher (EnemyMatcher (EnemyWithCardCode), select)
 import LordOfTheRings.Quest.Types (isSideQuest)
 import LordOfTheRings.Scenario.Types (ScenarioAttrs (..))
 import LordOfTheRings.Source
@@ -51,6 +58,14 @@ getStormcallerMeta = getsGame (getMeta . toAttrs . (.scenario))
 
 stageOf :: EncounterCard -> Int
 stageOf = fromMaybe 0 . cdStage . toCardDef
+
+-- | The Stormcaller the game plays: in campaign mode its Campaign Mode only side.
+stormcallerSide :: HasGame m => m CardDef
+stormcallerSide = campaignSide Enemies.stormcaller Enemies.stormcallerCampaign
+
+-- | The Stormcaller in play.
+selectStormcaller :: HasGame m => m [EnemyId]
+selectStormcaller = select . EnemyWithCardCode . toCardCode =<< stormcallerSide
 
 -- | The Stormcaller's stage number, 0 before its area is prepared.
 getStormcallerStage :: HasGame m => m Int

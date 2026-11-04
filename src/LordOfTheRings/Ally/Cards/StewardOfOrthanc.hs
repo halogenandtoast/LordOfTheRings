@@ -14,7 +14,7 @@ stewardOfOrthanc = ally StewardOfOrthanc Cards.stewardOfOrthanc
 
 -- | Marks the player who triggered a Steward of Orthanc this round, any copy of it.
 triggered :: ModifierType
-triggered = PlayedThisRound (toCardCode Cards.stewardOfOrthanc)
+triggered = UsedThisRound (toCardCode Cards.stewardOfOrthanc)
 
 -- | Response: When you play an event, give it Doomed 1 to draw a card. You cannot trigger
 -- this ability if you have already triggered the ability of a Steward of Orthanc this

@@ -2,10 +2,11 @@ module LordOfTheRings.Criteria (module LordOfTheRings.Criteria) where
 
 import LordOfTheRings.Campaign (CampaignLogKey)
 import LordOfTheRings.Card.CardType
+import LordOfTheRings.Card.Code (CardCode)
 import LordOfTheRings.Heading (HeadingMatcher)
 import LordOfTheRings.Id
 import LordOfTheRings.Matcher.Types
-import LordOfTheRings.Modifier (ModifierType (CannotCancelShadowEffects, CannotCancelWhenRevealedEffects))
+import LordOfTheRings.Modifier (ModifierType (ShadowCannotBeCanceled, WhenRevealedCannotBeCanceled))
 import LordOfTheRings.Target (Target (GameTarget))
 import LordOfTheRings.Phase (Phase)
 import LordOfTheRings.Prelude
@@ -41,6 +42,9 @@ data Criterion
     EncounterEffectsCancelable
   | -- | the treachery card being revealed is the first revealed this round
     FirstTreacheryRevealedThisRound
+  | -- | a player played a copy of the card this round, as "Only 1 copy of Tighten Our Belts
+    -- can be played by the players each round" reads
+    CardPlayedThisRound CardCode
   | NotCriterion Criterion
   | -- | the target has, or lacks, the modifier
     TargetHasModifier Target ModifierType
@@ -141,8 +145,8 @@ controlsAlly pid m = AllyExists (AllyControlledBy (PlayerWithId pid) <> m)
 
 -- | Nothing stops a player card cancelling a shadow effect.
 shadowEffectsCancelable :: Criterion
-shadowEffectsCancelable = EncounterEffectsCancelable <> TargetLacksModifier GameTarget CannotCancelShadowEffects
+shadowEffectsCancelable = EncounterEffectsCancelable <> TargetLacksModifier GameTarget ShadowCannotBeCanceled
 
 -- | Nothing stops a player card cancelling a When Revealed effect.
 whenRevealedCancelable :: Criterion
-whenRevealedCancelable = EncounterEffectsCancelable <> TargetLacksModifier GameTarget CannotCancelWhenRevealedEffects
+whenRevealedCancelable = EncounterEffectsCancelable <> TargetLacksModifier GameTarget WhenRevealedCannotBeCanceled

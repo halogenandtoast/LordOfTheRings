@@ -3,7 +3,7 @@ module LordOfTheRings.Helpers.Modifiers (module LordOfTheRings.Helpers.Modifiers
 import Control.Monad.Writer.Strict (execWriterT)
 import Data.Map.Monoidal.Strict (MonoidalMap (..))
 import Data.Map.Strict qualified as Map
-import LordOfTheRings.Card (Card, CardType (AllyType), cdCardTraits, toCardCode, toCardDef)
+import LordOfTheRings.Card (Card, CardCode, CardType (AllyType), cdCardTraits, toCardCode, toCardDef)
 import LordOfTheRings.Classes.HasGame
 import LordOfTheRings.Classes.HasModifiersFor
 import LordOfTheRings.Ally.Types (allyCardId)
@@ -142,6 +142,11 @@ doesNotExhaustToCommit target = elem DoesNotExhaustToCommit <$> getModifiers tar
 getModifiers :: (HasGame m, Targetable a) => a -> m [ModifierType]
 getModifiers a = map modifierType . Map.findWithDefault [] (toTarget a) <$> getsGame gameModifiers
 
+-- | The cards each player played this round, from wherever, one entry per card played.
+-- Read from the effects, so it serves a 'getModifiersFor' as the modifiers are gathered.
+cardsPlayedThisRound :: (HasGame m) => m [(PlayerId, CardCode, CardType)]
+cardsPlayedThisRound = getsGame \g -> [(pid, code, t) | Effect _ (PlayerTarget pid) ms _ <- gameEffects g, PlayedCardThisRound code t <- ms]
+
 -- | What forbids the player playing the card: a 'CannotPlay' on the game or on them, or
 -- a one-ally-per-round rule once an ally has been played, kept whole so the board can
 -- name the source.
@@ -150,7 +155,7 @@ playProhibitions pid c = do
   mods <- getsGame gameModifiers
   entryBarred <- getsGame allyEntryBarred
   let on t = Map.findWithDefault [] t mods
-      allyPlayed = AllyPlayedThisRound `elem` map modifierType (on GameTarget)
+  allyPlayed <- any (\(_, _, t) -> t == AllyType) <$> cardsPlayedThisRound
   pure
     [ m
     | m <- on GameTarget <> on (PlayerTarget pid)

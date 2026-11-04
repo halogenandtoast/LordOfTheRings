@@ -17,13 +17,12 @@ mendorsSupport =
       & criteriaL
       .~ Criteria
         [ exists (AllyWithTitle "Mendor")
-        , TargetLacksModifier GameTarget (PlayedThisRound $ cdCardCode Cards.mendorsSupport)
+        , NotCriterion (CardPlayedThisRound $ cdCardCode Cards.mendorsSupport)
         ]
 
 instance RunMessage MendorsSupport where
   runMessage msg e@(MendorsSupport attrs) = case msg of
     PlayEvent _ card _ | card.id == toId attrs -> do
-      roundModifier attrs GameTarget (PlayedThisRound $ cdCardCode Cards.mendorsSupport)
       mendors <- select (AllyWithTitle "Mendor")
       for_ mendors \m -> roundModifiers attrs m [WillpowerModifier 2, AttackModifier 2, DefenseModifier 2]
       pure e

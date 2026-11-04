@@ -43,7 +43,7 @@ instance HasAbilities TheBlackSword where
     ]
 
 firstAttack :: ModifierType
-firstAttack = PlayedThisRound (CardCode "black-sword-attack")
+firstAttack = UsedThisRound (CardCode "black-sword-attack")
 
 -- | Forced: After Captain Sahír attacks for the first time each round, he makes an attack
 -- against each other player (in turn order).

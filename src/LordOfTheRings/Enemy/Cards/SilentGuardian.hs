@@ -3,7 +3,7 @@ module LordOfTheRings.Enemy.Cards.SilentGuardian (silentGuardian) where
 import LordOfTheRings.Card (Card (PlayerCard), CardType (EventType), toCardCode)
 import LordOfTheRings.Enemy.CardDefs qualified as Cards
 import LordOfTheRings.Enemy.Import.Lifted
-import LordOfTheRings.Helpers.Modifiers (getModifiers)
+import LordOfTheRings.Helpers.Modifiers (cardsPlayedThisRound)
 import LordOfTheRings.Placement (Placement (EngagedWith))
 
 newtype SilentGuardian = SilentGuardian EnemyAttrs
@@ -21,7 +21,7 @@ instance RunMessage SilentGuardian where
   runMessage msg (SilentGuardian attrs) = case msg of
     CheckWindows ws | EngagedWith pid <- attrs.placement -> do
       player <- getPlayer pid
-      played <- length . filter (== PlayedCardTypeThisRound EventType) <$> getModifiers (PlayerTarget pid)
+      played <- length . filter (\(p, _, t) -> p == pid && t == EventType) <$> cardsPlayedThisRound
       let fromHand = [cid | Window After (PlayedFromHand (CardIdTarget cid)) <- ws]
           -- one played from elsewhere is known by its code, the last of it discarded
           elsewhere = [toCardCode pc | null fromHand, Window After (PlayedCard p pc) <- ws, p == pid]

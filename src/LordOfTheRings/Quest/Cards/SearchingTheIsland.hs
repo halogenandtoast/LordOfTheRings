@@ -2,7 +2,6 @@ module LordOfTheRings.Quest.Cards.SearchingTheIsland (searchingTheIsland) where
 
 import LordOfTheRings.Card (EncounterCard, genEncounterCard, toCardCode)
 import LordOfTheRings.Classes.HasGame (getsGame)
-import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Helpers.IslandMap (locationAt)
 import LordOfTheRings.Helpers.Staging (getLocationQuestPoints)
 import LordOfTheRings.Location.Grid (Pos (..))
@@ -10,7 +9,7 @@ import LordOfTheRings.Objective.CardDefs qualified as Objectives
 import LordOfTheRings.Objective.Types (ObjectiveAttrs (objectiveId))
 import LordOfTheRings.Quest.CardDefs qualified as Cards
 import LordOfTheRings.Quest.Import.Lifted
-import LordOfTheRings.Scenario.Scenarios.TempleOfTheDeceived.Helpers (getGateKey)
+import LordOfTheRings.Scenario.Scenarios.TempleOfTheDeceived.Helpers (getGateKey, templeGuardianSide)
 
 newtype SearchingTheIsland = SearchingTheIsland QuestAttrs
   deriving anyclass (IsQuest, HasAbilities, HasModifiersFor)
@@ -46,14 +45,15 @@ instance RunMessage SearchingTheIsland where
         targets corners makeActive
       traverse_ (addToStaging <=< genEncounterCard) [Objectives.captainSahirObjective, Objectives.naasiyahObjective]
       deck <- getsGame ((.encounterDeck) . toAttrs . (.scenario))
-      for_ (filter (isOneOf [Enemies.templeGuardian, Objectives.gateKey]) deck) \c -> do
+      guardian <- templeGuardianSide
+      for_ (filter (isOneOf [guardian, Objectives.gateKey]) deck) \c -> do
         removeFromEncounterDeck c
         addToStaging c
       push $ DoStep 1 msg
       shuffleEncounterDeck
       SearchingTheIsland <$> runMessage msg attrs
     DoStep 1 (Flip (isTarget attrs -> True)) -> do
-      guardian <- selectOne (EnemyWithCardCode $ toCardCode Enemies.templeGuardian)
+      guardian <- selectOne . EnemyWithCardCode . toCardCode =<< templeGuardianSide
       key <- getGateKey
       for_ ((,) <$> key <*> guardian) \(k, g) -> attachObjective (objectiveId k) g
       pure q

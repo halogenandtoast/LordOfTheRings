@@ -57,6 +57,15 @@ spec = describe "Escape from Dol Guldur" do
     -- and the board greys it, naming the stage
     publicHandBlockers two `shouldReturn` Just [RefQuest]
 
+  it "counts an ally played this round before the 1-ally limit came into play" . escapeTest $ \pid -> do
+    two <- putCardIntoHand pid Allies.guardOfTheCitadel
+    _ <- playWith pid "01001" 4 Allies.guardOfTheCitadel
+    passActions pid
+    _ <- putQuestStage Quests.theNecromancersTower
+    run $ BeginPhase PlanningPhase
+    question <- getQuestion pid
+    [() | Just q <- [question], TargetLabel (CardIdTarget cid) _ <- questionChoices q, cid == two.id] `shouldBe` []
+
   it "holds the players at The Necromancer's Tower until they claim an objective" . escapeTest $ \pid -> do
     stage <- putQuestStage Quests.theNecromancersTower
     run $ PlaceTokens GameSource stage Progress 9

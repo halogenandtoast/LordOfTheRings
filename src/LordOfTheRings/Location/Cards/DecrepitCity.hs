@@ -14,7 +14,7 @@ decrepitCity = location DecrepitCity Cards.decrepitCity
 -- | While Decrepit City is the active location, "when revealed" effects cannot be
 -- canceled.
 instance HasModifiersFor DecrepitCity where
-  getModifiersFor (DecrepitCity a) = when (a.placement == ActiveLocation) $ modified a GameTarget [CannotCancelWhenRevealedEffects]
+  getModifiersFor (DecrepitCity a) = when (a.placement == ActiveLocation) $ modified a GameTarget [WhenRevealedCannotBeCanceled]
 
 -- | Shadow: Either discard 3 cards from the top of your deck, or this attack is considered
 -- undefended. The defending player chooses.

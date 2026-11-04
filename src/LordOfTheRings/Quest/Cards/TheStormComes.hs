@@ -1,8 +1,7 @@
 module LordOfTheRings.Quest.Cards.TheStormComes (theStormComes) where
 
 import LordOfTheRings.Card (CardType (AllyType))
-import LordOfTheRings.Classes.HasGame (getsGame)
-import LordOfTheRings.Game.Base (gameEffects)
+import LordOfTheRings.Helpers.Modifiers (cardsPlayedThisRound)
 import LordOfTheRings.Quest.CardDefs qualified as Cards
 import LordOfTheRings.Quest.Import.Lifted
 import LordOfTheRings.Sphere (Sphere (..))
@@ -22,8 +21,8 @@ theStormComes = quest TheStormComes Cards.theStormComes
 instance HasModifiersFor TheStormComes where
   getModifiersFor (TheStormComes a) = whenM (inVictoryDisplay a.cardId) do
     -- read from the effects, as the modifiers are being gathered
-    effects <- getsGame gameEffects
-    let played pid = any (\e -> effectTarget e == PlayerTarget pid && PlayedCardTypeThisRound AllyType `elem` effectModifiers e) effects
+    allies <- cardsPlayedThisRound
+    let played pid = notNull [p | (p, _, AllyType) <- allies, p == pid]
     players <- select AnyPlayer
     for_ (filter (not . played) players) \pid -> do
       heroes <- select (HeroControlledBy $ PlayerWithId pid)
