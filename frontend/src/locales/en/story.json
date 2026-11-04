@@ -3999,5 +3999,27 @@
       "Farin laughed and said, “Then let’s get moving. It will be dark soon.”",
       "The story continues in “The Fortress of Nurn,” the sixth Adventure Pack in “The Vengeance of Mordor” cycle."
     ]
+  },
+  "the-passage-of-the-marshes": {
+    "intro": [
+      "Frodo and Sam have crossed the Anduin and wandered the Emyn Muil to the edge of the Dead Marshes, with Gollum following close behind. They mean to catch him before going any further."
+    ],
+    "setup": [
+      "Build the encounter deck from the The Passage of the Marshes, Gollum and Morgul Nazgûl encounter sets."
+    ],
+    "rules": [
+      {
+        "title": "Mire X",
+        "text": "At the end of each refresh phase, each location with the mire keyword in the staging area gets 1 resource, called a mire token. A location with as many mire tokens as its mire value is discarded at once, and its Forced effect for being discarded by mire resolves. That effect does not resolve when the location leaves play any other way."
+      },
+      {
+        "title": "Gollum / Sméagol",
+        "text": "Gollum (an enemy) and Sméagol (an objective-ally) are two sides of one card that is never shuffled into the encounter deck. Defeating Gollum turns him to an exhausted Sméagol without damage; Sméagol turned to Gollum comes back ready and undamaged. Gollum always engages the first player, and attacks when he follows the first player token in the refresh phase. If Sméagol is destroyed, the players lose, and no card effect changes that."
+      },
+      {
+        "title": "The Searching Eye",
+        "text": "The Searching Eye is an encounter card shuffled into a player's deck. It is drawn, held and discarded like a player card, to its player's discard pile, but it cannot be played."
+      }
+    ]
   }
 }
