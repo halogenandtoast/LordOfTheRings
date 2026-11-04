@@ -126,6 +126,7 @@ allObjectiveCards =
       , pitTrap
       , nooseOfVines
       , porosGarrison
+      , haldan
       ]
 
 durinsAxe :: CardDef
@@ -854,4 +855,16 @@ porosGarrison =
     { cdUnique = True
     , cdCardTraits = setFromList [Gondor]
     , cdKeywords = setFromList [FirstPlayerGainsControl]
+    }
+
+-- | The objective-ally side of Woodmen Village (18069A), shared by Journey Up the Anduin and
+-- Lost in Mirkwood: no copy is gathered; Woodmen Village turns into it, or Lost in Mirkwood
+-- puts him into play this side faceup.
+haldan :: CardDef
+haldan =
+  ((objective "18069B" "Haldan" JourneyUpTheAnduin 0)
+      { cdCardType = ObjectiveAllyType, cdWillpower = Just 2, cdAttack = Just 3, cdDefense = Just 1, cdHitPoints = Just 4 })
+    { cdCardTraits = setFromList [Woodman, Scout]
+    , cdKeywords = setFromList [FirstPlayerGainsControl]
+    , cdOtherSide = Just "18069A"
     }

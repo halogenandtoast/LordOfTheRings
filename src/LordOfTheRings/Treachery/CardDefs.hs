@@ -365,6 +365,16 @@ allTreacheryCards =
       , bitingInsects
       , dangerCloseBehind
       , mountainsOfShadow
+      , ruinedSupplies
+      , lostInTheWild
+      , weighedDown
+      , gatheringGloom
+      , swarmOfBats
+      , afraidOfTheDark
+      , darkPlaces
+      , eyesInTheDark
+      , dragonBreath
+      , dragonScales
       ]
 
 deepDeepDark :: CardDef
@@ -2334,3 +2344,46 @@ dangerCloseBehind =
 
 mountainsOfShadow :: CardDef
 mountainsOfShadow = (treachery "17155" "Mountains of Shadow" MountainsOfShadow 2) {cdShadowEffect = True, cdEasyModeQuantity = Just 1}
+
+-- * The Wilds of Rhovanion's shared encounter sets
+
+ruinedSupplies :: CardDef
+ruinedSupplies =
+  (treachery "18025" "Ruined Supplies" LostInWilderland 2)
+    { cdKeywords = setFromList [Doomed 1]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
+    }
+
+lostInTheWild :: CardDef
+lostInTheWild = (treachery "18026" "Lost in the Wild" LostInWilderland 2) {cdEasyModeQuantity = Just 1}
+
+weighedDown :: CardDef
+weighedDown = (treachery "18027" "Weighed Down" LostInWilderland 2) {cdEasyModeQuantity = Just 1}
+
+gatheringGloom :: CardDef
+gatheringGloom =
+  (treachery "18040" "Gathering Gloom" GatheringGloom 2)
+    { cdKeywords = setFromList [Doomed 1]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
+    }
+
+-- | Printed "Swarm of Bats", as its own text names it.
+swarmOfBats :: CardDef
+swarmOfBats = (treachery "18041" "Swarm of Bats" GatheringGloom 3) {cdShadowEffect = True, cdEasyModeQuantity = Just 2}
+
+afraidOfTheDark :: CardDef
+afraidOfTheDark = (treachery "18048" "Afraid of the Dark" AfraidOfTheDark 2) {cdEasyModeQuantity = Just 1}
+
+darkPlaces :: CardDef
+darkPlaces = (treachery "18056" "Dark Places" DeepUnderground 3) {cdShadowEffect = True}
+
+eyesInTheDark :: CardDef
+eyesInTheDark = (treachery "18057" "Eyes in the Dark" AfraidOfTheDark 3) {cdKeywords = setFromList [Doomed 1], cdShadowEffect = True}
+
+dragonBreath :: CardDef
+dragonBreath = (treachery "18058" "Dragon Breath" DragonMight 2) {cdCardTraits = setFromList [Dragon], cdKeywords = setFromList [Surge]}
+
+dragonScales :: CardDef
+dragonScales = (treachery "18059" "Dragon Scales" DragonMight 2) {cdCardTraits = setFromList [Dragon], cdKeywords = setFromList [Surge]}

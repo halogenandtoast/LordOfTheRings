@@ -431,6 +431,14 @@ allEnemyCards =
       , southronOutrider
       , urukProwler
       , desertWarg
+      , goblinTroop
+      , strayGoblinGreyMountains
+      , packOfWargs
+      , stoneTroll
+      , hobgoblin
+      , werewolf
+      , giantSpider
+      , blackBats
       ]
 
 namelessThing :: CardDef
@@ -3520,4 +3528,62 @@ desertWarg =
     { cdCardTraits = setFromList [Creature]
     , cdShadowEffect = True
     , cdWhenRevealed = True
+    }
+
+-- * The Wilds of Rhovanion's shared encounter sets
+
+goblinTroop :: CardDef
+goblinTroop =
+  (enemy "18020" "Goblin Troop" GreyMountainGoblins 2 35 3 5 4 6)
+    { cdCardTraits = setFromList [Orc, Goblin]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
+    }
+
+-- | Grey Mountain Goblins' Stray Goblin; Shadow and Flame's is 'strayGoblin'.
+strayGoblinGreyMountains :: CardDef
+strayGoblinGreyMountains =
+  (enemy "18021" "Stray Goblin" GreyMountainGoblins 3 50 1 2 0 3)
+    { cdCardTraits = setFromList [Orc, Goblin]
+    , cdKeywords = setFromList [Surge]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 2
+    }
+
+packOfWargs :: CardDef
+packOfWargs =
+  (enemy "18022" "Pack of Wargs" HillsOfWilderland 2 40 4 4 3 5)
+    { cdCardTraits = setFromList [Creature, Warg]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
+    }
+
+-- | Printed "Stone-troll", as The Withered Heath's Snow-troll (Hall of Beorn).
+stoneTroll :: CardDef
+stoneTroll =
+  (enemy "18049" "Stone-troll" FellBeasts 2 36 3 6 3 9)
+    { cdCardTraits = setFromList [Troll]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
+    }
+
+hobgoblin :: CardDef
+hobgoblin =
+  (enemy "18050" "Hobgoblin" FellBeasts 2 38 1 1 1 5)
+    { cdCardTraits = setFromList [Orc]
+    , cdEasyModeQuantity = Just 1
+    }
+
+werewolf :: CardDef
+werewolf = (enemy "18051" "Werewolf" WildCreatures 2 33 3 2 1 8) {cdCardTraits = setFromList [Creature], cdShadowEffect = True}
+
+giantSpider :: CardDef
+giantSpider = (enemy "18052" "Giant Spider" WildCreatures 3 28 2 3 2 3) {cdCardTraits = setFromList [Creature, Spider], cdShadowEffect = True}
+
+blackBats :: CardDef
+blackBats =
+  (enemy "18053" "Black Bats" WildCreatures 3 18 1 2 1 2)
+    { cdCardTraits = setFromList [Creature]
+    , cdKeywords = setFromList [Surge]
+    , cdShadowEffect = True
     }

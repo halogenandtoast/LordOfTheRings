@@ -188,6 +188,7 @@ import LordOfTheRings.Ally.Cards.LindonNavigator
 import LordOfTheRings.Ally.Cards.SailorOfLune
 import LordOfTheRings.Ally.Cards.Calphon
 import LordOfTheRings.Ally.Cards.CaptainSahir
+import LordOfTheRings.Ally.Cards.Haldan
 import LordOfTheRings.Ally.Cards.Naasiyah
 import LordOfTheRings.Ally.Cards.AzainSilverbeard
 import LordOfTheRings.Ally.Cards.ImladrisCaregiver
@@ -449,6 +450,7 @@ allAllies =
         , SomeAllyCard silverWing
         , SomeAllyCard calphon
         , SomeAllyCard captainSahir
+        , SomeAllyCard haldan
         , SomeAllyCard naasiyah
         , SomeAllyCard azainSilverbeard
         , SomeAllyCard imladrisCaregiver

@@ -623,6 +623,11 @@ selectCharacters heroes allies = (<>) <$> (map toTarget <$> select heroes) <*> (
 charactersControlledBy :: HasGame m => PlayerId -> m [Target]
 charactersControlledBy pid = selectCharacters (HeroControlledBy $ PlayerWithId pid) (AllyControlledBy $ PlayerWithId pid)
 
+-- | The number of characters controlled by the player who controls the most characters, as
+-- Hills of Wilderland's X reads.
+mostCharactersControlled :: HasGame m => m Int
+mostCharactersControlled = foldr max 0 <$> (traverse (fmap length . charactersControlledBy) =<< getRemainingPlayers)
+
 exhaustedCharactersOf :: HasGame m => PlayerId -> m [Target]
 exhaustedCharactersOf pid =
   selectCharacters (ExhaustedHero <> HeroControlledBy (PlayerWithId pid)) (ExhaustedAlly <> AllyControlledBy (PlayerWithId pid))

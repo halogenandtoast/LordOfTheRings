@@ -436,6 +436,18 @@ import LordOfTheRings.Location.Cards.DesolateLand
 import LordOfTheRings.Location.Cards.HarondorWaste
 import LordOfTheRings.Location.Cards.FoothillsOfMordor
 import LordOfTheRings.Location.Cards.ShadowyVale
+import LordOfTheRings.Location.Cards.HillsOfWilderland
+import LordOfTheRings.Location.Cards.LonelyLands
+import LordOfTheRings.Location.Cards.AccursedForest
+import LordOfTheRings.Location.Cards.DarkBlackWoods
+import LordOfTheRings.Location.Cards.DarkTunnel
+import LordOfTheRings.Location.Cards.ForkedPassage
+import LordOfTheRings.Location.Cards.LostArmory
+import LordOfTheRings.Location.Cards.AncientTreasury
+import LordOfTheRings.Location.Cards.FrightfulDen
+import LordOfTheRings.Location.Cards.LightlessGrotto
+import LordOfTheRings.Location.Cards.CrumblingCavern
+import LordOfTheRings.Location.Cards.UndergroundLake
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -918,5 +930,17 @@ allLocations =
         , SomeLocationCard harondorWaste
         , SomeLocationCard foothillsOfMordor
         , SomeLocationCard shadowyVale
+        , SomeLocationCard hillsOfWilderland
+        , SomeLocationCard lonelyLands
+        , SomeLocationCard accursedForest
+        , SomeLocationCard darkBlackWoods
+        , SomeLocationCard darkTunnel
+        , SomeLocationCard forkedPassage
+        , SomeLocationCard lostArmory
+        , SomeLocationCard ancientTreasury
+        , SomeLocationCard frightfulDen
+        , SomeLocationCard lightlessGrotto
+        , SomeLocationCard crumblingCavern
+        , SomeLocationCard undergroundLake
         ]
     ]

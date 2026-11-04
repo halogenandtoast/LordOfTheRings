@@ -453,6 +453,19 @@ allLocationCards =
       , harondorWaste
       , foothillsOfMordor
       , shadowyVale
+      , hillsOfWilderland
+      , lonelyLands
+      , accursedForest
+      , darkBlackWoods
+      , darkTunnel
+      , forkedPassage
+      , lostArmory
+      , ancientTreasury
+      , frightfulDen
+      , lightlessGrotto
+      , crumblingCavern
+      , undergroundLake
+      , woodmenVillage
       ]
 
 drownedTreasury :: CardDef
@@ -3431,3 +3444,54 @@ foothillsOfMordor = (location "17153" "Foothills of Mordor" MountainsOfShadow 3 
 
 shadowyVale :: CardDef
 shadowyVale = (location "17154" "Shadowy Vale" MountainsOfShadow 2 2 5) {cdCardTraits = setFromList [Hills], cdEasyModeQuantity = Just 1}
+
+-- * The Wilds of Rhovanion's shared encounter sets
+
+-- | X threat and X quest points: see "LordOfTheRings.Location.Cards.HillsOfWilderland".
+hillsOfWilderland :: CardDef
+hillsOfWilderland = (location "18023" "Hills of Wilderland" HillsOfWilderland 2 0 0) {cdCardTraits = setFromList [Hills], cdEasyModeQuantity = Just 1}
+
+lonelyLands :: CardDef
+lonelyLands = (location "18024" "Lonely Lands" HillsOfWilderland 3 2 5) {cdCardTraits = setFromList [Hills], cdEasyModeQuantity = Just 2}
+
+accursedForest :: CardDef
+accursedForest = (location "18038" "Accursed Forest" DarkWoods 2 4 4) {cdCardTraits = setFromList [Forest, Dark], cdEasyModeQuantity = Just 1}
+
+darkBlackWoods :: CardDef
+darkBlackWoods = (location "18039" "Dark Black Woods" DarkWoods 3 3 3) {cdCardTraits = setFromList [Forest, Dark], cdEasyModeQuantity = Just 2}
+
+darkTunnel :: CardDef
+darkTunnel = (location "18054" "Dark Tunnel" DeepUnderground 4 3 3) {cdCardTraits = setFromList [Underground, Dark], cdKeywords = setFromList [Deep]}
+
+forkedPassage :: CardDef
+forkedPassage = (location "18055" "Forked Passage" DeepUnderground 2 2 2) {cdCardTraits = setFromList [Underground, Dark], cdKeywords = setFromList [Deep]}
+
+-- | The Lost Caves set is the Caves deck (MEC65 rules), never shuffled into the encounter
+-- deck.
+lostArmory :: CardDef
+lostArmory = (location "18060" "Lost Armory" LostCaves 1 2 2) {cdCardTraits = setFromList [Underground], cdVictoryPoints = Just 1}
+
+ancientTreasury :: CardDef
+ancientTreasury = (location "18061" "Ancient Treasury" LostCaves 1 3 3) {cdCardTraits = setFromList [Underground], cdVictoryPoints = Just 1}
+
+frightfulDen :: CardDef
+frightfulDen = (location "18062" "Frightful Den" LostCaves 1 4 4) {cdCardTraits = setFromList [Underground, Dark], cdVictoryPoints = Just 1}
+
+lightlessGrotto :: CardDef
+lightlessGrotto = (location "18063" "Lightless Grotto" LostCaves 1 5 5) {cdCardTraits = setFromList [Underground, Dark], cdVictoryPoints = Just 1}
+
+crumblingCavern :: CardDef
+crumblingCavern = (location "18064" "Crumbling Cavern" LostCaves 1 6 6) {cdCardTraits = setFromList [Underground, Dark], cdVictoryPoints = Just 1}
+
+-- | X threat and X quest points, as Hills of Wilderland's.
+undergroundLake :: CardDef
+undergroundLake = (location "18065" "Underground Lake" LostCaves 1 0 0) {cdCardTraits = setFromList [Underground, Dark], cdVictoryPoints = Just 1}
+
+-- | Journey Up the Anduin's Woodmen Village, whose other side is Haldan (18069B). What it
+-- does is the scenario's.
+woodmenVillage :: CardDef
+woodmenVillage =
+  (location "18069A" "Woodmen Village" JourneyUpTheAnduin 1 4 4)
+    { cdCardTraits = setFromList [Riverland]
+    , cdOtherSide = Just "18069B"
+    }
