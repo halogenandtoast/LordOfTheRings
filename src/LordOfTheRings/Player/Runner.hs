@@ -150,6 +150,7 @@ runPlayer msg player = case msg of
           -- a hero in the deck was shuffled in by Lost and Alone, and is put into play as drawn
           (heroes, drawn) = partition ((== HeroType) . (.cardType)) cards
       pushAll [PutHeroIntoPlay player.id pc | PlayerCard pc <- heroes]
+      pushAll [EncounterCardEnteredHand player.id ec | EncounterCard ec <- drawn]
       pushWhen (notNull cards) $ CheckWindows [mkAfter $ CardsDrawn player.id (length cards)]
       pure $ player & handL <>~ drawn & deckL .~ deck
     WithTarget (isTarget player -> True) (DoPhase PlanningPhase) -> do
@@ -282,6 +283,7 @@ runPlayer msg player = case msg of
       pure $ player & deckL .~ deck & discardL .~ []
     TakeFromDeck pid cid | pid == player.id -> do
       let (taken, kept) = partition ((== cid) . (.id)) player.deck
+      pushAll [EncounterCardEnteredHand pid ec | EncounterCard ec <- taken]
       pure $ player & deckL .~ kept & handL <>~ taken
     DebugSearchDeck pid | pid == player.id -> do
       -- not shuffled after: a debug search leaves the rest of the deck in its order
@@ -341,7 +343,10 @@ runPlayer msg player = case msg of
     DiscardTopOfDeck pid n | pid == player.id -> do
       let (discarded, deck) = splitAt n player.deck
       pushWhen (notNull discarded) $ CheckWindows [mkAfter $ DiscardedFromDeck pid c.id | c <- discarded]
-      pure $ player & deckL .~ deck & discardL %~ (discarded <>)
+      -- an encounter card in the deck goes to the encounter discard pile
+      let encounter = [ec | EncounterCard ec <- discarded]
+      pushWhen (notNull encounter) $ AddToEncounterDiscard encounter
+      pure $ player & deckL .~ deck & discardL %~ ([c | c@(PlayerCard _) <- discarded] <>)
     SwapHandWithDeck pid fromHand fromDeck | pid == player.id -> do
       let swap c
             | c.id == fromHand = fromMaybe c $ find ((== fromDeck) . (.id)) player.deck
@@ -362,6 +367,9 @@ runPlayer msg player = case msg of
       let (moved, kept) = partition ((== cid) . (.id)) player.discard
       deck <- shuffleM (moved <> player.deck)
       pure $ player & discardL .~ kept & deckL .~ deck
+    ShuffleCardIntoDeck pid card | pid == player.id -> do
+      deck <- shuffleM (card : player.deck)
+      pure $ player & deckL .~ deck
     ShufflePlayerDeck pid | pid == player.id -> do
       deck <- shuffleM player.deck
       pure $ player & deckL .~ deck

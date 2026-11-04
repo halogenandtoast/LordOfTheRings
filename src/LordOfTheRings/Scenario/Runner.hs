@@ -12,9 +12,9 @@ import LordOfTheRings.I18n
 import LordOfTheRings.Keyword (Keyword (Guarded, GuardedBy))
 import LordOfTheRings.Matcher
 import LordOfTheRings.Message
-import LordOfTheRings.Message.Lifted (placeResources)
+import LordOfTheRings.Message.Lifted (placeResources, shuffleIntoDeck)
 import LordOfTheRings.Campaign
-import LordOfTheRings.Game.Base (allPlayers, gameEntities, gamePhase, gamePlayers, gameRound)
+import LordOfTheRings.Game.Base (allPlayers, gameEntities, gamePhase, gamePlayerOrder, gamePlayers, gameRound)
 import LordOfTheRings.Entities (entitiesHeroes, entitiesObjectives)
 import LordOfTheRings.Helpers.Modifiers (getModifiers)
 import LordOfTheRings.Modifier (ModifierType (EncounterDeckResetsWheneverEmpty, RecordedIfWon, ReturnBeforeEncounterDeckResets))
@@ -65,9 +65,17 @@ instance RunMessage ScenarioAttrs where
     -- in campaign mode the encounter cards of the Campaign Pool are shuffled in with it
     DoStep 2 Setup -> do
       -- (an objective, as Arnor Ravaged, comes into play as its own Setup text says)
-      earned <- traverse genEncounterCard [def | p <- foldMap (.pool) attrs.campaign, isNothing p.attachedTo, let def = toCardDef p.code, not (isPlayerCardDef def), cdCardType def /= ObjectiveType]
+      earned <- traverse genEncounterCard [def | p <- foldMap (.pool) attrs.campaign, isNothing p.attachedTo, isNothing p.seat, let def = toCardDef p.code, not (isPlayerCardDef def), cdCardType def /= ObjectiveType]
       encounterDeck <- shuffleM (earned <> attrs.encounterDeck)
       pure $ attrs & encounterDeckL .~ encounterDeck
+    -- once the starting hands are drawn, an encounter card of the pool with a seat goes
+    -- into that seat's deck, as Temple of the Deceived's resolution has a Recurring
+    -- Nightmare shuffled in
+    DoStep 6 Setup -> do
+      order <- getsGame gamePlayerOrder
+      for_ [(pid, def) | p <- foldMap (.pool) attrs.campaign, isNothing p.attachedTo, Just pid <- [atMay order =<< p.seat], let def = toCardDef p.code, not (isPlayerCardDef def)] \(pid, def) ->
+        shuffleIntoDeck pid =<< genEncounterCard def
+      pure attrs
     DoStep 4 Setup -> do
       heroes <- getsGame (toList . entitiesHeroes . gameEntities)
       when attrs.easyMode $ for_ heroes \hero -> placeResources attrs hero.id 1

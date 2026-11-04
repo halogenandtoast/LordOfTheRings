@@ -44,7 +44,7 @@ import LordOfTheRings.Log.Refs (cardTitle, sendLogInOpenBlock, sourceCardTitle)
 import LordOfTheRings.Matcher
 import LordOfTheRings.Matcher.Window (windowMatches)
 import LordOfTheRings.Message
-import LordOfTheRings.Message.Lifted (drawCards, raiseThreatFromDoomed)
+import LordOfTheRings.Message.Lifted (choosePlayerM, drawCards, raiseThreatFromDoomed, shuffleIntoDeck)
 import LordOfTheRings.Modifier
 import LordOfTheRings.Objective
 import LordOfTheRings.Outcome
@@ -3100,8 +3100,19 @@ runGameMessage msg g = case msg of
       <> attachedEnemies g target
       <> [AddToEncounterDiscard e.shadowCards | notNull e.shadowCards]
       <> freeGuarded g target
-    deck <- shuffleM (MkEncounterCard (enemyCardId $ toAttrs e) (toCardCode e) : (toAttrs g.scenario).encounterDeck)
-    pure $ g & entitiesL . enemiesL %~ Map.delete eid & scenarioL %~ overAttrs (encounterDeckL .~ deck)
+    let card = MkEncounterCard (enemyCardId $ toAttrs e) (toCardCode e)
+        removed = g & entitiesL . enemiesL %~ Map.delete eid
+    toPlayersDeck <- elem LeavesPlayToAnyPlayersDeck <$> getModifiers target
+    if toPlayersDeck
+      then removed <$ toAnyPlayersDeck g card
+      else do
+        deck <- shuffleM (card : (toAttrs g.scenario).encounterDeck)
+        pure $ removed & scenarioL %~ overAttrs (encounterDeckL .~ deck)
+  -- an encounter card drawn into a hand is answered by its card, out of play, as Recurring
+  -- Nightmare's Forced effect (as Arkham's drawn encounter cards resolve their revelations)
+  EncounterCardEnteredHand _ card | cdCardType (toCardDef card) == EnemyType -> do
+    _ <- runEach msg . createEnemy card =<< getRandom
+    pure g
   AddToStaging card | gainsController (toCardDef card) -> do
     thisObjective <- newObjective card
     controller <- objectiveAllyController (toCardDef card)
@@ -3239,6 +3250,8 @@ discardFromPlay target g = case target of
           waiting ec e = effectTarget e == CardIdTarget ec.id && LeavesPlayToTopOfEncounterDeck `elem` effectModifiers e
           orcGuards = (toAttrs g.scenario).scenarioOrcGuards
       case toCard entity of
+        EncounterCard ec
+          | LeavesPlayToAnyPlayersDeck `elem` mods -> removed <$ toAnyPlayersDeck g ec
         -- an Orc Guard leaves its player card in that player's discard pile
         EncounterCard ec
           | Just pc <- Map.lookup ec.id orcGuards ->
@@ -3271,6 +3284,11 @@ discardFromPlay target g = case target of
     -- a card of the Corsair deck to its own discard pile (Dream-chaser rules)
     EncounterCard ec -> scenarioL %~ overAttrs (discardEncounterCard ec)
     _ -> id
+
+-- | As it leaves play, the first player shuffles the card into any player's deck, as
+-- Recurring Nightmare reads.
+toAnyPlayersDeck :: Game -> EncounterCard -> GameT ()
+toAnyPlayersDeck g card = runQueueT $ choosePlayerM g.firstPlayer (EncounterCard card) (`shuffleIntoDeck` card)
 
 -- | The enemies grappling the location let go of it, for the staging area (The Thing in
 -- the Depths).
