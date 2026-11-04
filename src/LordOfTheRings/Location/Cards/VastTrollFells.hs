@@ -13,10 +13,16 @@ vastTrollFells :: LocationCard VastTrollFells
 vastTrollFells = location VastTrollFells Cards.vastTrollFells
 
 -- | Heroes cannot gain resources by card effects.
+-- With a player who has no resource to spend, the players cannot travel to a safe location.
 instance HasModifiersFor VastTrollFells where
   getModifiersFor (VastTrollFells a) = when (a.placement /= Unplaced) do
     heroes <- select AnyHero
     for_ heroes \h -> modified a h [CannotGainResourcesFromCardEffects]
+    players <- getRemainingPlayers
+    unable <- flip anyM players \p -> selectNone (HeroControlledBy (PlayerWithId p) <> HeroWithResources)
+    when unable do
+      safe <- filterM isSafe =<< select LocationInStagingArea
+      for_ safe \l -> modified a l [CannotBeTraveledTo]
 
 -- | As an additional cost to travel to a safe location, each player must spend 1 resource.
 -- Shadow: If no progress was placed on a side quest this round, attacking enemy gets +4

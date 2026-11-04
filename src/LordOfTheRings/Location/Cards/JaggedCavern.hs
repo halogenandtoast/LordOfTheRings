@@ -15,7 +15,8 @@ jaggedCavern :: LocationCard JaggedCavern
 jaggedCavern = location JaggedCavern Cards.jaggedCavern
 
 {- | While Jagged Cavern is the active location, the first treachery card revealed each
-round gains doomed 1 and surge.
+round gains doomed 1 and surge: only the round's first, so none once one has been revealed
+before it became active.
 Forced: If Jagged Cavern is the active location at the end of the quest phase, each player
 must discard each card in his or her hand. Then, you may flip Jagged Cavern to its Grotto
 side.
@@ -25,7 +26,7 @@ instance HasAbilities JaggedCavern where
     [ ability
     | a.placement == ActiveLocation
     , ability <-
-        [ limited (GroupLimit PerRound 1) $ mkAbility a 1 $ forced $ TreacheryRevealedWindow After
+        [ restricted a 1 FirstTreacheryRevealedThisRound $ forced $ TreacheryRevealedWindow After
         , mkAbility a 2 $ forced $ PhaseEndsWindow When QuestPhase
         ]
     ]

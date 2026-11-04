@@ -2441,6 +2441,7 @@ test-suite LordOfTheRings-test
       LordOfTheRings.Dwarrowdelf.TheRedhornGateSpec
       LordOfTheRings.Dwarrowdelf.TheWatcherInTheWaterSpec
       LordOfTheRings.DwarrowdelfEngineSpec
+      LordOfTheRings.Encounter.LocationTextSpec
       LordOfTheRings.Encounter.ScriptedCardsSpec
       LordOfTheRings.EncounterPhaseSpec
       LordOfTheRings.EndGameSpec

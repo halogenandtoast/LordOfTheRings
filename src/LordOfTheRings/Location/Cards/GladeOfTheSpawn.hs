@@ -16,7 +16,7 @@ gladeOfTheSpawn = location GladeOfTheSpawn Cards.gladeOfTheSpawn
 -- enters play, each player must choose and exhaust 1 character he controls."
 instance HasAbilities GladeOfTheSpawn where
   getAbilities (GladeOfTheSpawn a) =
-    [mkAbility a 1 $ forced $ EnemyWithTraitRevealedWindow After Spider | a.placement == ActiveLocation]
+    [mkAbility a 1 $ forced $ MatchingEnemyEntersPlayWindow After (EnemyWithTrait Spider) | a.placement == ActiveLocation]
 
 instance RunMessage GladeOfTheSpawn where
   runMessage msg l@(GladeOfTheSpawn a) = case msg of
