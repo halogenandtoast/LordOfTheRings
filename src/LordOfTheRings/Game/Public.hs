@@ -158,6 +158,9 @@ publicGameFor seesHand g = hideDecks $ toJSON merged
         $ adjust (inside "objectives" $ overValues $ inside "underneath" $ const $ Array mempty) "entities"
         $ adjust (inside "contracts" $ overValues $ inside "underneath" $ const $ Array mempty) "entities"
         $ adjust (inside "locations" $ overValues $ inside "underneath" $ const $ Array mempty) "entities"
+        -- the player cards under a quest are facedown; an encounter card there is faceup, as
+        -- the Power of Mordor card under each Storm the Castle
+        $ adjust (inside "quests" $ overValues $ inside "underneath" faceupOnly) "entities"
         $ adjust (inside "locations" $ overValues hideOtherSide) "entities"
         $ adjust (overEntries \pid -> if seesHand pid then id else hideSearch) "question"
         $ adjust (overEntries \pid -> if seesHand pid then hidePlayer else hideHand . hidePlayer) "players"
@@ -254,7 +257,7 @@ publicGameFor seesHand g = hideDecks $ toJSON merged
   under n =
     mapFromList
       $ [(o.objectiveCardId, n o.objectiveUnderneath) | o <- map toAttrs (toList $ entitiesObjectives merged.entities)]
-      <> [(q.questCardId, n q.questUnderneath) | q <- map toAttrs (toList $ entitiesQuests merged.entities)]
+      <> [(q.questCardId, n [c | c@(PlayerCard _) <- q.questUnderneath]) | q <- map toAttrs (toList $ entitiesQuests merged.entities)]
       -- and contracts, as The Burglar's Turn's loot deck
       <> [(c.contractCardId, n c.contractUnderneath) | c <- map toAttrs (toList $ entitiesContracts merged.entities)]
   -- what the scenario keeps by this key in its meta, as Escape from Mount Gram's captured
@@ -301,6 +304,9 @@ publicGameFor seesHand g = hideDecks $ toJSON merged
   adjust f k o = maybe o (\v -> KeyMap.insert k (f v) o) (KeyMap.lookup k o)
   inside k f = \case
     Object o -> Object $ adjust f k o
+    v -> v
+  faceupOnly = \case
+    Array cards -> Array $ filter (\case Object c -> not (KeyMap.member "owner" c); _ -> False) cards
     v -> v
   overValues f = \case
     Object o -> Object $ fmap f o
