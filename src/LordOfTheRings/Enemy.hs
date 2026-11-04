@@ -466,6 +466,11 @@ import LordOfTheRings.Enemy.Cards.ServantOfSauron
 import LordOfTheRings.Enemy.Cards.RhunBackstabber
 import LordOfTheRings.Enemy.Cards.TreacherousEasterling
 import LordOfTheRings.Enemy.Cards.UlchorsGuard
+import LordOfTheRings.Enemy.Cards.NamelessBeast
+import LordOfTheRings.Enemy.Cards.MordorCaveTroll
+import LordOfTheRings.Enemy.Cards.AshMountainWerewolf
+import LordOfTheRings.Enemy.Cards.SpawnOfShelob
+import LordOfTheRings.Enemy.Cards.TorechGorgorPatrol
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -960,5 +965,10 @@ allEnemys =
         , SomeEnemyCard rhunBackstabber
         , SomeEnemyCard treacherousEasterling
         , SomeEnemyCard ulchorsGuard
+        , SomeEnemyCard namelessBeast
+        , SomeEnemyCard mordorCaveTroll
+        , SomeEnemyCard ashMountainWerewolf
+        , SomeEnemyCard spawnOfShelob
+        , SomeEnemyCard torechGorgorPatrol
         ]
     ]

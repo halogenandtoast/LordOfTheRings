@@ -515,6 +515,9 @@ allLocationCards =
       , twistedTunnel
       , narrowOpening
       , crumblingPassage
+      , fieryChasm
+      , hideousDeeps
+      , orcPassage
       ]
 
 drownedTreasury :: CardDef
@@ -3834,3 +3837,15 @@ crumblingPassage =
     , cdWhenRevealed = True
     , cdEasyModeQuantity = Just 1
     }
+
+-- * Under the Ash Mountains
+
+-- | X threat, X 1 more than the number of quest cards in play: given by its own modifiers.
+fieryChasm :: CardDef
+fieryChasm = (location "22100" "Fiery Chasm" UnderTheAshMountains 3 0 5) {cdCardTraits = setFromList [Underground], cdEasyModeQuantity = Just 2}
+
+hideousDeeps :: CardDef
+hideousDeeps = (location "22101" "Hideous Deeps" UnderTheAshMountains 2 3 6) {cdCardTraits = setFromList [Underground], cdWhenRevealed = True}
+
+orcPassage :: CardDef
+orcPassage = (location "22102" "Orc Passage" UnderTheAshMountains 2 4 4) {cdCardTraits = setFromList [Underground], cdEasyModeQuantity = Just 1}

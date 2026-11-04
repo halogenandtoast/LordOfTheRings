@@ -408,6 +408,9 @@ allTreacheryCards =
       , ulchorsRage
       , fanaticism
       , fearfulShadows
+      , ransackedSupplies
+      , burningReek
+      , writhingShadows
       ]
 
 deepDeepDark :: CardDef
@@ -2589,3 +2592,19 @@ fearfulShadows =
     , cdShadowEffect = True
     , cdEasyModeQuantity = Just 1
     }
+
+-- * Under the Ash Mountains
+
+ransackedSupplies :: CardDef
+ransackedSupplies = (treachery "22103" "Ransacked Supplies" UnderTheAshMountains 3) {cdShadowEffect = True}
+
+burningReek :: CardDef
+burningReek =
+  (treachery "22104" "Burning Reek" UnderTheAshMountains 2)
+    { cdKeywords = setFromList [Doomed 1]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
+    }
+
+writhingShadows :: CardDef
+writhingShadows = (treachery "22105" "Writhing Shadows" UnderTheAshMountains 2) {cdShadowEffect = True, cdEasyModeQuantity = Just 1}

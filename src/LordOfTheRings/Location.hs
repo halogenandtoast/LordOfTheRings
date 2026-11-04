@@ -497,6 +497,9 @@ import LordOfTheRings.Location.Cards.Catacombs
 import LordOfTheRings.Location.Cards.TwistedTunnel
 import LordOfTheRings.Location.Cards.NarrowOpening
 import LordOfTheRings.Location.Cards.CrumblingPassage
+import LordOfTheRings.Location.Cards.FieryChasm
+import LordOfTheRings.Location.Cards.HideousDeeps
+import LordOfTheRings.Location.Cards.OrcPassage
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -1040,5 +1043,8 @@ allLocations =
         , SomeLocationCard twistedTunnel
         , SomeLocationCard narrowOpening
         , SomeLocationCard crumblingPassage
+        , SomeLocationCard fieryChasm
+        , SomeLocationCard hideousDeeps
+        , SomeLocationCard orcPassage
         ]
     ]

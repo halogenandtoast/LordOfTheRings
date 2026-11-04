@@ -317,6 +317,11 @@ import LordOfTheRings.Quest.Cards.AnArduousJourney
 import LordOfTheRings.Quest.Cards.ShadowOfFearASitE
 import LordOfTheRings.Quest.Cards.UnwelcomeTravelers
 import LordOfTheRings.Quest.Cards.LostInTheDark
+import LordOfTheRings.Quest.Cards.TheTunnelsOfTorechGorgor
+import LordOfTheRings.Quest.Cards.AHauntForBeasts
+import LordOfTheRings.Quest.Cards.OverwhelmingDarkness
+import LordOfTheRings.Quest.Cards.PassageIntoMordor
+import LordOfTheRings.Quest.Cards.AnEvilPlace
 import LordOfTheRings.Quest.Runner ()
 import LordOfTheRings.Quest.Types as X
 import LordOfTheRings.Id
@@ -666,5 +671,10 @@ allQuests =
         , SomeQuestCard shadowOfFearASitE
         , SomeQuestCard unwelcomeTravelers
         , SomeQuestCard lostInTheDark
+        , SomeQuestCard theTunnelsOfTorechGorgor
+        , SomeQuestCard aHauntForBeasts
+        , SomeQuestCard overwhelmingDarkness
+        , SomeQuestCard passageIntoMordor
+        , SomeQuestCard anEvilPlace
         ]
     ]
