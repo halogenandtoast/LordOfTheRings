@@ -466,6 +466,12 @@ allLocationCards =
       , crumblingCavern
       , undergroundLake
       , woodmenVillage
+      , theCursedTomb
+      , forgottenCrypt
+      , hauntedHall
+      , hiddenStaircase
+      , moonlitPassage
+      , cursedTower
       ]
 
 drownedTreasury :: CardDef
@@ -3494,4 +3500,57 @@ woodmenVillage =
   (location "18069A" "Woodmen Village" JourneyUpTheAnduin 1 4 4)
     { cdCardTraits = setFromList [Riverland]
     , cdOtherSide = Just "18069B"
+    }
+
+-- * The Ghost of Framsburg (19094-19111)
+
+theCursedTomb :: CardDef
+theCursedTomb =
+  unique
+    (location "19097" "The Cursed Tomb" TheGhostOfFramsburg 1 5 5)
+      { cdCardTraits = setFromList [Ruins, Dark]
+      , cdVictoryPoints = Just 5
+      }
+
+forgottenCrypt :: CardDef
+forgottenCrypt =
+  (location "19101" "Forgotten Crypt" TheGhostOfFramsburg 2 2 2)
+    { cdCardTraits = setFromList [Ruins, Dark]
+    , cdVictoryPoints = Just 2
+    , cdEasyModeQuantity = Just 0
+    }
+
+hauntedHall :: CardDef
+hauntedHall =
+  (location "19102" "Haunted Hall" TheGhostOfFramsburg 2 4 4)
+    { cdCardTraits = setFromList [Ruins, Dark]
+    , cdKeywords = setFromList [Discover 4]
+    , cdEasyModeQuantity = Just 1
+    }
+
+-- | Discover X, and X threat: its card gives itself X.
+hiddenStaircase :: CardDef
+hiddenStaircase =
+  (location "19103" "Hidden Staircase" TheGhostOfFramsburg 2 0 4)
+    { cdCardTraits = setFromList [Ruins, Dark, Hazard]
+    , cdKeywords = setFromList [Discover 0]
+    , cdEasyModeQuantity = Just 0
+    }
+
+moonlitPassage :: CardDef
+moonlitPassage =
+  (location "19104" "Moonlit Passage" TheGhostOfFramsburg 3 2 4)
+    { cdCardTraits = setFromList [Ruins]
+    , cdKeywords = setFromList [Discover 2]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 2
+    }
+
+cursedTower :: CardDef
+cursedTower =
+  (location "19105" "Cursed Tower" TheGhostOfFramsburg 3 3 3)
+    { cdCardTraits = setFromList [Ruins, Dark]
+    , cdKeywords = setFromList [Discover 3]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 2
     }

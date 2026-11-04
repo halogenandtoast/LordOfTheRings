@@ -448,6 +448,12 @@ import LordOfTheRings.Location.Cards.FrightfulDen
 import LordOfTheRings.Location.Cards.LightlessGrotto
 import LordOfTheRings.Location.Cards.CrumblingCavern
 import LordOfTheRings.Location.Cards.UndergroundLake
+import LordOfTheRings.Location.Cards.TheCursedTomb
+import LordOfTheRings.Location.Cards.ForgottenCrypt
+import LordOfTheRings.Location.Cards.HauntedHall
+import LordOfTheRings.Location.Cards.HiddenStaircase
+import LordOfTheRings.Location.Cards.MoonlitPassage
+import LordOfTheRings.Location.Cards.CursedTower
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -942,5 +948,11 @@ allLocations =
         , SomeLocationCard lightlessGrotto
         , SomeLocationCard crumblingCavern
         , SomeLocationCard undergroundLake
+        , SomeLocationCard theCursedTomb
+        , SomeLocationCard forgottenCrypt
+        , SomeLocationCard hauntedHall
+        , SomeLocationCard hiddenStaircase
+        , SomeLocationCard moonlitPassage
+        , SomeLocationCard cursedTower
         ]
     ]

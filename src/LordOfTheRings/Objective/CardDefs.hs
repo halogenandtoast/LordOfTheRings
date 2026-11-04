@@ -127,6 +127,9 @@ allObjectiveCards =
       , nooseOfVines
       , porosGarrison
       , haldan
+      , cryptKey
+      , oldLantern
+      , scathasTeeth
       ]
 
 durinsAxe :: CardDef
@@ -868,3 +871,29 @@ haldan =
     , cdKeywords = setFromList [FirstPlayerGainsControl]
     , cdOtherSide = Just "18069A"
     }
+
+-- * The Ghost of Framsburg (19094-19111)
+
+cryptKey :: CardDef
+cryptKey =
+  unique
+    (objective "19094" "Crypt Key" TheGhostOfFramsburg 1)
+      { cdCardTraits = setFromList [Artifact, Item]
+      , cdKeywords = setFromList [Loot]
+      }
+
+oldLantern :: CardDef
+oldLantern =
+  unique
+    (objective "19095" "Old Lantern" TheGhostOfFramsburg 1)
+      { cdCardTraits = setFromList [Artifact, Item]
+      , cdKeywords = setFromList [Loot]
+      }
+
+scathasTeeth :: CardDef
+scathasTeeth =
+  unique
+    (objective "19096" "Scatha's Teeth" TheGhostOfFramsburg 1)
+      { cdCardTraits = setFromList [Artifact, Item]
+      , cdKeywords = setFromList [Loot]
+      }

@@ -2535,5 +2535,30 @@
     "draw": "Draw 2 cards",
     "resource": "Add 1 resource to a hero's resource pool",
     "hero": "Ancient Treasury: choose a hero to gain 1 resource"
+  },
+  "cryptKey": {
+    "choose": "Crypt Key: increase or decrease the location's Discover value by 1",
+    "increase": "Increase its Discover value by 1",
+    "decrease": "Decrease its Discover value by 1"
+  },
+  "oldLantern": {
+    "player": "Old Lantern: choose a player to look at the top cards of his deck",
+    "card": "Old Lantern: add one of these cards to your hand; the rest go to the bottom of your deck"
+  },
+  "scathasTeeth": {
+    "player": "Scatha's Teeth: choose a player to reduce his threat by 2"
+  },
+  "forgottenCrypt": {
+    "loot": "Forgotten Crypt: choose a Loot objective in the encounter discard pile for the enemy to guard"
+  },
+  "cryptStalker": {
+    "choose": "Crypt Stalker: raise your threat by 2, or return the attacking enemy to the staging area",
+    "raiseThreat": "Raise your threat by 2",
+    "return": "Return the attacking enemy to the staging area"
+  },
+  "searchingTheRuins": {
+    "choose": "Searching the Ruins: choose one",
+    "raiseThreat": "Raise each player's threat by 2",
+    "location": "Discard cards from the encounter deck until a location is discarded, and add it to the staging area"
   }
 }

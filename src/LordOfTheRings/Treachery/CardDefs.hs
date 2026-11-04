@@ -375,6 +375,9 @@ allTreacheryCards =
       , eyesInTheDark
       , dragonBreath
       , dragonScales
+      , abandonedRuins
+      , terribleShadows
+      , slammedShut
       ]
 
 deepDeepDark :: CardDef
@@ -2387,3 +2390,24 @@ dragonBreath = (treachery "18058" "Dragon Breath" DragonMight 2) {cdCardTraits =
 
 dragonScales :: CardDef
 dragonScales = (treachery "18059" "Dragon Scales" DragonMight 2) {cdCardTraits = setFromList [Dragon], cdKeywords = setFromList [Surge]}
+
+-- * The Ghost of Framsburg (19094-19111)
+
+abandonedRuins :: CardDef
+abandonedRuins = (treachery "19106" "Abandoned Ruins" TheGhostOfFramsburg 2) {cdShadowEffect = True, cdEasyModeQuantity = Just 1}
+
+terribleShadows :: CardDef
+terribleShadows =
+  (treachery "19107" "Terrible Shadows" TheGhostOfFramsburg 2)
+    { cdCardTraits = setFromList [Hazard]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 0
+    }
+
+slammedShut :: CardDef
+slammedShut =
+  (treachery "19108" "Slammed Shut" TheGhostOfFramsburg 3)
+    { cdCardTraits = setFromList [Hazard]
+    , cdKeywords = setFromList [Doomed 1]
+    , cdEasyModeQuantity = Just 0
+    }
