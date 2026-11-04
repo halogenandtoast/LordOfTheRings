@@ -4,6 +4,7 @@ import Data.Map.Strict qualified as Map
 import LordOfTheRings.Card.CardDef
 import LordOfTheRings.Card.Code
 import LordOfTheRings.Keyword
+import LordOfTheRings.Name (Name)
 import LordOfTheRings.Prelude
 import LordOfTheRings.Sphere
 import LordOfTheRings.Trait
@@ -98,6 +99,16 @@ allHeroCards =
       , thorinStonehelm
       , gwaihirTheLandOfSorrow
       , aragornSpirit
+      , frodoBagginsTheBlackRiders
+      , samGamgeeTheBlackRiders
+      , merryTheBlackRiders
+      , pippinTheBlackRiders
+      , fattyBolger
+      , frodoBagginsTheRoadDarkens
+      , gandalfTheRoadDarkens
+      , aragornTheTreasonOfSaruman
+      , theodenTheTreasonOfSaruman
+      , treebeardTheTreasonOfSaruman
       ]
 
 aragorn :: CardDef
@@ -629,4 +640,72 @@ aragornSpirit =
   (hero "22137" "Aragorn" Spirit 12 2 3 2 5)
     { cdCardTraits = setFromList [Dunedain, Ranger, Scout]
     , cdKeywords = setFromList [Sentinel]
+    }
+
+-- | A Fellowship sphere hero of The Lord of the Rings saga: no threat cost, as the scenario,
+-- not a deck, puts him into play (The Black Riders rules insert).
+fellowshipHero :: CardCode -> Name -> Int -> Int -> Int -> Int -> CardDef
+fellowshipHero code name willpower attack defense hitPoints =
+  (hero code name Fellowship 0 willpower attack defense hitPoints) {cdThreatCost = Nothing}
+
+frodoBagginsTheBlackRiders :: CardDef
+frodoBagginsTheBlackRiders =
+  (fellowshipHero "141001" "Frodo Baggins" 2 1 2 2)
+    { cdCardTraits = setFromList [Hobbit, RingBearer]
+    }
+
+samGamgeeTheBlackRiders :: CardDef
+samGamgeeTheBlackRiders =
+  (hero "141002" "Sam Gamgee" Leadership 8 3 1 1 3)
+    { cdCardTraits = setFromList [Hobbit]
+    }
+
+merryTheBlackRiders :: CardDef
+merryTheBlackRiders =
+  (hero "141003" "Merry" Tactics 6 2 0 1 2)
+    { cdCardTraits = setFromList [Hobbit]
+    }
+
+pippinTheBlackRiders :: CardDef
+pippinTheBlackRiders =
+  (hero "141004" "Pippin" Lore 6 2 1 1 2)
+    { cdCardTraits = setFromList [Hobbit]
+    }
+
+fattyBolger :: CardDef
+fattyBolger =
+  (hero "141005" "Fatty Bolger" Spirit 7 1 1 2 3)
+    { cdCardTraits = setFromList [Hobbit]
+    }
+
+frodoBagginsTheRoadDarkens :: CardDef
+frodoBagginsTheRoadDarkens =
+  (fellowshipHero "142001" "Frodo Baggins" 2 1 2 2)
+    { cdCardTraits = setFromList [Hobbit, RingBearer]
+    }
+
+gandalfTheRoadDarkens :: CardDef
+gandalfTheRoadDarkens =
+  (hero "142002" "Gandalf" Neutral 14 3 3 3 5)
+    { cdCardTraits = setFromList [Istari]
+    }
+
+aragornTheTreasonOfSaruman :: CardDef
+aragornTheTreasonOfSaruman =
+  (fellowshipHero "143001" "Aragorn" 2 3 2 5)
+    { cdCardTraits = setFromList [Dunedain, Noble, Ranger]
+    , cdKeywords = setFromList [FirstPlayerGainsControl]
+    }
+
+theodenTheTreasonOfSaruman :: CardDef
+theodenTheTreasonOfSaruman =
+  (hero "143002" "Théoden" Spirit 12 2 3 2 4)
+    { cdCardTraits = setFromList [Rohan, Noble, Warrior]
+    , cdKeywords = setFromList [Sentinel]
+    }
+
+treebeardTheTreasonOfSaruman :: CardDef
+treebeardTheTreasonOfSaruman =
+  (hero "143003" "Treebeard" Lore 13 2 3 3 5)
+    { cdCardTraits = setFromList [Ent]
     }

@@ -1309,6 +1309,7 @@ library
       LordOfTheRings.Hero.Cards.AragornLore
       LordOfTheRings.Hero.Cards.AragornSpirit
       LordOfTheRings.Hero.Cards.AragornTactics
+      LordOfTheRings.Hero.Cards.AragornTheTreasonOfSaruman
       LordOfTheRings.Hero.Cards.Argalad
       LordOfTheRings.Hero.Cards.ArwenUndomiel
       LordOfTheRings.Hero.Cards.BardSonOfBrand
@@ -1343,12 +1344,16 @@ library
       LordOfTheRings.Hero.Cards.Erkenbrand
       LordOfTheRings.Hero.Cards.Faramir
       LordOfTheRings.Hero.Cards.Fastred
+      LordOfTheRings.Hero.Cards.FattyBolger
       LordOfTheRings.Hero.Cards.Firyal
       LordOfTheRings.Hero.Cards.FolcoBoffin
       LordOfTheRings.Hero.Cards.FrodoBaggins
       LordOfTheRings.Hero.Cards.FrodoBagginsLeadership
+      LordOfTheRings.Hero.Cards.FrodoBagginsTheBlackRiders
+      LordOfTheRings.Hero.Cards.FrodoBagginsTheRoadDarkens
       LordOfTheRings.Hero.Cards.Galadriel
       LordOfTheRings.Hero.Cards.GaldorOfTheHavensHero
+      LordOfTheRings.Hero.Cards.GandalfTheRoadDarkens
       LordOfTheRings.Hero.Cards.GildorInglorionLeadership
       LordOfTheRings.Hero.Cards.Gimli
       LordOfTheRings.Hero.Cards.GimliLeadership
@@ -1374,24 +1379,29 @@ library
       LordOfTheRings.Hero.Cards.Lothiriel
       LordOfTheRings.Hero.Cards.Mablung
       LordOfTheRings.Hero.Cards.MerrySpirit
+      LordOfTheRings.Hero.Cards.MerryTheBlackRiders
       LordOfTheRings.Hero.Cards.Mirlonde
       LordOfTheRings.Hero.Cards.Naasiyah
       LordOfTheRings.Hero.Cards.Nori
       LordOfTheRings.Hero.Cards.Ori
       LordOfTheRings.Hero.Cards.Pippin
+      LordOfTheRings.Hero.Cards.PippinTheBlackRiders
       LordOfTheRings.Hero.Cards.PrinceImrahil
       LordOfTheRings.Hero.Cards.PrinceImrahilTactics
       LordOfTheRings.Hero.Cards.Quickbeam
       LordOfTheRings.Hero.Cards.Radagast
       LordOfTheRings.Hero.Cards.Rossiel
+      LordOfTheRings.Hero.Cards.SamGamgeeTheBlackRiders
       LordOfTheRings.Hero.Cards.SarumanLore
       LordOfTheRings.Hero.Cards.Smeagol
       LordOfTheRings.Hero.Cards.Thalin
       LordOfTheRings.Hero.Cards.Theoden
+      LordOfTheRings.Hero.Cards.TheodenTheTreasonOfSaruman
       LordOfTheRings.Hero.Cards.Theodred
       LordOfTheRings.Hero.Cards.ThorinStonehelm
       LordOfTheRings.Hero.Cards.Thranduil
       LordOfTheRings.Hero.Cards.Thurindir
+      LordOfTheRings.Hero.Cards.TreebeardTheTreasonOfSaruman
       LordOfTheRings.Hero.Cards.Yazan
       LordOfTheRings.Hero.Import.Lifted
       LordOfTheRings.Hero.Runner

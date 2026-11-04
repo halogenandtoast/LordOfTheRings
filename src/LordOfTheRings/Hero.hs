@@ -105,6 +105,16 @@ import LordOfTheRings.Hero.Cards.FrodoBagginsLeadership
 import LordOfTheRings.Hero.Cards.ThorinStonehelm
 import LordOfTheRings.Hero.Cards.GwaihirTheLandOfSorrow
 import LordOfTheRings.Hero.Cards.AragornSpirit
+import LordOfTheRings.Hero.Cards.FrodoBagginsTheBlackRiders
+import LordOfTheRings.Hero.Cards.SamGamgeeTheBlackRiders
+import LordOfTheRings.Hero.Cards.MerryTheBlackRiders
+import LordOfTheRings.Hero.Cards.PippinTheBlackRiders
+import LordOfTheRings.Hero.Cards.FattyBolger
+import LordOfTheRings.Hero.Cards.FrodoBagginsTheRoadDarkens
+import LordOfTheRings.Hero.Cards.AragornTheTreasonOfSaruman
+import LordOfTheRings.Hero.Cards.TheodenTheTreasonOfSaruman
+import LordOfTheRings.Hero.Cards.TreebeardTheTreasonOfSaruman
+import LordOfTheRings.Hero.Cards.GandalfTheRoadDarkens
 import LordOfTheRings.Hero.Runner ()
 import LordOfTheRings.Hero.Types as X
 import LordOfTheRings.Id
@@ -272,5 +282,15 @@ allHeroes =
         , SomeHeroCard thorinStonehelm
         , SomeHeroCard gwaihirTheLandOfSorrow
         , SomeHeroCard aragornSpirit
+        , SomeHeroCard frodoBagginsTheBlackRiders
+        , SomeHeroCard samGamgeeTheBlackRiders
+        , SomeHeroCard merryTheBlackRiders
+        , SomeHeroCard pippinTheBlackRiders
+        , SomeHeroCard fattyBolger
+        , SomeHeroCard frodoBagginsTheRoadDarkens
+        , SomeHeroCard aragornTheTreasonOfSaruman
+        , SomeHeroCard theodenTheTreasonOfSaruman
+        , SomeHeroCard treebeardTheTreasonOfSaruman
+        , SomeHeroCard gandalfTheRoadDarkens
         ]
     ]
