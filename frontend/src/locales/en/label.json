@@ -361,6 +361,7 @@
   "gandalf": {
     "chooseEnemy": "Deal 4 damage to an enemy",
     "chooseOne": "Gandalf: choose 1",
+    "chooseUpTo": "Gandalf: choose up to 3",
     "draw": "Draw 3 cards",
     "damage": "Deal 4 damage to 1 enemy in play",
     "threat": "Reduce your threat by 5"
@@ -2166,12 +2167,16 @@
     "leave": "Leave it in the discard pile"
   },
   "sendForHelp": {
-    "search": "Send for Help: choose a card among the top 10 of your deck to draw",
+    "search": "Send for Help: choose a card among the top 10 of your deck",
     "nothing": "Take nothing",
+    "drawOrPlay": "Send for Help: draw the card or play it at no cost",
+    "draw": "Draw it",
+    "play": "Play it at no cost",
     "hero": "Send for Help: choose a hero to put into play",
-    "heroNamed": "{hero}",
     "phase": "Send for Help: choose an additional phase",
     "resource": "Resource",
+    "planning": "Planning",
+    "combat": "Combat",
     "refresh": "Refresh"
   },
   "thunderstruck": {
