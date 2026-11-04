@@ -84,6 +84,9 @@ data Area = Area
   -- ^ the area's players, cards in play and effects, while another area is in focus
   , areaHeldEntities :: Entities
   , areaHeldEffects :: [Effect]
+  , areaHeldModifiers :: Map Target [Modifier]
+  -- ^ its cards' modifiers as they were when it was last in focus: nothing in another area
+  -- changes them, so they are its cards' modifiers still
   , areaStatus :: AreaStatus
   , areaJoining :: Bool
   -- ^ its quest card defeated, its players join another area at the beginning of the
@@ -162,13 +165,14 @@ focusArea pid g = case gameSeparation g of
             -- a quest card in each staging area comes along into focus
             shared = Map.filter inEachStagingArea (entitiesQuests es)
             hold a
-              | isFocusedArea g a = a {areaHeldPlayers = gamePlayers g, areaHeldEntities = es {entitiesQuests = Map.difference (entitiesQuests es) shared}, areaHeldEffects = gameEffects g}
-              | elem pid (areaPlayers a) = a {areaHeldPlayers = mempty, areaHeldEntities = mempty, areaHeldEffects = []}
+              | isFocusedArea g a = a {areaHeldPlayers = gamePlayers g, areaHeldEntities = es {entitiesQuests = Map.difference (entitiesQuests es) shared}, areaHeldEffects = gameEffects g, areaHeldModifiers = gameModifiers g}
+              | elem pid (areaPlayers a) = a {areaHeldPlayers = mempty, areaHeldEntities = mempty, areaHeldEffects = [], areaHeldModifiers = mempty}
               | otherwise = a
          in g
               { gamePlayers = areaHeldPlayers t
               , gameEntities = (areaHeldEntities t) {entitiesQuests = entitiesQuests (areaHeldEntities t) <> shared}
               , gameEffects = areaHeldEffects t
+              , gameModifiers = areaHeldModifiers t
               , gameFirstPlayer = areaLead g s t
               , gameSeparation = Just s {separationAreas = map hold (separationAreas s)}
               }
@@ -194,6 +198,7 @@ joinArea joining target g0 = case gameSeparation g of
                 { gamePlayers = gamePlayers g <> areaHeldPlayers j
                 , gameEntities = gameEntities g <> es {entitiesQuests = Map.filter isSideQuest (entitiesQuests es)}
                 , gameEffects = gameEffects g <> areaHeldEffects j
+                , gameModifiers = Map.unionWith (<>) (gameModifiers g) (areaHeldModifiers j)
                 }
          in case areas of
               [_] -> joined {gameSeparation = Nothing, gameFirstPlayer = separationFirstPlayer s}

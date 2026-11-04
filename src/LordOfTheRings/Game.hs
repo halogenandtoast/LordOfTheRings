@@ -298,7 +298,7 @@ instance FromJSON Separation where
   parseJSON = genericParseJSON (aesonOptions $ Just "separation")
 
 instance FromJSON Area where
-  parseJSON = genericParseJSON (aesonOptions $ Just "area")
+  parseJSON = genericParseJSON (aesonOptions $ Just "area") . withDefaults [("heldModifiers", toJSON (mempty :: Map Target [Modifier]))]
 
 {- | The players split into areas, one for each group: each player takes his cards in
 play, those engaged with him and those attached to them, and the encounter cards no
@@ -336,6 +336,7 @@ separate groups g
             , entitiesObjectives = Map.filterWithKey (\k _ -> inGroup (toTarget k)) es.objectives
             }
       , areaHeldEffects = filter (\e -> maybe True (== i) (effectGroup e)) (gameEffects g)
+      , areaHeldModifiers = gameModifiers g
       , areaStatus = AreaStarted
       , areaJoining = False
       }
@@ -3549,12 +3550,12 @@ byCost enemies = do
 attacksOf :: PlayerId -> GameT [EnemyId]
 attacksOf pid = byCost . ordNub =<< (<>) <$> select (EnemyEngagedWith $ PlayerWithId pid) <*> attacksAsIfEngaged pid
 
--- | The enemies in the staging area that attack the player as if engaged, as Snow-Giant.
 -- | The enemies the players may engage from the staging area: those there, not one only
 -- considered to be, as Tide-runner engaged or in the Stormcaller's area.
 engageableFromStaging :: GameT [EnemyId]
 engageableFromStaging = filterM (fmap ((== StagingArea) . (.placement)) . getEnemy) =<< select EnemyInStagingArea
 
+-- | The enemies in the staging area that attack the player as if engaged, as Snow-Giant.
 attacksAsIfEngaged :: PlayerId -> GameT [EnemyId]
 attacksAsIfEngaged pid = filterM asIf =<< select EnemyInStagingArea
  where
