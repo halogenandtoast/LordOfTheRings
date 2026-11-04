@@ -1371,7 +1371,7 @@ runGameMessage msg g = case msg of
       [eid] -> push $ DeclareAttackers pid eid
       _ ->
         push
-          $ questionLabelWith (ikey "label.chooseEnemyToAttack") Nothing (map toTarget targets) pid
+          $ questionLabelWith (ikey "label.chooseNextEnemyToAttack") Nothing (map toTarget targets) pid
           $ [ targetLabel eid [DeclareAttackers pid eid, ChooseAttackTarget pid (filter (/= eid) targets)]
             | eid <- targets
             ]
@@ -1992,7 +1992,7 @@ runGameMessage msg g = case msg of
              (Just t)
              []
              lead
-             [ Label (ikey "label.returnAllyToHand") [ReturnToHand t]
+             [ Label (ikey "label.returnToOwnersHand") [ReturnToHand t]
              , Label (ikey "label.shuffleAllyIntoDeck") [ShuffleIntoOwnersDeck t]
              ]
          | t <- both

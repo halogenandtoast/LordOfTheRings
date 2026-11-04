@@ -122,7 +122,7 @@ spec = describe "Combat phase" do
     run $ EngageEnemy pid two
     run $ PlayerAttacks pid
     Just (QuestionLabel prompt _ targets _) <- getQuestion pid
-    prompt `shouldBe` "$label.chooseEnemyToAttack"
+    prompt `shouldBe` "$label.chooseNextEnemyToAttack"
     length targets `shouldBe` 2
     chooseTarget pid two
     Just (QuestionLabel declare _ declared _) <- getQuestion pid
