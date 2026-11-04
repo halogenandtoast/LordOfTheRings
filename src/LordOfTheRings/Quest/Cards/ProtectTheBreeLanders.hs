@@ -21,7 +21,7 @@ instance HasAbilities ProtectTheBreeLanders where
 instance RunMessage ProtectTheBreeLanders where
   runMessage msg q@(ProtectTheBreeLanders attrs) = case msg of
     UseCardAbility _ (isSource attrs -> True) 1 _ -> do
-      placed <- progressPlacedThisRound (toTarget attrs)
+      placed <- progressPlacedThisPhase (toTarget attrs)
       when (placed == 0) $ placeResources attrs attrs 1
       let n = countTokens Resource attrs.questTokens + fromEnum (placed == 0)
       eachPlayer \p -> encounterRaisesThreat p n

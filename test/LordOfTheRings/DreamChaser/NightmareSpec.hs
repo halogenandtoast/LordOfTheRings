@@ -2,6 +2,7 @@ module LordOfTheRings.DreamChaser.NightmareSpec (spec) where
 
 import LordOfTheRings.Ally.CardDefs qualified as Allies
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
+import LordOfTheRings.Enemy.Types (enemyTokens)
 import LordOfTheRings.Heading (Heading (..))
 import LordOfTheRings.Helpers.Modifiers (getModifiers, preloadModifiers)
 import LordOfTheRings.Helpers.Staging (getEnemyAttack, getStagingThreat)
@@ -226,6 +227,20 @@ spec = describe "Dream-chaser Nightmare mode" do
       secondDeck <- scenarioSetAside <$> scenarioAttrs
       map (`copies` secondDeck) [Enemies.umbarPatrolNightmare, Objectives.theCursedSword, Locations.streetsOfUmbar, Enemies.patrolShip]
         `shouldBe` [3, 1, 2, 0]
+
+    it "The Cursed Sword gives its enemy the excess damage of its attack as resources, once a round" . gameTest $ \_ -> do
+      eowyn <- toTarget <$> getHeroWithCode "01007"
+      theodred <- toTarget <$> getHeroWithCode "01002"
+      _ <- setEncounterDeck [Enemies.hillTroll]
+      run RevealEncounterCard
+      eid <- getsGame (fromJustNote "no enemy" . headMay . map toId . toList . (.entities.enemies))
+      run . (`PutObjectiveIntoPlayAttached` EnemyTarget eid) =<< genEncounterCard Objectives.theCursedSword
+      let resources = countTokens Resource . enemyTokens . toAttrs <$> getEnemy eid
+      -- 6 attack, Éowyn's 1 defense against her 3 hit points
+      run $ AttackDamage eid eowyn
+      resources `shouldReturn` 2
+      run $ AttackDamage eid theodred
+      resources `shouldReturn` 2
 
     it "leaves a standard game's second deck alone" . gameTestIn theCityOfCorsairs testDeck $ \_ -> do
       run $ DoStep 1 Setup

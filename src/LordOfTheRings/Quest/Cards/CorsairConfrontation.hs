@@ -1,7 +1,6 @@
 module LordOfTheRings.Quest.Cards.CorsairConfrontation (corsairConfrontation) where
 
-import LordOfTheRings.Card (Card (EncounterCard), toCardCode)
-import LordOfTheRings.Classes.HasGame (getsGame)
+import LordOfTheRings.Card (toCardCode)
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Phase (Phase (QuestPhase))
 import LordOfTheRings.Quest.CardDefs qualified as Cards
@@ -27,14 +26,8 @@ instance RunMessage CorsairConfrontation where
       askToResolveWhenRevealed attrs
       CorsairConfrontation <$> runMessage msg attrs
     WhenRevealed (isTarget attrs -> True) -> do
-      scenario <- getsGame (toAttrs . (.scenario))
-      let warship = (== toCardCode Enemies.corsairWarship) . toCardCode
       lead <- getLead
-      case [c | EncounterCard c <- scenario.victoryDisplay, warship c] of
-        card : _ | not (any warship $ scenario.encounterDeck <> scenario.encounterDiscard) -> do
-          removeFromVictoryDisplay (EncounterCard card)
-          addToStaging card
-        _ -> searchEncounterDeckAndDiscard lead attrs (cardIs Enemies.corsairWarship)
+      searchEncounterCardsAndVictoryDisplayToStaging lead attrs (cardIs Enemies.corsairWarship)
       pure q
     UseCardAbility _ (isSource attrs -> True) 1 _ -> do
       whenM (selectNone $ EnemyWithCardCode $ toCardCode Enemies.corsairWarship) $ completeQuest attrs.id

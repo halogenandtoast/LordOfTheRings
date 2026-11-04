@@ -135,6 +135,16 @@ spec = describe "The Grey Havens Nightmare Decks" do
       run $ CheckWindows [mkWhen $ PhaseEnds QuestPhase]
       questsInPlay `shouldReturn` [toCardCode Quests.intoTheStorm]
 
+    it "Corsair Confrontation may take the Corsair Warship from the victory display while the deck has one too" . nightmare voyageAcrossBelegaer $ \pid -> do
+      _ <- setEncounterDeck [Enemies.corsairWarship]
+      shown <- genEncounterCard Enemies.corsairWarship
+      putGame . (scenarioL %~ overAttrs (\a -> a {scenarioVictoryDisplay = [EncounterCard shown]})) =<< getGame
+      _ <- setQuestDeck [Quests.intoTheStorm, Quests.corsairPursuit]
+      _ <- revealedStage pid Quests.corsairConfrontation
+      chooseTarget pid (EncounterCard shown)
+      scenarioVictoryDisplay <$> scenarioAttrs `shouldReturn` []
+      length <$> getEncounterDeck `shouldReturn` 1
+
     it "Raging Squall damages each character committed to the Sailing test that discards it" . nightmare voyageAcrossBelegaer $ \pid -> do
       setHeading Sunny
       _ <- setEncounterDeck [Treacheries.ragingSquallNightmare]
