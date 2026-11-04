@@ -143,6 +143,7 @@ allObjectiveCards =
       , underTheWatchfulEye
       , theArmiesOfMordor
       , coveredInDarkness
+      , easterlingPursuit
       ]
 
 durinsAxe :: CardDef
@@ -991,3 +992,9 @@ theArmiesOfMordor = (objective "21069" "The Armies of Mordor" ThePowerOfMordor 1
 
 coveredInDarkness :: CardDef
 coveredInDarkness = (objective "21070" "Covered in Darkness" ThePowerOfMordor 1) {cdCardTraits = setFromList [Mordor], cdKeywords = setFromList [Doomed 5]}
+
+-- * The River Running
+
+-- | Added to the staging area as stage 1A is set up.
+easterlingPursuit :: CardDef
+easterlingPursuit = objective "21012" "Easterling Pursuit" TheRiverRunning 1
