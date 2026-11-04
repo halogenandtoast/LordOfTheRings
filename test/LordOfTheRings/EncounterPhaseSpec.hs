@@ -20,6 +20,16 @@ spec = describe "Encounter phase" do
     headMay <$> peekQueue `shouldReturn` Just (CheckWindows [mkWhen $ EnemyEngaged eid pid])
     enemyPlacements `shouldReturn` [("01096", StagingArea)]
 
+  it "has one enemy make engagement checks alone, as False Accusations' shadow reads" . gameTest $ \pid -> do
+    run . AddToStaging =<< genEncounterCard Enemies.forestSpider
+    run . AddToStaging =<< genEncounterCard Enemies.kingSpider
+    spider <- getsGame (fromJustNote "no spider" . headMay . map toId . filter ((== toCardCode Enemies.forestSpider) . toCardCode) . toList . (.entities.enemies))
+    -- the player's threat reaches both enemies' engagement costs
+    threat <- (.threat) <$> getPlayer pid
+    run $ RaiseThreat pid (max 0 (40 - threat))
+    run $ EnemyEngagementChecks spider
+    sort <$> enemyPlacements `shouldReturn` sort [(toCardCode Enemies.forestSpider, EngagedWith pid), (toCardCode Enemies.kingSpider, StagingArea)]
+
   it "opens a window before a player's threat is raised" . gameTest $ \pid -> do
     was <- (.threat) <$> getPlayer pid
     runOnly $ RaiseThreat pid 2

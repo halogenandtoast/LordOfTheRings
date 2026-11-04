@@ -138,10 +138,10 @@ instance RunMessage TheStewardsFear where
     -- the card, out of play or in the encounter discard pile, is shuffled into the underworld
     -- deck; one that should be in the discard pile and is not stays where it is
     ScenarioSpecific "underworld.reclaim" (parseMaybe parseJSON -> Just (card, fromDiscard))
-      | not fromDiscard || card `elem` attrs.encounterDiscard -> do
+      | not fromDiscard || card `elem` attrs.encounterDiscard || EncounterCard card `elem` attrs.victoryDisplay -> do
           let meta = getMeta attrs
           deck <- shuffleM (card : meta.underworldDeck)
-          pure $ TheStewardsFear $ withMeta meta {underworldDeck = deck} & encounterDiscardL %~ filter (/= card)
+          pure $ TheStewardsFear $ withMeta meta {underworldDeck = deck} & encounterDiscardL %~ filter (/= card) & victoryDisplayL %~ filter (/= EncounterCard card)
     ScenarioSpecific "underworld.shuffle" _ -> do
       let meta = getMeta attrs
       deck <- shuffleM (meta.underworldDeck <> attrs.encounterDeck)
@@ -163,6 +163,8 @@ instance RunMessage TheStewardsFear where
     -- Nightmare: "Forced: After an enemy is destroyed, shuffle it into the underworld deck
     -- if you are not at stage 3." "Forced: At the beginning of the refresh phase, if there
     -- is a Clue card in the staging area, shuffle it back into the underworld deck."
+    -- The enemy is taken from the encounter discard pile, or the victory display for one
+    -- with victory points.
     nightmareWindows ws = do
       stage <- getMainStage
       when (stage /= 3) $ for_ [c | Window After (EnemyDestroyed (EncounterCard c)) <- ws] (reclaim True)

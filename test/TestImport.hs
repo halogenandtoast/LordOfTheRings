@@ -236,6 +236,10 @@ gameTestIn scenario deck body = do
 campaignTestIn :: Scenario -> CampaignLog -> DeckList -> (PlayerId -> GameT ()) -> IO ()
 campaignTestIn scenario l = gameTestIn (overAttrs (\a -> a {scenarioCampaign = Just l}) scenario)
 
+-- | A table of two playing the scenario in campaign mode.
+twoPlayerCampaignTestIn :: Scenario -> CampaignLog -> DeckList -> (PlayerId -> PlayerId -> GameT ()) -> IO ()
+twoPlayerCampaignTestIn scenario l = twoPlayerTestIn (overAttrs (\a -> a {scenarioCampaign = Just l}) scenario)
+
 -- | The campaign log the scenario holds, as resolved once it is won.
 getCampaignLog :: GameT CampaignLog
 getCampaignLog = getsGame (fromJustNote "not in campaign mode" . scenarioCampaign . toAttrs . (.scenario))
@@ -249,9 +253,13 @@ putQuestStage def = do
 
 -- | A table of two: the test deck, then the given deck.
 twoPlayerTest :: DeckList -> (PlayerId -> PlayerId -> GameT ()) -> IO ()
-twoPlayerTest other body = do
+twoPlayerTest = twoPlayerTestIn passageThroughMirkwood
+
+-- | A table of two in the scenario: the test deck, then the given deck.
+twoPlayerTestIn :: Scenario -> DeckList -> (PlayerId -> PlayerId -> GameT ()) -> IO ()
+twoPlayerTestIn scenario other body = do
   seats <- traverse (fmap (either (error . show) id) . uncurry loadPlayer) (("one", testDeck) :| [("two", other)])
-  env <- newGameEnv (newTableIn passageThroughMirkwood seats) (const $ pure ()) 1
+  env <- newGameEnv (newTableIn scenario seats) (const $ pure ()) 1
   runGameT env do
     order <- getsGame (.playerOrder)
     case order of

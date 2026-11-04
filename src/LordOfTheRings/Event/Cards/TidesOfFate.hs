@@ -32,7 +32,7 @@ instance RunMessage TidesOfFate where
           spendGroupResources pid Tactics 2
           for_ defenders \d -> do
             ready d
-            phaseModifier attrs d (AttackModifier 3)
+            phaseModifier attrs d (ForNextAttack $ AttackModifier 3)
         labeled "tidesOfFate.done" (pure ())
       pure e
     _ -> TidesOfFate <$> runMessage msg attrs

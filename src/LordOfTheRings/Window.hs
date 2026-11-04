@@ -1,6 +1,6 @@
 module LordOfTheRings.Window (module LordOfTheRings.Window, module X) where
 
-import LordOfTheRings.Card (Card)
+import LordOfTheRings.Card (Card, PlayerCard)
 import LordOfTheRings.Card.Code (CardCode)
 import LordOfTheRings.Id
 import LordOfTheRings.Phase
@@ -38,10 +38,24 @@ data WindowType
   | -- | an attack destroyed an enemy engaged with the player: the characters that attacked
     EngagedEnemyDestroyedByAttack PlayerId [Target]
   | CharacterDestroyed Target Card
+  | -- | the character destroyed was under the player's control, opened with
+    -- 'CharacterDestroyed'
+    CharacterDestroyedUnder PlayerId Target
   | -- | an encounter card revealed from the encounter deck
     Revealed Target
   | -- | a location about to leave play as an explored location
     Explored LocationId
+  | -- | the card of the location just explored, opened with 'Explored' after it left play,
+    -- for what is read of it then, as its printed quest points
+    ExploredCard Card
+  | -- | a location has left play, however it did
+    LocationLeftPlay LocationId
+  | -- | an enemy entered play, however it did: revealed, put into play or turned faceup
+    EnemyEnteredPlay EnemyId
+  | -- | the player looked at one or more cards in the encounter deck
+    LookedAtEncounterDeck PlayerId
+  | -- | the player turned 1 or more hidden cards faceup, at once (The Blood of Gondor)
+    TurnedHiddenCardsFaceup PlayerId
   | EnemyAttacking EnemyId PlayerId
   | PhaseEnds Phase
   | RoundEnds
@@ -52,6 +66,8 @@ data WindowType
   | ProgressPlaced Target Int
   | QuestedUnsuccessfully
   | QuestedSuccessfully
+  | -- | the progress from questing successfully has been placed
+    PlacedProgressFromQuesting
   | -- | an attack the character made has resolved
     AttackedEnemy Target EnemyId
   | -- | an attack the character defended has resolved
@@ -63,8 +79,9 @@ data WindowType
     ShadowCardDealt EnemyId CardId PlayerId
   | -- | a shadow card's effect about to resolve: the card, and the enemy it was dealt to
     ShadowEffectTriggered CardId EnemyId
-  | -- | a shadow effect about to resolve during an attack the character defends
-    ShadowEffectAgainst Target
+  | -- | a shadow card's effect about to resolve during an attack the character defends:
+    -- the card, and the character
+    ShadowEffectAgainst CardId Target
   | -- | a character left play, as its card
     CharacterLeftPlay Card
   | -- | a character left play: who controlled it, and its traits as it left
@@ -92,6 +109,10 @@ data WindowType
     PlayingEvent PlayerId CardId
   | -- | an attack the characters made dealt the enemy this much damage
     AttackDealtDamage EnemyId [Target] Int
+  | -- | the enemy's attack dealt the character this much damage past what destroys it
+    AttackDealtExcessDamage EnemyId Target Int
+  | -- | the enemy's attack dealt the card damage, as Dwarven Shield answers
+    DamagedByEnemyAttack Target EnemyId
   | -- | the player let the enemy's attack go undefended
     AttackUndefended PlayerId EnemyId
   | -- | an enemy was defeated: damage destroyed it
@@ -114,7 +135,7 @@ data WindowType
   | -- | an attack the character defended has resolved, and it took no damage defending it
     DefendedWithoutDamage Target EnemyId
   | -- | the player played a card from anywhere, hand, discard pile or deck, as its code
-    PlayedCard PlayerId CardCode
+    PlayedCard PlayerId PlayerCard
   | -- | the player is about to be eliminated by reaching his threat elimination level
     EliminatedByThreat PlayerId
   | -- | a quest card was defeated, before what is attached to it is discarded
@@ -129,6 +150,9 @@ data WindowType
     BecameReady Target
   | -- | it became Day or Night, as The Wastes of Eriador's Time objective flipped
     Became TimeOfDay
+  | -- | the card turned over to the side with this code, as Beneath the Sands' Search
+    -- objective flips to On Track
+    FlippedTo Target CardCode
   | -- | the When Revealed effects of the card just revealed were canceled
     WhenRevealedCanceled Target
   | -- | the captured cards underneath the card were rescued, as Jailor Gornákh answers
@@ -159,8 +183,18 @@ data WindowType
     QuestBypassed Target
   | -- | the character was committed to an escape test, as Things in the Pools answers
     CommittedToEscapeTest Target
+  | -- | the guarded character went free of encounters, back under its owner's control
+    CharacterRescued Target
   | -- | the hidden card was turned faceup: the enemy it put into play (The Blood of Gondor)
     HiddenCardTurnedFaceup Target
+  | -- | the attackers against the enemy are declared, before the attack resolves
+    AttackersDeclared EnemyId
+  | -- | a card was discarded from the encounter deck, as Calaerion answers
+    DiscardedFromEncounterDeck CardId
+  | -- | the active location was explored, read as it leaves play, alongside 'Explored'
+    ActiveLocationExplored LocationId
+  | -- | the card of the enemy an attack destroyed, alongside 'EnemyDestroyedByAttack'
+    EnemyCardDestroyedByAttack EnemyId CardId
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

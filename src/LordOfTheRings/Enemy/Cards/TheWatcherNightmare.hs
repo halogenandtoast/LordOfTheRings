@@ -14,7 +14,7 @@ theWatcherNightmare = enemy TheWatcherNightmare Cards.theWatcherNightmare
 
 -- | While The Watcher is in the staging area, it cannot be damaged by player card effects.
 instance HasModifiersFor TheWatcherNightmare where
-  getModifiersFor (TheWatcherNightmare a) = when (a.placement == StagingArea) $ modifySelf a [ImmuneToPlayerCardEffects]
+  getModifiersFor (TheWatcherNightmare a) = when (a.placement == StagingArea) $ modifySelf a [CannotBeDamagedByPlayerCardEffects]
 
 -- | If The Watcher is in the staging area at the end of the combat phase, each player must
 -- deal 3 damage to 1 character he controls.

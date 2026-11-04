@@ -1,5 +1,6 @@
 module LordOfTheRings.Treachery.Cards.PitIntoTheDepths (pitIntoTheDepths) where
 
+import LordOfTheRings.Phase (Phase (QuestPhase))
 import LordOfTheRings.Scenario.Scenarios.TheDrownedRuins.Helpers (underwaterActive)
 import LordOfTheRings.Trait (Trait (Grotto))
 import LordOfTheRings.Treachery.CardDefs qualified as Cards
@@ -19,8 +20,8 @@ pitIntoTheDepths = treachery PitIntoTheDepths Cards.pitIntoTheDepths
 instance RunMessage PitIntoTheDepths where
   runMessage msg t@(PitIntoTheDepths attrs) = case msg of
     WhenRevealed (isTarget attrs -> True) -> do
-      allies <- select AnyAlly
-      for_ allies \x -> phaseModifier attrs x (WillpowerModifier (-1))
+      -- each ally, one entering play later too (FAQ 1.55)
+      createEffect attrs GameTarget [EachAlly (WillpowerModifier (-1))] (UntilEndOfPhaseOf QuestPhase)
       grotto <- select (IsActiveLocation <> LocationWithTrait Grotto)
       for_ grotto flipOver
       pure t

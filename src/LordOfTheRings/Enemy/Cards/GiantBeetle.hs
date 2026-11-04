@@ -18,6 +18,7 @@ instance HasModifiersFor GiantBeetle where
 
 -- | While Giant Beetle is engaged with a player, it gains: "As an additional cost to travel
 -- to a safe location, Giant Beetle makes an immediate attack against the engaged player."
+-- Paid as a Travel cost is: the attack resolves before the location becomes active.
 instance RunMessage GiantBeetle where
   runMessage msg (GiantBeetle attrs) = case msg of
     TravelTo lid | EngagedWith pid <- attrs.placement -> do

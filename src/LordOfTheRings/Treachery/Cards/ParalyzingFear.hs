@@ -16,6 +16,8 @@ paralyzingFear = treachery ParalyzingFear Cards.paralyzingFear
 -- of his deck."
 -- The hero cannot ready, but while the resource the discard puts on this card for its one
 -- Ready is there.
+-- The resource on it marks the paid Ready: treachery attrs hold no state of their own,
+-- and the token is gone again before anyone is asked anything.
 instance HasModifiersFor ParalyzingFear where
   getModifiersFor (ParalyzingFear a) =
     when (paid a == 0) $ withHost a \host -> modified a host [CannotReady]
@@ -47,7 +49,7 @@ instance RunMessage ParalyzingFear where
           labeled "paralyzingFear.discard" do
             discardTopOfDeck pid 1
             placeResources attrs attrs 1
-            ready host
+            encounterReadies host
             removeTokens attrs attrs Resource 1
           labeled "paralyzingFear.stayExhausted" $ pure ()
       ParalyzingFear <$> runMessage msg attrs

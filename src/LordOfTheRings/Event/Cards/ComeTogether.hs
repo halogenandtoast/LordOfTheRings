@@ -5,6 +5,7 @@ import LordOfTheRings.Event.Import.Lifted
 import LordOfTheRings.Helpers.Campaign (campaignLevel)
 import LordOfTheRings.Message.Lifted.UpTo
 import LordOfTheRings.Sphere (Sphere (..))
+import LordOfTheRings.Trait (traitName)
 
 newtype ComeTogether = ComeTogether EventAttrs
   deriving anyclass (IsEvent, HasModifiersFor)
@@ -36,7 +37,13 @@ instance RunMessage ComeTogether where
       chooseUpToM pid "comeTogether.choose" (toTarget attrs) [] x
         [ UpToTarget c do
             unless (null mods) $ roundModifiers attrs c mods
-            when lore $ healDamage attrs c 2
+            when lore do
+              chooseOneM pid do
+                questionLabeled "comeTogether.trait"
+                causedBy attrs
+                for_ [minBound .. maxBound] \t ->
+                  labeledWith "comeTogether.gainTrait" [textVar "trait" (traitName t)] $ roundModifier attrs c (GainTrait t)
+              healDamage attrs c 2
         | c <- characters
         ]
       pure e

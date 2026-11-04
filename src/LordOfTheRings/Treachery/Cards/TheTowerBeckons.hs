@@ -1,6 +1,6 @@
 module LordOfTheRings.Treachery.Cards.TheTowerBeckons (theTowerBeckons) where
 
-import LordOfTheRings.Scenario.Scenarios.TheMorgulVale.Helpers (placeOnTower, towerProgress)
+import LordOfTheRings.Scenario.Scenarios.TheMorgulVale.Helpers (getToTheTower, placeOnTower)
 import LordOfTheRings.Treachery.CardDefs qualified as Cards
 import LordOfTheRings.Treachery.Import.Lifted
 
@@ -21,9 +21,9 @@ instance RunMessage TheTowerBeckons where
       placeOnTower attrs 1
       doStep 1 msg
       pure t
+    -- X is counted as the tower's progress changes this phase (FAQ 1.55)
     DoStep 1 (WhenRevealed (isTarget attrs -> True)) -> do
-      x <- towerProgress
-      when (x > 0) $ phaseModifier attrs GameTarget (StagingThreatBonus x)
+      getToTheTower >>= traverse_ \o -> phaseModifier attrs GameTarget (StagingThreatPerToken (ObjectiveTarget o) Progress)
       pure t
     ResolveShadowEffect cid _ _ _ | cid == attrs.cardId -> do
       placeOnTower attrs 1

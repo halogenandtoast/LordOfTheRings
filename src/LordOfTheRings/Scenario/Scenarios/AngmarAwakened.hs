@@ -9,6 +9,7 @@ module LordOfTheRings.Scenario.Scenarios.AngmarAwakened (
   recordProtectTheInnocent,
   angmarSetup,
   thaurdirsBurdens,
+  thaurdirsBurdensAtSetup,
   attachPermanentBoons,
   seatOf,
   chooseBoonForHand,
@@ -18,7 +19,7 @@ import Data.List (elemIndex)
 import Data.Map.Strict qualified as Map
 import LordOfTheRings.Attachment.CardDefs qualified as Attachments
 import LordOfTheRings.Campaign
-import LordOfTheRings.Classes.Entity (toAttrs)
+import LordOfTheRings.Classes.Entity (toAttrs, toId)
 import LordOfTheRings.Classes.HasGame (HasGame, getsGame)
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Entities (entitiesHeroes, entitiesObjectives, entitiesQuests)
@@ -27,13 +28,14 @@ import LordOfTheRings.Hero.CardDefs qualified as Heroes
 import LordOfTheRings.Matcher
 import LordOfTheRings.Message.Lifted
 import LordOfTheRings.Objective.CardDefs qualified as Objectives
-import LordOfTheRings.Placement (placementController)
+import LordOfTheRings.Placement (Placement (AttachedTo), placementController)
 import LordOfTheRings.Prelude
 import LordOfTheRings.Id (PlayerId)
 import LordOfTheRings.Quest.CardDefs qualified as Quests
 import LordOfTheRings.Quest.Types (QuestAttrs (questTokens))
 import LordOfTheRings.Card
-import LordOfTheRings.Scenario.Types (ScenarioAttrs (scenarioCampaign))
+import LordOfTheRings.Scenario.Types (ScenarioAttrs (scenarioCampaign, scenarioSetAside))
+import LordOfTheRings.Enemy.Types (enemyCardId)
 import LordOfTheRings.Source (Sourceable)
 import LordOfTheRings.Target
 import LordOfTheRings.Token
@@ -106,6 +108,19 @@ angmarSetup attrs = for_ attrs.campaign \l -> do
     let noted = recordedCount ProtectTheInnocentDamage (toCardCode Quests.protectTheInnocent) l
     when (noted > 0) $ placeTokens attrs (CardIdTarget card.id) Damage noted
   when (inPool Attachments.amarthiulsCourage l) courageOnAmarthiul
+  -- The Treachery of Rhudaur's resolution: "For each Clue a player controls, that player
+  -- may add the book with the same name to the Campaign Pool and their deck."
+  let books = Map.toList $ Map.findWithDefault mempty BooksEarned l.counts
+  unless (null books) do
+    updateCampaignLog (Unrecord BooksEarned)
+    order <- getsGame (.playerOrder)
+    for_ books \(code, seat) -> for_ (atMay order seat) \p -> do
+      card <- genPlayerCard (toCardDef code) (Just p)
+      chooseOneM p do
+        questionLabeled "campaign.addBook"
+        showing [PlayerCard card]
+        labeled "campaign.addBookToDeck" $ updateCampaignLog $ AddToPool $ PoolCard code (Just seat) Nothing
+        labeled "pass" $ pure ()
   when (Map.member ChoosePendantOrCourage l.notes) do
     lead <- getLead
     updateCampaignLog (Unrecord ChoosePendantOrCourage)
@@ -131,25 +146,43 @@ courageOnAmarthiul = do
     card <- genPlayerCard Attachments.amarthiulsCourage (Just controller)
     attachOutOfPlay controller card a.id
 
-{- | Thaurdir's burdens from the pool, attached to Thaurdir once he is in play, which the
-scenario checks as each window opens. At Deadmen's Dike, with none earned yet: Forced: After
-Thaurdir enters play, randomly select one of the following burdens and attach it to
-Thaurdir: Thaurdir's Legacy, Thaurdir's Majesty, or Thaurdir's Spite. Add that card to the
-Campaign Pool.
+thaurdirCodes :: [CardCode]
+thaurdirCodes = map toCardCode [Enemies.thaurdirDeadmensDike, Enemies.thaurdirTheTreacheryOfRhudaur, Enemies.thaurdirCaptain, Enemies.thaurdirChampion]
 
+thaurdirBurdenDefs :: [CardDef]
+thaurdirBurdenDefs = [Objectives.thaurdirsLegacy, Objectives.thaurdirsMajesty, Objectives.thaurdirsSpite]
+
+{- | Each of Thaurdir's burdens in the pool: "Setup: Attach to Thaurdir (even if he is out
+of play). Otherwise, remove this card from the game." Out of play, it is attached to his
+card, wherever it lies; its Forced effect is live either way.
+-}
+thaurdirsBurdensAtSetup :: ReverseQueue m => ScenarioAttrs -> m ()
+thaurdirsBurdensAtSetup attrs = for_ attrs.campaign \l -> do
+  inPlay <- getsGame (filter ((`elem` thaurdirCodes) . toCardCode) . toList . (.entities.enemies))
+  let outOfPlay = [c | c <- scenarioSetAside attrs <> attrs.encounterDeck <> attrs.encounterDiscard, toCardCode c `elem` thaurdirCodes]
+      host = case inPlay of
+        e : _ -> Just (EnemyTarget $ toId e)
+        [] -> CardIdTarget . (.id) <$> headMay outOfPlay
+  for_ host \h -> for_ (filter (`inPool` l) thaurdirBurdenDefs) \def ->
+    (`putObjectiveIntoPlayAttached` h) =<< genEncounterCard def
+
+{- | Thaurdir's burdens follow him as he enters play, from his card to him. At Deadmen's
+Dike, with none earned yet: Forced: After Thaurdir enters play, randomly select one of the
+following burdens and attach it to Thaurdir: Thaurdir's Legacy, Thaurdir's Majesty, or
+Thaurdir's Spite. Add that card to the Campaign Pool. The scenario checks as each window
+opens.
 -}
 thaurdirsBurdens :: ReverseQueue m => ScenarioAttrs -> Bool -> m ()
 thaurdirsBurdens attrs firstTime = for_ attrs.campaign \l -> do
-  thaurdirs <- concat <$> traverse (select . EnemyWithCardCode . toCardCode) [Enemies.thaurdirDeadmensDike, Enemies.thaurdirTheTreacheryOfRhudaur, Enemies.thaurdirCaptain, Enemies.thaurdirChampion]
-  for_ (take 1 thaurdirs) \thaurdir -> do
-    inPlay <- getsGame (map toCardCode . toList . entitiesObjectives . gameEntities)
-    let burdens = [Objectives.thaurdirsLegacy, Objectives.thaurdirsMajesty, Objectives.thaurdirsSpite]
-        earned = filter (`inPool` l) burdens
-        attach def = (`putObjectiveIntoPlayAttached` thaurdir) =<< genEncounterCard def
-    for_ [b | b <- earned, toCardCode b `notElem` inPlay] attach
-    when (firstTime && null earned) do
+  thaurdirs <- getsGame (filter ((`elem` thaurdirCodes) . toCardCode) . toList . (.entities.enemies))
+  objectives <- getsGame (toList . entitiesObjectives . gameEntities)
+  for_ thaurdirs \t ->
+    for_ [o | o <- objectives, o.placement == AttachedTo (CardIdTarget (enemyCardId $ toAttrs t))] \o ->
+      attachObjective (toId o) (EnemyTarget $ toId t)
+  for_ (take 1 thaurdirs) \thaurdir ->
+    when (firstTime && not (any (`inPool` l) thaurdirBurdenDefs)) do
       def <- uniform (Objectives.thaurdirsLegacy :| [Objectives.thaurdirsMajesty, Objectives.thaurdirsSpite])
-      attach def
+      (`putObjectiveIntoPlayAttached` EnemyTarget (toId thaurdir)) =<< genEncounterCard def
       updateCampaignLog $ AddToPool $ PoolCard (toCardCode def) Nothing Nothing
 
 {- | Escape from Mount Gram's campaign card: Forced: After a hero enters play, attach to
@@ -166,17 +199,10 @@ attachPermanentBoons attrs code = for_ attrs.campaign \l -> do
       else (`putObjectiveIntoPlayAttached` h.id) =<< genEncounterCard def
 
 {- | Each player in turn order may select one of the boons and add it to their hand, and
-the Campaign Pool, for their deck.
-
+the Campaign Pool, for their deck. A boon one player selects is gone for those after.
 -}
 chooseBoonForHand :: ReverseQueue m => [CardDef] -> m ()
-chooseBoonForHand defs = eachPlayer \p -> do
-  boons <- traverse (`genPlayerCard` Just p) defs
+chooseBoonForHand defs = eachPlayerMayTakeOneOf "campaign.chooseBoon" Nothing defs \p boon -> do
   seat <- seatOf p
-  chooseOneM p do
-    questionLabeled "campaign.chooseBoon"
-    showing (map PlayerCard boons)
-    labeled "pass" $ pure ()
-    for_ boons \boon -> targeting (CardIdTarget boon.id) do
-      putInHand boon
-      updateCampaignLog $ AddToPool $ PoolCard (toCardCode boon) seat Nothing
+  putInHand boon
+  updateCampaignLog $ AddToPool $ PoolCard (toCardCode boon) seat Nothing

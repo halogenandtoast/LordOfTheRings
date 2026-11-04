@@ -15,7 +15,7 @@ erkenbrand = hero Erkenbrand Cards.erkenbrand
 -- cancel a shadow effect just triggered."
 instance HasAbilities Erkenbrand where
   getAbilities (Erkenbrand a) =
-    [restricted a 1 EncounterEffectsCancelable $ response $ ShadowEffectAgainstWindow When (toTarget a)]
+    [restricted a 1 shadowEffectsCancelable $ response $ ShadowEffectAgainstWindow When (toTarget a)]
 
 instance RunMessage Erkenbrand where
   runMessage msg h@(Erkenbrand attrs) = case msg of

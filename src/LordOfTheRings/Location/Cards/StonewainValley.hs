@@ -24,7 +24,8 @@ instance RunMessage StonewainValley where
   runMessage msg (StonewainValley a) = case msg of
     RemoveTokens _ (HeroTarget hid) Resource n | n > 0 && a.placement == StagingArea -> do
       lead <- getLead
-      owner <- (.owner) <$> getHero hid
-      when (owner == lead) $ placeResources a a n
+      hero <- getHero hid
+      -- no more than the pool held
+      when (hero.owner == lead && hero.resources > 0) $ placeResources a a (min n hero.resources)
       StonewainValley <$> runMessage msg a
     _ -> StonewainValley <$> runMessage msg a

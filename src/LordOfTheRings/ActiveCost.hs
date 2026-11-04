@@ -10,10 +10,10 @@ import LordOfTheRings.Id
 import LordOfTheRings.Json
 import LordOfTheRings.Message
 import LordOfTheRings.Prelude
-import LordOfTheRings.Effect (Effect (..), EffectDuration (UntilEndOfRound))
-import LordOfTheRings.Modifier (ModifierType (PlayedACardThisRound))
+import LordOfTheRings.Effect (Effect (..), EffectDuration (UntilEndOfPhase, UntilEndOfRound))
+import LordOfTheRings.Modifier (ModifierType (PlayedACardThisPhase, PlayedACardThisRound, PlayedAnAllyThisRound, PlayedCardTypeThisRound, PlayedEventThisRound))
 import LordOfTheRings.Source (Source (GameSource, PlayerSource))
-import LordOfTheRings.Target (Target (PlayerTarget), toTarget)
+import LordOfTheRings.Target (Target (GameTarget, PlayerTarget), toTarget)
 import LordOfTheRings.Token (Token (Resource))
 import LordOfTheRings.Window
 
@@ -98,13 +98,14 @@ instance RunMessage ActiveCost where
     PaidCost acId | acId == ac.activeCostId -> do
       case ac.activeCostCard of
         PlayerCard card -> do
-          push $ CreateEffect $ Effect GameSource (PlayerTarget ac.activeCostPlayer) [PlayedACardThisRound] UntilEndOfRound
+          push $ CreateEffect $ Effect GameSource (PlayerTarget ac.activeCostPlayer) [PlayedACardThisRound, PlayedCardTypeThisRound (cdCardType $ toCardDef card)] UntilEndOfRound
+          push $ CreateEffect $ Effect GameSource (PlayerTarget ac.activeCostPlayer) [PlayedACardThisPhase] UntilEndOfPhase
           pushAll $ maybe (playCard ac.activeCostPlayer card ac.activeCostWindows) (pure . PlayAttachmentOn ac.activeCostPlayer card) ac.activeCostHost
           push
             $ CheckWindows
             $ [mkAfter $ PlayedFromHand (toTarget card) | ac.activeCostFromHand]
             <> [mkAfter $ PlayedCardFromHand ac.activeCostPlayer (toCardCode card) | ac.activeCostFromHand]
-            <> [mkAfter $ PlayedCard ac.activeCostPlayer (toCardCode card)]
+            <> [mkAfter $ PlayedCard ac.activeCostPlayer card]
             <> [mkAfter $ PaidFrom (toTarget card) ac.activeCostPaidFrom]
         EncounterCard _ -> pure ()
       pure ac
@@ -113,9 +114,13 @@ instance RunMessage ActiveCost where
 -- | A card, its cost paid, played into play or resolved.
 playCard :: PlayerId -> PlayerCard -> [Window] -> [Message]
 playCard pid card windows = case cdCardType (toCardDef card) of
-  AllyType -> [PlayAlly pid card]
+  AllyType -> [CreateEffect $ Effect GameSource GameTarget [PlayedAnAllyThisRound] UntilEndOfRound, PlayAlly pid card]
   AttachmentType -> [PlayAttachment pid card]
   -- the When window comes first, for an effect that cancels it, as Counter-Spell's
-  EventType -> [CheckWindows [mkWhen $ PlayingEvent pid card.id], PlayEvent pid card windows]
+  EventType ->
+    [ CheckWindows [mkWhen $ PlayingEvent pid card.id]
+    , CreateEffect $ Effect GameSource (PlayerTarget pid) [PlayedEventThisRound] UntilEndOfRound
+    , PlayEvent pid card windows
+    ]
   PlayerSideQuestType -> [PutSideQuestIntoPlay pid card]
   _ -> []

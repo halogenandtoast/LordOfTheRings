@@ -1,14 +1,16 @@
 module LordOfTheRings.Criteria (module LordOfTheRings.Criteria) where
 
+import LordOfTheRings.Campaign (CampaignLogKey)
 import LordOfTheRings.Card.CardType
 import LordOfTheRings.Heading (HeadingMatcher)
 import LordOfTheRings.Id
 import LordOfTheRings.Matcher.Types
-import LordOfTheRings.Modifier (ModifierType)
-import LordOfTheRings.Target (Target)
+import LordOfTheRings.Modifier (ModifierType (CannotCancelShadowEffects, CannotCancelWhenRevealedEffects))
+import LordOfTheRings.Target (Target (GameTarget))
 import LordOfTheRings.Phase (Phase)
 import LordOfTheRings.Prelude
 import LordOfTheRings.Sphere (Sphere)
+import LordOfTheRings.Trait (Trait)
 
 data Criterion
   = NoCriteria
@@ -37,6 +39,8 @@ data Criterion
     BeforeStaging
   | -- | nothing stops a player card cancelling an encounter card's effects
     EncounterEffectsCancelable
+  | -- | the treachery card being revealed is the first revealed this round
+    FirstTreacheryRevealedThisRound
   | NotCriterion Criterion
   | -- | the target has, or lacks, the modifier
     TargetHasModifier Target ModifierType
@@ -53,6 +57,11 @@ data Criterion
     FewerInVictoryDisplay Int CardMatcher
   | -- | a matching card is in the player's discard pile
     CardInDiscard PlayerId CardMatcher
+  | -- | a matching card is in any player's discard pile, as The Houses of Healing needs a
+    -- hero there
+    CardInAnyDiscard CardMatcher
+  | -- | the main quest has no keywords, printed or gained, as Backtrack reads
+    MainQuestWithoutKeywords
   | Criteria [Criterion]
   | AnyCriteria [Criterion]
   | -- | at least this many enemies match
@@ -61,6 +70,16 @@ data Criterion
     HeadingMatches HeadingMatcher
   | -- | the game is dealt in nightmare mode, as a setup card changes a stage's ability
     InNightmareMode
+  | -- | in campaign mode, the log holds a card under the key, as a secret yet unflipped
+    CampaignRecorded CampaignLogKey
+  | -- | the characters the player controls have at least this many different traits
+    -- between them, as The Free Peoples reads
+    DifferentTraitsAtLeast PlayerId Int
+  | -- | a Condition attachment is in play, as Bulwark of the West discards
+    ConditionAttachmentExists
+  | -- | a matching card is in the player's hand, whether or not it could be played, as
+    -- Kahliel discards a Harad ally
+    CardInHandToDiscard PlayerId CardMatcher
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
@@ -95,6 +114,15 @@ instance Exists AllyMatcher where
 eachHeroHasPrintedIcon :: PlayerId -> Sphere -> Criterion
 eachHeroHasPrintedIcon pid sphere = NotCriterion $ HeroExists (HeroControlledBy (PlayerWithId pid) <> NotHero (HeroWithPrintedSphere sphere))
 
+-- | The player controls a different unique character with each trait, as "Play only if you
+-- control a unique character with the Warrior trait and another unique character with the
+-- Scout trait" reads.
+uniqueCharactersWith :: PlayerId -> [Trait] -> Criterion
+uniqueCharactersWith pid = DistinctCharacters . map \trait ->
+  (HeroControlledBy you <> HeroWithTrait trait, AllyControlledBy you <> UniqueAlly <> AllyWithTrait trait)
+ where
+  you = PlayerWithId pid
+
 -- | The player may resolve a Valour trigger: his threat is 40 or higher.
 valour :: PlayerId -> Criterion
 valour pid = PlayerExists (PlayerWithId pid <> PlayerWithThreatAtLeast 40)
@@ -110,3 +138,11 @@ withoutErrata = NotCriterion . usesErrata
 -- | The player controls a matching ally, as a card that returns one to hand needs.
 controlsAlly :: PlayerId -> AllyMatcher -> Criterion
 controlsAlly pid m = AllyExists (AllyControlledBy (PlayerWithId pid) <> m)
+
+-- | Nothing stops a player card cancelling a shadow effect.
+shadowEffectsCancelable :: Criterion
+shadowEffectsCancelable = EncounterEffectsCancelable <> TargetLacksModifier GameTarget CannotCancelShadowEffects
+
+-- | Nothing stops a player card cancelling a When Revealed effect.
+whenRevealedCancelable :: Criterion
+whenRevealedCancelable = EncounterEffectsCancelable <> TargetLacksModifier GameTarget CannotCancelWhenRevealedEffects

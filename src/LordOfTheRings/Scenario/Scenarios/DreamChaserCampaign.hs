@@ -28,7 +28,7 @@ import LordOfTheRings.Event.CardDefs qualified as Events
 import LordOfTheRings.Game.Base (allPlayers, gameEntities, gamePlayerOrder)
 import LordOfTheRings.Entities (entitiesObjectives)
 import LordOfTheRings.GameT (GameT)
-import LordOfTheRings.Helpers.IslandMap (locationAt)
+import LordOfTheRings.Helpers.Campaign (templeSecrets)
 import LordOfTheRings.Keyword (Keyword (Uncharted))
 import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Location.Grid (Pos (..))
@@ -116,6 +116,18 @@ runCampaign l msg attrs = case msg of
       & encounterDeckL %~ filter (not . carried)
       & encounterDiscardL %~ filter (not . carried)
       & setAsideL %~ (<> moved)
+  -- Temple of the Deceived: Travel Action: Flip over a secret at your location. If it is a
+  -- Recurring Nightmare, it engages you. If it is Starla, you gain control of her (ready).
+  UseCardAbility pid ScenarioSource 1 _ | sid attrs == "temple-of-the-deceived" -> do
+    here <- mapMaybe (.position) <$> (traverse getLocation =<< select IsActiveLocation)
+    let flipped = [(pos, code) | (pos, code) <- templeSecrets attrs, pos `elem` here]
+    for_ flipped \(_, code) ->
+      if code == toCardCode Enemies.recurringNightmare
+        then putEnemyIntoPlayEngaged pid =<< genEncounterCard Enemies.recurringNightmare
+        else putAllyIntoPlayUnder pid =<< genPlayerCard Allies.starla (Just pid)
+    let rows = map (posRow . fst) flipped
+        flip' l' = record RevealedSecrets (recorded RevealedSecrets l' <> map snd flipped) $ record Secrets [if r `elem` rows then "" else c | (r, c) <- zip [0 ..] (recorded Secrets l')] l'
+    pure $ withLog flip' attrs
   ResolveCampaign -> do
     l' <- resolve l attrs
     runMessage msg (attrs & campaignL ?~ l' {campaignLogCardResources = 0, campaignLogNotes = foldr Map.delete l'.notes [ChosenDuringSetup, SahirKeyed, SahirTurned, Secrets, RevealedSecrets]})
@@ -403,19 +415,6 @@ windows l ws attrs = case sid attrs of
   -- The City of Corsairs: Forced: When Captain Sahír enters play, attach Black Key
   -- (burden) and The Black Sword to him.
   "the-city-of-corsairs" -> keyed [Objectives.blackKeyBurden, Objectives.theBlackSword] (EnemyWithCardCode $ toCardCode Enemies.captainSahirTheCityOfCorsairs)
-  -- Temple of the Deceived: Travel Action: Flip over a secret at your location. If it is a
-  -- Recurring Nightmare, it engages you. If it is Starla, you gain control of her (ready).
-  "temple-of-the-deceived" -> do
-    let secrets = recorded Secrets l
-    temples <- traverse (\r -> fmap (.id) <$> locationAt (Pos 4 r)) [0 .. 2]
-    let revealed = [(r, code) | Window After (BecameActiveLocation lid) <- ws, (r, Just t) <- zip [0 :: Int ..] temples, t == lid, Just code <- [atMay secrets r], code /= ""]
-    lead <- getLead
-    for_ revealed \(_, code) ->
-      if code == toCardCode Enemies.recurringNightmare
-        then putEnemyIntoPlayEngaged lead =<< genEncounterCard Enemies.recurringNightmare
-        else putAllyIntoPlayUnder lead =<< genPlayerCard Allies.starla (Just lead)
-    let flipped l' = record RevealedSecrets (recorded RevealedSecrets l' <> map snd revealed) $ record Secrets [if r `elem` map fst revealed then "" else c | (r, c) <- zip [0 ..] secrets] l'
-    pure $ if null revealed then attrs else withLog flipped attrs
   _ -> pure attrs
  where
   -- once, the first time he is seen in play

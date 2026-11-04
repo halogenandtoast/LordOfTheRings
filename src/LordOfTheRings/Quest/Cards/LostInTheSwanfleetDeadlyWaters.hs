@@ -1,5 +1,6 @@
 module LordOfTheRings.Quest.Cards.LostInTheSwanfleetDeadlyWaters (lostInTheSwanfleetDeadlyWaters) where
 
+import LordOfTheRings.Card (CardType (TreacheryType), cdCardType, toCardDef)
 import LordOfTheRings.Classes.HasGame (getsGame)
 import LordOfTheRings.Quest.CardDefs qualified as Cards
 import LordOfTheRings.Quest.Import.Lifted
@@ -17,10 +18,14 @@ instance HasAbilities LostInTheSwanfleetDeadlyWaters where
 
 -- | The Nightmare Deck's B side of Lost in the Swanfleet.
 -- Treachery card effects cannot be canceled.
+-- Their When Revealed effects, and the shadow effects of treacheries dealt as shadow cards.
 instance HasModifiersFor LostInTheSwanfleetDeadlyWaters where
   getModifiersFor (LostInTheSwanfleetDeadlyWaters a) = when a.flipped do
     treacheries <- getsGame (toList . (.entities.treacheries))
     for_ treacheries \t -> modified a t [WhenRevealedCannotBeCanceled]
+    enemies <- getsGame (toList . (.entities.enemies))
+    for_ [c | e <- enemies, c <- e.shadowCards, cdCardType (toCardDef c) == TreacheryType] \c ->
+      modified a (CardIdTarget c.id) [ShadowCannotBeCanceled]
 
 instance RunMessage LostInTheSwanfleetDeadlyWaters where
   runMessage msg (LostInTheSwanfleetDeadlyWaters attrs) = LostInTheSwanfleetDeadlyWaters <$> runWanderingStage msg attrs

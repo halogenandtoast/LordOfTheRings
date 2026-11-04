@@ -1,6 +1,6 @@
 module LordOfTheRings.Treachery.Cards.BefouledEquipment (befouledEquipment) where
 
-import LordOfTheRings.Scenario.Scenarios.ReturnToMirkwood.Helpers (getGuard, tantrumTargets)
+import LordOfTheRings.Scenario.Scenarios.ReturnToMirkwood.Helpers (shadowGuardTargets, tantrumTargets)
 import LordOfTheRings.Treachery.CardDefs qualified as Cards
 import LordOfTheRings.Treachery.Import.Lifted
 
@@ -27,7 +27,7 @@ instance RunMessage BefouledEquipment where
         pure attachments
       when (all null discarded) revealEncounterCard
       pure t
-    ResolveShadowEffect cid _ _ _ | cid == attrs.cardId -> do
-      getGuard >>= traverse_ (traverse_ discard <=< getAttachmentsControlledBy)
+    ResolveShadowEffect cid eid _ _ | cid == attrs.cardId -> do
+      shadowGuardTargets eid >>= traverse_ (traverse_ discard <=< getAttachmentsControlledBy)
       pure t
     _ -> BefouledEquipment <$> runMessage msg attrs

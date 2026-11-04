@@ -1,6 +1,7 @@
 module LordOfTheRings.Treachery.Cards.TrappedVillagers (trappedVillagers) where
 
-import LordOfTheRings.Scenario.Scenarios.EncounterAtAmonDin.Helpers (deadVillagerCount, villagerDies)
+import LordOfTheRings.Scenario.Scenarios.EncounterAtAmonDin.Helpers (objectiveOf, villagerDies)
+import LordOfTheRings.Objective.CardDefs qualified as Objectives
 import LordOfTheRings.Treachery.CardDefs qualified as Cards
 import LordOfTheRings.Treachery.Import.Lifted
 
@@ -21,9 +22,9 @@ instance RunMessage TrappedVillagers where
       replicateM_ 3 $ villagerDies attrs
       doStep 1 msg
       pure t
+    -- counted as the damage on Dead Villagers changes this round (FAQ 1.55)
     DoStep 1 (WhenRevealed (isTarget attrs -> True)) -> do
-      dead <- deadVillagerCount
-      when (dead > 0) $ roundModifier attrs GameTarget (StagingThreatBonus dead)
+      objectiveOf Objectives.deadVillagers >>= traverse_ \o -> roundModifier attrs GameTarget (StagingThreatPerToken (ObjectiveTarget o) Damage)
       pure t
     ResolveShadowEffect cid eid _ _ | cid == attrs.cardId -> do
       enemyGetsAttack attrs eid 2

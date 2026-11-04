@@ -3,7 +3,13 @@ own: see "LordOfTheRings.Scenario.Scenarios.FoundationsOfStone.Helpers".
 -}
 module LordOfTheRings.Scenario.Scenarios.FoundationsOfStone (foundationsOfStone) where
 
+import LordOfTheRings.Classes.HasGame (getGame)
 import LordOfTheRings.EncounterSet qualified as EncounterSet
+import LordOfTheRings.Entities (entitiesLocations)
+import LordOfTheRings.Game.Base (Area (..), Separation (..), gameSeparation, isFocusedArea)
+import LordOfTheRings.Location.Types ()
+import LordOfTheRings.Modifier (ModifierType (StagingThreatBonus))
+import LordOfTheRings.Placement (Placement (StagingArea))
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Quest.CardDefs qualified as Quests
@@ -12,8 +18,27 @@ import LordOfTheRings.Scenario.Import.Lifted
 import LordOfTheRings.Treachery.CardDefs qualified as Treacheries
 
 newtype FoundationsOfStone = FoundationsOfStone ScenarioAttrs
-  deriving anyclass (IsScenario, HasAbilities, HasModifiersFor)
+  deriving anyclass (IsScenario, HasAbilities)
   deriving newtype (Show, Eq, ToJSON, Entity)
+
+-- | Nightmare's Shivering River: "While Shivering River is in the staging area, it
+-- contributes its threat to the total threat in each other player's staging area." One in
+-- another area's staging area adds its threat to this one's; held there, its modifiers are
+-- not read, so it adds its printed threat.
+instance HasModifiersFor FoundationsOfStone where
+  getModifiersFor (FoundationsOfStone a) = do
+    g <- getGame
+    let rivers =
+          [ l
+          | Just s <- [gameSeparation g]
+          , area <- separationAreas s
+          , not (isFocusedArea g area)
+          , l <- toList (entitiesLocations $ areaHeldEntities area)
+          , l.placement == StagingArea
+          , toCardCode l == toCardCode Locations.shiveringRiver
+          ]
+        n = sum (map (.threat) rivers)
+    when (n > 0) $ modified a GameTarget [StagingThreatBonus n]
 
 foundationsOfStone :: Scenario
 foundationsOfStone =

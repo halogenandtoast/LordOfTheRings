@@ -83,6 +83,7 @@ import LordOfTheRings.Attachment.Cards.Cunning
 import LordOfTheRings.Attachment.Cards.Hardy
 import LordOfTheRings.Attachment.Cards.Resolute
 import LordOfTheRings.Attachment.Cards.Ruthless
+import LordOfTheRings.Attachment.Cards.DeterminationAttachment
 import LordOfTheRings.Attachment.Cards.Stalwart
 import LordOfTheRings.Attachment.Cards.AmarthiulsCourage
 import LordOfTheRings.Attachment.Cards.ChieftainsBrooch
@@ -164,6 +165,21 @@ import LordOfTheRings.Attachment.Cards.BlackKey
 import LordOfTheRings.Attachment.Cards.ParryingCutlass
 import LordOfTheRings.Attachment.Cards.ThrowingAxe
 import LordOfTheRings.Attachment.Cards.CirdansBlessing
+import LordOfTheRings.Attachment.Cards.DwarvenShield
+import LordOfTheRings.Attachment.Cards.MirkwoodLongKnife
+import LordOfTheRings.Attachment.Cards.TheRoadGoesEverOn
+import LordOfTheRings.Attachment.Cards.KahlielsHeaddress
+import LordOfTheRings.Attachment.Cards.SteedOfTheNorth
+import LordOfTheRings.Attachment.Cards.MightyWarrior
+import LordOfTheRings.Attachment.Cards.HaradrimSpear
+import LordOfTheRings.Attachment.Cards.FiresideSong
+import LordOfTheRings.Attachment.Cards.DoughtyRanger
+import LordOfTheRings.Attachment.Cards.SongOfHope
+import LordOfTheRings.Attachment.Cards.FearlessScout
+import LordOfTheRings.Attachment.Cards.DunedainPipe
+import LordOfTheRings.Attachment.Cards.DiligentNoble
+import LordOfTheRings.Attachment.Cards.LegacyBlade
+import LordOfTheRings.Attachment.Cards.Followed
 import LordOfTheRings.Attachment.Runner ()
 import LordOfTheRings.Attachment.Types as X
 import LordOfTheRings.Id
@@ -273,6 +289,7 @@ allAttachments =
         , SomeAttachmentCard hardy
         , SomeAttachmentCard resolute
         , SomeAttachmentCard ruthless
+        , SomeAttachmentCard determinationAttachment
         , SomeAttachmentCard stalwart
         , SomeAttachmentCard amarthiulsCourage
         , SomeAttachmentCard chieftainsBrooch
@@ -365,5 +382,20 @@ allAttachments =
         , SomeAttachmentCard cirdansBlessingTactics
         , SomeAttachmentCard cirdansBlessingSpirit
         , SomeAttachmentCard cirdansBlessingLore
+        , SomeAttachmentCard dwarvenShield
+        , SomeAttachmentCard mirkwoodLongKnife
+        , SomeAttachmentCard theRoadGoesEverOn
+        , SomeAttachmentCard kahlielsHeaddress
+        , SomeAttachmentCard steedOfTheNorth
+        , SomeAttachmentCard mightyWarrior
+        , SomeAttachmentCard haradrimSpear
+        , SomeAttachmentCard firesideSong
+        , SomeAttachmentCard doughtyRanger
+        , SomeAttachmentCard songOfHope
+        , SomeAttachmentCard fearlessScout
+        , SomeAttachmentCard dunedainPipe
+        , SomeAttachmentCard diligentNoble
+        , SomeAttachmentCard legacyBlade
+        , SomeAttachmentCard followed
         ]
     ]

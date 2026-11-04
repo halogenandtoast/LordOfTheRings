@@ -37,6 +37,11 @@ instance RunMessage QuestAttrs where
     PlaceUnderneath (isTarget attrs -> True) cards -> pure $ attrs & underneathL <>~ cards
     RemoveTokens _ (isTarget attrs -> True) token n -> do
       pure $ attrs & tokensL %~ subtractTokens token n
+    -- a stage with enough progress is defeated as it is checked, as once nothing stops it
+    CheckStage qid | qid == attrs.id -> do
+      done <- hasEnoughProgress attrs
+      when done $ push (CompleteQuest attrs.id)
+      pure attrs
     _ -> pure attrs
 
 {- | The stage's quest points, its modifiers applied, as Haunting Fog's +6 and Thaurdir's
@@ -90,6 +95,9 @@ runBlockedStage blocker msg attrs = case msg of
     when (isBlocker && blockers == 1 && done)
       $ push (CompleteQuest attrs.id)
     runMessage msg attrs
+  CheckStage qid | qid == attrs.id -> do
+    blocked <- selectAny blocker
+    if blocked then pure attrs else runMessage msg attrs
   _ -> runMessage msg attrs
  where
   leaving = case msg of

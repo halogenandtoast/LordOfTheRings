@@ -11,7 +11,8 @@ shiveringRiver :: LocationCard ShiveringRiver
 shiveringRiver = location ShiveringRiver Cards.shiveringRiver
 
 -- | While Shivering River is in the staging area, it contributes its [Threat] to the total
--- [Threat] in each other player's staging area.
+-- [Threat] in each other player's staging area: Foundations of Stone's scenario adds it to
+-- each other area's, as the players are separated.
 -- Shadow: Attacking enemy gets +1 [Attack]. (+3 [Attack] instead if there is more than one
 -- player at this staging area.)
 instance RunMessage ShiveringRiver where

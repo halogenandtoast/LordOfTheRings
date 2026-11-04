@@ -171,8 +171,8 @@ instance RunMessage EscapeFromMountGram where
       -- discard the rest."
       let vault = toCardCode host == toCardCode Quests.raidGolfimbulsVault
       for_ cards \pc -> case cdCardType (toCardDef pc) of
-        HeroType -> putIntoPlayAtNoCost pc
         _ | vault && Item `notMember` cdCardTraits (toCardDef pc) -> push $ PutInDiscard pc
+        HeroType -> putIntoPlayAtNoCost pc
         _ -> putInHand pc
       push $ CheckWindows [mkAfter $ CapturedCardsRescued host (map PlayerCard cards)]
       -- Dungeon Guard: Response: After the captured card(s) underneath Dungeon Guard are

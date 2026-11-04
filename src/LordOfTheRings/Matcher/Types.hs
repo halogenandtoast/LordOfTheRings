@@ -5,6 +5,7 @@ import LordOfTheRings.Card.CardType
 import LordOfTheRings.Card.Code
 import LordOfTheRings.Id
 import LordOfTheRings.Keyword (Keyword (Doomed))
+import LordOfTheRings.Location.Grid (Pos)
 import LordOfTheRings.Name
 import LordOfTheRings.Prelude
 import LordOfTheRings.Sphere (Sphere)
@@ -59,6 +60,8 @@ data HeroMatcher
   | -- | a hero defending the attack being resolved
     DefendingHero
   | PrisonerHero
+  | -- | in play in the staging area, under no player's control (The Long Arm of Mordor)
+    HeroInStagingArea
   | -- | a hero with an attachment, objective or condition of the trait attached
     HeroWithAttached Trait
   | -- | a hero with a ready attachment of the trait attached
@@ -150,6 +153,8 @@ data AttachMatcher
     AttachToPlayer
   | -- | played into the staging area unattached, as a Trap
     PlayIntoStagingArea
+  | -- | played into its owner's play area unattached, as Followed
+    PlayIntoPlayArea
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
@@ -216,8 +221,15 @@ data LocationMatcher
     -- stands for them all, as an ability that does not stack is triggered by one
     LocationWithIdBelow LocationId
   | UniqueLocation
+  | -- | a location with the same title as the active location, the active one among them,
+    -- as Explore Secret Ways reads
+    LocationWithActiveLocationTitle
   | -- | a location player card effects may discard from play
     LocationDiscardableByPlayerCards
+  | -- | the location lying there on the Island Map (Temple of the Deceived)
+    LocationAtPosition Pos
+  | -- | a location that can enter the staging area, as Shrine to Morgoth cannot
+    LocationCanEnterStagingArea
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
@@ -267,6 +279,10 @@ instance Semigroup CardMatcher where
 
 instance Monoid CardMatcher where
   mempty = AnyCard
+
+-- | A side quest, the players' or the encounter deck's.
+sideQuestCard :: CardMatcher
+sideQuestCard = CardMatchAny [CardWithType PlayerSideQuestType, CardWithType EncounterSideQuestType]
 
 cardIs :: CardDef -> CardMatcher
 cardIs = CardWithCode . cdCardCode

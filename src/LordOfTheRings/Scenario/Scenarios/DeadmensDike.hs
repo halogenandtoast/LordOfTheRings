@@ -20,6 +20,8 @@ deadmensDike =
   Scenario
     $ scenario (DeadmensDike . (nightmareDeckL ?~ nightmare)) "deadmens-dike" "Deadmen's Dike"
  where
+  -- Its "Each player's deck cannot include more than 50 total cards" is a deckbuilding
+  -- rule: decks are built before the game, and nothing here validates them.
   nightmare =
     nightmareDeck
       Nightmare.deadmensDikeNightmare

@@ -28,6 +28,7 @@ instance RunMessage TrollAttack where
     ResolveShadowEffect cid eid pid _ | cid == attrs.cardId -> do
       troll <- selectAny (EnemyWithId eid <> EnemyWithTrait Troll)
       others <- filter (/= pid) <$> getRemainingPlayers
-      when troll $ afterAttack eid [UndefendedDamage p eid | p <- others]
+      -- the others are attacked undefended, their damage dealt with the defending player's
+      when troll $ withAttackDamage eid [UndefendedDamage p eid | p <- others]
       pure t
     _ -> TrollAttack <$> runMessage msg attrs

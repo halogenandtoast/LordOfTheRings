@@ -14,10 +14,14 @@ snowyBadlands = location SnowyBadlands Cards.snowyBadlands
 
 -- | While Snowy Badlands is in the staging area, each enemy in the staging area cannot take
 -- damage.
+-- With a player who has no exhausted character to deal it to, its Travel cost cannot be
+-- paid.
 instance HasModifiersFor SnowyBadlands where
   getModifiersFor (SnowyBadlands a) = when (a.placement == StagingArea) do
     staged <- select EnemyInStagingArea
     for_ staged \e -> modified a e [CannotTakeDamage]
+    unable <- anyM (fmap null . exhaustedCharactersOf) =<< getRemainingPlayers
+    when unable $ modifySelf a [CannotBeTraveledTo]
 
 -- | Travel: Each player deals 1 damage to an exhausted character he controls to travel here
 -- (2 damage instead if it is Night).

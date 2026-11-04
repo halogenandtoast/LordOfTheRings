@@ -15,7 +15,7 @@ import LordOfTheRings.Scenario.Scenarios.TheStewardsFear.Helpers (Meta (..), get
 import LordOfTheRings.Scenario.Scenarios.EncounterAtAmonDin.Helpers (deadVillagerCount, getVillagers, rescuedVillagerCount)
 import LordOfTheRings.Scenario.CardDefs qualified as Nightmare
 import LordOfTheRings.Scenario.Scenarios.TheMorgulVale.Helpers (towerProgress)
-import LordOfTheRings.Scenario.Types (GameMode (..), ScenarioAttrs (scenarioSetAside), metaL, modeL, victoryDisplayL)
+import LordOfTheRings.Scenario.Types (GameMode (..), ScenarioAttrs (scenarioSetAside, scenarioVictoryDisplay), metaL, modeL, victoryDisplayL)
 import LordOfTheRings.Treachery.CardDefs qualified as Treacheries
 import LordOfTheRings.Window (Timing (When), Window (..), WindowType (AdvancedToStage, PhaseBegins, PhaseEnds, RoundEnds), mkAfter)
 import TestImport
@@ -141,10 +141,13 @@ spec = describe "Against the Shadow nightmare decks" do
       towerProgress `shouldReturn` 1
 
     it "The Tower Beckons places progress and adds the tower's progress to the staging area" . nightmare theMorgulVale $ \_ -> do
-      _ <- tower
+      t <- tower
       reveal Treacheries.theTowerBeckons []
       towerProgress `shouldReturn` 1
       getStagingThreat `shouldReturn` 1
+      -- kept up as the tower's progress changes this phase
+      run $ PlaceTokens GameSource (ObjectiveTarget t) Progress 1
+      getStagingThreat `shouldReturn` 2
 
     it "Noxious Fumes deals damage equal to the tower's progress" . nightmare theMorgulVale $ \pid -> do
       _ <- tower
@@ -363,6 +366,10 @@ spec = describe "Against the Shadow nightmare decks" do
       reveal Treacheries.trappedVillagers []
       deadVillagerCount `shouldReturn` 3
       getStagingThreat `shouldReturn` 3
+      -- kept up as more villagers die this round
+      dead <- getsGame (fromJustNote "no Dead Villagers" . fmap toId . find ((== toCardCode Objectives.deadVillagers) . toCardCode) . toList . (.entities.objectives))
+      run $ PlaceTokens GameSource (ObjectiveTarget dead) Damage 1
+      getStagingThreat `shouldReturn` 4
 
     it "Run for your Lives! deals damage for each dead villager" . nightmare encounterAtAmonDin $ \pid -> do
       villagers 1
@@ -543,3 +550,10 @@ spec = describe "Against the Shadow nightmare decks" do
       bandit <- staged Enemies.lossarnachBandit
       run $ DealDamage GameSource (toTarget bandit) 5
       map toCardCode . (.underworldDeck) <$> fearMeta `shouldReturn` [toCardCode Enemies.lossarnachBandit]
+
+    it "shuffles a destroyed enemy with victory points into the underworld deck from the victory display" . nightmare theStewardsFear $ \_ -> do
+      _ <- setUnderworld []
+      troll <- staged Enemies.hillTroll
+      run $ DealDamage GameSource (toTarget troll) 9
+      map toCardCode . (.underworldDeck) <$> fearMeta `shouldReturn` [toCardCode Enemies.hillTroll]
+      getsGame (scenarioVictoryDisplay . toAttrs . (.scenario)) `shouldReturn` []

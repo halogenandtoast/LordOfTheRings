@@ -26,6 +26,6 @@ instance RunMessage RammingShip where
       roundModifier attrs attrs.id (AttackModifier 4)
       pure e
     ResolveShadowEffect cid _ pid _ | cid == attrs.cardId -> do
-      revealFromCorsairDeck (CardIdSource cid) pid
+      revealFromCorsairDeckWithShadow (CardIdSource cid) pid
       pure e
     _ -> RammingShip <$> runMessage msg attrs

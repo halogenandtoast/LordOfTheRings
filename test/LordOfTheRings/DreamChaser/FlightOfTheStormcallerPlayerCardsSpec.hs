@@ -4,16 +4,16 @@ module LordOfTheRings.DreamChaser.FlightOfTheStormcallerPlayerCardsSpec (spec) w
 import LordOfTheRings.Ally.CardDefs qualified as Allies
 import LordOfTheRings.Attachment.CardDefs qualified as Attachments
 import LordOfTheRings.Card (cdCardTraits)
-import LordOfTheRings.Effect (Effect (..), EffectDuration (UntilEndOfAttack))
+import LordOfTheRings.Effect (Effect (..), EffectDuration (UntilEndOfAttack, UntilEndOfRound))
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Event.CardDefs qualified as Events
 import LordOfTheRings.Helpers.Character (getAttack, getDefense)
 import LordOfTheRings.Helpers.Modifiers (getModifiers)
 import LordOfTheRings.Matcher (getEnemy, getThreat)
-import LordOfTheRings.Modifier (ModifierType (Defending, GainTrait))
+import LordOfTheRings.Modifier (ModifierType (CannotDiscardFromHand, Defending, GainTrait))
 import LordOfTheRings.Phase
 import LordOfTheRings.Trait (Trait (Gondor))
-import LordOfTheRings.Window (WindowType (EnemyDestroyedByAttack), mkAfter)
+import LordOfTheRings.Window (WindowType (DeclaredAsAttacker, EnemyDestroyedByAttack), mkAfter)
 import TestImport
 
 beravorCode, eowynCode, theodredCode, gimliCode, eleanorCode, denethorCode :: CardCode
@@ -167,6 +167,9 @@ spec = describe "Flight of the Stormcaller player cards" do
       chooseLabel "$label.tidesOfFate.ready" pid
       replicateM_ 2 $ chooseTarget pid gimli
       isExhausted gimli `shouldReturn` False
+      -- the +3 waits for its next attack
+      getAttack gimli `shouldReturn` 2
+      run $ CheckWindows [mkAfter $ DeclaredAsAttacker gimli eid]
       getAttack gimli `shouldReturn` 5
 
   describe "Imladris Caregiver" do
@@ -203,6 +206,14 @@ spec = describe "Flight of the Stormcaller player cards" do
       _ <- putCardIntoHand pid Allies.gondorianSpearman
       card <- putCardIntoHand pid Allies.guardianOfRivendell
       giveResources theodredCode 3
+      run $ BeginPhase PlanningPhase
+      offersCard pid card `shouldReturn` False
+
+    it "cannot be played by a player who cannot discard from hand" . gameTest $ \pid -> do
+      replicateM_ 2 $ putCardIntoHand pid Allies.gondorianSpearman
+      card <- putCardIntoHand pid Allies.guardianOfRivendell
+      giveResources theodredCode 3
+      run $ CreateEffect $ Effect GameSource (PlayerTarget pid) [CannotDiscardFromHand] UntilEndOfRound
       run $ BeginPhase PlanningPhase
       offersCard pid card `shouldReturn` False
 

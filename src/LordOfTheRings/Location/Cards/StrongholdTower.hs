@@ -13,7 +13,7 @@ strongholdTower = location StrongholdTower Cards.strongholdTower
 
 -- | While Stronghold Tower is in the staging area, shadow effects cannot be canceled.
 instance HasModifiersFor StrongholdTower where
-  getModifiersFor (StrongholdTower a) = when (a.placement == StagingArea) $ modified a GameTarget [CannotCancelEncounterEffects]
+  getModifiersFor (StrongholdTower a) = when (a.placement == StagingArea) $ modified a GameTarget [CannotCancelShadowEffects]
 
 -- | Travel: Each player must deal 2 damage to a character he controls to travel here.
 instance RunMessage StrongholdTower where

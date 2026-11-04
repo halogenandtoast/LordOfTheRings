@@ -3,12 +3,17 @@ module LordOfTheRings.Helpers.Modifiers (module LordOfTheRings.Helpers.Modifiers
 import Control.Monad.Writer.Strict (execWriterT)
 import Data.Map.Monoidal.Strict (MonoidalMap (..))
 import Data.Map.Strict qualified as Map
-import LordOfTheRings.Card (Card, CardType (AllyType))
+import LordOfTheRings.Card (Card, CardType (AllyType), cdCardTraits, toCardCode, toCardDef)
 import LordOfTheRings.Classes.HasGame
 import LordOfTheRings.Classes.HasModifiersFor
 import LordOfTheRings.Ally.Types (allyCardId)
 import LordOfTheRings.Classes.Entity (toAttrs, toId)
 import LordOfTheRings.Effect
+import LordOfTheRings.Enemy.Types (enemyTokens)
+import LordOfTheRings.Location.Types (locationTokens)
+import LordOfTheRings.Objective.Types (objectiveTokens)
+import LordOfTheRings.Quest.Types (questTokens)
+import LordOfTheRings.Token (countTokens)
 import LordOfTheRings.Entities
 import LordOfTheRings.Game.Base
 import LordOfTheRings.Id (PlayerId)
@@ -18,6 +23,7 @@ import LordOfTheRings.Placement (Placement (..))
 import LordOfTheRings.Prelude
 import LordOfTheRings.Source (Source (GameSource), isPlayerCardSource, isPlayerEventSource, sourceTarget)
 import LordOfTheRings.Target
+import LordOfTheRings.Trait (Trait (Modification))
 
 -- | Collect every constant ability and lasting effect into the modifier cache.
 preloadModifiers :: (HasGame m) => Game -> m Game
@@ -41,8 +47,17 @@ preloadModifiers g = do
   let -- what is out of play only while its source is in play, as Saruman's chosen card,
       -- comes back as the source leaves
       lasting e =
-        ConsideredOutOfPlay `notElem` effectModifiers e
-          || maybe True (hostInPlay es . AttachedTo) (sourceTarget $ effectSource e)
+        ( ConsideredOutOfPlay `notElem` effectModifiers e
+            || maybe True (hostInPlay es . AttachedTo) (sourceTarget $ effectSource e)
+        )
+          && all (shows (effectTarget e)) [c | WhileShowing c <- effectModifiers e]
+      -- the card's faceup side, as a two-sided card flipped shows the other's code
+      shows t c = case t of
+        ObjectiveTarget oid -> maybe False ((== c) . toCardCode) (Map.lookup oid es.objectives)
+        QuestTarget qid -> maybe False ((== c) . toCardCode) (Map.lookup qid es.quests)
+        LocationTarget lid -> maybe False ((== c) . toCardCode) (Map.lookup lid es.locations)
+        EnemyTarget eid -> maybe False ((== c) . toCardCode) (Map.lookup eid es.enemies)
+        _ -> False
       fromEffects =
         Map.fromListWith
           (<>)
@@ -81,11 +96,37 @@ preloadModifiers g = do
           , l <- toList es.locations
           , l.placement == StagingArea
           ]
-      all' = Map.unionsWith (<>) [Map.map (filter (not . ownText)) fromEntities, fromEffects, followed, staged, attachedOut]
+      -- a lasting effect on each ally reaches one that enters play after it began
+      allied =
+        Map.fromListWith
+          (<>)
+          [ (toTarget (toId a), [Modifier (effectSource e) m])
+          | e <- gameEffects g
+          , EachAlly m <- effectModifiers e
+          , a <- toList es.allies
+          ]
+      all0 = Map.unionsWith (<>) [Map.map (filter (not . ownText)) fromEntities, fromEffects, followed, staged, allied, attachedOut]
+      -- an encounter card's lasting effect counted from tokens is recalculated as they
+      -- change (FAQ 1.55): each such modifier adds its count as the plain modifier
+      counted t = \case
+        Modifier source (ThreatPerToken token) -> [Modifier source (ThreatModifier $ tokensOn t token)]
+        Modifier source (StagingThreatPerToken on token) -> [Modifier source (StagingThreatBonus $ tokensOn on token)]
+        _ -> []
+      all' = Map.mapWithKey (\t ms -> ms <> concatMap (counted t) ms) all0
+      tokensOn t token = maybe 0 (countTokens token) case t of
+        EnemyTarget i -> enemyTokens . toAttrs <$> Map.lookup i es.enemies
+        ObjectiveTarget i -> objectiveTokens . toAttrs <$> Map.lookup i es.objectives
+        LocationTarget i -> locationTokens . toAttrs <$> Map.lookup i es.locations
+        QuestTarget i -> questTokens . toAttrs <$> Map.lookup i es.quests
+        _ -> Nothing
       -- a card immune to player card effects keeps none of their modifiers, but its own, as
       -- an objective ally under a player's control (Chief Turch) is a player card itself
       immune ms = ImmuneToPlayerCardEffects `elem` map modifierType ms
-      unaffected t ms = if immune ms then filter (\m -> sourceTarget (modifierSource m) == Just t || not (isPlayerCardSource $ modifierSource m)) ms else ms
+      -- Modification attachments are encounter cards (Dream-chaser rules, "Gaining XP"), so a
+      -- ship-objective's immunity lets theirs through
+      modifications = setFromList [toTarget x | x <- toList es.attachments, Modification `member` cdCardTraits (toCardDef x)] :: Set Target
+      fromPlayerCard m = isPlayerCardSource (modifierSource m) && maybe True (`notMember` modifications) (sourceTarget $ modifierSource m)
+      unaffected t ms = if immune ms then filter (\m -> sourceTarget (modifierSource m) == Just t || not (fromPlayerCard m)) ms else ms
       -- no willpower from player cards, as Frozen Silverlode forbids
       frozen = NoWillpowerFromPlayerCards `elem` map modifierType (Map.findWithDefault [] GameTarget all')
       gained m = case m.modifierType of
@@ -106,6 +147,7 @@ getModifiers a = map modifierType . Map.findWithDefault [] (toTarget a) <$> gets
 playProhibitions :: (HasGame m) => PlayerId -> Card -> m [Modifier]
 playProhibitions pid c = do
   mods <- getsGame gameModifiers
+  entryBarred <- getsGame allyEntryBarred
   let on t = Map.findWithDefault [] t mods
       allyPlayed = AllyPlayedThisRound `elem` map modifierType (on GameTarget)
   pure
@@ -114,6 +156,7 @@ playProhibitions pid c = do
     , case m.modifierType of
         CannotPlay matcher -> cardMatches matcher c
         OneAllyPerRound -> allyPlayed && c.cardType == AllyType
+        OneAllyEntersPlayPerRound -> entryBarred && c.cardType == AllyType
         _ -> False
     ]
 

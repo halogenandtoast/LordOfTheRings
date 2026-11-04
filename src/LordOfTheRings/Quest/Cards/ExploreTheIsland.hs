@@ -22,7 +22,7 @@ instance HasAbilities ExploreTheIsland where
     [ ability
     | a.flipped
     , ability <-
-        [ mkAbility a 1 $ forced $ AnyExploredWindow When
+        [ mkAbility a 1 $ forced $ AnyExploredWindow After
         , mkAbility a 2 $ forced $ LocationBecameActiveWindow When unchartedLocation
         ]
     ]
@@ -48,9 +48,8 @@ instance RunMessage ExploreTheIsland where
       ExploreTheIsland <$> runMessage msg attrs
     PlaceTokens source (isTarget attrs -> True) Progress _ | not (isSource attrs source) -> pure q
     UseCardAbility _ (isSource attrs -> True) 1 ws -> do
-      for_ [lid | Window _ (Explored lid) <- ws] \lid -> do
-        l <- getLocation lid
-        placeProgress (AbilitySource (toSource attrs) 1) attrs (fromMaybe 0 $ cdQuestPoints $ toCardDef l)
+      for_ [c | Window _ (ExploredCard c) <- ws] \c ->
+        placeProgress (AbilitySource (toSource attrs) 1) attrs (fromMaybe 0 $ cdQuestPoints $ toCardDef c)
       pure q
     UseCardAbility _ (isSource attrs -> True) 2 _ -> do
       addFromUnchartedDeck 1

@@ -22,6 +22,9 @@ changeOfPlans = quest ChangeOfPlans Cards.changeOfPlans
 -- from the game. Add The Thing in the Depths to the staging area. Shuffle the encounter
 -- discard pile and the set aside The Thing in the Depths encounter set into the encounter
 -- deck. Advance to stage 3.
+-- Captain Sahír and Na'asiyah are in play by now: stage 1B takes progress only once Helm
+-- of the Stormcaller, which adds them, is in the victory display, and they are
+-- indestructible until then.
 instance RunMessage ChangeOfPlans where
   runMessage msg q@(ChangeOfPlans attrs) = case msg of
     Flip (isTarget attrs -> True) | not attrs.flipped -> do

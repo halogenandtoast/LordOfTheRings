@@ -16,6 +16,9 @@ beatsAndEchoes = treachery BeatsAndEchoes Cards.beatsAndEchoes
 -- | When Revealed: Reveal the top X cards of the encounter deck, adding all enemies to the
 -- staging area. Discard the other revealed cards without resolving them. X is 2 plus the
 -- number of players not engaged with a Goblin enemy.
+-- The cards are discarded from the top, then each enemy among them leaves the discard pile
+-- and is revealed as any other, its When Revealed effect and keywords resolving: only the
+-- others are discarded without resolving.
 instance RunMessage BeatsAndEchoes where
   runMessage msg t@(BeatsAndEchoes attrs) = case msg of
     WhenRevealed (isTarget attrs -> True) -> do
@@ -24,6 +27,6 @@ instance RunMessage BeatsAndEchoes where
       discardTopOfEncounterDeck attrs (2 + length free)
       pure t
     DiscardedTopOfEncounterDeck (isSource attrs -> True) _ cards -> do
-      traverse_ addToStagingFromDiscard [c | c <- cards, cdCardType (toCardDef c) == EnemyType]
+      traverse_ revealFromEncounterDiscard [c | c <- cards, cdCardType (toCardDef c) == EnemyType]
       pure t
     _ -> BeatsAndEchoes <$> runMessage msg attrs

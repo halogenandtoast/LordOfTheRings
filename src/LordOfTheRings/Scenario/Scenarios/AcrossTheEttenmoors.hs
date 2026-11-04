@@ -1,9 +1,8 @@
 module LordOfTheRings.Scenario.Scenarios.AcrossTheEttenmoors (acrossTheEttenmoors) where
 
+import Data.Aeson.Types (parseMaybe)
 import LordOfTheRings.Campaign (PoolCard (..), addToPool)
-import LordOfTheRings.Classes.HasGame (getsGame)
 import LordOfTheRings.EncounterSet qualified as EncounterSet
-import LordOfTheRings.Game.Base (gameRound)
 import LordOfTheRings.Phase (Phase (QuestPhase))
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Location.CardDefs qualified as Locations
@@ -52,14 +51,21 @@ instance RunMessage AcrossTheEttenmoors where
     -- Campaign: Setup: Set all 5 Losing Time treacheries aside, out of play.
     DoStep 9 Setup | isJust attrs.campaign -> do
       angmarSetup attrs
-      AcrossTheEttenmoors <$> runMessage msg attrs
+      losingTime <- replicateM 5 (genEncounterCard Treacheries.losingTime)
+      AcrossTheEttenmoors <$> runMessage msg (attrs & setAsideL %~ (<> losingTime))
     -- Forced: At the beginning of the quest phase, place 1 resource on this card. Then, if
     -- there are 3 or more resources on it, remove 3 resources from it to reveal 1 set-aside
     -- copy of Losing Time and place it in the encounter discard pile.
+    -- The resources on the campaign card are the scenario's meta. It answers the phase's
+    -- window, before the players commit.
     CheckWindows ws | isJust attrs.campaign, Window After (PhaseBegins QuestPhase) `elem` ws -> do
-      n <- getsGame gameRound
-      when (n `mod` 3 == 0 && n `div` 3 <= 5) $ push . RevealCard =<< genEncounterCard Treacheries.losingTime
-      AcrossTheEttenmoors <$> runMessage msg attrs
+      let resources = 1 + fromMaybe (0 :: Int) (parseMaybe parseJSON attrs.scenarioMeta)
+          aside = [c | c <- attrs.scenarioSetAside, toCardCode c == toCardCode Treacheries.losingTime]
+      case aside of
+        card : _ | resources >= 3 -> do
+          push $ RevealCard card
+          AcrossTheEttenmoors <$> runMessage msg (attrs & metaL .~ toJSON (resources - 3) & setAsideL %~ filter (/= card))
+        _ -> AcrossTheEttenmoors <$> runMessage msg (attrs & metaL .~ toJSON resources)
     -- Resolution: Add each copy of Losing Time in the encounter deck or encounter discard
     -- pile to the Campaign Pool.
     ResolveCampaign | Just l <- attrs.campaign -> do

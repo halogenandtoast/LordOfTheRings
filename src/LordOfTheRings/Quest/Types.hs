@@ -125,6 +125,13 @@ instance HasCardDef Quest where
 isSideQuest :: HasCardDef a => a -> Bool
 isSideQuest = isSideQuestType . cdCardType . toCardDef
 
+{- | A quest card considered to be in each player's staging area, as Loot the Dungeons
+reads: while the players are separated it stays with the area in focus, the one card for
+them all.
+-}
+inEachStagingArea :: HasCardDef a => a -> Bool
+inEachStagingArea = (== "AAC175") . cdCardCode . toCardDef
+
 -- | A side quest revealed from the encounter deck.
 isEncounterSideQuest :: HasCardDef a => a -> Bool
 isEncounterSideQuest = (== EncounterSideQuestType) . cdCardType . toCardDef

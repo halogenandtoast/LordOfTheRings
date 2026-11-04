@@ -16,7 +16,7 @@ curiousBrandybuck = ally (\a -> CuriousBrandybuck a {allyHandWindow = Just $ Any
 -- | Forced: After the active location is explored, place Curious Brandybuck on the bottom
 -- of its owner's deck.
 instance HasAbilities CuriousBrandybuck where
-  getAbilities (CuriousBrandybuck a) = [mkAbility a 1 $ forced $ ActiveLocationExploredWindow When]
+  getAbilities (CuriousBrandybuck a) = [mkAbility a 1 $ forced $ ActiveLocationExploredWindow After]
 
 instance RunMessage CuriousBrandybuck where
   runMessage msg s@(CuriousBrandybuck a) = case msg of

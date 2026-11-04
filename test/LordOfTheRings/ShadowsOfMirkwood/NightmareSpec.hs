@@ -1,9 +1,12 @@
 module LordOfTheRings.ShadowsOfMirkwood.NightmareSpec (spec) where
 
+import LordOfTheRings.Attachment.CardDefs qualified as Attachments
+import LordOfTheRings.Effect (Effect (..), EffectDuration (UntilEndOfPhase))
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
+import LordOfTheRings.Helpers.Character (getWillpower)
 import LordOfTheRings.Helpers.Modifiers (getModifiers)
 import LordOfTheRings.Keyword (Keyword (Ranged))
-import LordOfTheRings.Modifier (ModifierType (CannotReduceThreat, LoseKeyword))
+import LordOfTheRings.Modifier (ModifierType (CannotHaveAttachments, CannotHavePlayerAttachments, CannotReduceThreat, HitPointModifier, LoseKeyword, UndefendedDamageTo))
 import LordOfTheRings.Helpers.Staging (getEnemyAttack, getStagingThreat)
 import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Objective (ObjectiveAttrs (..))
@@ -52,6 +55,22 @@ spec = describe "Shadows of Mirkwood nightmare mode" do
       map (`copies` deck) [Enemies.mistyMountainGoblins, Locations.gladdenFields, Enemies.ravenousHawk, Treacheries.restlessHunters]
         `shouldBe` [1, 0, 3, 3]
 
+    it "Restless Hunters' shadow sends this attack's damage to the hero with a Clue, not later ones" . nightmare theHuntForGollum $ \pid -> do
+      hero <- getsGame (toTarget . fromJustNote "no hero" . headMay . toList . (.entities.heroes))
+      run . (`PutObjectiveIntoPlayAttached` hero) =<< genEncounterCard Objectives.signsOfGollum
+      -- kept standing, its damage to be read
+      run $ CreateEffect $ Effect GameSource hero [HitPointModifier 20] UntilEndOfPhase
+      run . PutEnemyIntoPlayEngaged pid =<< genEncounterCard Enemies.huntingWarg
+      warg <- theEnemy
+      _ <- setEncounterDeck [Treacheries.restlessHunters]
+      run $ DealShadowCard warg
+      run $ EnemyAttack pid warg
+      passActions pid
+      chooseLabel "$label.takeAttackUndefended" pid
+      passActions pid
+      getCharacterDamage hero >>= (`shouldSatisfy` (> 0))
+      getModifiers warg >>= (`shouldSatisfy` all (\case UndefendedDamageTo _ -> False; _ -> True))
+
     it "attaches a free Clue card to a Mordor enemy at the end of the refresh phase" . nightmare theHuntForGollum $ \_ -> do
       reveal Enemies.huntingWarg []
       warg <- enemyCardId =<< theEnemy
@@ -87,6 +106,13 @@ spec = describe "Shadows of Mirkwood nightmare mode" do
       getsGame (fmap (.placement) . lookup eid . map (\e -> (toId e, toAttrs e)) . toList . (.entities.enemies))
         `shouldReturn` Just (EngagedWith pid)
 
+    it "Ravenous Hawk engages the player who looks at it among several cards" . nightmare theHuntForGollum $ \pid -> do
+      _ <- setEncounterDeck [Enemies.mistyMountainGoblins, Enemies.ravenousHawk]
+      run $ RevealOneOfTopEncounterCards pid GameSource 2 False
+      eid <- getsGame (fromJustNote "no hawk" . fmap toId . find ((== toCardCode Enemies.ravenousHawk) . toCardCode) . toList . (.entities.enemies))
+      getsGame (fmap (.placement) . lookup eid . map (\e -> (toId e, toAttrs e)) . toList . (.entities.enemies))
+        `shouldReturn` Just (EngagedWith pid)
+
   describe "Conflict at the Carrock" do
     it "builds the nightmare deck, its own Trolls in place of the standard ones" . nightmare conflictAtTheCarrock $ \_ -> do
       run $ DoStep 1 Setup
@@ -99,6 +125,16 @@ spec = describe "Shadows of Mirkwood nightmare mode" do
       _ <- putQuestStage Quests.grimbeornsQuest
       run $ CheckWindows [mkWhen $ PhaseEnds QuestPhase]
       (.progress) <$> getActiveQuest `shouldReturn` 1
+
+    it "has each Troll refuse player attachments only while Stuart is in the victory display" . nightmare conflictAtTheCarrock $ \_ -> do
+      reveal Enemies.stuartNightmare []
+      stuart <- theEnemy
+      run $ AddToVictoryDisplay (toTarget stuart)
+      reveal Enemies.savageHillTroll []
+      troll <- theEnemy
+      mods <- getModifiers troll
+      mods `shouldSatisfy` elem CannotHavePlayerAttachments
+      mods `shouldSatisfy` notElem CannotHaveAttachments
 
     it "gives each Troll +1 attack while Morris is in the victory display" . nightmare conflictAtTheCarrock $ \_ -> do
       reveal Enemies.morrisNightmare []
@@ -127,6 +163,11 @@ spec = describe "Shadows of Mirkwood nightmare mode" do
       reveal Treacheries.timeForSupper []
       getDamage (toTarget troll) `shouldReturn` 0
 
+    it "Stuart bars only player attachments" . nightmare conflictAtTheCarrock $ \_ -> do
+      run . AddToStaging =<< genEncounterCard Enemies.stuartNightmare
+      stuart <- theEnemy
+      getModifiers stuart >>= (`shouldSatisfy` \ms -> CannotHavePlayerAttachments `elem` ms && CannotHaveAttachments `notElem` ms)
+
   describe "A Journey to Rhosgobel" do
     it "builds the nightmare deck" . nightmare aJourneyToRhosgobel $ \_ -> do
       run $ DoStep 1 Setup
@@ -153,6 +194,17 @@ spec = describe "Shadows of Mirkwood nightmare mode" do
       run $ HealDamage GameSource w 3
       getDamage w `shouldReturn` 4
       getsGame (length . (.entities.treacheries)) `shouldReturn` 0
+
+    it "Noxious Supplies does not limit healing by the player card Athelas" . nightmare aJourneyToRhosgobel $ \pid -> do
+      run . AddToStaging =<< genEncounterCard Objectives.wilyador
+      w <- getsGame (toTarget . fromJustNote "no Wilyador" . find ((== toCardCode Objectives.wilyador) . toCardCode) . toList . (.entities.allies))
+      run $ DealDamage GameSource w 5
+      reveal Treacheries.noxiousSupplies [Locations.darkWoodGrove]
+      hero <- getsGame (toTarget . fromJustNote "no hero" . headMay . toList . (.entities.heroes))
+      AttachmentTarget athelas <- putAttachmentOn pid Attachments.athelas hero
+      run $ HealDamage (AbilitySource (AttachmentSource athelas) 1) w 3
+      getDamage w `shouldReturn` 2
+      getsGame (length . (.entities.treacheries)) `shouldReturn` 1
 
     it "Labyrinthine Woods gives Creatures +1 attack in the staging area" . nightmare aJourneyToRhosgobel $ \_ -> do
       reveal Locations.labyrinthineWoods []
@@ -242,6 +294,15 @@ spec = describe "Shadows of Mirkwood nightmare mode" do
       run . AddToEncounterDiscard . pure =<< genEncounterCard Enemies.marshWight
       reveal Treacheries.devilryOfTheDarkLand []
       getsGame (map toCardCode . toList . (.entities.enemies)) `shouldReturn` [toCardCode Enemies.marshWight]
+
+    it "Lost Soul of Lórien destroyed attaches to a hero as a condition, its willpower 0" . nightmare theDeadMarshes $ \pid -> do
+      run . AddToStaging =<< genEncounterCard Enemies.lostSoulOfLorien
+      soul <- theEnemy
+      eowyn <- toTarget <$> getHeroWithCode "01007"
+      run $ DealDamage GameSource (EnemyTarget soul) 3
+      chooseTarget pid eowyn
+      getsGame (fmap (.placement) . find ((== soul) . toId) . toList . (.entities.enemies)) `shouldReturn` Just (AttachedTo eowyn)
+      getWillpower eowyn `shouldReturn` 0
 
   describe "Return to Mirkwood" do
     it "builds the nightmare deck" . nightmare returnToMirkwood $ \_ -> do

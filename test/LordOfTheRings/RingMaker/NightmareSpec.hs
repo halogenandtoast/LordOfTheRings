@@ -278,6 +278,16 @@ spec = describe "The Ring-maker Nightmare Decks" do
       shadow pid eid Treacheries.quicksand [eowyn]
       getModifiers eowyn >>= (`shouldSatisfy` elem CannotReady)
 
+    it "Deadly Waters keeps a treachery's shadow effect from being canceled" . nightmare theNinInEilph $ \pid -> do
+      quest <- putQuestStage Quests.lostInTheSwanfleetDeadlyWaters
+      run $ Flip quest
+      answerAll pid
+      eid <- engaged pid Enemies.deadlyMarshAdder
+      answerAll pid
+      card <- genEncounterCard Treacheries.quicksand
+      run $ AttachShadowCard eid card
+      getModifiers (CardIdTarget card.id) >>= (`shouldSatisfy` elem ShadowCannotBeCanceled)
+
     it "An Arduous Journey has allies enter play exhausted" . nightmare theNinInEilph $ \pid -> do
       quest <- putQuestStage Quests.throughTheMarshAnArduousJourney
       run $ Flip quest

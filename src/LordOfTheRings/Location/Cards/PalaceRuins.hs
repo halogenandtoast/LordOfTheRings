@@ -20,8 +20,9 @@ instance HasAbilities PalaceRuins where
 instance RunMessage PalaceRuins where
   runMessage msg l@(PalaceRuins a) = case msg of
     UseCardAbility pid (isSource a -> True) 1 _ -> do
+      -- any X the deck holds; its threat goes no lower than 0
       deck <- length . (.deck) <$> getPlayer pid
-      chooseAmountM pid "palaceRuins.amount" a 1 (min 9 deck) \x -> do
+      chooseAmountM pid "palaceRuins.amount" a 1 deck \x -> do
         discardTopOfDeck pid x
         phaseModifier a a (ThreatModifier (-x))
       pure l

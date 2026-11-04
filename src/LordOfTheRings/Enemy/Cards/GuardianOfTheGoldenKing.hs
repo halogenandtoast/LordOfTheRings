@@ -15,7 +15,7 @@ guardianOfTheGoldenKing = enemy GuardianOfTheGoldenKing Cards.guardianOfTheGolde
 -- from the attack until only X or fewer characters are attacking, where X is the
 -- looked-at card's printed cost (those characters do not ready).
 instance HasAbilities GuardianOfTheGoldenKing where
-  getAbilities (GuardianOfTheGoldenKing a) = [mkAbility a 1 $ forced $ EnemyAttackedWindow When a.id]
+  getAbilities (GuardianOfTheGoldenKing a) = [mkAbility a 1 $ forced $ AttackersDeclaredWindow After a.id]
 
 -- | The first player chooses the characters removed, one at a time.
 instance RunMessage GuardianOfTheGoldenKing where

@@ -1,5 +1,6 @@
 module LordOfTheRings.DreamChaser.GreyHavensNightmareSpec (spec) where
 
+import Data.Map.Strict qualified as Map
 import LordOfTheRings.Card (cdEncounterSet, toCardDef)
 import LordOfTheRings.EncounterSet qualified as EncounterSet
 import LordOfTheRings.Enemy (EnemyAttrs (..))
@@ -9,6 +10,7 @@ import LordOfTheRings.Helpers.Modifiers (getModifiers, preloadModifiers)
 import LordOfTheRings.Helpers.Staging (getEngagementCost, getLocationThreat)
 import LordOfTheRings.Location (LocationAttrs (..))
 import LordOfTheRings.Location.CardDefs qualified as Locations
+import LordOfTheRings.Matcher (HeroMatcher (AttackingHero), selectAny)
 import LordOfTheRings.Modifier (ModifierType (..))
 import LordOfTheRings.Objective.CardDefs qualified as Objectives
 import LordOfTheRings.Outcome (Outcome (Won))
@@ -135,6 +137,16 @@ spec = describe "The Grey Havens Nightmare Decks" do
       run $ CheckWindows [mkWhen $ PhaseEnds QuestPhase]
       questsInPlay `shouldReturn` [toCardCode Quests.intoTheStorm]
 
+    it "Corsair Confrontation may take the Corsair Warship from the victory display while the deck has one too" . nightmare voyageAcrossBelegaer $ \pid -> do
+      _ <- setEncounterDeck [Enemies.corsairWarship]
+      shown <- genEncounterCard Enemies.corsairWarship
+      putGame . (scenarioL %~ overAttrs (\a -> a {scenarioVictoryDisplay = [EncounterCard shown]})) =<< getGame
+      _ <- setQuestDeck [Quests.intoTheStorm, Quests.corsairPursuit]
+      _ <- revealedStage pid Quests.corsairConfrontation
+      chooseTarget pid (EncounterCard shown)
+      scenarioVictoryDisplay <$> scenarioAttrs `shouldReturn` []
+      length <$> getEncounterDeck `shouldReturn` 1
+
     it "Raging Squall damages each character committed to the Sailing test that discards it" . nightmare voyageAcrossBelegaer $ \pid -> do
       setHeading Sunny
       _ <- setEncounterDeck [Treacheries.ragingSquallNightmare]
@@ -174,6 +186,26 @@ spec = describe "The Grey Havens Nightmare Decks" do
       heading `shouldReturn` Just Stormy
 
   describe "The Fate of Númenor" do
+    it "Guardian of the Golden King removes attackers as soon as they are declared" . nightmare theFateOfNumenor $ \pid -> do
+      guardian <- stagedEnemy Enemies.guardianOfTheGoldenKing
+      run $ EngageEnemy pid guardian
+      -- nothing at the bottom of the deck: X is 0
+      g <- getGame
+      putGame $ g & playersL . ix pid . deckL .~ []
+      eowyn <- toTarget <$> getHeroWithCode "01007"
+      run $ DeclareAttackers pid guardian
+      chooseTarget pid eowyn
+      chooseLabel "$label.doneAttacking" pid
+      selectAny AttackingHero `shouldReturn` False
+
+    it "lets no more than 1 character attack Graxar each round" . nightmare theFateOfNumenor $ \pid -> do
+      graxar <- stagedEnemy Enemies.graxar
+      run $ EngageEnemy pid graxar
+      eowyn <- toTarget <$> getHeroWithCode "01007"
+      run $ DeclareAttackers pid graxar
+      chooseTarget pid eowyn
+      getQuestion pid >>= (`shouldSatisfy` \case Just (QuestionLabel l _ _ _) -> not ("$label.declareAttackers" `isPrefixOf` l); _ -> True)
+
     it "replaces the Uncharted deck with the Nightmare Deck's, Overgrown Steps staying in the encounter deck" . nightmare theFateOfNumenor $ \_ -> do
       run $ DoStep 1 Setup
       s <- scenarioAttrs
@@ -253,6 +285,19 @@ spec = describe "The Grey Havens Nightmare Decks" do
       run . CheckStage =<< getsGame (fromJustNote "no quest" . fmap toId . headMay . toList . (.entities.quests))
       getsGame (.outcome) `shouldReturn` Just Won
 
+    it "Elite Marauder's excess damage goes point by point to Aflame locations of the player's choice" . nightmare raidOnTheGreyHavens $ \pid -> do
+      white <- stagedLocation Locations.whiteShip
+      caravel <- stagedLocation Locations.elvenCaravel
+      eid <- stagedEnemy Enemies.eliteMarauder
+      run $ EngageEnemy pid eid
+      b <- beravor
+      -- 6 attack against Beravor's 2 defense and 2 hit points left: 2 excess
+      run $ DealDamage GameSource b 2
+      run $ AttackDamage eid b
+      chooseTarget pid white
+      chooseTarget pid caravel
+      map (.damage) <$> traverse locationAttrs [white, caravel] `shouldReturn` [1, 1]
+
     it "Corsair Pyromaniac takes a resource as a card goes underneath The Havens Burn" . nightmare raidOnTheGreyHavens $ \_ -> do
       run . AddToStaging =<< genEncounterCard Objectives.theHavensBurn
       havens <- getsGame (toTarget . fromJustNote "no Havens Burn" . headMay . toList . (.entities.objectives))
@@ -282,3 +327,14 @@ spec = describe "The Grey Havens Nightmare Decks" do
       raider <- stagedEnemy Enemies.umbarRaider
       reveal Treacheries.infiltration
       resourcesOn raider `shouldReturn` 3
+
+    it "Infiltration shares the resources with a set-aside Raider, the first player placing the odd one" . nightmare raidOnTheGreyHavens $ \pid -> do
+      heroes <- getsGame (map toTarget . toList . (.entities.heroes))
+      for_ heroes \h -> run $ PlaceTokens GameSource h Resource 1
+      sahir <- genEncounterCard Enemies.captainSahir
+      getGame >>= putGame . (scenarioL %~ overAttrs (setAsideL .~ [sahir]))
+      raider <- stagedEnemy Enemies.umbarRaider
+      reveal Treacheries.infiltration
+      chooseTarget pid (CardIdTarget sahir.id)
+      resourcesOn raider `shouldReturn` 1
+      getsGame (Map.lookup sahir.id . scenarioOutOfPlayResources . toAttrs . (.scenario)) `shouldReturn` Just 2

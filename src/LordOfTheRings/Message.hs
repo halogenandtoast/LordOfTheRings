@@ -5,6 +5,7 @@ import LordOfTheRings.Campaign (CampaignLogUpdate)
 import LordOfTheRings.Card
 import LordOfTheRings.Effect
 import LordOfTheRings.Heading (HeadingShift)
+import LordOfTheRings.I18n (ikeyWith, intVar)
 import LordOfTheRings.Id
 import LordOfTheRings.Json (withDefaults)
 import LordOfTheRings.Location.Grid (Pos)
@@ -140,6 +141,9 @@ data Message
     PutOnBottomOfOwnersDeck Target
   | TakeControl AllyId PlayerId
   | RemoveFromDiscard PlayerId CardId
+  | -- | the player plays an attachment of their choice from their discard pile on the host,
+    -- paying for it, as Stalwart lets them
+    PlayAttachmentFromDiscardOn PlayerId Source Target
   | -- | an ally card put into play under the player's control, keeping its owner
     PutAllyIntoPlayUnder PlayerId PlayerCard
   | PutHeroIntoPlay PlayerId PlayerCard
@@ -220,6 +224,9 @@ data Message
   | UseAbility PlayerId Ability [Window]
   | UseCardAbility PlayerId Source Int [Window]
   | CreateEffect Effect
+  | -- | the lasting effects of that duration end, as the round's do once the round's end
+    -- has resolved
+    EndEffects EffectDuration
   | AttachCard AttachmentId Target
   | -- | the character's restricted cards are counted again, after one is discarded
     CheckRestricted Target
@@ -243,6 +250,15 @@ data Message
     PayExhaustHeroCost PlayerId HeroMatcher [Message]
   | -- | the player deals 1 damage to a character they control other than the one given
     DamageAnotherCharacter Source PlayerId Target
+  | -- | the player deals 1 damage to an Aflame location in the staging area of their
+    -- choice, chosen as it resolves, as Elite Marauder's excess damage reads point by point
+    DamageAflameLocation Source PlayerId
+  | -- | the windows for an ally having entered play, under whoever controls it as this
+    -- resolves: one revealed from the encounter deck, given a player as it resolves
+    AllyEnteredPlayUnderController AllyId
+  | -- | the enemy's attack is over without it having attacked, as a canceled attack: what
+    -- lasted for that attack ends, and no "after it attacks" window opens
+    AttackEndedUnresolved EnemyId
   | -- | the player divides the damage among characters they control, a point at a time,
     -- the points assigned so far kept; it is dealt once all are assigned
     DealDamageDivided Source PlayerId Int [Target]
@@ -259,6 +275,9 @@ data Message
     staging area to guard it, any other card is revealed
     -}
     GuardObjective ObjectiveId
+  | -- | the first player claims the objective, which nothing guards (see
+    -- 'FirstPlayerClaimsWhenFree')
+    ClaimFreeObjective ObjectiveId
   | -- | a guarded location revealed, as Across the Ettenmoors' objective-locations: the next
     -- encounter card is revealed guarding it, the location attached to that card until it
     -- leaves play
@@ -275,6 +294,22 @@ data Message
     RemoveFromQuestDeck EncounterCard
   | TakePrisoner HeroId
   | RescuePrisoner HeroId
+  | -- | the character, a hero or an ally, goes to the encounter card with this id as its
+    -- captive: under no player's control and out of the game's reach, a guarded objective
+    -- until that card leaves play (The Long Arm of Mordor, The Dungeons of Cirith Gurat)
+    GuardCharacter Target CardId
+  | -- | the guarded character is free of encounters: its owner takes control of it, exhausted
+    RescueCharacter Target
+  | -- | the hero goes to the staging area, in play under no player's control (The Long Arm
+    -- of Mordor)
+    MoveHeroToStagingArea HeroId
+  | -- | the hero in the staging area returns to its owner's control, exhausted
+    TakeControlOfHero HeroId
+  | -- | an objective-hero comes into play under the player's control
+    PutObjectiveHeroIntoPlayUnder PlayerId EncounterCard
+  | -- | a card out of play, an ally card from its owner's discard pile or an objective ally,
+    -- comes into play as the captive of the encounter card with this id (see 'GuardCharacter')
+    GuardCard Card CardId
   | SetAside EncounterCard
   | -- | a stage whose condition may have just been met checks whether it is defeated
     CheckStage QuestId
@@ -292,6 +327,9 @@ data Message
     attaching itself where its placement says
     -}
     PutShadowTreacheryIntoPlay EnemyId CardId Placement
+  | -- | the treachery leaves the encounter discard pile attached to the target, its When
+    -- Revealed effect not resolved, as Broken Rudder's *Forced effect attaches it
+    AttachFromEncounterDiscard EncounterCard Target
   | ShufflePlayerDeck PlayerId
   | {- | the player takes matching cards from those searched in their deck into hand, any
     number of them or only 1 as the flag says, then shuffles their deck
@@ -339,6 +377,8 @@ data Message
   | ShuffleEncounterDiscardIntoDeck CardMatcher
   | -- | set-aside cards are shuffled into the encounter deck
     ShuffleSetAsideIntoEncounterDeck [EncounterCard]
+  | -- | set-aside cards are removed from the game, as an encounter set a scenario stops using
+    RemoveSetAsideFromGame [EncounterCard]
   | -- | matching encounter cards in the victory display are shuffled into the encounter deck
     ShuffleVictoryDisplayIntoEncounterDeck CardMatcher
   | -- | an objective ally in play joins the player as an ally
@@ -405,6 +445,10 @@ data Message
   | -- | an enemy with ambush entering play: the first player in turn order whose threat
     -- reaches its engagement cost engages it
     AmbushEngagementCheck EnemyId
+  | -- | the enemy in the staging area makes engagement checks against each player, as
+    -- ambush has it do: the first in turn order whose threat reaches its engagement cost
+    -- engages it, as False Accusations reads
+    EnemyEngagementChecks EnemyId
   | EngageEnemy PlayerId EnemyId
   | -- | the combat phase begins: the archery in play is dealt among the characters
     ResolveArchery
@@ -425,6 +469,11 @@ data Message
   | DefendedByMany PlayerId EnemyId [Target]
   | -- | the players as a group spend resources of a sphere, from any of their heroes
     SpendGroupResources PlayerId Sphere Int
+  | {- | as 'SpendResources' (or 'SpendGroupResources' when the flag is set), the heroes
+    chosen so far to pay 1 each, once per resource: each hero's are spent at once when
+    the last is chosen, a single spend from that hero's pool as Forage for Food reads it
+    -}
+    SpendResourcesChosen PlayerId Bool Sphere Int [HeroId]
   | -- | the players as a group discard resources from any of their heroes' pools, as
     -- many as they can up to the number, as prowl reads: not spent, so any hero's go
     DiscardGroupResources PlayerId Int
@@ -475,7 +524,18 @@ data Message
   | -- | the messages, if the enemy's attack has destroyed a character, as "if this attack
     -- destroys a character" reads once the attack is over (see 'attackDestroyed')
     IfAttackDestroyed EnemyId [Message]
+  | -- | the messages, if the enemy's attack dealt damage to one of the characters, as "if
+    -- this attack deals damage to a Ship objective" reads once the attack is over
+    IfAttackDamaged EnemyId [Target] [Message]
+  | -- | resources added to a card that is out of play, kept for it until it enters play
+    PlaceResourcesOutOfPlay CardId Int
+  | -- | the player deals the damage to a hero the matcher picks out to pay a cost
+    PayDamageHeroCost PlayerId HeroMatcher Int [Message]
+  | -- | the messages, if the enemy's last attack dealt no damage, as King's Knight reads
+    IfAttackDealtNoDamage EnemyId [Message]
   | DrawCards Drawing
+  | -- | the draw itself, once nothing has stopped it, as Iron Shackles or Enchanted Stream
+    DoDrawCards Drawing
   | Mulligan PlayerId
   | -- | log only: what is narrated until the block closes is filed under it
     OpenLogBlock LogBlock
@@ -537,6 +597,9 @@ data Message
     SearchEncounterDeckAndDiscardToEngage PlayerId Target CardMatcher
   | -- | as 'SearchEncounterDeckAndDiscard', the card found revealed, as Forecastle Deck reads
     SearchEncounterDeckAndDiscardToReveal PlayerId Target CardMatcher
+  | -- | as 'SearchEncounterDeckAndDiscard', the victory display searched too, as Corsair
+    -- Confrontation reads
+    SearchEncounterCardsAndVictoryDisplay PlayerId Target CardMatcher
   | {- | the cards go facedown underneath the target, out of play, as The Orcs' Search takes
     them: from a player's hand, deck or discard pile, or a location in play
     -}
@@ -604,6 +667,14 @@ data Message
   | -- | the top card of the Corsair deck is revealed and put into play engaged with the
     -- player, for the source, its discard pile reshuffled first if it has run out
     RevealFromCorsairDeck Source PlayerId
+  | -- | as 'RevealFromCorsairDeck', the enemy put into play dealt a shadow card, as Ramming
+    -- Ship's shadow reads
+    RevealFromCorsairDeckWithShadow Source PlayerId
+  | -- | deal a shadow card to the enemy whose card this is, once it has entered play
+    DealShadowCardToCard CardId
+  | -- | the enemy goes to the staging area of the player's area, as Giant Cave Centipede
+    -- moves to a different player's while the players are separated
+    PlaceInStagingAreaOf PlayerId EnemyId
   | -- | the card the source revealed from the Corsair deck, as Light Cruiser reads it
     RevealedFromCorsairDeck Source PlayerId EncounterCard
   | -- | the Ship enemy engaged the player from the staging area: its Boarding X resolves
@@ -670,6 +741,21 @@ chooseOne :: HasCallStack => PlayerId -> [UI Message] -> Message
 chooseOne _ [] = error "chooseOne: no choices"
 chooseOne pid choices = Ask pid $ ChooseOne choices
 
+{- | The next resource of a payment made 1 at a time: the player picks a hero with one left
+of those paying, or, once all are picked (or none is left to pick), each hero's resources
+are spent at once.
+-}
+spendChosen :: Source -> PlayerId -> Bool -> Sphere -> Int -> [HeroId] -> [(HeroId, Int)] -> Message
+spendChosen source pid isGroup sphere n chosen payers = case [h | (h, k) <- payers, k > paid h] of
+  -- the last hero left to pay pays the rest, unasked, as a player's own spend does
+  [h] | n > 0, not isGroup -> SpendResourcesChosen pid isGroup sphere (n - 1) (h : chosen)
+  hs@(_ : _) | n > 0 ->
+    questionLabel (ikeyWith "label.payMore" [intVar "count" n]) pid
+      [targetLabel h [SpendResourcesChosen pid isGroup sphere (n - 1) (h : chosen)] | h <- hs]
+  _ -> Run [RemoveTokens source (HeroTarget h) Resource (paid h) | h <- ordNub (reverse chosen)]
+ where
+  paid h = length (filter (== h) chosen)
+
 -- | Ask a question with a prompt explaining what is being chosen.
 questionLabel :: HasCallStack => Text -> PlayerId -> [UI Message] -> Message
 questionLabel prompt = questionLabelWith prompt Nothing []
@@ -697,3 +783,16 @@ inLogBlock :: MonadRandom m => LogBlockKind -> [Message] -> m [Message]
 inLogBlock kind msgs = do
   block <- LogBlock <$> getRandom <*> pure kind
   pure $ OpenLogBlock block : msgs <> [CloseLogBlock block.id]
+
+{- | The enemy the message takes out of play other than by destroying it, as an effect
+that discards it, returns it to the encounter deck or adds it to the victory display.
+-}
+removedEnemy :: Message -> Maybe EnemyId
+removedEnemy = \case
+  Discard (EnemyTarget eid) -> Just eid
+  ReturnToTopOfEncounterDeck (EnemyTarget eid) -> Just eid
+  ReturnToBottomOfEncounterDeck (EnemyTarget eid) -> Just eid
+  ShuffleIntoEncounterDeck (EnemyTarget eid) -> Just eid
+  RemoveFromGame (EnemyTarget eid) -> Just eid
+  AddToVictoryDisplay (EnemyTarget eid) -> Just eid
+  _ -> Nothing

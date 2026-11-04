@@ -26,13 +26,16 @@ instance RunMessage SavageFray where
           if
             | battle -> roundModifiers attrs q [LoseKeyword Battle, GainKeyword Siege]
             | siege -> roundModifiers attrs q [LoseKeyword Siege, GainKeyword Battle]
+            -- another keyword, as archery or time, is switched to the one the first player
+            -- picks
             | otherwise -> do
+                others <- currentQuestKeywords
                 lead <- getLead
                 chooseOneM lead do
                   questionLabeled "savageFray.choose"
                   causedBy attrs
-                  labeled "savageFray.battle" $ roundModifier attrs q (GainKeyword Battle)
-                  labeled "savageFray.siege" $ roundModifier attrs q (GainKeyword Siege)
+                  labeled "savageFray.battle" $ roundModifiers attrs q (GainKeyword Battle : map LoseKeyword others)
+                  labeled "savageFray.siege" $ roundModifiers attrs q (GainKeyword Siege : map LoseKeyword others)
         _ -> revealEncounterCard
       pure t
     _ -> SavageFray <$> runMessage msg attrs

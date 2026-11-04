@@ -351,8 +351,16 @@ spec = describe "Angmar Awakened player cards: Mount Gram, the Ettenmoors and Rh
       sideQuestInPlay pid theodredCode 1 Quests.sendForAid
       ally <- onTopOfDeck pid Allies.galadhonArcher
       run $ PlaceProgressOnQuest 6
+      chooseLabel "$label.sendForAid.searchDeck" pid
       chooseTarget pid (CardIdTarget ally.id)
       allyCount `shouldReturn` 1
+
+    it "leaves the deck of a player who does not search unshuffled" . gameTest $ \pid -> do
+      sideQuestInPlay pid theodredCode 1 Quests.sendForAid
+      deckBefore <- map (.id) . (.deck) <$> getPlayer pid
+      run $ PlaceProgressOnQuest 6
+      chooseLabel "$label.pass" pid
+      map (.id) . (.deck) <$> getPlayer pid `shouldReturn` deckBefore
 
   describe "Elven Spear" do
     it "discards a card for +1 attack" . withHeroes [beravorCode, legolasCode, theodredCode] $ \pid -> do

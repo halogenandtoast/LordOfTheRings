@@ -9,6 +9,7 @@ import LordOfTheRings.Matcher (CardMatcher (CardWithTitle), cardMatches)
 import LordOfTheRings.Modifier (ModifierType (..))
 import LordOfTheRings.Objective.CardDefs qualified as Objectives
 import LordOfTheRings.Outcome (Outcome (Lost))
+import LordOfTheRings.Effect (Effect (..), EffectDuration (UntilEndOfPhase))
 import LordOfTheRings.Phase (Phase (PlanningPhase, QuestPhase))
 import LordOfTheRings.Quest.CardDefs qualified as Quests
 import LordOfTheRings.Scenario (deadmensDike, intrudersInChetwood, theWeatherHills)
@@ -127,6 +128,18 @@ spec = describe "The Lost Realm Nightmare" do
       threat pid `shouldReturn` was + 1
       run $ CheckWindows [mkWhen $ PhaseEnds QuestPhase]
       threat pid `shouldReturn` was + 3
+
+    it "Protect the Bree-landers counts only the progress placed on it this quest phase" . nightmare intrudersInChetwood $ \pid -> do
+      staged Quests.protectTheBreeLanders
+      q <- questOf Quests.protectTheBreeLanders
+      putGame . (phaseL .~ PlanningPhase) =<< getGame
+      run $ PlaceTokens GameSource q Progress 1
+      -- the planning phase ends, and its effects with it
+      putGame . (effectsL %~ filter ((/= UntilEndOfPhase) . effectDuration)) =<< getGame
+      putGame . (phaseL .~ QuestPhase) =<< getGame
+      was <- threat pid
+      run $ CheckWindows [mkWhen $ PhaseEnds QuestPhase]
+      threat pid `shouldReturn` was + 1
 
     it "Kill Them! stages an Orc War Party and removes the main quest's progress" . nightmare intrudersInChetwood $ \pid -> do
       q <- putQuestStage Quests.stopTheWarParty
