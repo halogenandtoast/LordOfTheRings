@@ -180,6 +180,8 @@ export interface ServerGame {
   /** The Orcs' quest stage and the progress on it (Race Across Harad). */
   orcsStage?: Card | null
   orcsProgress?: number | null
+  /** The circuit's six stages, the stages The Challengers and The Wainriders have each advanced through, and the damage on The Wainriders' stage (Challenge of the Wainriders). */
+  circuit?: { stages: Card[]; challengers: number; wainriders: number; damage: number } | null
   lastCommittedWillpower: number | null
   /** What each target is modified by, as [target, modifiers] pairs. */
   modifiers?: [Target, { modifierType: { tag: string; contents?: unknown } }[]][]

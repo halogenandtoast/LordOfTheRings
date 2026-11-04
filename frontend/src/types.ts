@@ -134,6 +134,19 @@ export interface ScenarioView {
   /** The Orcs' quest stage, with its progress, and the cards in their area (Race Across Harad). */
   orcsStage: CardView | null
   orcsArea: CardView[]
+  /** The circuit, stages 1 to 6, with where The Challengers and The Wainriders are (Challenge of the Wainriders). */
+  circuit: CircuitStageView[] | null
+}
+
+/** A stage of the circuit: its B side, the objectives at it, and the damage on The Wainriders' stage. */
+export interface CircuitStageView {
+  card: CardView
+  stage: number
+  objectives: CardView[]
+  /** The lap of the circuit The Challengers are on, 1 or 2, when they are at this stage. */
+  challengersLap: number | null
+  /** The lap of the circuit The Wainriders are on, when they are at this stage. */
+  wainridersLap: number | null
 }
 
 export interface IslandMapCell {
@@ -218,6 +231,8 @@ const printedFace: Record<string, string> = {
   '18069A': '18069',
   '18069B': '18070',
   '19143A': '19143',
+  // two cards are printed number 73: The Champion's Cunning has the code, Wainrider Chariot its own file
+  '22073-chariot': 'challenge-of-the-wainriders-073-wainrider-chariot',
   '19143B': '19144',
 }
 // a quest stage whose B side is printed under the next number, as The Crossroads Fort's 1B,
