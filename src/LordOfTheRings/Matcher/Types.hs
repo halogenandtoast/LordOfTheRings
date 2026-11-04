@@ -83,6 +83,9 @@ data HeroMatcher
     HeroMatchAny [HeroMatcher]
   | -- | a hero whose printed resource icon is the sphere's, not one it gains
     HeroWithPrintedSphere Sphere
+  | -- | a hero with at least this many restricted cards attached, as Forth, The Three
+    -- Hunters! reads "at least 2 restricted attachments"
+    HeroWithRestrictedAttachmentsAtLeast Int
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
@@ -312,6 +315,8 @@ data CardMatcher
     CardWithPrintedCost Int
   | -- | a card printed with at least this cost, as "printed cost 3 or more" reads
     CardWithPrintedCostAtLeast Int
+  | -- | a card printed with the keyword, as "a restricted attachment" reads
+    CardWithKeyword Keyword
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
@@ -353,6 +358,7 @@ cardMatches matcher (toCardDef -> def) = case matcher of
   CardWithPrintedCostAtLeast n -> case cdCost def of
     Just (StaticCost c) -> c >= n
     _ -> False
+  CardWithKeyword k -> k `member` cdKeywords def
 
 -- | The player cards printed with a Valour trigger.
 valourCards :: [CardCode]

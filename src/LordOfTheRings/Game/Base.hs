@@ -8,6 +8,7 @@ import LordOfTheRings.ActiveCost
 import LordOfTheRings.Ally.Types (Ally)
 import LordOfTheRings.Location.Types (Location)
 import LordOfTheRings.Card (Card)
+import LordOfTheRings.Matcher.Types (cardMatches)
 import LordOfTheRings.Effect
 import LordOfTheRings.Entities
 import LordOfTheRings.Id
@@ -253,6 +254,12 @@ instance HasField "questionVersion" Game Int where
 
 instance HasField "outcome" Game (Maybe Outcome) where
   getField = gameOutcome
+
+-- | Whether the player cannot put the card into play under his control, as Fellowship
+-- bars non-unique allies.
+barredFromPlay :: Game -> PlayerId -> Card -> Bool
+barredFromPlay g pid card =
+  or [cardMatches m card | CannotPutIntoPlay m <- map modifierType (Map.findWithDefault [] (PlayerTarget pid) (gameModifiers g))]
 
 -- | Whether no more allies can enter play this round: one has, while only one may, as
 -- Corsair Waters reads.

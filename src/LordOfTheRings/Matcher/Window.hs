@@ -356,6 +356,11 @@ data WindowMatcher
   | -- | a player's attack against a matching enemy resolved, a matching hero among its
     -- attackers, as The Great Worm answers one with Reforged Wormsbane
     MatchingEnemyAttackResolvedWindow Timing HeroMatcher EnemyMatcher
+  | -- | a character the player controlled left play, as Fellowship's side B answers
+    ControlledCharacterLeftPlayWindow Timing PlayerId
+  | -- | a character came under the player's control: an ally or a hero entered play under
+    -- him, or he took control of one, as Fellowship's side A counts his characters then
+    CharacterEnteredPlayUnderWindow Timing PlayerId
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
@@ -491,6 +496,8 @@ windowMatches matcher (Window timing wType) = case (matcher, wType) of
   (AnyPlayedCardFromHandWindow t m, PlayedCardFromHand _ code) -> t == timing && cardMatches m code
   (AnotherCharacterDealtDamageWindow t other, DealtDamage c@(HeroTarget _) _) -> t == timing && c /= other
   (AnotherCharacterDealtDamageWindow t other, DealtDamage c@(AllyTarget _) _) -> t == timing && c /= other
+  (ControlledCharacterLeftPlayWindow t pid, LeftPlay _ pid' _) -> t == timing && pid == pid'
+  (CharacterEnteredPlayUnderWindow t pid, AllyEnteredPlay _ pid' _) -> t == timing && pid == pid'
   -- these read the game, so "LordOfTheRings.Helpers.Window" matches them
   (LeftPlaySharingTraitWindow {}, _) -> False
   (EnemyDestroyedByHeroWindow {}, _) -> False

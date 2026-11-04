@@ -178,6 +178,10 @@ chooseNewCurrentQuest pid source = do
 raiseThreat :: ReverseQueue m => PlayerId -> Int -> m ()
 raiseThreat pid n = push $ RaiseThreat pid n
 
+-- | Add to the player's starting threat during setup, as Messenger of the King does.
+addToStartingThreat :: ReverseQueue m => PlayerId -> Int -> m ()
+addToStartingThreat pid n = push $ AddToStartingThreat pid n
+
 {- | Raise the player's threat by an encounter or quest card's effect, opening the window
 Elfhelm answers.
 -}
@@ -1579,6 +1583,16 @@ hand, as Hobgoblin's (ReturnToHandWhenFree).
 -}
 guardPlayerCard :: ReverseQueue m => CardId -> GuardRelease -> PlayerCard -> m ()
 guardPlayerCard cid release = push . GuardPlayerCard cid release
+
+-- | The encounter card, by its card id, stops guarding the player card, so it can go
+-- elsewhere, as The Burglar's Turn's loot does.
+takeGuardedPlayerCard :: ReverseQueue m => CardId -> PlayerCard -> m ()
+takeGuardedPlayerCard cid card = push $ TakeGuardedPlayerCard cid card.id
+
+-- | The player attaches the attachment, out of play, to an eligible card without playing
+-- or paying for it, its guarded keyword not resolved; with none, it is discarded.
+attachFreedCard :: ReverseQueue m => PlayerId -> PlayerCard -> m ()
+attachFreedCard pid = push . AttachFreedCard pid
 
 -- | The card, taken from where it was, is shuffled into the Caves deck.
 shuffleIntoCavesDeck :: ReverseQueue m => EncounterCard -> m ()
