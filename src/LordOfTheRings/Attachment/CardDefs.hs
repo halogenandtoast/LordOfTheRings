@@ -228,6 +228,7 @@ allAttachmentCards =
       , warriorSword
       , valiantDetermination
       , ringOfThror
+      , putOffPursuit
       ]
 
 -- | A boon of the Revised Core campaign: Permanent, limit 1 per hero.
@@ -1585,3 +1586,10 @@ ringOfThror =
       { cdCardTraits = setFromList [Artifact, Ring]
       , cdKeywords = setFromList [GuardedBy [EnemyType, LocationType]]
       }
+
+putOffPursuit :: CardDef
+putOffPursuit =
+  (attachment "21008" "Put Off Pursuit" Lore (StaticCost 1))
+    { cdCardTraits = setFromList [Condition]
+    , cdLimitOnePerHost = True
+    }

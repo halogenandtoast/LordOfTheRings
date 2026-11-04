@@ -210,6 +210,7 @@ import LordOfTheRings.Attachment.Cards.Outmatched
 import LordOfTheRings.Attachment.Cards.WarriorSword
 import LordOfTheRings.Attachment.Cards.ValiantDetermination
 import LordOfTheRings.Attachment.Cards.RingOfThror
+import LordOfTheRings.Attachment.Cards.PutOffPursuit
 import LordOfTheRings.Attachment.Runner ()
 import LordOfTheRings.Attachment.Types as X
 import LordOfTheRings.Id
@@ -457,5 +458,6 @@ allAttachments =
         , SomeAttachmentCard warriorSword
         , SomeAttachmentCard valiantDetermination
         , SomeAttachmentCard ringOfThror
+        , SomeAttachmentCard putOffPursuit
         ]
     ]

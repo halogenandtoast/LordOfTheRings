@@ -235,6 +235,7 @@ allEventCards =
       , manTheWalls
       , familiarLands
       , swiftAndStrong
+      , theGatheringStorm
       ]
 
 everVigilant :: CardDef
@@ -952,3 +953,6 @@ swiftAndStrong =
   (event "19090" "Swift and Strong" Tactics (StaticCost 1))
     { cdCardTraits = setFromList [Song]
     }
+
+theGatheringStorm :: CardDef
+theGatheringStorm = event "21007" "The Gathering Storm" Leadership (StaticCost 0)

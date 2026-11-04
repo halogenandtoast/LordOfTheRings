@@ -233,6 +233,10 @@ allAllyCards =
       , soldierOfErebor
       , mirkwoodHunter
       , descendantOfGirion
+      , merryLeadership
+      , pippinTactics
+      , faramirLore
+      , derufin
       ]
 
 guardOfTheCitadel :: CardDef
@@ -1641,3 +1645,32 @@ descendantOfGirion =
   (ally "19091" "Descendant of Girion" Spirit (StaticCost 4) 2 2 2 2)
     { cdCardTraits = setFromList [Dale]
     }
+
+merryLeadership :: CardDef
+merryLeadership =
+  unique
+    (ally "21003" "Merry" Leadership (StaticCost 2) 2 0 0 2)
+      { cdCardTraits = setFromList [Hobbit]
+      }
+
+pippinTactics :: CardDef
+pippinTactics =
+  unique
+    (ally "21004" "Pippin" Tactics (StaticCost 2) 2 0 0 2)
+      { cdCardTraits = setFromList [Hobbit]
+      }
+
+faramirLore :: CardDef
+faramirLore =
+  unique
+    (ally "21005" "Faramir" Lore (StaticCost 4) 2 1 2 3)
+      { cdCardTraits = setFromList [Gondor, Noble, Ranger]
+      }
+
+derufin :: CardDef
+derufin =
+  unique
+    (ally "21006" "Derufin" Spirit (StaticCost 3) 1 2 1 2)
+      { cdCardTraits = setFromList [Gondor, Warrior]
+      , cdKeywords = setFromList [Ranged]
+      }

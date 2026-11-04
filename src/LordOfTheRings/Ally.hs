@@ -261,6 +261,10 @@ import LordOfTheRings.Ally.Cards.Thalion
 import LordOfTheRings.Ally.Cards.SoldierOfErebor
 import LordOfTheRings.Ally.Cards.MirkwoodHunter
 import LordOfTheRings.Ally.Cards.DescendantOfGirion
+import LordOfTheRings.Ally.Cards.MerryLeadership
+import LordOfTheRings.Ally.Cards.PippinTactics
+import LordOfTheRings.Ally.Cards.FaramirLore
+import LordOfTheRings.Ally.Cards.Derufin
 import LordOfTheRings.Ally.Runner ()
 import LordOfTheRings.Ally.Types as X
 import LordOfTheRings.Id
@@ -554,5 +558,9 @@ allAllies =
         , SomeAllyCard soldierOfErebor
         , SomeAllyCard mirkwoodHunter
         , SomeAllyCard descendantOfGirion
+        , SomeAllyCard merryLeadership
+        , SomeAllyCard pippinTactics
+        , SomeAllyCard faramirLore
+        , SomeAllyCard derufin
         ]
     ]
