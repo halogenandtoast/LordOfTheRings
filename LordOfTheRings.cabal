@@ -1418,6 +1418,7 @@ library
       LordOfTheRings.Location.Cards.BurntSands
       LordOfTheRings.Location.Cards.CalmWaters
       LordOfTheRings.Location.Cards.CaptainsQuarters
+      LordOfTheRings.Location.Cards.CapturedTower
       LordOfTheRings.Location.Cards.Caradhras
       LordOfTheRings.Location.Cards.CargoHold
       LordOfTheRings.Location.Cards.Catacombs
@@ -1441,6 +1442,7 @@ library
       LordOfTheRings.Location.Cards.ConcealedOrcCamp
       LordOfTheRings.Location.Cards.ConcealedWoods
       LordOfTheRings.Location.Cards.ContestedDepths
+      LordOfTheRings.Location.Cards.ContestedSquare
       LordOfTheRings.Location.Cards.CormallenFields
       LordOfTheRings.Location.Cards.CorsairWaters
       LordOfTheRings.Location.Cards.CreatureDen
@@ -1549,6 +1551,7 @@ library
       LordOfTheRings.Location.Cards.FrozenSilverlode
       LordOfTheRings.Location.Cards.GapOfRohan
       LordOfTheRings.Location.Cards.GardenOfPoisons
+      LordOfTheRings.Location.Cards.GateOfDorwinion
       LordOfTheRings.Location.Cards.GateOfGundabad
       LordOfTheRings.Location.Cards.GateOfIron
       LordOfTheRings.Location.Cards.GatesOfCarnDum
@@ -1612,6 +1615,7 @@ library
       LordOfTheRings.Location.Cards.LostArmory
       LordOfTheRings.Location.Cards.LostIsland
       LordOfTheRings.Location.Cards.LushJungle
+      LordOfTheRings.Location.Cards.MakeshiftFortification
       LordOfTheRings.Location.Cards.MakeshiftPassage
       LordOfTheRings.Location.Cards.MarketSquare
       LordOfTheRings.Location.Cards.Methedras
@@ -1676,6 +1680,7 @@ library
       LordOfTheRings.Location.Cards.PrisonCell
       LordOfTheRings.Location.Cards.PrisonCellNightmare
       LordOfTheRings.Location.Cards.QuarterDeck
+      LordOfTheRings.Location.Cards.RansackedHouse
       LordOfTheRings.Location.Cards.RathCelerdain
       LordOfTheRings.Location.Cards.RaurosFalls
       LordOfTheRings.Location.Cards.RavenChiefsCamp

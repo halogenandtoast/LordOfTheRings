@@ -497,6 +497,11 @@ import LordOfTheRings.Location.Cards.Catacombs
 import LordOfTheRings.Location.Cards.TwistedTunnel
 import LordOfTheRings.Location.Cards.NarrowOpening
 import LordOfTheRings.Location.Cards.CrumblingPassage
+import LordOfTheRings.Location.Cards.GateOfDorwinion
+import LordOfTheRings.Location.Cards.ContestedSquare
+import LordOfTheRings.Location.Cards.RansackedHouse
+import LordOfTheRings.Location.Cards.MakeshiftFortification
+import LordOfTheRings.Location.Cards.CapturedTower
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -1040,5 +1045,10 @@ allLocations =
         , SomeLocationCard twistedTunnel
         , SomeLocationCard narrowOpening
         , SomeLocationCard crumblingPassage
+        , SomeLocationCard gateOfDorwinion
+        , SomeLocationCard contestedSquare
+        , SomeLocationCard ransackedHouse
+        , SomeLocationCard makeshiftFortification
+        , SomeLocationCard capturedTower
         ]
     ]
