@@ -297,6 +297,19 @@ spec = describe "Location card text" do
       run $ FocusArea one
       getStagingThreat `shouldReturn` 3
 
+  it "Shivering River adds its threat as its own area has it modified" $ do
+    seats <- traverse (fmap (either (error . show) id) . uncurry loadPlayer) (("one", testDeck) :| [("two", testDeck)])
+    env <- newGameEnv (newTableIn foundationsOfStone seats) (const $ pure ()) 1
+    runGameT env do
+      [one, two] <- getsGame (.playerOrder)
+      run $ SeparatePlayers [[one], [two]]
+      run $ FocusArea two
+      river <- stagedLocation Locations.shiveringRiver
+      effect (LocationTarget river) [ThreatModifier 2]
+      getStagingThreat `shouldReturn` 5
+      run $ FocusArea one
+      getStagingThreat `shouldReturn` 5
+
   it "Shrine to Morgoth cannot enter the staging area" . gameTest $ \_ -> do
     shrine <- activeLocation Locations.shrineToMorgothTheDrownedRuins
     run $ PlaceLocation shrine StagingArea

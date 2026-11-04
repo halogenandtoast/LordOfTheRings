@@ -3,10 +3,11 @@ own: see "LordOfTheRings.Scenario.Scenarios.FoundationsOfStone.Helpers".
 -}
 module LordOfTheRings.Scenario.Scenarios.FoundationsOfStone (foundationsOfStone) where
 
-import LordOfTheRings.Classes.HasGame (getGame)
+import LordOfTheRings.Classes.HasGame (ReadGame (..), getGame)
 import LordOfTheRings.EncounterSet qualified as EncounterSet
 import LordOfTheRings.Entities (entitiesLocations)
-import LordOfTheRings.Game.Base (Area (..), Separation (..), gameSeparation, isFocusedArea)
+import LordOfTheRings.Game.Base (Area (..), Separation (..), areaLead, focusArea, gameSeparation, isFocusedArea)
+import LordOfTheRings.Helpers.Staging (getLocationThreat)
 import LordOfTheRings.Location.Types ()
 import LordOfTheRings.Modifier (ModifierType (StagingThreatBonus))
 import LordOfTheRings.Placement (Placement (StagingArea))
@@ -23,21 +24,21 @@ newtype FoundationsOfStone = FoundationsOfStone ScenarioAttrs
 
 -- | Nightmare's Shivering River: "While Shivering River is in the staging area, it
 -- contributes its threat to the total threat in each other player's staging area." One in
--- another area's staging area adds its threat to this one's; held there, its modifiers are
--- not read, so it adds its printed threat.
+-- another area's staging area adds its threat there, as that area reads it, to this one's.
 instance HasModifiersFor FoundationsOfStone where
   getModifiersFor (FoundationsOfStone a) = do
     g <- getGame
-    let rivers =
-          [ l
-          | Just s <- [gameSeparation g]
-          , area <- separationAreas s
-          , not (isFocusedArea g area)
-          , l <- toList (entitiesLocations $ areaHeldEntities area)
-          , l.placement == StagingArea
-          , toCardCode l == toCardCode Locations.shiveringRiver
-          ]
-        n = sum (map (.threat) rivers)
+    let n =
+          sum
+            [ runReadGame (getLocationThreat l.id) held
+            | Just s <- [gameSeparation g]
+            , area <- separationAreas s
+            , not (isFocusedArea g area)
+            , let held = focusArea (areaLead g s area) g
+            , l <- toList (entitiesLocations $ areaHeldEntities area)
+            , l.placement == StagingArea
+            , toCardCode l == toCardCode Locations.shiveringRiver
+            ]
     when (n > 0) $ modified a GameTarget [StagingThreatBonus n]
 
 foundationsOfStone :: Scenario
