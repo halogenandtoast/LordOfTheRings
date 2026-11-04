@@ -179,12 +179,18 @@ windowMatchesM matcher w@(Window timing wType) = case (matcher, wType) of
         pure $ any (\d -> d.target == EnemyTarget eid && maybe False (>= n) (cdHitPoints $ toCardDef d.card)) destroyed
   (ExploredMatchingWindow t m, Explored lid) | t == timing -> maybe False (cardMatches m . toCardDef) . Map.lookup lid . (.locations) <$> getsGame gameEntities
   (HeroDeclaredAsDefenderWindow t m, DeclaredAsDefender (HeroTarget hid) _) | t == timing -> selectAny (HeroWithId hid <> m)
-  (CharacterDefenderDeclaredWindow t hm am em, DeclaredAsDefender c eid) | t == timing -> do
-    character <- case c of
-      HeroTarget hid -> selectAny (HeroWithId hid <> hm)
-      AllyTarget aid -> selectAny (AllyWithId aid <> am)
+  (CharacterDefenderDeclaredWindow t hm am em, DeclaredAsDefender c eid) | t == timing ->
+    andM [characterMatches hm am c, selectAny (EnemyWithId eid <> em)]
+  (CharacterAttackerDeclaredWindow t hm am em, DeclaredAsAttacker c eid) | t == timing ->
+    andM [characterMatches hm am c, selectAny (EnemyWithId eid <> em)]
+  -- the attachment played is in play by now, its host's only attachment
+  (AttachmentPlayedOnBareCharacterWindow t pid hm am, PlayedCard pid' card) | t == timing && pid == pid' -> do
+    es <- getsGame gameEntities
+    case find ((== card.id) . (.cardId) . toAttrs) (toList es.attachments) of
+      Just a | AttachedTo host <- a.placement -> andM [characterMatches hm am host, (== [toTarget a]) <$> getAllAttachmentsOn host]
       _ -> pure False
-    andM [pure character, selectAny (EnemyWithId eid <> em)]
+  -- still in play, as "when a character leaves play" reads
+  (CharacterWithAttachmentsLeftPlayWindow t, LeftPlay c _ _) | t == timing -> notNull <$> playerAttachmentsOn c
   (RevealedTitleInVictoryDisplayWindow t, Revealed target) | t == timing -> do
     es <- getsGame gameEntities
     shown <- getsGame (map (title . toCardDef) . (.victoryDisplay) . toAttrs . gameScenario)
@@ -528,3 +534,10 @@ travelableLocations = do
     if l.progress < questPoints
       then pure []
       else filterM (fmap (notElem CannotBeTraveledTo) . getModifiers) (map toId laid)
+
+-- | Whether the character is a hero matching the one or an ally matching the other.
+characterMatches :: HasGame m => HeroMatcher -> AllyMatcher -> Target -> m Bool
+characterMatches hm am = \case
+  HeroTarget hid -> selectAny (HeroWithId hid <> hm)
+  AllyTarget aid -> selectAny (AllyWithId aid <> am)
+  _ -> pure False
