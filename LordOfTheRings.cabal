@@ -1305,6 +1305,7 @@ library
       LordOfTheRings.Hero.CardDefs
       LordOfTheRings.Hero.Cards.Amarthiul
       LordOfTheRings.Hero.Cards.Aragorn
+      LordOfTheRings.Hero.Cards.AragornFellowship
       LordOfTheRings.Hero.Cards.AragornLore
       LordOfTheRings.Hero.Cards.AragornSpirit
       LordOfTheRings.Hero.Cards.AragornTactics

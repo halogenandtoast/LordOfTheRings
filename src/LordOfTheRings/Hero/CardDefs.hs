@@ -98,6 +98,7 @@ allHeroCards =
       , thorinStonehelm
       , gwaihirTheLandOfSorrow
       , aragornSpirit
+      , aragornFellowship
       ]
 
 aragorn :: CardDef
@@ -629,4 +630,14 @@ aragornSpirit =
   (hero "22137" "Aragorn" Spirit 12 2 3 2 5)
     { cdCardTraits = setFromList [Dunedain, Ranger, Scout]
     , cdKeywords = setFromList [Sentinel]
+    }
+
+-- | The Fellowship sphere Aragorn of The Treason of Saruman: no threat cost; the first
+-- player gains control of him.
+aragornFellowship :: CardDef
+aragornFellowship =
+  (hero "143001" "Aragorn" Fellowship 0 2 3 2 5)
+    { cdThreatCost = Nothing
+    , cdCardTraits = setFromList [Dunedain, Noble, Ranger]
+    , cdKeywords = setFromList [FirstPlayerGainsControl]
     }
