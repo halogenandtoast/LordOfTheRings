@@ -3600,5 +3600,51 @@
       "One of the heroes clasped hands with the Woodman and said, “Thank you for your help. You are a brave man, Haldan. I wish you safe travel on your return journey.”",
       "With that, the heroes climbed aboard the Bardings’ boat and sailed north as Haldan waved goodbye from the shore."
     ]
+  },
+  "challenge-of-the-wainriders": {
+    "intro": [
+      "The heroes followed Ulchor’s trail from the city of Ulfast south across the expanse of Rhûn. It seemed clear to them that the villain now intended to return to his province of Nurn, in the land of Mordor. The heroes rode hard in the hope that they might overtake him before he reached the Black Land.",
+      "At first their pursuit was aided by good weather and a clear trail, but fortune turned against them when they came upon a camp of Wainriders. These were a nomadic band of Easterlings who roamed about Rhûn in great wains. They valued their freedom too much to swear allegiance to Sauron, but they were no friends to the West either. When they saw the heroes approaching on horseback, they mounted their horses and quickly encircled the heroes.",
+      "Seeing that escape was impossible, the heroes raised their hands in surrender. They did not wish to fight the Wainriders, especially when they were so badly outnumbered. They were taken as prisoners and brought to the Wainrider camp. There, the heroes were questioned about where they came from and where they were going by the Wainrider’s chieftain. When they told the Wainriders about their quest to capture Thane Ulchor, their captors laughed and said, “Yes, we know that one! He was here just before you. He threatened us by the power of Mordor if we did not let him go, and he promised us gold if we killed any who followed him.”",
+      "“Did he give you any gold?” asked one of the heroes.",
+      "“No,” laughed the Wainrider chieftain. “Only threats and promises.”",
+      "“Such is the way of Mordor, my friend. But it is not our way,” said the hero. “We will pay you with the gold that we have with us if you will let us be on our way. No idle threats or empty promises.”",
+      "The chieftain laughed again. He leaned forward to tell the hero, “If we wanted your gold, we could just take it.” Then, he leaned back and motioned to the others around him, “But we are not thieves or murderers. That is not our way. We are riders and chariot racers! Our way is the wind in our hair and the earth rushing beneath us.” The others around him cheered and whooped until he motioned for them to stop. “Can you drive a chariot?” he asked the hero.",
+      "The hero considered his answer and said, “Yes.”",
+      "“Good!” smiled the chieftain. “Then this is what we will do: we will have a chariot race. If you can beat our champion, then you may keep your gold and be on your way. But if our champion wins, we will deliver you to Ulchor.”"
+    ],
+    "setup": [
+      "“Challenge of the Wainriders” is played with an encounter deck built with all the cards from the following encounter sets: Challenge of the Wainriders, Rolling Plains, and Riders of Rhûn. (Rolling Plains and Riders of Rhûn can be found in A Shadow in the East deluxe expansion to The Lord of the Rings: The Card Game.)"
+    ],
+    "rules": [
+      {
+        "title": "The Circuit",
+        "text": "When setting up the quest deck for The Challenge of the Wainriders, arrange stages 1, 2, and 3 in a row from left to right. Then, place stages 4, 5, and 6 in a row above them from right to left, so that stage 4 is positioned directly above stage 3. The two rows together make “the circuit.” After creating the circuit, flip each quest stage over and place The Challengers objective and The Wainriders objective at stage 1B.\n\nThe Challengers objective represents the players’ position in the race, and The Wainriders’ objective represents their opponents’ position. The stage that The Challengers objective is at is considered the current quest. The stage that The Wainriders objective is at is considered “the Wainriders’ stage.”\n\nWhen the players defeat a quest stage, they advance The Challengers objective counterclockwise to the next stage in the circuit. The Wainriders objective will also advance around the circuit in a counterclockwise direction. If The Challengers objective has advanced through more quest stages than The Wainriders, then the players are considered to be ahead of The Wainriders. When the players defeat stage 6, they complete the circuit. In order to defeat the scenario, The Challengers objective must complete the circuit twice before The Wainriders objective completes the circuit twice."
+      },
+      {
+        "title": "Race Keyword",
+        "text": "Race is a new keyword used on quest cards in Challenge of the Wainriders. It represents the players’ chariot race against the Wainriders. Quest cards with the race keyword cannot be defeated outside of the quest phase, and progress cannot be placed on them by player card effects.\n\nWhen a quest stage with the race keyword is defeated, it is not removed from play after it is defeated. Instead, the quest stage remains in play and all progress is removed from it at the end of the phase."
+      },
+      {
+        "title": "Racing X Tests",
+        "text": "Racing tests represent the heroes’ ability to drive their chariots over difficult and dangerous terrain. Succeeding at these tests will mean the difference between winning and losing the race. Each quest stage has a Forced effect that initiates a racing X test when that stage is defeated. When this happens, the first player commits a single character to the test by exhausting it. Then, the first player discards the top X cards of the encounter deck, where X is the total value of that character’s indicated attribute (Willpower, Attack, or Defense). Some encounter cards have racing test results printed in their lower-right-hand corners. The results types are STRAIGHT, TURN and WILD (the WILD result counts as both a STRAIGHT and a TURN result). Each racing test specifies which result and how many of that result the players need to discard in order to pass.\n\nExample: Tony quested successfully at stage 2B and placed a total of 11 progress on that stage, triggering its effect: “Forced: When this stage is defeated, make a racing Attack test. To pass requires 1 STRAIGHT result, plus an additional STRAIGHT result for each stage you have completed this round. If the players pass the test, excess progress is placed on the next stage. If the players fail the test, deal 1 damage to each character.” Tony exhausts Aragorn who has 3 Attack so he discards the top 3 cards of the encounter deck. Among the discarded cards are two STRAIGHT results, which is more than enough to pass the test. Tony advances The Challengers objective to stage 3B of The Circuit and places the 7 excess progress on that stage, triggering its effect: “Forced: When this stage is defeated, make a racing Willpower test. To pass requires 1 TURN result, plus an additional TURN result for each stage you have completed this round. If the players pass the test, excess progress is placed on the next stage. If the players fail the test, each player discards an ally he controls.” Tony exhausts Éowyn who has 4 Willpower, so he discards the top 4 cards of the encounter deck. There is only one TURN result among the discarded cards, which is not enough to pass the test, so he fails. For failing the test, Tony must discard an ally he controls. However, he has still defeated stage 3B. He advances The Challengers objective to stage 4B, but he does not place the remaining 3 progress on that stage."
+      }
+    ],
+    "resolution": [
+      "The chariot race was more like a battle than a sporting event. At first, the heroes were unprepared for the ferocity of the Wainriders’ racing skills, but what they lacked in experience they quickly made up for with daring. They drove harder over each rise and around each turn, until they overtook the Wainrider champion to finish in first place.",
+      "After they crossed the finish line, the heroes were greeted warmly by the Wainrider camp. “Well done! Well done!” they cheered, and clapped them on their backs. “We didn’t know Westerners could ride like that! We will tell stories of this race for years to come. Well done indeed!”",
+      "“Then we are free to go?” asked one of the heroes.",
+      "“Yes, yes,” answered the Wainrider chieftain. “You have won your freedom. Go with good hearts.”",
+      "“Thank you,” said the hero.",
+      "“But,” added the chieftain, “if you still mean to find Ulchor, you will need our help.”",
+      "“How is that?” asked the hero.",
+      "“Ulchor has gone back to Mordor,” the Wainrider explained. “You cannot follow him there without being captured again; this time not by Wainriders but by Orcs. There is no hope for you that way.”",
+      "“But we have sworn to deliver justice to Ulchor,” replied the hero. “We cannot turn back now.”",
+      "“You misunderstand,” said the Wainrider. “You don’t turn back now. There is a way under the Ash Mountains. We can lead you to the entrance for the gold that you have.”",
+      "The hero studied the Wainrider’s face for a moment, then, offering his hand he said, “Agreed.”",
+      "The Wainrider smiled, took his hand and said, “Good.”",
+      "That night the Wainriders held a feast to honor the heroes and celebrate the race they had won. The next morning, the heroes mounted their horses along with a couple of Wainriders who would guide them to the tunnel entrance.",
+      "The story continues in “Under the Ash Mountains,” the fourth Adventure Pack in the “The Vengeance of Mordor” cycle."
+    ]
   }
 }
