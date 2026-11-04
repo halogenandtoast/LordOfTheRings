@@ -127,6 +127,8 @@ allObjectiveCards =
       , nooseOfVines
       , porosGarrison
       , haldan
+      , theGoblinsAssault
+      , theHeroesDefense
       ]
 
 durinsAxe :: CardDef
@@ -868,3 +870,11 @@ haldan =
     , cdKeywords = setFromList [FirstPlayerGainsControl]
     , cdOtherSide = Just "18069A"
     }
+
+-- * The Fate of Wilderland
+
+theGoblinsAssault :: CardDef
+theGoblinsAssault = (objective "19155" "The Goblins' Assault" TheFateOfWilderland 1) {cdCardTraits = setFromList [Assault]}
+
+theHeroesDefense :: CardDef
+theHeroesDefense = (objective "19156" "The Heroes' Defense" TheFateOfWilderland 1) {cdCardTraits = setFromList [Defense]}

@@ -439,6 +439,10 @@ allEnemyCards =
       , werewolf
       , giantSpider
       , blackBats
+      , urdug
+      , urdugsElite
+      , fierceVanguard
+      , wargRider
       ]
 
 namelessThing :: CardDef
@@ -3587,3 +3591,32 @@ blackBats =
     , cdKeywords = setFromList [Surge]
     , cdShadowEffect = True
     }
+
+-- * The Fate of Wilderland
+
+urdug :: CardDef
+urdug =
+  unique
+    (enemy "19157" "Urdug" TheFateOfWilderland 1 50 2 3 2 5)
+      { cdCardTraits = setFromList [Orc, Goblin]
+      , cdVictoryPoints = Just 5
+      }
+
+urdugsElite :: CardDef
+urdugsElite =
+  (enemy "19158" "Urdug's Elite" TheFateOfWilderland 3 25 2 3 2 5)
+    { cdCardTraits = setFromList [Orc, Goblin]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 2
+    }
+
+fierceVanguard :: CardDef
+fierceVanguard =
+  (enemy "19159" "Fierce Vanguard" TheFateOfWilderland 3 20 2 2 2 3)
+    { cdCardTraits = setFromList [Orc, Goblin]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 2
+    }
+
+wargRider :: CardDef
+wargRider = (enemy "19160" "Warg-rider" TheFateOfWilderland 2 30 3 4 1 4) {cdCardTraits = setFromList [Orc, Goblin]}

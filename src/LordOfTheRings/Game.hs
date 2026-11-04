@@ -2008,9 +2008,11 @@ runGameMessage msg g = case msg of
           -- 'doesNotRaiseThreat'
           do
             spared <- elem NoThreatFromQuestingUnsuccessfully <$> getModifiers GameTarget
+            let delayed = [PlaceTokens (effectSource e) t Progress n | e <- gameEffects g, ProgressIfQuestUnsuccessful t n <- effectModifiers e]
             pushAll
               $ CheckWindows [mkWhen QuestedUnsuccessfully]
-              : [RaiseThreat pid (threat - willpower) | not spared, pid <- players]
+              : delayed
+              <> [RaiseThreat pid (threat - willpower) | not spared, pid <- players]
               <> [CheckWindows [mkAfter QuestedUnsuccessfully]]
       | otherwise -> pure ()
     pure $ g & lastCommittedWillpowerL ?~ willpower

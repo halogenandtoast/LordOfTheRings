@@ -491,6 +491,9 @@ data ModifierType
     HeroCommittedThisRound
   | -- | on the game: the players quested successfully this phase, as Bofur reads
     QuestedSuccessfullyThisPhase
+  | -- | on the game, until the end of the phase: if the players quest unsuccessfully, the
+    -- effect's source places this much progress on the target, as Dark Clouds reads
+    ProgressIfQuestUnsuccessful Target Int
   | -- | on the game: it cannot end, a win or loss waiting until nothing gives this, as
     -- Ghulat reads
     GameCannotEnd

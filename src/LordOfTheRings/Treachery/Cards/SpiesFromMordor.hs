@@ -25,10 +25,6 @@ instance RunMessage SpiesFromMordor where
         else revealEncounterCard
       pure t
     ResolveShadowEffect cid _ pid _ | cid == attrs.cardId -> do
-      attachments <- filter (\case ObjectiveTarget _ -> False; _ -> True) <$> getAttachmentsControlledBy pid
-      chooseOrRunOneM pid do
-        questionLabeled "spiesFromMordor.discard"
-        causedBy (CardIdTarget cid)
-        targets attachments discard
+      discardNonObjectiveAttachment (CardIdTarget cid) pid
       pure t
     _ -> SpiesFromMordor <$> runMessage msg attrs

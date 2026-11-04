@@ -3243,5 +3243,39 @@
       "Kahliel lifted his hand and his companions fell silent. “We will ride to Gondor,” he said, “The Mûmakil dwell in this forest, along with the supplies we need. We will capture the beasts we need and ride them to Gondor.”",
       "To be continued in “The Mûmakil,” the first Adventure Pack in “The Haradrim” cycle."
     ]
+  },
+  "the-fate-of-wilderland": {
+    "intro": [
+      "Urdug had been busy since escaping his captors at Hrogar’s Hill. He had gathered the scattered host of Gundabad and led them back to the mountain, but it had taken some doing.",
+      "When Dagnir attacked the Woodmen’s town, it provided the Goblin chieftain with the perfect opportunity to slip his bonds and disappear. Killing his guards was just an added pleasure. He had endured too much humility at the hands of the heroes who forced him to march across Rhovanion on their quest, but the long journey had also given him the time to plot his revenge.",
+      "“If these heroes are so determined to slay Dagnir, then why not help them?” he had thought to himself. “And when the Dragon is dead, me and my lads will kill these fools and take back our home.” So he gave them the key to his secret entrance and told them the story of how he escaped through the eastern door when Dagnir first attacked Gundabad.",
+      "After he slipped the heroes at Hrogar’s Hill, he came upon two of his brethren fleeing the battle. He recognized them as traitors who chose to serve Dagnir after she usurped his place in Gundabad. He set upon them in a fury, killing one and holding the other at knife point. “Listen you maggot!” he snarled, “I ought to slit your throat like I did your traitor friend, but I need you to carry a message back to that den of gutless cowards back home: Dagnir’s days are numbered. A band of mighty warriors is on their way to Gundabad to slay her soon.”",
+      "“H-how do you know?” asked his captive.",
+      "“Because I’ve sent them, you worm!” snapped Urdug. “I’ve set things in motion to take back what’s mine, and anyone who gets in my way will end up like that.” He pointed to the Goblin corpse at his feet. “So run and tell those miserable lackeys that they better join with me when they hear my war-horn.”",
+      "After he let his messenger go, he traveled through the Grey Mountains on his way west, searching out the Goblins who fled that way when the Dragon came. By the time he reached Mount Gundabad, he already had a small army with him, but he was careful to stay out of sight until his spies returned with news of Dagnir’s demise.",
+      "“Har, har! I told you lads!” he laughed, “Just like I promised: Dagnir is dead and Gundabad is ours!”",
+      "And with that, he mounted his Warg and blew a loud blast on his war-horn. “Follow me, boys!” he cried as he rode toward Gundabad.",
+      "Inside the mountain, the heroes heard the sound and raced to see the approaching army. More Goblins were joining them from their hiding-holes; lackeys answering their master’s call.",
+      "There was little time for the heroes to organize a defense. They were outnumbered many times over, but among them was no thought of surrender; the Goblins would make cruel sport of any captives. Their only option was to fight. Urdug had the overwhelming force, but the heroes determined he would pay dearly for each life he took. And if the price proved too steep, there was a small hope that the Goblins would be dismayed and scatter. So it was with fierce war cries that Urdug and the heroes charged into battle."
+    ],
+    "setup": [
+      "“The Fate of Wilderland” is played with an encounter deck built with all the cards from the following encounter sets: The Fate of Wilderland, Grey Mountain Goblins, Gathering Gloom and Hills of Wilderland. (Grey Mountain Goblins, Gathering Gloom and Hills of Wilderland can be found in The Wilds of Rhovanion deluxe expansion to The Lord of the Rings: The Card Game.)"
+    ],
+    "resolution": [
+      "The rocks about the gate were stained black with blood, and the slopes of Mount Gundabad were littered with the slain. Unbelievably, the heroes had prevailed in battle against the larger force of Goblins determined to retake the mountain. The battle had not gone well, but the Goblins’ battle lust wavered in the face of the heroes’ fierce defense. The companions fought like cornered beasts, thoughtless of their peril, almost savage in their desperation. The Goblins had never seen warriors like these, and it was only Urdug’s will that drove them on. When their chieftain was pulled down from his Warg and slain, the Goblins’ will broke and they scattered in fear.",
+      "“The day is ours!” shouted one of the heroes, and his companions cheered. They withdrew inside the gate and each slumped to the ground with exhaustion. The wealth of Gundabad lay before them, but any one of them would have traded it all for a cup of water and something to eat.",
+      "It had been a long road from the Iron Hills to Mount Gundabad, but Dagnir was dead and the Goblins were scattered. All that was left was to divide the treasure. Messengers were sent east to the Woodmen at Hrogar’s Hill, and from there further east to King Brand in Dale. Within a fortnight, the first troop of Woodmen arrived to help the heroes liberate the wealth of Gundabad.",
+      "The greater share of the treasure was given to the Master at Hrogar’s Hill to help rebuild the town. Yet much wealth was carried back to Dale with the heroes for their triumphant return. It was upon a fair spring day the heroes arrived in King Brand’s hall with an escort of the king’s men and several large chests of gold.",
+      "King Brand stood and greeted the heroes, “Well met once again, my friends. All Wilderland sings of your deeds. Honored shall you ever be among my people. Come, sit at my table and enjoy the celebration.”",
+      "The heroes bowed, and one spoke, “Thank you, my lord. You give us great honor, but there is one thing that remains unsettled in Rhovanion.”",
+      "“Yes, indeed,” said Brand, “Your friends, the Haradrim.”",
+      "He lifted his cup and spoke, “I swear to you, by this time next year they will be safely settled within my realm as honored friends.”",
+      "The hero bowed again and said, “Twice thanks, my lord. Then all is settled and we are content.”",
+      "“All except for the growling of my stomach,” laughed another of the companions. “It is hard to endure the courtesies of court after a long journey when the smell of food fills my nose.”",
+      "The king laughed and said, “Well said! Please, sit and eat. This meal is in your honor. And when you have eaten your fill, I will hear the whole account of your adventures.”",
+      "The heroes enjoyed the greatest meal of their lives, sweetened with the success of their quest. They regaled the king’s court with the details of their journey: the Withered Heath, the cold-drake, Urdug, Dagnir’s attack on Hrogar’s Hill, the ghost of Fram, Wormsbane, the Dragon’s death, and the battle of Mount Gundabad.",
+      "“My friends,” said King Brand, “You have journeyed far and done much. Wilderland is in your debt. These deeds of yours will live forever in the songs of Dale.”",
+      "Then, to the lasting delight of the heroes, a minstrel was called forth to sing their tale. As they listened to the bard’s account of their deeds, they wondered at all they had accomplished."
+    ]
   }
 }

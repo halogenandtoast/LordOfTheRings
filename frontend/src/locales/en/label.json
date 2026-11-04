@@ -1142,9 +1142,7 @@
     "scour": "Trigger each Scour effect in play",
     "hand": "Each player places a random card from hand underneath The Orcs' Search"
   },
-  "spiesFromMordor": {
-    "discard": "Discard a non-objective attachment you control"
-  },
+  "discardNonObjectiveAttachment": "Discard a non-objective attachment you control",
   "readyUpTo": "Choose a character to ready ({n} left)",
   "neekerbreekers": {
     "damageAlly": "Choose an ally you control to take 2 damage"
@@ -2559,5 +2557,28 @@
     "return": "Return a non-unique Creature enemy engaged with you to the staging area",
     "ally": "Radagast's Staff: choose a Creature ally to ready",
     "enemy": "Radagast's Staff: choose a Creature enemy to return to the staging area"
+  },
+  "theFateOfWilderland": {
+    "placeProgress": "Place 1 progress on The Goblins' Assault"
+  },
+  "urdugsElite": {
+    "choose": "Urdug's Elite: exhaust a character you control, or place 1 progress on The Goblins' Assault"
+  },
+  "fierceVanguard": {
+    "choose": "Fierce Vanguard: choose one",
+    "attack": "Fierce Vanguard gets +2 attack until the end of the round"
+  },
+  "wargRider": {
+    "choose": "Warg-rider: choose one",
+    "return": "Return Warg-rider to the staging area"
+  },
+  "dwarvenWatchtower": {
+    "choose": "Dwarven Watchtower: choose one",
+    "resource": "Place 1 resource on The Heroes' Defense",
+    "progress": "Remove 1 progress from The Goblins' Assault"
+  },
+  "slopesOfGundabad": {
+    "choose": "Slopes of Gundabad: choose one",
+    "reveal": "Reveal an additional encounter card"
   }
 }

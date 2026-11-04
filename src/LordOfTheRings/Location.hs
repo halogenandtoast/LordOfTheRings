@@ -448,6 +448,10 @@ import LordOfTheRings.Location.Cards.FrightfulDen
 import LordOfTheRings.Location.Cards.LightlessGrotto
 import LordOfTheRings.Location.Cards.CrumblingCavern
 import LordOfTheRings.Location.Cards.UndergroundLake
+import LordOfTheRings.Location.Cards.GateOfGundabad
+import LordOfTheRings.Location.Cards.HilltopBattlements
+import LordOfTheRings.Location.Cards.DwarvenWatchtower
+import LordOfTheRings.Location.Cards.SlopesOfGundabad
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -942,5 +946,9 @@ allLocations =
         , SomeLocationCard lightlessGrotto
         , SomeLocationCard crumblingCavern
         , SomeLocationCard undergroundLake
+        , SomeLocationCard gateOfGundabad
+        , SomeLocationCard hilltopBattlements
+        , SomeLocationCard dwarvenWatchtower
+        , SomeLocationCard slopesOfGundabad
         ]
     ]

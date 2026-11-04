@@ -167,3 +167,9 @@ instance HasField "resources" ObjectiveAttrs Int where
 
 instance HasField "resources" Objective Int where
   getField = (.resources) . toAttrs
+
+instance HasField "progress" ObjectiveAttrs Int where
+  getField = countTokens Progress . objectiveTokens
+
+instance HasField "progress" Objective Int where
+  getField = (.progress) . toAttrs

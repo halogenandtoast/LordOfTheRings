@@ -375,6 +375,9 @@ allTreacheryCards =
       , eyesInTheDark
       , dragonBreath
       , dragonScales
+      , fierceAttack
+      , urdugsCommand
+      , darkClouds
       ]
 
 deepDeepDark :: CardDef
@@ -2387,3 +2390,19 @@ dragonBreath = (treachery "18058" "Dragon Breath" DragonMight 2) {cdCardTraits =
 
 dragonScales :: CardDef
 dragonScales = (treachery "18059" "Dragon Scales" DragonMight 2) {cdCardTraits = setFromList [Dragon], cdKeywords = setFromList [Surge]}
+
+-- * The Fate of Wilderland
+
+fierceAttack :: CardDef
+fierceAttack =
+  (treachery "19165" "Fierce Attack" TheFateOfWilderland 3)
+    { cdKeywords = setFromList [Doomed 1]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 2
+    }
+
+urdugsCommand :: CardDef
+urdugsCommand = (treachery "19166" "Urdug's Command" TheFateOfWilderland 3) {cdShadowEffect = True, cdEasyModeQuantity = Just 2}
+
+darkClouds :: CardDef
+darkClouds = (treachery "19167" "Dark Clouds" TheFateOfWilderland 2) {cdShadowEffect = True}
