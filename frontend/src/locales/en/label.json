@@ -2071,9 +2071,7 @@
     "response": "Choose a non-unique location to take the progress made beyond the active location this phase",
     "skip": "Do not choose a location"
   },
-  "westernQuarter": {
-    "discard": "Choose the highest cost attachment you control to discard"
-  },
+  "discardHighestCostAttachment": "Choose the highest cost attachment you control to discard",
   "falseAccusations": {
     "choose": "False Accusations: raise your threat by 5 or exhaust each ready character you control",
     "threat": "Raise your threat by 5",
