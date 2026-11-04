@@ -464,6 +464,9 @@ allQuestCards =
       , aShortRest
       , theMountainPass
       , downDownToGoblinTown
+      , outOfTheFryingPan
+      , riddlesInTheDark
+      , intoTheFire
       ]
 
 theDrippingWalls :: CardDef
@@ -1948,3 +1951,15 @@ theMountainPass = quest "131027" "The Mountain Pass" OverTheMistyMountainsGrim 2
 -- | Printed with The Great Goblin's set icon; it is part of the quest deck all the same.
 downDownToGoblinTown :: CardDef
 downDownToGoblinTown = quest "131028" "Down, Down to Goblin Town" TheGreatGoblin 3 20
+
+-- * Dungeons Deep and Caverns Dim
+
+outOfTheFryingPan :: CardDef
+outOfTheFryingPan = quest "131029" "Out of the Frying Pan" DungeonsDeepAndCavernsDim 1 14
+
+-- | Stage 2, in the riddle area beside stage 1 the whole time the players are on it.
+riddlesInTheDark :: CardDef
+riddlesInTheDark = quest "131030" "Riddles in the Dark" DungeonsDeepAndCavernsDim 2 9
+
+intoTheFire :: CardDef
+intoTheFire = quest "131031" "Into the Fire" DungeonsDeepAndCavernsDim 3 16

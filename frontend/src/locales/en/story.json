@@ -4096,5 +4096,16 @@
       "Each player may add treasures he has discovered in We Must Away, Ere Break of Day to his deck.",
       "The first player takes control of Bilbo Baggins. If he leaves play, the players lose."
     ]
+  },
+  "dungeons-deep-and-caverns-dim": {
+    "intro": [
+      "Lost in the tunnels under the Misty Mountains, Bilbo stumbles on a ring in the dark and on Gollum beside an underground lake, where his life hangs on a contest of riddles. Far from him, the dwarves break out of the goblins' halls only to find wolves waiting among the pines."
+    ],
+    "setup": [
+      "Build the encounter deck from the Dungeons Deep and Caverns Dim and Misty Mountain Goblins encounter sets. Lake in the Cavern starts in the staging area.",
+      "Stage 2, Riddles in the Dark, forms the riddle area beside stage 1 with Gollum and Bilbo Baggins, who wears Bilbo's Magic Ring. Bilbo stays under the first player's control, but while in the riddle area he cannot quest, attack, have attachments played on him, take damage from anything but Gollum, or defend except against Gollum. Cards in the riddle area are immune to player card effects.",
+      "When an encounter card with a riddle is revealed from the encounter deck, the first player either resolves it normally or answers its riddle: he names the items it asks for, shuffles his deck and discards the top cards, and each discarded card matching every named item places 1 progress on stage 2. Players may take actions before the matches are counted. Failing to find a match makes Gollum attack Bilbo.",
+      "The players cannot advance to stage 3 until both stage 1 and stage 2 are complete."
+    ]
   }
 }

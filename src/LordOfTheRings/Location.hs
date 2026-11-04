@@ -560,6 +560,8 @@ import LordOfTheRings.Location.Cards.OverhangingRock
 import LordOfTheRings.Location.Cards.TheHighPass
 import LordOfTheRings.Location.Cards.FrontPorch
 import LordOfTheRings.Location.Cards.GreatCavernRoom
+import LordOfTheRings.Location.Cards.TheWargsGlade
+import LordOfTheRings.Location.Cards.LakeInTheCavern
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -1166,5 +1168,7 @@ allLocations =
         , SomeLocationCard theHighPass
         , SomeLocationCard frontPorch
         , SomeLocationCard greatCavernRoom
+        , SomeLocationCard theWargsGlade
+        , SomeLocationCard lakeInTheCavern
         ]
     ]

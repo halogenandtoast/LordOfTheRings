@@ -929,6 +929,15 @@ data ModifierType
   | -- | on the game: the total threat of the cards in the Orcs' area is added to the staging
     -- area's, as Howling at their Heels reads (Race Across Harad)
     OrcsAreaThreatAddsToStaging
+  | -- | on a character: it takes no damage but from the source, as Bilbo Baggins in the
+    -- riddle area takes none from cards other than Gollum (Dungeons Deep and Caverns Dim)
+    CannotTakeDamageExceptFrom Source
+  | -- | on the game: the first player is answering a riddle, past its discards and before
+    -- its matches are counted, when Bilbo's Magic Ring's first Action may be taken
+    AnsweringRiddle
+  | -- | on the game: at the end of the combat phase the matching enemies return to the
+    -- staging area, as Great Gray Wolf's Forced effect reads
+    ReturnToStagingAtEndOfCombat EnemyMatcher
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

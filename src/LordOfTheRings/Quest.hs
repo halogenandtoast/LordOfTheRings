@@ -380,6 +380,9 @@ import LordOfTheRings.Quest.Cards.DawnTakeYouAll
 import LordOfTheRings.Quest.Cards.AShortRest
 import LordOfTheRings.Quest.Cards.TheMountainPass
 import LordOfTheRings.Quest.Cards.DownDownToGoblinTown
+import LordOfTheRings.Quest.Cards.OutOfTheFryingPan
+import LordOfTheRings.Quest.Cards.RiddlesInTheDark
+import LordOfTheRings.Quest.Cards.IntoTheFire
 import LordOfTheRings.Quest.Runner ()
 import LordOfTheRings.Quest.Types as X
 import LordOfTheRings.Id
@@ -792,5 +795,8 @@ allQuests =
         , SomeQuestCard aShortRest
         , SomeQuestCard theMountainPass
         , SomeQuestCard downDownToGoblinTown
+        , SomeQuestCard outOfTheFryingPan
+        , SomeQuestCard riddlesInTheDark
+        , SomeQuestCard intoTheFire
         ]
     ]

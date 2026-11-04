@@ -29,6 +29,20 @@ data RacingResult = Straight | Turn | Wild
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
+{- | What a riddle printed on an encounter card has the first player name (The Hobbit: Over
+Hill and Under Hill rules insert, "Riddles"): a card type (ally, event, attachment or
+treasure), a sphere, a cost. A discarded card matches if it has each item named.
+-}
+data RiddleItem = RiddleCardType | RiddleSphere | RiddleCost
+  deriving stock (Show, Eq, Ord, Generic)
+  deriving anyclass (ToJSON, FromJSON)
+
+-- | A riddle: the items named, and how many cards the first player discards from the top
+-- of his deck to answer it.
+data Riddle = Riddle {riddleItems :: [RiddleItem], riddleDiscards :: Int}
+  deriving stock (Show, Eq, Generic)
+  deriving anyclass (ToJSON, FromJSON)
+
 -- | Where a player card may be played from.
 data PlayableFrom = FromHand | FromHandOrDiscard | FromDiscardOnly
   deriving stock (Show, Eq, Generic)
@@ -74,6 +88,8 @@ data CardDef = CardDef
   -- ^ the sailing success icons printed on the encounter card, found by a Sailing test
   , cdRacingResult :: Maybe RacingResult
   -- ^ the racing test result printed on the encounter card, found by a racing test
+  , cdRiddle :: Maybe Riddle
+  -- ^ the riddle printed on the encounter card, as Wild Wargs' (Dungeons Deep and Caverns Dim)
   , cdDeckLimit :: Int
   -- ^ the copies of its title a deck may hold
   , cdLimitOnePerHost :: Bool
@@ -157,6 +173,7 @@ emptyCardDef cCode name cType =
     , cdEscape = Nothing
     , cdSailingIcons = 0
     , cdRacingResult = Nothing
+    , cdRiddle = Nothing
     , cdDeckLimit = 3
     , cdLimitOnePerHost = False
     , cdLimitOneInVictoryDisplay = False

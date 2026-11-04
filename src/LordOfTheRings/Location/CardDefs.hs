@@ -578,6 +578,10 @@ allLocationCards =
       , theHighPass
       , frontPorch
       , greatCavernRoom
+      , theWargsGlade
+      , lakeInTheCavern
+      , theWargsGlade
+      , lakeInTheCavern
       ]
 
 drownedTreasury :: CardDef
@@ -4208,3 +4212,16 @@ frontPorch = (location "131066" "Front Porch" TheGreatGoblin 2 4 4) {cdCardTrait
 
 greatCavernRoom :: CardDef
 greatCavernRoom = (location "131067" "Great Cavern Room" TheGreatGoblin 3 2 3) {cdCardTraits = setFromList [Cave]}
+
+-- * Dungeons Deep and Caverns Dim
+
+theWargsGlade :: CardDef
+theWargsGlade =
+  (location "131077" "The Wargs' Glade" DungeonsDeepAndCavernsDim 3 2 4)
+    { cdCardTraits = setFromList [Forest]
+    , cdRiddle = Just $ Riddle [RiddleSphere] 1
+    }
+
+-- | Its threat X is twice the number of players; it has no quest points to travel to.
+lakeInTheCavern :: CardDef
+lakeInTheCavern = unique (location "131078" "Lake in the Cavern" DungeonsDeepAndCavernsDim 1 0 0) {cdCardTraits = setFromList [Cave]}

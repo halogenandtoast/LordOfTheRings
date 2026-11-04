@@ -147,7 +147,7 @@ against instead, as the Haradrim cycle's "remove 2 progress from the main quest"
 -}
 removeProgressFromMainQuest :: (ReverseQueue m, Sourceable source) => source -> Int -> m ()
 removeProgressFromMainQuest source n = do
-  quests <- getsGame (filter (not . isSideQuest) . toList . entitiesQuests . gameEntities)
+  quests <- getMainQuestCards
   for_ quests \q -> when (q.progress > 0) $ removeTokens source q Progress (min n q.progress)
 
 -- | Place progress on the main quest, bypassing the active location, as Umbar Square reads.
@@ -463,6 +463,15 @@ removeFromDiscard pid cid = push $ RemoveFromDiscard pid cid
 
 placeEnemy :: ReverseQueue m => EnemyId -> Placement -> m ()
 placeEnemy eid placement = push $ PlaceEnemy eid placement
+
+-- | The enemy card, taken from where it was, comes into play placed there, as Gollum in the
+-- riddle area (Dungeons Deep and Caverns Dim).
+createEnemyAt :: ReverseQueue m => EncounterCard -> Placement -> m EnemyId
+createEnemyAt card placement = do
+  eid <- getRandom
+  push $ CreateEnemy eid card
+  placeEnemy eid placement
+  pure eid
 
 -- | "Return all engaged enemies to the staging area."
 returnEngagedEnemiesToStaging :: ReverseQueue m => m ()

@@ -453,6 +453,11 @@ import LordOfTheRings.Treachery.Cards.GripGrabPinchNab
 import LordOfTheRings.Treachery.Cards.GallopingBoulders
 import LordOfTheRings.Treachery.Cards.GuffawingOfGiants
 import LordOfTheRings.Treachery.Cards.ChaosInTheCavern
+import LordOfTheRings.Treachery.Cards.ComeDownLittleBird
+import LordOfTheRings.Treachery.Cards.ItLikesRiddles
+import LordOfTheRings.Treachery.Cards.HidingInTheTrees
+import LordOfTheRings.Treachery.Cards.WhatsInMyPocket
+import LordOfTheRings.Treachery.Cards.NotFairNotFair
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -933,5 +938,10 @@ allTreacherys =
         , SomeTreacheryCard gallopingBoulders
         , SomeTreacheryCard guffawingOfGiants
         , SomeTreacheryCard chaosInTheCavern
+        , SomeTreacheryCard comeDownLittleBird
+        , SomeTreacheryCard itLikesRiddles
+        , SomeTreacheryCard hidingInTheTrees
+        , SomeTreacheryCard whatsInMyPocket
+        , SomeTreacheryCard notFairNotFair
         ]
     ]

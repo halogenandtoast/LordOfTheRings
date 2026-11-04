@@ -24,6 +24,9 @@ data Placement
   | -- | in the Orcs' area (Race Across Harad): neither in the staging area nor engaged,
     -- while the players are not at the Orcs' stage
     OrcsArea
+  | -- | in the riddle area (Dungeons Deep and Caverns Dim): neither in the staging area nor
+    -- engaged, as Gollum waits there while Bilbo Baggins riddles with him
+    RiddleArea
   deriving stock (Show, Eq, Ord, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

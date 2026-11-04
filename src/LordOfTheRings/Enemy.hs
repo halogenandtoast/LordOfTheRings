@@ -537,6 +537,9 @@ import LordOfTheRings.Enemy.Cards.GoblinDriver
 import LordOfTheRings.Enemy.Cards.StoneGiant
 import LordOfTheRings.Enemy.Cards.GoblinBentSwords
 import LordOfTheRings.Enemy.Cards.TheGreatGoblin
+import LordOfTheRings.Enemy.Cards.GollumDungeonsDeep
+import LordOfTheRings.Enemy.Cards.GreatGrayWolf
+import LordOfTheRings.Enemy.Cards.WildWargs
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -1103,5 +1106,8 @@ allEnemys =
         , SomeEnemyCard stoneGiant
         , SomeEnemyCard goblinBentSwords
         , SomeEnemyCard theGreatGoblin
+        , SomeEnemyCard gollumDungeonsDeep
+        , SomeEnemyCard greatGrayWolf
+        , SomeEnemyCard wildWargs
         ]
     ]

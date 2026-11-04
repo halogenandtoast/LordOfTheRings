@@ -26,7 +26,7 @@ import LordOfTheRings.Modifier
 import LordOfTheRings.Name
 import LordOfTheRings.Objective.Types (Objective, ObjectiveAttrs (objectiveGuard, objectiveTokens))
 import LordOfTheRings.Placement
-import LordOfTheRings.Quest.Types (QuestAttrs (questTokens), isEncounterSideQuest, isSideQuest)
+import LordOfTheRings.Quest.Types (Quest, QuestAttrs (questTokens), isEncounterSideQuest, isSideQuest)
 import LordOfTheRings.Player.Types
 import LordOfTheRings.Prelude
 import LordOfTheRings.Scenario.Types (GameMode (NightmareMode), scenarioGuardedPlayerCards, scenarioMode)
@@ -965,17 +965,29 @@ getChosenQuest = do
 
 -- | The quest cards in play, side quests left out.
 getMainQuests :: HasGame m => m [Target]
-getMainQuests = getsGame (map toTarget . filter (not . isSideQuest) . toList . entitiesQuests . gameEntities)
+getMainQuests = map toTarget <$> getMainQuestCards
+
+{- | The main quest cards in play: neither a side quest nor a stage that cannot be the
+current quest, as Riddles in the Dark in the riddle area beside the quest stage the players
+quest against (Dungeons Deep and Caverns Dim).
+-}
+getMainQuestCards :: HasGame m => m [Quest]
+getMainQuestCards = getsGame \g ->
+  [ q
+  | q <- toList (entitiesQuests $ gameEntities g)
+  , not (isSideQuest q)
+  , CannotBeCurrentQuest `notElem` map modifierType (Map.findWithDefault [] (toTarget q) (gameModifiers g))
+  ]
 
 -- | The progress on the main quest, not a side quest's, as "if there are no progress
 -- tokens on the main quest" reads.
 getMainQuestProgress :: HasGame m => m Int
-getMainQuestProgress = getsGame (sum . map (.progress) . filter (not . isSideQuest) . toList . entitiesQuests . gameEntities)
+getMainQuestProgress = sum . map (.progress) <$> getMainQuestCards
 
 -- | The resources on the main quest, as The City of Ulfast's "X is 1 more than the number of
 -- resources on the main quest" reads.
 getMainQuestResources :: HasGame m => m Int
-getMainQuestResources = getsGame (sum . map (countTokens Resource . questTokens . toAttrs) . filter (not . isSideQuest) . toList . entitiesQuests . gameEntities)
+getMainQuestResources = sum . map (countTokens Resource . questTokens . toAttrs) <$> getMainQuestCards
 
 -- | The card is in the victory display, as a player side quest's "while this quest is in
 -- the victory display" reads: built from its card there, it gives its modifiers.

@@ -5,6 +5,7 @@ import LordOfTheRings.Card.CardDef
 import LordOfTheRings.Card.Code
 import LordOfTheRings.EncounterSet
 import LordOfTheRings.Keyword
+import LordOfTheRings.Name (Name)
 import LordOfTheRings.Prelude
 import LordOfTheRings.Trait
 
@@ -463,6 +464,11 @@ allTreacheryCards =
       , gallopingBoulders
       , guffawingOfGiants
       , chaosInTheCavern
+      , comeDownLittleBird
+      , itLikesRiddles
+      , hidingInTheTrees
+      , whatsInMyPocket
+      , notFairNotFair
       ]
 
 deepDeepDark :: CardDef
@@ -2918,3 +2924,24 @@ guffawingOfGiants = treachery "131073" "Guffawing of Giants" OverTheMistyMountai
 
 chaosInTheCavern :: CardDef
 chaosInTheCavern = (treachery "131071" "Chaos in the Cavern" TheGreatGoblin 2) {cdShadowEffect = True}
+
+-- * Dungeons Deep and Caverns Dim
+
+riddleTreachery :: CardCode -> Name -> Int -> [RiddleItem] -> Int -> CardDef
+riddleTreachery code name quantity items discards =
+  (treachery code name DungeonsDeepAndCavernsDim quantity) {cdRiddle = Just $ Riddle items discards}
+
+comeDownLittleBird :: CardDef
+comeDownLittleBird = riddleTreachery "131080" "Come down little bird" 2 [RiddleCardType, RiddleCost] 3
+
+itLikesRiddles :: CardDef
+itLikesRiddles = riddleTreachery "131081" "It Likes Riddles?" 3 [RiddleCost] 2
+
+hidingInTheTrees :: CardDef
+hidingInTheTrees = riddleTreachery "131082" "Hiding in the Trees" 2 [RiddleCardType, RiddleSphere] 3
+
+whatsInMyPocket :: CardDef
+whatsInMyPocket = riddleTreachery "131083" "What's In My Pocket?" 2 [RiddleSphere, RiddleCost] 2
+
+notFairNotFair :: CardDef
+notFairNotFair = treachery "131084" "Not fair! Not fair!" DungeonsDeepAndCavernsDim 1

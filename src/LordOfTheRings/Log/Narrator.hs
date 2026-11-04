@@ -31,7 +31,7 @@ import LordOfTheRings.Log
 import LordOfTheRings.Log.Block
 import LordOfTheRings.Log.Refs
 import LordOfTheRings.Helpers.Modifiers (getModifiers, immuneToSource)
-import LordOfTheRings.Matcher (getArcheryTotal, getDamage, getDiscoverValue, getTimeCounters)
+import LordOfTheRings.Matcher (getArcheryTotal, getDamage, getDiscoverValue, getLead, getTimeCounters)
 import LordOfTheRings.Modifier (ModifierType (CannotRemoveTimeCounters))
 import LordOfTheRings.Message
 import LordOfTheRings.Outcome
@@ -40,6 +40,7 @@ import LordOfTheRings.Placement
 import LordOfTheRings.Player.Types
 import LordOfTheRings.Prelude hiding (say)
 import LordOfTheRings.Scenario.Scenarios.DesertCrossing.Helpers (getTemperature)
+import LordOfTheRings.Scenario.Scenarios.DungeonsDeepAndCavernsDim.Helpers (Named (..))
 import LordOfTheRings.Scenario.Types
 import LordOfTheRings.Source
 import LordOfTheRings.Target
@@ -442,6 +443,23 @@ narrationFor = \case
   ScenarioSpecific "stormcaller.advanced" (parseMaybe parseJSON -> Just card) ->
     Just $ one $ toned Bad $ structure [ikeyPart "log.stormcallerAdvances" ["quest" ~> EncounterCard card]]
   ScenarioSpecific "stormcaller.join" _ -> Just $ one $ toned Good $ mechanic [ikeyPart "log.stormcallerCaughtUp" []]
+  -- \* The riddle area and its riddles (Dungeons Deep and Caverns Dim)
+  PlaceEnemy eid RiddleArea -> Just $ whenRef (toTarget eid) \e -> one $ mechanic [ikeyPart "log.toRiddleArea" ["card" ~> e]]
+  ScenarioSpecific "riddle.answer" (parseMaybe parseJSON -> Just (_ :: Source, _ :: Bool, card :: EncounterCard, _ :: Riddle)) -> Just do
+    who <- playerRefFor =<< getLead
+    one $ action [ikeyPart "log.answersRiddle" ["player" ~> who, "card" ~> EncounterCard card]]
+  ScenarioSpecific "riddle.name" (parseMaybe parseJSON -> Just named) -> Just do
+    who <- playerRefFor =<< getLead
+    let item = case named of
+          NamedCardType AllyType -> ikeyPart "log.riddleItem.ally" []
+          NamedCardType EventType -> ikeyPart "log.riddleItem.event" []
+          NamedCardType _ -> ikeyPart "log.riddleItem.attachment" []
+          NamedTreasure -> ikeyPart "log.riddleItem.treasure" []
+          NamedSphere sphere -> toLogPart sphere
+          NamedCost n -> ikeyPart "log.riddleItem.cost" ["n" ~> n]
+    one $ action [ikeyPart "log.namesRiddle" ["player" ~> who, "item" ~> item]]
+  ScenarioSpecific "riddle.answered" (parseMaybe parseJSON -> Just (_ :: Source, n :: Int)) ->
+    Just $ one $ toned (if n > 0 then Good else Bad) $ mechanic [ikeyPart "log.riddleMatches" ["count" ~> n]]
   -- \* Cold-Drake set aside with its damage (The Withered Heath)
   ScenarioSpecific "witheredHeath.drakeHealed" (parseMaybe parseJSON -> Just (n :: Int)) ->
     Just $ one $ toned Good $ mechanic [ikeyPart "log.coldDrakeHealed" ["count" ~> n]]
