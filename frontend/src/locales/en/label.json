@@ -1364,6 +1364,7 @@
     "engage": "Quiet the Spirits: choose the player with the highest threat for the Undead enemy to engage"
   },
   "engageHighestThreat": "Choose the player with the highest threat for the enemy to engage",
+  "attachToEnemy": "Choose a tied enemy to attach the card to",
   "unexpectedRescue": {
     "startingHero": "Unexpected Rescue: choose your starting hero; the others go to your captured deck"
   },

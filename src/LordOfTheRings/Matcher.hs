@@ -241,6 +241,7 @@ matchEnemy matcher enemy = case matcher of
   EnemyInStormcallerArea -> enemyIn StormcallerArea enemy
   EnemyWithTrait trait -> hasTrait trait (toTarget enemy) (toCardDef enemy)
   EnemyWithCardCode code -> pure $ toCardCode enemy == code
+  EnemyWithTitle title -> pure $ cardMatches (CardWithTitle title) enemy
   EnemyWithCardId cid -> pure $ (toCard enemy).id == cid
   EnemyWithFacedownShadow -> any ((`notElem` (toAttrs enemy).enemyShadowRevealed) . (.id)) <$> shadowsPlayerCardsCanAffect enemy
   EnemyWithRevealedShadow -> pure $ notNull (toAttrs enemy).enemyShadowRevealed

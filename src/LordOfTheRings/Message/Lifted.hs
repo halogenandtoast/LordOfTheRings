@@ -10,7 +10,7 @@ module LordOfTheRings.Message.Lifted (
 
 import LordOfTheRings.Attachment.CardDefs qualified as Attachments
 import LordOfTheRings.Campaign (CampaignLogUpdate)
-import LordOfTheRings.Card (Card (..), CardDef, CardType, EncounterCard, HasCardCode (..), IsCard (..), PlayerCard, cdCardTraits, cdCardType, genPlayerCard, toCardDef)
+import LordOfTheRings.Card (Card (..), CardCode, CardDef, CardType, EncounterCard, HasCardCode (..), IsCard (..), PlayerCard, cdCardTraits, cdCardType, genPlayerCard, toCardDef)
 import LordOfTheRings.Trait (Trait (Master))
 import LordOfTheRings.Classes.Entity (Entity (toAttrs))
 import LordOfTheRings.Scenario.Types (ScenarioAttrs (scenarioSetAside))
@@ -958,6 +958,53 @@ attachFromEncounterDiscard card = push . AttachFromEncounterDiscard card . toTar
 
 attachShadowTreachery :: (ReverseQueue m, Targetable host) => EnemyId -> CardId -> host -> m ()
 attachShadowTreachery eid cid = push . PutShadowTreacheryIntoPlay eid cid . AttachedTo . toTarget
+
+{- | The top matching card of the encounter discard pile attaches to the host, as Warrior of
+Rhûn's "attach the top Easterling treachery in the discard pile to it" reads; nothing,
+with none there.
+-}
+attachTopOfEncounterDiscard :: (ReverseQueue m, Targetable host) => CardMatcher -> host -> m ()
+attachTopOfEncounterDiscard matcher host = do
+  discards <- getEncounterDiscard
+  for_ (find (cardMatches matcher) discards) \card -> attachFromEncounterDiscard card host
+
+-- | Which end of a stat an effect picks, as "the enemy with the lowest Attack" reads.
+data Extreme = Lowest | Highest
+  deriving stock (Show, Eq)
+
+{- | The treachery attaches to the matching enemy in play with the lowest, or highest, value
+of the stat, among those without a copy of it attached already, the first player choosing
+among those tied, as Sword of Rhûn's "Attach to the Easterling enemy with the lowest Attack
+without a Sword of Rhûn" reads; what follows is done to that enemy as it attaches. Whether
+there was one, for "Otherwise, it gains surge".
+-}
+attachToEnemyWith
+  :: (ReverseQueue m, Targetable source)
+  => source
+  -> TreacheryId
+  -> CardCode
+  -> EnemyMatcher
+  -> Extreme
+  -> (EnemyId -> m Int)
+  -> (EnemyId -> QueueT Message m ())
+  -> m Bool
+attachToEnemyWith source tid code matcher extreme stat andThen = do
+  enemies <- filterM (fmap null . treacheriesOn code . toTarget) =<< select matcher
+  valued <- for enemies \e -> (e,) <$> stat e
+  let pick = case extreme of
+        Lowest -> minimumMay
+        Highest -> maximumMay
+  case pick (map snd valued) of
+    Nothing -> pure False
+    Just best -> do
+      lead <- getLead
+      chooseOrRunOneM lead do
+        questionLabeled "attachToEnemy"
+        causedBy source
+        targets [e | (e, v) <- valued, v == best] \e -> do
+          attachTreachery tid e
+          andThen e
+      pure True
 
 placeLocation :: ReverseQueue m => LocationId -> Placement -> m ()
 placeLocation lid = push . PlaceLocation lid
