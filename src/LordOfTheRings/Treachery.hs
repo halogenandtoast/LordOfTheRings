@@ -429,6 +429,12 @@ import LordOfTheRings.Treachery.Cards.Snowdrifts
 import LordOfTheRings.Treachery.Cards.BitterCold
 import LordOfTheRings.Treachery.Cards.StormOfHowls
 import LordOfTheRings.Treachery.Cards.LustForTheRing
+import LordOfTheRings.Treachery.Cards.GrowingThreat
+import LordOfTheRings.Treachery.Cards.OrcsOfTheWhiteHand
+import LordOfTheRings.Treachery.Cards.BlackFeatheredArrows
+import LordOfTheRings.Treachery.Cards.FallenIntoEvil
+import LordOfTheRings.Treachery.Cards.FollowedByNightTheRoadDarkens
+import LordOfTheRings.Treachery.Cards.IllFate
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -885,5 +891,11 @@ allTreacherys =
         , SomeTreacheryCard bitterCold
         , SomeTreacheryCard stormOfHowls
         , SomeTreacheryCard lustForTheRing
+        , SomeTreacheryCard growingThreat
+        , SomeTreacheryCard orcsOfTheWhiteHand
+        , SomeTreacheryCard blackFeatheredArrows
+        , SomeTreacheryCard fallenIntoEvil
+        , SomeTreacheryCard followedByNightTheRoadDarkens
+        , SomeTreacheryCard illFate
         ]
     ]

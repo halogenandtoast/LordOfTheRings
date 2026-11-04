@@ -102,6 +102,10 @@ import LordOfTheRings.Attachment.Cards.StingTheRoadDarkens
 import LordOfTheRings.Attachment.Cards.MithrilShirtTheRoadDarkens
 import LordOfTheRings.Attachment.Cards.GlamdringTheRoadDarkens
 import LordOfTheRings.Attachment.Cards.AndurilTheRoadDarkens
+import LordOfTheRings.Attachment.Cards.PhialOfGaladriel
+import LordOfTheRings.Attachment.Cards.ThreeGoldenHairs
+import LordOfTheRings.Attachment.Cards.LorienRope
+import LordOfTheRings.Attachment.Cards.LeafWrappedLembas
 import LordOfTheRings.Attachment.Cards.AppointedByFate
 import LordOfTheRings.Attachment.Cards.RingMail
 import LordOfTheRings.Attachment.Cards.EverMyHeartRises
@@ -367,6 +371,10 @@ allAttachments =
         , SomeAttachmentCard mithrilShirtTheRoadDarkens
         , SomeAttachmentCard glamdringTheRoadDarkens
         , SomeAttachmentCard andurilTheRoadDarkens
+        , SomeAttachmentCard phialOfGaladriel
+        , SomeAttachmentCard threeGoldenHairs
+        , SomeAttachmentCard lorienRope
+        , SomeAttachmentCard leafWrappedLembas
         , SomeAttachmentCard appointedByFate
         , SomeAttachmentCard ringMail
         , SomeAttachmentCard everMyHeartRises

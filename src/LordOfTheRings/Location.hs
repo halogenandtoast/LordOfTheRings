@@ -536,6 +536,13 @@ import LordOfTheRings.Location.Cards.TreeCrownedHill
 import LordOfTheRings.Location.Cards.HillsOfHollin
 import LordOfTheRings.Location.Cards.RedhornFoothills
 import LordOfTheRings.Location.Cards.Eregion
+import LordOfTheRings.Location.Cards.ParthGalen
+import LordOfTheRings.Location.Cards.SeatOfSeeing
+import LordOfTheRings.Location.Cards.TheArgonath
+import LordOfTheRings.Location.Cards.SarnGebir
+import LordOfTheRings.Location.Cards.RiverAnduin
+import LordOfTheRings.Location.Cards.WoodedShoreline
+import LordOfTheRings.Location.Cards.SlopesOfAmonHen
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -1118,5 +1125,12 @@ allLocations =
         , SomeLocationCard hillsOfHollin
         , SomeLocationCard redhornFoothills
         , SomeLocationCard eregion
+        , SomeLocationCard parthGalen
+        , SomeLocationCard seatOfSeeing
+        , SomeLocationCard theArgonath
+        , SomeLocationCard sarnGebir
+        , SomeLocationCard riverAnduin
+        , SomeLocationCard woodedShoreline
+        , SomeLocationCard slopesOfAmonHen
         ]
     ]
