@@ -698,9 +698,10 @@ getLead :: HasGame m => m PlayerId
 getLead = getsGame gameFirstPlayer
 
 -- | The "you" of an encounter card being revealed: in The Lord of the Rings saga's staging
--- step the player revealing it, otherwise the first player.
+-- step the player revealing it, otherwise the first player at the stage in focus (see
+-- 'getStageLead').
 getRevealer :: HasGame m => m PlayerId
-getRevealer = getsGame \g -> fromMaybe (gameFirstPlayer g) (gameRevealer g)
+getRevealer = maybe getStageLead pure =<< getsGame gameRevealer
 
 -- | The last player: the last still in the game in turn order from the first player.
 getLastPlayer :: HasGame m => m PlayerId
