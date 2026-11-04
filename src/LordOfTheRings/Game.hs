@@ -3913,9 +3913,14 @@ entering a = do
   exhausted <- elem AlliesEnterPlayExhausted <$> getModifiers GameTarget
   pure $ if exhausted then overAttrs (\x -> x {allyExhausted = True}) a else a
 
--- | Mark the ally as having entered play this round, under the player its source names.
+-- | Mark the ally as having entered play this round, under the player its source names:
+-- an objective-ally is put into play by the encounter cards, so by no player.
 enteredPlayThisRound :: Ally -> Message
-enteredPlayThisRound a = CreateEffect $ Effect (PlayerSource $ allyOwner $ toAttrs a) (toTarget a) [EnteredPlayThisRound] UntilEndOfRound
+enteredPlayThisRound a = CreateEffect $ Effect source (toTarget a) [EnteredPlayThisRound] UntilEndOfRound
+ where
+  source
+    | cdCardType (toCardDef a) == ObjectiveAllyType = GameSource
+    | otherwise = PlayerSource $ allyOwner $ toAttrs a
 
 -- | The windows for an ally entering play under the player.
 allyEntersPlay :: PlayerId -> Ally -> Message
