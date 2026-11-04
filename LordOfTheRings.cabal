@@ -2733,6 +2733,7 @@ test-suite LordOfTheRings-test
       LordOfTheRings.Encounter.ScriptedCardsSpec
       LordOfTheRings.EncounterPhaseSpec
       LordOfTheRings.EndGameSpec
+      LordOfTheRings.EredMithrin.FireInTheNightSpec
       LordOfTheRings.EredMithrin.SharedEncounterSetsSpec
       LordOfTheRings.EredMithrinEngineSpec
       LordOfTheRings.Haradrim.BeneathTheSandsPlayerCardsSpec
