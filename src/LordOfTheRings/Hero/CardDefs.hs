@@ -98,6 +98,7 @@ allHeroCards =
       , thorinStonehelm
       , gwaihirTheLandOfSorrow
       , aragornSpirit
+      , frodoBagginsTheRoadDarkens
       ]
 
 aragorn :: CardDef
@@ -629,4 +630,12 @@ aragornSpirit =
   (hero "22137" "Aragorn" Spirit 12 2 3 2 5)
     { cdCardTraits = setFromList [Dunedain, Ranger, Scout]
     , cdKeywords = setFromList [Sentinel]
+    }
+
+-- | The Road Darkens' Ring-bearer, a Fellowship sphere hero with no threat cost: the game
+-- gives him to the first player at setup (see 'LordOfTheRings.Saga.fellowshipSetup').
+frodoBagginsTheRoadDarkens :: CardDef
+frodoBagginsTheRoadDarkens =
+  (hero "142001" "Frodo Baggins" Fellowship 0 2 1 2 2)
+    { cdCardTraits = setFromList [Hobbit, RingBearer]
     }

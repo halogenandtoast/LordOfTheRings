@@ -1346,6 +1346,7 @@ library
       LordOfTheRings.Hero.Cards.FolcoBoffin
       LordOfTheRings.Hero.Cards.FrodoBaggins
       LordOfTheRings.Hero.Cards.FrodoBagginsLeadership
+      LordOfTheRings.Hero.Cards.FrodoBagginsTheRoadDarkens
       LordOfTheRings.Hero.Cards.Galadriel
       LordOfTheRings.Hero.Cards.GaldorOfTheHavensHero
       LordOfTheRings.Hero.Cards.GildorInglorionLeadership
@@ -2035,6 +2036,7 @@ library
       LordOfTheRings.Objective.Cards.TheGoblinsAssault
       LordOfTheRings.Objective.Cards.TheHavensBurn
       LordOfTheRings.Objective.Cards.TheHeroesDefense
+      LordOfTheRings.Objective.Cards.TheOneRingTheRoadDarkens
       LordOfTheRings.Objective.Cards.TheOrcsSearch
       LordOfTheRings.Objective.Cards.TheSerpentsGarb
       LordOfTheRings.Objective.Cards.TheWainriders

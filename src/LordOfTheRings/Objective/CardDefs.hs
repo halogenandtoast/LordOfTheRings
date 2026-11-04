@@ -153,6 +153,7 @@ allObjectiveCards =
       , edrahil
       , arador
       , farin
+      , theOneRingTheRoadDarkens
       ]
 
 durinsAxe :: CardDef
@@ -1053,3 +1054,12 @@ arador = captive "22125" "Arador" Gondor 0 1 3 5
 
 farin :: CardDef
 farin = captive "22126" "Farin" Dwarf 1 3 0 4
+
+-- | The Road Darkens' The One Ring: in no encounter set, the game attaches it to the
+-- Ring-bearer at setup (see 'LordOfTheRings.Saga.fellowshipSetup').
+theOneRingTheRoadDarkens :: CardDef
+theOneRingTheRoadDarkens =
+  (emptyCardDef "142091" "The One Ring" ObjectiveType)
+    { cdUnique = True
+    , cdCardTraits = setFromList [Artifact, Item, Ring]
+    }
