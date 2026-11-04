@@ -229,6 +229,9 @@ import LordOfTheRings.Quest.Cards.SurpriseAttack
 import LordOfTheRings.Quest.Cards.FindTheOthers
 import LordOfTheRings.Quest.Cards.FreeTheCaptives
 import LordOfTheRings.Quest.Cards.EscapeIntoTheJungle
+import LordOfTheRings.Quest.Cards.TravelingNorth
+import LordOfTheRings.Quest.Cards.WoodmenUnderAttack
+import LordOfTheRings.Quest.Cards.ThePassageOfTheFord
 import LordOfTheRings.Quest.Cards.TheStormComes
 import LordOfTheRings.Quest.Cards.PrepareForBattle
 import LordOfTheRings.Quest.Cards.ExploreSecretWays
@@ -531,6 +534,9 @@ allQuests =
         , SomeQuestCard findTheOthers
         , SomeQuestCard freeTheCaptives
         , SomeQuestCard escapeIntoTheJungle
+        , SomeQuestCard travelingNorth
+        , SomeQuestCard woodmenUnderAttack
+        , SomeQuestCard thePassageOfTheFord
         , SomeQuestCard lostUnderground
         , SomeQuestCard searchingTheCaves
         , SomeQuestCard gettingCloser

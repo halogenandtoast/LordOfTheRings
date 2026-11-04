@@ -314,6 +314,9 @@ allQuestCards =
       , findTheOthers
       , freeTheCaptives
       , escapeIntoTheJungle
+      , travelingNorth
+      , woodmenUnderAttack
+      , thePassageOfTheFord
       , lostUnderground
       , searchingTheCaves
       , gettingCloser
@@ -1390,3 +1393,14 @@ orcPatrols = quest "17162" "Orc Patrols" TheCrossingsOfPoros 3 15
 
 battleAtTheCrossings :: CardDef
 battleAtTheCrossings = quest "17163" "Battle at the Crossings" TheCrossingsOfPoros 4 20
+
+-- * Journey Up the Anduin
+
+travelingNorth :: CardDef
+travelingNorth = quest "18066" "Traveling North" JourneyUpTheAnduin 1 10
+
+woodmenUnderAttack :: CardDef
+woodmenUnderAttack = quest "18067" "Woodmen Under Attack" JourneyUpTheAnduin 2 5
+
+thePassageOfTheFord :: CardDef
+thePassageOfTheFord = quest "18068" "The Passage of the Ford" JourneyUpTheAnduin 3 5
