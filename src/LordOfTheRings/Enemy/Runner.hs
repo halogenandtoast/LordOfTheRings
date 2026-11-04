@@ -11,7 +11,7 @@ import LordOfTheRings.Message
 import LordOfTheRings.I18n (ikey)
 import LordOfTheRings.Effect (Effect (..), EffectDuration (UntilEndOfRound))
 import LordOfTheRings.GameT (GameT)
-import LordOfTheRings.Modifier (ModifierType (DamageLimit, DamageTakenThisRound, KeepUnresolvedShadowCards, MaxDamage))
+import LordOfTheRings.Modifier (ModifierType (DamageLimit, DamageLimitEachRound, DamageTakenThisRound, KeepUnresolvedShadowCards, MaxDamage))
 import LordOfTheRings.Phase
 import LordOfTheRings.Placement (placementController)
 import LordOfTheRings.Queue (QueueT)
@@ -63,16 +63,24 @@ instance RunMessage EnemyAttrs where
     RemoveFromGame (isTarget attrs -> True) -> leaving
     -- one that cannot take more than N damage each round, as Mumak: damage past what the
     -- round has left is lost, and what it has left is kept as a round effect
+    -- one that cannot take more than N damage each round while another card says so, as A
+    -- Haunt for Beasts, counts what it took this round against that card's limit
     PlaceTokens _ (isTarget attrs -> True) Damage n | n > 0 -> do
       mods <- getModifiers attrs
       let left = foldr min maxBound [k | DamageLimit k <- mods]
           -- one that cannot have more than N damage, as City Guard
           room = foldr min maxBound [max 0 (k - attrs.damage) | MaxDamage k <- mods]
-          placed = min room (min n left)
+          taken = sum [k | DamageTakenThisRound k <- mods]
+          eachRound = foldr min maxBound [max 0 (k - taken) | DamageLimitEachRound k <- mods]
+          placed = min room (min n (min left eachRound))
       when (left < maxBound)
         $ push
         $ CreateEffect
         $ Effect (toSource attrs) (toTarget attrs) [DamageLimit (left - placed)] UntilEndOfRound
+      when (eachRound < maxBound && placed > 0)
+        $ push
+        $ CreateEffect
+        $ Effect (toSource attrs) (toTarget attrs) [DamageTakenThisRound placed] UntilEndOfRound
       pure $ attrs & tokensL %~ addTokens Damage placed
     PlaceTokens _ (isTarget attrs -> True) token n -> do
       pure $ attrs & tokensL %~ addTokens token n

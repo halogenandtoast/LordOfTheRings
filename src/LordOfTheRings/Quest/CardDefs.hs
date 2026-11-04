@@ -414,6 +414,11 @@ allQuestCards =
       , tryingToBlendIn
       , drawingAttention
       , ulchorsTrap
+      , theTunnelsOfTorechGorgor
+      , aHauntForBeasts
+      , overwhelmingDarkness
+      , passageIntoMordor
+      , anEvilPlace
       ]
 
 theDrippingWalls :: CardDef
@@ -1685,3 +1690,20 @@ drawingAttention = quest "22052" "Drawing Attention" TheCityOfUlfast 3 15
 
 ulchorsTrap :: CardDef
 ulchorsTrap = quest "22053" "Ulchor's Trap" TheCityOfUlfast 4 20
+-- * Under the Ash Mountains
+
+theTunnelsOfTorechGorgor :: CardDef
+theTunnelsOfTorechGorgor = (encounterSideQuest "22092" "The Tunnels of Torech Gorgor" UnderTheAshMountains 3) {cdVictoryPoints = Just 10}
+
+aHauntForBeasts :: CardDef
+aHauntForBeasts = (encounterSideQuest "22093" "A Haunt for Beasts" UnderTheAshMountains 4) {cdVictoryPoints = Just 10}
+
+-- | Hall of Beorn leaves out its Victory 10; the card prints it.
+overwhelmingDarkness :: CardDef
+overwhelmingDarkness = (encounterSideQuest "22094" "Overwhelming Darkness" UnderTheAshMountains 6) {cdVictoryPoints = Just 10}
+
+passageIntoMordor :: CardDef
+passageIntoMordor = quest "22106" "Passage into Mordor" UnderTheAshMountains 1 25
+
+anEvilPlace :: CardDef
+anEvilPlace = (quest "22107" "An Evil Place" UnderTheAshMountains 2 25) {cdWhenRevealed = True}

@@ -413,6 +413,9 @@ allTreacheryCards =
       , extraVigil
       , weveBeenSeen
       , patrollingTheStreets
+      , ransackedSupplies
+      , burningReek
+      , writhingShadows
       ]
 
 deepDeepDark :: CardDef
@@ -2611,3 +2614,18 @@ weveBeenSeen = (treachery "22046" "We've Been Seen" TheCityOfUlfast 3) {cdShadow
 
 patrollingTheStreets :: CardDef
 patrollingTheStreets = (treachery "22047" "Patrolling the Streets" TheCityOfUlfast 3) {cdShadowEffect = True}
+-- * Under the Ash Mountains
+
+ransackedSupplies :: CardDef
+ransackedSupplies = (treachery "22103" "Ransacked Supplies" UnderTheAshMountains 3) {cdShadowEffect = True}
+
+burningReek :: CardDef
+burningReek =
+  (treachery "22104" "Burning Reek" UnderTheAshMountains 2)
+    { cdKeywords = setFromList [Doomed 1]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
+    }
+
+writhingShadows :: CardDef
+writhingShadows = (treachery "22105" "Writhing Shadows" UnderTheAshMountains 2) {cdShadowEffect = True, cdEasyModeQuantity = Just 1}

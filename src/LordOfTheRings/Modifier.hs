@@ -297,6 +297,10 @@ data ModifierType
   | -- | on an enemy: it cannot have more than this much damage on it; damage past that is not
     -- dealt, as The City of Ulfast's stages read of City Guard
     MaxDamage Int
+  | -- | on an enemy: it cannot take more than this much damage each round, counted against
+    -- 'DamageTakenThisRound', so the limit ends with the card that gives it, as A Haunt for
+    -- Beasts reads
+    DamageLimitEachRound Int
   | -- | on an objective ally in the staging area: it is committed to the current quest, as
     -- Celador reads
     CountsAsCommitted
@@ -617,6 +621,9 @@ data ModifierType
   | -- | on the game: player card effects cannot take a card out of a player's discard
     -- pile, as The Power of Angmar reads
     DiscardPilesLocked
+  | -- | on the game: event cards cannot shuffle cards from a player's discard pile into his
+    -- deck, as Passage into Mordor reads
+    EventsCannotShuffleDiscardIntoDeck
   | -- | on a player: he may optionally engage 1 additional enemy in the encounter phase,
     -- as Halbarad reads
     OptionallyEngagesAdditionalEnemy

@@ -153,6 +153,11 @@ doesNotExhaustToCommit target = elem DoesNotExhaustToCommit <$> getModifiers tar
 getModifiers :: (HasGame m, Targetable a) => a -> m [ModifierType]
 getModifiers a = map modifierType . Map.findWithDefault [] (toTarget a) <$> getsGame gameModifiers
 
+-- | Whether an event card may shuffle cards from a discard pile into a deck: not while
+-- 'EventsCannotShuffleDiscardIntoDeck' holds, as Passage into Mordor reads.
+eventsMayShuffleDiscardIntoDeck :: HasGame m => m Bool
+eventsMayShuffleDiscardIntoDeck = notElem EventsCannotShuffleDiscardIntoDeck <$> getModifiers GameTarget
+
 -- | The cards each player played this round, from wherever, one entry per card played.
 -- Read from the effects, so it serves a 'getModifiersFor' as the modifiers are gathered.
 cardsPlayedThisRound :: (HasGame m) => m [(PlayerId, CardCode, CardType)]

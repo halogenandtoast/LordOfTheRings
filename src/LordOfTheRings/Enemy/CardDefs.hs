@@ -481,6 +481,11 @@ allEnemyCards =
       , ulfastSentry
       , theKingsElite
       , ulchorsAgent
+      , namelessBeast
+      , mordorCaveTroll
+      , ashMountainWerewolf
+      , spawnOfShelob
+      , torechGorgorPatrol
       ]
 
 namelessThing :: CardDef
@@ -3950,3 +3955,26 @@ ulchorsAgent =
     , cdWhenRevealed = True
     , cdShadowEffect = True
     }
+-- * Under the Ash Mountains
+
+namelessBeast :: CardDef
+namelessBeast = (enemy "22095" "Nameless Beast" UnderTheAshMountains 2 30 3 3 3 6) {cdCardTraits = setFromList [Nameless], cdShadowEffect = True}
+
+mordorCaveTroll :: CardDef
+mordorCaveTroll = (enemy "22096" "Mordor Cave Troll" UnderTheAshMountains 2 33 3 6 3 8) {cdCardTraits = setFromList [Troll], cdEasyModeQuantity = Just 1}
+
+ashMountainWerewolf :: CardDef
+ashMountainWerewolf = (enemy "22097" "Ash Mountain Werewolf" UnderTheAshMountains 3 28 2 4 1 5) {cdCardTraits = setFromList [Creature, Werewolf], cdShadowEffect = True}
+
+spawnOfShelob :: CardDef
+spawnOfShelob =
+  (enemy "22098" "Spawn of Shelob" UnderTheAshMountains 3 12 1 2 1 2)
+    { cdCardTraits = setFromList [Creature, Spider]
+    , cdKeywords = setFromList [Surge]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 2
+    }
+
+-- | X threat, X 1 more than the number of quest cards in play: given by its own modifiers.
+torechGorgorPatrol :: CardDef
+torechGorgorPatrol = (enemy "22099" "Torech Gorgor Patrol" UnderTheAshMountains 2 45 0 5 4 9) {cdCardTraits = setFromList [Orc, Uruk], cdEasyModeQuantity = Just 1}

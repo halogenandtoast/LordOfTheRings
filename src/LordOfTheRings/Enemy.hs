@@ -472,6 +472,11 @@ import LordOfTheRings.Enemy.Cards.CityGuard
 import LordOfTheRings.Enemy.Cards.UlfastSentry
 import LordOfTheRings.Enemy.Cards.TheKingsElite
 import LordOfTheRings.Enemy.Cards.UlchorsAgent
+import LordOfTheRings.Enemy.Cards.NamelessBeast
+import LordOfTheRings.Enemy.Cards.MordorCaveTroll
+import LordOfTheRings.Enemy.Cards.AshMountainWerewolf
+import LordOfTheRings.Enemy.Cards.SpawnOfShelob
+import LordOfTheRings.Enemy.Cards.TorechGorgorPatrol
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -972,5 +977,10 @@ allEnemys =
         , SomeEnemyCard ulfastSentry
         , SomeEnemyCard theKingsElite
         , SomeEnemyCard ulchorsAgent
+        , SomeEnemyCard namelessBeast
+        , SomeEnemyCard mordorCaveTroll
+        , SomeEnemyCard ashMountainWerewolf
+        , SomeEnemyCard spawnOfShelob
+        , SomeEnemyCard torechGorgorPatrol
         ]
     ]

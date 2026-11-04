@@ -2943,5 +2943,15 @@
     "choose": "Drawing Attention: choose one",
     "threat": "Raise your threat by 5",
     "attack": "City Guard makes an immediate attack against you"
+  },
+  "spawnOfShelob": {
+    "choose": "Spawn of Shelob: choose one",
+    "discard": "Discard the top card of your deck",
+    "attack": "Spawn of Shelob gets +2 attack until the end of the round"
+  },
+  "burningReek": {
+    "choose": "Burning Reek: choose one",
+    "discard": "Discard the top 2 cards of your deck",
+    "return": "Return the attacking enemy to the staging area after this attack"
   }
 }

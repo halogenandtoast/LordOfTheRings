@@ -505,6 +505,9 @@ import LordOfTheRings.Location.Cards.TheKingsLawn
 import LordOfTheRings.Location.Cards.GuardedArchway
 import LordOfTheRings.Location.Cards.CrowdedMarket
 import LordOfTheRings.Location.Cards.StreetsOfUlfast
+import LordOfTheRings.Location.Cards.FieryChasm
+import LordOfTheRings.Location.Cards.HideousDeeps
+import LordOfTheRings.Location.Cards.OrcPassage
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -1056,5 +1059,8 @@ allLocations =
         , SomeLocationCard guardedArchway
         , SomeLocationCard crowdedMarket
         , SomeLocationCard streetsOfUlfast
+        , SomeLocationCard fieryChasm
+        , SomeLocationCard hideousDeeps
+        , SomeLocationCard orcPassage
         ]
     ]

@@ -330,6 +330,11 @@ import LordOfTheRings.Quest.Cards.SearchingForUlchor
 import LordOfTheRings.Quest.Cards.TryingToBlendIn
 import LordOfTheRings.Quest.Cards.DrawingAttention
 import LordOfTheRings.Quest.Cards.UlchorsTrap
+import LordOfTheRings.Quest.Cards.TheTunnelsOfTorechGorgor
+import LordOfTheRings.Quest.Cards.AHauntForBeasts
+import LordOfTheRings.Quest.Cards.OverwhelmingDarkness
+import LordOfTheRings.Quest.Cards.PassageIntoMordor
+import LordOfTheRings.Quest.Cards.AnEvilPlace
 import LordOfTheRings.Quest.Runner ()
 import LordOfTheRings.Quest.Types as X
 import LordOfTheRings.Id
@@ -692,5 +697,10 @@ allQuests =
         , SomeQuestCard tryingToBlendIn
         , SomeQuestCard drawingAttention
         , SomeQuestCard ulchorsTrap
+        , SomeQuestCard theTunnelsOfTorechGorgor
+        , SomeQuestCard aHauntForBeasts
+        , SomeQuestCard overwhelmingDarkness
+        , SomeQuestCard passageIntoMordor
+        , SomeQuestCard anEvilPlace
         ]
     ]
