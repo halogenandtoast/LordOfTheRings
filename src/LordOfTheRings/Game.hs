@@ -1723,6 +1723,10 @@ runGameMessage msg g = case msg of
         | h <- heroes
         ]
     pure g
+  DamageAflameLocation source pid -> do
+    burning <- filterM (fmap (> 0) . getAflame) =<< select LocationInStagingArea
+    pushWhen (notNull burning) $ chooseOrRunOne pid [targetLabel l [DealDamage source (LocationTarget l) 1] | l <- burning]
+    pure g
   AttackEndedUnresolved _ -> pure $ g & effectsL %~ filter ((/= UntilEndOfAttack) . effectDuration)
   DamageAnotherCharacter source pid damaged -> do
     others <- filter (/= damaged) <$> charactersControlledBy pid
@@ -3451,12 +3455,9 @@ attackDamage pid eid target n = do
         , excess > 0
         , notNull ships
         ]
-  burning <- if excessToAflame then filterM (fmap (> 0) . getAflame) =<< select LocationInStagingArea else pure []
-  let toAflame =
-        [ chooseOrRunOne pid [targetLabel l [DealDamage (EnemyAttackSource eid) (LocationTarget l) excess] | l <- burning]
-        | excess > 0
-        , notNull burning
-        ]
+  -- each point on an Aflame location of the player's choice, so a location the first
+  -- points destroy takes no more
+  let toAflame = replicate (if excessToAflame then excess else 0) (DamageAflameLocation (EnemyAttackSource eid) pid)
   let captured = case target of
         HeroTarget h -> toCard <$> Map.lookup h es.heroes
         AllyTarget a -> toCard <$> Map.lookup a es.allies
