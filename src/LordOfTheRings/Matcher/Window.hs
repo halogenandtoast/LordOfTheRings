@@ -23,6 +23,8 @@ data WindowMatcher
     PlayerEngagedEnemyWindow Timing PlayerId
   | OptionallyEngagedWindow Timing PlayerId
   | EnemyEntersStagingAreaWindow Timing
+  | -- | an enemy entered play, in the staging area or engaged
+    EnemyEntersPlayWindow Timing
   | -- | an enemy with the trait added to the staging area, as Amon Forn reads
     EnemyWithTraitEntersStagingAreaWindow Timing Trait
   | GainedResourcesWindow Timing Target
@@ -84,6 +86,8 @@ data WindowMatcher
   | -- | a shadow card dealt to an enemy engaged with the player
     ShadowCardDealtWindow Timing PlayerId
   | EnemyAttacksWindow Timing EnemyId
+  | -- | the enemy's attack dealt excess damage, as The Cursed Sword reads
+    EnemyDealtExcessDamageWindow Timing EnemyId
   | -- | characters attack the enemy, as "when it is attacked" reads
     EnemyAttackedWindow Timing EnemyId
   | -- | an encounter card revealed from the encounter deck with a When Revealed effect
@@ -302,6 +306,7 @@ windowMatches matcher (Window timing wType) = case (matcher, wType) of
   (PlayerEngagedEnemyWindow t pid, EnemyEngaged _ pid') -> t == timing && pid == pid'
   (OptionallyEngagedWindow t pid, OptionallyEngaged _ pid') -> t == timing && pid == pid'
   (EnemyEntersStagingAreaWindow t, EntersStagingArea (EnemyTarget _)) -> t == timing
+  (EnemyEntersPlayWindow t, EntersPlay (EnemyTarget _)) -> t == timing
   (GainedResourcesWindow t target, GainedResources target') -> t == timing && target == target'
   (DealtDamageWindow t target, DealtDamage target' _) -> t == timing && target == target'
   (TraveledWindow t lid, Traveled lid') -> t == timing && lid == lid'
@@ -339,6 +344,7 @@ windowMatches matcher (Window timing wType) = case (matcher, wType) of
   (ShadowEffectResolvedWindow t eid, ShadowEffectResolved _ eid') -> t == timing && eid == eid'
   (ShadowCardDealtWindow t pid, ShadowCardDealt _ _ pid') -> t == timing && pid == pid'
   (EnemyAttacksWindow t eid, EnemyAttacking eid' _) -> t == timing && eid == eid'
+  (EnemyDealtExcessDamageWindow t eid, AttackDealtExcessDamage eid' _ _) -> t == timing && eid == eid'
   (EnemyAttackedWindow t eid, EnemyAttacked eid') -> t == timing && eid == eid'
   (AllyLeftPlayWindow t, LeftPlay (AllyTarget _) _ _) -> t == timing
   (AttackerDeclaredWindow t who, DeclaredAsAttacker target _) -> t == timing && maybe True (== target) who
@@ -424,6 +430,8 @@ windowMatches matcher (Window timing wType) = case (matcher, wType) of
   (AttackDealtDamageByWindow {}, _) -> False
   (MatchingEnemyAttacksWindow {}, _) -> False
   (EnemyWithPrintedHitPointsDestroyedByAttackWindow {}, _) -> False
+  -- after it left play, read from its card
+  (ExploredMatchingWindow t m, ExploredCard c) -> t == timing && cardMatches m c
   (ExploredMatchingWindow {}, _) -> False
   (HeroDeclaredAsDefenderWindow {}, _) -> False
   (RevealedTitleInVictoryDisplayWindow {}, _) -> False

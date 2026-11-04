@@ -45,6 +45,9 @@ data WindowType
     Revealed Target
   | -- | a location about to leave play as an explored location
     Explored LocationId
+  | -- | the card of the location just explored, opened with 'Explored' after it left play,
+    -- for what is read of it then, as its printed quest points
+    ExploredCard Card
   | EnemyAttacking EnemyId PlayerId
   | PhaseEnds Phase
   | RoundEnds
@@ -95,6 +98,8 @@ data WindowType
     PlayingEvent PlayerId CardId
   | -- | an attack the characters made dealt the enemy this much damage
     AttackDealtDamage EnemyId [Target] Int
+  | -- | the enemy's attack dealt the character this much damage past what destroys it
+    AttackDealtExcessDamage EnemyId Target Int
   | -- | the player let the enemy's attack go undefended
     AttackUndefended PlayerId EnemyId
   | -- | an enemy was defeated: damage destroyed it

@@ -765,6 +765,13 @@ progressPlacedThisRound t = do
   mods <- map modifierType . Map.findWithDefault [] t <$> getsGame gameModifiers
   pure $ sum [n | ProgressPlacedThisRound n <- mods]
 
+-- | The progress placed on the quest card this phase, as "if no progress was placed on
+-- Protect the Bree-landers" reads at the end of the quest phase.
+progressPlacedThisPhase :: HasGame m => Target -> m Int
+progressPlacedThisPhase t = do
+  mods <- map modifierType . Map.findWithDefault [] t <$> getsGame gameModifiers
+  pure $ sum [n | ProgressPlacedThisPhase n <- mods]
+
 -- | The current quest is a side quest, as "if the current quest is a side quest" reads.
 currentQuestIsSideQuest :: HasGame m => m Bool
 currentQuestIsSideQuest = isJust <$> getCurrentSideQuest

@@ -2,7 +2,7 @@
 
 module LordOfTheRings.Location.Runner (module X) where
 
-import LordOfTheRings.Card (CardDef (..), toCardDef)
+import LordOfTheRings.Card (CardDef (..), toCard, toCardDef)
 import LordOfTheRings.Classes.HasQueue
 import LordOfTheRings.Classes.RunMessage
 import LordOfTheRings.Helpers.Modifiers (getModifiers, immuneToSource, modifiedValue, questPointsOf)
@@ -54,7 +54,7 @@ instance RunMessage LocationAttrs where
               then AddToVictoryDisplay (toTarget attrs)
               else Discard (toTarget attrs)
           , -- after it is explored, as Idraen answers
-            CheckWindows [mkAfter $ Explored attrs.id]
+            CheckWindows [mkAfter $ Explored attrs.id, mkAfter $ ExploredCard (toCard attrs)]
           ]
       pure attrs'
     unlessImmune source = do

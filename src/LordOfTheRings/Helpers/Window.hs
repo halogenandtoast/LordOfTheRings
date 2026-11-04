@@ -23,7 +23,7 @@ import LordOfTheRings.Matcher
 import LordOfTheRings.Message
 import LordOfTheRings.Name (Name (..))
 import LordOfTheRings.Modifier (
-  ModifierType (Blank, BlankAttachments, CannotBeTraveledTo, CannotCancelEncounterEffects, CannotExhaust, CannotTriggerAbilities, Defending, WhenRevealedCannotBeCanceled),
+  ModifierType (Blank, BlankAttachments, CannotBeTraveledTo, CannotCancelEncounterEffects, CannotExhaust, CannotTriggerAbilities, Defending, ShadowCannotBeCanceled, WhenRevealedCannotBeCanceled),
   ModifierType (Blank, BlankAttachments, CannotBeTraveledTo, CannotCancelEncounterEffects, CannotExhaust, CannotTriggerAbilities, StagingStepBegun, TravelRange, TravelableWithActiveLocation),
   ModifierType (CannotDiscardFromHand),
  )
@@ -160,7 +160,9 @@ windowMatchesM matcher w@(Window timing wType) = case (matcher, wType) of
     | t == timing && who `elem` attackers -> do
         destroyed <- getsGame gameAttackDestroyed
         pure $ any (\d -> d.target == EnemyTarget eid && maybe False (>= n) (cdHitPoints $ toCardDef d.card)) destroyed
-  (ExploredMatchingWindow t m, Explored lid) | t == timing -> cardMatches m . toCardDef <$> getLocation lid
+  -- a shadow effect that cannot be canceled leaves nothing to cancel
+  (ShadowEffectWindow t, ShadowEffectTriggered cid _) | t == timing -> notElem ShadowCannotBeCanceled <$> getModifiers (CardIdTarget cid)
+  (ExploredMatchingWindow t m, Explored lid) | t == timing -> maybe False (cardMatches m . toCardDef) . Map.lookup lid . (.locations) <$> getsGame gameEntities
   (HeroDeclaredAsDefenderWindow t m, DeclaredAsDefender (HeroTarget hid) _) | t == timing -> selectAny (HeroWithId hid <> m)
   (CharacterDefenderDeclaredWindow t hm am em, DeclaredAsDefender c eid) | t == timing -> do
     character <- case c of

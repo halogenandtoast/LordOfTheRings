@@ -17,8 +17,7 @@ jailorGornakhNightmare = enemy JailorGornakhNightmare Cards.jailorGornakhNightma
 -- Forced: After a player rescues any number of cards, Jailor Gornákh attacks that player.
 instance HasAbilities JailorGornakhNightmare where
   getAbilities (JailorGornakhNightmare a) =
-    [ mkAbility a 1 $ forced $ CardEntersStagingAreaWindow After (toTarget a)
-    , mkAbility a 1 $ forced $ EntersPlayWindow After (toTarget a)
+    [ mkAbility a 1 $ forced $ EntersPlayWindow After (toTarget a)
     , mkAbility a 2 $ forced $ CapturedCardsRescuedWindow After
     ]
 

@@ -714,6 +714,11 @@ searchEncounterDeckAndDiscard
   :: (ReverseQueue m, Targetable source) => PlayerId -> source -> CardMatcher -> m ()
 searchEncounterDeckAndDiscard pid source = push . SearchEncounterDeckAndDiscard pid (toTarget source)
 
+-- | As 'searchEncounterDeckAndDiscard', the victory display searched too.
+searchEncounterCardsAndVictoryDisplayToStaging
+  :: (ReverseQueue m, Targetable source) => PlayerId -> source -> CardMatcher -> m ()
+searchEncounterCardsAndVictoryDisplayToStaging pid source = push . SearchEncounterCardsAndVictoryDisplay pid (toTarget source)
+
 -- | As 'searchEncounterDeckAndDiscard', the card found revealed, as Forecastle Deck reads.
 searchEncounterDeckAndDiscardToReveal
   :: (ReverseQueue m, Targetable source) => PlayerId -> source -> CardMatcher -> m ()

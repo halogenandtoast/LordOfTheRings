@@ -387,6 +387,7 @@ runGame msg g = case msg of
           then pure g
           else do
             push $ CreateEffect $ Effect GameSource target [ProgressPlacedThisRound room] UntilEndOfRound
+            push $ CreateEffect $ Effect GameSource target [ProgressPlacedThisPhase room] UntilEndOfPhase
             runGame'' (PlaceTokens source target Progress room) g
   -- a location's Travel cost, which its card pushes as it sees TravelTo, is paid before
   -- it becomes the active location, so it is still in the staging area as it is paid (as
@@ -1597,15 +1598,11 @@ runGameMessage msg g = case msg of
         [targetLabel c (Exhaust c : map (paidWith c) rest) | c <- characters]
     pure g
   -- the group pays, the player picking whose heroes' resources, 1 at a time
-  SpendGroupResources pid sphere n | n > 0 -> do
+  SpendGroupResources pid sphere n | n > 0 -> g <$ push (SpendResourcesChosen pid True sphere n [])
+  SpendResourcesChosen pid True sphere n chosen -> do
     heroes <- traverse getHero =<< select AnyHero
-    payers <- filterM (heroPaysFor sphere) [h | h <- heroes, h.resources > 0]
-    unless (null payers)
-      $ push
-      $ questionLabel (ikeyWith "label.payMore" [intVar "count" n]) pid
-      $ [ targetLabel h [RemoveTokens (PlayerSource pid) (toTarget h) Resource 1, SpendGroupResources pid sphere (n - 1)]
-        | h <- payers
-        ]
+    payers <- filterM (heroPaysFor sphere) heroes
+    push $ spendChosen (PlayerSource pid) pid True sphere n chosen [(h.id, h.resources) | h <- payers]
     pure g
   DiscardGroupResources pid n | n > 0 -> do
     heroes <- filter ((> 0) . (.resources)) <$> (traverse getHero =<< select AnyHero)
@@ -2099,7 +2096,7 @@ runGameMessage msg g = case msg of
     for_ (Map.lookup host g.entities.enemies) \hostEnemy ->
       for_ (find ((== cid) . (.id)) hostEnemy.shadowCards) \card -> do
         enemy <- newEnemy card
-        pushAll [RemoveShadowCard host cid, CheckWindows [mkAfter $ EntersStagingArea (toTarget enemy)]]
+        pushAll [RemoveShadowCard host cid, CheckWindows [mkAfter $ EntersStagingArea (toTarget enemy), mkAfter $ EntersPlay (toTarget enemy)]]
         putGame $ g & entitiesL . enemiesL %~ insertEntity (overAttrs (\a -> a {enemyPlacement = StagingArea}) enemy)
     getGame
   PutShadowCardIntoPlay host cid pid -> do
@@ -2137,7 +2134,7 @@ runGameMessage msg g = case msg of
     | Just (owner, pc) <- headMay [(p.id, c) | p <- toList g.players, PlayerCard c <- p.deck <> p.hand <> p.discard, c.id == cid] -> do
         let dead = createEnemy (MkEncounterCard cid (toCardCode reanimatedDead)) eid
             without = filter ((/= cid) . (.id))
-        push $ CheckWindows [mkAfter $ EntersStagingArea (toTarget eid)]
+        push $ CheckWindows [mkAfter $ EntersStagingArea (toTarget eid), mkAfter $ EntersPlay (toTarget eid)]
         pure
           $ g
           & playersL
@@ -2544,7 +2541,7 @@ runGameMessage msg g = case msg of
         -- Prowl, a keyword, resolves before the When Revealed effect (ALeP 3.094)
         revealing t =
           inLogBlock (RevealBlock card)
-            $ [CheckWindows [mkAfter $ EntersStagingArea t] | cdCardType def `elem` [EnemyType, LocationType, EncounterSideQuestType], isNothing engaging]
+            $ [CheckWindows $ mkAfter (EntersStagingArea t) : [mkAfter (EntersPlay t) | cdCardType def == EnemyType] | cdCardType def `elem` [EnemyType, LocationType, EncounterSideQuestType], isNothing engaging]
             <> [CheckWindows [mkWhen $ Revealed t]] <> [WhileInPlay t prowl | notNull prowl] <> [whenRevealed t, WhileInPlay t doomed]
             <> [CheckWindows [mkAfter $ Revealed t]]
     case cdCardType def of
@@ -2803,7 +2800,7 @@ runGameMessage msg g = case msg of
   AddToStaging card -> case cdCardType (toCardDef card) of
     EnemyType -> do
       thisEnemy <- newEnemy card
-      pushAll [CheckWindows [mkAfter $ EntersStagingArea (toTarget thisEnemy)], AmbushEngagementCheck (toId thisEnemy)]
+      pushAll [CheckWindows [mkAfter $ EntersStagingArea (toTarget thisEnemy), mkAfter $ EntersPlay (toTarget thisEnemy)], AmbushEngagementCheck (toId thisEnemy)]
       pure
         $ g
         & entitiesL
@@ -3253,8 +3250,14 @@ attackDamage pid eid target n = do
       excessTo = [t | ExcessDamageTo t <- mods, t /= target]
       excessToAflame = ExcessDamageToAflameLocation `elem` mods
       excessToDeck = ExcessDamageDiscardsFromDeck `elem` mods
+  -- what is dealt past the character's remaining hit points (an attack turned on a
+  -- location, as a Battleground takes it, has none)
+  let character = case target of
+        HeroTarget _ -> True
+        AllyTarget _ -> True
+        _ -> False
   excess <-
-    if excessToThreat || excessToOthers || excessToLocation || excessToQuests || excessToShip || notNull excessTo || excessToAflame || excessToDeck
+    if character
       then (\remaining -> max 0 (n - remaining)) <$> ((-) <$> getHitPoints target <*> getDamage target)
       else pure 0
   active <- select IsActiveLocation
@@ -3290,6 +3293,7 @@ attackDamage pid eid target n = do
         <> [chooseOrRunOne pid [targetLabel t [DealDamage (EnemyAttackSource eid) t excess] | t <- excessTo] | notNull excessTo, excess > 0]
         <> toAflame
         <> [DiscardTopOfDeck pid excess | excessToDeck, excess > 0]
+        <> [CheckWindows [mkAfter $ AttackDealtExcessDamage eid target excess] | excess > 0]
 
 -- | The player's characters that may yet be declared as attackers against the enemy.
 ownAttackers :: PlayerId -> EnemyId -> GameT [Target]
