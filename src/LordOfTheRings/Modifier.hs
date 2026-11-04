@@ -564,6 +564,9 @@ data ModifierType
     -- effect's source deals it the first amount of damage, the second instead if it is
     -- guarding a card, as Bilbo Baggins's (Tactics) reads
     DamageIfQuestSuccessful Int Int
+  | -- | on a player, until the end of the phase: if the players quest successfully, the
+    -- effect's source reduces his threat by this much, as Frodo Baggins's (Leadership) reads
+    LowerThreatIfQuestSuccessful Int
   | -- | on the game: it cannot end, a win or loss waiting until nothing gives this, as
     -- Ghulat reads
     GameCannotEnd

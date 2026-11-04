@@ -44,7 +44,8 @@ import LordOfTheRings.Log.Refs (cardTitle, sendLogInOpenBlock, sourceCardTitle)
 import LordOfTheRings.Matcher
 import LordOfTheRings.Matcher.Window (windowMatches)
 import LordOfTheRings.Message
-import LordOfTheRings.Message.Lifted (choosePlayerM, drawCards, raiseThreatFromDoomed, setUpTheOneRing, shuffleIntoDeck)
+import LordOfTheRings.Message.Lifted (choosePlayerM, drawCards, lowerThreatBy, raiseThreatFromDoomed, setUpTheOneRing, shuffleIntoDeck)
+import LordOfTheRings.Message.Lifted.Queue (capture)
 import LordOfTheRings.Modifier
 import LordOfTheRings.Objective
 import LordOfTheRings.Outcome
@@ -2096,11 +2097,15 @@ runGameMessage msg g = case msg of
               EnemyTarget eid -> selectAny (EnemyWithId eid <> EnemyGuardingACard)
               _ -> pure False
             pure $ DealDamage (effectSource e) (effectTarget e) (if guarding then m else n)
+          lowered <-
+            concat <$> for [(e, pid, n) | e <- gameEffects g, PlayerTarget pid <- [effectTarget e], LowerThreatIfQuestSuccessful n <- effectModifiers e] \(e, pid, n) ->
+              capture $ lowerThreatBy (effectSource e) pid n
           -- what questing successfully triggers resolves before the progress is placed
           -- (FAQ 1.24), as The Hunt Begins' Forced effect
           pushAll
             $ CreateEffect (Effect GameSource GameTarget [QuestedSuccessfullyThisPhase] UntilEndOfPhase)
             : delayed
+            <> lowered
             <> [ CheckWindows [mkAfter QuestedSuccessfully]
                , PlaceProgressOnQuest (willpower - threat)
                , CheckWindows [mkAfter PlacedProgressFromQuesting]
