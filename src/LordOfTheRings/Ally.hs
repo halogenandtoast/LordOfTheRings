@@ -281,6 +281,9 @@ import LordOfTheRings.Ally.Cards.EagleEmissary
 import LordOfTheRings.Ally.Cards.WilyadorTheLandOfSorrow
 import LordOfTheRings.Ally.Cards.Haleth
 import LordOfTheRings.Ally.Cards.MistyMountainJourneyman
+import LordOfTheRings.Ally.Cards.Edrahil
+import LordOfTheRings.Ally.Cards.Arador
+import LordOfTheRings.Ally.Cards.Farin
 import LordOfTheRings.Ally.Runner ()
 import LordOfTheRings.Ally.Types as X
 import LordOfTheRings.Id
@@ -594,5 +597,8 @@ allAllies =
         , SomeAllyCard wilyadorTheLandOfSorrow
         , SomeAllyCard haleth
         , SomeAllyCard mistyMountainJourneyman
+        , SomeAllyCard edrahil
+        , SomeAllyCard arador
+        , SomeAllyCard farin
         ]
     ]

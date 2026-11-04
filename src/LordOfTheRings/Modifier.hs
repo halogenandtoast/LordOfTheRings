@@ -318,6 +318,9 @@ data ModifierType
     -- against it, no other player's ranged or sentinel character, as Khamûl the Easterling
     -- reads
     OnlyEngagedPlayerFights
+  | -- | on an enemy: allies cannot be declared as attackers or defenders against it, as
+    -- Ulwarth reads
+    NotFoughtByAllies
   | -- | on an enemy: damage from its undefended attacks is dealt to this character
     UndefendedDamageTo Target
   | -- | on an ally: the resources on it can pay for matching cards its controller plays

@@ -219,6 +219,10 @@ export const toView = (data: GameData, defs: Record<string, CardDef>, previous: 
       ...Object.values(entities.quests ?? {}).flatMap((q) =>
         ids.has(q.cardId) ? (q.underneath ?? []).map((c) => card(c.cardCode, c.id, { attachedTo: q.cardId })) : [],
       ),
+      // the cards faceup under a location sit on it, as the Warden under a Camp (The Land of Sorrow)
+      ...Object.values(entities.locations).flatMap((l) =>
+        ids.has(l.cardId) ? (l.underneath ?? []).map((c) => card(c.cardCode, c.id, { attachedTo: l.cardId })) : [],
+      ),
     ]
   }
 

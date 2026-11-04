@@ -493,6 +493,11 @@ import LordOfTheRings.Enemy.Cards.SoldierOfNurn
 import LordOfTheRings.Enemy.Cards.EasterlingMercenary
 import LordOfTheRings.Enemy.Cards.MordorOlogHai
 import LordOfTheRings.Enemy.Cards.GuardDogs
+import LordOfTheRings.Enemy.Cards.Ulwarth
+import LordOfTheRings.Enemy.Cards.Lorgan
+import LordOfTheRings.Enemy.Cards.Borlach
+import LordOfTheRings.Enemy.Cards.EasterlingGuard
+import LordOfTheRings.Enemy.Cards.NurnSlaver
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -1015,5 +1020,10 @@ allEnemys =
         , SomeEnemyCard easterlingMercenary
         , SomeEnemyCard mordorOlogHai
         , SomeEnemyCard guardDogs
+        , SomeEnemyCard ulwarth
+        , SomeEnemyCard lorgan
+        , SomeEnemyCard borlach
+        , SomeEnemyCard easterlingGuard
+        , SomeEnemyCard nurnSlaver
         ]
     ]

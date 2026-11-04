@@ -393,6 +393,8 @@ instance RunMessage ScenarioAttrs where
     -- a set-aside card removed from the game, as the objective-heroes no player chose
     RemoveFromGame (CardIdTarget cid) -> pure $ attrs & setAsideL %~ filter ((/= cid) . (.id))
     GuardCard (EncounterCard card) _ -> pure $ attrs & setAsideL %~ filter (/= card)
+    -- a set-aside card placed under a card, as a Warden under a Camp (The Land of Sorrow)
+    PlaceUnderneath _ cards -> pure $ attrs & setAsideL %~ filter ((`notElem` map (.id) cards) . (.id))
     DebugSearchEncounterDeck pid -> do
       push
         $ Ask pid

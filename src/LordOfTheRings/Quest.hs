@@ -353,6 +353,8 @@ import LordOfTheRings.Quest.Cards.StormTheCastleCastleGarrison
 import LordOfTheRings.Quest.Cards.StormTheCastleLethalCounterattack
 import LordOfTheRings.Quest.Cards.StormTheCastleNoQuarter
 import LordOfTheRings.Quest.Cards.StormTheCastleStrongholdOfMordor
+import LordOfTheRings.Quest.Cards.SlavesOfTheDarkLord
+import LordOfTheRings.Quest.Cards.LeadTheRevolt
 import LordOfTheRings.Quest.Runner ()
 import LordOfTheRings.Quest.Types as X
 import LordOfTheRings.Id
@@ -738,5 +740,7 @@ allQuests =
         , SomeQuestCard stormTheCastleLethalCounterattack
         , SomeQuestCard stormTheCastleNoQuarter
         , SomeQuestCard stormTheCastleStrongholdOfMordor
+        , SomeQuestCard slavesOfTheDarkLord
+        , SomeQuestCard leadTheRevolt
         ]
     ]

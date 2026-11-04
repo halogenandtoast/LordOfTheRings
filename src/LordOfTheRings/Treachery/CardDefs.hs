@@ -427,6 +427,9 @@ allTreacheryCards =
       , theChampionsCunning
       , determinedDefense
       , theDarkLordsReach
+      , overseersWhip
+      , crueltyOfMordor
+      , brokenCaptives
       ]
 
 deepDeepDark :: CardDef
@@ -2633,9 +2636,24 @@ ransackedSupplies = (treachery "22103" "Ransacked Supplies" UnderTheAshMountains
 burningReek :: CardDef
 burningReek =
   (treachery "22104" "Burning Reek" UnderTheAshMountains 2)
+    { cdKeywords = setFromList [Doomed 1]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
+    }
+
 fury :: CardDef
 fury =
   (treachery "22019" "Fury" WrathAndRuin 2)
+    { cdCardTraits = setFromList [Easterling]
+    , cdKeywords = setFromList [Surge]
+    , cdEasyModeQuantity = Just 1
+    }
+
+-- * The Land of Sorrow
+
+overseersWhip :: CardDef
+overseersWhip =
+  (treachery "22131" "Overseer's Whip" TheLandOfSorrow 2)
     { cdCardTraits = setFromList [Easterling]
     , cdKeywords = setFromList [Surge]
     , cdEasyModeQuantity = Just 1
@@ -2695,3 +2713,8 @@ determinedDefense = (treachery "22156" "Determined Defense" TheFortressOfNurn 3)
 
 theDarkLordsReach :: CardDef
 theDarkLordsReach = (treachery "22157" "The Dark Lord's Reach" TheFortressOfNurn 2) {cdShadowEffect = True, cdEasyModeQuantity = Just 1}
+crueltyOfMordor :: CardDef
+crueltyOfMordor = (treachery "22132" "Cruelty of Mordor" TheLandOfSorrow 3) {cdShadowEffect = True, cdEasyModeQuantity = Just 2}
+
+brokenCaptives :: CardDef
+brokenCaptives = (treachery "22133" "Broken Captives" TheLandOfSorrow 2) {cdShadowEffect = True, cdEasyModeQuantity = Just 1}

@@ -1011,6 +1011,21 @@ attachToEnemyWith
   -> m Bool
 attachToEnemyWith source tid code matcher extreme stat andThen = do
   enemies <- filterM (fmap null . treacheriesOn code . toTarget) =<< select matcher
+  attachToEnemyAmong source tid enemies extreme stat andThen
+
+{- | As 'attachToEnemyWith', among the enemies given, whatever is attached to them, as
+Overseer's Whip's "Attach to the Easterling enemy with the lowest engagement cost" reads.
+-}
+attachToEnemyAmong
+  :: (ReverseQueue m, Targetable source)
+  => source
+  -> TreacheryId
+  -> [EnemyId]
+  -> Extreme
+  -> (EnemyId -> m Int)
+  -> (EnemyId -> QueueT Message m ())
+  -> m Bool
+attachToEnemyAmong source tid enemies extreme stat andThen = do
   valued <- for enemies \e -> (e,) <$> stat e
   let pick = case extreme of
         Lowest -> minimumMay

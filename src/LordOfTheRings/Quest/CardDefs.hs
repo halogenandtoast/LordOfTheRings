@@ -437,6 +437,8 @@ allQuestCards =
       , stormTheCastleLethalCounterattack
       , stormTheCastleNoQuarter
       , stormTheCastleStrongholdOfMordor
+      , slavesOfTheDarkLord
+      , leadTheRevolt
       ]
 
 theDrippingWalls :: CardDef
@@ -1810,3 +1812,12 @@ stormTheCastleNoQuarter = stormTheCastle "22163" 12
 -- | Stronghold of Mordor on its other side.
 stormTheCastleStrongholdOfMordor :: CardDef
 stormTheCastleStrongholdOfMordor = stormTheCastle "22164" 8
+
+-- * The Land of Sorrow
+
+slavesOfTheDarkLord :: CardDef
+slavesOfTheDarkLord = quest "22135" "Slaves of the Dark Lord" TheLandOfSorrow 1 15
+
+-- | 10 quest points, and 10 more per player from its own modifiers.
+leadTheRevolt :: CardDef
+leadTheRevolt = quest "22136" "Lead the Revolt" TheLandOfSorrow 2 10

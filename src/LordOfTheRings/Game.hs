@@ -4090,6 +4090,9 @@ canFight eid c = do
     , allM (\(t, k) -> orM [hasTrait t c def, hasKeyword k c def]) [(t, k) | OnlyFoughtBy t k <- mods]
     , allM (\k -> hasKeyword k c def) [k | OnlyFoughtByKeyword k <- mods]
     , if NotFoughtByDamaged `elem` mods then (== 0) <$> getDamage c else pure True
+    , pure $ case c of
+        AllyTarget _ -> NotFoughtByAllies `notElem` mods
+        _ -> True
     , barredBy [m | CannotFight m <- cmods]
     , case c of
         HeroTarget hid | NotFoughtByHeroesWithoutResources `elem` mods -> (> 0) . (.resources) <$> getHero hid

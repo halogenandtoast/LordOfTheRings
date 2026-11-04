@@ -538,6 +538,11 @@ allLocationCards =
       , fortressWallsTheFortressOfNurn
       , guardTower
       , plazaOfNurn
+      , theBarracks
+      , slaveQuarters
+      , theStorehouse
+      , workingFields
+      , watchTowerTheLandOfSorrow
       ]
 
 drownedTreasury :: CardDef
@@ -3965,3 +3970,34 @@ guardTower = (location "22154" "Guard Tower" TheFortressOfNurn 3 2 4) {cdCardTra
 -- | Its threat is X, 1 more than the Castle side quests in the victory display.
 plazaOfNurn :: CardDef
 plazaOfNurn = (location "22155" "Plaza of Nurn" TheFortressOfNurn 3 0 5) {cdCardTraits = setFromList [City], cdEasyModeQuantity = Just 2}
+
+-- * The Land of Sorrow
+
+-- | A Camp: it guards a Captive objective ally and hides a Warden (stage 1A).
+camp :: CardCode -> Name -> Int -> CardDef
+camp code name questPoints =
+  unique (location code name TheLandOfSorrow 1 1 questPoints)
+    { cdCardTraits = setFromList [Camp]
+    , cdVictoryPoints = Just 1
+    }
+
+theBarracks :: CardDef
+theBarracks = camp "22121" "The Barracks" 5
+
+slaveQuarters :: CardDef
+slaveQuarters = camp "22122" "Slave Quarters" 3
+
+theStorehouse :: CardDef
+theStorehouse = camp "22123" "The Storehouse" 4
+
+workingFields :: CardDef
+workingFields = (location "22129" "Working Fields" TheLandOfSorrow 3 3 4) {cdCardTraits = setFromList [Plains]}
+
+-- | X threat, X 1 more than the Captive objective allies the players control: given by its
+-- own modifiers.
+watchTowerTheLandOfSorrow :: CardDef
+watchTowerTheLandOfSorrow =
+  (location "22130" "Watch Tower" TheLandOfSorrow 3 0 5)
+    { cdCardTraits = setFromList [Plains]
+    , cdEasyModeQuantity = Just 1
+    }

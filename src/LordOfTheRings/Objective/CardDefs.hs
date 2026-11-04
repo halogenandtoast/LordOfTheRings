@@ -150,6 +150,9 @@ allObjectiveCards =
       , evidenceOfTheCult
       , theWainriders
       , theChallengers
+      , edrahil
+      , arador
+      , farin
       ]
 
 durinsAxe :: CardDef
@@ -1029,3 +1032,24 @@ theWainriders = objective "22064" "The Wainriders" ChallengeOfTheWainriders 1
 
 theChallengers :: CardDef
 theChallengers = objective "22065" "The Challengers" ChallengeOfTheWainriders 1
+
+-- * The Land of Sorrow
+
+-- | A Captive objective ally, guarded by a Camp location from stage 1A until the first
+-- player gains control of it.
+captive :: CardCode -> Name -> Trait -> Int -> Int -> Int -> Int -> CardDef
+captive code name trait willpower attack defense hitPoints =
+  unique
+    ((objective code name TheLandOfSorrow 1)
+        { cdCardType = ObjectiveAllyType, cdWillpower = Just willpower, cdAttack = Just attack, cdDefense = Just defense, cdHitPoints = Just hitPoints })
+      { cdCardTraits = setFromList [Captive, trait]
+      }
+
+edrahil :: CardDef
+edrahil = captive "22124" "Edrahil" Silvan 3 1 0 3
+
+arador :: CardDef
+arador = captive "22125" "Arador" Gondor 0 1 3 5
+
+farin :: CardDef
+farin = captive "22126" "Farin" Dwarf 1 3 0 4

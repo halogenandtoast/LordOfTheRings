@@ -520,6 +520,11 @@ import LordOfTheRings.Location.Cards.RavineLedge
 import LordOfTheRings.Location.Cards.FortressWallsTheFortressOfNurn
 import LordOfTheRings.Location.Cards.GuardTower
 import LordOfTheRings.Location.Cards.PlazaOfNurn
+import LordOfTheRings.Location.Cards.TheBarracks
+import LordOfTheRings.Location.Cards.SlaveQuarters
+import LordOfTheRings.Location.Cards.TheStorehouse
+import LordOfTheRings.Location.Cards.WorkingFields
+import LordOfTheRings.Location.Cards.WatchTowerTheLandOfSorrow
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -1086,5 +1091,10 @@ allLocations =
         , SomeLocationCard fortressWallsTheFortressOfNurn
         , SomeLocationCard guardTower
         , SomeLocationCard plazaOfNurn
+        , SomeLocationCard theBarracks
+        , SomeLocationCard slaveQuarters
+        , SomeLocationCard theStorehouse
+        , SomeLocationCard workingFields
+        , SomeLocationCard watchTowerTheLandOfSorrow
         ]
     ]

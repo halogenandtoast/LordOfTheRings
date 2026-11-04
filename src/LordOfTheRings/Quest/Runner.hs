@@ -129,6 +129,7 @@ runConditionalStage condition msg attrs = case msg of
     pure attrs
   ClaimObjective {} -> recheck
   RescuePrisoner {} -> recheck
+  RescueCharacter {} -> recheck
   AddToVictoryDisplay {} -> recheck
   Discard (LocationTarget _) -> recheck
   _ -> runMessage msg attrs

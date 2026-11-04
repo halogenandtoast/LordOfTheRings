@@ -3955,5 +3955,49 @@
       "“Our Master is ill pleased to learn you have failed him a second time,” the Mouth said in a cold voice. “You were nearly dead when I found you in Nurn. Your castle in tatters, and your captives escaped. You have much to answer for. It will be a small comfort to The Dark Lord to know that you survived; He is looking forward to questioning you Himself.”",
       "Ulchor wept."
     ]
+  },
+  "the-land-of-sorrow": {
+    "intro": [
+      "After descending from the southern fences of the Ered Lithui, the heroes headed south toward the Sea of Núrnen where they knew they would find Ulchor’s fortress upon the northern shore. They had learned this much from the King of Ulfast, who was eager to have his revenge upon the Thane of Nurn. He told them to follow the river that flowed south from the Ash Mountains, which would lead them to Ulchor’s fortress of Dol Rhugar.",
+      "Dol Rhugar was the capital city of Nurn. From there Thane Ulchor ruled over that land, but it was not Ulchor who built the city. The fortress was built by the Númenóreans during the Watchful Peace, after The Last Alliance of Elves and Men overthrew Sauron. They built a tower of guard to keep watch over the eastern border of Mordor, and a city grew up around it. Minas Fuin it was called in those days, and those that lived there were not without gladness, for the land of Nurn prospered under Númenórean rule.",
+      "But those days were long passed. When the Númenórean race declined and Sauron again rose to power, those who had worshipped him in secret came forth to declare themselves. Among them were Ulchor’s ancestors, who helped to overthrow the last remnants of the Númenórean forces in Nurn. As a reward for their fealty, The Dark Lord granted the land of Nurn to Ulchor’s family and bestowed upon them the title of Thane. But in return, Sauron demanded provisions for his armies in the region of Gorgoroth, where nothing grew.",
+      "So it was that as the heroes drew near to the sea of Núrnen, they encountered the slave-worked fields that surrounded Dol Rhugar, and they saw The Dark Lord’s prisoners being made to harvest crops and raise livestock to feed his vast armies. There were Elves, Dwarves, and men dressed only in rags and bent with hard labor. Stern Easterlings moved among them and drove them harder still with cruel whips.",
+      "The heroes watched all this from the shelter of a low hill overlooking the fields. There they debated what should be done.",
+      "“We must help these people!” declared one, struggling to keep her voice down.",
+      "“But what of our quest to find Ulchor?” asked her companion. “If we intervene here, he will surely be alerted to our presence.”",
+      "“Aye,” voiced another. “Then how shall we fulfill our oaths of vengeance upon him?”",
+      "“We swore an oath to avenge the people of Dorwinion,” answered the first, “but they are gone, and fulfilling it will not bring them back. These people,” she said, pointing at the fields, “are alive and need our help. We cannot overlook the living to avenge the dead.”",
+      "There was silence as the others contemplated her words. Then, at last, one of her companions spoke. “I began this quest to see Ulchor pay for his crimes; to avenge the deaths of Niena, Torwald, and the rest. But we all know that if Niena could speak to us now, she would tell us not to worry about her when there are others in need.”",
+      "The others looked up at this, and they were surprised to see they were smiling at her memory, and that of her husband Torwald.",
+      "“It is agreed then?” asked the first.",
+      "“Yes,” said her companion, drawing his weapon. “We will set upon these Easterling slavers and release their captives.”",
+      "The other heroes nodded and did the same. Then, the first raised her sword and cried aloud, “For Niena!” and charged into battle."
+    ],
+    "setup": [
+      "“The Land of Sorrow” is played with an encounter deck built with all the cards from the following encounter sets: The Land of Sorrow, Easterling Raiders, and Rolling Plains. (Easterling Raiders and Rolling Plains can be found in A Shadow in the East deluxe expansion to The Lord of the Rings: The Card Game.)"
+    ],
+    "resolution": [
+      "The Easterlings were wholly unprepared for the heroes’ sudden attack; they thought themselves safe from all harm here in the land of Mordor. The heroes used this to their advantage when they launched their assault. Though the Easterlings far outnumbered them, they were used to whipping prisoners and shooting escapees - they could not match the ferocity of the heroes’ attack, or stand before their wrath. Those that didn’t die dropped their weapons and fled back to Dol Rhugar.",
+      "Once the fighting was done, the prisoners rallied around the heroes, who had unlocked their chains with keys taken from fallen guards. Former slaves rubbed their wrists and ankles as they looked around themselves in disbelief. None of them could have ever imagined that help would reach them all the way in Mordor.",
+      "“Thank ye, lads,” said an elderly Dwarf named Farin. Years of captivity had nearly broken his pride, but when the fighting started he was one of the first to lift a weapon and join in. “I never thought I’d get the chance to make these slavers pay.”",
+      "“Yes, thank you!” spoke an Elf. His name was Edrahil. “I was captured at Amon Lanc and brought here. It has been so long since I have seen the forest that I was nearly lost to despair. Did my lord Thranduil send you?”",
+      "“Nay,” said one of the heroes. “We have come to Mordor seeking vengeance against the Thane of Nurn for his crimes against Dorwinion. We knew nothing of your captivity until we came upon you just now.”",
+      "“You are too few to assault the Thane’s stronghold of Dol Rhugar,” said a Gondorian man named Arador. He had fought valiantly alongside the heroes once the battle began.",
+      "“We had not planned to lay siege to his fortress when we first pursued Ulchor,” said one of the heroes. “Our plan was to come upon him unlooked for in the land where he felt safest and least expected an attack. But all of that changed when we found you.”",
+      "“We are grateful for your intervention,” said Edrahil. “But it will count for naught if Ulchor is not defeated. Otherwise, he will surely gather his army and hunt us down.”",
+      "“Aye,” said Farin, “He would not remain Thane of Nurn for long if Sauron learned that he had let his prisoners escape. He’ll come for us, alright.”",
+      "“Then we must get you to safety!” urged one of the heroes, feeling responsible for the fate of these people.",
+      "“There is no safety in Mordor,” replied Arador. “There is only one thing we can do: attack Dol Rhugar.”",
+      "“What?” said Farin in disbelief. “Are you mad?”",
+      "“No,” answered Arador. “Ulchor will expect us to run. He will not expect us to marshal our forces for an assault.”",
+      "“That’s because it is folly,” urged Edrahil. “Even if we all had weapons and armor, we’d still have no way to breach the walls of Dol Rhugar.”",
+      "“But we do,” said Arador. “There are other prisoners within the city; slaves who are made to serve Ulchor and his lieutenants. I used to be one of them until I was sent to the fields for displeasing my master. While I was working in the city, I discovered a secret entrance long forgotten by the people there. I can use it to enter the city at night while you gather your forces nearby. Once inside, I will find others to help me open the gate and signal you to attack. We can be inside the city before the alarm goes up.”",
+      "Farin grinned. “I’m beginning to like this plan,” he said.",
+      "“But what do we hope to accomplish once inside?” asked Edrahil.",
+      "Arador motioned to the heroes and replied, “These brave companions showed us what only a few can achieve with surprise and determination on their side.” He looked around at all of the freed captives gathered around them, and said, “Just imagine what all of us together can achieve.”",
+      "Edrahil smiled and nodded.",
+      "Farin laughed and said, “Then let’s get moving. It will be dark soon.”",
+      "The story continues in “The Fortress of Nurn,” the sixth Adventure Pack in “The Vengeance of Mordor” cycle."
+    ]
   }
 }
