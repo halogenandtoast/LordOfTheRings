@@ -475,6 +475,7 @@ allEnemyCards =
       , rhunBackstabber
       , treacherousEasterling
       , ulchorsGuard
+      , easterlingOutrider
       ]
 
 namelessThing :: CardDef
@@ -3888,4 +3889,15 @@ ulchorsGuard =
     { cdCardTraits = setFromList [Easterling]
     , cdShadowEffect = True
     , cdEasyModeQuantity = Just 3
+    }
+
+-- * The River Running
+
+easterlingOutrider :: CardDef
+easterlingOutrider =
+  (enemy "21013" "Easterling Outrider" TheRiverRunning 3 24 1 2 1 2)
+    { cdCardTraits = setFromList [Easterling]
+    , cdKeywords = setFromList [Surge]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
     }

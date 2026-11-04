@@ -408,6 +408,7 @@ allTreacheryCards =
       , ulchorsRage
       , fanaticism
       , fearfulShadows
+      , enemiesCloseBehind
       ]
 
 deepDeepDark :: CardDef
@@ -2589,3 +2590,8 @@ fearfulShadows =
     , cdShadowEffect = True
     , cdEasyModeQuantity = Just 1
     }
+
+-- * The River Running
+
+enemiesCloseBehind :: CardDef
+enemiesCloseBehind = (treachery "21016" "Enemies Close Behind" TheRiverRunning 2) {cdShadowEffect = True}

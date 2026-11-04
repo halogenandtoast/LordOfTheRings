@@ -401,6 +401,8 @@ allQuestCards =
       , shadowOfFearASitE
       , unwelcomeTravelers
       , lostInTheDark
+      , chasedByEasterlings
+      , theCrossingOfAraw
       ]
 
 theDrippingWalls :: CardDef
@@ -1629,3 +1631,11 @@ lostInTheDark =
     { cdVictoryPoints = Just 10
     , cdWhenRevealed = True
     }
+
+-- * The River Running
+
+chasedByEasterlings :: CardDef
+chasedByEasterlings = quest "21075" "Chased by Easterlings" TheRiverRunning 1 5
+
+theCrossingOfAraw :: CardDef
+theCrossingOfAraw = quest "21076" "The Crossing of Araw" TheRiverRunning 2 15

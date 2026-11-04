@@ -3600,5 +3600,57 @@
       "One of the heroes clasped hands with the Woodman and said, “Thank you for your help. You are a brave man, Haldan. I wish you safe travel on your return journey.”",
       "With that, the heroes climbed aboard the Bardings’ boat and sailed north as Haldan waved goodbye from the shore."
     ]
+  },
+  "the-river-running": {
+    "intro": [
+      "It was late spring and the trees were already blossoming in Dale when envoys from Dorwinion arrived with an urgent message for King Brand. The city guard escorted the weary travelers to the great keep where they found the King holding court from upon his wooden throne. Citizens of Dale and nearby Lake-town were gathered there seeking audience, and a motley band of adventurers stood to one side observing what was said. The guards made their way through the crowd and brought the Dorwinions straight to the foot of Brand’s throne.",
+      "“Welcome friends,” said King Brand to the weary Dorwinions. “What brings you here in such haste?”",
+      "The Dorwinions bowed, and one of them said, “A great darkness has befallen our fair country, my lord.”",
+      "“People are missing,” said another. “Whole vineyards go untended in the countryside because the workers have disappeared. We fear what these things forebode, but we are helpless to forestall it; we have no warriors to protect us.”",
+      "“Alas, that I have none to send thee,” the King spoke sadly. “My country was this last winter beset by Orcs and Dragons, and we recover still. I’m afraid all my warriors are needed here.”",
+      "“Have you no one you can spare, my lord?” asked one of the Dorwinions.",
+      "“Indeed not,” was King Brand’s grave reply. “Though I wish that it were otherwise.”",
+      "“Then I fear that Dorwinion will be consumed by darkness,” lamented one of the messengers.",
+      "“Perhaps not,” spoke one of the adventurers who stood nearby. He motioned to his companions. “My friends and I have rested here long enough and we stand ready to aid your people.”",
+      "Walking forward to the foot of the throne, he knelt and continued: “We have enjoyed King Brand’s hospitality, and by his leave we will journey to Dorwinion to confront the growing shadow there.”",
+      "The Dorwinions regarded the adventurer with surprise, but the King smiled and spoke. “My friend, this country owes you and your friends a debt that cannot be repaid. I could not ask you to undertake another journey into danger on my behalf. But since you do now volunteer, I am glad. I can think of no one better suited for this task. Go with my blessing and the goodwill of my people.”",
+      "The King ordered that a boat be provisioned for the long journey to Dorwinion, and an oarsman familiar with the southern passage of the River Running be assigned to bring the heroes there safely.",
+      "Once underway, the heroes learned much from the oarsman assigned to them by King Brand. His was named Rutland, and he was a seasoned boatman who made his livelihood ferrying goods up and down the River Running. He told the heroes all he knew of Dorwinion and its surrounds as the current brought them ever closer.",
+      "“They’re a peaceful people - not much for fighting,” said Rutland. “They prefer making that famous wine of theirs. It’s powerful stuff, too. The Elves in Mirkwood can’t get enough of it. Last year I made enough gold from trading with them to buy this here boat.” He smiled proudly and patted the oar he was using to steer.",
+      "“Yep,” he continued. “We deal with all kinds: Dorwinions, Elves, Easterlings, and now them Haradrim you brought this spring.”",
+      "“What dealings do you have with Easterlings?” asked one of the heroes.",
+      "“Just a little trade,” said the oarsman. “Some of their merchants set up camp just north of Dorwinion on the eastern shore of the river. We like to stop there on our way to and from the Sea of Rhûn to swap goods and news. They’re honest people, even if they seem strange to us.”",
+      "“That is surprising news,” said the hero with wonder. “We thought all Easterlings were our enemies and hated the West.”",
+      "“I wouldn’t be too quick to guess what all Easterlings think of the West or anything else,” chuckled Rutland. “They come in all different kinds, just like you and me. I expect most of them would rather live with their neighbors than kill them, though sure enough there are some who want blood. But they spend a fair bit of time fighting amongst themselves from what I hear. Matter of fact, the merchants we trade with on the river mentioned once how they were threatened themselves. Seems some cadre of warriors didn’t approve of them doing business with us.”",
+      "“I should like to meet these merchants,” said the hero. “I have never spoken with an Easterling before.”",
+      "“You’ll get your chance soon enough,” said Rutland. “We camp there tonight.”",
+      "That evening, just before dusk, the oarsman landed their boat on the eastern shore and led them to the merchants’ camp. The Easterlings there greeted the Lakeman like an old friend, and they welcomed the adventurers to join them by their fire. As the sun went down, news and drinks passed freely between them, and before long there was merry laughter too. The heroes were enjoying the hospitality of their hosts when there was a terrible cry, and out of the night charged Easterling warriors brandishing torches. They set fire to the huts and threw their torches in Rutland’s boat. The oarsman cried out in terror and was struck down alongside his merchant friend. There was no time to organize a defense and the heroes had no choice but to flee, so they lifted their injured friend and carried him away into the dark night."
+    ],
+    "setup": [
+      "“The River Running” is played with an encounter deck built with all the cards from the following encounter sets: The River Running, Riders of Rhûn, Easterling Raiders, and Rolling Plains."
+    ],
+    "rules": [
+      {
+        "title": "Archery X",
+        "text": "While a card with the archery keyword is in play, players must assign damage to characters in play equal to the specified archery value at the beginning of each combat phase. This damage can be dealt to characters under any player’s control, and it can be divided among characters as the players see fit. If there is a disagreement as to where to assign archery damage, the first player makes the final decision. If multiple cards with the archery keyword are in play, the effects are cumulative. Remember that defense does not block archery damage."
+      },
+      {
+        "title": "Side Quests",
+        "text": "Side quests represent secondary adventures that the heroes may undertake while pursuing the main goals of the quest deck. Side quests are never considered to be a part of the quest deck. The top card of the quest deck is called the “main quest.”\n\nA side quest with an encounter card back is called an “encounter side quest.” An encounter side quest is both a quest card and an encounter card. When an encounter side quest is revealed, it is added to the staging area. Because side quests are quest cards as well as encounter cards, the “when revealed” effects of side quests cannot be canceled by player card effects."
+      },
+      {
+        "title": "Side Quests in Play",
+        "text": "While any side quest is in the staging area, it functions like a quest card with the following exception: when a side quest is defeated, the players do not advance to the next stage of the quest deck. Instead, the side quest is added the victory display.\n\nAt the beginning of each quest phase, if there are one or more side quests in the staging area, the first player may choose one to be the “current quest” until the end of the phase instead of the quest card that is currently active via the quest deck. While a side quest is the current quest, any progress that the players make is placed onto that side quest and any card effects that target the “current quest” target that side quest. Progress must still be placed on the active location before it can be placed on a side quest. Any progress that is made beyond the current quest’s total quest points is discarded; do not place progress on any other quest card in play."
+      }
+    ],
+    "resolution": [
+      "The heroes scrambled up the steep embankment on the western shore of the River Running. Their feet slipped on the loose rocks and their tired legs screamed with pain, yet they toiled on, determined to reach the summit and escape from the valley below. When they reached the top, a wide plain opened before them, and they collapsed from exhaustion.",
+      "After they caught their breath, the heroes crawled back to the edge of the ravine and looked over the river they had just crossed. Below, upon the eastern shore they saw the Easterling warriors who had pursued them. They appeared to be debating with each other. Some pointed across the river in the direction the heroes had fled while others shook their heads and raised their fists. For a tense moment the heroes feared that these fierce warriors would ford the river and continue the chase, but to their great wonder, the Easterlings instead turned their horses east and rode away.",
+      "“Why do they leave?” asked one of the heroes in disbelief.",
+      "“Can’t say,” answered Rutland in a pained voice. He coughed and clutched his side.",
+      "“Your wound needs attention,” said the hero, looking at the injured Lakeman with concern.",
+      "“Aye,” groaned Rutland. “I’ve a friend in the city of Dorwinion who can patch me up. Name’s Niena. Her husband, Torwald, is a cousin of mine. If you can help me there, they’ll take care of me.”",
+      "“Of course,” said the hero, helping Rutland to his feet. “Our quest is to answer Dorwinion’s call for help. We should not rest again until we reach the city.”"
+    ]
   }
 }

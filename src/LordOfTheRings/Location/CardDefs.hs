@@ -515,6 +515,8 @@ allLocationCards =
       , twistedTunnel
       , narrowOpening
       , crumblingPassage
+      , riverRunning
+      , exposedRiverbank
       ]
 
 drownedTreasury :: CardDef
@@ -3834,3 +3836,11 @@ crumblingPassage =
     , cdWhenRevealed = True
     , cdEasyModeQuantity = Just 1
     }
+
+-- * The River Running
+
+riverRunning :: CardDef
+riverRunning = (location "21014" "River Running" TheRiverRunning 2 2 5) {cdCardTraits = setFromList [Riverland]}
+
+exposedRiverbank :: CardDef
+exposedRiverbank = (location "21015" "Exposed Riverbank" TheRiverRunning 2 4 4) {cdCardTraits = setFromList [Riverland], cdEasyModeQuantity = Just 1}

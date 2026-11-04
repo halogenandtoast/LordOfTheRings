@@ -2864,6 +2864,14 @@
   "seedyTavern": {
     "placeUnderneath": "Seedy Tavern: choose a card to put facedown under it; the rest are shuffled back"
   },
+  "easterlingOutrider": {
+    "choose": "Easterling Outrider: place 1 resource on Easterling Pursuit, or it attacks you",
+    "pursuit": "Place 1 resource on Easterling Pursuit",
+    "attack": "It makes an immediate attack against you"
+  },
+  "riverRunning": {
+    "engage": "River Running: choose the enemy to engage"
+  },
   "frodoBagginsLeadership": {
     "ready": "Frodo Baggins: choose another unique character committed to the quest to ready"
   },

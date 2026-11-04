@@ -466,6 +466,7 @@ import LordOfTheRings.Enemy.Cards.ServantOfSauron
 import LordOfTheRings.Enemy.Cards.RhunBackstabber
 import LordOfTheRings.Enemy.Cards.TreacherousEasterling
 import LordOfTheRings.Enemy.Cards.UlchorsGuard
+import LordOfTheRings.Enemy.Cards.EasterlingOutrider
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -960,5 +961,6 @@ allEnemys =
         , SomeEnemyCard rhunBackstabber
         , SomeEnemyCard treacherousEasterling
         , SomeEnemyCard ulchorsGuard
+        , SomeEnemyCard easterlingOutrider
         ]
     ]
