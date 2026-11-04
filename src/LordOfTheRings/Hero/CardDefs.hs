@@ -77,6 +77,7 @@ allHeroCards =
       , argalad
       , naasiyah
       , princeImrahilTactics
+      , folcoBoffin
       ]
 
 aragorn :: CardDef
@@ -474,4 +475,10 @@ princeImrahilTactics :: CardDef
 princeImrahilTactics =
   (hero "12138" "Prince Imrahil" Tactics 11 2 3 2 4)
     { cdCardTraits = setFromList [Gondor, Noble, Warrior]
+    }
+
+folcoBoffin :: CardDef
+folcoBoffin =
+  (hero "17109" "Folco Boffin" Lore 7 2 2 0 2)
+    { cdCardTraits = setFromList [Hobbit]
     }

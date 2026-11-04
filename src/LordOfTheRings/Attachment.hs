@@ -170,6 +170,8 @@ import LordOfTheRings.Attachment.Cards.DoughtyRanger
 import LordOfTheRings.Attachment.Cards.SongOfHope
 import LordOfTheRings.Attachment.Cards.FearlessScout
 import LordOfTheRings.Attachment.Cards.DunedainPipe
+import LordOfTheRings.Attachment.Cards.DiligentNoble
+import LordOfTheRings.Attachment.Cards.LegacyBlade
 import LordOfTheRings.Attachment.Runner ()
 import LordOfTheRings.Attachment.Types as X
 import LordOfTheRings.Id
@@ -377,5 +379,7 @@ allAttachments =
         , SomeAttachmentCard songOfHope
         , SomeAttachmentCard fearlessScout
         , SomeAttachmentCard dunedainPipe
+        , SomeAttachmentCard diligentNoble
+        , SomeAttachmentCard legacyBlade
         ]
     ]

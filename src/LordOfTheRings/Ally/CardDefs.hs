@@ -197,6 +197,9 @@ allAllyCards =
       , dunedainLookout
       , defenderOfCairAndros
       , southronRefugee
+      , knightOfDale
+      , eregionSurvivor
+      , leaflock
       ]
 
 guardOfTheCitadel :: CardDef
@@ -1373,3 +1376,22 @@ southronRefugee =
   (ally "17090" "Southron Refugee" Neutral (StaticCost 2) 1 1 0 2)
     { cdCardTraits = setFromList [Harad]
     }
+
+knightOfDale :: CardDef
+knightOfDale =
+  (ally "17110" "Knight of Dale" Leadership (StaticCost 4) 2 2 1 3)
+    { cdCardTraits = setFromList [Dale, Warrior]
+    }
+
+eregionSurvivor :: CardDef
+eregionSurvivor =
+  (ally "17114" "Eregion Survivor" Spirit (StaticCost 2) 1 1 1 3)
+    { cdCardTraits = setFromList [Noldor]
+    }
+
+leaflock :: CardDef
+leaflock =
+  unique
+    (ally "17116" "Leaflock" Lore (StaticCost 3) 0 2 2 3)
+      { cdCardTraits = setFromList [Ent]
+      }

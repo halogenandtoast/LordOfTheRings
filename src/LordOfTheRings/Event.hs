@@ -184,6 +184,9 @@ import LordOfTheRings.Event.Cards.HuntingParty
 import LordOfTheRings.Event.Cards.TheFreePeoples
 import LordOfTheRings.Event.Cards.BurstIntoSong
 import LordOfTheRings.Event.Cards.OldToby
+import LordOfTheRings.Event.Cards.FierceDefense
+import LordOfTheRings.Event.Cards.HeirsOfEarendil
+import LordOfTheRings.Event.Cards.OpenTheArmory
 import LordOfTheRings.Event.Types as X
 import LordOfTheRings.Id
 import LordOfTheRings.Prelude
@@ -387,5 +390,8 @@ allEvents =
         , SomeEventCard theFreePeoples
         , SomeEventCard burstIntoSong
         , SomeEventCard oldToby
+        , SomeEventCard fierceDefense
+        , SomeEventCard heirsOfEarendil
+        , SomeEventCard openTheArmory
         ]
     ]

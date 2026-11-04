@@ -201,6 +201,9 @@ allEventCards =
       , theFreePeoples
       , burstIntoSong
       , oldToby
+      , fierceDefense
+      , heirsOfEarendil
+      , openTheArmory
       ]
 
 everVigilant :: CardDef
@@ -803,3 +806,12 @@ oldToby =
   (event "17089" "Old Toby" Lore (StaticCost 2))
     { cdCardTraits = setFromList [Pipeweed]
     }
+
+fierceDefense :: CardDef
+fierceDefense = event "17113" "Fierce Defense" Tactics (StaticCost 3)
+
+heirsOfEarendil :: CardDef
+heirsOfEarendil = event "17115" "Heirs of Eärendil" Spirit (StaticCost 1)
+
+openTheArmory :: CardDef
+openTheArmory = event "17118" "Open the Armory" Neutral (StaticCost 1)

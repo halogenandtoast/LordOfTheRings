@@ -2210,5 +2210,18 @@
   },
   "dunedainPipe": {
     "bottom": "Dúnedain Pipe: choose a card from your hand to place on the bottom of your deck"
+  },
+  "fierceDefense": {
+    "enemy": "Fierce Defense: choose a non-unique enemy engaged with you",
+    "damage": "Deal 3 damage to a non-unique enemy engaged with you"
+  },
+  "heirsOfEarendil": {
+    "location": "Heirs of Eärendil: choose a non-unique location in the staging area to discard"
+  },
+  "openTheArmory": {
+    "toHand": "Search the top 10 cards for a Weapon or Armor to add to your hand",
+    "intoPlay": "Open the Armory: choose a Weapon or Armor to put into play",
+    "host": "Open the Armory: choose where to attach it",
+    "none": "Put none into play"
   }
 }

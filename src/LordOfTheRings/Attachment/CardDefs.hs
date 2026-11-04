@@ -189,6 +189,8 @@ allAttachmentCards =
       , songOfHope
       , fearlessScout
       , dunedainPipe
+      , diligentNoble
+      , legacyBlade
       ]
 
 -- | A boon of the Revised Core campaign: Permanent, limit 1 per hero.
@@ -1270,4 +1272,18 @@ dunedainPipe =
   (attachment "17088" "Dúnedain Pipe" Lore (StaticCost 1))
     { cdCardTraits = setFromList [Item, Pipe]
     , cdLimitOnePerHost = True
+    }
+
+diligentNoble :: CardDef
+diligentNoble =
+  (attachment "17111" "Diligent Noble" Leadership (StaticCost 1))
+    { cdCardTraits = setFromList [Skill]
+    , cdLimitOnePerHost = True
+    }
+
+legacyBlade :: CardDef
+legacyBlade =
+  (attachment "17117" "Legacy Blade" Lore (StaticCost 0))
+    { cdCardTraits = setFromList [Item, Weapon]
+    , cdKeywords = setFromList [Restricted]
     }
