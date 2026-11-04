@@ -498,6 +498,11 @@ import LordOfTheRings.Enemy.Cards.Lorgan
 import LordOfTheRings.Enemy.Cards.Borlach
 import LordOfTheRings.Enemy.Cards.EasterlingGuard
 import LordOfTheRings.Enemy.Cards.NurnSlaver
+import LordOfTheRings.Enemy.Cards.WatcherInTheWater
+import LordOfTheRings.Enemy.Cards.GreatWargChief
+import LordOfTheRings.Enemy.Cards.HoundOfSauron
+import LordOfTheRings.Enemy.Cards.HowlingWarg
+import LordOfTheRings.Enemy.Cards.CrebainFromDunland
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -1025,5 +1030,10 @@ allEnemys =
         , SomeEnemyCard borlach
         , SomeEnemyCard easterlingGuard
         , SomeEnemyCard nurnSlaver
+        , SomeEnemyCard watcherInTheWater
+        , SomeEnemyCard greatWargChief
+        , SomeEnemyCard houndOfSauron
+        , SomeEnemyCard howlingWarg
+        , SomeEnemyCard crebainFromDunland
         ]
     ]

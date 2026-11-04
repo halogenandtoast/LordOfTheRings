@@ -525,6 +525,12 @@ import LordOfTheRings.Location.Cards.SlaveQuarters
 import LordOfTheRings.Location.Cards.TheStorehouse
 import LordOfTheRings.Location.Cards.WorkingFields
 import LordOfTheRings.Location.Cards.WatchTowerTheLandOfSorrow
+import LordOfTheRings.Location.Cards.RedhornPass
+import LordOfTheRings.Location.Cards.DoorsOfDurinTheRingGoesSouth
+import LordOfTheRings.Location.Cards.TreeCrownedHill
+import LordOfTheRings.Location.Cards.HillsOfHollin
+import LordOfTheRings.Location.Cards.RedhornFoothills
+import LordOfTheRings.Location.Cards.Eregion
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -1096,5 +1102,11 @@ allLocations =
         , SomeLocationCard theStorehouse
         , SomeLocationCard workingFields
         , SomeLocationCard watchTowerTheLandOfSorrow
+        , SomeLocationCard redhornPass
+        , SomeLocationCard doorsOfDurinTheRingGoesSouth
+        , SomeLocationCard treeCrownedHill
+        , SomeLocationCard hillsOfHollin
+        , SomeLocationCard redhornFoothills
+        , SomeLocationCard eregion
         ]
     ]
