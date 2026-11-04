@@ -3715,7 +3715,6 @@ orcOfTheFlame =
     { cdCardTraits = setFromList [Orc, Goblin]
     , cdShadowEffect = True
     , cdWhenRevealed = True
-    , cdEasyModeQuantity = Just 0
     }
 -- | X, its threat and defense, is 1 more than the number of players: printed as 0, the
 -- card adds it.
@@ -3765,7 +3764,6 @@ wilderlandBear =
   (enemy "19040" "Wilderland Bear" RoamAcrossRhovanion 2 30 3 4 1 5)
     { cdCardTraits = setFromList [Creature]
     , cdWhenRevealed = True
-    , cdEasyModeQuantity = Just 0
     }
 
 -- | The enemy side of Urdug (Hall of Beorn's 19053): never gathered, Urdug's Gambit flips

@@ -2382,7 +2382,7 @@ frenziedCreature :: CardDef
 frenziedCreature = (treachery "18018" "Frenzied Creature" JourneyUpTheAnduin 2) {cdShadowEffect = True, cdEasyModeQuantity = Just 1}
 
 dangerousCrossing :: CardDef
-dangerousCrossing = (treachery "18019" "Dangerous Crossing" JourneyUpTheAnduin 3) {cdShadowEffect = True, cdEasyModeQuantity = Just 0}
+dangerousCrossing = (treachery "18019" "Dangerous Crossing" JourneyUpTheAnduin 3) {cdShadowEffect = True}
 
 lostInTheWild :: CardDef
 lostInTheWild = (treachery "18026" "Lost in the Wild" LostInWilderland 2) {cdEasyModeQuantity = Just 1}
@@ -2439,7 +2439,6 @@ powerfulInWrath =
   (treachery "19080" "Powerful in Wrath" FireInTheNight 2)
     { cdKeywords = setFromList [Doomed 1]
     , cdShadowEffect = True
-    , cdEasyModeQuantity = Just 0
     }
 
 -- * The Ghost of Framsburg (19094-19111)
@@ -2452,7 +2451,6 @@ terribleShadows =
   (treachery "19107" "Terrible Shadows" TheGhostOfFramsburg 2)
     { cdCardTraits = setFromList [Hazard]
     , cdShadowEffect = True
-    , cdEasyModeQuantity = Just 0
     }
 
 theDragonsFury :: CardDef
@@ -2467,7 +2465,6 @@ slammedShut =
   (treachery "19108" "Slammed Shut" TheGhostOfFramsburg 3)
     { cdCardTraits = setFromList [Hazard]
     , cdKeywords = setFromList [Doomed 1]
-    , cdEasyModeQuantity = Just 0
     }
 -- * Mount Gundabad
 
@@ -2499,14 +2496,13 @@ harshWeather =
   (treachery "19045" "Harsh Weather" RoamAcrossRhovanion 3)
     { cdCardTraits = setFromList [Weather]
     , cdShadowEffect = True
-    , cdEasyModeQuantity = Just 0
     }
 
 -- | The treachery, not the Wild Creatures encounter set.
 wildCreatures :: CardDef
-wildCreatures = (treachery "19046" "Wild Creatures" RoamAcrossRhovanion 2) {cdEasyModeQuantity = Just 0}
+wildCreatures = (treachery "19046" "Wild Creatures" RoamAcrossRhovanion 2)
 unseenDanger :: CardDef
 unseenDanger = (treachery "18036" "Unseen Danger" LostInMirkwood 2) {cdShadowEffect = True, cdEasyModeQuantity = Just 1}
 
 vastnessOfMirkwood :: CardDef
-vastnessOfMirkwood = (treachery "18037" "Vastness of Mirkwood" LostInMirkwood 3) {cdEasyModeQuantity = Just 0}
+vastnessOfMirkwood = (treachery "18037" "Vastness of Mirkwood" LostInMirkwood 3)

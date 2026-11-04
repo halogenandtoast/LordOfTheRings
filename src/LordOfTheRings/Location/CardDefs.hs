@@ -3596,7 +3596,7 @@ townGate :: CardDef
 townGate = (location "19077" "Town Gate" FireInTheNight 2 3 4) {cdCardTraits = setFromList [Town], cdEasyModeQuantity = Just 1}
 
 woodenPalisade :: CardDef
-woodenPalisade = (location "19078" "Wooden Palisade" FireInTheNight 3 2 3) {cdCardTraits = setFromList [Town], cdEasyModeQuantity = Just 0}
+woodenPalisade = (location "19078" "Wooden Palisade" FireInTheNight 3 2 3) {cdCardTraits = setFromList [Town]}
 
 burningWatchtower :: CardDef
 burningWatchtower = (location "19079" "Burning Watchtower" FireInTheNight 3 0 5) {cdCardTraits = setFromList [Town], cdEasyModeQuantity = Just 1}
@@ -3607,7 +3607,7 @@ ironHillsMine :: CardDef
 ironHillsMine = (location "18044" "Iron Hills Mine" TheKingsQuest 2 4 4) {cdCardTraits = setFromList [Underground], cdEasyModeQuantity = Just 1}
 
 contestedDepths :: CardDef
-contestedDepths = (location "18045" "Contested Depths" TheKingsQuest 3 1 5) {cdCardTraits = setFromList [Underground], cdEasyModeQuantity = Just 0}
+contestedDepths = (location "18045" "Contested Depths" TheKingsQuest 3 1 5) {cdCardTraits = setFromList [Underground]}
 
 deepChasm :: CardDef
 deepChasm =
@@ -3632,7 +3632,6 @@ forgottenCrypt =
   (location "19101" "Forgotten Crypt" TheGhostOfFramsburg 2 2 2)
     { cdCardTraits = setFromList [Ruins, Dark]
     , cdVictoryPoints = Just 2
-    , cdEasyModeQuantity = Just 0
     }
 
 hauntedHall :: CardDef
@@ -3649,7 +3648,6 @@ hiddenStaircase =
   (location "19103" "Hidden Staircase" TheGhostOfFramsburg 2 0 4)
     { cdCardTraits = setFromList [Ruins, Dark, Hazard]
     , cdKeywords = setFromList [Discover 0]
-    , cdEasyModeQuantity = Just 0
     }
 
 moonlitPassage :: CardDef
@@ -3743,7 +3741,6 @@ slopesOfEredMithrin =
     { cdCardTraits = setFromList [Hills]
     , cdKeywords = setFromList [Doomed 1]
     , cdShadowEffect = True
-    , cdEasyModeQuantity = Just 0
     }
 -- | An objective-location of Lost in Mirkwood: Guarded (X), worth 4 victory points. The
 -- scenario's Searching for a Way Out makes it immune to player card effects.
