@@ -98,6 +98,24 @@ spec = describe "The Wilds of Rhovanion player cards" do
       attachmentPlacement Attachments.hauberkOfMail `shouldReturn` Nothing
       map toCardCode . (.discard) <$> getPlayer pid `shouldReturn` [toCardCode Allies.redwaterSentry]
 
+    it "returns the facedown Eagles on Eagles of the Misty Mountains, which count as attachments" . gameTestWith deck $ \pid -> do
+      eagles <- putAllyIntoPlay pid Allies.eaglesOfTheMistyMountains
+      vassal <- genPlayerCard Allies.vassalOfTheWindlord (Just pid)
+      run $ AttachFacedown eagles vassal
+      run $ Discard eagles
+      chooseAbilityOf pid =<< hero bardCode
+      map (.id) . (.hand) <$> getPlayer pid >>= (`shouldSatisfy` elem vassal.id)
+      map toCardCode . (.discard) <$> getPlayer pid `shouldReturn` [toCardCode Allies.eaglesOfTheMistyMountains]
+
+    it "returns a Mount ally attached as an attachment, as Wild Stallion" . gameTestWith deck $ \pid -> do
+      sentry <- putAllyIntoPlay pid Allies.redwaterSentry
+      AllyTarget stallion <- putAllyIntoPlay pid Allies.wildStallion
+      run $ AllyBecomesAttachment stallion sentry
+      run $ Discard sentry
+      chooseAbilityOf pid =<< hero bardCode
+      handCodes pid >>= (`shouldSatisfy` elem (toCardCode Allies.wildStallion))
+      map toCardCode . (.discard) <$> getPlayer pid `shouldReturn` [toCardCode Allies.redwaterSentry]
+
   describe "Redwater Sentry" do
     it "costs an Armor 1 less, and gets +1 defense and sentinel while it has one" . gameTest $ \pid -> do
       sentry <- putAllyIntoPlay pid Allies.redwaterSentry

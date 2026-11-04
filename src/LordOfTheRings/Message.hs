@@ -446,6 +446,9 @@ data Message
     PutInDiscard PlayerCard
   | -- | a card goes facedown under the ally, or the Nameless enemy
     AttachFacedown Target PlayerCard
+  | -- | the facedown card leaves the character for its owner's hand, as Bard son of Brand
+    -- returns those on Eagles of the Misty Mountains
+    ReturnFacedownToHand Target CardId
   | -- | the player commits characters to the escape test, one at a time
     MakeEscapeTest EscapeTest
   | ResolveEscapeTest EscapeTest

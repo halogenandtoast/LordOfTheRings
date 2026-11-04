@@ -200,7 +200,7 @@ windowMatchesM matcher w@(Window timing wType) = case (matcher, wType) of
       Just a | AttachedTo host <- a.placement -> andM [characterMatches hm am host, (== [toTarget a]) <$> getAllAttachmentsOn host]
       _ -> pure False
   -- still in play, as "when a character leaves play" reads
-  (CharacterWithAttachmentsLeftPlayWindow t, LeftPlay c _ _) | t == timing -> notNull <$> playerAttachmentsOn c
+  (CharacterWithAttachmentsLeftPlayWindow t, LeftPlay c _ _) | t == timing -> orM [notNull <$> playerAttachmentsOn c, notNull <$> facedownAttachmentsOn c]
   (RevealedTitleInVictoryDisplayWindow t, Revealed target) | t == timing -> do
     es <- getsGame gameEntities
     shown <- getsGame (map (title . toCardDef) . (.victoryDisplay) . toAttrs . gameScenario)
