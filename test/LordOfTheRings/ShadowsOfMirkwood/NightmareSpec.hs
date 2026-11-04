@@ -4,7 +4,7 @@ import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Helpers.Character (getWillpower)
 import LordOfTheRings.Helpers.Modifiers (getModifiers)
 import LordOfTheRings.Keyword (Keyword (Ranged))
-import LordOfTheRings.Modifier (ModifierType (CannotReduceThreat, LoseKeyword))
+import LordOfTheRings.Modifier (ModifierType (CannotHaveAttachments, CannotHavePlayerAttachments, CannotReduceThreat, LoseKeyword))
 import LordOfTheRings.Helpers.Staging (getEnemyAttack, getStagingThreat)
 import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Objective (ObjectiveAttrs (..))
@@ -127,6 +127,11 @@ spec = describe "Shadows of Mirkwood nightmare mode" do
       run $ DealDamage GameSource (toTarget troll) 2
       reveal Treacheries.timeForSupper []
       getDamage (toTarget troll) `shouldReturn` 0
+
+    it "Stuart bars only player attachments" . nightmare conflictAtTheCarrock $ \_ -> do
+      run . AddToStaging =<< genEncounterCard Enemies.stuartNightmare
+      stuart <- theEnemy
+      getModifiers stuart >>= (`shouldSatisfy` \ms -> CannotHavePlayerAttachments `elem` ms && CannotHaveAttachments `notElem` ms)
 
   describe "A Journey to Rhosgobel" do
     it "builds the nightmare deck" . nightmare aJourneyToRhosgobel $ \_ -> do
