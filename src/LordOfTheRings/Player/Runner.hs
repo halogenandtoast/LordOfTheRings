@@ -524,7 +524,10 @@ canAfford p c = do
 -- it is to go on lowers it.
 canAffordWith :: HasGame m => Int -> Player -> Card -> m Bool
 canAffordWith discount p c = case (c.cost, c.sphere) of
-  (Just cost, Just sphere) -> do
+  (Just cost, Just printed) -> do
+    -- one that does not require a resource match is paid for as a neutral card
+    free <- any (\case NextIgnoresResourceMatch m -> cardMatches m c; _ -> False) <$> getModifiers (PlayerTarget p.id)
+    let sphere = if free then Neutral else printed
     extra <- subtract discount <$> costModifier p.id c
     heroes <- traverse getHero =<< select (HeroControlledBy $ PlayerWithId p.id)
     payers <-

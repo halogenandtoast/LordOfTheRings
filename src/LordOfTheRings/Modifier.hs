@@ -302,6 +302,9 @@ data ModifierType
     ReduceNextCostOf CardMatcher Int
   | -- | as 'ReduceNextCostOf', to no less than 0
     LowerNextCostOf CardMatcher Int
+  | -- | on a player: the next matching card he plays does not require a resource match,
+    -- as King of Dale's ally; spent with it
+    NextIgnoresResourceMatch CardMatcher
   | -- | on a character: it is defending the attack being resolved
     Defending
   | -- | on a card in hand, as its card id: its player may discard this many cards from

@@ -3940,13 +3940,19 @@ payFor g pid card fromHand windows host discount = do
           && or
             ( [cardMatches m card | ReduceNextCostOf m _ <- effectModifiers e]
                 <> [cardMatches m card | LowerNextCostOf m _ <- effectModifiers e]
+                <> [cardMatches m card | NextIgnoresResourceMatch m <- effectModifiers e]
                 <> [fromHand | NextCardGainsDoomed _ <- effectModifiers e]
             )
       spentEffects = filter spent (gameEffects g)
+      -- one that does not require a resource match, as King of Dale's ally, is paid as neutral
+      unmatched = or [cardMatches m card | e <- spentEffects, NextIgnoresResourceMatch m <- effectModifiers e]
+      asPaid = \case
+        LordOfTheRings.ActiveCost.ResourceCost _ c | unmatched -> LordOfTheRings.ActiveCost.ResourceCost Neutral c
+        c -> c
   let activeCost =
         ActiveCost
           { activeCostId = costId
-          , activeCostCost = raiseCost extra (cardCost card)
+          , activeCostCost = raiseCost extra (asPaid $ cardCost card)
           , activeCostCard = card
           , activeCostPlayer = pid
           , activeCostWindows = windows
