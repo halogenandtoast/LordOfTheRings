@@ -813,6 +813,10 @@ putHeroIntoPlay :: ReverseQueue m => PlayerId -> PlayerCard -> m ()
 putHeroIntoPlay pid = push . PutHeroIntoPlay pid
 
 -- | A treachery dealt as a shadow card comes into play attached to the host.
+-- | The treachery leaves the encounter discard pile attached to the host, not revealed.
+attachFromEncounterDiscard :: (ReverseQueue m, Targetable host) => EncounterCard -> host -> m ()
+attachFromEncounterDiscard card = push . AttachFromEncounterDiscard card . toTarget
+
 attachShadowTreachery :: (ReverseQueue m, Targetable host) => EnemyId -> CardId -> host -> m ()
 attachShadowTreachery eid cid = push . PutShadowTreacheryIntoPlay eid cid . AttachedTo . toTarget
 

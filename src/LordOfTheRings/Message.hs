@@ -324,6 +324,9 @@ data Message
     attaching itself where its placement says
     -}
     PutShadowTreacheryIntoPlay EnemyId CardId Placement
+  | -- | the treachery leaves the encounter discard pile attached to the target, its When
+    -- Revealed effect not resolved, as Broken Rudder's *Forced effect attaches it
+    AttachFromEncounterDiscard EncounterCard Target
   | ShufflePlayerDeck PlayerId
   | {- | the player takes matching cards from those searched in their deck into hand, any
     number of them or only 1 as the flag says, then shuffles their deck

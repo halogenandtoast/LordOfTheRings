@@ -57,6 +57,8 @@ data ModifierType
   | -- | on an enemy: allies cannot defend while it attacks, as Snow Warg's
     CannotBeDefendedByAllies
   | CannotHaveAttachments
+  | -- | no player attachment may be attached to it, as Stuart reads
+    CannotHavePlayerAttachments
   | -- | no attachment with the restricted keyword can be attached to it
     CannotHaveRestrictedAttachments
   | -- | on the game: the total threat in the staging area is raised by this much

@@ -1647,6 +1647,9 @@ runGameMessage msg g = case msg of
       %~ Map.delete oid
       & scenarioL
       %~ overAttrs (encounterDeckL .~ deck)
+  AttachFromEncounterDiscard card host | card `elem` (toAttrs g.scenario).encounterDiscard -> do
+    treachery <- overAttrs (\a -> a {treacheryPlacement = AttachedTo host}) <$> newTreachery card
+    pure $ g & entitiesL . treacheriesL %~ insertEntity treachery & scenarioL %~ overAttrs (encounterDiscardL %~ filter (/= card))
   PutShadowTreacheryIntoPlay host cid placement -> do
     for_ (Map.lookup host g.entities.enemies) \hostEnemy ->
       for_ (find ((== cid) . ecId) hostEnemy.shadowCards) \card -> do

@@ -28,7 +28,7 @@ instance RunMessage AttachmentAttrs where
       | attrs.placement == StagingArea
       , attrs.attachTo == PlayIntoStagingArea
       , (eid : _) <- [eid | Window After (EntersStagingArea (EnemyTarget eid)) <- ws] -> do
-          eligible <- notElem CannotHaveAttachments <$> getModifiers eid
+          eligible <- (\ms -> not $ any (`elem` ms) [CannotHaveAttachments, CannotHavePlayerAttachments]) <$> getModifiers eid
           pushWhen eligible $ AttachCard attrs.id (toTarget eid)
           pure attrs
     -- one waiting in its owner's play area, as Followed, attaches to the next enemy that

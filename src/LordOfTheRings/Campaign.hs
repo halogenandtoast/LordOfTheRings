@@ -77,6 +77,10 @@ data CampaignLogKey
   | -- | Angmar Awakened: Deadmen's Dike's resolution has the players choose Iârion's
     -- Pendant or Amarthiúl's Courage, which they do as the next scenario is set up
     ChoosePendantOrCourage
+  | -- | Angmar Awakened: the books The Treachery of Rhudaur's resolution lets each player
+    -- add for a Clue they control, by the seat of that player ('counted'), offered as the
+    -- next scenario is set up
+    BooksEarned
   deriving stock (Show, Eq, Ord, Generic, Enum, Bounded)
   deriving anyclass (ToJSON, FromJSON)
 
@@ -409,4 +413,4 @@ updateLog = \case
   RemoveFromPool code -> \l -> l {campaignLogPool = filter ((/= code) . (.code)) l.pool}
   AdjustThreatPenalty n -> \l -> l {campaignLogThreatPenalty = l.threatPenalty + n}
   Record key cards -> record key cards
-  Unrecord key -> \l -> l {campaignLogNotes = Map.delete key l.notes}
+  Unrecord key -> \l -> l {campaignLogNotes = Map.delete key l.notes, campaignLogCounts = Map.delete key l.counts}
