@@ -4075,9 +4075,12 @@ attackDamage pid eid target n = do
         HeroTarget h -> toCard <$> Map.lookup h es.heroes
         AllyTarget a -> toCard <$> Map.lookup a es.allies
         _ -> Nothing
+  defending <- fromMaybe pid <$> characterController target
   pure $ case captured of
     -- it captures the character instead, as Cruel Torturer reads
     Just card | CaptureInsteadOfAttackDamage `elem` mods, n > 0 -> [PlaceUnderneath (EnemyTarget eid) [card]]
+    -- or the defending player's threat is raised as much, as The Two Watchers' is
+    _ | AttackDamageToThreatInstead `elem` mods -> [x | n > 0, x <- [RaiseThreat defending n, CheckWindows [mkAfter $ ThreatRaisedByEncounter defending n]]]
     _ ->
       DealDamage (EnemyAttackSource eid) target n
         : concat [[RaiseThreat pid excess, CheckWindows [mkAfter $ ThreatRaisedByEncounter pid excess]] | excessToThreat, excess > 0]
