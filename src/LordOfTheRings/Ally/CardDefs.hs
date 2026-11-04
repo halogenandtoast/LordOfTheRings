@@ -253,6 +253,18 @@ allAllyCards =
       , wilyadorTheLandOfSorrow
       , haleth
       , mistyMountainJourneyman
+      , anbornLeadership
+      , mablungLore
+      , skinbark
+      , gamling
+      , grimbold
+      , princeImrahilSpirit
+      , halbaradLeadership
+      , ghanBuriGhan
+      , rosieCotton
+      , elfhelmTactics
+      , elladanLore
+      , elrohirSpirit
       ]
 
 guardOfTheCitadel :: CardDef
@@ -1799,3 +1811,92 @@ mistyMountainJourneyman =
   (ally "22144" "Misty Mountain Journeyman" Spirit (StaticCost 1) 2 0 0 1)
     { cdCardTraits = setFromList [Dunedain, Scout]
     }
+
+-- * The Lord of the Rings saga: The Land of Shadow, The Flame of the West and The Mountain
+-- of Fire
+
+anbornLeadership :: CardDef
+anbornLeadership =
+  unique
+    (ally "144004" "Anborn" Leadership (StaticCost 4) 1 3 1 3)
+      { cdCardTraits = setFromList [Gondor, Ranger]
+      }
+
+mablungLore :: CardDef
+mablungLore =
+  unique
+    (ally "144005" "Mablung" Lore (StaticCost 2) 2 1 0 2)
+      { cdCardTraits = setFromList [Gondor, Ranger]
+      }
+
+skinbark :: CardDef
+skinbark =
+  unique
+    (ally "144006" "Skinbark" Tactics (StaticCost 3) 0 4 2 3)
+      { cdCardTraits = setFromList [Ent]
+      }
+
+gamling :: CardDef
+gamling =
+  unique
+    (ally "144007" "Gamling" Spirit (StaticCost 3) 1 1 2 2)
+      { cdCardTraits = setFromList [Rohan, Warrior]
+      }
+
+grimbold :: CardDef
+grimbold =
+  unique
+    (ally "145004" "Grimbold" Tactics (StaticCost 3) 2 1 1 2)
+      { cdCardTraits = setFromList [Rohan, Warrior]
+      }
+
+princeImrahilSpirit :: CardDef
+princeImrahilSpirit =
+  unique
+    (ally "145005" "Prince Imrahil" Spirit (StaticCost 4) 2 2 2 3)
+      { cdCardTraits = setFromList [Gondor, Noble]
+      }
+
+halbaradLeadership :: CardDef
+halbaradLeadership =
+  unique
+    (ally "145006" "Halbarad" Leadership (StaticCost 4) 2 2 2 3)
+      { cdCardTraits = setFromList [Dunedain, Ranger]
+      }
+
+-- | Its willpower is X, the threat of the active location: printed 0, raised by its own
+-- modifier.
+ghanBuriGhan :: CardDef
+ghanBuriGhan =
+  unique
+    (ally "145007" "Ghân-buri-Ghân" Lore (StaticCost 2) 0 1 1 2)
+      { cdCardTraits = setFromList [Wose]
+      }
+
+rosieCotton :: CardDef
+rosieCotton =
+  unique
+    (ally "146005" "Rosie Cotton" Leadership (StaticCost 2) 2 0 0 2)
+      { cdCardTraits = setFromList [Hobbit]
+      }
+
+elfhelmTactics :: CardDef
+elfhelmTactics =
+  unique
+    (ally "146006" "Elfhelm" Tactics (StaticCost 4) 1 2 2 3)
+      { cdCardTraits = setFromList [Rohan, Warrior]
+      }
+
+elladanLore :: CardDef
+elladanLore =
+  unique
+    (ally "146007" "Elladan" Lore (StaticCost 3) 2 1 1 3)
+      { cdCardTraits = setFromList [Noldor, Ranger]
+      }
+
+elrohirSpirit :: CardDef
+elrohirSpirit =
+  unique
+    (ally "146008" "Elrohir" Spirit (StaticCost 3) 2 1 1 3)
+      { cdCardTraits = setFromList [Noldor, Ranger]
+      }

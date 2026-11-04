@@ -241,6 +241,18 @@ allAttachmentCards =
       , shiningShield
       , tirelessThoroughbred
       , thorongil
+      , staffOfLebethron
+      , ambush
+      , snowmane
+      , goldenShield
+      , liveryOfTheTower
+      , roheryn
+      , bannerOfElendil
+      , esquireOfRohan
+      , esquireOfGondor
+      , orcDisguise
+      , guthwine
+      , friendOfFriends
       ]
 
 -- | A boon of the Revised Core campaign: Permanent, limit 1 per hero.
@@ -1694,3 +1706,96 @@ thorongil =
     (attachment "22146" "Thorongil" Neutral (StaticCost 3))
       { cdCardTraits = setFromList [Title]
       }
+
+-- * The Lord of the Rings saga: The Land of Shadow, The Flame of the West and The Mountain
+-- of Fire
+
+staffOfLebethron :: CardDef
+staffOfLebethron =
+  (attachment "144008" "Staff of Lebethron" Leadership (StaticCost 1))
+    { cdCardTraits = setFromList [Item]
+    , cdKeywords = setFromList [Restricted]
+    }
+
+ambush :: CardDef
+ambush =
+  (attachment "144009" "Ambush" Lore (StaticCost 2))
+    { cdCardTraits = setFromList [Condition, Trap]
+    }
+
+snowmane :: CardDef
+snowmane =
+  unique
+    (attachment "144010" "Snowmane" Spirit (StaticCost 1))
+      { cdCardTraits = setFromList [Mount]
+      , cdKeywords = setFromList [Restricted]
+      }
+
+goldenShield :: CardDef
+goldenShield =
+  unique
+    (attachment "145010" "Golden Shield" Tactics (StaticCost 1))
+      { cdCardTraits = setFromList [Item, Armor]
+      , cdKeywords = setFromList [Restricted]
+      }
+
+liveryOfTheTower :: CardDef
+liveryOfTheTower =
+  (attachment "145011" "Livery of the Tower" Spirit (StaticCost 0))
+    { cdCardTraits = setFromList [Item, Armor]
+    , cdKeywords = setFromList [Restricted]
+    }
+
+roheryn :: CardDef
+roheryn =
+  unique
+    (attachment "145012" "Roheryn" Leadership (StaticCost 2))
+      { cdCardTraits = setFromList [Mount]
+      }
+
+bannerOfElendil :: CardDef
+bannerOfElendil =
+  unique
+    (attachment "145013" "Banner of Elendil" Fellowship (StaticCost 3))
+      { cdCardTraits = setFromList [Artifact, Item]
+      }
+
+{- | A Permanent boon of The Flame of the West: never in a deck built by its player, it is
+earned in the campaign and attached to a hero at setup (Setup: Attach to a hero).
+-}
+esquireBoon :: CardCode -> Name -> CardDef
+esquireBoon code name =
+  unique
+    (attachment code name Neutral (StaticCost 0))
+      { cdCardTraits = setFromList [Title, Boon]
+      , cdKeywords = setFromList [Permanent]
+      , cdSetupAttach = True
+      , cdDeckLimit = 1
+      }
+
+esquireOfRohan :: CardDef
+esquireOfRohan = esquireBoon "145014" "Esquire of Rohan"
+
+esquireOfGondor :: CardDef
+esquireOfGondor = esquireBoon "145015" "Esquire of Gondor"
+
+orcDisguise :: CardDef
+orcDisguise =
+  (attachment "146009" "Orc Disguise" Fellowship (StaticCost 1))
+    { cdCardTraits = setFromList [Item, Armor]
+    , cdLimitOnePerHost = True
+    }
+
+guthwine :: CardDef
+guthwine =
+  unique
+    (attachment "146011" "Gúthwinë" Leadership (StaticCost 2))
+      { cdCardTraits = setFromList [Item, Weapon]
+      , cdKeywords = setFromList [Restricted]
+      }
+
+friendOfFriends :: CardDef
+friendOfFriends =
+  (attachment "146012" "Friend of Friends" Neutral (StaticCost 1))
+    { cdCardTraits = setFromList [Condition]
+    }

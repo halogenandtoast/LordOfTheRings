@@ -4,6 +4,7 @@ import Data.Map.Strict qualified as Map
 import LordOfTheRings.Card.CardDef
 import LordOfTheRings.Card.Code
 import LordOfTheRings.Keyword
+import LordOfTheRings.Name (Name)
 import LordOfTheRings.Prelude
 import LordOfTheRings.Sphere
 import LordOfTheRings.Trait
@@ -99,6 +100,14 @@ allHeroCards =
       , gwaihirTheLandOfSorrow
       , aragornSpirit
       , aragornTheFlameOfTheWest
+      , frodoBagginsTheLandOfShadow
+      , frodoBagginsTheMountainOfFire
+      , aragornTheMountainOfFire
+      , faramirLeadership
+      , damrodLore
+      , beregondSpirit
+      , eomerLeadership
+      , tomCotton
       ]
 
 aragorn :: CardDef
@@ -632,11 +641,69 @@ aragornSpirit =
     , cdKeywords = setFromList [Sentinel]
     }
 
--- | The Fellowship sphere Aragorn of The Flame of the West, threat cost 0: the first player
--- takes control of him as its scenarios are set up.
+-- * The Lord of the Rings saga: The Land of Shadow, The Flame of the West and The Mountain
+-- of Fire
+
+{- | A Fellowship sphere hero: no threat cost, as the scenario supplies it to the first
+player at setup, apart from his deck (see 'LordOfTheRings.Saga.fellowshipSetup').
+-}
+fellowshipHero :: CardCode -> Name -> Int -> Int -> Int -> Int -> CardDef
+fellowshipHero code name willpower attack defense hitPoints =
+  (hero code name Fellowship 0 willpower attack defense hitPoints) {cdThreatCost = Nothing}
+
+frodoBagginsTheLandOfShadow :: CardDef
+frodoBagginsTheLandOfShadow =
+  (fellowshipHero "144001" "Frodo Baggins" 2 1 2 2)
+    { cdCardTraits = setFromList [Hobbit, RingBearer]
+    }
+
+faramirLeadership :: CardDef
+faramirLeadership =
+  (hero "144002" "Faramir" Leadership 11 2 2 2 5)
+    { cdCardTraits = setFromList [Gondor, Noble, Ranger]
+    , cdKeywords = setFromList [Ranged]
+    }
+
+damrodLore :: CardDef
+damrodLore =
+  (hero "144003" "Damrod" Lore 9 2 2 1 4)
+    { cdCardTraits = setFromList [Gondor, Ranger]
+    }
+
 aragornTheFlameOfTheWest :: CardDef
 aragornTheFlameOfTheWest =
-  (hero "145001" "Aragorn" Fellowship 0 2 3 2 5)
+  (fellowshipHero "145001" "Aragorn" 2 3 2 5)
     { cdCardTraits = setFromList [Dunedain, Noble, Ranger]
-    , cdKeywords = setFromList [FirstPlayerGainsControl]
+    }
+
+beregondSpirit :: CardDef
+beregondSpirit =
+  (hero "145003" "Beregond" Spirit 10 0 1 4 4)
+    { cdCardTraits = setFromList [Gondor, Warrior]
+    , cdKeywords = setFromList [Sentinel]
+    }
+
+frodoBagginsTheMountainOfFire :: CardDef
+frodoBagginsTheMountainOfFire =
+  (fellowshipHero "146001" "Frodo Baggins" 2 1 2 2)
+    { cdCardTraits = setFromList [Hobbit, RingBearer]
+    }
+
+aragornTheMountainOfFire :: CardDef
+aragornTheMountainOfFire =
+  (fellowshipHero "146002" "Aragorn" 2 3 2 5)
+    { cdCardTraits = setFromList [Dunedain, Gondor, Noble, Warrior]
+    , cdKeywords = setFromList [Sentinel, FirstPlayerGainsControl]
+    }
+
+eomerLeadership :: CardDef
+eomerLeadership =
+  (hero "146003" "Éomer" Leadership 10 1 3 2 4)
+    { cdCardTraits = setFromList [Rohan, Noble, Warrior]
+    }
+
+tomCotton :: CardDef
+tomCotton =
+  (hero "146004" "Tom Cotton" Tactics 8 1 1 3 3)
+    { cdCardTraits = setFromList [Hobbit]
     }

@@ -1788,7 +1788,12 @@ runGameMessage msg g = case msg of
             else pure attackers
         attack <- getAttackStrength counted eid (toCardDef enemy')
         alone <- case attackers of
-          [a] -> elem IgnoresDefenseWhenAttackingAlone <$> getModifiers a
+          [a] -> do
+            aMods <- getModifiers a
+            orM
+              [ pure $ IgnoresDefenseWhenAttackingAlone `elem` aMods
+              , anyM (\m -> selectAny (EnemyWithId eid <> m)) [m | IgnoresDefenseOfWhenAttackingAlone m <- aMods]
+              ]
           _ -> pure False
         defense <- if alone then pure 0 else getEnemyDefense eid
         hitPoints <- getEnemyHitPoints eid
@@ -3838,10 +3843,12 @@ checkRestricted g host = do
   let slots :: HasCardDef a => a -> Int
       slots = cdRestrictedSlots . toCardDef
       restrictedOn =
-        [(toTarget x, slots x) | x <- toList g.entities.attachments, x.placement == AttachedTo host, isRestricted x || gainsRestricted x]
+        [(toTarget x, slots x) | x <- toList g.entities.attachments, x.placement == AttachedTo host, (isRestricted x && not (losesRestricted x)) || gainsRestricted x]
           <> [(toTarget o, slots o) | o <- toList g.entities.objectives, o.placement == AttachedTo host, isRestricted o]
       -- an attachment given Restricted with its text, as Wild Stallion's Mount text
       gainsRestricted x = GainKeyword Restricted `elem` map modifierType (Map.findWithDefault [] (toTarget x) (gameModifiers g))
+      -- one that loses it on its host, as Snowmane on Théoden
+      losesRestricted x = LoseKeyword Restricted `elem` map modifierType (Map.findWithDefault [] (toTarget x) (gameModifiers g))
   controller <- characterController host
   extra <- sum . (\ms -> [n | AdditionalRestrictedSlots n <- ms]) <$> getModifiers host
   for_ controller \pid ->

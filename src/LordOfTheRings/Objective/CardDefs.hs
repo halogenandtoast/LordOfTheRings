@@ -155,6 +155,8 @@ allObjectiveCards =
       , farin
       , overcomeByFear
       , armyOfTheDeadBoon
+      , theOneRingTheLandOfShadow
+      , theOneRingTheMountainOfFire
       ]
 
 durinsAxe :: CardDef
@@ -1083,3 +1085,21 @@ armyOfTheDeadBoon =
     , cdKeywords = setFromList [FirstPlayerGainsControl]
     , cdOtherSide = Just "145067"
     }
+-- * The Lord of the Rings saga
+
+{- | A box's One Ring: put into play attached to the Ring-bearer as the scenario is set up
+(see 'LordOfTheRings.Message.Lifted.setUpFellowship'), never gathered with an encounter
+set.
+-}
+sagaOneRing :: CardCode -> CardDef
+sagaOneRing code =
+  unique
+    (emptyCardDef code "The One Ring" ObjectiveType)
+      { cdCardTraits = setFromList [Artifact, Item, Ring]
+      }
+
+theOneRingTheLandOfShadow :: CardDef
+theOneRingTheLandOfShadow = sagaOneRing "144063"
+
+theOneRingTheMountainOfFire :: CardDef
+theOneRingTheMountainOfFire = sagaOneRing "146065"

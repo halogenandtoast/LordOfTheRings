@@ -105,7 +105,15 @@ import LordOfTheRings.Hero.Cards.FrodoBagginsLeadership
 import LordOfTheRings.Hero.Cards.ThorinStonehelm
 import LordOfTheRings.Hero.Cards.GwaihirTheLandOfSorrow
 import LordOfTheRings.Hero.Cards.AragornSpirit
-import LordOfTheRings.Hero.Cards.AragornTheFlameOfTheWest (aragornTheFlameOfTheWest)
+import LordOfTheRings.Hero.Cards.FrodoBagginsTheLandOfShadow
+import LordOfTheRings.Hero.Cards.FrodoBagginsTheMountainOfFire
+import LordOfTheRings.Hero.Cards.AragornTheFlameOfTheWest
+import LordOfTheRings.Hero.Cards.AragornTheMountainOfFire
+import LordOfTheRings.Hero.Cards.FaramirLeadership
+import LordOfTheRings.Hero.Cards.DamrodLore
+import LordOfTheRings.Hero.Cards.BeregondSpirit
+import LordOfTheRings.Hero.Cards.EomerLeadership
+import LordOfTheRings.Hero.Cards.TomCotton
 import LordOfTheRings.Hero.Runner ()
 import LordOfTheRings.Hero.Types as X
 import LordOfTheRings.Id
@@ -274,5 +282,13 @@ allHeroes =
         , SomeHeroCard gwaihirTheLandOfSorrow
         , SomeHeroCard aragornSpirit
         , SomeHeroCard aragornTheFlameOfTheWest
+        , SomeHeroCard frodoBagginsTheLandOfShadow
+        , SomeHeroCard frodoBagginsTheMountainOfFire
+        , SomeHeroCard aragornTheMountainOfFire
+        , SomeHeroCard faramirLeadership
+        , SomeHeroCard damrodLore
+        , SomeHeroCard beregondSpirit
+        , SomeHeroCard eomerLeadership
+        , SomeHeroCard tomCotton
         ]
     ]

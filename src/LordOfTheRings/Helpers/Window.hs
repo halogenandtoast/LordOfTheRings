@@ -5,7 +5,7 @@ import Data.Map.Strict qualified as Map
 import LordOfTheRings.Ability
 import LordOfTheRings.Ally.Types (allyTokens)
 import LordOfTheRings.Attachment.Types
-import LordOfTheRings.Card (cdCardTraits, cdHitPoints, cdKeywords, cdName, cdShadowCannotBeCanceled, cdVictoryPoints, cdWhenRevealed, ecId, toCardCode, toCardDef)
+import LordOfTheRings.Card (cdCardTraits, cdHitPoints, cdKeywords, cdName, cdShadowCannotBeCanceled, cdVictoryPoints, cdWhenRevealed, ecId, toCard, toCardCode, toCardDef)
 import LordOfTheRings.Effect (Effect (..))
 import LordOfTheRings.Classes.Entity
 import LordOfTheRings.Classes.HasGame
@@ -15,6 +15,7 @@ import LordOfTheRings.Game.Base
 import LordOfTheRings.Campaign (recorded)
 import LordOfTheRings.Helpers.Attachment (cardHosts)
 import LordOfTheRings.Helpers.Campaign (getCampaignLog)
+import LordOfTheRings.Helpers.Fellowship (readySagaOneRing)
 import LordOfTheRings.Helpers.Modifiers (cardsPlayedThisRound, getModifiers)
 import LordOfTheRings.Helpers.Staging (getLocationQuestPoints)
 import LordOfTheRings.Location.Grid (distance)
@@ -242,6 +243,22 @@ windowMatchesM matcher w@(Window timing wType) = case (matcher, wType) of
     players <- select pm
     andM [selectAny (EnemyWithId eid <> m), anyM (fmap (maybe False (`elem` players)) . characterController) attackers]
   (MatchingAttackersDeclaredWindow t m, AttackersDeclared eid) | t == timing -> selectAny (EnemyWithId eid <> m)
+  (AttachedToEnemyWindow t pid trait, Attached (AttachmentTarget aid) (EnemyTarget _) traits) | t == timing && trait `member` traits ->
+    maybe False ((== pid) . (.controller) . toAttrs) . Map.lookup aid . (.attachments) <$> getsGame gameEntities
+  -- the ally is kept aside as the window opens; its card has gone to its owner's discard
+  -- pile if it was discarded, not returned to hand or deck
+  (AllyWithTraitDiscardedFromPlayWindow t pid trait, LeftPlay (AllyTarget aid) pid' traits) | t == timing && pid == pid' && trait `member` traits -> do
+    departed <- getsGame (Map.lookup aid . gameLeftPlay)
+    case departed of
+      Just a -> do
+        let card = toCard a
+        discards <- getsGame (concatMap (.discard) . toList . gamePlayers)
+        pure $ any ((== card.id) . (.id)) discards
+      Nothing -> pure False
+  (PlayerEngagedMatchingEnemyWindow t pid m, EnemyEngaged eid pid') | t == timing && pid == pid' -> selectAny (EnemyWithId eid <> m)
+  (PlayerOptionallyEngagedMatchingWindow t pid m, OptionallyEngaged eid pid') | t == timing && pid == pid' -> selectAny (EnemyWithId eid <> m)
+  (HeroDefendedAttackWindow t hm m, DefendedAttack (HeroTarget hid) eid) | t == timing ->
+    andM [selectAny (HeroWithId hid <> hm), selectAny (EnemyWithId eid <> m)]
   (ErrataWindow pid errata printed, _) -> do
     followsErrata <- selectAny (PlayerWithId pid <> PlayerUsingErrata)
     windowMatchesM (if followsErrata then errata else printed) w
@@ -410,7 +427,10 @@ canPay = \case
   SpendResourcesCost sphere n -> do
     pid <- getsGame gameActivePlayer
     (>= n) <$> getResourcesOfSphere pid sphere
-  ExhaustTheOneRingCost -> selectAny (heroWithReadyOneRing <> HeroControlledBy ActivePlayer)
+  -- the Master One Ring, or a saga's One Ring objective
+  ExhaustTheOneRingCost -> do
+    pid <- getsGame gameActivePlayer
+    orM [selectAny (heroWithReadyOneRing <> HeroControlledBy ActivePlayer), isJust <$> readySagaOneRing pid]
 
 -- | As 'canPay', for the player paying, whom 'ActivePlayer' matches.
 canPayFor :: HasGame m => PlayerId -> AbilityCost -> m Bool
@@ -441,7 +461,10 @@ payCost pid cost rest = case cost of
   DamageHeroCost m n -> pure [PayDamageHeroCost pid m n rest]
   ExhaustCharacterCost hm am -> pure [PayExhaustCharacterCost pid hm am rest]
   Costs cs -> foldrM (payCost pid) rest cs
-  ExhaustTheOneRingCost -> maybe rest (\aid -> Exhaust (AttachmentTarget aid) : rest) <$> getTheOneRing
+  ExhaustTheOneRingCost ->
+    getTheOneRing >>= \case
+      Just aid -> pure $ Exhaust (AttachmentTarget aid) : rest
+      Nothing -> maybe rest (\oid -> Exhaust (ObjectiveTarget oid) : rest) <$> readySagaOneRing pid
   _ -> pure $ costMessages (PlayerSource pid) cost <> rest
 
 costMessages :: Source -> AbilityCost -> [Message]

@@ -403,6 +403,9 @@ data ModifierType
     ReducedByDiscardingFromDeck Int
   | -- | on a character: the enemy it attacks alone does not count its defense
     IgnoresDefenseWhenAttackingAlone
+  | -- | on a character: a matching enemy it attacks alone does not count its defense, as
+    -- Skinbark an Orc
+    IgnoresDefenseOfWhenAttackingAlone EnemyMatcher
   | -- | on a player: an enemy engaged them this round
     EngagedAnEnemyThisRound
   | -- | on a player: his threat was raised this round, by anything, as Darkness in the
