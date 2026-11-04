@@ -420,6 +420,8 @@ import LordOfTheRings.Treachery.Cards.TheDarkLordsReach
 import LordOfTheRings.Treachery.Cards.OverseersWhip
 import LordOfTheRings.Treachery.Cards.CrueltyOfMordor
 import LordOfTheRings.Treachery.Cards.BrokenCaptives
+import LordOfTheRings.Treachery.Cards.CallOfTheRing
+import LordOfTheRings.Treachery.Cards.WeHatesThem
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -867,5 +869,7 @@ allTreacherys =
         , SomeTreacheryCard overseersWhip
         , SomeTreacheryCard crueltyOfMordor
         , SomeTreacheryCard brokenCaptives
+        , SomeTreacheryCard callOfTheRing
+        , SomeTreacheryCard weHatesThem
         ]
     ]

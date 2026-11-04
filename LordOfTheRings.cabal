@@ -243,6 +243,7 @@ library
       LordOfTheRings.Ally.Cards.SilvanTracker
       LordOfTheRings.Ally.Cards.SilverlodeArcher
       LordOfTheRings.Ally.Cards.SilverWing
+      LordOfTheRings.Ally.Cards.SmeagolTheLandOfShadow
       LordOfTheRings.Ally.Cards.SnowbournScout
       LordOfTheRings.Ally.Cards.SoldierOfDolAmroth
       LordOfTheRings.Ally.Cards.SoldierOfErebor
@@ -728,6 +729,7 @@ library
       LordOfTheRings.Enemy.Cards.GoblinTroop
       LordOfTheRings.Enemy.Cards.GoblinWarlord
       LordOfTheRings.Enemy.Cards.GollumASitE
+      LordOfTheRings.Enemy.Cards.GollumTheLandOfShadow
       LordOfTheRings.Enemy.Cards.GraspingArm
       LordOfTheRings.Enemy.Cards.GraspingTentacle
       LordOfTheRings.Enemy.Cards.Graxar
@@ -793,6 +795,7 @@ library
       LordOfTheRings.Enemy.Cards.MorgulSorcerer
       LordOfTheRings.Enemy.Cards.MorgulSpider
       LordOfTheRings.Enemy.Cards.MorgulTracker
+      LordOfTheRings.Enemy.Cards.MorgulWraith
       LordOfTheRings.Enemy.Cards.MoriaBats
       LordOfTheRings.Enemy.Cards.Morris
       LordOfTheRings.Enemy.Cards.MorrisNightmare
@@ -2541,6 +2544,7 @@ library
       LordOfTheRings.Scenario.Scenarios.TheMumakil.Helpers
       LordOfTheRings.Scenario.Scenarios.TheNinInEilph
       LordOfTheRings.Scenario.Scenarios.TheNinInEilph.Helpers
+      LordOfTheRings.Scenario.Scenarios.ThePassageOfTheMarshes.Helpers
       LordOfTheRings.Scenario.Scenarios.TheRedhornGate
       LordOfTheRings.Scenario.Scenarios.TheRiverRunning
       LordOfTheRings.Scenario.Scenarios.TheRiverRunning.Helpers
@@ -2623,6 +2627,7 @@ library
       LordOfTheRings.Treachery.Cards.BurningReek
       LordOfTheRings.Treachery.Cards.BurntHomestead
       LordOfTheRings.Treachery.Cards.CallOfTheCurse
+      LordOfTheRings.Treachery.Cards.CallOfTheRing
       LordOfTheRings.Treachery.Cards.CalphonsFolly
       LordOfTheRings.Treachery.Cards.CandlesOfCorpses
       LordOfTheRings.Treachery.Cards.CaptivesOfGornakh
@@ -2984,6 +2989,7 @@ library
       LordOfTheRings.Treachery.Cards.WatchfulEyes
       LordOfTheRings.Treachery.Cards.WaylaidByAgents
       LordOfTheRings.Treachery.Cards.WearyLands
+      LordOfTheRings.Treachery.Cards.WeHatesThem
       LordOfTheRings.Treachery.Cards.WeighedDown
       LordOfTheRings.Treachery.Cards.WeightOfResponsibility
       LordOfTheRings.Treachery.Cards.WeveBeenSeen
