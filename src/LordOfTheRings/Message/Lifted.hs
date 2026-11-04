@@ -1755,6 +1755,15 @@ sack n = when (n > 0) $ push $ DrawFromSackDeck n
 returnToSackDeck :: ReverseQueue m => ObjectiveId -> m ()
 returnToSackDeck = push . ReturnToSackDeck
 
+-- | The top N cards of the encounter discard pile go to the bottom of the encounter deck,
+-- as Cave Entrance and A Nice Pickle read.
+moveDiscardToBottomOfEncounterDeck :: ReverseQueue m => Int -> m ()
+moveDiscardToBottomOfEncounterDeck n = do
+  cards <- take n <$> getEncounterDiscard
+  unless (null cards) do
+    traverse_ removeFromEncounterDiscard cards
+    push $ PutOnBottomOfEncounterDeck cards
+
 -- | The top card of the Evil Creatures deck is added to the staging area, the source told
 -- of it with 'AddedFromEvilCreaturesDeck' (Journey Up the Anduin).
 addFromEvilCreaturesDeck :: (ReverseQueue m, Sourceable source) => source -> m ()
