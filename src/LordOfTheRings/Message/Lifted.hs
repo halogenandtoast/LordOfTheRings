@@ -147,7 +147,7 @@ against instead, as the Haradrim cycle's "remove 2 progress from the main quest"
 -}
 removeProgressFromMainQuest :: (ReverseQueue m, Sourceable source) => source -> Int -> m ()
 removeProgressFromMainQuest source n = do
-  quests <- getsGame (filter (not . isSideQuest) . toList . entitiesQuests . gameEntities)
+  quests <- getMainQuestCards
   for_ quests \q -> when (q.progress > 0) $ removeTokens source q Progress (min n q.progress)
 
 -- | Place progress on the main quest, bypassing the active location, as Umbar Square reads.
