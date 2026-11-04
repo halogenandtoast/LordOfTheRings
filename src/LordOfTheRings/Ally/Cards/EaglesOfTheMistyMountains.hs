@@ -33,6 +33,6 @@ instance RunMessage EaglesOfTheMistyMountains where
           inDiscard <- any ((== c.pcId) . (.id)) . (.discard) <$> getPlayer owner
           when inDiscard do
             removeFromDiscard owner c.pcId
-            attachFacedown a.id c
+            attachFacedown a c
       pure s
     _ -> EaglesOfTheMistyMountains <$> runMessage msg a
