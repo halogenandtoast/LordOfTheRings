@@ -40,7 +40,8 @@ import LordOfTheRings.Location hiding (location)
 import LordOfTheRings.Location.Grid (adjacentPositions)
 import LordOfTheRings.Log.Block
 import LordOfTheRings.Log.Narrator
-import LordOfTheRings.Log.Refs (sendLogInOpenBlock)
+import LordOfTheRings.Log.Refs (findCard, sendLogInOpenBlock)
+import LordOfTheRings.Name (Name (..))
 import LordOfTheRings.Matcher
 import LordOfTheRings.Matcher.Window (windowMatches)
 import LordOfTheRings.Message
@@ -877,10 +878,24 @@ runGameMessage msg g = case msg of
   HealDamage source target n | n > 0 -> do
     damage <- getDamage target
     mods <- getModifiers target
-    let from = case source of
-          ObjectiveSource oid -> toCardCode <$> Map.lookup oid g.entities.objectives
+    -- a card is named by its title (rules reference), so "other than Athelas" spares the
+    -- player attachment Athelas too
+    let es = g.entities
+        sourceCode = \case
+          AbilitySource s _ -> sourceCode s
+          HeroSource i -> toCardCode <$> Map.lookup i es.heroes
+          AllySource i -> toCardCode <$> Map.lookup i es.allies
+          AttachmentSource i -> toCardCode <$> Map.lookup i es.attachments
+          ObjectiveSource i -> toCardCode <$> Map.lookup i es.objectives
+          LocationSource i -> toCardCode <$> Map.lookup i es.locations
+          TreacherySource i -> toCardCode <$> Map.lookup i es.treacheries
+          QuestSource i -> toCardCode <$> Map.lookup i es.quests
+          CardIdSource cid -> toCardCode <$> findCard cid g
+          CardCodeSource code -> Just code
           _ -> Nothing
-        healed = foldr min (min n damage) $ [k | HealLimit k <- mods] <> [k | HealLimitExceptFrom k code <- mods, from /= Just code]
+        title code = (\(Name t _) -> t) . cdName <$> lookupCardDef code
+        from = title =<< sourceCode source
+        healed = foldr min (min n damage) $ [k | HealLimit k <- mods] <> [k | HealLimitExceptFrom k code <- mods, from /= title code]
     when (healed > 0 && CannotBeHealed `notElem` mods)
       $ pushAll [RemoveTokens source target Damage healed, CheckWindows [mkAfter $ Healed target source]]
     pure g
@@ -1708,6 +1723,16 @@ runGameMessage msg g = case msg of
         | h <- heroes
         ]
     pure g
+  DamageAflameLocation source pid -> do
+    burning <- filterM (fmap (> 0) . getAflame) =<< select LocationInStagingArea
+    pushWhen (notNull burning) $ chooseOrRunOne pid [targetLabel l [DealDamage source (LocationTarget l) 1] | l <- burning]
+    pure g
+  AllyEnteredPlayUnderController aid -> do
+    for_ (Map.lookup aid g.entities.allies) \a -> case (toAttrs a).allyPlacement of
+      InPlayArea pid -> push $ allyEntersPlay pid a
+      _ -> pure ()
+    pure g
+  AttackEndedUnresolved _ -> pure $ g & effectsL %~ filter ((/= UntilEndOfAttack) . effectDuration)
   DamageAnotherCharacter source pid damaged -> do
     others <- filter (/= damaged) <$> charactersControlledBy pid
     push $ case others of
@@ -2702,7 +2727,11 @@ runGameMessage msg g = case msg of
         lead <- getLead
         aid <- getRandom
         let thisAlly = overAttrs (\a -> a {allyPlacement = InPlayArea lead}) $ lookupAlly (toCardCode card) card.id aid owner.id
-        pushAll . (enteredPlayThisRound thisAlly :) . (<> [WhileInPlay (toTarget thisAlly) [ResolveSurge (toTarget thisAlly) card]])
+        -- it enters play as it is revealed, but whose it is is chosen as its When Revealed
+        -- resolves, so the windows for it entering play open once that is done
+        pushAll
+          . (enteredPlayThisRound thisAlly :)
+          . (<> [WhileInPlay (toTarget thisAlly) [AllyEnteredPlayUnderController aid, ResolveSurge (toTarget thisAlly) card]])
           =<< revealing (toTarget thisAlly)
         pure $ g & entitiesL . alliesL %~ insertEntity thisAlly & playersL . ix owner.id . setAsideCardsL %~ filter ((/= card.id) . (.id))
       -- a player event with the Encounter keyword, as Wind from the Sea: its When Revealed,
@@ -3435,12 +3464,9 @@ attackDamage pid eid target n = do
         , excess > 0
         , notNull ships
         ]
-  burning <- if excessToAflame then filterM (fmap (> 0) . getAflame) =<< select LocationInStagingArea else pure []
-  let toAflame =
-        [ chooseOrRunOne pid [targetLabel l [DealDamage (EnemyAttackSource eid) (LocationTarget l) excess] | l <- burning]
-        | excess > 0
-        , notNull burning
-        ]
+  -- each point on an Aflame location of the player's choice, so a location the first
+  -- points destroy takes no more
+  let toAflame = replicate (if excessToAflame then excess else 0) (DamageAflameLocation (EnemyAttackSource eid) pid)
   let captured = case target of
         HeroTarget h -> toCard <$> Map.lookup h es.heroes
         AllyTarget a -> toCard <$> Map.lookup a es.allies

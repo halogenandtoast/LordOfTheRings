@@ -18,6 +18,8 @@ import {
 } from '@browser/lib/search'
 import type { Card, CardIndex, CardType, Cycle, Pack, Section, Sphere } from '@browser/types/card'
 
+// The database is a static file from the importer, served as is: the server never reads
+// the cards itself, so there is no API endpoint for them.
 async function fetchCardIndex(): Promise<CardIndex> {
   const response = await fetch('/data/cards.json')
   if (!response.ok) throw new Error(`${response.status} ${response.statusText}`.trim())

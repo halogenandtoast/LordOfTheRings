@@ -28,7 +28,8 @@ import LordOfTheRings.Matcher
 import LordOfTheRings.Modifier (Modifier (..))
 import LordOfTheRings.Objective.Types (ObjectiveAttrs (..))
 import LordOfTheRings.Quest.Types (QuestAttrs (..))
-import LordOfTheRings.Question (searchedCards)
+import LordOfTheRings.I18n (ikey)
+import LordOfTheRings.Question (Question (QuestionLabel), UI (TargetLabel), questionChoices, searchedCards)
 import LordOfTheRings.Scenario.Types (ScenarioAttrs (..))
 import LordOfTheRings.Target
 import LordOfTheRings.Prelude
@@ -131,6 +132,7 @@ publicGameFor seesHand g = hideDecks $ toJSON merged
         $ KeyMap.insert "stats" (toJSON $ foldMap (runReadGame cardStats) areaViews)
         $ KeyMap.insert "hitPoints" (toJSON $ foldMap (runReadGame hitPoints) areaViews)
         $ KeyMap.insert "attackStrength" (toJSON $ runReadGame attackStrength g)
+        $ KeyMap.insert "attackAdding" (toJSON $ runReadGame attackAdding g)
         $ KeyMap.insert "attachmentHosts" (toJSON attachHosts)
         $ KeyMap.insert "playProhibitions" (toJSON prohibitions)
         $ KeyMap.insert "underneath" (toJSON underneath)
@@ -183,6 +185,19 @@ publicGameFor seesHand g = hideDecks $ toJSON merged
       else fmap mapFromList $ select AnyEnemy >>= traverse \i -> do
         e <- getEnemy i
         ((toCard e).id,) <$> getAttackStrength attackers i (toCardDef e)
+  -- while attackers are asked for, the attack each one choosable would add to the attack
+  -- on the enemy, with its bonuses against it
+  attackAdding :: ReadGame (Map CardId Int)
+  attackAdding = fmap (mapFromList . concat) $ for (toList g.question) \case
+    QuestionLabel label _ [EnemyTarget eid] q | takeWhile (/= ' ') label `elem` [ikey "label.declareAttackers", ikey "label.joinAttackRanged"] -> do
+      e <- getEnemy eid
+      fmap catMaybes $ for [t | TargetLabel t _ <- questionChoices q] \t -> do
+        cid <- case t of
+          HeroTarget i -> Just . (.id) . toCard <$> getHero i
+          AllyTarget i -> Just . (.id) . toCard <$> getAlly i
+          _ -> pure Nothing
+        for cid \c -> (c,) <$> getAttackStrength [t] eid (toCardDef e)
+    _ -> pure []
   character target c = do
     stats <- sequence [("willpower",) <$> getWillpower target, ("attack",) <$> getAttack target, ("defense",) <$> getDefense target]
     pure ((toCard c).id, stats)
