@@ -439,6 +439,9 @@ allQuestCards =
       , stormTheCastleStrongholdOfMordor
       , slavesOfTheDarkLord
       , leadTheRevolt
+      , anUnexpectedParty
+      , roastMutton
+      , dawnTakeYouAll
       ]
 
 theDrippingWalls :: CardDef
@@ -1821,3 +1824,16 @@ slavesOfTheDarkLord = quest "22135" "Slaves of the Dark Lord" TheLandOfSorrow 1 
 -- | 10 quest points, and 10 more per player from its own modifiers.
 leadTheRevolt :: CardDef
 leadTheRevolt = quest "22136" "Lead the Revolt" TheLandOfSorrow 2 10
+
+-- * We Must Away, Ere Break of Day
+
+anUnexpectedParty :: CardDef
+anUnexpectedParty = quest "131023" "An Unexpected Party" WeMustAwayEreBreakOfDay 1 7
+
+-- | 1 quest point, though progress never goes on it: cards are discarded from the
+-- encounter deck instead.
+roastMutton :: CardDef
+roastMutton = quest "131024" "Roast Mutton" WeMustAwayEreBreakOfDay 2 1
+
+dawnTakeYouAll :: CardDef
+dawnTakeYouAll = quest "131025" "Dawn Take You All" WeMustAwayEreBreakOfDay 3 0
