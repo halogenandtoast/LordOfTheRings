@@ -72,6 +72,10 @@ allEventCards =
       , hostOfGaladhrim
       , theMusterOfRohan
       , helmOfSecrecy
+      , hornsHornsHorns
+      , farSighted
+      , recklessAttack
+      , defiantChallenge
       , theMasterRing
       , theRulingRing
       , theRingOfPower
@@ -413,6 +417,18 @@ theMusterOfRohan = event "22062" "The Muster of Rohan" Spirit (StaticCost 4)
 
 helmOfSecrecy :: CardDef
 helmOfSecrecy = (event "22090" "Helm of Secrecy" Neutral (StaticCost 4)) {cdDeckLimit = 1}
+
+hornsHornsHorns :: CardDef
+hornsHornsHorns = (event "22056" "Horns! Horns! Horns!" Leadership (StaticCost 0)) {cdKeywords = setFromList [Doomed 2]}
+
+farSighted :: CardDef
+farSighted = (event "22058" "Far-sighted" Lore (StaticCost 0)) {cdKeywords = setFromList [Doomed 1]}
+
+recklessAttack :: CardDef
+recklessAttack = (event "22087" "Reckless Attack" Tactics (StaticCost 0)) {cdKeywords = setFromList [Doomed 2]}
+
+defiantChallenge :: CardDef
+defiantChallenge = (event "22089" "Defiant Challenge" Spirit (StaticCost 0)) {cdKeywords = setFromList [Doomed 2]}
 
 theMasterRing :: CardDef
 theMasterRing = (event "21009" "The Master Ring" Neutral (StaticCost 0)) {cdCardTraits = setFromList [Master]}

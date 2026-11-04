@@ -42,6 +42,8 @@ allHeroCards =
       , hirgon
       , fastred
       , lothiriel
+      , sarumanLore
+      , gildorInglorionLeadership
       , bilboBaggins
       , frodoBaggins
       , brandSonOfBain
@@ -271,6 +273,18 @@ lothiriel :: CardDef
 lothiriel =
   (hero "22027" "Lothíriel" Spirit 8 3 1 1 3)
     { cdCardTraits = setFromList [Gondor, Noble]
+    }
+
+sarumanLore :: CardDef
+sarumanLore =
+  (hero "22054" "Saruman" Lore 13 3 4 2 4)
+    { cdCardTraits = setFromList [Istari, Isengard]
+    }
+
+gildorInglorionLeadership :: CardDef
+gildorInglorionLeadership =
+  (hero "22081" "Gildor Inglorion" Leadership 9 3 2 1 3)
+    { cdCardTraits = setFromList [Noldor, Noble]
     }
 
 bilboBaggins :: CardDef

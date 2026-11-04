@@ -84,6 +84,9 @@ allAttachmentCards =
       , strengthAndCourage
       , powerOfCommand
       , wellPreserved
+      , goldenBelt
+      , sarumansStaff
+      , stoneOfElostirion
       , songOfKings
       , dunedainWarning
       , bornAloft
@@ -592,6 +595,29 @@ wellPreserved =
     { cdCardTraits = setFromList [Master]
     , cdLimitOnePerHost = True
     }
+
+goldenBelt :: CardDef
+goldenBelt =
+  (attachment "22060" "Golden Belt" Tactics (StaticCost 0))
+    { cdCardTraits = setFromList [Item]
+    , cdLimitOnePerHost = True
+    }
+
+sarumansStaff :: CardDef
+sarumansStaff =
+  unique
+    (attachment "22063" "Saruman's Staff" Neutral (StaticCost 2))
+      { cdCardTraits = setFromList [Artifact, Item, Staff]
+      , cdKeywords = setFromList [Restricted]
+      }
+
+stoneOfElostirion :: CardDef
+stoneOfElostirion =
+  unique
+    (attachment "22084" "Stone of Elostirion" Lore (StaticCost 1))
+      { cdCardTraits = setFromList [Artifact, Item]
+      , cdKeywords = setFromList [GuardedBy [LocationType], Restricted]
+      }
 
 songOfKings :: CardDef
 songOfKings =
