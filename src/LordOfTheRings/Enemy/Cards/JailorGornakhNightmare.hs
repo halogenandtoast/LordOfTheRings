@@ -17,10 +17,13 @@ jailorGornakhNightmare = enemy JailorGornakhNightmare Cards.jailorGornakhNightma
 -- Forced: After a player rescues any number of cards, Jailor Gornákh attacks that player.
 instance HasAbilities JailorGornakhNightmare where
   getAbilities (JailorGornakhNightmare a) =
-    [ mkAbility a 1 $ forced $ EntersPlayWindow After (toTarget a)
+    [ mkAbility a 1 $ forced $ CardEntersStagingAreaWindow After (toTarget a)
+    , mkAbility a 1 $ forced $ EntersPlayWindow After (toTarget a)
     , mkAbility a 2 $ forced $ CapturedCardsRescuedWindow After
     ]
 
+-- | Captured cards are rescued by their owners (Escape from Mount Gram rules), so the
+-- players attacked are the owners of the cards rescued.
 instance RunMessage JailorGornakhNightmare where
   runMessage msg e@(JailorGornakhNightmare attrs) = case msg of
     UseCardAbility _ (isSource attrs -> True) 1 _ -> do

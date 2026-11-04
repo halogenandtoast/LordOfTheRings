@@ -13,7 +13,7 @@ dunedainWatcher = ally DunedainWatcher Cards.dunedainWatcher
 -- | Response: Discard Dúnedain Watcher from play to cancel the shadow effects of a card
 -- just triggered.
 instance HasAbilities DunedainWatcher where
-  getAbilities (DunedainWatcher a) = [restricted a 1 EncounterEffectsCancelable $ response $ ShadowEffectWindow When]
+  getAbilities (DunedainWatcher a) = [restricted a 1 shadowEffectsCancelable $ response $ ShadowEffectWindow When]
 
 instance RunMessage DunedainWatcher where
   runMessage msg s@(DunedainWatcher a) = case msg of

@@ -8,7 +8,7 @@ import LordOfTheRings.Helpers.Modifiers (doesNotExhaustToCommit, getModifiers)
 import LordOfTheRings.Hero.Types as X
 import LordOfTheRings.Message
 import LordOfTheRings.Effect (Effect (..), EffectDuration (UntilEndOfRound))
-import LordOfTheRings.Modifier (ModifierType (CannotCollectResources, CannotExhaust, CannotGainResourcesFromCardEffects, CannotGainResourcesFromPlayerCardEffects, CannotReady, CollectsAdditionalResources, DoesNotExhaustToAttack, SpentResourcesThisRound))
+import LordOfTheRings.Modifier (ModifierType (CannotCollectResources, CannotExhaust, CannotGainResourcesFromCardEffects, CannotGainResourcesFromPlayerCardEffects, CannotReady, CannotReadyFromCardEffects, CollectsAdditionalResources, ControlledCardsCannotReady, DoesNotExhaustToAttack, ReadiedByRefresh, SpentResourcesThisRound))
 import LordOfTheRings.Phase
 import LordOfTheRings.Prelude
 import LordOfTheRings.Source
@@ -53,8 +53,12 @@ instance RunMessage HeroAttrs where
       pushWhen attrs.heroCommitted $ CheckWindows [mkAfter $ RemovedFromQuest (toTarget attrs)]
       pure $ attrs & committedL .~ False
     Ready (isTarget attrs -> True) -> do
-      -- on the game, no character readies, as Enfeebled's "exhausted characters cannot ready"
-      blocked <- elem CannotReady . concat <$> sequence [getModifiers attrs, getModifiers GameTarget]
+      -- on the game, no character readies, as Enfeebled's "exhausted characters cannot ready";
+      -- nor one whose controller's cards cannot, as Ungoliant's Brood's; a card effect cannot
+      -- ready one barred from it, the refresh phase still does
+      mods <- getModifiers attrs
+      held <- elem ControlledCardsCannotReady <$> getModifiers (PlayerTarget attrs.owner)
+      blocked <- (|| held || (CannotReadyFromCardEffects `elem` mods && ReadiedByRefresh `notElem` mods)) . elem CannotReady . (mods <>) <$> getModifiers GameTarget
       when (attrs.heroExhausted && not blocked) $ push $ CheckWindows [mkAfter $ BecameReady (toTarget attrs)]
       pure $ attrs & exhaustedL %~ (&& blocked)
     PlaceTokens _ (isTarget attrs -> True) token n -> do

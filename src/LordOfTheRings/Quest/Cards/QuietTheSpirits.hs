@@ -21,7 +21,7 @@ quietTheSpirits = quest QuietTheSpirits Cards.quietTheSpirits
 -- Forced: After an enemy is destroyed, place 2 progress on Quiet the Spirits.
 instance HasAbilities QuietTheSpirits where
   getAbilities (QuietTheSpirits a) =
-    [ restricted a 1 (TargetHasModifier (toTarget a) CurrentQuest) $ forced $ EnemyEntersPlayWindow After
+    [ restricted a 1 (TargetHasModifier (toTarget a) CurrentQuest) $ forced $ MatchingEnemyEntersPlayWindow After (EnemyWithTrait Undead)
     , mkAbility a 2 $ forced $ EnemyDefeatedWindow After
     ]
 
@@ -29,7 +29,7 @@ instance HasAbilities QuietTheSpirits where
 instance RunMessage QuietTheSpirits where
   runMessage msg q@(QuietTheSpirits attrs) = case msg of
     UseCardAbility _ (isSource attrs -> True) 1 windows -> do
-      undead <- filterM (\e -> selectAny (EnemyWithId e <> EnemyWithTrait Undead)) [e | Window _ (EntersPlay (EnemyTarget e)) <- windows]
+      undead <- filterM (\e -> selectAny (EnemyWithId e <> EnemyWithTrait Undead)) [e | Window _ (EnemyEnteredPlay e) <- windows]
       players <- getRemainingPlayers
       threats <- for players \p -> (p,) . (.threat) <$> getPlayer p
       let highest = foldr (max . snd) 0 threats

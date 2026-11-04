@@ -22,8 +22,8 @@ instance HasModifiersFor IarionsPendant where
 -- effect just triggered.
 instance HasAbilities IarionsPendant where
   getAbilities (IarionsPendant a) =
-    [ restricted a 1 EncounterEffectsCancelable $ response $ CardRevealedWindow When
-    , restricted a 2 EncounterEffectsCancelable $ response $ ShadowEffectWindow When
+    [ restricted a 1 whenRevealedCancelable $ response $ CardRevealedWindow When
+    , restricted a 2 shadowEffectsCancelable $ response $ ShadowEffectWindow When
     ]
 
 instance RunMessage IarionsPendant where

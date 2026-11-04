@@ -21,7 +21,8 @@ instance HasModifiersFor FieryDepths where
     players <- length <$> getRemainingPlayers
     modified a a $ [ProgressLimit 0 | a.placement == StagingArea] <> [CannotBeTraveledTo | damage < players]
 
--- | Travel: Each player must move 1 damage from Durin's Bane to a hero to travel here.
+-- | Travel: Each player must move 1 damage from Durin's Bane to a hero to travel here. The
+-- damage is moved, not dealt.
 instance RunMessage FieryDepths where
   runMessage msg (FieryDepths a) = case msg of
     TravelTo lid | lid == a.id -> do
@@ -31,8 +32,6 @@ instance RunMessage FieryDepths where
         chooseOrRunOneM p do
           questionLabeled "fieryDepths.moveDamage"
           causedBy a
-          targets heroes \h -> do
-            removeTokens a b Damage 1
-            dealDamage a h 1
+          targets heroes \h -> moveDamage a b h 1
       FieryDepths <$> runMessage msg a
     _ -> FieryDepths <$> runMessage msg a

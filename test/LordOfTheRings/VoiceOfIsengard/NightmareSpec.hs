@@ -168,6 +168,13 @@ spec = describe "The Voice of Isengard Nightmare Decks" do
       setAsideCodes
         `shouldReturn` sort (replicate 3 (toCardCode Enemies.vigilantOrc) <> replicate 2 (toCardCode Treacheries.mugashsRage) <> replicate 3 (toCardCode Enemies.mugashsGuard))
 
+    it "Methedras Lookout's shadow returns the attacking enemy to the staging area at once" . nightmare toCatchAnOrc $ \pid -> do
+      eid <- engaged pid Enemies.guardWarg
+      run . AttachShadowCard eid =<< genEncounterCard Enemies.methedrasLookout
+      run $ ResolveShadow eid pid []
+      chooseLabel "$label.methedrasLookout.return" pid
+      placementOf Enemies.guardWarg `shouldReturn` Just StagingArea
+
     it "shuffles Mugash's Rage into the encounter deck as the players reach stage 3" . nightmare toCatchAnOrc $ \_ -> do
       _ <- builtDeck
       _ <- putQuestStage Quests.theWizardsPrize

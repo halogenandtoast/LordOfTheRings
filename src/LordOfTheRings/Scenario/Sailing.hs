@@ -23,7 +23,7 @@ import LordOfTheRings.Scenario.Types
 import LordOfTheRings.Source
 import LordOfTheRings.Target
 import LordOfTheRings.Trait (Trait (Ship))
-import LordOfTheRings.Window (WindowType (CommittedToSailingTest), mkAfter)
+import LordOfTheRings.Window (WindowType (CommittedToSailingTest, DiscardedFromEncounterDeck), mkAfter)
 
 -- | A card of the Corsair deck: an enemy without the Ship trait.
 isCorsairDeckCard :: EncounterCard -> Bool
@@ -71,7 +71,7 @@ runSailing msg attrs = case msg of
   -- as many cards as characters committed are looked at, the encounter discard pile
   -- shuffled in beneath the deck should it run short
   DoStep 1 (ResolveSailingTest committed) -> do
-    counts <- for committed \c -> (\ms -> fromMaybe 1 $ headMay [n | CountsAsSailingCharacters n <- ms]) <$> getModifiers c
+    counts <- for committed $ fmap sailingCharacters . getModifiers
     gameMods <- getModifiers GameTarget
     let n = sum counts + sum [k | SailingTestAdditionalCards k <- gameMods]
     (deck, discarded) <-
@@ -95,19 +95,14 @@ runSailing msg attrs = case msg of
       labeled "continue" do
         replicateM_ (found - canceled) $ shiftHeadingOnCourse GameSource
         push $ AddToEncounterDiscard top
+        push $ CheckWindows [mkAfter $ DiscardedFromEncounterDeck c.id | c <- top]
     pure attrs
   PrepareCorsairDeck -> do
     let (corsairs, rest) = partition isCorsairDeckCard attrs.encounterDeck
     deck <- shuffleM corsairs
     pure $ attrs & encounterDeckL .~ rest & corsairDeckL ?~ deck & corsairDiscardL .~ []
-  RevealFromCorsairDeck source pid | Just deck <- attrs.corsairDeck -> do
-    (deck', discarded) <- if null deck then (,[]) <$> shuffleM attrs.corsairDiscard else pure (deck, attrs.corsairDiscard)
-    case deck' of
-      [] -> pure attrs
-      top : rest -> do
-        push $ RevealCardEngaged pid top
-        push $ RevealedFromCorsairDeck source pid top
-        pure $ attrs & corsairDeckL ?~ rest & corsairDiscardL .~ discarded
+  RevealFromCorsairDeck source pid -> fromCorsairDeck source pid False
+  RevealFromCorsairDeckWithShadow source pid -> fromCorsairDeck source pid True
   ResolveBoarding pid eid -> do
     x <- getBoarding eid
     replicateM_ x $ push $ RevealFromCorsairDeck (EnemySource eid) pid
@@ -141,3 +136,17 @@ runSailing msg attrs = case msg of
         push $ ChooseFleetShip rest (filter (/= s) ships)
     pure attrs
   _ -> pure attrs
+ where
+  -- the top card is put into play engaged with the player, the Corsair discard pile
+  -- shuffled back in first once the deck is empty; with a shadow card, as Ramming Ship's
+  fromCorsairDeck source pid shadowed = case attrs.corsairDeck of
+    Nothing -> pure attrs
+    Just deck -> do
+      (deck', discarded) <- if null deck then (,[]) <$> shuffleM attrs.corsairDiscard else pure (deck, attrs.corsairDiscard)
+      case deck' of
+        [] -> pure attrs
+        top : rest -> do
+          push $ RevealCardEngaged pid top
+          when shadowed $ push $ DealShadowCardToCard top.id
+          push $ RevealedFromCorsairDeck source pid top
+          pure $ attrs & corsairDeckL ?~ rest & corsairDiscardL .~ discarded

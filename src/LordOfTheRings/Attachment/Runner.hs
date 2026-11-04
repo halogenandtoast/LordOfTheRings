@@ -28,7 +28,7 @@ instance RunMessage AttachmentAttrs where
       | attrs.placement == StagingArea
       , attrs.attachTo == PlayIntoStagingArea
       , (eid : _) <- [eid | Window After (EntersStagingArea (EnemyTarget eid)) <- ws] -> do
-          eligible <- (\ms -> not $ any (`elem` ms) [CannotHaveAttachments, CannotHavePlayerAttachments]) <$> getModifiers eid
+          eligible <- (\ms -> CannotHaveAttachments `notElem` ms && CannotHavePlayerAttachments `notElem` ms) <$> getModifiers eid
           pushWhen eligible $ AttachCard attrs.id (toTarget eid)
           pure attrs
     -- one waiting in its owner's play area, as Followed, attaches to the next enemy that
@@ -41,7 +41,10 @@ instance RunMessage AttachmentAttrs where
           pushWhen eligible $ AttachCard attrs.id (toTarget eid)
           pure attrs
     Exhaust (isTarget attrs -> True) -> pure $ attrs & exhaustedL .~ True
-    Ready (isTarget attrs -> True) -> pure $ attrs & exhaustedL .~ False
+    Ready (isTarget attrs -> True) -> do
+      -- its controller's cards may be kept from readying, as Ungoliant's Brood's
+      blocked <- elem ControlledCardsCannotReady <$> getModifiers (PlayerTarget attrs.controller)
+      pure $ attrs & exhaustedL %~ (&& blocked)
     PlaceTokens _ (isTarget attrs -> True) token n -> do
       pure $ attrs & tokensL %~ addTokens token n
     RemoveTokens _ (isTarget attrs -> True) token n -> do

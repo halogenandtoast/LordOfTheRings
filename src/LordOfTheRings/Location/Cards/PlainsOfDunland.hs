@@ -15,10 +15,13 @@ plainsOfDunland = location PlainsOfDunland Cards.plainsOfDunland
 
 -- | While Plains of Dunland is in the staging area, each Dunland enemy gets -20 engagement
 -- cost and cannot be optionally engaged.
+-- With no enemy in the staging area to engage, its Travel cost cannot be paid.
 instance HasModifiersFor PlainsOfDunland where
   getModifiersFor (PlainsOfDunland a) = when (a.placement == StagingArea) do
     enemies <- select (EnemyWithTrait Dunland)
     for_ enemies \e -> modified a e [EngagementCostModifier (-20), CannotBeOptionallyEngagedBy AnyPlayer]
+    staged <- selectAny EnemyInStagingArea
+    unless staged $ modifySelf a [CannotBeTraveledTo]
 
 -- | Travel: The first player engages the highest attack enemy in the staging area to
 -- travel here.

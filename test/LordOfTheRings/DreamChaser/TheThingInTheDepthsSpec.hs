@@ -109,6 +109,8 @@ spec = describe "The Thing in the Depths" do
     run $ Flip q
     endOfRound
     endOfRound
+    -- on their cards out of play, not on the stage
+    getsGame (fmap (countTokens Resource . questTokens . toAttrs) . headMay . toList . (.entities.quests)) `shouldReturn` Just 0
     staged Locations.helmOfTheStormcaller
     helm <- locationOf Locations.helmOfTheStormcaller
     travelTo helm.id

@@ -25,7 +25,7 @@ import LordOfTheRings.Name (Name (..))
 import LordOfTheRings.Modifier (
   ModifierType (Blank, BlankAttachments, CannotBeTraveledTo, CannotCancelEncounterEffects, CannotExhaust, CannotTriggerAbilities, Defending, ShadowCannotBeCanceled, WhenRevealedCannotBeCanceled),
   ModifierType (Blank, BlankAttachments, CannotBeTraveledTo, CannotCancelEncounterEffects, CannotExhaust, CannotTriggerAbilities, StagingStepBegun, TravelRange, TravelableWithActiveLocation),
-  ModifierType (CannotDiscardFromHand, GainKeyword),
+  ModifierType (CannotDiscardFromHand, CannotTakeDamage, GainKeyword, TreacheryRevealedThisRound),
  )
 import LordOfTheRings.Phase (Phase (QuestPhase))
 import LordOfTheRings.Placement
@@ -41,6 +41,8 @@ getAllAbilities = do
   -- an ally that just left play answers only its own leaving, as Arkham's cards in discard
   departed <- getsGame gameLeftPlay
   scenario <- getsGame gameScenario
+  -- and so does a location that left play, its leaving or its being explored
+  gone <- getsGame gameLeftPlayLocations
   let leftPlayAbilities =
         [ ab
         | a <- toList departed
@@ -48,6 +50,15 @@ getAllAbilities = do
         , Just (LeftPlayWindow _ t) <- [abilityWindow ab]
         , t == toTarget a
         ]
+          <> [ ab
+             | (lid, l) <- Map.toList gone
+             , not (Map.member lid es.locations)
+             , ab <- getAbilities l
+             , case abilityWindow ab of
+                 Just (LocationLeftPlayWindow _ lid') -> lid == lid'
+                 Just (ExploredWindow After lid') -> lid == lid'
+                 _ -> False
+             ]
   -- attachments whose text is blank have no abilities
   blank <- elem BlankAttachments <$> getModifiers GameTarget
   let abilities =
@@ -126,6 +137,8 @@ windowMatchesM matcher w@(Window timing wType) = case (matcher, wType) of
   (EnemyAttacksPlayerWindow t pid m, EnemyAttacking eid pid') | t == timing && pid == pid' -> selectAny (EnemyWithId eid <> m)
   (MatchingEnemyAttacksWindow t m, EnemyAttacking eid _) | t == timing -> selectAny (EnemyWithId eid <> m)
   (MatchingEnemyRevealedWindow t m, Revealed (EnemyTarget eid)) | t == timing -> selectAny (EnemyWithId eid <> m)
+  (MatchingEnemyEntersPlayWindow t m, EnemyEnteredPlay eid) | t == timing -> selectAny (EnemyWithId eid <> m)
+  (TimeCountersRemovedFromEnemyWindow t m, TimeCountersRemoved (EnemyTarget eid) n) | t == timing && n > 0 -> selectAny (EnemyWithId eid <> m)
   (PlayerDiscardedFromDeckWindow t m, DiscardedFromDeck pid _) | t == timing -> selectAny (PlayerWithId pid <> m)
   -- the attachment played is in play by now, on its host
   (AttachmentPlayedOnHeroWindow t pid, PlayedFromHand (CardIdTarget cid)) | t == timing -> do
@@ -135,7 +148,6 @@ windowMatchesM matcher w@(Window timing wType) = case (matcher, wType) of
         selectAny (HeroWithId hid <> HeroControlledBy (PlayerWithId pid))
       _ -> pure False
   (ExploredWithoutVictoryWindow t, Explored lid) | t == timing -> isNothing . cdVictoryPoints . toCardDef <$> getLocation lid
-  (ActiveLocationExploredWindow t, Explored lid) | t == timing -> selectAny (LocationWithId lid <> IsActiveLocation)
   (CharacterWithTraitDealtDamageWindow t trait, DealtDamage target _) | t == timing -> case target of
     HeroTarget hid -> selectAny (HeroWithId hid <> HeroWithTrait trait)
     AllyTarget aid -> selectAny (AllyWithId aid <> AllyWithTrait trait)
@@ -199,6 +211,7 @@ windowMatchesM matcher w@(Window timing wType) = case (matcher, wType) of
   (ErrataWindow pid errata printed, _) -> do
     followsErrata <- selectAny (PlayerWithId pid <> PlayerUsingErrata)
     windowMatchesM (if followsErrata then errata else printed) w
+  (AnyWindowOf ms, _) -> anyM (`windowMatchesM` w) ms
   _ -> pure $ windowMatches matcher w
  where
   title def = case cdName def of Name t _ -> t
@@ -285,6 +298,7 @@ passesCriteria = \case
   BeforeStaging ->
     andM [(== QuestPhase) <$> getsGame gamePhase, notElem StagingStepBegun <$> getModifiers GameTarget]
   EncounterEffectsCancelable -> notElem CannotCancelEncounterEffects <$> getModifiers GameTarget
+  FirstTreacheryRevealedThisRound -> getsGame ((<= 1) . length . filter (elem TreacheryRevealedThisRound . effectModifiers) . gameEffects)
   NotCriterion c -> not <$> passesCriteria c
   TargetHasModifier t m -> elem m <$> getModifiers t
   TargetLacksModifier t m -> notElem m <$> getModifiers t
@@ -293,6 +307,7 @@ passesCriteria = \case
   CardInVictoryDisplay m -> getsGame (any (cardMatches m) . (.victoryDisplay) . toAttrs . gameScenario)
   FewerInVictoryDisplay n m -> getsGame ((< n) . length . filter (cardMatches m) . (.victoryDisplay) . toAttrs . gameScenario)
   CardInDiscard pid m -> any (cardMatches m) . (.discard) <$> getPlayer pid
+  CardInAnyDiscard m -> anyM (fmap (any (cardMatches m) . (.discard)) . getPlayer) =<< getRemainingPlayers
   Criteria cs -> allM passesCriteria cs
   EnemiesAtLeast n m -> (>= n) . length <$> select m
   HeadingMatches m -> headingMatches m
@@ -335,6 +350,7 @@ canPay = \case
   RaiseThreatCost _ -> pure True
   SphereResourceCost pid sphere n -> (>= n) <$> getResourcesOfSphere pid sphere
   ExhaustHeroCost m -> notNull <$> exhaustableHeroes m
+  DamageHeroCost m _ -> notNull <$> damageableHeroes m
   Costs cs -> allM canPay cs
   ExhaustCharacterCost hm am -> notNull <$> exhaustableCharacters hm am
   SpendResourcesCost sphere n -> do
@@ -353,6 +369,10 @@ asPlayer pid q = runReadGame q . (\g -> g {gameActivePlayer = pid}) <$> getGame
 exhaustableHeroes :: HasGame m => HeroMatcher -> m [HeroId]
 exhaustableHeroes m = filterM (\h -> notElem CannotExhaust <$> getModifiers (HeroTarget h)) =<< select (m <> ReadyHero)
 
+-- | The heroes matching that can take damage.
+damageableHeroes :: HasGame m => HeroMatcher -> m [HeroId]
+damageableHeroes m = filterM (\h -> notElem CannotTakeDamage <$> getModifiers (HeroTarget h)) =<< select m
+
 -- | The ready heroes and allies matching that can exhaust.
 exhaustableCharacters :: HasGame m => HeroMatcher -> AllyMatcher -> m [Target]
 exhaustableCharacters hm am = filterM (fmap (notElem CannotExhaust) . getModifiers) =<< selectCharacters (hm <> ReadyHero) (am <> ReadyAlly)
@@ -363,6 +383,7 @@ until it is made.
 payCost :: PlayerId -> AbilityCost -> [Message] -> [Message]
 payCost pid cost rest = case cost of
   ExhaustHeroCost m -> [PayExhaustHeroCost pid m rest]
+  DamageHeroCost m n -> [PayDamageHeroCost pid m n rest]
   ExhaustCharacterCost hm am -> [PayExhaustCharacterCost pid hm am rest]
   Costs cs -> foldr (payCost pid) rest cs
   _ -> costMessages (PlayerSource pid) cost <> rest
@@ -378,6 +399,7 @@ costMessages source = \case
     _ -> []
   SphereResourceCost pid sphere n -> [SpendResources pid sphere n]
   ExhaustHeroCost _ -> [] -- chosen as it is paid, by 'payCost'
+  DamageHeroCost _ _ -> []
   Costs cs -> concatMap (costMessages source) cs
   ExhaustCharacterCost _ _ -> []
   SpendResourcesCost sphere n -> case source of
@@ -386,7 +408,12 @@ costMessages source = \case
 
 -- | The player who controls an ability's source, if anyone does.
 abilityController :: HasGame m => Ability -> m (Maybe PlayerId)
-abilityController ab = go ab.abilitySource
+abilityController ab = sourceController ab.abilitySource
+
+-- | The player who controls the source, if anyone does: an encounter card's, the first
+-- player.
+sourceController :: HasGame m => Source -> m (Maybe PlayerId)
+sourceController = go
  where
   go = \case
     AbilitySource s _ -> go s
@@ -411,6 +438,17 @@ abilityController ab = go ab.abilitySource
     Just (AttachedTo host@(HeroTarget _)) -> characterController host
     Just (AttachedTo host@(AllyTarget _)) -> characterController host
     _ -> Just <$> getLead
+
+{- | The player whose player card the source is: who controls the hero, ally or attachment,
+or who holds the event, as its card id, in hand, deck or discard pile.
+-}
+playerCardController :: HasGame m => Source -> m (Maybe PlayerId)
+playerCardController = \case
+  AbilitySource s _ -> playerCardController s
+  CardIdSource cid ->
+    fmap (.id) . find (\p -> any ((== cid) . (.id)) (p.hand <> p.deck <> p.discard)) . toList <$> getsGame gamePlayers
+  source | isPlayerCardSource source -> sourceController source
+  _ -> pure Nothing
 
 -- | The Action abilities a player can use right now.
 getActionAbilities :: HasGame m => PlayerId -> m [Ability]

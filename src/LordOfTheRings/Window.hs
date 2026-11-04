@@ -48,6 +48,14 @@ data WindowType
   | -- | the card of the location just explored, opened with 'Explored' after it left play,
     -- for what is read of it then, as its printed quest points
     ExploredCard Card
+  | -- | a location has left play, however it did
+    LocationLeftPlay LocationId
+  | -- | an enemy entered play, however it did: revealed, put into play or turned faceup
+    EnemyEnteredPlay EnemyId
+  | -- | the player looked at one or more cards in the encounter deck
+    LookedAtEncounterDeck PlayerId
+  | -- | the player turned 1 or more hidden cards faceup, at once (The Blood of Gondor)
+    TurnedHiddenCardsFaceup PlayerId
   | EnemyAttacking EnemyId PlayerId
   | PhaseEnds Phase
   | RoundEnds
@@ -178,6 +186,14 @@ data WindowType
     CharacterRescued Target
   | -- | the hidden card was turned faceup: the enemy it put into play (The Blood of Gondor)
     HiddenCardTurnedFaceup Target
+  | -- | the attackers against the enemy are declared, before the attack resolves
+    AttackersDeclared EnemyId
+  | -- | a card was discarded from the encounter deck, as Calaerion answers
+    DiscardedFromEncounterDeck CardId
+  | -- | the active location was explored, read as it leaves play, alongside 'Explored'
+    ActiveLocationExplored LocationId
+  | -- | the card of the enemy an attack destroyed, alongside 'EnemyDestroyedByAttack'
+    EnemyCardDestroyedByAttack EnemyId CardId
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

@@ -11,9 +11,9 @@ import LordOfTheRings.Json
 import LordOfTheRings.Message
 import LordOfTheRings.Prelude
 import LordOfTheRings.Effect (Effect (..), EffectDuration (UntilEndOfPhase, UntilEndOfRound))
-import LordOfTheRings.Modifier (ModifierType (PlayedACardThisPhase, PlayedACardThisRound, PlayedCardTypeThisRound))
+import LordOfTheRings.Modifier (ModifierType (PlayedACardThisPhase, PlayedACardThisRound, PlayedAnAllyThisRound, PlayedCardTypeThisRound, PlayedEventThisRound))
 import LordOfTheRings.Source (Source (GameSource, PlayerSource))
-import LordOfTheRings.Target (Target (PlayerTarget), toTarget)
+import LordOfTheRings.Target (Target (GameTarget, PlayerTarget), toTarget)
 import LordOfTheRings.Token (Token (Resource))
 import LordOfTheRings.Window
 
@@ -114,9 +114,13 @@ instance RunMessage ActiveCost where
 -- | A card, its cost paid, played into play or resolved.
 playCard :: PlayerId -> PlayerCard -> [Window] -> [Message]
 playCard pid card windows = case cdCardType (toCardDef card) of
-  AllyType -> [PlayAlly pid card]
+  AllyType -> [CreateEffect $ Effect GameSource GameTarget [PlayedAnAllyThisRound] UntilEndOfRound, PlayAlly pid card]
   AttachmentType -> [PlayAttachment pid card]
   -- the When window comes first, for an effect that cancels it, as Counter-Spell's
-  EventType -> [CheckWindows [mkWhen $ PlayingEvent pid card.id], PlayEvent pid card windows]
+  EventType ->
+    [ CheckWindows [mkWhen $ PlayingEvent pid card.id]
+    , CreateEffect $ Effect GameSource (PlayerTarget pid) [PlayedEventThisRound] UntilEndOfRound
+    , PlayEvent pid card windows
+    ]
   PlayerSideQuestType -> [PutSideQuestIntoPlay pid card]
   _ -> []

@@ -28,6 +28,8 @@ instance HasModifiersFor ThrowingAxe where
 -- | Upgraded: Action: Either deal 1 damage to an enemy, or toss Throwing Axe. If it travels
 -- at least two feet across the playing area and stops on any enemies, deal 4 damage to
 -- one of them. Reattach Throwing Axe to its hero. (Limit once per game.)
+-- There is no table to toss it across here, so the player says where it landed: on an
+-- enemy of their choice, dealt 4 damage, or on none.
 instance HasAbilities ThrowingAxe where
   getAbilities (ThrowingAxe a) =
     [ limited (PlayerLimit PerGame 1) $ restricted a 1 (exists EnemyNotImmuneToPlayerCards) $ ActionAbility Free
@@ -51,8 +53,9 @@ instance RunMessage ThrowingAxe where
           causedBy a
           targets enemies \e -> dealDamage a e 1
         labeled "throwingAxe.toss" $ chooseOneM pid do
-          questionLabeled "throwingAxe.chooseEnemy"
+          questionLabeled "throwingAxe.landed"
           causedBy a
           targets enemies \e -> dealDamage a e 4
+          labeled "throwingAxe.missed" $ pure ()
       pure s
     _ -> ThrowingAxe <$> runMessage msg a

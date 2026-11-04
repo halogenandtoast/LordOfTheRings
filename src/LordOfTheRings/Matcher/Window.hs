@@ -23,8 +23,6 @@ data WindowMatcher
     PlayerEngagedEnemyWindow Timing PlayerId
   | OptionallyEngagedWindow Timing PlayerId
   | EnemyEntersStagingAreaWindow Timing
-  | -- | an enemy entered play, in the staging area or engaged
-    EnemyEntersPlayWindow Timing
   | -- | an enemy with the trait added to the staging area, as Amon Forn reads
     EnemyWithTraitEntersStagingAreaWindow Timing Trait
   | GainedResourcesWindow Timing Target
@@ -60,6 +58,18 @@ data WindowMatcher
     SideQuestRevealedWindow Timing
   | ShadowEffectWindow Timing
   | ExploredWindow Timing LocationId
+  | -- | the location left play, however it did, for its own abilities to answer
+    LocationLeftPlayWindow Timing LocationId
+  | -- | a matching enemy entered play, however it did, as "after a Spider enemy enters
+    -- play" reads
+    MatchingEnemyEntersPlayWindow Timing EnemyMatcher
+  | -- | a player looked at one or more cards in the encounter deck, as Hideous Depths reads
+    LookedAtEncounterDeckWindow Timing
+  | -- | a player turned 1 or more hidden cards faceup (The Blood of Gondor)
+    TurnedHiddenCardsFaceupWindow Timing
+  | -- | any number of time counters removed from a matching enemy, as Sacred Forest's
+    -- Guardians read
+    TimeCountersRemovedFromEnemyWindow Timing EnemyMatcher
   | -- | any location worth no victory points explored
     ExploredWithoutVictoryWindow Timing
   | PhaseEndsWindow Timing Phase
@@ -238,6 +248,14 @@ data WindowMatcher
     ExploredMatchingWindow Timing CardMatcher
   | -- | a card discarded from the player's hand, as Silver Harp answers
     DiscardedFromHandWindow Timing PlayerId
+  | -- | the card discarded from the player's hand, as Starla answers her own discard
+    CardDiscardedFromHandWindow Timing PlayerId CardId
+  | -- | a card discarded from the encounter deck, as Calaerion answers
+    DiscardedFromEncounterDeckWindow Timing
+  | -- | any player's threat reduced, by anything, as Mail of Earnur answers
+    ThreatReducedWindow Timing
+  | -- | any of the windows, as "discarded from your hand or deck" reads
+    AnyWindowOf [WindowMatcher]
   | -- | the card readied, by anything, as Wellinghall Preserver answers
     BecameReadyWindow Timing Target
   | -- | a matching hero declared as a defender, as Dori answers another hero
@@ -307,6 +325,8 @@ data WindowMatcher
   | -- | a matching enemy revealed from the encounter deck, as Concealed Woods reads one with
     -- ambush
     MatchingEnemyRevealedWindow Timing EnemyMatcher
+  | -- | the attackers against the enemy were declared, as Guardian of the Golden King answers
+    AttackersDeclaredWindow Timing EnemyId
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
@@ -321,11 +341,11 @@ windowMatches matcher (Window timing wType) = case (matcher, wType) of
   (PlayerEngagedEnemyWindow t pid, EnemyEngaged _ pid') -> t == timing && pid == pid'
   (OptionallyEngagedWindow t pid, OptionallyEngaged _ pid') -> t == timing && pid == pid'
   (EnemyEntersStagingAreaWindow t, EntersStagingArea (EnemyTarget _)) -> t == timing
-  (EnemyEntersPlayWindow t, EntersPlay (EnemyTarget _)) -> t == timing
   (GainedResourcesWindow t target, GainedResources target') -> t == timing && target == target'
   (DealtDamageWindow t target, DealtDamage target' _) -> t == timing && target == target'
   (TraveledWindow t lid, Traveled lid') -> t == timing && lid == lid'
   (ExhaustedWindow t target, Exhausted target') -> t == timing && target == target'
+  (AttackersDeclaredWindow t eid, AttackersDeclared eid') -> t == timing && eid == eid'
   (AnyTraveledWindow t, Traveled _) -> t == timing
   (DefenderDeclaredWindow t who, DeclaredAsDefender target _) -> t == timing && maybe True (== target) who
   (DefenderDeclaredAgainstWindow t eid, DeclaredAsDefender _ eid') -> t == timing && eid == eid'
@@ -342,6 +362,11 @@ windowMatches matcher (Window timing wType) = case (matcher, wType) of
   (SideQuestRevealedWindow t, Revealed (QuestTarget _)) -> t == timing
   (ShadowEffectWindow t, ShadowEffectTriggered _ _) -> t == timing
   (ExploredWindow t lid, Explored lid') -> t == timing && lid == lid'
+  (LocationLeftPlayWindow t lid, LocationLeftPlay lid') -> t == timing && lid == lid'
+  (LookedAtEncounterDeckWindow t, LookedAtEncounterDeck _) -> t == timing
+  (TurnedHiddenCardsFaceupWindow t, TurnedHiddenCardsFaceup _) -> t == timing
+  (MatchingEnemyEntersPlayWindow {}, _) -> False
+  (TimeCountersRemovedFromEnemyWindow {}, _) -> False
   (PhaseEndsWindow t phase, PhaseEnds phase') -> t == timing && phase == phase'
   (RoundEndsWindow, RoundEnds) -> True
   (StagingStepBeginsWindow, StagingStepBegins) -> True
@@ -412,6 +437,11 @@ windowMatches matcher (Window timing wType) = case (matcher, wType) of
   (AllyWithTraitDiscardedByCardEffectWindow t trait, AllyDiscardedByCardEffect _ traits) -> t == timing && trait `member` traits
   (EnemyDestroyedWindow t m, EnemyDestroyed card) -> t == timing && cardMatches m card
   (DiscardedFromHandWindow t pid, DiscardedFromHand pid' _) -> t == timing && pid == pid'
+  (CardDiscardedFromHandWindow t pid cid, DiscardedFromHand pid' cid') -> t == timing && pid == pid' && cid == cid'
+  (DiscardedFromEncounterDeckWindow t, DiscardedFromEncounterDeck _) -> t == timing
+  (ThreatReducedWindow t, ThreatReduced _ _) -> t == timing
+  (ActiveLocationExploredWindow t, ActiveLocationExplored _) -> t == timing
+  (AnyWindowOf ms, _) -> any (\m -> windowMatches m (Window timing wType)) ms
   (BecameReadyWindow t target, BecameReady target') -> t == timing && target == target'
   (BecomesWindow time, Became time') -> time == time'
   (FlippedToWindow t code, FlippedTo _ code') -> t == timing && code == code'
@@ -444,7 +474,6 @@ windowMatches matcher (Window timing wType) = case (matcher, wType) of
   (AttachmentPlayedOnHeroWindow {}, _) -> False
   (EnemyAttacksPlayerWindow {}, _) -> False
   (ExploredWithoutVictoryWindow {}, _) -> False
-  (ActiveLocationExploredWindow {}, _) -> False
   (CharacterWithTraitDealtDamageWindow {}, _) -> False
   (HeroGainedResourcesWindow {}, _) -> False
   (SurgeCardRevealedWindow {}, _) -> False

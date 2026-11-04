@@ -15,7 +15,7 @@ westRoadTraveller = ally WestRoadTraveller Cards.westRoadTraveller
 -- location with any other location in the staging area.
 instance HasAbilities WestRoadTraveller where
   getAbilities (WestRoadTraveller a) =
-    [ restricted a 1 (exists IsActiveLocation <> exists LocationInStagingArea)
+    [ restricted a 1 (exists (IsActiveLocation <> LocationCanEnterStagingArea) <> exists LocationInStagingArea)
         $ response
         $ PlayedFromHandWindow After (CardIdTarget a.allyCardId)
     ]

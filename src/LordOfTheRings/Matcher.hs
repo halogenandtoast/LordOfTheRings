@@ -255,6 +255,7 @@ matchLocation matcher location = case matcher of
     active <- getsGame (filter ((== ActiveLocation) . (.placement)) . toList . entitiesLocations . gameEntities)
     pure $ any ((== title location) . title) active
   LocationDiscardableByPlayerCards -> notElem CannotBeDiscardedByPlayerCards . map modifierType . Map.findWithDefault [] (toTarget location) <$> getsGame gameModifiers
+  LocationCanEnterStagingArea -> notElem CannotEnterStagingArea . map modifierType . Map.findWithDefault [] (toTarget location) <$> getsGame gameModifiers
 
 -- | Not considered out of play, as Saruman's chosen card is.
 notOutOfPlay :: HasGame m => Target -> m Bool
@@ -290,6 +291,13 @@ titles es =
 -- | Whether the character is defending the attack being resolved.
 isDefending :: HasGame m => Target -> m Bool
 isDefending target = elem Defending . map modifierType . Map.findWithDefault [] target <$> getsGame gameModifiers
+
+-- | The card's traits as they are now: its printed traits, those it gained, less those it
+-- lost, as Chieftain's Brooch reads its hero's.
+getTraits :: HasGame m => Target -> CardDef -> m (Set Trait)
+getTraits target def = do
+  mods <- map modifierType . Map.findWithDefault [] target <$> getsGame gameModifiers
+  pure $ setFromList [t | t <- toList (cdCardTraits def) <> [t' | GainTrait t' <- mods], LoseTrait t `notElem` mods]
 
 -- | The characters defending the enemy's attack, as "while attacking a character with less
 -- willpower" reads of Uruk Warg-Rider's.
@@ -378,7 +386,8 @@ affordableAlliesInHand pid sphere reduction minimumCost = do
       forbidden c = any (\case CannotPlay m -> cardMatches m c; _ -> False) (gameMods <> on (PlayerTarget pid))
       cost c = maybe 0 costAsResources c.cost
       reducedCost c = min (cost c) $ max minimumCost (cost c - reduction)
-  if OneAllyPerRound `elem` gameMods && AllyPlayedThisRound `elem` gameMods
+  entryBarred <- getsGame allyEntryBarred
+  if (OneAllyPerRound `elem` gameMods && AllyPlayedThisRound `elem` gameMods) || entryBarred
     then pure []
     else filterM passesUnique
       [ c
@@ -916,6 +925,13 @@ unchartedLocation = LocationWithKeyword Uncharted
 -- counts as 0.
 printedCostOf :: HasCardDef a => a -> Int
 printedCostOf = maybe 0 costAsResources . cdCost . toCardDef
+
+-- | The resources on a card, as it is considered to have them: none while it is
+-- considered to have no resources, as Captain's Quarters reads of Raider characters.
+resourcesHeld :: (HasGame m, Targetable a) => a -> Int -> m Int
+resourcesHeld a n = do
+  mods <- map modifierType . Map.findWithDefault [] (toTarget a) <$> getsGame gameModifiers
+  pure $ if HasNoResources `elem` mods then 0 else n
 
 -- | The characters the encounter card guards as captives (see 'GuardCharacter').
 charactersGuardedBy :: HasGame m => CardId -> m [Target]

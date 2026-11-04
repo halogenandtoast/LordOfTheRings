@@ -144,6 +144,23 @@ spec = describe "The Dream-chaser engine" do
       eid <- fromJustNote "no enemy Na'asiyah" <$> enemyWithCode Enemies.naasiyah
       getsGame (fmap (.placement) . find ((== eid) . toId) . toList . (.entities.enemies)) `shouldReturn` Just StagingArea
 
+    it "discards Na'asiyah's resource once the attack she defends against has resolved" . gameTest $ \pid -> do
+      run . PutEnemyIntoPlayEngaged pid =<< genEncounterCard Enemies.naasiyah
+      eid <- fromJustNote "no enemy Na'asiyah" <$> enemyWithCode Enemies.naasiyah
+      run $ PlaceTokens GameSource (toTarget eid) Resource 2
+      eowyn <- toTarget <$> getHeroWithCode "01007"
+      run $ AttackWith eowyn
+      let resources = getsGame (fmap (\e -> countTokens Resource (enemyTokens $ toAttrs e)) . find ((== eid) . toId) . toList . (.entities.enemies))
+          damageStep = \case
+            Just (DoStep 1 (ResolveAttack _ eid')) -> eid' == eid
+            _ -> False
+          stepToDamage = peekMessage >>= \m -> unless (damageStep m || isNothing m) (runNext >> stepToDamage)
+      push $ ResolveAttack pid eid
+      stepToDamage
+      resources `shouldReturn` Just 2
+      void mainLoop
+      resources `shouldReturn` Just 1
+
     it "cancels the damage Captain Sahír would take, a point for each resource discarded from him" . gameTest $ \_ -> do
       run . AddToStaging =<< genEncounterCard Enemies.captainSahir
       eid <- fromJustNote "no Sahír" <$> enemyWithCode Enemies.captainSahir

@@ -228,6 +228,8 @@ data LocationMatcher
     LocationDiscardableByPlayerCards
   | -- | the location lying there on the Island Map (Temple of the Deceived)
     LocationAtPosition Pos
+  | -- | a location that can enter the staging area, as Shrine to Morgoth cannot
+    LocationCanEnterStagingArea
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

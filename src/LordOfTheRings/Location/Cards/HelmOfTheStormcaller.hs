@@ -19,7 +19,7 @@ helmOfTheStormcaller = location HelmOfTheStormcaller Cards.helmOfTheStormcaller
 instance HasModifiersFor HelmOfTheStormcaller where
   getModifiersFor (HelmOfTheStormcaller a) = do
     raiders <- traverse getEnemy =<< select (EnemyWithTrait Raider)
-    let n = sum [countTokens Resource (toAttrs r).enemyTokens | r <- raiders]
+    n <- sum <$> for raiders \r -> resourcesHeld r (countTokens Resource (toAttrs r).enemyTokens)
     modifySelf a $ ImmuneToPlayerCardEffects : [QuestPointModifier n | n > 0]
 
 -- | Forced: When Helm of the Stormcaller becomes the active location, add Captain Sahír and

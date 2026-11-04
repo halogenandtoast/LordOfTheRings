@@ -13,7 +13,7 @@ import LordOfTheRings.Matcher (getEnemy, getThreat)
 import LordOfTheRings.Modifier (ModifierType (CannotDiscardFromHand, Defending, GainTrait))
 import LordOfTheRings.Phase
 import LordOfTheRings.Trait (Trait (Gondor))
-import LordOfTheRings.Window (WindowType (EnemyDestroyedByAttack), mkAfter)
+import LordOfTheRings.Window (WindowType (DeclaredAsAttacker, EnemyDestroyedByAttack), mkAfter)
 import TestImport
 
 beravorCode, eowynCode, theodredCode, gimliCode, eleanorCode, denethorCode :: CardCode
@@ -167,6 +167,9 @@ spec = describe "Flight of the Stormcaller player cards" do
       chooseLabel "$label.tidesOfFate.ready" pid
       replicateM_ 2 $ chooseTarget pid gimli
       isExhausted gimli `shouldReturn` False
+      -- the +3 waits for its next attack
+      getAttack gimli `shouldReturn` 2
+      run $ CheckWindows [mkAfter $ DeclaredAsAttacker gimli eid]
       getAttack gimli `shouldReturn` 5
 
   describe "Imladris Caregiver" do

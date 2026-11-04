@@ -23,6 +23,8 @@ gavin = ally Gavin Cards.gavin
 deck.
 When Revealed: Put Gavin into play under any player's control committed to the quest. Add
 1 resource to Lanwyn's resource pool, if able.
+Revealed outside the quest phase there is no quest to commit him to, so he only comes into
+play.
 -}
 instance HasAbilities Gavin where
   getAbilities (Gavin a) =

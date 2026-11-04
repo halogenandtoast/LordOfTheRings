@@ -13,9 +13,9 @@ snowGiant :: EnemyCard SnowGiant
 snowGiant = enemy SnowGiant Cards.snowGiant
 
 -- | While Snow-Giant is in the staging area, it attacks the first player during the
--- combat phase, as if it were engaged.
+-- combat phase, as if it were engaged: it is not engaged, so not attacked as though it were.
 instance HasModifiersFor SnowGiant where
-  getModifiersFor (SnowGiant a) = when (a.placement == StagingArea) $ modifySelf a [EngagedWithEachPlayer FirstPlayer]
+  getModifiersFor (SnowGiant a) = when (a.placement == StagingArea) $ modifySelf a [AttacksAsIfEngagedWith FirstPlayer]
 
 -- | Forced: After Snow-Giant engages you, discard the ally you control with the highest
 -- [Willpower].

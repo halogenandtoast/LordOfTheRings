@@ -13,7 +13,8 @@ orcWight = enemy OrcWight Cards.orcWight
 -- | Forced: After Orc Wight enters play, deal it 2 shadow cards.
 instance HasAbilities OrcWight where
   getAbilities (OrcWight a) =
-    [ mkAbility a 1 $ forced $ EntersPlayWindow After (toTarget a)
+    [ mkAbility a 1 $ forced $ CardEntersStagingAreaWindow After (toTarget a)
+    , mkAbility a 1 $ forced $ EntersPlayWindow After (toTarget a)
     ]
 
 -- | Shadow: If attacking enemy has at least 1 other shadow card currently dealt to it,

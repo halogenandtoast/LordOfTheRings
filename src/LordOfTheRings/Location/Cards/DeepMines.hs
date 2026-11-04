@@ -17,7 +17,7 @@ instance HasAbilities DeepMines where
   getAbilities (DeepMines a) =
     [ restricted a 1 (exists $ LocationWithId a.id <> LocationInStagingArea)
         $ forced
-        $ EnemyWithTraitEntersStagingAreaWindow After Goblin
+        $ MatchingEnemyEntersPlayWindow After (EnemyWithTrait Goblin)
     ]
 
 -- | Shadow: Attacking enemy gets +1 attack. Then, if the attacking enemy is a Goblin, deal
@@ -25,7 +25,7 @@ instance HasAbilities DeepMines where
 instance RunMessage DeepMines where
   runMessage msg l@(DeepMines a) = case msg of
     UseCardAbility _ (isSource a -> True) 1 ws -> do
-      for_ [eid | Window _ (EntersStagingArea (EnemyTarget eid)) <- ws] \eid -> placeResources a eid 1
+      for_ [eid | Window _ (EnemyEnteredPlay eid) <- ws] \eid -> placeResources a eid 1
       pure l
     ResolveShadowEffect cid eid pid defenders | cid == a.cardId -> do
       enemyGetsAttack a eid 1

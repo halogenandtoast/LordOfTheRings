@@ -19,7 +19,7 @@ enlargedQuartersUpgraded = attachment EnlargedQuarters Cards.enlargedQuartersUpg
 -- it counts as 1 additional character when committed to a Sailing test.
 instance HasModifiersFor EnlargedQuarters where
   getModifiersFor (EnlargedQuarters a) =
-    withHost a \host -> modified a host $ [HitPointModifier 3, CommittableToAnySailingTest] <> [CountsAsSailingCharacters 2 | isUpgradedSide a]
+    withHost a \host -> modified a host $ [HitPointModifier 3, CommittableToAnySailingTest] <> [AdditionalSailingCharacters 1 | isUpgradedSide a]
 
 instance RunMessage EnlargedQuarters where
   runMessage msg (EnlargedQuarters a) = EnlargedQuarters <$> removedAsItLeaves msg a

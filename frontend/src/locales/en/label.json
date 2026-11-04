@@ -1,5 +1,7 @@
 {
   "choosePlayer": "Choose a player",
+  "placeProgressOnQuestCard": "Choose a quest card to place the progress on",
+  "playAttachmentFromDiscard": "Choose an attachment in your discard pile to play on the hero",
   "chooseCurrentQuest": "Choose the quest to quest against this phase",
   "questAgainstMainQuest": "The main quest",
   "chooseNewCurrentQuest": "Choose a new quest card to be the current quest",
@@ -1588,8 +1590,10 @@
   "anduinTrollSpawn": {
     "engage": "Choose the player engaged with a Hill Troll for Anduin Troll Spawn to engage"
   },
-  "gladdenMarshlands": {
-    "damage": "Deal 1 damage to a hero you control to lower Gladden Marshlands' threat by 1"
+  "elvenWaveRunner": {
+    "respond": "Elven Wave-runner is in the victory display: each player may draw 1 card",
+    "draw": "Each player draws 1 card",
+    "decline": "Decline"
   },
   "pursuitOnTheShore": {
     "return": "Choose the enemy to return to the staging area"
@@ -1616,10 +1620,8 @@
     "raiseThreat": "Raise your threat by 3"
   },
   "ruthless": {
-    "moveDamage": "Choose an enemy engaged with you to move the damage to"
-  },
-  "stalwart": {
-    "playAttachment": "Choose an attachment in your discard pile to play on the hero"
+    "moveDamage": "Choose an enemy engaged with you to move the damage to",
+    "amount": "Ruthless: choose how much damage to move"
   },
   "daechanarsBrand": {
     "choose": "Choose a Sorcery treachery to add to the victory display"
@@ -2046,7 +2048,8 @@
     "triggerLost": "Choose a Lost: effect in play to trigger"
   },
   "giantCaveCentipede": {
-    "shuffle": "Choose the card of highest cost in your hand to shuffle into your deck"
+    "shuffle": "Choose the card of highest cost in your hand to shuffle into your deck",
+    "player": "Choose the player whose staging area Giant Cave Centipede goes to"
   },
   "chillOfTheRoots": {
     "choose": "Chill of the Roots: discard your hand, or raise your threat by its size",
@@ -2137,7 +2140,9 @@
     "choose": "Throwing Axe: choose one",
     "one": "Deal 1 damage to an enemy",
     "toss": "Toss Throwing Axe: deal 4 damage to the enemy it lands on",
-    "chooseEnemy": "Throwing Axe: choose an enemy"
+    "chooseEnemy": "Throwing Axe: choose an enemy",
+    "landed": "Throwing Axe: choose the enemy it landed on, if any",
+    "missed": "It landed on no enemy"
   },
   "galdorsCounsel": {
     "enemy": "Galdor's Counsel: choose a non-unique enemy to deal damage to",
@@ -2145,13 +2150,22 @@
     "addToHand": "Galdor's Counsel: add any number of these cards to your hand",
     "topOrBottom": "Galdor's Counsel: look at the top or the bottom of your deck",
     "top": "The top of your deck",
-    "bottom": "The bottom of your deck"
+    "bottom": "The bottom of your deck",
+    "done": "Done adding cards to your hand",
+    "putBack": "Galdor's Counsel: choose the next card to put back",
+    "topOrBottomOfDeck": "Galdor's Counsel: put it on the top or the bottom of your deck",
+    "onTop": "On top of your deck",
+    "onBottom": "On the bottom of your deck"
   },
   "comeTogether": {
-    "choose": "Come Together: choose up to that many characters"
+    "choose": "Come Together: choose up to that many characters",
+    "trait": "Come Together: choose a Trait for the character to gain",
+    "gainTrait": "{trait}"
   },
   "command": {
     "choose": "Command: choose up to that many options, each once",
+    "moveAttachment": "Command: you may move the readied attachment to an eligible character",
+    "dontMove": "Leave it where it is",
     "heroDefense": "A hero gets +2 defense until the end of the round",
     "enemyDefense": "An enemy gets -2 defense until the end of the round",
     "readyBlessed": "Ready a character with Círdan's Blessing on it",
@@ -2197,7 +2211,8 @@
     "damage": "Deal 2 damage to the defending character"
   },
   "calaerion": {
-    "ready": "Calaerion: choose the ally to ready"
+    "ready": "Calaerion: choose the ally to ready",
+    "shuffle": "Calaerion: choose the discarded card to shuffle back into the encounter deck"
   },
   "gavin": {
     "control": "Gavin: choose the player to take control of him"

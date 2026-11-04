@@ -19,7 +19,7 @@ instance HasModifiersFor MailOfEarnur where
 
 -- | Response: After a player's threat is reduced, heal 1 damage from attached hero.
 instance HasAbilities MailOfEarnur where
-  getAbilities (MailOfEarnur a) = [mkAbility a 1 $ response $ ThreatReducedByPlayerCardWindow After | AttachedTo _ <- [a.placement]]
+  getAbilities (MailOfEarnur a) = [mkAbility a 1 $ response $ ThreatReducedWindow After | AttachedTo _ <- [a.placement]]
 
 instance RunMessage MailOfEarnur where
   runMessage msg s@(MailOfEarnur a) = case msg of

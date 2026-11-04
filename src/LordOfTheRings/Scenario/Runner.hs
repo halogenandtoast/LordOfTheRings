@@ -17,7 +17,7 @@ import LordOfTheRings.Campaign
 import LordOfTheRings.Game.Base (allPlayers, gameEntities, gamePhase, gamePlayers, gameRound)
 import LordOfTheRings.Entities (entitiesHeroes, entitiesObjectives)
 import LordOfTheRings.Helpers.Modifiers (getModifiers)
-import LordOfTheRings.Modifier (ModifierType (EncounterDeckResetsWheneverEmpty, ReturnBeforeEncounterDeckResets))
+import LordOfTheRings.Modifier (ModifierType (EncounterDeckResetsWheneverEmpty, RecordedIfWon, ReturnBeforeEncounterDeckResets))
 import LordOfTheRings.Outcome
 import LordOfTheRings.Phase (Phase (QuestPhase))
 import LordOfTheRings.Placement (Placement (AttachedTo))
@@ -27,7 +27,7 @@ import LordOfTheRings.Scenario.Sailing (discardEncounterCard, runSailing)
 import LordOfTheRings.Scenario.Types as X
 import LordOfTheRings.Source (Source (ObjectiveSource), sourceTarget)
 import LordOfTheRings.Target
-import LordOfTheRings.Window (WindowType (AdvancedToStage), mkAfter)
+import LordOfTheRings.Window (WindowType (AdvancedToStage, DiscardedFromEncounterDeck, LookedAtEncounterDeck), mkAfter)
 
 -- | The copies of each card in the set, fewer of some in easy mode.
 gatherEncounterSet :: MonadRandom m => ScenarioAttrs -> EncounterSet -> m [EncounterCard]
@@ -87,7 +87,12 @@ instance RunMessage ScenarioAttrs where
     -- their owners' discard piles fallen (Revised Core rulebook, "Scoring" and "The
     -- Fellowship of Heroes")
     UpdateCampaignLog u -> pure $ attrs & campaignL %~ fmap (updateLog u)
-    ResolveCampaign | Just l <- attrs.campaign -> do
+    ResolveCampaign | Just l0 <- attrs.campaign -> do
+      -- what the cards in play record should the scenario be won, as Determination's
+      -- Forced effect marks its character
+      gameMods <- getModifiers GameTarget
+      let mark lg (key, code) = updateLog (Record key (ordNub $ recorded key lg <> [code])) lg
+          l = foldl' mark l0 [(key, code) | RecordedIfWon key code <- gameMods]
       players <- getsGame (toList . allPlayers)
       heroes <- getsGame (toList . entitiesHeroes . gameEntities)
       rounds <- getsGame gameRound
@@ -134,7 +139,8 @@ instance RunMessage ScenarioAttrs where
       [] -> pure attrs
     LookAtTopOfEncounterDeck pid source canMove -> do
       for_ (headMay attrs.encounterDeck) \top ->
-        push
+        pushAll
+          $ (: [CheckWindows [mkAfter $ LookedAtEncounterDeck pid]])
           $ Ask pid
           $ QuestionLabel (ikey "label.topOfEncounterDeck") (sourceTarget source) []
           $ SearchCards [EncounterCard top]
@@ -150,7 +156,8 @@ instance RunMessage ScenarioAttrs where
       let (top, rest) = splitAt n attrs.encounterDeck
           others c = filter (/= c) top
       unless (null top)
-        $ push
+        $ pushAll
+        $ (: [CheckWindows [mkAfter $ LookedAtEncounterDeck pid]])
         $ Ask pid
         $ QuestionLabel (ikey $ if toBottom then "label.revealOneRestToBottom" else "label.revealOne") (sourceTarget source) []
         $ SearchCards (map EncounterCard top)
@@ -173,6 +180,7 @@ instance RunMessage ScenarioAttrs where
               else pure (a'', acc <> top)
       (attrs', discarded) <- discardFrom n attrs []
       push $ DiscardedTopOfEncounterDeck source target discarded
+      pushWhen (notNull discarded) $ CheckWindows [mkAfter $ DiscardedFromEncounterDeck c.id | c <- discarded]
       pure attrs'
     ResetToStage _ rest -> pure $ attrs & questDeckL .~ rest
     MoveTopOfEncounterDeckToBottom -> case attrs.encounterDeck of
@@ -232,6 +240,7 @@ instance RunMessage ScenarioAttrs where
       deck <- shuffleM (matching <> attrs.encounterDeck)
       pure $ attrs & encounterDeckL .~ deck & encounterDiscardL .~ rest
     SetAside card -> pure $ attrs & setAsideL %~ (card :) & encounterDeckL %~ filter (/= card)
+    PlaceResourcesOutOfPlay cid n -> pure $ attrs & outOfPlayResourcesL %~ Map.insertWith (+) cid n
     -- a set-aside card revealed, as Cornered Animals reveals Orc Ambush
     RevealCard card -> pure $ attrs & setAsideL %~ filter (/= card)
     -- a set-aside card added to the staging area, as Orc Trail adds one out-of-play Orc
@@ -263,11 +272,13 @@ instance RunMessage ScenarioAttrs where
       -- set-aside card discarded is part of the encounter deck from then on (MEC61 rules)
       pure $ foldr discardEncounterCard attrs [c | (c, Nothing) <- owned] & setAsideL %~ filter (`notElem` cards)
     RemoveSetAsideFromGame cards -> pure $ attrs & setAsideL %~ filter (`notElem` cards)
-    -- a set-aside card with the Encounter keyword, as Ranger Summons shuffles one in
+    -- a set-aside card with the Encounter keyword, as Ranger Summons shuffles one in, or a
+    -- card in the encounter discard pile, as Calaerion shuffles one back
     ShuffleIntoEncounterDeck (CardIdTarget cid) -> do
       owned <- getsGame (concatMap (.setAsideCards) . toList . gamePlayers)
-      deck <- shuffleM $ [MkEncounterCard cid (toCardCode c) | c <- owned, c.id == cid] <> attrs.encounterDeck
-      pure $ attrs & encounterDeckL .~ deck
+      let (discarded, rest) = partition ((== cid) . (.id)) attrs.encounterDiscard
+      deck <- shuffleM $ [MkEncounterCard cid (toCardCode c) | c <- owned, c.id == cid] <> discarded <> attrs.encounterDeck
+      pure $ attrs & encounterDeckL .~ deck & encounterDiscardL .~ rest
     RemoveFromEncounterDeck card -> pure $ attrs & encounterDeckL %~ filter (/= card)
     RemoveFromEncounterDiscard card -> pure $ attrs & encounterDiscardL %~ filter (/= card)
     RemoveFromVictoryDisplay card -> pure $ attrs & victoryDisplayL %~ filter ((/= card.id) . (.id))

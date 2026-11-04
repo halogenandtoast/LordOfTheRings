@@ -48,7 +48,7 @@ import LordOfTheRings.Token
 import LordOfTheRings.Window (
   Timing (After, When),
   Window (..),
-  WindowType (AllyDiscardedByCardEffect, CharacterRescued, DeclaredAsDefender, DefendedAttack, EnemyAttacking, ShadowEffectTriggered, StagingStepEnds, ThreatRaisedByDoomed, ThreatRaisedByEncounter, ThreatReduced, Traveled, WhenRevealedCanceled),
+  WindowType (AllyDiscardedByCardEffect, CharacterRescued, DeclaredAsDefender, DefendedAttack, DiscardedFromEncounterDeck, EnemyAttacking, ShadowEffectTriggered, StagingStepEnds, ThreatRaisedByDoomed, ThreatRaisedByEncounter, ThreatReduced, Traveled, WhenRevealedCanceled),
  )
 
 dealDamage
@@ -84,9 +84,26 @@ the rest goes to the quest (FAQ 2.02). An active location immune to the card ign
 and none of it reaches the quest (FAQ 2.41).
 -}
 placeProgressOnQuest :: (ReverseQueue m, Sourceable source) => source -> Int -> m ()
-placeProgressOnQuest source n =
+placeProgressOnQuest source n = placeProgressPastActiveLocation source n (placeProgressOnCurrentQuest source)
+
+{- | Progress a card places on a quest card of the player's choice, as "place 1 progress
+on a quest card in play" reads: the active location takes it first, as for the current
+quest (FAQ 1.00), and the player chooses the quest card for the rest.
+-}
+placeProgressOnAQuestCard :: (ReverseQueue m, Sourceable source) => PlayerId -> source -> Int -> m ()
+placeProgressOnAQuestCard pid source n = placeProgressPastActiveLocation source n \k -> do
+  quests <- getQuestCards
+  chooseOrRunOneM pid do
+    questionLabeled "placeProgressOnQuestCard"
+    targets quests \q -> placeProgress source q k
+
+-- | The active location takes the progress first, then what is left goes on to the quest
+-- by the continuation; an active location immune to the source takes it all.
+placeProgressPastActiveLocation
+  :: (ReverseQueue m, Sourceable source) => source -> Int -> (Int -> m ()) -> m ()
+placeProgressPastActiveLocation source n onQuest =
   select IsActiveLocation >>= \case
-    [] -> placeProgressOnCurrentQuest source n
+    [] -> onQuest n
     lid : _ -> do
       immune <- immuneToSource (toSource source) lid
       unless immune do
@@ -94,7 +111,7 @@ placeProgressOnQuest source n =
         room <- max 0 . subtract l.progress <$> getLocationQuestPoints lid
         let k = min n room
         when (k > 0) $ placeProgress source lid k
-        when (n > k) $ placeProgressOnCurrentQuest source (n - k)
+        when (n > k) $ onQuest (n - k)
 
 -- | Place time counters on the card, as "place 3 time counters on this stage" reads.
 placeTimeCounters
@@ -175,11 +192,10 @@ raiseThreatFromDoomed n = when (n > 0) $ eachPlayer \pid -> do
   raiseThreat pid n
   push $ CheckWindows [Window After $ ThreatRaisedByDoomed pid]
 
--- | Reduce the player's threat, unless it cannot be, as The Empty Mug forbids.
+-- | Reduce the player's threat, unless it cannot be, as The Empty Mug forbids, opening
+-- the window for it as 'lowerThreatBy' does: Mail of Earnur answers any reduction.
 lowerThreat :: ReverseQueue m => PlayerId -> Int -> m ()
-lowerThreat pid n = do
-  barred <- elem CannotReduceThreat <$> getModifiers (PlayerTarget pid)
-  unless barred $ push $ LowerThreat pid n
+lowerThreat = lowerThreatBy GameSource
 
 {- | The card reduces the player's threat, as 'lowerThreat', opening the window for it if
 it does reduce it: The Empty Mug answers a player card's.
@@ -631,6 +647,14 @@ putEnemyIntoPlayEngaged pid = push . PutEnemyIntoPlayEngaged pid
 removeFromEncounterDeck :: ReverseQueue m => EncounterCard -> m ()
 removeFromEncounterDeck = push . RemoveFromEncounterDeck
 
+-- | The card, in the encounter deck, is discarded from it, opening the window for it, as
+-- Calaerion answers.
+discardFromEncounterDeck :: ReverseQueue m => EncounterCard -> m ()
+discardFromEncounterDeck c = do
+  removeFromEncounterDeck c
+  push $ AddToEncounterDiscard [c]
+  push $ CheckWindows [Window After $ DiscardedFromEncounterDeck c.id]
+
 removeFromEncounterDiscard :: ReverseQueue m => EncounterCard -> m ()
 removeFromEncounterDiscard = push . RemoveFromEncounterDiscard
 
@@ -666,6 +690,14 @@ doesNotRaiseThreat pid = lift $ withQueue_ \q -> case break (\case RaiseThreat p
 afterAttack :: (MonadTrans t, HasQueue Message m) => EnemyId -> [Message] -> t m ()
 afterAttack eid msgs = lift $ insertAfterMatching msgs \case
   CheckWindows ws -> any (\case Window After (EnemyAttacking eid' _) -> eid == eid'; _ -> False) ws
+  _ -> False
+
+{- | Messages to run once the characters' attack on the enemy has resolved, as "after this
+attack" reads for an enemy defending: after what the attack's damage step pushes.
+-}
+afterAttackOn :: (MonadTrans t, HasQueue Message m) => EnemyId -> [Message] -> t m ()
+afterAttackOn eid msgs = lift $ insertAfterMatching msgs \case
+  DoStep 1 (ResolveAttack _ eid') -> eid == eid'
   _ -> False
 
 {- | "If this attack destroys a character": the shadow's next step, 'DoStep' 1 of its
@@ -734,6 +766,23 @@ shuffleEncounterDeck :: ReverseQueue m => m ()
 shuffleEncounterDeck = push $ ShuffleDeck EncounterDeck
 
 -- | Set an encounter card aside, out of play.
+-- | Resources added to a card out of play, placed on it as it enters play, as Captain's
+-- Quarters adds them to Captain Sahír.
+placeResourcesOutOfPlay :: ReverseQueue m => CardId -> Int -> m ()
+placeResourcesOutOfPlay cid = push . PlaceResourcesOutOfPlay cid
+
+-- | The set-aside encounter cards that match, out of play.
+getSetAside :: HasGame m => CardMatcher -> m [EncounterCard]
+getSetAside m = getsGame (filter (cardMatches m) . scenarioSetAside . toAttrs . (.scenario))
+
+-- | The damage moves from one card to another: it is not dealt, so nothing answers it as
+-- damage dealt, but it can destroy what it moves to.
+moveDamage :: (ReverseQueue m, Sourceable source, Targetable from, Targetable to) => source -> from -> to -> Int -> m ()
+moveDamage source from onto n = when (n > 0) do
+  push $ RemoveTokens (toSource source) (toTarget from) Damage n
+  push $ PlaceTokens (toSource source) (toTarget onto) Damage n
+  push $ CheckDefeated (toSource source) (toTarget onto)
+
 setAside :: ReverseQueue m => EncounterCard -> m ()
 setAside = push . SetAside
 
@@ -1073,6 +1122,12 @@ a Weapon or Armour attachment from his hand" reads; 'cardHosts' gives where it m
 -}
 attachFromHand :: (ReverseQueue m, Targetable host) => PlayerId -> Card -> host -> m ()
 attachFromHand pid card = push . PutAttachmentIntoPlayFromHand pid card.id . toTarget
+
+-- | The player plays an attachment of their choice from their discard pile on the host,
+-- paying for it, as Stalwart reads; none playable, nothing happens.
+playAttachmentFromDiscardOn
+  :: (ReverseQueue m, Sourceable source, Targetable host) => PlayerId -> source -> host -> m ()
+playAttachmentFromDiscardOn pid source host = push $ PlayAttachmentFromDiscardOn pid (toSource source) (toTarget host)
 
 {- | The player attaches a card from their discard pile to the host without paying for it,
 as Master Ironsmith reads; 'cardHosts' gives where it may go.
@@ -1534,6 +1589,15 @@ putShipIntoPlayUnder pid = push . PutObjectiveAllyIntoPlayUnder pid
 revealFromCorsairDeck :: (ReverseQueue m, Sourceable source) => source -> PlayerId -> m ()
 revealFromCorsairDeck source pid = push $ RevealFromCorsairDeck (toSource source) pid
 
+-- | As 'revealFromCorsairDeck', the enemy put into play dealt a shadow card.
+revealFromCorsairDeckWithShadow :: (ReverseQueue m, Sourceable source) => source -> PlayerId -> m ()
+revealFromCorsairDeckWithShadow source pid = push $ RevealFromCorsairDeckWithShadow (toSource source) pid
+
+-- | The enemy goes to the staging area the player shares, his area's while the players are
+-- separated.
+placeInStagingAreaOf :: ReverseQueue m => PlayerId -> EnemyId -> m ()
+placeInStagingAreaOf pid eid = push $ PlaceInStagingAreaOf pid eid
+
 -- | The player moves 1 resource from one of his heroes' pools to the card, as Umbar Raider
 -- takes it; nothing, with no resources to move.
 takeResourceFromAHero :: (ReverseQueue m, Sourceable a, Targetable a) => a -> PlayerId -> m ()
@@ -1642,6 +1706,10 @@ discardBottomOfDeck pid = do
 -- | A card in the player's deck goes to the bottom of it, as one looked at from the top.
 moveToBottomOfDeck :: ReverseQueue m => PlayerId -> Card -> m ()
 moveToBottomOfDeck pid card = push $ MoveToBottomOfDeck pid card.id
+
+-- | A card in the player's deck goes to the top of it.
+moveToTopOfDeck :: ReverseQueue m => PlayerId -> Card -> m ()
+moveToTopOfDeck pid card = push $ MoveToTopOfDeck pid card.id
 
 -- | A destroyed ally, from its owner's discard pile, goes to the bottom of his deck, as
 -- "place that ally on the bottom of its owner's deck" reads; an encounter card does not.

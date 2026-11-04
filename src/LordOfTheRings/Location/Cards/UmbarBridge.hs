@@ -1,6 +1,7 @@
 module LordOfTheRings.Location.Cards.UmbarBridge (umbarBridge) where
 
-import LordOfTheRings.Helpers.Modifiers (getModifiers)
+import LordOfTheRings.Classes.HasGame (getsGame)
+import LordOfTheRings.Game.Base (gameEffects)
 import LordOfTheRings.Location.CardDefs qualified as Cards
 import LordOfTheRings.Location.Import.Lifted
 import LordOfTheRings.Placement (Placement (StagingArea))
@@ -16,13 +17,15 @@ umbarBridge = location UmbarBridge Cards.umbarBridge
 -- | While Umbar Bridge is in the staging area, cancel the first X progress that would be
 -- placed on the current quest each round, where X is the highest number of resources on a
 -- Raider enemy in play.
+-- What it has canceled this round counts toward the X.
 instance HasModifiersFor UmbarBridge where
   getModifiersFor (UmbarBridge a) = when (a.placement == StagingArea) do
     raiders <- traverse getEnemy =<< select (EnemyWithTrait Raider)
-    let x = foldr (max . (.resources)) 0 raiders
+    x <- foldr max 0 <$> traverse (\r -> resourcesHeld r r.resources) raiders
     when (x > 0) $ getCurrentQuest >>= traverse_ \q -> do
-      placed <- sum . (\ms -> [k | ProgressPlacedThisRound k <- ms]) <$> getModifiers q
-      when (x > placed) $ modified a q [ProgressReducedBy (x - placed)]
+      effects <- getsGame gameEffects
+      let canceled = sum [k | e <- effects, effectTarget e == q, ProgressCanceledThisRound k <- effectModifiers e]
+      when (x > canceled) $ modified a q [ProgressReducedBy (x - canceled)]
 
 -- | Travel: Reduce the engagement cost of each Corsair enemy to 0 until the end of the
 -- round.

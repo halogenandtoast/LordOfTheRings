@@ -91,6 +91,7 @@ newTableIn gameScenario seats@((player, _) :| _) =
     , gameLastCommittedWillpower = Nothing
     , gameLogBlocks = []
     , gameLeftPlay = mempty
+    , gameLeftPlayLocations = mempty
     , gameAttackDestroyed = []
     , gameSeparation = Nothing
     }
@@ -291,7 +292,7 @@ instance FromJSON Entities where
 instance FromJSON Game where
   parseJSON =
     genericParseJSON (aesonOptions $ Just "game")
-      . withDefaults [("logBlocks", toJSON ([] :: [Value])), ("leftPlay", object []), ("attackDestroyed", toJSON ([] :: [Value])), ("separation", Null)]
+      . withDefaults [("logBlocks", toJSON ([] :: [Value])), ("leftPlay", object []), ("leftPlayLocations", object []), ("attackDestroyed", toJSON ([] :: [Value])), ("separation", Null)]
 
 instance FromJSON Separation where
   parseJSON = genericParseJSON (aesonOptions $ Just "separation")
@@ -457,6 +458,10 @@ runGame msg g = case msg of
         let reduced = max 0 (n - sum [k | ProgressReducedBy k <- mods])
             -- and no more than it may take now, as Stranded in Umbar's 15 tokens at most
             room = foldr min reduced $ [max 0 (k - placed) | ProgressPerRoundLimit k <- mods] <> [max 0 k | ProgressLimit k <- mods]
+        -- what is canceled is kept count of, as Umbar Bridge cancels only the first X
+        pushWhen (n > reduced)
+          $ CreateEffect
+          $ Effect GameSource target [ProgressCanceledThisRound (n - reduced)] UntilEndOfRound
         if room <= 0
           then pure g
           else do
@@ -476,6 +481,19 @@ runGame msg g = case msg of
     case only of
       p : _ | p /= pid -> g <$ push (EngageEnemy p eid)
       _ -> runGame'' msg g
+  -- no ally enters play once one has this round, as Corsair Waters reads: one to be put
+  -- into play stays where it is, or goes to its owner's discard pile if it has left it
+  PutAllyIntoPlay {} | allyEntryBarred g -> pure g
+  PutAllyIntoPlayUnder _ card | allyEntryBarred g -> do
+    let owner = card.owner >>= (`Map.lookup` g.players)
+        held = maybe False (\p -> any ((== card.id) . (.id)) (p.hand <> p.deck <> p.discard)) owner
+    pushWhen (not held) $ PutInDiscard card
+    pure g
+  -- a location that cannot enter the staging area stays where it is, as Shrine to Morgoth
+  PlaceLocation lid StagingArea
+    | Just l <- Map.lookup lid g.entities.locations
+    , CannotEnterStagingArea `elem` map modifierType (Map.findWithDefault [] (toTarget l) (gameModifiers g)) ->
+        pure g
   -- a location becoming the active location, however it does, opens its windows once it is
   PlaceLocation lid ActiveLocation
     | Just l <- Map.lookup lid g.entities.locations
@@ -550,17 +568,6 @@ movedLocation g = \case
   RemoveFromGame (LocationTarget lid) -> Just lid
   _ -> Nothing
 
--- | The enemy a message takes out of play other than by destroying it.
-removedEnemy :: Message -> Maybe EnemyId
-removedEnemy = \case
-  Discard (EnemyTarget eid) -> Just eid
-  ReturnToTopOfEncounterDeck (EnemyTarget eid) -> Just eid
-  ReturnToBottomOfEncounterDeck (EnemyTarget eid) -> Just eid
-  ShuffleIntoEncounterDeck (EnemyTarget eid) -> Just eid
-  RemoveFromGame (EnemyTarget eid) -> Just eid
-  AddToVictoryDisplay (EnemyTarget eid) -> Just eid
-  _ -> Nothing
-
 runGame' :: Message -> Game -> GameT Game
 runGame' msg g = case leavingCharacter g msg of
   -- a character leaving play opens the When window first, while it is still in play
@@ -608,16 +615,41 @@ runInPlay msg g =
             JoinArea {} -> True
             SeparatePlayers _ -> True
             _ -> False
+          -- a location leaving play is kept aside for its own abilities to answer it
+          departed = if movingAreas then mempty else Map.difference g.entities.locations g'.entities.locations
       unless movingAreas
         $ pushAll
         $ map (PlaceTimeCounters . EnemyTarget) (entered g.entities.enemies g'.entities.enemies)
         <> map (PlaceTimeCounters . LocationTarget) (entered g.entities.locations g'.entities.locations)
         <> [PlaceTimeCounters (toTarget q) | q <- toList g'.entities.quests, q.flipped, not (wasFlipped $ toId q)]
         <> [PlaceTimeCounters (toTarget q) | q <- toList g'.entities.quests, enteredSideQuest q]
+        <> [CheckWindows [mkAfter $ LocationLeftPlay lid] | lid <- Map.keys departed]
+      -- an enemy entering play, not one turned over from its other side, which stays in play;
+      -- the resources placed on its card while it was out of play come with it
+      let arrived = if movingAreas || isFlip then [] else entered g.entities.enemies g'.entities.enemies
+          isFlip = case msg of
+            Flip _ -> True
+            _ -> False
+          waiting = scenarioOutOfPlayResources (toAttrs g'.scenario)
+          carried = [(eid, n) | eid <- arrived, Just e <- [Map.lookup eid g'.entities.enemies], Just n <- [Map.lookup (toCard e).id waiting]]
+      pushAll [PlaceTokens GameSource (EnemyTarget eid) Resource n | (eid, n) <- carried]
+      -- one put into play engaged has entered play once it has engaged
+      queued <- peekQueue
+      for_ arrived \eid -> do
+        let engaging = \case
+              EngageEnemy _ eid' -> eid' == eid
+              _ -> False
+            window = CheckWindows [mkAfter $ EnemyEnteredPlay eid]
+        if any engaging queued then insertAfterMatching [window] engaging else push window
+      let gone = [(toCard e).id | (eid, _) <- carried, Just e <- [Map.lookup eid g'.entities.enemies]]
+          g'' =
+            g'
+              & leftPlayLocationsL %~ Map.union departed
+              & scenarioL %~ overAttrs (outOfPlayResourcesL %~ \m -> foldr Map.delete m gone)
       case msg of
         -- the window goes in front of the phase's own steps
-        BeginPhase phase -> g' <$ push (CheckWindows [mkAfter $ PhaseBegins phase])
-        _ -> pure g'
+        BeginPhase phase -> g'' <$ push (CheckWindows [mkAfter $ PhaseBegins phase])
+        _ -> pure g''
 
 runGameMessage :: Message -> Game -> GameT Game
 runGameMessage msg g = case msg of
@@ -632,12 +664,25 @@ runGameMessage msg g = case msg of
   IfAttackDestroyed eid msgs -> do
     whenM (attackDestroyedACharacter eid) $ pushAll msgs
     pure g
+  -- the refresh phase's readying is over once the character has readied
+  Ready t -> pure $ g & effectsL %~ filter (\e -> not (effectTarget e == t && effectModifiers e == [ReadiedByRefresh]))
+  IfAttackDamaged eid targets msgs -> do
+    let damaged e = effectTarget e `elem` targets && DamagedByAttackOf eid `elem` effectModifiers e
+    when (any damaged $ gameEffects g) $ pushAll msgs
+    pure g
+  IfAttackDealtNoDamage eid msgs -> do
+    unlessM (elem DealtAttackDamage <$> getModifiers (EnemyTarget eid)) $ pushAll msgs
+    pure g
   OpenLogBlock block -> pure $ g & logBlocksL %~ (<> [block])
   -- an ally that has just left play answers its own leaving
   UseCardAbility _ (AllySource aid) _ _ | Just a <- Map.lookup aid (gameLeftPlay g) -> do
     a' <- runEach msg a
     pure $ g & leftPlayL . ix aid .~ a'
   ForgetLeftPlay aid -> pure $ g & leftPlayL %~ Map.delete aid
+  -- a location that has left play answers its own leaving
+  UseCardAbility _ (LocationSource lid) _ _ | Just l <- Map.lookup lid (gameLeftPlayLocations g), not (Map.member lid g.entities.locations) -> do
+    l' <- runEach msg l
+    pure $ g & leftPlayLocationsL . ix lid .~ l'
   CloseLogBlock bid -> pure $ g & logBlocksL %~ filter ((/= bid) . (.id))
   -- step 8 follows the quest's own setup: a nightmare setup card's instructions, as its
   -- "the game is now ready to begin" reads; step 9 a campaign card's setup that needs what
@@ -716,7 +761,7 @@ runGameMessage msg g = case msg of
     -- each character readied opens its own window, for responses to it readying
     readied <- for (filter (`notElem` held) characters) \c -> do
       traits <- characterTraits c
-      pure [Ready c, CheckWindows [mkAfter $ Readied c traits]]
+      pure [refreshing c, Ready c, CheckWindows [mkAfter $ Readied c traits]]
     pushAll
       $ concat regenerating
       <> concat readied
@@ -731,6 +776,28 @@ runGameMessage msg g = case msg of
   SetFirstPlayer pid -> pure $ g & firstPlayerL .~ pid & separationL %~ fmap (\s -> s {separationFirstPlayer = pid})
   SeparatePlayers groups -> pure $ separate groups g
   FocusArea pid -> pure $ focusArea pid g
+  -- while the players are separated, an enemy sent to another area's staging area leaves
+  -- this one, what is attached to it going with it
+  PlaceInStagingAreaOf pid eid
+    | Map.member pid g.players -> g <$ push (PlaceEnemy eid StagingArea)
+    | Just s <- gameSeparation g
+    , any (elem pid . areaPlayers) (separationAreas s)
+    , Just e <- Map.lookup eid g.entities.enemies -> do
+        pushAll $ discardShadowsOf g (EnemyTarget eid)
+        let on' :: HasField "placement" a Placement => a -> Bool
+            on' a = a.placement == AttachedTo (EnemyTarget eid)
+            moving = mempty {entitiesEnemies = Map.singleton eid (overAttrs (\a -> a {enemyPlacement = StagingArea, enemyShadowCards = []}) e), entitiesAttachments = Map.filter on' g.entities.attachments, entitiesTreacheries = Map.filter on' g.entities.treacheries}
+            arrive a = if elem pid (areaPlayers a) then a {areaHeldEntities = areaHeldEntities a <> moving} else a
+        pure
+          $ g
+          & entitiesL . enemiesL %~ Map.delete eid
+          & entitiesL . attachmentsL %~ Map.filter (not . on')
+          & entitiesL . treacheriesL %~ Map.filter (not . on')
+          & separationL ?~ s {separationAreas = map arrive (separationAreas s)}
+  -- a shadow card for an enemy known by its card, as one just put into play
+  DealShadowCardToCard cid -> do
+    for_ (find ((== cid) . enemyCardId . toAttrs) (toList g.entities.enemies)) \e -> push $ DealShadowCard (toId e)
+    pure g
   JoinAtTravel ->
     pure $ g & separationL %~ fmap (\s -> s {separationAreas = [if isFocusedArea g a then a {areaJoining = True} else a | a <- separationAreas s]})
   JoinArea joining target -> pure $ joinArea joining target g
@@ -763,7 +830,7 @@ runGameMessage msg g = case msg of
   RefreshUpTo pid n cs | n > 0, notNull cs -> do
     choices <- for cs \c -> do
       traits <- characterTraits c
-      pure $ targetLabel c [Ready c, CheckWindows [mkAfter $ Readied c traits], RefreshUpTo pid (n - 1) (filter (/= c) cs)]
+      pure $ targetLabel c [refreshing c, Ready c, CheckWindows [mkAfter $ Readied c traits], RefreshUpTo pid (n - 1) (filter (/= c) cs)]
     push $ questionLabel (ikeyWith "label.refreshUpTo" [intVar "count" n]) pid choices
     pure g
   CheckEliminations -> do
@@ -823,8 +890,19 @@ runGameMessage msg g = case msg of
   Discard target -> discardTarget target g
   DealDamage source target n | n > 0 -> do
     mods <- getModifiers target
+    -- an enemy's attack's damage may go elsewhere, as Orc Saboteur's to a Battleground,
+    -- not to one of those it already goes to
+    attackRedirects <- case source of
+      EnemyAttackSource eid -> (\ms -> [t | AttackDamageRedirectedTo t <- ms]) <$> getModifiers eid
+      _ -> pure []
+    -- the player whose card deals it, as Marshland Outlaws reads
+    controller <- if isPlayerCardSource source then playerCardController source else pure Nothing
     -- damage another character takes in its place, as Song of Mocking's
-    let redirected = ordNub $ filter (inPlay g) [t | DamageRedirectedTo t <- mods]
+    let redirected =
+          ordNub
+            $ filter (inPlay g)
+            $ [t | DamageRedirectedTo t <- mods]
+            <> (if target `elem` attackRedirects then [] else filter (/= target) attackRedirects)
     lead <- getLead
     -- before it is dealt, a Forced effect may cancel it, as Patrol Leader's: see 'cancelDamage'
     -- damage redirected is applied where it goes, not redirected again, as two Songs of
@@ -836,8 +914,11 @@ runGameMessage msg g = case msg of
               combat = case source of
                 PlayerAttackSource _ -> True
                 _ -> False
+              barred =
+                (CannotBeDamagedByPlayerCardEffects `elem` mods' && isPlayerCardSource source)
+                  || maybe False (\p -> CannotBeDamagedByEffectsOf p `elem` mods') controller
           pure
-            $ if CannotTakeDamage `elem` mods' || (CannotTakeNonCombatDamage `elem` mods' && not combat)
+            $ if CannotTakeDamage `elem` mods' || (CannotTakeNonCombatDamage `elem` mods' && not combat) || barred
               then []
               else [CheckWindows [mkWhen $ DealtDamage t n'], DoStep 1 (DealDamage source t n')]
     unless (CannotTakeDamage `elem` mods) $ pushAll =<< case redirected of
@@ -865,6 +946,8 @@ runGameMessage msg g = case msg of
     defending <- elem Defending <$> getModifiers target
     pushAll
       $ [CreateEffect $ Effect GameSource target [DamagedWhileDefending] UntilEndOfAttack | defending]
+      -- kept until the enemy attacks again, as what its attack destroyed is
+      <> [CreateEffect $ Effect GameSource target [DamagedByAttackOf eid] UntilEndOfRound | EnemyAttackSource eid <- [source], n > 0]
       <> [ PlaceTokens source target Damage n
          , CheckWindows $ mkAfter (DealtDamage target n) : [mkAfter $ DamagedByEnemyAttack target eid | EnemyAttackSource eid <- [source]]
          , CheckDefeated source target
@@ -960,7 +1043,8 @@ runGameMessage msg g = case msg of
         -- what a player's attack destroyed, for the attack to read as it resolves
         recorded = attackDestroyedL %~ (<> [AttackDestroyed source target Nothing card Nothing | PlayerAttackSource _ <- [source]])
     push $ CheckWindows [mkAfter $ EnemyDefeated eid, mkAfter $ EnemyDestroyed card]
-    if stays then pure g else recorded <$> case cdVictoryPoints (toCardDef enemy) of
+    -- one that stays in play for its own effect was still destroyed by the attack
+    if stays then pure (recorded g) else recorded <$> case cdVictoryPoints (toCardDef enemy) of
       Just _ -> do
         -- what is attached to it is discarded, an objective it guarded as a Key of The Three
         -- Trials, and a Mount, as Mordor Warg, goes to the staging area
@@ -1109,8 +1193,11 @@ runGameMessage msg g = case msg of
     let checked = ambush && IgnoreAmbush `notElem` gameMods && NoEngagementChecks `notElem` (gameMods <> mods)
     when checked do
       cost <- getEngagementCost eid
+      -- its cost against each player, as for an engagement check, as Captive Villager's
+      -- controller is considered to have more threat
+      let costFor p = cost + sum [n | EngagementCostAgainst p' n <- mods, p' == p]
       players <- traverse (\p -> (p,) <$> getThreat p) =<< getPlayerOrder
-      for_ (find (\(p, threat) -> threat >= cost && CannotEngagePlayer p `notElem` mods) players) \(p, _) -> push (EngageEnemy p eid)
+      for_ (find (\(p, threat) -> threat >= costFor p && CannotEngagePlayer p `notElem` mods) players) \(p, _) -> push (EngageEnemy p eid)
     pure g
   EngageEnemy pid eid -> do
     -- a Ship enemy engaging from the staging area resolves its Boarding X (Dream-chaser rules)
@@ -1158,10 +1245,17 @@ runGameMessage msg g = case msg of
         then pure allies
         else withHitPointsLeft assigned =<< selectCharacters AnyHero (AllyControlledBy AnyPlayer)
     gameMods <- getModifiers GameTarget
+    -- Ship objectives take it all while they can, as City Under Siege reads
+    ships <-
+      if ArcheryDamageToShipObjectives `elem` gameMods
+        then withHitPointsLeft assigned . map toTarget =<< select (shipObjective <> AllyControlledBy AnyPlayer)
+        else pure []
     let staying = case assigned of
           c : _ | ArcheryDamageStaysOnCharacter `elem` gameMods, c `elem` characters -> [c]
           _ -> characters
-        characters' = staying <> ordNub (filter (inPlay g) [t | ArcheryDamageMayGoTo t <- gameMods])
+        characters'
+          | notNull ships = ships
+          | otherwise = staying <> ordNub (filter (inPlay g) [t | ArcheryDamageMayGoTo t <- gameMods])
     push
       $ if n > 0 && notNull characters'
         then
@@ -1173,15 +1267,15 @@ runGameMessage msg g = case msg of
     order <- getPlayerOrder
     -- one engaged with each player from the staging area is dealt one for each attack
     -- an enemy with hinder is dealt none
-    enemies <- filterM (\e -> not <$> orM [engagedWithEach e, hinders g e]) =<< concatMapM engagedByCost order
+    enemies <- filterM (\e -> not <$> orM [engagedWithEach e, hinders g e]) . ordNub =<< concatMapM attacksOf order
     pushAll $ map DealShadowCard enemies
     pure g
   EnemyAttacks pid -> do
-    pushAll . (CreateEffect (Effect GameSource GameTarget [ResolvingEnemyAttacks] UntilEndOfPhase) :) . pure . ChooseEnemyAttack pid =<< engagedByCost pid
+    pushAll . (CreateEffect (Effect GameSource GameTarget [ResolvingEnemyAttacks] UntilEndOfPhase) :) . pure . ChooseEnemyAttack pid =<< attacksOf pid
     pure g
   ChooseEnemyAttack pid candidates -> do
     -- checked again before each attack: a card played between attacks may stop one
-    engaged <- select (EnemyEngagedWith $ PlayerWithId pid)
+    engaged <- (<>) <$> select (EnemyEngagedWith $ PlayerWithId pid) <*> attacksAsIfEngaged pid
     enemies <-
       filterM
         (fmap (\ms -> CannotAttack `notElem` ms && CannotAttackPlayer pid `notElem` ms) . getModifiers)
@@ -1206,8 +1300,12 @@ runGameMessage msg g = case msg of
       =<< inLogBlock
         (EnemyAttackBlock pid eid)
         (CheckWindows [mkWhen $ EnemyAttacking eid pid] : windows <> [DeclareDefenders pid eid []])
-    -- what its last attack destroyed is forgotten as it makes a new one
-    pure $ g & attackDestroyedL %~ filter ((/= EnemyAttackSource eid) . attackDestroyedBy)
+    -- what its last attack destroyed or damaged is forgotten as it makes a new one
+    let lastDamage e = effectTarget e == EnemyTarget eid && DealtAttackDamage `elem` effectModifiers e
+    pure
+      $ g
+      & attackDestroyedL %~ filter ((/= EnemyAttackSource eid) . attackDestroyedBy)
+      & effectsL %~ filter (\e -> not (lastDamage e) && effectModifiers e /= [DamagedByAttackOf eid])
   DefendWith pid eid defender -> do
     windows <- actionWindows
     pushAll
@@ -1402,16 +1500,19 @@ runGameMessage msg g = case msg of
     pure g
   AttackStagingAreaAlone pid attacker -> do
     ready <- elem attacker <$> readyAttackers pid
-    staged <- filterM (fmap (notElem CannotBeAttacked) . getModifiers) =<< select EnemyInStagingArea
+    staged <-
+      filterM (\e -> andM [notElem CannotBeAttacked <$> getModifiers e, (> 0) . fromMaybe 1 <$> attackerRoom e])
+        =<< select EnemyInStagingArea
     when (ready && notNull staged)
       $ push
       $ questionLabelWith (ikey "label.attackStagingAlone") (Just attacker) [] pid
       $ [ targetLabel
             eid
-            [ AttackWith attacker
-            , CreateEffect $ Effect GameSource attacker [AttackModifier 1] UntilEndOfAttack
-            , ResolveAttack pid eid
-            ]
+            $ [ AttackWith attacker
+              , CreateEffect $ Effect GameSource attacker [AttackModifier 1] UntilEndOfAttack
+              ]
+            <> declaredAttacker attacker eid
+            <> [CheckWindows [mkAfter $ AttackersDeclared eid], ResolveAttack pid eid]
         | eid <- staged
         ]
       <> [Label (ikey "label.doNotAttack") []]
@@ -1428,7 +1529,7 @@ runGameMessage msg g = case msg of
           questionLabelWith (ikey "label.declareAttackers") Nothing [toTarget eid] pid
             $ [ targetLabel
                   a
-                  [AttackWith a, CheckWindows [mkAfter $ DeclaredAsAttacker a eid], DeclareAttackers pid eid]
+                  (AttackWith a : declaredAttacker a eid <> [DeclareAttackers pid eid])
               | a <- attackers
               ]
             <> [Label (ikey "label.doneAttacking") [DeclareRangedAttackers pid eid others]]
@@ -1437,9 +1538,9 @@ runGameMessage msg g = case msg of
   -- may act once its attackers are declared and once its damage is dealt
   DeclareRangedAttackers pid eid others | null others || not (Map.member eid g.entities.enemies) -> do
     attackers <- selectCharacters AttackingHero AttackingAlly
-    windows <-
-      if null attackers || not (Map.member eid g.entities.enemies) then pure [] else actionWindows
-    pushAll $ windows <> [ResolveAttack pid eid] <> windows
+    let attacked = notNull attackers && Map.member eid g.entities.enemies
+    windows <- if attacked then actionWindows else pure []
+    pushAll $ [CheckWindows [mkAfter $ AttackersDeclared eid] | attacked] <> windows <> [ResolveAttack pid eid] <> windows
     pure g
   DeclareRangedAttackers pid eid (other : rest) -> do
     attacking <- selectCharacters AttackingHero AttackingAlly
@@ -1455,10 +1556,7 @@ runGameMessage msg g = case msg of
           questionLabelWith (ikey "label.joinAttackRanged") Nothing [toTarget eid] other
             $ [ targetLabel
                   a
-                  [ AttackWith a
-                  , CheckWindows [mkAfter $ DeclaredAsAttacker a eid]
-                  , DeclareRangedAttackers pid eid (other : rest)
-                  ]
+                  (AttackWith a : declaredAttacker a eid <> [DeclareRangedAttackers pid eid (other : rest)])
               | a <- ranged
               ]
             <> [Label (ikey "label.doneAttacking") [DeclareRangedAttackers pid eid rest]]
@@ -1531,6 +1629,7 @@ runGameMessage msg g = case msg of
         destroyed = any byThisAttack $ gameAttackDestroyed g
     pushWhen destroyed $ CheckWindows $ mkAfter (EnemyDestroyedByAttack eid attackers traits)
       : [mkAfter $ EngagedEnemyDestroyedByAttack pid attackers | Just pid <- [engaged]]
+      <> take 1 [mkAfter $ EnemyCardDestroyedByAttack eid (attackDestroyedCard d).id | d <- gameAttackDestroyed g, byThisAttack d]
     -- the attacking player draws for it, as Knife-work lets
     when destroyed do
       attacking <- ordNub . catMaybes <$> traverse characterController attackers
@@ -1704,6 +1803,12 @@ runGameMessage msg g = case msg of
     push
       $ questionLabelWith (ikey "label.chooseAndExhaustHero") Nothing [] pid
         [targetLabel h (Exhaust (toTarget h) : map (paidWith h) rest) | h <- heroes]
+    pure g
+  PayDamageHeroCost pid matcher n rest -> do
+    heroes <- asPlayer pid (damageableHeroes matcher)
+    push
+      $ questionLabelWith (ikeyWith "label.dealDamageToOneHero" [intVar "n" n]) Nothing [] pid
+        [targetLabel h (DealDamage (PlayerSource pid) (toTarget h) n : rest) | h <- heroes]
     pure g
   PayExhaustCharacterCost pid hm am rest -> do
     characters <- asPlayer pid (exhaustableCharacters hm am)
@@ -2010,7 +2115,11 @@ runGameMessage msg g = case msg of
           (fmap (elem ReturnToTopOfEncounterDeckAfterCombat) . getModifiers)
           (toList g.entities.enemies)
       pushAll [ReturnToTopOfEncounterDeck (toTarget e) | e <- returning]
-    returning <- flip filterM (toList g.entities.allies) \a ->
+    -- an ally put into play until the end of the phase, as Command's, is discarded
+    discarding <- flip filterM (toList g.entities.allies) \a ->
+      elem DiscardAtEndOfPhase <$> getModifiers (CardIdTarget $ allyCardId $ toAttrs a)
+    pushAll [Discard (toTarget a) | a <- discarding]
+    returning <- flip filterM (filter ((`notElem` map toId discarding) . toId) $ toList g.entities.allies) \a ->
       elem ReturnToHandAtEndOfPhase <$> getModifiers (CardIdTarget $ allyCardId $ toAttrs a)
     shuffling <- flip filterM (toList g.entities.allies) \a -> elem ShuffleIntoDeckAtEndOfPhase <$> getModifiers a
     -- an ally under both, as Beorn put into play by Sneak Attack, goes where the first
@@ -2042,7 +2151,7 @@ runGameMessage msg g = case msg of
             g
         passToken s = s {separationFirstPlayer = fromMaybe s.separationFirstPlayer $ headMay $ drop 1 $ seatsFrom s.separationFirstPlayer g.playerOrder}
     pushEnd step
-    pure $ g' & effectsL %~ filter ((`notElem` [UntilEndOfPhase, UntilEndOfPhaseOf phase]) . effectDuration)
+    pure $ g' & effectsL %~ filter ((`notElem` [UntilEndOfPhase, UntilEndOfPhaseOf phase]) . effectDuration) & leftPlayLocationsL .~ mempty
   PlayAlly pid card -> do
     thisAlly <- entering =<< newAlly pid card
     limited' <- elem OneAllyPerRound <$> getModifiers GameTarget
@@ -2097,11 +2206,17 @@ runGameMessage msg g = case msg of
     -- after an enemy's attack has resolved, what lasted for that attack ends
     let attackOver = any (\case Window After (EnemyAttacking _ _) -> True; _ -> False) windows
         -- an effect waiting for the next enemy in the staging area passes to it
-        passed = case [eid | Window After (EntersStagingArea (EnemyTarget eid)) <- windows] of
+        passed = nextAttack . case [eid | Window After (EntersStagingArea (EnemyTarget eid)) <- windows] of
           eid : _ -> map \e -> case [m | NextEnemyInStaging m <- effectModifiers e] of
             [] -> e
             ms -> e {effectTarget = EnemyTarget eid, effectModifiers = ms}
           [] -> id
+        -- an effect waiting for the character's next attack lasts for that attack once it is
+        -- declared as an attacker
+        attackers = [t | Window After (DeclaredAsAttacker t _) <- windows]
+        nextAttack = map \e -> case [m | ForNextAttack m <- effectModifiers e] of
+          ms@(_ : _) | effectTarget e `elem` attackers -> e {effectModifiers = ms, effectDuration = UntilEndOfAttack}
+          _ -> e
     pure $ g & effectsL %~ passed . (if attackOver then filter ((/= UntilEndOfAttack) . effectDuration) else id)
   ResponseWindow windows order used passes
     | passes < length order
@@ -2155,6 +2270,7 @@ runGameMessage msg g = case msg of
     pure g
   RespondFromDiscard pid card _ -> do
     for_ (lookupEvent (toCardCode card) card.id pid) $ void . runEach msg
+    when (cdCardType (toCardDef card) == AllyType) $ void $ runEach msg $ createAlly card (AllyId UUID.nil) pid
     pure g
   TravelActions -> do
     order <- getPlayerOrder
@@ -2229,7 +2345,7 @@ runGameMessage msg g = case msg of
     for_ (Map.lookup host g.entities.enemies) \hostEnemy ->
       for_ (find ((== cid) . (.id)) hostEnemy.shadowCards) \card -> do
         enemy <- newEnemy card
-        pushAll [RemoveShadowCard host cid, CheckWindows [mkAfter $ EntersStagingArea (toTarget enemy), mkAfter $ EntersPlay (toTarget enemy)]]
+        pushAll [RemoveShadowCard host cid, CheckWindows [mkAfter $ EntersStagingArea (toTarget enemy)]]
         putGame $ g & entitiesL . enemiesL %~ insertEntity (overAttrs (\a -> a {enemyPlacement = StagingArea}) enemy)
     getGame
   PutShadowCardIntoPlay host cid pid -> do
@@ -2267,7 +2383,7 @@ runGameMessage msg g = case msg of
     | Just (owner, pc) <- headMay [(p.id, c) | p <- toList g.players, PlayerCard c <- p.deck <> p.hand <> p.discard, c.id == cid] -> do
         let dead = createEnemy (MkEncounterCard cid (toCardCode reanimatedDead)) eid
             without = filter ((/= cid) . (.id))
-        push $ CheckWindows [mkAfter $ EntersStagingArea (toTarget eid), mkAfter $ EntersPlay (toTarget eid)]
+        push $ CheckWindows [mkAfter $ EntersStagingArea (toTarget eid)]
         pure
           $ g
           & playersL
@@ -2693,7 +2809,7 @@ runGameMessage msg g = case msg of
         -- Prowl, a keyword, resolves before the When Revealed effect (ALeP 3.094)
         revealing t =
           inLogBlock (RevealBlock card)
-            $ [CheckWindows $ mkAfter (EntersStagingArea t) : [mkAfter (EntersPlay t) | cdCardType def == EnemyType] | cdCardType def `elem` [EnemyType, LocationType, EncounterSideQuestType], isNothing engaging]
+            $ [CheckWindows [mkAfter $ EntersStagingArea t] | cdCardType def `elem` [EnemyType, LocationType, EncounterSideQuestType], isNothing engaging]
             <> [CheckWindows [mkWhen $ Revealed t]] <> [WhileInPlay t prowl | notNull prowl] <> [whenRevealed t, WhileInPlay t doomed]
             <> [CheckWindows [mkAfter $ Revealed t]]
     case cdCardType def of
@@ -2726,7 +2842,9 @@ runGameMessage msg g = case msg of
           %~ insertEntity (overAttrs (\a -> a {locationPlacement = StagingArea}) location)
       TreacheryType -> do
         treachery <- newTreachery card
-        pushAll . (<> [FinishRevelation (toId treachery), WhileInPlay (toTarget treachery) surge])
+        -- counted as it is revealed, for "the first treachery card revealed each round"
+        let counted = CreateEffect $ Effect (TreacherySource $ toId treachery) GameTarget [TreacheryRevealedThisRound] UntilEndOfRound
+        pushAll . (counted :) . (<> [FinishRevelation (toId treachery), WhileInPlay (toTarget treachery) surge])
           =<< revealing (toTarget treachery)
         pure $ g & entitiesL . treacheriesL %~ insertEntity treachery
       -- a player card with the Encounter keyword, as Ranger of the North: it enters play
@@ -2984,7 +3102,7 @@ runGameMessage msg g = case msg of
   AddToStaging card -> case cdCardType (toCardDef card) of
     EnemyType -> do
       thisEnemy <- newEnemy card
-      pushAll [CheckWindows [mkAfter $ EntersStagingArea (toTarget thisEnemy), mkAfter $ EntersPlay (toTarget thisEnemy)], AmbushEngagementCheck (toId thisEnemy)]
+      pushAll [CheckWindows [mkAfter $ EntersStagingArea (toTarget thisEnemy)], AmbushEngagementCheck (toId thisEnemy)]
       pure
         $ g
         & entitiesL
@@ -3253,6 +3371,10 @@ leftPlayWindows g target = case target of
     gained <- gainedTraits target
     pure [LeftPlay target pid (cdCardTraits def <> gained), CharacterLeftPlay card]
 
+-- | The refresh phase, not a card effect, readies the character next.
+refreshing :: Target -> Message
+refreshing c = CreateEffect $ Effect GameSource c [ReadiedByRefresh] UntilEndOfPhase
+
 -- | The character is defending the attack being resolved.
 -- | The character defends the enemy's attack, the effect's source the attack, for what
 -- reads the defender of one enemy's attack (see 'getDefendersAgainst').
@@ -3351,7 +3473,8 @@ playsBeforeCommitting pid = \case
     _ -> False
 
 {- | Cards in a player's discard pile that respond to the windows from there: allies like
-Ered Luin Miner, put into play, and events like Hidden Cache, which resolve it. The
+Ered Luin Miner, put into play unless their card says otherwise, as Starla is played,
+and events like Hidden Cache, which resolve it. The
 continuation gets the card id, to mark the card as used.
 -}
 discardResponses
@@ -3364,11 +3487,7 @@ discardResponses pid windows used continue = do
       AllyType
         | matches (allyDiscardWindow $ toAttrs $ createAlly pc (AllyId UUID.nil) pid) -> do
             ok <- passesUnique (PlayerCard pc)
-            pure
-              $ guard ok
-              $> targetLabel
-                (CardIdTarget pc.id)
-                [RemoveFromDiscard pid pc.id, PutAllyIntoPlayUnder pid pc, continue pc.id]
+            pure $ guard ok $> targetLabel (CardIdTarget pc.id) [RespondFromDiscard pid pc windows, continue pc.id]
       EventType
         | Just e <- lookupEvent (toCardCode pc) pc.id pid
         , matches (toAttrs e).eventDiscardWindow ->
@@ -3407,10 +3526,23 @@ dealAssigned source assigned = [DealDamage source c k | (c, k) <- Map.toList (Ma
 
 -- | Enemies engaged with a player, highest engagement cost first.
 engagedByCost :: PlayerId -> GameT [EnemyId]
-engagedByCost pid = do
-  enemies <- select (EnemyEngagedWith $ PlayerWithId pid)
+engagedByCost pid = byCost =<< select (EnemyEngagedWith $ PlayerWithId pid)
+
+byCost :: [EnemyId] -> GameT [EnemyId]
+byCost enemies = do
   costs <- traverse getEngagementCost enemies
   pure $ map fst $ sortOn (Down . snd) $ zip enemies costs
+
+-- | The enemies that attack the player in the combat phase, by engagement cost: those
+-- engaged with him, and those in the staging area that attack him as if engaged.
+attacksOf :: PlayerId -> GameT [EnemyId]
+attacksOf pid = byCost . ordNub =<< (<>) <$> select (EnemyEngagedWith $ PlayerWithId pid) <*> attacksAsIfEngaged pid
+
+-- | The enemies in the staging area that attack the player as if engaged, as Snow-Giant.
+attacksAsIfEngaged :: PlayerId -> GameT [EnemyId]
+attacksAsIfEngaged pid = filterM asIf =<< select EnemyInStagingArea
+ where
+  asIf e = getModifiers e >>= \ms -> anyM (\m -> selectAny (PlayerWithId pid <> m)) [m | AttacksAsIfEngagedWith m <- ms]
 
 -- | Whether the enemy is engaged with each player from the staging area, as Durin's Bane.
 engagedWithEach :: EnemyId -> GameT Bool
@@ -3594,7 +3726,21 @@ canFight eid c = do
 canAttack :: EnemyId -> Target -> GameT Bool
 canAttack eid c = do
   barred <- (\ms -> anyM (\m -> selectAny (EnemyWithId eid <> m)) [m | CannotAttackMatching m <- ms]) =<< getModifiers c
-  if barred then pure False else canFight eid c
+  full <- (<= 0) . fromMaybe 1 <$> attackerRoom eid
+  if barred || full then pure False else canFight eid c
+
+-- | How many more characters may attack the enemy this round, when it is limited, as Graxar.
+attackerRoom :: EnemyId -> GameT (Maybe Int)
+attackerRoom eid = do
+  mods <- getModifiers eid
+  pure $ subtract (length [() | DeclaredAttackerThisRound <- mods]) <$> minimumMay [n | AttackersPerRoundLimit n <- mods]
+
+-- | The character is declared as an attacker against the enemy.
+declaredAttacker :: Target -> EnemyId -> [Message]
+declaredAttacker a eid =
+  [ CreateEffect $ Effect GameSource (EnemyTarget eid) [DeclaredAttackerThisRound] UntilEndOfRound
+  , CheckWindows [mkAfter $ DeclaredAsAttacker a eid]
+  ]
 
 -- | Whether the character may defend against the enemy's attack: one that cannot exhaust
 -- only if it defends without exhausting.

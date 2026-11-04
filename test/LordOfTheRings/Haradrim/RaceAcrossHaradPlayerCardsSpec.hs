@@ -14,7 +14,6 @@ import LordOfTheRings.Modifier (ModifierType (DoesNotContributeThreat, GainTrait
 import LordOfTheRings.Quest.CardDefs qualified as Quests
 import LordOfTheRings.Scenario.Types (victoryDisplayL)
 import LordOfTheRings.Trait (Trait (Warrior))
-import LordOfTheRings.Window (WindowType (Explored), mkWhen)
 import TestImport
 
 thurindirCode, beravorCode, eowynCode, theodredCode, gimliCode :: CardCode
@@ -152,7 +151,7 @@ spec = describe "Race Across Harad player cards" do
       -- Old Forest Road's own response to the travel
       chooseLabel "$label.pass" pid
       other <- stagedLocation Locations.oldForestRoad
-      run $ CheckWindows [mkWhen $ Explored active]
+      run $ PlaceTokens GameSource (toTarget active) Progress 3
       chooseAbilityOf pid settler
       getsGame (Map.member other . (.entities.locations)) `shouldReturn` False
       getsGame (null . (.entities.allies)) `shouldReturn` True
