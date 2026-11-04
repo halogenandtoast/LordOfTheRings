@@ -548,6 +548,12 @@ allLocationCards =
       , trystingPlace
       , deadlyRoad
       , hauntedPath
+      , grond
+      , gateOfGondor
+      , cityWall
+      , pelennorField
+      , fireFilledTrench
+      , siegeTower
       ]
 
 drownedTreasury :: CardDef
@@ -4024,3 +4030,32 @@ deadlyRoad = (location "145020" "Deadly Road" ThePassingOfTheGreyCompany 3 2 3) 
 
 hauntedPath :: CardDef
 hauntedPath = (location "145021" "Haunted Path" ThePassingOfTheGreyCompany 3 1 4) {cdCardTraits = setFromList [Underground], cdShadowEffect = True}
+
+-- * The Battle of the Pelennor Fields
+
+-- | X threat, the resources on it: given by its own modifiers. Set aside by stage 1A.
+grond :: CardDef
+grond =
+  unique (location "145044" "Grond" TheBattleOfThePelennorFields 1 0 3)
+    { cdCardTraits = setFromList [SiegeTrait]
+    , cdVictoryPoints = Just 4
+    }
+
+gateOfGondor :: CardDef
+gateOfGondor =
+  unique (location "145045" "Gate of Gondor" TheBattleOfThePelennorFields 1 5 3)
+    { cdCardTraits = setFromList [MinasTirith]
+    , cdVictoryPoints = Just 5
+    }
+
+cityWall :: CardDef
+cityWall = (location "145046" "City Wall" TheBattleOfThePelennorFields 3 3 4) {cdCardTraits = setFromList [MinasTirith]}
+
+pelennorField :: CardDef
+pelennorField = (location "145047" "Pelennor Field" TheBattleOfThePelennorFields 4 2 4) {cdCardTraits = setFromList [Pelennor], cdShadowEffect = True}
+
+fireFilledTrench :: CardDef
+fireFilledTrench = (location "145048" "Fire-filled Trench" TheBattleOfThePelennorFields 3 2 3) {cdCardTraits = setFromList [Pelennor, SiegeTrait], cdEasyModeQuantity = Just 2}
+
+siegeTower :: CardDef
+siegeTower = (location "145049" "Siege Tower" TheBattleOfThePelennorFields 3 3 3) {cdCardTraits = setFromList [SiegeTrait], cdEasyModeQuantity = Just 2}

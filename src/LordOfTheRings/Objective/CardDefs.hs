@@ -155,6 +155,8 @@ allObjectiveCards =
       , farin
       , overcomeByFear
       , armyOfTheDeadBoon
+      , minasTirith
+      , theCorsairFleetGondor
       ]
 
 durinsAxe :: CardDef
@@ -1082,4 +1084,21 @@ armyOfTheDeadBoon =
     , cdCardTraits = setFromList [Undead, Boon]
     , cdKeywords = setFromList [FirstPlayerGainsControl]
     , cdOtherSide = Just "145067"
+    }
+
+-- * The Battle of the Pelennor Fields
+
+-- | 30 hit points plus 10 for each player: its card counts them, so none are printed here
+-- for the game to destroy it by. Set aside by stage 1A.
+minasTirith :: CardDef
+minasTirith = unique (objective "145043" "Minas Tirith" TheBattleOfThePelennorFields 1) {cdCardTraits = setFromList [Gondor, City]}
+
+-- | The Gondor side of The Corsair Fleet, which The Battle of the Pelennor Fields' campaign
+-- card adds to the staging area: never gathered. Its Corsair side, 145071, is The Siege of
+-- Gondor's.
+theCorsairFleetGondor :: CardDef
+theCorsairFleetGondor =
+  unique (objective "145072" "The Corsair Fleet" TheSiegeOfGondor 1)
+    { cdCardTraits = setFromList [Gondor]
+    , cdEncounterSet = Nothing
     }

@@ -442,6 +442,11 @@ allQuestCards =
       , theForbiddenDoor
       , thePathsOfTheDead
       , theDeadAreFollowing
+      , theGarrisonOfGondor
+      , retreatFromOsgiliath
+      , theWhiteCityBesieged
+      , rohanHasCome
+      , fightingInTheFields
       ]
 
 theDrippingWalls :: CardDef
@@ -1838,3 +1843,24 @@ thePathsOfTheDead = quest "145064" "The Paths of the Dead" ThePassingOfTheGreyCo
 -- | The players win as The Stone of Erech leaves play explored, not by defeating it.
 theDeadAreFollowing :: CardDef
 theDeadAreFollowing = quest "145065" "The Dead are Following" ThePassingOfTheGreyCompany 3 5
+
+-- * The Battle of the Pelennor Fields
+
+theGarrisonOfGondor :: CardDef
+theGarrisonOfGondor = quest "145073" "The Garrison of Gondor" TheBattleOfThePelennorFields 1 2
+
+-- | X quest points, the total cost of the allies in the staging area: given by its own
+-- modifiers.
+retreatFromOsgiliath :: CardDef
+retreatFromOsgiliath = quest "145074" "Retreat from Osgiliath" TheBattleOfThePelennorFields 2 0
+
+-- | Assault. It gets +4 quest points for each player: given by its own modifiers.
+theWhiteCityBesieged :: CardDef
+theWhiteCityBesieged = quest "145075" "The White City Besieged" TheBattleOfThePelennorFields 3 4
+
+-- | Its quest points are "-": it advances at the end of the quest phase.
+rohanHasCome :: CardDef
+rohanHasCome = (quest "145076" "Rohan has Come!" TheBattleOfThePelennorFields 4 0) {cdQuestPoints = Nothing}
+
+fightingInTheFields :: CardDef
+fightingInTheFields = quest "145077" "Fighting in the Fields" TheBattleOfThePelennorFields 5 20
