@@ -522,6 +522,13 @@ allEnemyCards =
       , candleBearer
       , morgulWraith
       , gollumTheLandOfShadow
+      , shagrat
+      , gorbag
+      , woundedUruk
+      , theTwoWatchersEnemy
+      , orcOfMordor
+      , snagaArcher
+      , urukSoldierOrcsOfMordor
       ]
 
 namelessThing :: CardDef
@@ -4175,6 +4182,71 @@ nurnSlaver =
     { cdCardTraits = setFromList [Easterling]
     , cdShadowEffect = True
     , cdEasyModeQuantity = Just 3
+    }
+
+-- * The Tower of Cirith Ungol
+
+-- | Set aside as stage 1A is set up, added to the staging area as the players travel to
+-- Topmost Chamber.
+shagrat :: CardDef
+shagrat =
+  unique
+    (enemy "146020" "Shagrat" TheTowerOfCirithUngol 1 46 4 5 4 6)
+      { cdCardTraits = setFromList [Orc, Uruk]
+      , cdVictoryPoints = Just 4
+      }
+
+gorbag :: CardDef
+gorbag =
+  unique
+    (enemy "146021" "Gorbag" TheTowerOfCirithUngol 1 36 3 4 3 5)
+      { cdCardTraits = setFromList [Orc, Uruk]
+      , cdVictoryPoints = Just 3
+      , cdShadowEffect = True
+      }
+
+woundedUruk :: CardDef
+woundedUruk =
+  (enemy "146022" "Wounded Uruk" TheTowerOfCirithUngol 3 34 2 3 2 4)
+    { cdCardTraits = setFromList [Orc, Uruk]
+    , cdShadowEffect = True
+    }
+
+-- | The enemy side of The Two Watchers: no copy is gathered, the location side turns over
+-- to it.
+theTwoWatchersEnemy :: CardDef
+theTwoWatchersEnemy =
+  unique
+    (enemy "146071" "The Two Watchers" TheTowerOfCirithUngol 0 50 2 5 2 4)
+      { cdCardTraits = setFromList [Mordor]
+      , cdVictoryPoints = Just 5
+      , cdOtherSide = Just "146070"
+      }
+
+-- * Orcs of Mordor
+
+orcOfMordor :: CardDef
+orcOfMordor =
+  (enemy "146058" "Orc of Mordor" OrcsOfMordor 3 28 1 3 1 3)
+    { cdCardTraits = setFromList [Orc]
+    , cdKeywords = setFromList [Surge]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 2
+    }
+
+snagaArcher :: CardDef
+snagaArcher =
+  (enemy "146059" "Snaga Archer" OrcsOfMordor 3 44 2 4 2 3)
+    { cdCardTraits = setFromList [Orc, Snaga]
+    , cdKeywords = setFromList [Archery 2]
+    , cdShadowEffect = True
+    }
+
+urukSoldierOrcsOfMordor :: CardDef
+urukSoldierOrcsOfMordor =
+  (enemy "146060" "Uruk Soldier" OrcsOfMordor 3 38 3 5 2 5)
+    { cdCardTraits = setFromList [Orc, Uruk]
+    , cdShadowEffect = True
     }
 
 -- * The Passing of the Grey Company

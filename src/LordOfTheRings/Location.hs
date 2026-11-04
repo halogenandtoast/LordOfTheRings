@@ -541,6 +541,12 @@ import LordOfTheRings.Location.Cards.ShiftingQuagmire
 import LordOfTheRings.Location.Cards.HauntedMere
 import LordOfTheRings.Location.Cards.StagnantPools
 import LordOfTheRings.Location.Cards.SoftMires
+import LordOfTheRings.Location.Cards.TopmostChamber
+import LordOfTheRings.Location.Cards.EchoingPassage
+import LordOfTheRings.Location.Cards.BloodiedCourtyard
+import LordOfTheRings.Location.Cards.WindingStairs
+import LordOfTheRings.Location.Cards.TorchLitHall
+import LordOfTheRings.Location.Cards.TheTwoWatchers
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -1128,5 +1134,11 @@ allLocations =
         , SomeLocationCard hauntedMere
         , SomeLocationCard stagnantPools
         , SomeLocationCard softMires
+        , SomeLocationCard topmostChamber
+        , SomeLocationCard echoingPassage
+        , SomeLocationCard bloodiedCourtyard
+        , SomeLocationCard windingStairs
+        , SomeLocationCard torchLitHall
+        , SomeLocationCard theTwoWatchers
         ]
     ]

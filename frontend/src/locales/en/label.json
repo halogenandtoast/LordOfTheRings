@@ -3278,5 +3278,41 @@
     "resolution": "The Passage of the Marshes: choose one",
     "threatPenalty": "Take a permanent +2 starting threat penalty",
     "searchingEye": "Earn 1 copy of The Searching Eye"
+  },
+  "drawnToTheRing": {
+    "choose": "Drawn to the Ring: choose one",
+    "exhaustTheOneRing": "Exhaust The One Ring and reveal an encounter card",
+    "discardUntilEnemy": "Discard cards from the encounter deck until an enemy is discarded and put it into play engaged with you"
+  },
+  "deepShadows": {
+    "choose": "Deep Shadows: choose one",
+    "discardHand": "Discard your hand",
+    "reveal": "Reveal an encounter card"
+  },
+  "evilVigilance": {
+    "choose": "Evil Vigilance: discard a questing character you control, or raise your threat",
+    "threat": "Raise your threat by {n}, 1 for each questing character you control"
+  },
+  "aHeavyBurden": {
+    "choose": "A Heavy Burden: raise each player's threat by 1, or exhaust the Ring-bearer",
+    "raiseThreat": "Raise each player's threat by 1"
+  },
+  "lastOfTheCompany": {
+    "enemy": "Last of the Company: choose an Orc enemy to get -X threat until the end of the phase"
+  },
+  "orcsFight": {
+    "discardCopy": "Choose the copy of the discarded enemy in the staging area to discard"
+  },
+  "orcishHowls": {
+    "redirect": "Orcish Howls: choose another enemy engaged with you to resolve this attack against"
+  },
+  "passTheTwoWatchers": {
+    "lastOfTheCompany": "Pass the Two Watchers: choose a hero to attach Last of the Company and The One Ring to"
+  },
+  "escapeFromCirithUngol": {
+    "ringBearer": "Escape from Cirith Ungol: choose the Ring-bearer to attach The One Ring to"
+  },
+  "theTowerOfCirithUngol": {
+    "setAsideBoon": "The Tower of Cirith Ungol: choose an Item boon to set aside"
   }
 }

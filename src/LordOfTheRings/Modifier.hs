@@ -536,6 +536,11 @@ data ModifierType
   | -- | on an enemy: the damage its attack deals raises the player's threat as much, as
     -- Seedy Inn's shadow reads
     AttackDamageRaisesThreatOf PlayerId
+  | -- | on the game: each enemy gets +1 threat for each damage on it, as Orcish Howls reads
+    EnemiesGetThreatPerDamage
+  | -- | on an enemy: the damage its attack would deal is canceled, and the defending
+    -- player's threat raised as much instead, as The Two Watchers reads
+    AttackDamageToThreatInstead
   | -- | on an enemy: for each point of damage its attack deals, the player discards a card at
     -- random from their hand, as Northern Chetwood's shadow reads
     AttackDamageDiscardsRandomFromHandOf PlayerId

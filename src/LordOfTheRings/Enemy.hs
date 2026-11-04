@@ -513,6 +513,13 @@ import LordOfTheRings.Enemy.Cards.DeadThings
 import LordOfTheRings.Enemy.Cards.CandleBearer
 import LordOfTheRings.Enemy.Cards.MorgulWraith
 import LordOfTheRings.Enemy.Cards.GollumTheLandOfShadow
+import LordOfTheRings.Enemy.Cards.OrcOfMordor
+import LordOfTheRings.Enemy.Cards.SnagaArcher
+import LordOfTheRings.Enemy.Cards.UrukSoldierOrcsOfMordor
+import LordOfTheRings.Enemy.Cards.Shagrat
+import LordOfTheRings.Enemy.Cards.Gorbag
+import LordOfTheRings.Enemy.Cards.WoundedUruk
+import LordOfTheRings.Enemy.Cards.TheTwoWatchersEnemy
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -1055,5 +1062,12 @@ allEnemys =
         , SomeEnemyCard candleBearer
         , SomeEnemyCard morgulWraith
         , SomeEnemyCard gollumTheLandOfShadow
+        , SomeEnemyCard shagrat
+        , SomeEnemyCard gorbag
+        , SomeEnemyCard woundedUruk
+        , SomeEnemyCard theTwoWatchersEnemy
+        , SomeEnemyCard orcOfMordor
+        , SomeEnemyCard snagaArcher
+        , SomeEnemyCard urukSoldierOrcsOfMordor
         ]
     ]

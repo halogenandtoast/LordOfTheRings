@@ -435,6 +435,10 @@ import LordOfTheRings.Treachery.Cards.BitterReek
 import LordOfTheRings.Treachery.Cards.AFellLight
 import LordOfTheRings.Treachery.Cards.CallOfTheRing
 import LordOfTheRings.Treachery.Cards.WeHatesThem
+import LordOfTheRings.Treachery.Cards.DrawnToTheRing
+import LordOfTheRings.Treachery.Cards.DeepShadows
+import LordOfTheRings.Treachery.Cards.EvilVigilance
+import LordOfTheRings.Treachery.Cards.OrcishHowls
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -897,5 +901,9 @@ allTreacherys =
         , SomeTreacheryCard aFellLight
         , SomeTreacheryCard callOfTheRing
         , SomeTreacheryCard weHatesThem
+        , SomeTreacheryCard orcishHowls
+        , SomeTreacheryCard drawnToTheRing
+        , SomeTreacheryCard deepShadows
+        , SomeTreacheryCard evilVigilance
         ]
     ]

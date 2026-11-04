@@ -449,6 +449,9 @@ allQuestCards =
       , theTamingOfSmeagol
       , acrossTheMarshes
       , dontLookAtTheLights
+      , passTheTwoWatchers
+      , fightingInTheTower
+      , escapeFromCirithUngol
       ]
 
 theDrippingWalls :: CardDef
@@ -1831,6 +1834,17 @@ slavesOfTheDarkLord = quest "22135" "Slaves of the Dark Lord" TheLandOfSorrow 1 
 -- | 10 quest points, and 10 more per player from its own modifiers.
 leadTheRevolt :: CardDef
 leadTheRevolt = quest "22136" "Lead the Revolt" TheLandOfSorrow 2 10
+
+-- * The Tower of Cirith Ungol
+
+passTheTwoWatchers :: CardDef
+passTheTwoWatchers = quest "146066" "Pass the Two Watchers" TheTowerOfCirithUngol 1 0
+
+fightingInTheTower :: CardDef
+fightingInTheTower = quest "146067" "Fighting in the Tower" TheTowerOfCirithUngol 2 18
+
+escapeFromCirithUngol :: CardDef
+escapeFromCirithUngol = quest "146068" "Escape from Cirith Ungol" TheTowerOfCirithUngol 3 12
 
 -- * The Passing of the Grey Company
 

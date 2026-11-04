@@ -651,6 +651,7 @@ aragornSpirit =
     , cdKeywords = setFromList [Sentinel]
     }
 
+
 -- * The Lord of the Rings saga: The Land of Shadow, The Flame of the West and The Mountain
 -- of Fire
 
