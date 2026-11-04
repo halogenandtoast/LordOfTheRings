@@ -1723,6 +1723,7 @@ runGameMessage msg g = case msg of
         | h <- heroes
         ]
     pure g
+  AttackEndedUnresolved _ -> pure $ g & effectsL %~ filter ((/= UntilEndOfAttack) . effectDuration)
   DamageAnotherCharacter source pid damaged -> do
     others <- filter (/= damaged) <$> charactersControlledBy pid
     push $ case others of

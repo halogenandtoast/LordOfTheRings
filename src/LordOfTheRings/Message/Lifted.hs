@@ -1672,7 +1672,11 @@ cancelAttack eid = lift $ withQueue_ $ mapMaybe \case
   UndefendedAttack _ e | e == eid -> Nothing
   UndefendedDamage _ e | e == eid -> Nothing
   AttackDefended _ e _ | e == eid -> Nothing
-  CheckWindows ws | any ending ws -> Just $ CheckWindows (filter (not . defended) ws)
+  -- the enemy has not attacked, so no "after it attacks" window opens, but its "for this
+  -- attack" effects still end
+  CheckWindows ws | any ending ws -> Just $ case filter (\w -> not (ending w || defended w)) ws of
+    [] -> AttackEndedUnresolved eid
+    rest -> Run [CheckWindows rest, AttackEndedUnresolved eid]
   m -> Just m
  where
   ending = \case
