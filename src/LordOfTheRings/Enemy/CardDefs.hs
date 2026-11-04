@@ -474,6 +474,7 @@ allEnemyCards =
       , servantOfSauron
       , rhunBackstabber
       , treacherousEasterling
+      , ulchorsGuard
       ]
 
 namelessThing :: CardDef
@@ -3880,3 +3881,11 @@ rhunBackstabber = (enemy "21044" "Rhûn Backstabber" CityOfRhun 2 28 2 3 2 3) {c
 
 treacherousEasterling :: CardDef
 treacherousEasterling = (enemy "21045" "Treacherous Easterling" CityOfRhun 2 32 3 3 1 5) {cdCardTraits = setFromList [Easterling], cdEasyModeQuantity = Just 1}
+
+ulchorsGuard :: CardDef
+ulchorsGuard =
+  (enemy "21058" "Ulchor's Guard" UlchorsGuard 4 25 2 4 1 5)
+    { cdCardTraits = setFromList [Easterling]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 3
+    }

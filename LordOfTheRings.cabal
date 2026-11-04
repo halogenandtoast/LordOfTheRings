@@ -913,6 +913,7 @@ library
       LordOfTheRings.Enemy.Cards.TreacherousEasterling
       LordOfTheRings.Enemy.Cards.TreetopBirdEater
       LordOfTheRings.Enemy.Cards.TunnelingNamelessThing
+      LordOfTheRings.Enemy.Cards.UlchorsGuard
       LordOfTheRings.Enemy.Cards.UmbarAssassin
       LordOfTheRings.Enemy.Cards.UmbarCaptain
       LordOfTheRings.Enemy.Cards.UmbarPatrolNightmare
@@ -2501,6 +2502,7 @@ library
       LordOfTheRings.Treachery.Cards.FalseAccusations
       LordOfTheRings.Treachery.Cards.FalseLead
       LordOfTheRings.Treachery.Cards.FalseLeadTheStewardsFear
+      LordOfTheRings.Treachery.Cards.Fanaticism
       LordOfTheRings.Treachery.Cards.FangornsAnger
       LordOfTheRings.Treachery.Cards.Fatigue
       LordOfTheRings.Treachery.Cards.FearOfMordor
@@ -2747,6 +2749,7 @@ library
       LordOfTheRings.Treachery.Cards.TumultuousAssault
       LordOfTheRings.Treachery.Cards.TumultuousWaters
       LordOfTheRings.Treachery.Cards.TurnedAround
+      LordOfTheRings.Treachery.Cards.UlchorsRage
       LordOfTheRings.Treachery.Cards.UmbarPatrol
       LordOfTheRings.Treachery.Cards.UnbearableHeat
       LordOfTheRings.Treachery.Cards.UnderGuard

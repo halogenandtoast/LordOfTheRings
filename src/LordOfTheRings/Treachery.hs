@@ -395,6 +395,8 @@ import LordOfTheRings.Treachery.Cards.PainfulFatigue
 import LordOfTheRings.Treachery.Cards.Overwhelmed
 import LordOfTheRings.Treachery.Cards.DarknessInTheEast
 import LordOfTheRings.Treachery.Cards.UnderGuard
+import LordOfTheRings.Treachery.Cards.UlchorsRage
+import LordOfTheRings.Treachery.Cards.Fanaticism
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -817,5 +819,7 @@ allTreacherys =
         , SomeTreacheryCard overwhelmed
         , SomeTreacheryCard darknessInTheEast
         , SomeTreacheryCard underGuard
+        , SomeTreacheryCard ulchorsRage
+        , SomeTreacheryCard fanaticism
         ]
     ]

@@ -405,6 +405,8 @@ allTreacheryCards =
       , overwhelmed
       , darknessInTheEast
       , underGuard
+      , ulchorsRage
+      , fanaticism
       ]
 
 deepDeepDark :: CardDef
@@ -2572,3 +2574,9 @@ darknessInTheEast = (treachery "21048" "Darkness in the East" CityOfRhun 2) {cdS
 
 underGuard :: CardDef
 underGuard = (treachery "21051" "Under Guard" UnderGuard 3) {cdShadowEffect = True, cdEasyModeQuantity = Just 2}
+
+ulchorsRage :: CardDef
+ulchorsRage = (treachery "21059" "Ulchor's Rage" UlchorsGuard 3) {cdShadowEffect = True, cdEasyModeQuantity = Just 1}
+
+fanaticism :: CardDef
+fanaticism = (treachery "21060" "Fanaticism" UlchorsGuard 2) {cdCardTraits = setFromList [Easterling]}
