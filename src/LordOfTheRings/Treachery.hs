@@ -360,6 +360,8 @@ import LordOfTheRings.Treachery.Cards.LostInTheWild
 import LordOfTheRings.Treachery.Cards.WeighedDown
 import LordOfTheRings.Treachery.Cards.GatheringGloom
 import LordOfTheRings.Treachery.Cards.SwarmOfBats
+import LordOfTheRings.Treachery.Cards.AfraidOfTheDark
+import LordOfTheRings.Treachery.Cards.EyesInTheDark
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -747,5 +749,7 @@ allTreacherys =
         , SomeTreacheryCard weighedDown
         , SomeTreacheryCard gatheringGloom
         , SomeTreacheryCard swarmOfBats
+        , SomeTreacheryCard afraidOfTheDark
+        , SomeTreacheryCard eyesInTheDark
         ]
     ]

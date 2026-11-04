@@ -2511,5 +2511,15 @@
     "raiseThreat": "Raise your threat by {n}, 1 for each ally you control",
     "reveal": "Reveal an encounter card",
     "discardAlly": "Gathering Gloom: choose an ally to discard"
+  },
+  "afraidOfTheDark": {
+    "attach": "Choose a questing hero to attach Afraid of the Dark to"
+  },
+  "eyesInTheDark": {
+    "choose": "Eyes in the Dark: choose one",
+    "raiseThreat": "Raise your threat by {n}, 1 for each questing character you control",
+    "discard": "Discard a questing character you control",
+    "character": "Eyes in the Dark: choose a questing character to discard",
+    "discardAlly": "Eyes in the Dark: choose an ally to discard"
   }
 }

@@ -2125,6 +2125,7 @@ library
       LordOfTheRings.Treachery.CardDefs
       LordOfTheRings.Treachery.Cards.AFellDread
       LordOfTheRings.Treachery.Cards.AFoeBeyond
+      LordOfTheRings.Treachery.Cards.AfraidOfTheDark
       LordOfTheRings.Treachery.Cards.AFrightenedBeast
       LordOfTheRings.Treachery.Cards.AGreatHost
       LordOfTheRings.Treachery.Cards.AHurryingDarkness
@@ -2221,6 +2222,7 @@ library
       LordOfTheRings.Treachery.Cards.Enfeebled
       LordOfTheRings.Treachery.Cards.EvilStorm
       LordOfTheRings.Treachery.Cards.Exhaustion
+      LordOfTheRings.Treachery.Cards.EyesInTheDark
       LordOfTheRings.Treachery.Cards.EyesOfTheForest
       LordOfTheRings.Treachery.Cards.FallenStones
       LordOfTheRings.Treachery.Cards.FalseAccusations

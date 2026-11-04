@@ -370,6 +370,8 @@ allTreacheryCards =
       , weighedDown
       , gatheringGloom
       , swarmOfBats
+      , afraidOfTheDark
+      , eyesInTheDark
       ]
 
 deepDeepDark :: CardDef
@@ -2367,3 +2369,9 @@ gatheringGloom =
 -- | Printed "Swarm of Bats", as its own text names it.
 swarmOfBats :: CardDef
 swarmOfBats = (treachery "18041" "Swarm of Bats" GatheringGloom 3) {cdShadowEffect = True, cdEasyModeQuantity = Just 2}
+
+afraidOfTheDark :: CardDef
+afraidOfTheDark = (treachery "18048" "Afraid of the Dark" AfraidOfTheDark 2) {cdEasyModeQuantity = Just 1}
+
+eyesInTheDark :: CardDef
+eyesInTheDark = (treachery "18057" "Eyes in the Dark" AfraidOfTheDark 3) {cdKeywords = setFromList [Doomed 1], cdShadowEffect = True}
