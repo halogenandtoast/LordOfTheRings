@@ -1263,10 +1263,10 @@ library
       LordOfTheRings.Helpers.Attachment
       LordOfTheRings.Helpers.Campaign
       LordOfTheRings.Helpers.Character
+      LordOfTheRings.Helpers.ControlledLocation
       LordOfTheRings.Helpers.IslandMap
       LordOfTheRings.Helpers.Modifiers
       LordOfTheRings.Helpers.Staging
-      LordOfTheRings.Helpers.ControlledLocation
       LordOfTheRings.Helpers.Window
       LordOfTheRings.Hero
       LordOfTheRings.Hero.AllyHero
@@ -2510,10 +2510,10 @@ library
       LordOfTheRings.Treachery.Cards.CaradhrasTheCruel
       LordOfTheRings.Treachery.Cards.CatacombInspection
       LordOfTheRings.Treachery.Cards.CaughtInAWeb
+      LordOfTheRings.Treachery.Cards.CaughtOffGuard
       LordOfTheRings.Treachery.Cards.CaveIn
       LordOfTheRings.Treachery.Cards.CenturiesOfSorrow
       LordOfTheRings.Treachery.Cards.ChanceEncounter
-      LordOfTheRings.Treachery.Cards.CaughtOffGuard
       LordOfTheRings.Treachery.Cards.ChaosInTheNight
       LordOfTheRings.Treachery.Cards.ChillOfTheRoots
       LordOfTheRings.Treachery.Cards.ClosingIn
@@ -2606,10 +2606,10 @@ library
       LordOfTheRings.Treachery.Cards.FrenziedCreature
       LordOfTheRings.Treachery.Cards.FromTheDepths
       LordOfTheRings.Treachery.Cards.FuriousRainstorm
+      LordOfTheRings.Treachery.Cards.Fury
       LordOfTheRings.Treachery.Cards.FuryAndMalice
       LordOfTheRings.Treachery.Cards.GatheringForces
       LordOfTheRings.Treachery.Cards.GatheringGloom
-      LordOfTheRings.Treachery.Cards.Fury
       LordOfTheRings.Treachery.Cards.GatheringGround
       LordOfTheRings.Treachery.Cards.GetThatDwarf
       LordOfTheRings.Treachery.Cards.GoblinPatrolNightmare
@@ -2771,10 +2771,10 @@ library
       LordOfTheRings.Treachery.Cards.StiflingWoods
       LordOfTheRings.Treachery.Cards.Stinker
       LordOfTheRings.Treachery.Cards.StreetFighting
+      LordOfTheRings.Treachery.Cards.StreetFightingWrathAndRuin
       LordOfTheRings.Treachery.Cards.SuddenAssault
       LordOfTheRings.Treachery.Cards.SuddenAssaultNightmare
       LordOfTheRings.Treachery.Cards.SuddenDarkness
-      LordOfTheRings.Treachery.Cards.StreetFightingWrathAndRuin
       LordOfTheRings.Treachery.Cards.SuddenOnslaught
       LordOfTheRings.Treachery.Cards.SuddenPitfall
       LordOfTheRings.Treachery.Cards.SuddenPrecipice
@@ -2833,14 +2833,14 @@ library
       LordOfTheRings.Treachery.Cards.TumultuousWaters
       LordOfTheRings.Treachery.Cards.TurnedAround
       LordOfTheRings.Treachery.Cards.UlchorsRage
+      LordOfTheRings.Treachery.Cards.UlchorsRevenge
       LordOfTheRings.Treachery.Cards.UmbarPatrol
       LordOfTheRings.Treachery.Cards.UnbearableHeat
       LordOfTheRings.Treachery.Cards.UnderGuard
-      LordOfTheRings.Treachery.Cards.UlchorsRevenge
+      LordOfTheRings.Treachery.Cards.UnderSiege
       LordOfTheRings.Treachery.Cards.UnderTheShadow
       LordOfTheRings.Treachery.Cards.UndisturbedBones
       LordOfTheRings.Treachery.Cards.UnnaturalFog
-      LordOfTheRings.Treachery.Cards.UnderSiege
       LordOfTheRings.Treachery.Cards.UnseenDanger
       LordOfTheRings.Treachery.Cards.UnwelcomeDiscovery
       LordOfTheRings.Treachery.Cards.UrdugsCommand
