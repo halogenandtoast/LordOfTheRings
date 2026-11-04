@@ -800,6 +800,9 @@ data ModifierType
   | -- | on a player: he has failed a Hide test this round, as Green Hill Country's shadow
     -- reads
     FailedHideTestThisRound
+  | -- | on the game: each player draws this many more cards in his starting hand, as
+    -- Gandalf's Delay has each draw 1 less
+    StartingHandSize Int
   | -- | on the game: the players cannot win, a win waiting until nothing gives this, as
     -- The Blood of Gondor's Nightmare setup card reads
     PlayersCannotWin
