@@ -420,7 +420,8 @@ data Message
     Reanimate CardId EnemyId
   | ShuffleIntoEncounterDeck Target
   | {- | a treachery dealt as a shadow card resolves its revelation as if revealed, here
-    attaching itself where its placement says
+    attaching itself where its placement says; an enemy card dealt as one attaches itself
+    as its shadow reads, as Dark Bats
     -}
     PutShadowTreacheryIntoPlay EnemyId CardId Placement
   | -- | the treachery leaves the encounter discard pile attached to the target, its When

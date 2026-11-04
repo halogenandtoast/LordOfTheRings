@@ -1976,9 +1976,15 @@ runGameMessage msg g = case msg of
   PutShadowTreacheryIntoPlay host cid placement -> do
     for_ (Map.lookup host g.entities.enemies) \hostEnemy ->
       for_ (find ((== cid) . ecId) hostEnemy.shadowCards) \card -> do
-        thisTreachery <- overAttrs (\a -> a {treacheryPlacement = placement}) <$> newTreachery card
         pushAll [RemoveShadowCard host cid]
-        putGame $ g & entitiesL . treacheriesL %~ insertEntity thisTreachery
+        -- an enemy card dealt as a shadow card attaches as itself, as Dark Bats' shadow
+        if cdCardType (toCardDef card) == EnemyType
+          then do
+            thisEnemy <- overAttrs (\a -> a {enemyPlacement = placement}) <$> newEnemy card
+            putGame $ g & entitiesL . enemiesL %~ insertEntity thisEnemy
+          else do
+            thisTreachery <- overAttrs (\a -> a {treacheryPlacement = placement}) <$> newTreachery card
+            putGame $ g & entitiesL . treacheriesL %~ insertEntity thisTreachery
     getGame
   ChooseAndExhaust source pid n | n > 0 -> do
     ready <-

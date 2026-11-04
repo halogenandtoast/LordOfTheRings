@@ -982,6 +982,11 @@ attachFromEncounterDiscard card = push . AttachFromEncounterDiscard card . toTar
 attachShadowTreachery :: (ReverseQueue m, Targetable host) => EnemyId -> CardId -> host -> m ()
 attachShadowTreachery eid cid = push . PutShadowTreacheryIntoPlay eid cid . AttachedTo . toTarget
 
+-- | An enemy card dealt as a shadow card comes into play attached to the host, as Dark
+-- Bats' shadow attaches it to the defending character.
+attachShadowEnemy :: (ReverseQueue m, Targetable host) => EnemyId -> CardId -> host -> m ()
+attachShadowEnemy eid cid = push . PutShadowTreacheryIntoPlay eid cid . AttachedTo . toTarget
+
 {- | The top matching card of the encounter discard pile attaches to the host, as Warrior of
 Rhûn's "attach the top Easterling treachery in the discard pile to it" reads; nothing,
 with none there.
