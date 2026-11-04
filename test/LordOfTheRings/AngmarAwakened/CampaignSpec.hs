@@ -121,6 +121,17 @@ spec = describe "Angmar Awakened campaign" do
       map toCardCode <$> getEncounterDeck >>= (`shouldSatisfy` elem (toCardCode Quests.mysteriousOmens))
       map (.code) . (.pool) <$> getCampaignLog >>= (`shouldSatisfy` elem (toCardCode Quests.mysteriousOmens))
 
+  describe "Loot the Dungeons" do
+    it "is in each player's staging area while the players are separated" . twoPlayerTest (coreDeck "tactics") $ \one two -> do
+      run . AddToStaging =<< genEncounterCard Quests.lootTheDungeons
+      let loot = getsGame (any ((== toCardCode Quests.lootTheDungeons) . toCardCode) . toList . (.entities.quests))
+      run $ SeparatePlayers [[one], [two]]
+      loot `shouldReturn` True
+      run $ FocusArea two
+      loot `shouldReturn` True
+      run $ FocusArea one
+      loot `shouldReturn` True
+
   describe "Mysterious Omens" do
     it "leaves the pool once defeated, and its boon joins it on the hero" . campaignTestIn theWeatherHills angmar {campaignLogPool = [PoolCard (toCardCode Quests.mysteriousOmens) Nothing Nothing]} testDeck $ \pid -> do
       run . AddToStaging =<< genEncounterCard Quests.mysteriousOmens

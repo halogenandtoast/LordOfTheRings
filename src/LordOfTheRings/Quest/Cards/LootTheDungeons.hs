@@ -19,6 +19,8 @@ lootTheDungeons = quest LootTheDungeons Cards.lootTheDungeons
 
 -- | Loot the Dungeons is considered to be in each player's staging area and gets +4 quest
 -- points for each player in the game at every staging area.
+-- The one card is in every staging area: while the players are separated it is with the
+-- area in focus ('LordOfTheRings.Quest.Types.inEachStagingArea').
 instance HasModifiersFor LootTheDungeons where
   getModifiersFor (LootTheDungeons a) = do
     players <- length <$> getPlayerOrder
