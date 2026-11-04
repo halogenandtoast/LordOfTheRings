@@ -2296,8 +2296,9 @@ runGameMessage msg g = case msg of
           pure (TakesProgressAfterOtherActiveLocations `elem` mods, (lid, remaining, max 0 $ foldr min remaining limits))
         let rooms = map snd (sortOn fst ranked)
             after = any fst ranked
-        -- the rest goes to the side quest quested against, else to the quest cards
-        quests <- maybe getMainQuests (pure . pure) =<< getCurrentSideQuest
+        -- the rest goes to the side quest quested against, or the main quest chosen among
+        -- several, else to the quest cards
+        quests <- maybe getMainQuests (pure . pure) =<< getChosenQuest
         let place lid k = [PlaceTokens GameSource (toTarget lid) Progress k | k > 0]
         case rooms of
           -- with two active locations the first player divides the progress between them
@@ -2862,10 +2863,19 @@ runGameMessage msg g = case msg of
     push $ CheckWindows [mkAfter $ ChangedControl (AllyTarget aid)]
     pure $ g & entitiesL . alliesL . ix aid %~ overAttrs (\a -> a {allyPlacement = InPlayArea pid})
   -- a side quest defeated goes to the victory display, and the quest stays where it is
+  -- a side quest is chosen for the phase; a main quest while several are in play, as The
+  -- Battle of Five Armies' stages, for the round (The Hobbit: On the Doorstep rules insert,
+  -- "Current Quest Stage"), a side quest chosen later in the round only putting it aside
+  -- for the phase
   SetCurrentQuest t -> do
     sideQuests <- getSideQuests
-    let chosen = [Effect GameSource t [CurrentQuest] UntilEndOfPhase | t `elem` sideQuests]
-    pure $ g & effectsL %~ ((chosen <>) . filter ((CurrentQuest `notElem`) . effectModifiers))
+    mainQuests <- getMainQuests
+    let side = t `elem` sideQuests
+        chosen =
+          [Effect GameSource t [CurrentQuest] UntilEndOfPhase | side]
+            <> [Effect GameSource t [CurrentQuest] UntilEndOfRound | t `elem` mainQuests, length mainQuests > 1]
+        replaced e = CurrentQuest `elem` effectModifiers e && (not side || effectTarget e `elem` sideQuests)
+    pure $ g & effectsL %~ ((chosen <>) . filter (not . replaced))
   CompleteQuest qid | Just q <- Map.lookup qid g.entities.quests, isSideQuest q -> do
     pushAll $ CheckWindows [mkAfter $ QuestDefeated (QuestTarget qid)] : discardAttachedToQuest g qid
     -- "Limit 1 copy in the victory display": a copy defeated while one is there goes to its

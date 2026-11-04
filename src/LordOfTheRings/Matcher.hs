@@ -935,12 +935,24 @@ getConditionAttachments = do
     _ -> False
 
 -- | The current quest, as a target: a side quest the players chose to quest against this
--- phase, or else the quest card in play.
+-- phase, or else the quest card in play, the one chosen while several are.
 getCurrentQuest :: HasGame m => m (Maybe Target)
 getCurrentQuest = do
-  side <- getCurrentSideQuest
+  chosen <- getChosenQuest
   mains <- getMainQuests
-  pure $ side <|> headMay mains
+  pure $ chosen <|> headMay mains
+
+{- | The quest card chosen as the current quest: a side quest chosen for the phase, else
+one of several main quests in play chosen for the round, as The Battle of Five Armies'
+stages 2 to 4 are (The Hobbit: On the Doorstep rules insert, "Current Quest Stage").
+-}
+getChosenQuest :: HasGame m => m (Maybe Target)
+getChosenQuest = do
+  side <- getCurrentSideQuest
+  mods <- getsGame gameModifiers
+  quests <- getsGame (toList . entitiesQuests . gameEntities)
+  let main = headMay [toTarget q | q <- quests, not (isSideQuest q), CurrentQuest `elem` map modifierType (Map.findWithDefault [] (toTarget q) mods)]
+  pure $ side <|> main
 
 -- | The quest cards in play, side quests left out.
 getMainQuests :: HasGame m => m [Target]
