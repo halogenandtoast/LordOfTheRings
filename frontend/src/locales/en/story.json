@@ -3243,5 +3243,30 @@
       "Kahliel lifted his hand and his companions fell silent. “We will ride to Gondor,” he said, “The Mûmakil dwell in this forest, along with the supplies we need. We will capture the beasts we need and ride them to Gondor.”",
       "To be continued in “The Mûmakil,” the first Adventure Pack in “The Haradrim” cycle."
     ]
+  },
+  "lost-in-mirkwood": {
+    "intro": [
+      "The vast and dangerous forest of Mirkwood lay before the heroes like a wall of green and black. The Forest Road ran the length of the woods from the Old Ford to the River Running, but it was a perilous crossing. The fortress of Dol Guldur to the south had again become a place of evil and its influence could be felt throughout the darkening woods, and to the north were the many webs and snares of the giant spiders. To wander off the trail in either direction was to risk becoming lost forever, and it was a long way to the other side of the forest.",
+      "The heroes knew all this but were determined to reach Dale and have an audience with King Brand, so they thanked Grimbeorn and the Beornings for their aid and entered the woods. Haldan went with them. The Woodman had made this journey before and the adventurers welcomed his assistance.",
+      "“It is many days travel to the eastern edge of the forest,” said Haldan. “If we stick to the road we should not have any trouble. Traffic has lessened since the shadow returned to Mirkwood, but the trail is still easy to follow during the day. At night we camp and dare not move.”",
+      "The first few days were uneventful, but as they moved deeper into the woods the closeness of the forest became unbearable until each member of the company traveled in silent torment. The gloom of Mirkwood clouded their minds as well as their senses until the memory of sunlight faded into a dream.",
+      "That night great weariness overcame the adventurers and they fell into enchanted sleep. Haldan had first watch and as he struggled to keep his eyes open his head leaned heavily on the pommel of his axe. His mind was beginning to wander when he saw the horrible shape of a spider illuminated by the orange glow of the fire. “What a terrible vision,” he thought to himself as he stared into the bulbous eyes of the beast. It wasn’t until he saw another spider bite one of his sleeping companions that he cried out in terror and roused the others. A bitter and desperate battle ensued as the heroes struggled to cast off their weariness and defend themselves..."
+    ],
+    "setup": [
+      "“Lost in Mirkwood” is played with an encounter deck built with all the cards from the following encounter sets: Lost in Mirkwood, Dark Woods, Gathering Gloom, Passage Through Mirkwood, Spiders of Mirkwood and Dol Guldur Orcs (the last three sets can be found in The Lord of the Rings: The Card Game core set)."
+    ],
+    "rules": [
+      {
+        "title": "Guarded (X)",
+        "text": "Guarded (X) is a new version of the guarded keyword that appears on both objective cards and some player card attachments. X is a card type: enemy or location. When a card with guarded (X) enters play, discard cards from the encounter deck until an encounter card with the matching type is discarded. Then, add that card to the staging area and attach the guarded (X) card to it as a guarded objective. Once attached, an objective with guarded (X) works just like an objective with the original guarded keyword. If the encounter deck is empty while resolving the Guarded (X) keyword, shuffle the encounter discard pile into the encounter deck and finish resolving the guarded (X) keyword."
+      }
+    ],
+    "resolution": [
+      "The heroes blinked as their eyes adjusted to the light from the sun shining overhead. It had been a harrowing journey through Mirkwood, but they had finally reached the eastern edge of the forest. They came now to the shore of the River Running, and, as luck would have it, a trade vessel sailed into view on its way north.",
+      "They hailed the boat and her crew steered the vessel to shore in response. The captain was a friendly Barding who welcomed them aboard and offered them safe passage in exchange for a reasonable amount of their gold. The heroes happily accepted and began loading their things onto the boat.",
+      "“This is where we part ways,” said Haldan. “The river will carry you north to Lake-town and then to Dale, but my home lies back west.”",
+      "One of the heroes clasped hands with the Woodman and said, “Thank you for your help. You are a brave man, Haldan. I wish you safe travel on your return journey.”",
+      "With that, the heroes climbed aboard the Bardings’ boat and sailed north as Haldan waved goodbye from the shore."
+    ]
   }
 }
