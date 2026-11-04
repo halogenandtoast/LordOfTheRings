@@ -220,6 +220,9 @@ data Message
   | UseAbility PlayerId Ability [Window]
   | UseCardAbility PlayerId Source Int [Window]
   | CreateEffect Effect
+  | -- | the lasting effects of that duration end, as the round's do once the round's end
+    -- has resolved
+    EndEffects EffectDuration
   | AttachCard AttachmentId Target
   | -- | the character's restricted cards are counted again, after one is discarded
     CheckRestricted Target

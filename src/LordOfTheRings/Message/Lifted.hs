@@ -1355,6 +1355,14 @@ shuffleDiscardIntoDeck = push . ShuffleDiscardIntoDeck
 -- | The players make engagement checks, from the first player, as in the encounter phase.
 makeEngagementChecks :: ReverseQueue m => m ()
 makeEngagementChecks = getLead >>= \lead -> push (EngagementCheck lead 0)
+
+-- | Engagement checks made with the modifiers in effect only while they are made, as Fight
+-- Your Way Out lowers the engagement costs "during these engagement checks".
+makeEngagementChecksWith :: ReverseQueue m => [Effect] -> m ()
+makeEngagementChecksWith effects = do
+  pushAll $ map CreateEffect effects
+  makeEngagementChecks
+  push $ EndEffects UntilEndOfEngagementChecks
 {- | The player card behind the source leaves play, or its owner's discard pile, for good,
 as "remove that card from the game" reads of the card behind an effect.
 -}

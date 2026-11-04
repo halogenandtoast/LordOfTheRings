@@ -6,7 +6,7 @@ import LordOfTheRings.Quest.CardDefs qualified as Cards
 import LordOfTheRings.Quest.Import.Lifted
 
 newtype SneakPastTheGuards = SneakPastTheGuards QuestAttrs
-  deriving anyclass (IsQuest, HasAbilities)
+  deriving anyclass IsQuest
   deriving newtype (Show, Eq, ToJSON, Entity)
 
 sneakPastTheGuards :: QuestCard SneakPastTheGuards
@@ -21,14 +21,16 @@ instance HasModifiersFor SneakPastTheGuards where
     for_ staged \e -> modified a e $ CannotTakeDamage : [EngagementCostModifier a.progress | a.progress > 0]
     when (countTokens Resource a.questTokens < 2) $ modifySelf a [CannotBeDefeated]
 
+-- | Forced: At the end of the round, reveal an encounter card. Then, place 1 resource here
+-- if no enemies were engaged this round: read as the round ends, the round's lasting
+-- effects, which record what was engaged, ending after it.
+instance HasAbilities SneakPastTheGuards where
+  getAbilities (SneakPastTheGuards a) = [mkAbility a 1 $ forced RoundEndsWindow | a.flipped]
+
 {- | When Revealed: Shuffle the encounter discard pile into the encounter deck. Each player
 discards cards from the encounter deck until an enemy is discarded and adds that enemy to
 the staging area: player by player, step N the Nth player's, as the deck is as the one
 before left it.
-
-Forced: At the end of the round, reveal an encounter card. Then, place 1 resource here if
-no enemies were engaged this round.
-
 -}
 instance RunMessage SneakPastTheGuards where
   runMessage msg q@(SneakPastTheGuards attrs) = case msg of
@@ -48,10 +50,10 @@ instance RunMessage SneakPastTheGuards where
     DiscardedTopOfEncounterDeck (isSource attrs -> True) _ cards -> do
       for_ (take 1 $ filter (cardMatches $ CardWithType EnemyType) cards) addToStagingFromDiscard
       pure q
-    EndRound | attrs.flipped -> do
+    UseCardAbility _ (isSource attrs -> True) 1 _ -> do
       players <- getRemainingPlayers
       engaged <- or <$> for players \p -> elem EngagedAnEnemyThisRound <$> getModifiers (PlayerTarget p)
       revealEncounterCard
       unless engaged $ placeResources attrs attrs 1
-      SneakPastTheGuards <$> runMessage msg attrs
+      pure q
     _ -> SneakPastTheGuards <$> runMessage msg attrs

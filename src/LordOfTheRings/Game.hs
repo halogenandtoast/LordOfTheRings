@@ -675,9 +675,11 @@ runGameMessage msg g = case msg of
       -- each Aflame location in the staging area takes 1 damage (Raid on the Grey Havens)
       burning <- filterM (fmap (> 0) . getAflame) =<< select LocationInStagingArea
       pushAll [DealDamage GameSource (LocationTarget lid) 1 | lid <- burning]
-      push $ CheckWindows [mkWhen RoundEnds]
+      -- the round's lasting effects end once its end-of-round effects have resolved, which
+      -- may read what happened this round, as Sneak Past the Guards
+      pushAll [CheckWindows [mkWhen RoundEnds], EndEffects UntilEndOfRound]
       pushEnd step
-    pure $ g' & effectsL %~ filter ((/= UntilEndOfRound) . effectDuration)
+    pure $ if isJust g.outcome then g' & effectsL %~ filter ((/= UntilEndOfRound) . effectDuration) else g'
   BeginPhase RefreshPhase -> do
     -- an enemy with regenerate heals as much damage, unless Saruman holds it out of play
     present <- filterM (notOutOfPlay . toTarget) (toList g.entities.enemies)
@@ -1961,6 +1963,7 @@ runGameMessage msg g = case msg of
     runQueueT $ raiseThreatFromDoomed $ printedDoomed card
     pure g
   CreateEffect effect -> pure $ g & effectsL %~ (effect :)
+  EndEffects duration -> pure $ g & effectsL %~ filter ((/= duration) . effectDuration)
   EndPhase phase -> do
     push $ CheckWindows [mkWhen $ PhaseEnds phase]
     -- an enemy still in play raises a player's threat, as Crazed Captive's shadow reads

@@ -375,6 +375,20 @@ spec = describe "The Dungeons of Cirith Gurat" do
       getsGame (fmap (countTokens Resource . questTokens . toAttrs) . find ((== toCardCode Quests.sneakPastTheGuards) . toCardCode) . toList . (.entities.quests))
         `shouldReturn` Just 1
 
+    it "places no resource on Sneak Past the Guards at the end of a round an enemy was engaged in" . dungeonTest $ \pid -> do
+      q <- putQuestStage Quests.sneakPastTheGuards
+      _ <- setEncounterDeck []
+      run $ Flip q
+      resolveWhenRevealed pid
+      uruk <- stage Enemies.urukOfMordor
+      run $ EngageEnemy pid uruk
+      _ <- setEncounterDeck [Locations.gateOfIron, Locations.gateOfIron]
+      runOnly EndRound
+      void mainLoop
+      _ <- locationOf Locations.gateOfIron
+      getsGame (fmap (countTokens Resource . questTokens . toAttrs) . find ((== toCardCode Quests.sneakPastTheGuards) . toCardCode) . toList . (.entities.quests))
+        `shouldReturn` Just 0
+
     it "cannot defeat Sneak Past the Guards until it has 2 resources" . dungeonTest $ \pid -> do
       q <- putQuestStage Quests.sneakPastTheGuards
       _ <- setEncounterDeck []
@@ -403,6 +417,8 @@ spec = describe "The Dungeons of Cirith Gurat" do
       heroGuardedBy (toAttrs h) `shouldBe` Just cid
       placementOfEnemy uruk `shouldReturn` Just (EngagedWith pid)
       placementOfEnemy chieftain `shouldReturn` Just StagingArea
+      -- lowered only during those engagement checks
+      getEngagementCost uruk `shouldReturn` 35
 
     it "adds an enemy at the beginning of the quest phase, and wins once no captive is left" . dungeonTest $ \pid -> do
       q <- putQuestStage Quests.fightYourWayOut
