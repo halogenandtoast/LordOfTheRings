@@ -875,12 +875,13 @@ porosGarrison =
 -- puts him into play this side faceup.
 haldan :: CardDef
 haldan =
-  ((objective "18069B" "Haldan" JourneyUpTheAnduin 0)
-      { cdCardType = ObjectiveAllyType, cdWillpower = Just 2, cdAttack = Just 3, cdDefense = Just 1, cdHitPoints = Just 4 })
-    { cdCardTraits = setFromList [Woodman, Scout]
-    , cdKeywords = setFromList [FirstPlayerGainsControl]
-    , cdOtherSide = Just "18069A"
-    }
+  unique
+    ((objective "18069B" "Haldan" JourneyUpTheAnduin 0)
+        { cdCardType = ObjectiveAllyType, cdWillpower = Just 2, cdAttack = Just 3, cdDefense = Just 1, cdHitPoints = Just 4 })
+      { cdCardTraits = setFromList [Woodman, Scout]
+      , cdKeywords = setFromList [FirstPlayerGainsControl]
+      , cdOtherSide = Just "18069A"
+      }
 
 -- * The Fate of Wilderland
 
@@ -942,7 +943,6 @@ dragonSign =
   (objective "19012" "Dragon Sign" TheWitheredHeath 4)
     { cdCardTraits = setFromList [Clue]
     , cdKeywords = setFromList [GuardedBy [EnemyType]]
-    , cdVictoryPoints = Just 1
     }
 -- * Roam Across Rhovanion
 

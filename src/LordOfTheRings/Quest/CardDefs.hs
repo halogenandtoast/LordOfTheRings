@@ -1311,7 +1311,7 @@ theForestOfGreatFear :: CardDef
 theForestOfGreatFear = quest "18076" "The Forest of Great Fear" LostInMirkwood 4 8
 
 escapeFromTaurNuFuin :: CardDef
-escapeFromTaurNuFuin = quest "18077" "Escape from Taur-nu-Fuin" LostInMirkwood 4 16
+escapeFromTaurNuFuin = quest "18077" "Escape from Taur-nu-fuin" LostInMirkwood 4 16
 -- * Beneath the Sands
 
 lostUnderground :: CardDef
@@ -1483,28 +1483,28 @@ thePassageOfTheFord = quest "18068" "The Passage of the Ford" JourneyUpTheAnduin
 -- * Fire in the Night: its encounter side quests make the side quest deck
 
 drawHerFire :: CardDef
-drawHerFire = encounterSideQuest "19066" "Draw Her Fire" FireInTheNight 10
+drawHerFire = (encounterSideQuest "19066" "Draw Her Fire" FireInTheNight 5) {cdVictoryPoints = Just 10}
 
 fortifyTheDefense :: CardDef
-fortifyTheDefense = encounterSideQuest "19067" "Fortify the Defense" FireInTheNight 10
+fortifyTheDefense = (encounterSideQuest "19067" "Fortify the Defense" FireInTheNight 10) {cdVictoryPoints = Just 10}
 
 rallyTheWoodmen :: CardDef
-rallyTheWoodmen = encounterSideQuest "19068" "Rally the Woodmen" FireInTheNight 10
+rallyTheWoodmen = (encounterSideQuest "19068" "Rally the Woodmen" FireInTheNight 10) {cdVictoryPoints = Just 10}
 
 douseTheFlames :: CardDef
-douseTheFlames = encounterSideQuest "19069" "Douse the Flames" FireInTheNight 10
+douseTheFlames = (encounterSideQuest "19069" "Douse the Flames" FireInTheNight 10) {cdVictoryPoints = Just 10}
 
 holdTheDoor :: CardDef
-holdTheDoor = encounterSideQuest "19070" "Hold the Door" FireInTheNight 10
+holdTheDoor = (encounterSideQuest "19070" "Hold the Door" FireInTheNight 10) {cdVictoryPoints = Just 10}
 
 defendTheTown :: CardDef
-defendTheTown = encounterSideQuest "19071" "Defend the Town" FireInTheNight 10
+defendTheTown = (encounterSideQuest "19071" "Defend the Town" FireInTheNight 5) {cdVictoryPoints = Just 10}
 
 routTheGoblins :: CardDef
-routTheGoblins = (encounterSideQuest "19072" "Rout the Goblins" FireInTheNight 10) {cdWhenRevealed = True}
+routTheGoblins = (encounterSideQuest "19072" "Rout the Goblins" FireInTheNight 5) {cdWhenRevealed = True, cdVictoryPoints = Just 10}
 
 faceTheDragon :: CardDef
-faceTheDragon = encounterSideQuest "19073" "Face the Dragon" FireInTheNight 10
+faceTheDragon = (encounterSideQuest "19073" "Face the Dragon" FireInTheNight 10) {cdVictoryPoints = Just 10}
 
 hrogarsHill :: CardDef
 hrogarsHill = quest "19083" "Hrogar's Hill" FireInTheNight 1 50

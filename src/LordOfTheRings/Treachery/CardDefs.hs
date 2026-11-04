@@ -2409,13 +2409,13 @@ darkPlaces :: CardDef
 darkPlaces = (treachery "18056" "Dark Places" DeepUnderground 3) {cdShadowEffect = True}
 
 eyesInTheDark :: CardDef
-eyesInTheDark = (treachery "18057" "Eyes in the Dark" AfraidOfTheDark 3) {cdKeywords = setFromList [Doomed 1], cdShadowEffect = True}
+eyesInTheDark = (treachery "18057" "Eyes in the Dark" AfraidOfTheDark 3) {cdKeywords = setFromList [Doomed 1], cdShadowEffect = True, cdEasyModeQuantity = Just 2}
 
 dragonBreath :: CardDef
-dragonBreath = (treachery "18058" "Dragon Breath" DragonMight 2) {cdCardTraits = setFromList [Dragon], cdKeywords = setFromList [Surge]}
+dragonBreath = (treachery "18058" "Dragon Breath" DragonMight 2) {cdCardTraits = setFromList [Dragon], cdKeywords = setFromList [Surge], cdEasyModeQuantity = Just 1}
 
 dragonScales :: CardDef
-dragonScales = (treachery "18059" "Dragon Scales" DragonMight 2) {cdCardTraits = setFromList [Dragon], cdKeywords = setFromList [Surge]}
+dragonScales = (treachery "18059" "Dragon Scales" DragonMight 2) {cdCardTraits = setFromList [Dragon], cdKeywords = setFromList [Surge], cdEasyModeQuantity = Just 1}
 
 -- * The Fate of Wilderland
 
