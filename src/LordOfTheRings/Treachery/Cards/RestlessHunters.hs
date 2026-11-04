@@ -30,13 +30,15 @@ instance RunMessage RestlessHunters where
         causedBy attrs
         targets (map toId clues) $ attachClueToMordorEnemy attrs lead
       pure t
+    -- the damage goes to that hero for this attack alone: from the defenders or, undefended,
+    -- from the enemy
     ResolveShadowEffect cid eid pid defenders | cid == attrs.cardId -> do
       heroes <- select (HeroControlledBy (PlayerWithId pid) <> HeroWithAttached Clue)
       chooseOrRunOneM pid do
         questionLabeled "restlessHunters.hero"
         causedBy attrs
         targets heroes \h -> do
-          phaseModifier attrs eid (UndefendedDamageTo $ toTarget h)
-          for_ (filter (/= toTarget h) defenders) \d -> phaseModifier attrs d (DamageRedirectedTo $ toTarget h)
+          attackModifier attrs eid (UndefendedDamageTo $ toTarget h)
+          for_ (filter (/= toTarget h) defenders) \d -> attackModifier attrs d (DamageRedirectedTo $ toTarget h)
       pure t
     _ -> RestlessHunters <$> runMessage msg attrs

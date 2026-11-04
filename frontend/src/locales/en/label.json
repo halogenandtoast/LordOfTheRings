@@ -1731,6 +1731,7 @@
     "attack": "The attacking enemy makes an additional attack"
   },
   "infiltration": {
+    "extra": "Infiltration: choose a Raider enemy to take 1 of the resources left over",
     "shadow": "Choose the Aflame location this attack's damage is dealt to"
   },
   "burningTower": {

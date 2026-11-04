@@ -1,11 +1,12 @@
 module LordOfTheRings.ShadowsOfMirkwood.NightmareSpec (spec) where
 
 import LordOfTheRings.Attachment.CardDefs qualified as Attachments
+import LordOfTheRings.Effect (Effect (..), EffectDuration (UntilEndOfPhase))
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Helpers.Character (getWillpower)
 import LordOfTheRings.Helpers.Modifiers (getModifiers)
 import LordOfTheRings.Keyword (Keyword (Ranged))
-import LordOfTheRings.Modifier (ModifierType (CannotHaveAttachments, CannotHavePlayerAttachments, CannotReduceThreat, LoseKeyword))
+import LordOfTheRings.Modifier (ModifierType (CannotHaveAttachments, CannotHavePlayerAttachments, CannotReduceThreat, HitPointModifier, LoseKeyword, UndefendedDamageTo))
 import LordOfTheRings.Helpers.Staging (getEnemyAttack, getStagingThreat)
 import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Objective (ObjectiveAttrs (..))
@@ -53,6 +54,22 @@ spec = describe "Shadows of Mirkwood nightmare mode" do
       length deck `shouldBe` 47
       map (`copies` deck) [Enemies.mistyMountainGoblins, Locations.gladdenFields, Enemies.ravenousHawk, Treacheries.restlessHunters]
         `shouldBe` [1, 0, 3, 3]
+
+    it "Restless Hunters' shadow sends this attack's damage to the hero with a Clue, not later ones" . nightmare theHuntForGollum $ \pid -> do
+      hero <- getsGame (toTarget . fromJustNote "no hero" . headMay . toList . (.entities.heroes))
+      run . (`PutObjectiveIntoPlayAttached` hero) =<< genEncounterCard Objectives.signsOfGollum
+      -- kept standing, its damage to be read
+      run $ CreateEffect $ Effect GameSource hero [HitPointModifier 20] UntilEndOfPhase
+      run . PutEnemyIntoPlayEngaged pid =<< genEncounterCard Enemies.huntingWarg
+      warg <- theEnemy
+      _ <- setEncounterDeck [Treacheries.restlessHunters]
+      run $ DealShadowCard warg
+      run $ EnemyAttack pid warg
+      passActions pid
+      chooseLabel "$label.takeAttackUndefended" pid
+      passActions pid
+      getCharacterDamage hero >>= (`shouldSatisfy` (> 0))
+      getModifiers warg >>= (`shouldSatisfy` all (\case UndefendedDamageTo _ -> False; _ -> True))
 
     it "attaches a free Clue card to a Mordor enemy at the end of the refresh phase" . nightmare theHuntForGollum $ \_ -> do
       reveal Enemies.huntingWarg []
@@ -187,6 +204,7 @@ spec = describe "Shadows of Mirkwood nightmare mode" do
       AttachmentTarget athelas <- putAttachmentOn pid Attachments.athelas hero
       run $ HealDamage (AbilitySource (AttachmentSource athelas) 1) w 3
       getDamage w `shouldReturn` 2
+      getsGame (length . (.entities.treacheries)) `shouldReturn` 1
 
     it "Labyrinthine Woods gives Creatures +1 attack in the staging area" . nightmare aJourneyToRhosgobel $ \_ -> do
       reveal Locations.labyrinthineWoods []

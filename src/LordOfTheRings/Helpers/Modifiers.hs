@@ -9,6 +9,11 @@ import LordOfTheRings.Classes.HasModifiersFor
 import LordOfTheRings.Ally.Types (allyCardId)
 import LordOfTheRings.Classes.Entity (toAttrs, toId)
 import LordOfTheRings.Effect
+import LordOfTheRings.Enemy.Types (enemyTokens)
+import LordOfTheRings.Location.Types (locationTokens)
+import LordOfTheRings.Objective.Types (objectiveTokens)
+import LordOfTheRings.Quest.Types (questTokens)
+import LordOfTheRings.Token (countTokens)
 import LordOfTheRings.Entities
 import LordOfTheRings.Game.Base
 import LordOfTheRings.Id (PlayerId)
@@ -91,7 +96,29 @@ preloadModifiers g = do
           , l <- toList es.locations
           , l.placement == StagingArea
           ]
-      all' = Map.unionsWith (<>) [Map.map (filter (not . ownText)) fromEntities, fromEffects, followed, staged, attachedOut]
+      -- a lasting effect on each ally reaches one that enters play after it began
+      allied =
+        Map.fromListWith
+          (<>)
+          [ (toTarget (toId a), [Modifier (effectSource e) m])
+          | e <- gameEffects g
+          , EachAlly m <- effectModifiers e
+          , a <- toList es.allies
+          ]
+      all0 = Map.unionsWith (<>) [Map.map (filter (not . ownText)) fromEntities, fromEffects, followed, staged, allied, attachedOut]
+      -- an encounter card's lasting effect counted from tokens is recalculated as they
+      -- change (FAQ 1.55): each such modifier adds its count as the plain modifier
+      counted t = \case
+        Modifier source (ThreatPerToken token) -> [Modifier source (ThreatModifier $ tokensOn t token)]
+        Modifier source (StagingThreatPerToken on token) -> [Modifier source (StagingThreatBonus $ tokensOn on token)]
+        _ -> []
+      all' = Map.mapWithKey (\t ms -> ms <> concatMap (counted t) ms) all0
+      tokensOn t token = maybe 0 (countTokens token) case t of
+        EnemyTarget i -> enemyTokens . toAttrs <$> Map.lookup i es.enemies
+        ObjectiveTarget i -> objectiveTokens . toAttrs <$> Map.lookup i es.objectives
+        LocationTarget i -> locationTokens . toAttrs <$> Map.lookup i es.locations
+        QuestTarget i -> questTokens . toAttrs <$> Map.lookup i es.quests
+        _ -> Nothing
       -- a card immune to player card effects keeps none of their modifiers, but its own, as
       -- an objective ally under a player's control (Chief Turch) is a player card itself
       immune ms = ImmuneToPlayerCardEffects `elem` map modifierType ms

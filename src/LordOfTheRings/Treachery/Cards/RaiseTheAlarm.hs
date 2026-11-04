@@ -1,8 +1,6 @@
 module LordOfTheRings.Treachery.Cards.RaiseTheAlarm (raiseTheAlarm) where
 
 import LordOfTheRings.Card (CardType (EnemyType))
-import LordOfTheRings.Helpers.Character (getDefenseAgainst)
-import LordOfTheRings.Helpers.Staging (getEnemyAttack)
 import LordOfTheRings.Trait (Trait (Raider))
 import LordOfTheRings.Treachery.CardDefs qualified as Cards
 import LordOfTheRings.Treachery.Import.Lifted
@@ -31,11 +29,12 @@ instance RunMessage RaiseTheAlarm where
         addToStagingFromDiscard card
         placeResources attrs (CardIdTarget card.id) 3
       pure t
-    ResolveShadowEffect cid eid _ defenders | cid == attrs.cardId -> do
-      whenM (selectAny $ EnemyWithId eid <> EnemyWithTrait Raider) do
-        attack <- getEnemyAttack eid
-        defense <- sum <$> traverse (getDefenseAgainst eid) defenders
-        let n = max 0 (attack - defense)
-        when (n > 0) $ afterAttack eid [PlaceTokens (CardIdSource cid) (EnemyTarget eid) Resource n]
+    ResolveShadowEffect cid eid _ _ | cid == attrs.cardId -> do
+      whenM (selectAny $ EnemyWithId eid <> EnemyWithTrait Raider) $ afterAttack eid [DoStep 1 msg]
+      pure t
+    -- the damage the attack dealt, read once it is over
+    DoStep 1 (ResolveShadowEffect cid eid _ _) | cid == attrs.cardId -> do
+      n <- sum . map snd <$> attackDamaged eid
+      when (n > 0) $ placeResources (CardIdSource cid) eid n
       pure t
     _ -> RaiseTheAlarm <$> runMessage msg attrs

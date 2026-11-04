@@ -1,6 +1,9 @@
 module LordOfTheRings.DreamChaser.FlightOfTheStormcallerSpec (spec) where
 
+import LordOfTheRings.Effect (Effect (..), EffectDuration (UntilEndOfPhase))
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
+import LordOfTheRings.Objective.CardDefs qualified as Objectives
+import LordOfTheRings.Treachery.CardDefs qualified as Treacheries
 import LordOfTheRings.Entities (questsL)
 import LordOfTheRings.Heading (Heading (..))
 import LordOfTheRings.Helpers.Modifiers (getModifiers, preloadModifiers)
@@ -36,6 +39,27 @@ prepareArea stageDef rest progress = do
   deck <- traverse genEncounterCard rest
   refresh . (scenarioL %~ overAttrs (metaL .~ toJSON (Meta (Just stage) deck progress))) =<< getGame
   enemyOf Enemies.stormcaller
+
+-- | A Ship enemy engaged with the player attacks undefended with Sahír's Getting Away! as its
+-- shadow, its damage going to the player's Ship objective, which may be kept from taking it.
+sahirsAttack :: PlayerId -> Bool -> GameT Target
+sahirsAttack pid shielded = do
+  run . PutObjectiveAllyIntoPlayUnder pid =<< genEncounterCard Objectives.dreamChaser
+  ship <- getsGame (toTarget . fromJustNote "no ship" . find ((== toCardCode Objectives.dreamChaser) . toCardCode) . toList . (.entities.allies))
+  when shielded $ run $ CreateEffect $ Effect GameSource ship [CannotTakeDamage] UntilEndOfPhase
+  run . PutEnemyIntoPlayEngaged pid =<< genEncounterCard Enemies.patrolShip
+  eid <- enemyOf Enemies.patrolShip
+  _ <- setEncounterDeck [Treacheries.sahirsGettingAway]
+  run $ DealShadowCard eid
+  run $ EnemyAttack pid eid
+  passActions pid
+  chooseLabel "$label.takeAttackUndefended" pid
+  passActions pid
+  getQuestion pid >>= \case
+    Just (QuestionLabel "$label.undefendedDamage" _ _ _) -> chooseTarget pid ship
+    _ -> pure ()
+  passActions pid
+  pure ship
 
 enemyOf :: CardDef -> GameT EnemyId
 enemyOf def = getsGame (fromJustNote "no such enemy" . fmap toId . find ((== toCardCode def) . toCardCode) . toList . (.entities.enemies))
@@ -86,6 +110,17 @@ spec = describe "Flight of the Stormcaller" do
     map toCardCode corsairs `shouldSatisfy` elem (toCardCode Enemies.serpentsBlade)
 
   describe "The Stormcaller's area" do
+    it "Sahír's Getting Away!'s shadow places progress once the attack damages a Ship objective" . stormTest $ \pid -> do
+      _ <- prepareArea Quests.fullSailAheadStormcaller [] 0
+      ship <- sahirsAttack pid False
+      stormProgress `shouldReturn` 1
+      getCharacterDamage ship >>= (`shouldSatisfy` (> 0))
+
+    it "Sahír's Getting Away!'s shadow places none when the Ship objective takes no damage" . stormTest $ \pid -> do
+      _ <- prepareArea Quests.fullSailAheadStormcaller [] 0
+      _ <- sahirsAttack pid True
+      stormProgress `shouldReturn` 0
+
     it "keeps its cards out of the staging area and immune to player card effects" . stormTest $ \_ -> do
       stormcaller <- prepareArea Quests.fullSailAheadStormcaller [] 0
       getModifiers (EnemyTarget stormcaller) >>= (`shouldSatisfy` elem ImmuneToPlayerCardEffects)

@@ -6,6 +6,7 @@ import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Frontend (FrontendMessage (..))
 import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Log.Entry
+import LordOfTheRings.Objective.CardDefs qualified as Objectives
 import LordOfTheRings.Quest.CardDefs qualified as Quests
 import LordOfTheRings.Treachery.CardDefs qualified as Treacheries
 import TestImport
@@ -85,3 +86,13 @@ spec = describe "Game log" do
     said <- mapMaybe keyOf <$> entries logged
     said `shouldSatisfy` elem "log.immuneTo"
     said `shouldSatisfy` notElem "log.progressRemoved"
+
+  it "says Closing In goes underneath The Orcs' Search, not that it is removed from the game" . loggedTest $ \logged _ -> do
+    run . PutObjectiveIntoPlay =<< genEncounterCard Objectives.theOrcsSearch
+    _ <- setEncounterDeck [Treacheries.closingIn, Locations.forestGate]
+    writeIORef logged []
+    run RevealEncounterCard
+    resolveRevealed
+    said <- mapMaybe keyOf <$> entries logged
+    said `shouldSatisfy` elem "log.placedUnderneath"
+    said `shouldSatisfy` notElem "log.removedFromGame"

@@ -79,8 +79,9 @@ data WindowType
     ShadowCardDealt EnemyId CardId PlayerId
   | -- | a shadow card's effect about to resolve: the card, and the enemy it was dealt to
     ShadowEffectTriggered CardId EnemyId
-  | -- | a shadow effect about to resolve during an attack the character defends
-    ShadowEffectAgainst Target
+  | -- | a shadow card's effect about to resolve during an attack the character defends:
+    -- the card, and the character
+    ShadowEffectAgainst CardId Target
   | -- | a character left play, as its card
     CharacterLeftPlay Card
   | -- | a character left play: who controlled it, and its traits as it left

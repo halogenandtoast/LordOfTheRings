@@ -1,6 +1,8 @@
 module LordOfTheRings.DreamChaser.RaidOnTheGreyHavensSpec (spec) where
 
+import LordOfTheRings.Effect (Effect (..), EffectDuration (UntilEndOfPhase))
 import LordOfTheRings.Enemy (EnemyAttrs (..))
+import LordOfTheRings.Modifier (ModifierType (CannotTakeDamage))
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Helpers.Staging (getStagingThreat)
 import LordOfTheRings.Location (LocationAttrs (..))
@@ -124,6 +126,16 @@ spec = describe "Raid on the Grey Havens" do
     run RevealEncounterCard
     resolveRevealed
     damageOn piers `shouldReturn` 1
+    getEncounterDeck `shouldReturn` []
+
+  it "counts only the damage The Fires Spread deals, surging when a location takes none" . raidTest $ \_ -> do
+    replicateM_ 3 $ run . AddToStaging =<< genEncounterCard Locations.burningPiers
+    piers <- map fst <$> getAflameLocations
+    length piers `shouldBe` 3
+    for_ (take 1 piers) \l -> run $ CreateEffect $ Effect GameSource (LocationTarget l) [CannotTakeDamage] UntilEndOfPhase
+    _ <- setEncounterDeck [Treacheries.theFiresSpread, Locations.mithlondHarbor]
+    run RevealEncounterCard
+    resolveRevealed
     getEncounterDeck `shouldReturn` []
 
   -- \* The Corsair's Assault

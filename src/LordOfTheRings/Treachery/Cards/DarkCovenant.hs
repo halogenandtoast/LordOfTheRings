@@ -17,6 +17,9 @@ darkCovenant = treachery DarkCovenant Cards.darkCovenant
 -- characters he controls. X is the total threat of the discarded cards.
 -- Shadow: If this attack destroys a character, raise your threat by the destroyed
 -- character's willpower.
+-- The progress is offered only when there is X of it to remove: of a "must either" choice
+-- one option must be performed in full, if able (FAQ 1.44). The destroyed character's
+-- willpower is its printed one, read off its card once it has left play.
 instance RunMessage DarkCovenant where
   runMessage msg t@(DarkCovenant attrs) = case msg of
     WhenRevealed (isTarget attrs -> True) -> do

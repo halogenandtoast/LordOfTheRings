@@ -1,6 +1,7 @@
 module LordOfTheRings.Treachery.Cards.HowlingOfWargs (howlingOfWargs) where
 
 import LordOfTheRings.Card (CardType (EncounterSideQuestType))
+import LordOfTheRings.Helpers.Modifiers (getModifiers)
 import LordOfTheRings.Treachery.CardDefs qualified as Cards
 import LordOfTheRings.Treachery.Import.Lifted
 
@@ -26,8 +27,9 @@ instance RunMessage HowlingOfWargs where
         labeled "howlingOfWargs.shadow" $ traverse_ dealShadowCard =<< select EnemyInStagingArea
         labeled "howlingOfWargs.search" $ searchEncounterDeckAndDiscardToReveal lead attrs (CardWithType EncounterSideQuestType)
       pure t
-    ResolveShadowEffect cid eid pid _ | cid == attrs.cardId -> do
-      engaged <- select (EnemyEngagedWith (PlayerWithId pid) <> not_ (EnemyWithId eid))
+    -- the attacking enemy among those that have attacked
+    ResolveShadowEffect cid _ pid _ | cid == attrs.cardId -> do
+      engaged <- filterM (fmap (notElem AttackedThisPhase) . getModifiers) =<< select (EnemyEngagedWith (PlayerWithId pid))
       traverse_ dealShadowCard engaged
       pure t
     _ -> HowlingOfWargs <$> runMessage msg attrs

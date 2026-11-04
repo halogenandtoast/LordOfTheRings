@@ -1,6 +1,9 @@
 module LordOfTheRings.Treachery.Cards.NoxiousSupplies (noxiousSupplies) where
 
 import LordOfTheRings.Card (toCardCode)
+import LordOfTheRings.Classes.HasGame (getsGame)
+import LordOfTheRings.Helpers.Modifiers (getModifiers)
+import LordOfTheRings.Log.Refs (cardTitle, sourceCardTitle)
 import LordOfTheRings.Objective.CardDefs qualified as Objectives
 import LordOfTheRings.Placement (Placement (AttachedTo))
 import LordOfTheRings.Scenario.Scenarios.AJourneyToRhosgobel.Helpers (getWilyador)
@@ -29,12 +32,13 @@ instance RunMessage NoxiousSupplies where
     WhenRevealed (isTarget attrs -> True) -> do
       getWilyador >>= traverse_ (attachTreachery attrs.treacheryId)
       pure t
-    CheckWindows ws | AttachedTo host <- attrs.placement, any (healedBesidesAthelas host . windowType) ws -> do
-      discard attrs
+    -- read as the healing resolves, while the card healing is still where its title can be
+    -- found, the limit cutting the same healing
+    HealDamage source target n | AttachedTo host <- attrs.placement, target == host, n > 0 -> do
+      g <- getsGame id
+      damage <- getDamage host
+      barred <- elem CannotBeHealed <$> getModifiers host
+      let athelas = sourceCardTitle g source == Just (cardTitle Objectives.athelas)
+      when (damage > 0 && not barred && not athelas) $ discard attrs
       NoxiousSupplies <$> runMessage msg attrs
     _ -> NoxiousSupplies <$> runMessage msg attrs
-   where
-    healedBesidesAthelas host = \case
-      Healed c (ObjectiveSource _) | c == host -> False
-      Healed c _ -> c == host
-      _ -> False
