@@ -878,7 +878,8 @@ runGameMessage msg g = case msg of
         -- what a player's attack destroyed, for the attack to read as it resolves
         recorded = attackDestroyedL %~ (<> [AttackDestroyed source target Nothing card | PlayerAttackSource _ <- [source]])
     push $ CheckWindows [mkAfter $ EnemyDefeated eid, mkAfter $ EnemyDestroyed card]
-    if stays then pure g else recorded <$> case cdVictoryPoints (toCardDef enemy) of
+    -- one that stays in play for its own effect was still destroyed by the attack
+    if stays then pure (recorded g) else recorded <$> case cdVictoryPoints (toCardDef enemy) of
       Just _ -> do
         -- an objective it guarded as an attachment is discarded, as a Key of The Three Trials
         pushAll $ [Discard (toTarget o) | o <- toList g.entities.objectives, o.placement == AttachedTo target] <> discardShadowsOf g target <> freeGuarded g target
