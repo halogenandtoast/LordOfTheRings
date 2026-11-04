@@ -5,7 +5,7 @@ import LordOfTheRings.Card.CardType (CardType)
 import LordOfTheRings.Card.Code (CardCode)
 import LordOfTheRings.Id (PlayerId)
 import LordOfTheRings.Keyword (Keyword)
-import LordOfTheRings.Matcher.Types (CardMatcher, EnemyMatcher, LocationMatcher, PlayerMatcher)
+import LordOfTheRings.Matcher.Types (CardMatcher, EnemyMatcher, HeroMatcher, LocationMatcher, PlayerMatcher)
 import LordOfTheRings.Outcome (Outcome)
 import LordOfTheRings.Placement (Placement)
 import LordOfTheRings.Prelude
@@ -334,6 +334,9 @@ data ModifierType
     UndefendedDamageTo Target
   | -- | on an ally: the resources on it can pay for matching cards its controller plays
     ResourcesPayFor CardMatcher
+  | -- | on a card: matching heroes' resources can pay for it, even those of a hero its
+    -- player does not control, as Burglar Baggins's from Bilbo Baggins' pool
+    PayableFromHeroes HeroMatcher
   | -- | on the game: players cannot play matching cards
     CannotPlay CardMatcher
   | -- | on a player: no matching card can be put into play under his control, as
@@ -466,6 +469,9 @@ data ModifierType
   | -- | on the game: the next encounter card revealed, if of this type, is discarded
     -- without resolving, as Minas Tirith Lampwright's
     DiscardNextRevealed CardType
+  | -- | on the game: the next enemy revealed from the encounter deck is dealt this much
+    -- damage by the effect's source, as Expecting Mischief reads
+    DamageNextRevealedEnemy Int
   | -- | on a card: no time counter can be removed from it, as Tharbad Hideout reads for
     -- the current quest
     CannotRemoveTimeCounters
@@ -583,6 +589,18 @@ data ModifierType
   | -- | on a hero: player card effects cannot give it resources, as No End in Sight reads;
     -- encounter card effects still may
     CannotGainResourcesFromPlayerCardEffects
+  | -- | on a hero: only treasure cards' effects can give it resources, as On the Doorstep's
+    -- Bilbo Baggins reads "cannot gain resources from non-treasure cards"
+    CannotGainResourcesFromNonTreasureCards
+  | -- | on a character: it counts as two when its controller's Dwarf characters are
+    -- counted, as Bombur reads
+    CountsAsTwoDwarves
+  | -- | on a hero: control of it goes back to the player at the end of the phase, as
+    -- Desperate Alliance gives it away until then
+    ControlReturnsAtEndOfPhase PlayerId
+  | -- | on an ally's card: it goes to the bottom of its owner's deck at the end of the
+    -- phase, as To me! O my kinsfolk! puts one into play
+    BottomOfDeckAtEndOfPhase
   | -- | on a player: he played the card this round, from wherever, paid for or not; one
     -- per card played. Read them with 'cardsPlayedThisRound'
     PlayedCardThisRound CardCode CardType

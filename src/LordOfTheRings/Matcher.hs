@@ -16,7 +16,7 @@ import LordOfTheRings.Enemy.Types hiding (enemy)
 import LordOfTheRings.Entities
 import LordOfTheRings.Game.Base
 import LordOfTheRings.Heading as X
-import LordOfTheRings.Helpers.Modifiers (cardsPlayedThisRound, engagementCostOf, hitPointsOf, modifiedValue)
+import LordOfTheRings.Helpers.Modifiers (cardsPlayedThisRound, engagementCostOf, getModifiers, hitPointsOf, modifiedValue)
 import LordOfTheRings.Hero.Types hiding (hero)
 import LordOfTheRings.Id
 import LordOfTheRings.Keyword (Keyword (..))
@@ -115,6 +115,7 @@ matchHero matcher hero = case matcher of
       . Map.findWithDefault [] (toTarget hero)
       <$> getsGame gameModifiers
   HeroWithKeyword k -> hasKeyword k (toTarget hero) (toCardDef hero)
+  HeroWithPrintedKeyword k -> pure $ k `member` cdKeywords (toCardDef hero)
   ReadyHero -> pure $ not (heroExhausted $ toAttrs hero)
   ExhaustedHero -> pure $ heroExhausted (toAttrs hero)
   CommittedHero -> pure $ heroCommitted (toAttrs hero)
@@ -1047,6 +1048,13 @@ getNextPlayer pid = do
 controlledCharactersWithTrait :: HasGame m => PlayerId -> Trait -> m [Target]
 controlledCharactersWithTrait pid trait =
   selectCharacters (HeroControlledBy (PlayerWithId pid) <> HeroWithTrait trait) (AllyControlledBy (PlayerWithId pid) <> AllyWithTrait trait)
+
+-- | The Dwarf characters the player controls, as "if you control at least 5 Dwarf
+-- characters" counts them: Bombur counts as two.
+dwarfCount :: HasGame m => PlayerId -> m Int
+dwarfCount pid = do
+  dwarves <- controlledCharactersWithTrait pid Dwarf
+  sum <$> for dwarves \d -> (\two -> if two then 2 else 1) . elem CountsAsTwoDwarves <$> getModifiers d
 
 -- * The Dream-chaser's heading and its ships (Dream-chaser rules)
 

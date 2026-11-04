@@ -57,6 +57,8 @@ data HeroMatcher
   | HeroWithTrait Trait
   | HeroWithSphere Sphere
   | HeroWithKeyword Keyword
+  | -- | a hero with the keyword printed on its card, as Great Yew Bow attaches to
+    HeroWithPrintedKeyword Keyword
   | ReadyHero
   | ExhaustedHero
   | CommittedHero
@@ -339,6 +341,8 @@ data CardMatcher
     CardWithPrintedCostAtLeast Int
   | -- | a card printed with the keyword, as "a restricted attachment" reads
     CardWithKeyword Keyword
+  | -- | a Hobbit saga treasure, the card type "search your deck for a treasure card" reads
+    TreasureCard
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
@@ -387,6 +391,7 @@ cardMatches matcher (toCardDef -> def) = case matcher of
     Just (StaticCost c) -> c >= n
     _ -> False
   CardWithKeyword k -> k `member` cdKeywords def
+  TreasureCard -> cdTreasure def
 
 -- | The player cards printed with a Valour trigger.
 valourCards :: [CardCode]

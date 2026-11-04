@@ -860,9 +860,12 @@ runGameMessage msg g = case msg of
   ChangeHeroController hid pid | Just h <- Map.lookup hid g.entities.heroes -> do
     let old = h.owner
         onHero a = a.placement == AttachedTo (toTarget hid)
-    -- the player left with no hero, his last one gone to another, is eliminated
+    -- the player left with no hero, his last one gone to another, is eliminated; not for
+    -- one lent until the end of the phase, as Desperate Alliance lends it (FAQ 1.9: "A
+    -- player is not eliminated from the game unless each of his heroes is killed")
+    lent <- elem (ControlReturnsAtEndOfPhase old) <$> getModifiers (HeroTarget hid)
     let othersLeft = any (\h' -> h'.owner == old && h'.id /= hid) (toList g.entities.heroes)
-    pushWhen (not othersLeft) $ EliminatePlayer old
+    pushWhen (not othersLeft && not lent) $ EliminatePlayer old
     pure
       $ g
       & entitiesL . heroesL . ix hid %~ overAttrs (\a -> a {heroOwner = pid})
@@ -931,6 +934,9 @@ runGameMessage msg g = case msg of
     eliminated <- forMaybeM (toList g.players) \player -> do
       heroes <- select (HeroControlledBy $ PlayerWithId player.id)
       level <- getEliminationLevel player.id
+      -- nor for a hero lent to another player until the end of the phase, as by Desperate
+      -- Alliance (FAQ 1.9)
+      lent <- anyM (fmap (elem (ControlReturnsAtEndOfPhase player.id)) . getModifiers) (toList g.entities.heroes)
       -- a hero shuffled into the deck, as Lost and Alone does, is not killed (FAQ 2.37)
       -- a hero guarded by an encounter card is in play still, under no player's control, as
       -- Carried Away's: its owner is not eliminated for it
@@ -941,7 +947,7 @@ runGameMessage msg g = case msg of
           -- Lose?")
           -- an ally turned enemy, as Secret Cultist's, is not a hero side
           turned = any (\e -> enemyOwner (toAttrs e) == Just player.id && cdCardType (toCardDef e) == EnemyType) g.entities.enemies
-          noHeroes = null heroes && not guarded && not turned && not (any ((== HeroType) . (.cardType)) player.deck)
+          noHeroes = null heroes && not guarded && not lent && not turned && not (any ((== HeroType) . (.cardType)) player.deck)
           byThreat = player.threat >= level
           -- Deadmen's Dike eliminates a player whose deck runs out
           byEmptyDeck = emptyDeck && null player.deck
@@ -2229,8 +2235,7 @@ runGameMessage msg g = case msg of
   PlaceTokens source target@(HeroTarget _) Resource n
     | n > 0
     , source /= GameSource -> do
-        mods <- getModifiers target
-        let barred = CannotGainResourcesFromCardEffects `elem` mods || (isPlayerCardSource source && CannotGainResourcesFromPlayerCardEffects `elem` mods)
+        barred <- resourcesBarredFrom source target
         unless barred $ push $ CheckWindows [mkAfter $ GainedResources target]
         pure g
   -- an Orc Guard that would return to the staging area goes to its owner's discard pile
@@ -2380,6 +2385,14 @@ runGameMessage msg g = case msg of
     discarding <- flip filterM (toList g.entities.allies) \a ->
       elem DiscardAtEndOfPhase <$> getModifiers (CardIdTarget $ allyCardId $ toAttrs a)
     pushAll [Discard (toTarget a) | a <- discarding]
+    -- one put into play until then, as To me! O my kinsfolk!'s, goes to the bottom of its
+    -- owner's deck
+    bottomed <- flip filterM (toList g.entities.allies) \a ->
+      elem BottomOfDeckAtEndOfPhase <$> getModifiers (CardIdTarget $ allyCardId $ toAttrs a)
+    pushAll [PutOnBottomOfOwnersDeck (toTarget a) | a <- bottomed]
+    -- a hero given away until then, as Desperate Alliance gives one, goes back
+    returned <- for (toList g.entities.heroes) \h -> map (h.id,) . (\ms -> [p | ControlReturnsAtEndOfPhase p <- ms]) <$> getModifiers h
+    pushAll [ChangeHeroController hid p | (hid, p) <- concat returned]
     returning <- flip filterM (filter ((`notElem` map toId discarding) . toId) $ toList g.entities.allies) \a ->
       elem ReturnToHandAtEndOfPhase <$> getModifiers (CardIdTarget $ allyCardId $ toAttrs a)
     shuffling <- flip filterM (toList g.entities.allies) \a -> elem ShuffleIntoDeckAtEndOfPhase <$> getModifiers a
@@ -3116,11 +3129,15 @@ runGameMessage msg g = case msg of
         -- Drúadan Forest rules)
         prowl = [DiscardGroupResources lead n | Prowl n <- toList (cdKeywords def), n > 0, lead <- take 1 players]
         whenRevealed t = if cdWhenRevealed def then AskToResolveWhenRevealed t card else WhenRevealed t
+        -- the first enemy revealed this phase takes the damage Expecting Mischief readies for
+        -- it, before its When Revealed and keywords, as Thalin deals his (FAQ 1.9)
+        mischief = take 1 [e | cdCardType def == EnemyType, e <- gameEffects g, any isDamageNextRevealedEnemy (effectModifiers e)]
+        mischiefDamage t = [DealDamage (effectSource e) t n | e <- mischief, DamageNextRevealedEnemy n <- effectModifiers e]
         -- Prowl, a keyword, resolves before the When Revealed effect (ALeP 3.094)
         revealing t =
           inLogBlock (RevealBlock card)
             $ [CheckWindows [mkAfter $ EntersStagingArea t] | cdCardType def `elem` [EnemyType, LocationType, EncounterSideQuestType], isNothing engaging]
-            <> [CheckWindows [mkWhen $ Revealed t]] <> [WhileInPlay t prowl | notNull prowl] <> [whenRevealed t, WhileInPlay t doomed]
+            <> [CheckWindows [mkWhen $ Revealed t]] <> mischiefDamage t <> [WhileInPlay t prowl | notNull prowl] <> [whenRevealed t, WhileInPlay t doomed]
             <> [CheckWindows [mkAfter $ Revealed t]]
     case cdCardType def of
       -- an enemy revealed to be put into play engaged never enters the staging area
@@ -3128,7 +3145,7 @@ runGameMessage msg g = case msg of
         enemy <- newEnemy card
         pushAll . ([EngageEnemy pid (toId enemy), CheckWindows [mkAfter $ EntersPlay $ toTarget enemy]] <>) . (<> [WhileInPlay (toTarget enemy) [ResolveSurge (toTarget enemy) card]])
           =<< revealing (toTarget enemy)
-        pure $ g & entitiesL . enemiesL %~ insertEntity (overAttrs (\a -> a {enemyPlacement = Unplaced}) enemy)
+        pure $ g & effectsL %~ filter (`notElem` mischief) & entitiesL . enemiesL %~ insertEntity (overAttrs (\a -> a {enemyPlacement = Unplaced}) enemy)
       EnemyType -> do
         enemy <- newEnemy card
         let grapples = [ResolveGrapple (toId enemy) | any isGrapple (cdKeywords def)]
@@ -3136,6 +3153,7 @@ runGameMessage msg g = case msg of
           =<< revealing (toTarget enemy)
         pure
           $ g
+          & effectsL %~ filter (`notElem` mischief)
           & entitiesL
           . enemiesL
           %~ insertEntity (overAttrs (\a -> a {enemyPlacement = StagingArea}) enemy)
@@ -4401,6 +4419,11 @@ revealedCard = \case
 isDiscoverValueModifier :: ModifierType -> Bool
 isDiscoverValueModifier = \case
   DiscoverValueModifier _ -> True
+  _ -> False
+
+isDamageNextRevealedEnemy :: ModifierType -> Bool
+isDamageNextRevealedEnemy = \case
+  DamageNextRevealedEnemy _ -> True
   _ -> False
 
 isDiscardNextRevealed :: ModifierType -> Bool

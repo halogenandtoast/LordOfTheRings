@@ -3,7 +3,7 @@ module LordOfTheRings.Helpers.Modifiers (module LordOfTheRings.Helpers.Modifiers
 import Control.Monad.Writer.Strict (execWriterT)
 import Data.Map.Monoidal.Strict (MonoidalMap (..))
 import Data.Map.Strict qualified as Map
-import LordOfTheRings.Card (Card, CardCode, CardType (AllyType, ObjectiveAllyType), cdCardTraits, cdCardType, cdSphere, toCardCode, toCardDef)
+import LordOfTheRings.Card (Card, CardCode, CardType (AllyType, ObjectiveAllyType), cdCardTraits, cdCardType, cdSphere, cdTreasure, toCardCode, toCardDef)
 import LordOfTheRings.Sphere (Sphere (Fellowship))
 import LordOfTheRings.Classes.HasGame
 import LordOfTheRings.Classes.HasModifiersFor
@@ -234,6 +234,22 @@ cardCodeOf g t = code
     AllyTarget i -> toCardCode <$> Map.lookup i es.allies
     CardIdTarget cid -> toCardCode <$> find ((== cid) . (.id)) [c | p <- toList g.players, c <- p.hand <> p.discard <> p.deck]
     _ -> Nothing
+
+{- | Whether the hero cannot gain the resources the source's effect gives it: a card effect's
+barred by its modifiers, as Garden of Poisons's, a player card's as No End in Sight's, and
+any but a treasure card's for On the Doorstep's Bilbo Baggins. The resource phase's come
+from the game, not a card.
+-}
+resourcesBarredFrom :: (HasGame m, Targetable a) => Source -> a -> m Bool
+resourcesBarredFrom GameSource _ = pure False
+resourcesBarredFrom source a = do
+  mods <- getModifiers a
+  g <- getGame
+  let treasure = maybe False (cdTreasure . toCardDef) (cardCodeOf g =<< sourceTarget source)
+  pure
+    $ CannotGainResourcesFromCardEffects `elem` mods
+    || (isPlayerCardSource source && CannotGainResourcesFromPlayerCardEffects `elem` mods)
+    || (not treasure && CannotGainResourcesFromNonTreasureCards `elem` mods)
 
 -- | Whether only Master cards' effects touch the card, as The One Ring's do: a card effect
 -- verb with no source, as 'LordOfTheRings.Message.Lifted.discard', leaves it be.

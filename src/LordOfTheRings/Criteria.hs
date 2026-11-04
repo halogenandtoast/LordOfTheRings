@@ -59,6 +59,8 @@ data Criterion
     ModifierFrom Source ModifierType
   | -- | at least this many characters match: heroes and allies
     CharactersAtLeast Int HeroMatcher AllyMatcher
+  | -- | the player controls at least this many Dwarf characters, as 'dwarfCount' counts
+    DwarvesAtLeast PlayerId Int
   | -- | a different character for each pair of matchers, heroes and allies: "a Rohan
     -- character and another Gondor character"
     DistinctCharacters [(HeroMatcher, AllyMatcher)]

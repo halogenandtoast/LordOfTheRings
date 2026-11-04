@@ -2,7 +2,6 @@ module LordOfTheRings.Hero.Cards.Ori (ori) where
 
 import LordOfTheRings.Hero.CardDefs qualified as Cards
 import LordOfTheRings.Hero.Import.Lifted
-import LordOfTheRings.Trait (Trait (Dwarf))
 
 newtype Ori = Ori HeroAttrs
   deriving anyclass (IsHero, HasAbilities)
@@ -19,8 +18,8 @@ the resource phase draws none.
 -}
 instance HasModifiersFor Ori where
   getModifiersFor (Ori a) = unless a.heroPrisoner do
-    dwarves <- controlledCharactersWithTrait a.heroOwner Dwarf
-    when (length dwarves >= 5) $ modified a (PlayerTarget a.heroOwner) [AdditionalResourcePhaseDraws 1]
+    dwarves <- dwarfCount a.heroOwner
+    when (dwarves >= 5) $ modified a (PlayerTarget a.heroOwner) [AdditionalResourcePhaseDraws 1]
 
 instance RunMessage Ori where
   runMessage msg (Ori attrs) = Ori <$> runMessage msg attrs
