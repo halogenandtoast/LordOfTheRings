@@ -525,6 +525,10 @@ import LordOfTheRings.Location.Cards.SlaveQuarters
 import LordOfTheRings.Location.Cards.TheStorehouse
 import LordOfTheRings.Location.Cards.WorkingFields
 import LordOfTheRings.Location.Cards.WatchTowerTheLandOfSorrow
+import LordOfTheRings.Location.Cards.TheWold
+import LordOfTheRings.Location.Cards.Eastemnet
+import LordOfTheRings.Location.Cards.PlainsOfRohan
+import LordOfTheRings.Location.Cards.BanksOfEntwash
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -1096,5 +1100,9 @@ allLocations =
         , SomeLocationCard theStorehouse
         , SomeLocationCard workingFields
         , SomeLocationCard watchTowerTheLandOfSorrow
+        , SomeLocationCard theWold
+        , SomeLocationCard eastemnet
+        , SomeLocationCard plainsOfRohan
+        , SomeLocationCard banksOfEntwash
         ]
     ]
