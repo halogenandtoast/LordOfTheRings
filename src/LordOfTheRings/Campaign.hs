@@ -91,6 +91,9 @@ data CampaignLogKey
     -- add for a Clue they control, by the seat of that player ('counted'), offered as the
     -- next scenario is set up
     BooksEarned
+  | -- | The Lord of the Rings: the heroes taken captive at the end of Breaking of the
+    -- Fellowship, one for each player
+    Captives
   deriving stock (Show, Eq, Ord, Generic, Enum, Bounded)
   deriving anyclass (ToJSON, FromJSON)
 
