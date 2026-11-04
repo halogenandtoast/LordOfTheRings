@@ -316,6 +316,7 @@ library
       LordOfTheRings.Attachment.CardDefs
       LordOfTheRings.Attachment.Cards.ABurningBrand
       LordOfTheRings.Attachment.Cards.AmarthiulsCourage
+      LordOfTheRings.Attachment.Cards.Ambush
       LordOfTheRings.Attachment.Cards.AncestralArmor
       LordOfTheRings.Attachment.Cards.AncientMathom
       LordOfTheRings.Attachment.Cards.AppointedByFate
@@ -325,6 +326,7 @@ library
       LordOfTheRings.Attachment.Cards.Asfaloth
       LordOfTheRings.Attachment.Cards.Athelas
       LordOfTheRings.Attachment.Cards.Ballista
+      LordOfTheRings.Attachment.Cards.BannerOfElendil
       LordOfTheRings.Attachment.Cards.BlackKey
       LordOfTheRings.Attachment.Cards.BladeOfGondolin
       LordOfTheRings.Attachment.Cards.BloodOfNumenor
@@ -364,6 +366,8 @@ library
       LordOfTheRings.Attachment.Cards.ElvenSpear
       LordOfTheRings.Attachment.Cards.EnlargedQuarters
       LordOfTheRings.Attachment.Cards.EntanglingNets
+      LordOfTheRings.Attachment.Cards.EsquireOfGondor
+      LordOfTheRings.Attachment.Cards.EsquireOfRohan
       LordOfTheRings.Attachment.Cards.EverMyHeartRises
       LordOfTheRings.Attachment.Cards.ExplorersAlmanac
       LordOfTheRings.Attachment.Cards.ExtraSails
@@ -374,14 +378,17 @@ library
       LordOfTheRings.Attachment.Cards.FiresideSong
       LordOfTheRings.Attachment.Cards.Followed
       LordOfTheRings.Attachment.Cards.ForestSnare
+      LordOfTheRings.Attachment.Cards.FriendOfFriends
       LordOfTheRings.Attachment.Cards.Glamdring
       LordOfTheRings.Attachment.Cards.GoldenBelt
+      LordOfTheRings.Attachment.Cards.GoldenShield
       LordOfTheRings.Attachment.Cards.GondorianFire
       LordOfTheRings.Attachment.Cards.GondorianShield
       LordOfTheRings.Attachment.Cards.GoodMeal
       LordOfTheRings.Attachment.Cards.GrapplingHook
       LordOfTheRings.Attachment.Cards.GreyCloak
       LordOfTheRings.Attachment.Cards.GuardedCeaselessly
+      LordOfTheRings.Attachment.Cards.Guthwine
       LordOfTheRings.Attachment.Cards.HaradrimSpear
       LordOfTheRings.Attachment.Cards.Hardy
       LordOfTheRings.Attachment.Cards.HardyLeadership
@@ -410,6 +417,7 @@ library
       LordOfTheRings.Attachment.Cards.LegacyOfDurin
       LordOfTheRings.Attachment.Cards.Lembas
       LordOfTheRings.Attachment.Cards.LightOfValinor
+      LordOfTheRings.Attachment.Cards.LiveryOfTheTower
       LordOfTheRings.Attachment.Cards.LordOfMorthond
       LordOfTheRings.Attachment.Cards.LoveOfTales
       LordOfTheRings.Attachment.Cards.MagicRing
@@ -429,6 +437,7 @@ library
       LordOfTheRings.Attachment.Cards.Nenya
       LordOfTheRings.Attachment.Cards.NorAmIAStranger
       LordOfTheRings.Attachment.Cards.OLorien
+      LordOfTheRings.Attachment.Cards.OrcDisguise
       LordOfTheRings.Attachment.Cards.Orcrist
       LordOfTheRings.Attachment.Cards.OrdersFromAngmar
       LordOfTheRings.Attachment.Cards.Outmatched
@@ -459,6 +468,7 @@ library
       LordOfTheRings.Attachment.Cards.RivendellBow
       LordOfTheRings.Attachment.Cards.RodOfTheSteward
       LordOfTheRings.Attachment.Cards.RohanWarhorse
+      LordOfTheRings.Attachment.Cards.Roheryn
       LordOfTheRings.Attachment.Cards.RoundShield
       LordOfTheRings.Attachment.Cards.RuneMaster
       LordOfTheRings.Attachment.Cards.Ruthless
@@ -471,6 +481,7 @@ library
       LordOfTheRings.Attachment.Cards.SilverHarp
       LordOfTheRings.Attachment.Cards.SilverLamp
       LordOfTheRings.Attachment.Cards.Silverthorn
+      LordOfTheRings.Attachment.Cards.Snowmane
       LordOfTheRings.Attachment.Cards.SongOfBattle
       LordOfTheRings.Attachment.Cards.SongOfEarendil
       LordOfTheRings.Attachment.Cards.SongOfHealing
@@ -484,6 +495,7 @@ library
       LordOfTheRings.Attachment.Cards.SpearOfTheMark
       LordOfTheRings.Attachment.Cards.Spyglass
       LordOfTheRings.Attachment.Cards.SquiresHelm
+      LordOfTheRings.Attachment.Cards.StaffOfLebethron
       LordOfTheRings.Attachment.Cards.Stalwart
       LordOfTheRings.Attachment.Cards.StarBrooch
       LordOfTheRings.Attachment.Cards.SteedOfImladris

@@ -223,6 +223,18 @@ import LordOfTheRings.Attachment.Cards.SparePipe
 import LordOfTheRings.Attachment.Cards.ShiningShield
 import LordOfTheRings.Attachment.Cards.TirelessThoroughbred
 import LordOfTheRings.Attachment.Cards.Thorongil
+import LordOfTheRings.Attachment.Cards.StaffOfLebethron
+import LordOfTheRings.Attachment.Cards.Ambush
+import LordOfTheRings.Attachment.Cards.Snowmane
+import LordOfTheRings.Attachment.Cards.GoldenShield
+import LordOfTheRings.Attachment.Cards.LiveryOfTheTower
+import LordOfTheRings.Attachment.Cards.Roheryn
+import LordOfTheRings.Attachment.Cards.BannerOfElendil
+import LordOfTheRings.Attachment.Cards.EsquireOfRohan
+import LordOfTheRings.Attachment.Cards.EsquireOfGondor
+import LordOfTheRings.Attachment.Cards.OrcDisguise
+import LordOfTheRings.Attachment.Cards.Guthwine
+import LordOfTheRings.Attachment.Cards.FriendOfFriends
 import LordOfTheRings.Attachment.Runner ()
 import LordOfTheRings.Attachment.Types as X
 import LordOfTheRings.Id
@@ -483,5 +495,17 @@ allAttachments =
         , SomeAttachmentCard shiningShield
         , SomeAttachmentCard tirelessThoroughbred
         , SomeAttachmentCard thorongil
+        , SomeAttachmentCard staffOfLebethron
+        , SomeAttachmentCard ambush
+        , SomeAttachmentCard snowmane
+        , SomeAttachmentCard goldenShield
+        , SomeAttachmentCard liveryOfTheTower
+        , SomeAttachmentCard roheryn
+        , SomeAttachmentCard bannerOfElendil
+        , SomeAttachmentCard esquireOfRohan
+        , SomeAttachmentCard esquireOfGondor
+        , SomeAttachmentCard orcDisguise
+        , SomeAttachmentCard guthwine
+        , SomeAttachmentCard friendOfFriends
         ]
     ]
