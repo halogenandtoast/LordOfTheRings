@@ -2708,6 +2708,22 @@ runGameMessage msg g = case msg of
       . objectivesL
       . traverse
       %~ (\o -> if guarding o then overAttrs (\a -> a {objectiveGuard = Nothing}) o else o)
+  -- a card out of play comes into play as a captive: see 'GuardCard'
+  -- an ally card no longer in its owner's discard pile, taken already, stays where it is
+  GuardCard card cid -> do
+    aid <- getRandom
+    lead <- getLead
+    let (owner, available) = case card of
+          PlayerCard pc -> case pc.owner of
+            Just o -> (o, maybe False (any ((== pc.id) . (.id)) . (.discard)) (Map.lookup o g.players))
+            Nothing -> (lead, False)
+          EncounterCard _ -> (lead, True)
+        captive = overAttrs (\a -> a {allyPlacement = AttachedTo (CardIdTarget cid)}) $ lookupAlly (toCardCode card) card.id aid owner
+    if available
+      then do
+        pushAll [RemoveFromDiscard owner card.id | PlayerCard _ <- [card]]
+        pure $ g & entitiesL . alliesL %~ insertEntity captive
+      else pure g
   -- as a Ship objective of the fleet comes into play (Dream-chaser rules)
   PutObjectiveAllyIntoPlayUnder pid card -> do
     aid <- getRandom

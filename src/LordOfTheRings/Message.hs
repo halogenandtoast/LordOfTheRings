@@ -281,6 +281,9 @@ data Message
     GuardCharacter Target CardId
   | -- | the guarded character is free of encounters: its owner takes control of it, exhausted
     RescueCharacter Target
+  | -- | a card out of play, an ally card from its owner's discard pile or an objective ally,
+    -- comes into play as the captive of the encounter card with this id (see 'GuardCharacter')
+    GuardCard Card CardId
   | SetAside EncounterCard
   | -- | a stage whose condition may have just been met checks whether it is defeated
     CheckStage QuestId
