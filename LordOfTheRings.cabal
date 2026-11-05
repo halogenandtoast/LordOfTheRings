@@ -1299,6 +1299,7 @@ library
       LordOfTheRings.Enemy.Cards.WraithOnWings
       LordOfTheRings.Enemy.Cards.WrithingTentacle
       LordOfTheRings.Enemy.Cards.ZealousTraitor
+      LordOfTheRings.Enemy.Cards.ZirakzigilArcher
       LordOfTheRings.Enemy.Import.Lifted
       LordOfTheRings.Enemy.Runner
       LordOfTheRings.Enemy.Types

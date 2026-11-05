@@ -14,7 +14,8 @@ allEnemyCards =
   Map.fromList $
     map
       (\def -> (cdCardCode def, def))
-      [ slabBearer
+      [ zirakzigilArcher
+      , slabBearer
       , paleGreenTentacle
       , huntingHawk
       , mistyMountainWarg
@@ -5449,3 +5450,7 @@ mistyMountainWarg = (enemy "the-road-darkens-nightmare-the-ring-goes-south-004" 
 slabBearer :: CardDef
 slabBearer = (enemy "the-road-darkens-nightmare-journey-in-the-dark-002" "Slab-bearer" JourneyInTheDarkNightmare 2 32 4 5 3 4)
   {cdCardTraits = setFromList [Troll]}
+
+zirakzigilArcher :: CardDef
+zirakzigilArcher = (enemy "the-road-darkens-nightmare-journey-in-the-dark-003" "Zirakzigil Archer" JourneyInTheDarkNightmare 4 42 3 4 3 4)
+  {cdCardTraits = setFromList [Orc], cdKeywords = setFromList [Peril, Archery 2], cdWhenRevealed = True}

@@ -1686,6 +1686,11 @@ eachPlayerMayDiscardFromHand source = do
 discardRandomFromHand :: ReverseQueue m => PlayerId -> Int -> m ()
 discardRandomFromHand pid n = push $ DiscardRandomFromHand pid n
 
+-- | Report the cards actually discarded in DiscardedRandomFromHand, after their
+-- discard windows resolve. An empty result also reports a prevented discard.
+discardRandomFromHandWithResult :: (ReverseQueue m, Sourceable source) => source -> PlayerId -> Int -> m ()
+discardRandomFromHandWithResult source pid n = push $ DiscardRandomFromHandWithResult (toSource source) pid n
+
 -- | Each hero's resource pool is emptied, as "remove all resources from each hero's
 -- resource pool" reads.
 removeAllResourcesFromEachHero :: (ReverseQueue m, Sourceable source) => source -> m ()

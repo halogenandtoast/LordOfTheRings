@@ -2,17 +2,17 @@ module LordOfTheRings.TheRoadDarkens.JourneyInTheDarkNightmareSpec (spec) where
 
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Ally.CardDefs qualified as Allies
-import LordOfTheRings.Effect (EffectDuration (UntilEndOfRound, UntilEndOfPhase))
+import LordOfTheRings.Effect (Effect (..), EffectDuration (UntilEndOfRound, UntilEndOfPhase))
 import LordOfTheRings.Quest.CardDefs qualified as Quests
 import LordOfTheRings.Event.CardDefs qualified as Events
 import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Helpers.Character (getWillpower)
-import LordOfTheRings.Helpers.Staging (getLocationThreat)
-import LordOfTheRings.Matcher (select, HeroMatcher (HeroControlledBy), PlayerMatcher (PlayerWithId), getMainQuestProgress)
+import LordOfTheRings.Helpers.Staging (getLocationThreat, getEngagementCost)
+import LordOfTheRings.Matcher (select, HeroMatcher (HeroControlledBy), PlayerMatcher (PlayerWithId), getMainQuestProgress, getArcheryTotal)
 import LordOfTheRings.Scenario (journeyInTheDark)
 import LordOfTheRings.Window (WindowType (CommittedToQuest), mkAfter)
 import LordOfTheRings.Helpers.Modifiers (getModifiers)
-import LordOfTheRings.Modifier (ModifierType (CannotHaveAttachments))
+import LordOfTheRings.Modifier (ModifierType (CannotHaveAttachments, CannotDiscardFromHand))
 import LordOfTheRings.Phase (Phase (PlanningPhase))
 import LordOfTheRings.Treachery.CardDefs qualified as Treacheries
 import TestImport
@@ -250,3 +250,105 @@ spec = describe "Journey in the Dark Nightmare" do
     chooseTarget pid defender
     passActions pid
     getMainQuestProgress `shouldReturn` 3
+
+  it "Zirakzigil Archer assigns the discarded card's cost among the revealer's characters" . gameTest $ \pid -> do
+    putGame . (playersL . ix pid . handL .~ []) =<< getGame
+    card <- putCardIntoHand pid Events.fortuneOrFate
+    firstHero <- toTarget <$> getHeroWithCode "01012"
+    secondHero <- toTarget <$> getHeroWithCode "01007"
+    _ <- setEncounterDeck [Enemies.zirakzigilArcher]
+    run RevealEncounterCard
+    resolveRevealed
+    map (.id) . (.discard) <$> getPlayer pid >>= (`shouldSatisfy` elem card.id)
+    replicateM_ 3 $ chooseTarget pid firstHero
+    replicateM_ 2 $ chooseTarget pid secondHero
+    getDamage firstHero `shouldReturn` 3
+    getDamage secondHero `shouldReturn` 2
+    getQuestion pid >>= (`shouldSatisfy` isNothing)
+    eid <- getsGame (toId . fromJustNote "archer" . headMay . toList . (.entities.enemies))
+    getEngagementCost eid `shouldReturn` 42
+    getArcheryTotal `shouldReturn` 2
+
+  it "Zirakzigil Archer does no when-revealed damage for an empty hand" . gameTest $ \pid -> do
+    putGame . (playersL . ix pid . handL .~ []) =<< getGame
+    _ <- setEncounterDeck [Enemies.zirakzigilArcher]
+    run RevealEncounterCard
+    resolveRevealed
+    getQuestion pid >>= (`shouldSatisfy` isNothing)
+    heroes <- map toTarget <$> select (HeroControlledBy $ PlayerWithId pid)
+    for_ heroes (\h -> getDamage h `shouldReturn` 0)
+
+  it "Zirakzigil Archer does no damage when the player cannot discard from hand" . gameTest $ \pid -> do
+    putGame . (playersL . ix pid . handL .~ []) =<< getGame
+    card <- putCardIntoHand pid Events.fortuneOrFate
+    run $ CreateEffect $ Effect GameSource (PlayerTarget pid) [CannotDiscardFromHand] UntilEndOfRound
+    _ <- setEncounterDeck [Enemies.zirakzigilArcher]
+    run RevealEncounterCard
+    resolveRevealed
+    map (.id) . (.hand) <$> getPlayer pid `shouldReturn` [card.id]
+    getQuestion pid >>= (`shouldSatisfy` isNothing)
+    heroes <- map toTarget <$> select (HeroControlledBy $ PlayerWithId pid)
+    for_ heroes (\h -> getDamage h `shouldReturn` 0)
+    -- The original random-discard message follows the same prohibition.
+    run $ DiscardRandomFromHand pid 1
+    map (.id) . (.hand) <$> getPlayer pid `shouldReturn` [card.id]
+
+  it "Zirakzigil Archer does not discard an encounter card that cannot leave the player's hand" . gameTest $ \pid -> do
+    protected <- genEncounterCard Treacheries.theNecromancersReach
+    putGame . (playersL . ix pid . handL .~ [EncounterCard protected]) =<< getGame
+    _ <- putCardIntoHand pid Events.aTestOfWill
+    hero <- toTarget <$> getHeroWithCode "01012"
+    _ <- setEncounterDeck [Enemies.zirakzigilArcher]
+    run RevealEncounterCard
+    resolveRevealed
+    chooseTarget pid hero
+    getDamage hero `shouldReturn` 1
+    map (.id) . (.hand) <$> getPlayer pid `shouldReturn` [protected.id]
+
+  it "Zirakzigil Archer resolves only its own discard result and treats X as zero" . gameTest $ \pid -> do
+    putGame . (playersL . ix pid . handL .~ []) =<< getGame
+    run . AddToStaging =<< genEncounterCard Enemies.zirakzigilArcher
+    card <- putCardIntoHand pid Events.gandalfsSearch
+    _ <- setEncounterDeck [Enemies.zirakzigilArcher]
+    run RevealEncounterCard
+    resolveRevealed
+    map (.id) . (.discard) <$> getPlayer pid >>= (`shouldSatisfy` elem card.id)
+    getQuestion pid >>= (`shouldSatisfy` isNothing)
+    _ <- putCardIntoHand pid Events.aTestOfWill
+    hero <- toTarget <$> getHeroWithCode "01012"
+    _ <- setEncounterDeck [Enemies.zirakzigilArcher]
+    run RevealEncounterCard
+    resolveRevealed
+    chooseTarget pid hero
+    getDamage hero `shouldReturn` 1
+    getQuestion pid >>= (`shouldSatisfy` isNothing)
+
+  it "Zirakzigil Archer discards and assigns damage only for the revealing player" . twoPlayerTestIn journeyInTheDark testDeck $ \one two -> do
+    putGame . (playersL . ix one . handL .~ []) . (playersL . ix two . handL .~ []) =<< getGame
+    untouched <- putCardIntoHand one Events.fortuneOrFate
+    discarded <- putCardIntoHand two Events.aTestOfWill
+    hero <- toTarget . fromJustNote "revealer's hero" . headMay <$> select (HeroControlledBy $ PlayerWithId two)
+    run $ SetRevealer (Just two)
+    _ <- setEncounterDeck [Enemies.zirakzigilArcher]
+    run RevealEncounterCard
+    resolveRevealed
+    getQuestion one >>= (`shouldSatisfy` isNothing)
+    chooseTarget two hero
+    getDamage hero `shouldReturn` 1
+    map (.id) . (.hand) <$> getPlayer one `shouldReturn` [untouched.id]
+    map (.id) . (.discard) <$> getPlayer two >>= (`shouldSatisfy` elem discarded.id)
+
+  it "Zirakzigil Archer's when-revealed effect can be canceled without discarding another card" . gameTest $ \pid -> do
+    putGame . (playersL . ix pid . handL .~ []) =<< getGame
+    kept <- putCardIntoHand pid Events.fortuneOrFate
+    cancellationCard <- putCardIntoHand pid Events.aTestOfWill
+    eowyn <- toTarget <$> getHeroWithCode "01007"
+    run $ PlaceTokens GameSource eowyn Resource 1
+    _ <- setEncounterDeck [Enemies.zirakzigilArcher]
+    run RevealEncounterCard
+    chooseTarget pid (CardIdTarget cancellationCard.id)
+    resolveRevealed
+    map (.id) . (.hand) <$> getPlayer pid `shouldReturn` [kept.id]
+    heroes <- map toTarget <$> select (HeroControlledBy $ PlayerWithId pid)
+    for_ heroes (\h -> getDamage h `shouldReturn` 0)
+    getArcheryTotal `shouldReturn` 2

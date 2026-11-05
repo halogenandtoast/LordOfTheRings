@@ -76,6 +76,14 @@ instance RunMessage Player where
       ShuffleDiscardIntoDeck pid -> pid == player.id
       _ -> False
 
+-- | A random discard may report the cards actually discarded back to its source,
+-- following Arkham's source-tagged DiscardedCards result messages.
+randomDiscardRequest :: Message -> Maybe (PlayerId, Int, Maybe Source)
+randomDiscardRequest = \case
+  DiscardRandomFromHand pid n -> Just (pid, n, Nothing)
+  DiscardRandomFromHandWithResult source pid n -> Just (pid, n, Just source)
+  _ -> Nothing
+
 runPlayer :: Message -> Player -> QueueT Message GameT Player
 runPlayer msg player = case msg of
     DoStep 1 Setup -> do
@@ -420,9 +428,11 @@ runPlayer msg player = case msg of
       let (moved, kept) = splitAt n player.discard
       deck <- shuffleM (moved <> player.deck)
       pure $ player & discardL .~ kept & deckL .~ deck
-    DiscardRandomFromHand pid n | pid == player.id -> do
-      discarded <- take n <$> shuffleM (discardableHand player)
+    request | Just (pid, n, resultSource) <- randomDiscardRequest request, pid == player.id -> do
+      barred <- elem CannotDiscardFromHand <$> getModifiers (PlayerTarget pid)
+      discarded <- if barred then pure [] else take n <$> shuffleM (discardableHand player)
       pushWhen (notNull discarded) $ CheckWindows [mkAfter $ DiscardedFromHand pid c.id | c <- discarded]
+      for_ resultSource \source -> push $ DiscardedRandomFromHand source pid discarded
       pure $ player & handL %~ filter (`notElem` discarded) & discardL %~ (discarded <>)
     -- an ally put into play from its owner's hand under any player's control, as Emery
     PutAllyIntoPlayUnder _ card | card.owner == Just player.id -> pure $ player & handL %~ filter ((/= card.id) . (.id))

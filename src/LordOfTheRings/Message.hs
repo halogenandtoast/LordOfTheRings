@@ -378,6 +378,8 @@ data Message
     -- the points assigned so far kept
     DealDamageDividedAmong Source PlayerId [Target] Int [Target]
   | DiscardRandomFromHand PlayerId Int
+  | DiscardRandomFromHandWithResult Source PlayerId Int
+  | DiscardedRandomFromHand Source PlayerId [Card]
   | RemoveFromQuest Target
   | AttachTreachery TreacheryId Target
   | ClaimObjective ObjectiveId Target
