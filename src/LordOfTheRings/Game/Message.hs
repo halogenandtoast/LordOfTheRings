@@ -2592,10 +2592,8 @@ runGameMessage msg g = case msg of
             putGame $ g & entitiesL . treacheriesL %~ insertEntity thisTreachery
     getGame
   ChooseAndExhaust source pid n | n > 0 -> do
-    ready <-
-      selectCharacters
-        (HeroControlledBy (PlayerWithId pid) <> ReadyHero)
-        (AllyControlledBy (PlayerWithId pid) <> ReadyAlly)
+    candidates <- exhaustableCharacters (HeroControlledBy $ PlayerWithId pid) (AllyControlledBy $ PlayerWithId pid)
+    ready <- filterM (fmap not . immuneToSource source) candidates
     unless (null ready)
       $ push
       $ questionLabelWith

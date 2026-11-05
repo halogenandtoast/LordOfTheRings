@@ -3564,6 +3564,7 @@ library
       LordOfTheRings.Treachery.Cards.OnslaughtOfMordor
       LordOfTheRings.Treachery.Cards.OrcAmbush
       LordOfTheRings.Treachery.Cards.OrcAssault
+      LordOfTheRings.Treachery.Cards.OrcDraught
       LordOfTheRings.Treachery.Cards.OrcHuntingParty
       LordOfTheRings.Treachery.Cards.OrcishHowls
       LordOfTheRings.Treachery.Cards.OrcsOfTheWhiteHand
@@ -3764,6 +3765,7 @@ library
       LordOfTheRings.Treachery.Cards.TumultuousAssault
       LordOfTheRings.Treachery.Cards.TumultuousWaters
       LordOfTheRings.Treachery.Cards.TurnedAround
+      LordOfTheRings.Treachery.Cards.UgluksCommand
       LordOfTheRings.Treachery.Cards.UlchorsRage
       LordOfTheRings.Treachery.Cards.UlchorsRevenge
       LordOfTheRings.Treachery.Cards.UmbarPatrol

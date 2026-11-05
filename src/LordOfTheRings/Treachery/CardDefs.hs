@@ -14,7 +14,9 @@ allTreacheryCards =
   Map.fromList $
     map
       (\def -> (cdCardCode def, def))
-      [ discordAndDistrust
+      [ ugluksCommand
+      , orcDraught
+      , discordAndDistrust
       , huntingTheRing
       , arrowsInTheNight
       , fieryWhip
@@ -3718,3 +3720,13 @@ huntingTheRing = (treachery "the-road-darkens-nightmare-breaking-of-the-fellowsh
 discordAndDistrust :: CardDef
 discordAndDistrust = (treachery "the-road-darkens-nightmare-breaking-of-the-fellowship-008" "Discord and Distrust" BreakingOfTheFellowshipNightmare 2)
   {cdKeywords = setFromList [Doomed 2], cdShadowEffect = True}
+
+-- * The Uruk-hai Nightmare
+
+ugluksCommand :: CardDef
+ugluksCommand = (treachery "the-treason-of-saruman-nightmare-the-uruk-hai-008" "Uglúk's Command" TheUrukHaiNightmare 3)
+  {cdKeywords = setFromList [Peril], cdShadowEffect = True}
+
+orcDraught :: CardDef
+orcDraught = (treachery "the-treason-of-saruman-nightmare-the-uruk-hai-009" "Orc-draught" TheUrukHaiNightmare 2)
+  {cdKeywords = setFromList [Peril, Surge], cdShadowEffect = True}

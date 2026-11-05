@@ -1,4 +1,15 @@
 {
+  "ugluksCommand": {
+    "choose": "Choose Uglúk’s Command’s effect",
+    "pursuit": "Increase the pursuit value by 4",
+    "attack": "Uglúk makes an immediate attack against you"
+  },
+  "orcDraught": {
+    "choose": "Choose Orc-draught’s effect",
+    "pursuit": "Increase the pursuit value by 1",
+    "discard": "Discard an ally you control",
+    "ally": "Choose an ally you control to discard"
+  },
   "veryWeary": {
     "damage": "Choose a questing character you control to take 1 damage"
   },

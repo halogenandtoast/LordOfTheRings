@@ -1,10 +1,13 @@
 module LordOfTheRings.TreasonOfSaruman.TheUrukHaiNightmareSpec (spec) where
 
 import LordOfTheRings.Ally.CardDefs qualified as Allies
+import LordOfTheRings.Location.CardDefs qualified as Locations
+import LordOfTheRings.Treachery.CardDefs qualified as Treacheries
+import LordOfTheRings.Helpers.Staging (getEnemyAttack)
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Helpers.Modifiers (getModifiers)
-import LordOfTheRings.Matcher (getArcheryTotal)
-import LordOfTheRings.Modifier (ModifierType (Blank, CannotTakeDamage))
+import LordOfTheRings.Matcher
+import LordOfTheRings.Modifier (ModifierType (Blank, CannotTakeDamage, CannotAttack, CannotAttackPlayer, CannotExhaust, ImmuneToCardEffects))
 import LordOfTheRings.Effect (Effect (..), EffectDuration (UntilEndOfRound))
 import LordOfTheRings.Scenario (theUrukHai)
 import LordOfTheRings.Scenario.Scenarios.TheUrukHai.Helpers (getPursuit)
@@ -25,6 +28,12 @@ attack pid eid defender = do
   passActions pid
   chooseTarget pid defender
   passActions pid
+
+reveal :: [CardDef] -> GameT ()
+reveal defs = do
+  _ <- setEncounterDeck defs
+  run RevealEncounterCard
+  resolveRevealed
 
 spec :: Spec
 spec = describe "The Uruk-hai Nightmare" do
@@ -148,3 +157,109 @@ spec = describe "The Uruk-hai Nightmare" do
     eid <- stage Enemies.orcOfTheWhiteHand
     run $ DealDamage GameSource (EnemyTarget eid) 3
     getDamage (EnemyTarget eid) `shouldReturn` 1
+
+  it "Ugluk's Command offers raising pursuit by four instead of an attack" . uruk $ \pid -> do
+    eid <- stage Enemies.ugluk
+    reveal [Treacheries.ugluksCommand]
+    chooseLabel "$label.ugluksCommand.pursuit" pid
+    getPursuit `shouldReturn` 4
+    (.placement) <$> getEnemy eid `shouldReturn` StagingArea
+
+  it "Ugluk's Command makes Ugluk attack from staging without engaging" . uruk $ \pid -> do
+    eid <- stage Enemies.ugluk
+    defender <- toTarget <$> getHeroWithCode "01012"
+    reveal [Treacheries.ugluksCommand, Locations.theOldFord]
+    chooseLabel "$label.ugluksCommand.attack" pid
+    passActions pid
+    chooseTarget pid defender
+    passActions pid
+    getDamage defender `shouldReturn` 3
+    getPursuit `shouldReturn` 0
+    (.placement) <$> getEnemy eid `shouldReturn` StagingArea
+    (.shadowCards) <$> getEnemy eid `shouldReturn` []
+
+  it "Ugluk's Command increases pursuit when Ugluk is absent" . uruk $ \pid -> do
+    reveal [Treacheries.ugluksCommand]
+    getPursuit `shouldReturn` 4
+    getQuestion pid >>= (`shouldSatisfy` isNothing)
+
+  it "Ugluk's Command cannot choose an attack that is prohibited" . uruk $ \pid -> do
+    eid <- stage Enemies.ugluk
+    run $ CreateEffect $ Effect GameSource (EnemyTarget eid) [CannotAttack] UntilEndOfRound
+    reveal [Treacheries.ugluksCommand]
+    getPursuit `shouldReturn` 4
+    getQuestion pid >>= (`shouldSatisfy` isNothing)
+
+  it "Ugluk's Command respects the attack prohibition against its revealer" . uruk $ \pid -> do
+    eid <- stage Enemies.ugluk
+    run $ CreateEffect $ Effect GameSource (EnemyTarget eid) [CannotAttackPlayer pid] UntilEndOfRound
+    reveal [Treacheries.ugluksCommand]
+    getPursuit `shouldReturn` 4
+
+  for_ [(9 :: Int, 0), (10, 1), (19, 1), (20, 2), (29, 2)] \(pursuit, bonus) ->
+    it ("Ugluk's Command's shadow uses the tens digit at pursuit " <> show pursuit) . uruk $ \pid -> do
+      run $ ScenarioSpecific "urukHai.setPursuit" (toJSON pursuit)
+      eid <- stage Enemies.forestSpider
+      baseAttack <- getEnemyAttack eid
+      run . AttachShadowCard eid =<< genEncounterCard Treacheries.ugluksCommand
+      run $ ResolveShadow eid pid []
+      getEnemyAttack eid `shouldReturn` (baseAttack + bonus)
+
+  it "Orc-draught allows discarding an ally instead of increasing pursuit and still surges" . uruk $ \pid -> do
+    _ <- putAllyIntoPlay pid Allies.guardOfTheCitadel
+    reveal [Treacheries.orcDraught, Enemies.forestSpider]
+    chooseLabel "$label.orcDraught.discard" pid
+    getPursuit `shouldReturn` 0
+    select (AllyControlledBy $ PlayerWithId pid) `shouldReturn` []
+    selectAny (EnemyWithCardCode $ toCardCode Enemies.forestSpider) `shouldReturn` True
+    map toCardCode . (.discard) <$> getPlayer pid >>= (`shouldSatisfy` elem (toCardCode Allies.guardOfTheCitadel))
+
+  it "Orc-draught allows keeping an ally by increasing pursuit" . uruk $ \pid -> do
+    _ <- putAllyIntoPlay pid Allies.guardOfTheCitadel
+    reveal [Treacheries.orcDraught, Locations.theOldFord]
+    chooseLabel "$label.orcDraught.pursuit" pid
+    getPursuit `shouldReturn` 1
+    length <$> select (AllyControlledBy $ PlayerWithId pid) `shouldReturn` 1
+
+  it "Orc-draught increases pursuit automatically without an ally" . uruk $ \pid -> do
+    reveal [Treacheries.orcDraught, Locations.theOldFord]
+    getPursuit `shouldReturn` 1
+    getQuestion pid >>= (`shouldSatisfy` isNothing)
+
+  it "Orc-draught cannot choose discarding an immune ally" . uruk $ \pid -> do
+    ally <- putAllyIntoPlay pid Allies.guardOfTheCitadel
+    run $ CreateEffect $ Effect GameSource ally [ImmuneToCardEffects] UntilEndOfRound
+    reveal [Treacheries.orcDraught, Locations.theOldFord]
+    getPursuit `shouldReturn` 1
+    length <$> select (AllyControlledBy $ PlayerWithId pid) `shouldReturn` 1
+    getQuestion pid >>= (`shouldSatisfy` isNothing)
+
+  it "Orc-draught makes the revealer choose which of their allies to discard" . uruk $ \pid -> do
+    kept <- putAllyIntoPlay pid Allies.guardOfTheCitadel
+    lost <- putAllyIntoPlay pid Allies.snowbournScout
+    reveal [Treacheries.orcDraught, Enemies.forestSpider]
+    chooseLabel "$label.orcDraught.discard" pid
+    chooseTarget pid lost
+    map toTarget <$> select (AllyControlledBy $ PlayerWithId pid) `shouldReturn` [kept]
+    getPursuit `shouldReturn` 0
+
+  it "Orc-draught's shadow exhausts a chosen character" . uruk $ \pid -> do
+    eid <- stage Enemies.forestSpider
+    defender <- getHeroWithCode "01012"
+    run . AttachShadowCard eid =<< genEncounterCard Treacheries.orcDraught
+    run $ ResolveShadow eid pid []
+    chooseTarget pid (toTarget defender)
+    selectAny (HeroWithId (toId defender) <> ExhaustedHero) `shouldReturn` True
+    getPursuit `shouldReturn` 0
+
+  it "Orc-draught's shadow excludes characters that cannot exhaust or are immune" . uruk $ \pid -> do
+    heroes <- select (HeroControlledBy $ PlayerWithId pid)
+    for_ heroes \hid -> run $ CreateEffect $ Effect GameSource (HeroTarget hid) [CannotExhaust] UntilEndOfRound
+    ally <- putAllyIntoPlay pid Allies.guardOfTheCitadel
+    run $ CreateEffect $ Effect GameSource ally [ImmuneToCardEffects] UntilEndOfRound
+    eid <- stage Enemies.forestSpider
+    run . AttachShadowCard eid =<< genEncounterCard Treacheries.orcDraught
+    run $ ResolveShadow eid pid []
+    getQuestion pid >>= (`shouldSatisfy` isNothing)
+    length <$> select (HeroControlledBy (PlayerWithId pid) <> ReadyHero) `shouldReturn` 3
+    length <$> select (AllyControlledBy (PlayerWithId pid) <> ReadyAlly) `shouldReturn` 1
