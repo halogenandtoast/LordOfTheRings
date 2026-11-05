@@ -284,6 +284,7 @@ import LordOfTheRings.Ally.Cards.Haleth
 import LordOfTheRings.Ally.Cards.MistyMountainJourneyman
 import LordOfTheRings.Ally.Cards.Edrahil
 import LordOfTheRings.Ally.Cards.Arador
+import LordOfTheRings.Ally.Cards.EntOfFangorn
 import LordOfTheRings.Ally.Cards.Farin
 import LordOfTheRings.Ally.Cards.ArmyOfTheDead (armyOfTheDead)
 import LordOfTheRings.Ally.Cards.GwaihirTheBlackGateOpens
@@ -631,6 +632,7 @@ allAllies =
         , SomeAllyCard haleth
         , SomeAllyCard mistyMountainJourneyman
         , SomeAllyCard edrahil
+        , SomeAllyCard entOfFangorn
         , SomeAllyCard arador
         , SomeAllyCard farin
         , SomeAllyCard armyOfTheDead

@@ -3893,6 +3893,30 @@
     "pursuit": "Increase the pursuit value by 3",
     "reveal": "Reveal an additional encounter card"
   },
+  "isengardOrc": {
+    "choose": "Isengard Orc: discard 1 random card from your hand, or reveal an encounter card",
+    "discard": "Discard 1 random card from your hand",
+    "reveal": "Reveal an encounter card"
+  },
+  "wolfOfIsengard": {
+    "choose": "Wolf of Isengard: discard 1 card from your hand, or it makes an additional attack against you after this one",
+    "discard": "Discard 1 card from your hand",
+    "attack": "Wolf of Isengard makes an additional attack against you"
+  },
+  "steamingVent": {
+    "damage": "Steaming Vent: deal 1 damage to a questing character you control"
+  },
+  "sarumansVoice": {
+    "attach": "Saruman's Voice: choose a hero to remove from the quest and attach it to"
+  },
+  "rouseTheEnts": {
+    "advance": "Rouse the Ents: advance to stage 2?",
+    "advanceToStage2": "Advance to stage 2, revealing 1 encounter card for each resource on Rouse the Ents",
+    "stay": "Stay at stage 1"
+  },
+  "breakingIsengard": {
+    "progress": "Breaking Isengard: choose a non-unique location to place 2 progress on"
+  },
   "isengardUruk": {
     "choose": "Isengard Uruk: assign 3 damage among characters you control, or reveal an additional encounter card",
     "damage": "Assign 3 damage among characters you control",

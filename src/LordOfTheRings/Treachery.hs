@@ -527,6 +527,10 @@ import LordOfTheRings.Treachery.Cards.BlackFeatheredArrows
 import LordOfTheRings.Treachery.Cards.FallenIntoEvil
 import LordOfTheRings.Treachery.Cards.FollowedByNightTheRoadDarkens
 import LordOfTheRings.Treachery.Cards.IllFate
+import LordOfTheRings.Treachery.Cards.BlastOfSorcery
+import LordOfTheRings.Treachery.Cards.PoisonedVapour
+import LordOfTheRings.Treachery.Cards.MachinesOfIsengard
+import LordOfTheRings.Treachery.Cards.SarumansVoice
 import LordOfTheRings.Treachery.Cards.RestByNight
 import LordOfTheRings.Treachery.Cards.StrangeWeariness
 import LordOfTheRings.Treachery.Cards.UnseenBarrier
@@ -1086,6 +1090,10 @@ allTreacherys =
         , SomeTreacheryCard fallenIntoEvil
         , SomeTreacheryCard followedByNightTheRoadDarkens
         , SomeTreacheryCard illFate
+        , SomeTreacheryCard blastOfSorcery
+        , SomeTreacheryCard poisonedVapour
+        , SomeTreacheryCard machinesOfIsengard
+        , SomeTreacheryCard sarumansVoice
         , SomeTreacheryCard restByNight
         , SomeTreacheryCard strangeWeariness
         , SomeTreacheryCard unseenBarrier
