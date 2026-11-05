@@ -398,6 +398,9 @@ data ModifierType
     IgnoreDeep
   | -- | on the game: the Discover keyword is ignored, as Mount Gundabad's campaign card reads
     IgnoreDiscover
+  | -- | on the game: a delayed effect, spent at the next quest resolution, adding a copy of
+    -- the card to the campaign pool, if able, as A Growing Threat reads
+    AddCopyToCampaignPoolAtQuestResolution CardCode
   | -- | on a location: encounter card effects cannot discard it from play, as Mount
     -- Gundabad's campaign card reads for unique locations
     CannotBeDiscardedByEncounterCards

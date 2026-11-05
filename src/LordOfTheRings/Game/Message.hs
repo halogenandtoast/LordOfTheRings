@@ -400,6 +400,7 @@ import LordOfTheRings.Matcher (
   shipObjectivesOf,
   timeCountersIn,
  )
+import LordOfTheRings.Campaign (CampaignLogUpdate (AddEncounterCardToPool))
 import LordOfTheRings.Message (
   EscapeTest (
     escapeCards,
@@ -422,6 +423,7 @@ import LordOfTheRings.Message (
   ),
   HideTest (HideTest, hideCommitted, hidePlayer, hideSource),
   Message (
+    UpdateCampaignLog,
     ActionWindow,
     AddFromGrottoDeck,
     AddFromUnchartedDeck,
@@ -710,6 +712,7 @@ import LordOfTheRings.Message.Lifted.Queue (capture)
 import LordOfTheRings.Modifier (
   Modifier (modifierSource, modifierType),
   ModifierType (
+    AddCopyToCampaignPoolAtQuestResolution,
     AdditionalAttackAfterNextAttack,
     AdditionalStagingReveals,
     AfterEngagementChecks,
@@ -2758,6 +2761,11 @@ runGameMessage msg g = case msg of
       <> [CreateEffect $ Effect GameSource GameTarget [AfterStagingStep] UntilEndOfPhase]
     pure g
   QuestResolution -> do
+    -- a delayed effect waiting on quest resolution, however the quest goes, as A Growing
+    -- Threat's "During quest resolution, add a copy of that card to the campaign pool, if
+    -- able": spent as it resolves
+    let toPool e = [code | AddCopyToCampaignPoolAtQuestResolution code <- effectModifiers e]
+    pushAll [UpdateCampaignLog (AddEncounterCardToPool code) | e <- gameEffects g, code <- toPool e]
     willpower <- getCommittedWillpower
     threat <- getStagingThreat
     players <- getStagePlayers
@@ -2806,7 +2814,7 @@ runGameMessage msg g = case msg of
               <> take 1 [DealDamage GameSource t (threat - willpower) | t <- damaged, inPlay g t]
               <> [CheckWindows [mkAfter QuestedUnsuccessfully], CheckWindows [mkAfter QuestResolved]]
       | otherwise -> push $ CheckWindows [mkAfter QuestResolved]
-    pure $ g & lastCommittedWillpowerL ?~ willpower
+    pure $ g & lastCommittedWillpowerL ?~ willpower & effectsL %~ filter (null . toPool)
   PlaceTimeCounters target -> do
     x <- getTimeX target
     pushWhen (x > 0) $ PlaceTokens GameSource target TimeCounter x

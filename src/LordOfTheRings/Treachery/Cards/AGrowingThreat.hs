@@ -1,9 +1,7 @@
 module LordOfTheRings.Treachery.Cards.AGrowingThreat (aGrowingThreat) where
 
-import LordOfTheRings.Campaign (CampaignLog (campaignLogPool), CampaignLogUpdate (AddToPool), PoolCard (..))
 import LordOfTheRings.Card (CardDef (..), CardType (ObjectiveAllyType, ObjectiveType), toCardCode, toCardDef)
 import LordOfTheRings.Classes.HasGame (getsGame)
-import LordOfTheRings.Helpers.Campaign (getCampaignLog)
 import LordOfTheRings.Trait (Trait (Burden))
 import LordOfTheRings.Treachery.CardDefs qualified as Cards
 import LordOfTheRings.Treachery.Import.Lifted
@@ -21,9 +19,11 @@ aGrowingThreat = treachery AGrowingThreat Cards.aGrowingThreat
 card in the encounter discard pile. During quest resolution, add a copy of that card to
 the campaign pool, if able. Remove A Growing Threat from the game.
 
-The copy is written to the campaign log now: what the log gains during a scenario is kept
-only once it is won, so it joins the pool as the scenario is resolved. "If able": no more
-copies than one collection holds (MEC115 rules, "Campaign Pool"), its encounter set's.
+"Quest resolution" is read as the quest phase's step of that name (Rules Reference, "Quest
+Phase": step 3, Quest Resolution), the copy added there by a delayed effect, whether the
+players quest successfully or not. Revealed after that step, it waits for the next one.
+"If able": no more copies than one collection holds (MEC115 rules, "Encounter Cards in the
+Campaign Pool"). What the log gains during a scenario is kept once it is won.
 -}
 instance RunMessage AGrowingThreat where
   runMessage msg t@(AGrowingThreat attrs) = case msg of
@@ -35,10 +35,7 @@ instance RunMessage AGrowingThreat where
       for_ (find eligible discarded) \c -> do
         removeFromEncounterDiscard c
         setAside c
-        getCampaignLog >>= traverse_ \l -> do
-          let owned = fromMaybe 1 (cdEncounterSetQuantity $ toCardDef c)
-              pooled = length [p | p <- campaignLogPool l, poolCardCode p == toCardCode c]
-          when (pooled < owned) $ updateCampaignLog (AddToPool (PoolCard (toCardCode c) Nothing Nothing))
+        addCopyToCampaignPoolAtQuestResolution attrs (toCardCode c)
       removeFromGame attrs
       pure t
     _ -> AGrowingThreat <$> runMessage msg attrs

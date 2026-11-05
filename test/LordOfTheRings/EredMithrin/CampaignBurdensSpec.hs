@@ -39,7 +39,7 @@ threat pid = (.threat) <$> getPlayer pid
 spec :: Spec
 spec = describe "Ered Mithrin campaign burdens" do
   describe "A Growing Threat" do
-    it "sets aside the topmost eligible discarded card, adds a copy to the campaign pool, and leaves the game" . gameTest $ \_ -> do
+    it "sets aside the topmost eligible discarded card, adds a copy to the campaign pool during quest resolution, and leaves the game" . gameTest $ \_ -> do
       inCampaign
       _ <- setEncounterDeck [Treacheries.aGrowingThreat, Locations.oldForestRoad]
       spider <- genEncounterCard Enemies.forestSpider
@@ -49,6 +49,12 @@ spec = describe "Ered Mithrin campaign burdens" do
       resolveRevealed
       getsGame (map toCardCode . scenarioSetAside . toAttrs . (.scenario)) >>= (`shouldSatisfy` elem (toCardCode Enemies.forestSpider))
       _ <- pure spider
+      -- not yet: the copy waits for quest resolution
+      map poolCardCode . campaignLogPool <$> getCampaignLog `shouldReturn` []
+      run QuestResolution
+      map poolCardCode . campaignLogPool <$> getCampaignLog `shouldReturn` [toCardCode Enemies.forestSpider]
+      -- spent: a later quest resolution adds no other copy
+      run QuestResolution
       map poolCardCode . campaignLogPool <$> getCampaignLog `shouldReturn` [toCardCode Enemies.forestSpider]
       map toCardCode <$> getEncounterDiscard >>= (`shouldSatisfy` notElem (toCardCode Treacheries.aGrowingThreat))
 

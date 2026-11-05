@@ -393,6 +393,12 @@ winGame = gameOver Won
 eliminatePlayer :: ReverseQueue m => PlayerId -> m ()
 eliminatePlayer = push . EliminatePlayer
 
+-- | A delayed effect: at the next quest resolution, a copy of the card is added to the
+-- campaign pool, if able, as A Growing Threat reads.
+addCopyToCampaignPoolAtQuestResolution :: (ReverseQueue m, Sourceable source) => source -> CardCode -> m ()
+addCopyToCampaignPoolAtQuestResolution source code =
+  createEffect source GameTarget [AddCopyToCampaignPoolAtQuestResolution code] UntilSpent
+
 createEffect
   :: (ReverseQueue m, Sourceable source, Targetable target)
   => source -> target -> [ModifierType] -> EffectDuration -> m ()
