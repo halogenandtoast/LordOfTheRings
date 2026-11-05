@@ -21,16 +21,14 @@ instance HasModifiersFor SarumanTheRoadToIsengard where
 {- | Forced: When Saruman is dealt a shadow card with a Wizardry effect, the defending player
 resolves that Wizardry effect as if he is the only player in the game.
 
-Saruman attacks only from the staging area: as stage 3B has him engaged with the first
-player, or as Saruman's Staff has him attack. Either way his shadow cards are dealt to him
-right before the attack they are for, with nothing between, so the attack names the
-defending player as it begins: each Wizardry card not yet turned faceup resolves as he is
-declared as an attacker, before defenders are declared.
+"Dealt a shadow card with ..." is checked as the card turns faceup in the attack's shadow
+step, after defenders are declared: one discarded before then never triggers it (Nate
+French, ALeP 3.003; Caleb, ALeP 3.274 #3).
 -}
 instance RunMessage SarumanTheRoadToIsengard where
   runMessage msg (SarumanTheRoadToIsengard attrs) = case msg of
-    CheckWindows ws | pid : _ <- [p | Window When (EnemyAttacking eid p) <- ws, eid == attrs.id] -> do
-      let dealt = [c | c <- attrs.shadowCards, c.id `notElem` enemyShadowRevealed attrs, hasWizardry (toCardCode c)]
-      for_ dealt \c -> wizardry attrs (toCardCode c) [pid]
+    CheckWindows ws -> do
+      for_ [(c, pid) | Window When (ShadowCardRevealed eid cid pid) <- ws, eid == attrs.id, c <- attrs.shadowCards, c.id == cid, hasWizardry (toCardCode c)] \(c, pid) ->
+        wizardry attrs (toCardCode c) [pid]
       SarumanTheRoadToIsengard <$> runMessage msg attrs
     _ -> SarumanTheRoadToIsengard <$> runMessage msg attrs

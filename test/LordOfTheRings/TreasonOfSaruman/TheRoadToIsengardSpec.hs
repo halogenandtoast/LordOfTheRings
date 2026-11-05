@@ -116,6 +116,10 @@ questionKey pid = fmap (\case QuestionLabel l _ _ _ -> l; _ -> "") <$> getQuesti
 outcome :: GameT (Maybe Outcome)
 outcome = getsGame (.outcome)
 
+-- | Pass each player's open action window, in turn.
+passAll :: [PlayerId] -> GameT ()
+passAll = traverse_ passActions
+
 -- | Use each Forced ability the open question offers, in turn.
 useForcedAbilities :: PlayerId -> GameT ()
 useForcedAbilities pid =
@@ -367,20 +371,38 @@ spec = describe "The Road to Isengard" do
       questionKey pid >>= (`shouldSatisfy` maybe False ("$label.declareDefender" `isPrefixOf`))
 
   describe "Saruman" do
-    it "has the defending player alone resolve a Wizardry shadow card dealt to him" . twoPlayerTestIn theRoadToIsengard testDeck $ \one two -> do
+    it "has the defending player alone resolve a Wizardry shadow card dealt to him, as it turns faceup" . twoPlayerTestIn theRoadToIsengard testDeck $ \one two -> do
       saruman <- stage Enemies.sarumanTheRoadToIsengard
       threat0 <- traverse threatOf [one, two]
       _ <- setEncounterDeck [Locations.openPit]
       run $ DealShadowCard saruman
       run $ EnemyAttack one saruman
+      passAll [one, two]
+      traverse threatOf [one, two] `shouldReturn` threat0
+      chooseLabel "$label.takeAttackUndefended" one
+      passAll [one, two]
       traverse threatOf [one, two] `shouldReturn` zipWith (+) threat0 [2, 0]
 
+    it "resolves nothing for a Wizardry shadow card discarded before the shadow step" . twoPlayerTestIn theRoadToIsengard testDeck $ \one two -> do
+      saruman <- stage Enemies.sarumanTheRoadToIsengard
+      threat0 <- traverse threatOf [one, two]
+      _ <- setEncounterDeck [Locations.openPit]
+      run $ DealShadowCard saruman
+      run $ DiscardShadowCards saruman
+      run $ EnemyAttack one saruman
+      passAll [one, two]
+      chooseLabel "$label.takeAttackUndefended" one
+      passAll [one, two]
+      traverse threatOf [one, two] `shouldReturn` threat0
+
   describe "Wolf of Isengard" do
-    it "makes an additional attack after this one, as its player chooses when it is dealt a Wizardry card" . isengardTest $ \pid -> do
+    it "makes an additional attack after this one, as its player chooses when a Wizardry card it is dealt turns faceup" . isengardTest $ \pid -> do
       setUp pid
       wolf <- engaged pid Enemies.wolfOfIsengard
       _ <- setEncounterDeck [Locations.ringWallOfIsengard, Treacheries.blastOfSorcery]
       run $ DealShadowCard wolf
+      questionKey pid >>= (`shouldSatisfy` (/= Just "$label.wolfOfIsengard.choose"))
+      run $ ResolveShadow wolf pid []
       chooseLabel "$label.wolfOfIsengard.attack" pid
       getModifiers (EnemyTarget wolf) >>= (`shouldSatisfy` elem (AdditionalAttackAfterNextAttack pid))
       run $ CheckWindows [mkAfter $ EnemyAttacking wolf pid]
@@ -394,9 +416,19 @@ spec = describe "The Road to Isengard" do
       hand <- handSize pid
       _ <- setEncounterDeck [Locations.ringWallOfIsengard]
       run $ DealShadowCard wolf
+      run $ ResolveShadow wolf pid []
       chooseLabel "$label.wolfOfIsengard.discard" pid
       chooseOptionMatching "discard a card" pid (const True)
       handSize pid `shouldReturn` (hand - 1)
+
+    it "asks nothing for a Wizardry card discarded before it turns faceup" . isengardTest $ \pid -> do
+      setUp pid
+      wolf <- engaged pid Enemies.wolfOfIsengard
+      _ <- setEncounterDeck [Locations.ringWallOfIsengard]
+      run $ DealShadowCard wolf
+      run $ DiscardShadowCards wolf
+      run $ ResolveShadow wolf pid []
+      questionKey pid >>= (`shouldSatisfy` (/= Just "$label.wolfOfIsengard.choose"))
 
   describe "Gríma" do
     it "is shuffled back into the encounter deck after he attacks, and the player reveals an encounter card" . isengardTest $ \pid -> do

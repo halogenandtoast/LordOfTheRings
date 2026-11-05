@@ -2062,6 +2062,7 @@ runGameMessage msg g = case msg of
       -- dealt face up
       let resolving card =
             RevealShadowCard eid (ecId card)
+              : CheckWindows [mkWhen $ ShadowCardRevealed eid (ecId card) pid]
               : if gained || cdShadowEffect (toCardDef card)
                 then
                   [ CheckWindows $ mkWhen (ShadowEffectTriggered (ecId card) eid)
