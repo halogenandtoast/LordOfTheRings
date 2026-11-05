@@ -536,10 +536,11 @@ resolve l attrs = case sid attrs of
   -- Songs and add it to the campaign pool. If there are 4 Dragon Sign objectives in the
   -- victory display, the players also look at 3 random undiscovered treasures and choose 1
   -- to attach to an eligible character. Discover.
-  -- The game is won as Cold-Drake is defeated, which defeats stage 4 (it cannot be defeated
-  -- otherwise while Cold-Drake is in play): its Accolade, Dragon-slayer, is offered first.
+  -- Dragon-slayer is not offered here: the campaign card attaches an Accolade "after a main
+  -- quest stage is defeated", and stage 4 (A Cornered Dragon) "cannot be defeated while
+  -- Cold-Drake is in play. When Cold-Drake is defeated, the players win the game." The
+  -- game is won by defeating Cold-Drake, not stage 4, so stage 4 is never defeated.
   "the-withered-heath" -> do
-    for_ (atMay accolades 3) offerAccolade
     push $ ScenarioSpecific "eredMithrin.accoladesToPool" Null
     eachPlayerMayTakeOneOf "eredMithrin.chooseSong" Nothing (map toCardDef songs) \p song -> do
       seat <- seatOf p

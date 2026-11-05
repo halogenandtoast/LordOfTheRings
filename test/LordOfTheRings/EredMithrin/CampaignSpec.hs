@@ -9,7 +9,7 @@ import LordOfTheRings.Helpers.Modifiers (getModifiers)
 import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Modifier (ModifierType (IgnoreDeep, IgnoreDiscover))
 import LordOfTheRings.Outcome (Outcome (..))
-import LordOfTheRings.Scenario (fireInTheNight, journeyUpTheAnduin, mountGundabad, theFateOfWilderland)
+import LordOfTheRings.Scenario (fireInTheNight, journeyUpTheAnduin, mountGundabad, theFateOfWilderland, theWitheredHeath)
 import TestImport
 
 emLog :: CampaignLog
@@ -112,6 +112,24 @@ spec = describe "Ered Mithrin campaign" do
       run $ GameOver Won
       chooseLabel "$label.pass" pid
       poolCodes <$> getCampaignLog `shouldReturn` ["EMC194"]
+
+  describe "The Withered Heath" do
+    -- Stage 4 "cannot be defeated while Cold-Drake is in play. When Cold-Drake is defeated,
+    -- the players win the game": stage 4 is never defeated, so Dragon-slayer is not offered
+    it "adds the Accolades in play and a Song to the pool, and never offers Dragon-slayer" . campaignTestIn theWitheredHeath emLog testDeck $ \pid -> do
+      beravor <- getHeroWithCode "01012"
+      _ <- putAttachmentOn pid Attachments.masterOfTheHunt (toTarget beravor.id)
+      run $ GameOver Won
+      getQuestion pid >>= (`shouldSatisfy` \case
+        Just (QuestionLabel l _ _ _) -> "$label.eredMithrin.chooseSong" `isPrefixOf` l
+        _ -> False)
+      chooseOptionMatching "choose a Song" pid \case
+        TargetLabel (CardIdTarget _) _ -> True
+        _ -> False
+      l <- getCampaignLog
+      [(p.code, p.attachedTo) | p <- l.pool, p.code == toCardCode Attachments.masterOfTheHunt] `shouldBe` [(toCardCode Attachments.masterOfTheHunt, Just "01012")]
+      poolCodes l `shouldSatisfy` any (`elem` ["EMC180", "EMC181", "EMC182", "EMC183"])
+      poolCodes l `shouldSatisfy` notElem (toCardCode Attachments.dragonSlayer)
 
   describe "The Fate of Wilderland" do
     it "ignores the deep and discover keywords, and ends the campaign once won" . campaignTestIn theFateOfWilderland (wonFirst ["journey-up-the-anduin", "lost-in-mirkwood", "the-kings-quest", "the-withered-heath", "roam-across-rhovanion", "fire-in-the-night", "the-ghost-of-framsburg", "mount-gundabad"] emLog) testDeck $ \_ -> do
