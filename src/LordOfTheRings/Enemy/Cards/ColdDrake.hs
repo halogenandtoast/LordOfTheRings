@@ -21,16 +21,15 @@ instance HasModifiersFor ColdDrake where
     modifySelf a $ [CannotHaveAttachments, CannotTakeNonCombatDamage] <> (if x > 0 then [ThreatModifier x, DefenseModifier x] else [])
 
 {- | Forced: After Cold-Drake is dealt a shadow card with no shadow effect, the defending
-character cannot ready until the end of the round. Read as its shadow cards resolve, as
-Werewolf's, when there is a defending character to name.
+character cannot ready until the end of the round. Read as each shadow card turns faceup
+('revealedShadowCards').
 Set aside by stage 3A, it comes back at stage 4A with the damage it kept.
 -}
 instance RunMessage ColdDrake where
   runMessage msg (ColdDrake attrs) = case msg of
-    ResolveShadow eid _ defenders | eid == attrs.id -> do
-      let faceDown = filter ((`notElem` attrs.enemyShadowRevealed) . (.id)) attrs.shadowCards
-      when (any (not . cdShadowEffect . toCardDef) faceDown)
-        $ for_ defenders \d -> roundModifier attrs d CannotReady
+    CheckWindows ws -> do
+      for_ [defenders | (c, _, defenders) <- revealedShadowCards attrs ws, not (cdShadowEffect $ toCardDef c)] \defenders ->
+        for_ defenders \d -> roundModifier attrs d CannotReady
       ColdDrake <$> runMessage msg attrs
     ScenarioSpecific "witheredHeath.drakeReturns" (parseMaybe parseJSON -> Just n) ->
       pure $ ColdDrake $ attrs & tokensL %~ addTokens Damage n

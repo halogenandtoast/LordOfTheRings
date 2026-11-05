@@ -28,7 +28,7 @@ French, ALeP 3.003; Caleb, ALeP 3.274 #3).
 instance RunMessage SarumanTheRoadToIsengard where
   runMessage msg (SarumanTheRoadToIsengard attrs) = case msg of
     CheckWindows ws -> do
-      for_ [(c, pid) | Window When (ShadowCardRevealed eid cid pid) <- ws, eid == attrs.id, c <- attrs.shadowCards, c.id == cid, hasWizardry (toCardCode c)] \(c, pid) ->
+      for_ [(c, pid) | (c, pid, _) <- revealedShadowCards attrs ws, hasWizardry (toCardCode c)] \(c, pid) ->
         wizardry attrs (toCardCode c) [pid]
       SarumanTheRoadToIsengard <$> runMessage msg attrs
     _ -> SarumanTheRoadToIsengard <$> runMessage msg attrs

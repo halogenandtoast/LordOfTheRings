@@ -1464,7 +1464,7 @@ resolveNewShadowCards eid pid defenders = do
   cancelMatching \case
     RevealShadowCard eid' _ -> eid' == eid
     ResolveShadowCard _ eid' _ _ -> eid' == eid
-    CheckWindows [Window When (ShadowCardRevealed eid' _ _)] -> eid' == eid
+    CheckWindows [Window When (ShadowCardRevealed eid' _ _ _)] -> eid' == eid
     CheckWindows (Window When (ShadowEffectTriggered _ eid') : _) -> eid' == eid
     _ -> False
   resolveShadowCards eid pid defenders
@@ -1476,7 +1476,7 @@ dealAndResolveShadowCard eid pid defenders card = do
   removeFromEncounterDiscard card
   push $ AttachShadowCard eid card
   push $ RevealShadowCard eid card.id
-  push $ CheckWindows [mkWhen $ ShadowCardRevealed eid card.id pid]
+  push $ CheckWindows [mkWhen $ ShadowCardRevealed eid card.id pid defenders]
   push $ ResolveShadowCard card.id eid pid defenders
 
 -- | Put the shadow card dealt to the enemy into play, engaged with the player.

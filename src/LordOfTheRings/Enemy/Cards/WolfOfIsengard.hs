@@ -23,7 +23,7 @@ Shadow: Deal 1 damage to the defending character.
 instance RunMessage WolfOfIsengard where
   runMessage msg e@(WolfOfIsengard attrs) = case msg of
     CheckWindows ws -> do
-      for_ [pid | Window When (ShadowCardRevealed eid cid pid) <- ws, eid == attrs.id, c <- attrs.shadowCards, c.id == cid, hasWizardry (toCardCode c)] \pid -> do
+      for_ [pid | (c, pid, _) <- revealedShadowCards attrs ws, hasWizardry (toCardCode c)] \pid -> do
         hand <- (.hand) <$> getPlayer pid
         chooseOrRunOneM pid do
           questionLabeled "wolfOfIsengard.choose"
