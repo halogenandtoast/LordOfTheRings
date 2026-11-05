@@ -2,13 +2,15 @@ module LordOfTheRings.TheLandOfShadow.JourneyToTheCrossRoadsNightmareSpec (spec)
 
 import LordOfTheRings.Effect (Effect (..), EffectDuration (UntilEndOfRound, UntilEndOfAttack))
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
-import LordOfTheRings.Helpers.Staging (getEnemyAttack, getEngagementCost, getLocationThreat)
+import LordOfTheRings.Event.CardDefs qualified as Events
+import LordOfTheRings.Outcome (Outcome (Lost))
+import LordOfTheRings.Helpers.Staging (getEnemyAttack, getEnemyThreat, getEngagementCost, getLocationThreat)
 import LordOfTheRings.Matcher
 import LordOfTheRings.Helpers.Modifiers (getModifiers)
 import LordOfTheRings.Helpers.Character (getWillpower)
 import LordOfTheRings.Entities (questsL)
 import LordOfTheRings.Attachment.CardDefs qualified as Attachments
-import LordOfTheRings.Phase (Phase (PlanningPhase))
+import LordOfTheRings.Phase (Phase (PlanningPhase, QuestPhase))
 import LordOfTheRings.Window (WindowType (PhaseEnds), mkWhen)
 import LordOfTheRings.Ability (isForcedAbility)
 import LordOfTheRings.Ally.CardDefs qualified as Allies
@@ -16,16 +18,30 @@ import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Location.Types (LocationAttrs (locationUnderneath))
 import LordOfTheRings.Quest.CardDefs qualified as Quests
 import LordOfTheRings.Card (toCard)
-import LordOfTheRings.Modifier (ModifierType (Blank, AttackModifier, DoesNotReadyDuringRefresh))
+import LordOfTheRings.Modifier (ModifierType (Blank, AttackModifier, DoesNotReadyDuringRefresh, CannotBeOptionallyEngagedBy))
 import LordOfTheRings.Objective.CardDefs qualified as Objectives
 import LordOfTheRings.Treachery.CardDefs qualified as Treacheries
 import LordOfTheRings.Objective.Types (ObjectiveAttrs (objectiveUnderneath))
 import LordOfTheRings.Scenario (journeyToTheCrossRoads)
+import LordOfTheRings.Scenario.Types (modeL, GameMode (NightmareMode), ScenarioAttrs (scenarioSetAside))
+import LordOfTheRings.Hero.CardDefs qualified as Heroes
 import LordOfTheRings.Scenario.Scenarios.JourneyToTheCrossRoads.Helpers (canPlaceUnderTheBlackGate)
 import TestImport
 
 crossRoads :: (PlayerId -> GameT ()) -> IO ()
 crossRoads = gameTestIn journeyToTheCrossRoads testDeck
+
+nightmareScenario :: Scenario
+nightmareScenario = overAttrs (modeL .~ NightmareMode) journeyToTheCrossRoads
+
+nightmare :: (PlayerId -> GameT ()) -> IO ()
+nightmare = gameTestIn nightmareScenario testDeck
+
+reveal :: [CardDef] -> GameT ()
+reveal defs = do
+  _ <- setEncounterDeck defs
+  run RevealEncounterCard
+  resolveRevealed
 
 stage :: CardDef -> GameT EnemyId
 stage def = do
@@ -354,3 +370,180 @@ spec = describe "Journey to the Cross-roads Nightmare" do
     getWillpower hero `shouldReturn` 4
     run $ Discard GameSource key
     getWillpower hero `shouldReturn` 2
+
+
+  it "Blind Wrath modifies only Harad enemies currently in staging, including later entrants" . crossRoads $ \pid -> do
+    staged <- stage Enemies.manOfHarad
+    engaged <- stage Enemies.southronRearguard
+    run $ EngageEnemy pid engaged
+    spider <- stage Enemies.forestSpider
+    cost <- getEngagementCost staged
+    threat <- getEnemyThreat staged
+    otherCost <- getEngagementCost engaged
+    reveal [Treacheries.blindWrath]
+    getEngagementCost staged `shouldReturn` (cost - 30)
+    getEnemyThreat staged `shouldReturn` (threat + 2)
+    getModifiers staged >>= (`shouldSatisfy` elem (CannotBeOptionallyEngagedBy AnyPlayer))
+    getEngagementCost engaged `shouldReturn` otherCost
+    getEngagementCost spider `shouldReturn` 25
+    late <- stage Enemies.southronWarrior
+    getEngagementCost late `shouldReturn` 16
+    run $ PlaceEnemy engaged StagingArea
+    getEngagementCost engaged `shouldReturn` (otherCost - 30)
+    run $ EngageEnemy pid staged
+    resolveForcedChoices pid
+    getEngagementCost staged `shouldReturn` cost
+    run $ EndEffects UntilEndOfRound
+    getEngagementCost late `shouldReturn` 46
+    getModifiers late >>= (`shouldSatisfy` notElem (CannotBeOptionallyEngagedBy AnyPlayer))
+
+  it "Blind Wrath's shadow increases attack without returning the enemy if its defender survives" . crossRoads $ \pid -> do
+    eid <- stage Enemies.forestSpider
+    run $ EngageEnemy pid eid
+    defender <- toTarget <$> getHeroWithCode "01012"
+    run . AttachShadowCard eid =<< genEncounterCard Treacheries.blindWrath
+    run $ EnemyAttack pid eid
+    passActions pid
+    chooseTarget pid defender
+    passActions pid
+    resolveShadowsInOrder pid
+    passActions pid
+    getDamage defender `shouldReturn` 2
+    (.placement) <$> getEnemy eid `shouldReturn` EngagedWith pid
+
+  it "Blind Wrath returns the attacker to staging after its attack destroys an ally" . crossRoads $ \pid -> do
+    eid <- stage Enemies.forestSpider
+    run $ EngageEnemy pid eid
+    defender <- putAllyIntoPlay pid Allies.vassalOfTheWindlord
+    run . AttachShadowCard eid =<< genEncounterCard Treacheries.blindWrath
+    run $ EnemyAttack pid eid
+    passActions pid
+    chooseTarget pid defender
+    passActions pid
+    resolveShadowsInOrder pid
+    passActions pid
+    (.placement) <$> getEnemy eid `shouldReturn` StagingArea
+    getsGame (any ((== defender) . toTarget) . toList . (.entities.allies)) `shouldReturn` False
+
+  it "Ware! Ware! goes under The Black Gate and still surges without a duplicate in the discard pile" . crossRoads $ \_ -> do
+    run . AddToStaging =<< genEncounterCard Objectives.theBlackGate
+    reveal [Treacheries.wareWare, Locations.woodedGlade]
+    under <- getsGame (concatMap (objectiveUnderneath . toAttrs) . toList . (.entities.objectives))
+    map toCardCode under `shouldBe` [toCardCode Treacheries.wareWare]
+    map toCardCode <$> getEncounterDiscard >>= (`shouldSatisfy` notElem (toCardCode Treacheries.wareWare))
+    selectAny (LocationWithCardCode $ toCardCode Locations.woodedGlade) `shouldReturn` True
+
+  it "Ware! Ware! puts the Cross-roads enemy into play without its When Revealed effect" . crossRoads $ \pid -> do
+    run . AddToStaging =<< genEncounterCard Objectives.theBlackGate
+    cr <- stageLocation Locations.theCrossRoadsTheLandOfShadow
+    card <- genEncounterCard Enemies.cursedDead
+    discarded <- genEncounterCard Enemies.cursedDead
+    run $ AddToEncounterDiscard [discarded]
+    run $ PlaceUnderneath (LocationTarget cr) [toCard card]
+    reveal [Treacheries.wareWare, Locations.woodedGlade]
+    chooseLabel "$label.wareWare.engage" pid
+    resolveRevealed
+    enemies <- traverse getEnemy =<< select (EnemyWithCardCode $ toCardCode Enemies.cursedDead)
+    map (.placement) enemies `shouldBe` [EngagedWith pid]
+    map toCardCode <$> getEncounterDiscard >>= (`shouldSatisfy` elem (toCardCode Enemies.cursedDead))
+    selectAny (LocationWithCardCode $ toCardCode Locations.woodedGlade) `shouldReturn` True
+    locationUnderneath . toAttrs <$> getLocation cr `shouldReturn` []
+
+  it "Ware! Ware! triggers Southron Warrior's engagement effect when putting it into play" . crossRoads $ \pid -> do
+    cr <- stageLocation Locations.theCrossRoadsTheLandOfShadow
+    card <- genEncounterCard Enemies.southronWarrior
+    run $ PlaceUnderneath (LocationTarget cr) [toCard card]
+    victim <- putAllyIntoPlay pid Allies.guardOfTheCitadel
+    reveal [Treacheries.wareWare, Locations.woodedGlade]
+    resolveForcedChoices pid
+    for_ [pid] \p -> do
+      asked <- getQuestion p
+      when (maybe False (any (\case TargetLabel t _ -> t == victim; _ -> False) . questionChoices) asked) $ chooseTarget p victim
+    resolveRevealed
+    getsGame (any ((== victim) . toTarget) . toList . (.entities.allies)) `shouldReturn` False
+
+  it "Ware! Ware!'s shadow engages a staged enemy with the attacked player and deals it a shadow" . twoPlayerTestIn journeyToTheCrossRoads testDeck $ \_ p2 -> do
+    attacker <- stage Enemies.forestSpider
+    chosen <- stage Enemies.manOfHarad
+    run $ EngageEnemy p2 attacker
+    _ <- setEncounterDeck [Enemies.hostOfIsengard]
+    run . AttachShadowCard attacker =<< genEncounterCard Treacheries.wareWare
+    run $ ResolveShadow attacker p2 []
+    resolveForcedChoices p2
+    (.placement) <$> getEnemy chosen `shouldReturn` EngagedWith p2
+    map toCardCode . (.shadowCards) <$> getEnemy chosen `shouldReturn` [toCardCode Enemies.hostOfIsengard]
+
+  it "builds the Nightmare deck with the exact removals and all Southron Warriors set aside" . nightmare $ \_ -> do
+    run $ DoStep 1 Setup
+    deck <- getEncounterDeck
+    length deck `shouldBe` 33
+    let copies def = length $ filter ((== toCardCode def) . toCardCode) deck
+    map copies [Enemies.captainOfHarad, Locations.hennethAnnun, Locations.southwardRoad, Locations.hillsOfIthilien, Treacheries.theDarkLordsSummons, Enemies.southronWarrior]
+      `shouldBe` [2, 0, 0, 0, 0, 0]
+    map copies [Enemies.southronRearguard, Locations.woodedGlade, Locations.denseFernBrake, Locations.shadowyThicket, Treacheries.blindWrath, Treacheries.wareWare]
+      `shouldBe` [2, 3, 2, 3, 3, 2]
+    aside <- getsGame (scenarioSetAside . toAttrs . (.scenario))
+    length (filter ((== toCardCode Enemies.southronWarrior) . toCardCode) aside) `shouldBe` 4
+
+  it "puts one Southron Warrior under The Cross-roads and leaves three aside in solo Nightmare setup" . nightmare $ \pid -> do
+    run Setup
+    chooseRingBearer pid (toCardCode Heroes.frodoBagginsTheLandOfShadow)
+    chooseLabel "$label.keepHand" pid
+    chooseOptionMatching "quest setup" pid (const True)
+    cr <- fromJustNote "Cross-roads" . headMay <$> select (LocationWithCardCode $ toCardCode Locations.theCrossRoadsTheLandOfShadow)
+    under <- locationUnderneath . toAttrs <$> getLocation cr
+    length under `shouldBe` 10
+    length (filter ((== toCardCode Enemies.southronWarrior) . toCardCode) under) `shouldBe` 1
+    aside <- getsGame (scenarioSetAside . toAttrs . (.scenario))
+    map toCardCode aside `shouldBe` replicate 3 (toCardCode Enemies.southronWarrior)
+
+  it "puts two Warriors under The Cross-roads and leaves two aside in two-player Nightmare setup" . twoPlayerTestIn nightmareScenario testDeck $ \p1 p2 -> do
+    run Setup
+    lead <- getLead
+    let other = if lead == p1 then p2 else p1
+    chooseRingBearer lead (toCardCode Heroes.frodoBagginsTheLandOfShadow)
+    replicateM_ 2 $ for_ [p1, p2] \pid -> do
+      asked <- getQuestion pid
+      when (maybe False (\case QuestionLabel label _ _ _ -> label == "$label.keepStartingHand"; _ -> False) asked) $
+        chooseLabel "$label.keepHand" pid
+    chooseOptionMatching "quest setup" lead (const True)
+    chooseOptionMatching "second player's location" other (const True)
+    cr <- fromJustNote "Cross-roads" . headMay <$> select (LocationWithCardCode $ toCardCode Locations.theCrossRoadsTheLandOfShadow)
+    under <- locationUnderneath . toAttrs <$> getLocation cr
+    length under `shouldBe` 11
+    length (filter ((== toCardCode Enemies.southronWarrior) . toCardCode) under) `shouldBe` 2
+    aside <- getsGame (scenarioSetAside . toAttrs . (.scenario))
+    map toCardCode aside `shouldBe` replicate 2 (toCardCode Enemies.southronWarrior)
+
+  it "Ware! Ware! remains under the Gate when its surge resets an empty encounter deck" . crossRoads $ \_ -> do
+    run . AddToStaging =<< genEncounterCard Objectives.theBlackGate
+    card <- genEncounterCard Locations.woodedGlade
+    run $ AddToEncounterDiscard [card]
+    putGame . (phaseL .~ QuestPhase) =<< getGame
+    reveal [Treacheries.wareWare]
+    under <- getsGame (concatMap (objectiveUnderneath . toAttrs) . toList . (.entities.objectives))
+    map toCardCode under `shouldBe` [toCardCode Treacheries.wareWare]
+    selectAny (LocationWithCardCode $ toCardCode Locations.woodedGlade) `shouldReturn` True
+    map toCardCode <$> getEncounterDeck >>= (`shouldSatisfy` notElem (toCardCode Treacheries.wareWare))
+
+  it "canceling Ware! Ware! prevents either option while preserving surge" . crossRoads $ \pid -> do
+    run . AddToStaging =<< genEncounterCard Objectives.theBlackGate
+    putGame . (playersL . ix pid . handL .~ []) =<< getGame
+    card <- putCardIntoHand pid Events.aTestOfWill
+    hero <- toTarget <$> getHeroWithCode "01007"
+    run $ PlaceTokens GameSource hero Resource 1
+    _ <- setEncounterDeck [Treacheries.wareWare, Locations.woodedGlade]
+    run RevealEncounterCard
+    chooseTarget pid (CardIdTarget card.id)
+    resolveRevealed
+    under <- getsGame (concatMap (objectiveUnderneath . toAttrs) . toList . (.entities.objectives))
+    under `shouldBe` []
+    selectAny (LocationWithCardCode $ toCardCode Locations.woodedGlade) `shouldReturn` True
+
+  it "Ware! Ware! counts towards The Black Gate's loss threshold" . crossRoads $ \_ -> do
+    run . AddToStaging =<< genEncounterCard Objectives.theBlackGate
+    gate <- getsGame (toTarget . fromJustNote "gate" . headMay . toList . (.entities.objectives))
+    cards <- replicateM 3 $ genEncounterCard Enemies.manOfHarad
+    run $ PlaceUnderneath gate (map toCard cards)
+    reveal [Treacheries.wareWare, Locations.woodedGlade]
+    getsGame (.outcome) `shouldReturn` Just Lost

@@ -47,7 +47,11 @@ instance RunMessage AmbushTheMenOfHarad where
       AmbushTheMenOfHarad <$> runMessage msg attrs
     DoStep 1 inner@(PerformSetup (isTarget attrs -> True)) -> do
       crossRoads <- select theCrossRoads
-      harad <- shuffleM =<< getSetAside menOfHarad
+      men <- getSetAside menOfHarad
+      nightmare <- inNightmareMode
+      warriors <- if nightmare then getSetAside (cardIs Enemies.southronWarrior) else pure []
+      players <- length <$> getRemainingPlayers
+      harad <- shuffleM (men <> take players warriors)
       for_ crossRoads \l -> placeUnderneath l (map EncounterCard harad)
       doStep 2 inner
       pure q

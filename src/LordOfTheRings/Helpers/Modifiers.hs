@@ -117,6 +117,13 @@ preloadModifiers g = do
           , l.placement == StagingArea
           , matches l
           ]
+      stagedEnemies = Map.fromListWith (<>)
+        [(toTarget e, [Modifier effect.effectSource m])
+        | effect <- gameEffects g
+        , EachMatchingEnemyInStagingArea cm m <- effect.effectModifiers
+        , e <- toList es.enemies
+        , e.placement == StagingArea
+        , cardMatches cm e]
       -- a lasting effect on each ally reaches one that enters play after it began
       allied =
         Map.fromListWith
@@ -153,7 +160,7 @@ preloadModifiers g = do
              , a <- toList es.allies
              , countTokens Damage (allyTokens $ toAttrs a) > 0
              ]
-      all0 = Map.unionsWith (<>) [Map.map (filter (not . ownText)) fromEntities, fromEffects, followed, staged, allied, wearied, attachedOut]
+      all0 = Map.unionsWith (<>) [Map.map (filter (not . ownText)) fromEntities, fromEffects, followed, staged, stagedEnemies, allied, wearied, attachedOut]
       -- an encounter card's lasting effect counted from tokens is recalculated as they
       -- change (FAQ 1.55): each such modifier adds its count as the plain modifier
       counted t = \case

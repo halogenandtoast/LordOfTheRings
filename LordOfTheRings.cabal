@@ -3311,6 +3311,7 @@ library
       LordOfTheRings.Treachery.Cards.BlastOfSorcery
       LordOfTheRings.Treachery.Cards.BlazingGrip
       LordOfTheRings.Treachery.Cards.BlindingBlizzard
+      LordOfTheRings.Treachery.Cards.BlindWrath
       LordOfTheRings.Treachery.Cards.BlockingWargs
       LordOfTheRings.Treachery.Cards.BloodRunsChill
       LordOfTheRings.Treachery.Cards.BoarClanAssault
@@ -3815,6 +3816,7 @@ library
       LordOfTheRings.Treachery.Cards.VeryWeary
       LordOfTheRings.Treachery.Cards.VileAffliction
       LordOfTheRings.Treachery.Cards.WainriderChariot
+      LordOfTheRings.Treachery.Cards.WareWare
       LordOfTheRings.Treachery.Cards.WastedProvisions
       LordOfTheRings.Treachery.Cards.WatcherInTheWoods
       LordOfTheRings.Treachery.Cards.WatchfulEyes

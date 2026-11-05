@@ -7,6 +7,9 @@ import LordOfTheRings.Campaign (CampaignLogKey (HaradEnemies), PoolCard (..), ad
 import LordOfTheRings.Classes.HasGame (getsGame)
 import LordOfTheRings.EncounterSet qualified as EncounterSet
 import LordOfTheRings.Id (PlayerId)
+import LordOfTheRings.Enemy.CardDefs qualified as Enemies
+import LordOfTheRings.Treachery.CardDefs qualified as Treacheries
+import LordOfTheRings.Scenario.CardDefs qualified as Nightmare
 import LordOfTheRings.Event.CardDefs qualified as Events
 import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Matcher (HeroMatcher (HeroControlledBy), PlayerMatcher (PlayerWithId), getRemainingPlayers, select)
@@ -21,7 +24,11 @@ newtype JourneyToTheCrossRoads = JourneyToTheCrossRoads ScenarioAttrs
   deriving newtype (Show, Eq, ToJSON, Entity)
 
 journeyToTheCrossRoads :: Scenario
-journeyToTheCrossRoads = Scenario $ scenario JourneyToTheCrossRoads "journey-to-the-cross-roads" "Journey to the Cross-roads"
+journeyToTheCrossRoads = Scenario $ scenario (JourneyToTheCrossRoads . (nightmareDeckL ?~ nightmare)) "journey-to-the-cross-roads" "Journey to the Cross-roads"
+
+ where
+  nightmare = nightmareDeck Nightmare.journeyToTheCrossRoadsNightmare EncounterSet.JourneyToTheCrossRoadsNightmare
+    [(Enemies.captainOfHarad, 1), (Locations.hennethAnnun, 1), (Locations.southwardRoad, 2), (Locations.hillsOfIthilien, 4), (Treacheries.theDarkLordsSummons, 3)]
 
 -- | The players who shuffled Brace of Coneys into their decks at the campaign's setup.
 coneysTakenBy :: ScenarioAttrs -> [PlayerId]
@@ -39,7 +46,7 @@ instance RunMessage JourneyToTheCrossRoads where
     DoStep 1 Setup -> do
       cards <- gatherEncounterSets attrs [EncounterSet.JourneyToTheCrossRoads, EncounterSet.HaradSaga]
       let aside c =
-            toCardCode c `elem` map toCardCode [Objectives.theBlackGate, Locations.theCrossRoadsTheLandOfShadow]
+            toCardCode c `elem` map toCardCode [Objectives.theBlackGate, Locations.theCrossRoadsTheLandOfShadow, Enemies.southronWarrior]
               || cdEncounterSet (toCardDef c) == Just EncounterSet.HaradSaga
           (setAside', deck) = partition aside cards
       firstStage <- genEncounterCard Quests.ambushTheMenOfHarad

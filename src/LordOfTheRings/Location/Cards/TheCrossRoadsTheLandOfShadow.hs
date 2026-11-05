@@ -27,6 +27,11 @@ instance HasModifiersFor TheCrossRoadsTheLandOfShadow where
 -- 'LordOfTheRings.Scenario.Scenarios.JourneyToTheCrossRoads.Helpers.revealFromUnderTheCrossRoads').
 instance RunMessage TheCrossRoadsTheLandOfShadow where
   runMessage msg l@(TheCrossRoadsTheLandOfShadow a) = case msg of
+    ScenarioSpecific "theCrossRoads.put" (parseMaybe parseJSON -> Just pid) -> case a.underneath of
+      EncounterCard card : rest -> do
+        push $ PutEnemyIntoPlayEngaged pid card
+        pure $ TheCrossRoadsTheLandOfShadow a {locationUnderneath = rest}
+      _ -> pure l
     ScenarioSpecific "theCrossRoads.reveal" (parseMaybe parseJSON -> Just engaged) -> case a.underneath of
       EncounterCard card : rest -> do
         push $ maybe (RevealCard card) (`RevealCardEngaged` card) engaged

@@ -742,6 +742,8 @@ data ModifierType
   | -- | on the game: as 'EachLocationInStagingArea', each matching one, as Vastness of
     -- Mirkwood's "each non-objective location in the staging area"
     EachMatchingLocationInStagingArea CardMatcher ModifierType
+  | -- | on the game: matching enemies currently in staging, including later entrants
+    EachMatchingEnemyInStagingArea CardMatcher ModifierType
   | -- | on the game: a hero committed to the quest this round, as The Rear Guard reads
     HeroCommittedThisRound
   | -- | on the game: the players quested successfully this phase, as Bofur reads

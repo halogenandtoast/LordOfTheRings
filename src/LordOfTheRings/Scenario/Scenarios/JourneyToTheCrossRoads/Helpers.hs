@@ -6,6 +6,7 @@ module LordOfTheRings.Scenario.Scenarios.JourneyToTheCrossRoads.Helpers (
   getTheBlackGate,
   cardsUnderTheCrossRoads,
   revealFromUnderTheCrossRoads,
+  putFromUnderTheCrossRoads,
   placeUnderTheBlackGate,
   canPlaceUnderTheBlackGate,
   lowestBy,
@@ -53,6 +54,10 @@ the message resolves, so each reveal takes the card on top then.
 -}
 revealFromUnderTheCrossRoads :: ReverseQueue m => Maybe PlayerId -> m ()
 revealFromUnderTheCrossRoads = push . ScenarioSpecific "theCrossRoads.reveal" . toJSON
+
+-- | Put the top card into play engaged, without revealing it (Ware! Ware!).
+putFromUnderTheCrossRoads :: ReverseQueue m => PlayerId -> m ()
+putFromUnderTheCrossRoads = push . ScenarioSpecific "theCrossRoads.put" . toJSON
 
 -- | An option that places the enemy under the Gate must be able to do so in full.
 canPlaceUnderTheBlackGate :: HasGame m => EnemyId -> m Bool
