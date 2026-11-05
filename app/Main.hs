@@ -51,7 +51,7 @@ import LordOfTheRings.Phase
 import LordOfTheRings.Prelude hiding (Handler, delete)
 import LordOfTheRings.Scenario (Scenario, lookupScenario)
 import LordOfTheRings.Saga (campaignResolvesOn)
-import LordOfTheRings.Scenario.Types (GameMode (..), ScenarioAttrs (scenarioCampaign, scenarioId), modeL, scenarioName)
+import LordOfTheRings.Scenario.Types (GameMode (..), ScenarioAttrs (scenarioCampaign, scenarioId), modeL, scenarioName, campaignModeFor)
 import Model
 import Network.HTTP.Client (Manager)
 import Network.HTTP.Client.TLS (newTlsManager)
@@ -1476,8 +1476,8 @@ campaignGame userId playerName cid campaignName sid seatCount spectators easy ni
     , lotrGameAllowSpectators = spectators
     , lotrGameWithFriends = True
     , lotrGameSeats = seatCount
-    , lotrGameEasyMode = easy
-    , lotrGameNightmare = nightmare
+    , lotrGameEasyMode = actualMode == EasyMode
+    , lotrGameNightmare = actualMode == NightmareMode
     , lotrGameCampaignId = Just cid
     , lotrGamePublicScoring = public
     , lotrGameCountsPublicly = public
@@ -1485,6 +1485,9 @@ campaignGame userId playerName cid campaignName sid seatCount spectators easy ni
     , lotrGameCreatedAt = now
     , lotrGameUpdatedAt = now
     }
+
+ where
+  actualMode = maybe NormalMode (campaignModeFor (gameMode easy nightmare) . toAttrs) (lookupScenario sid)
 
 -- | Start a campaign: its log, and its first scenario's game, waiting for its seats.
 postCampaignsR :: Handler Value
@@ -1496,11 +1499,11 @@ postCampaignsR = do
       seatCount = fromMaybe 1 new.seats
   sid <- maybe (sendResponseStatus status400 (ikey "error.noSuchCampaign")) pure $ nextScenario l
   when (seatCount < 1 || seatCount > 4) $ sendResponseStatus status400 (ikey "error.seatCount")
-  -- a campaign in nightmare mode plays each of its scenarios with its Nightmare Deck
+  -- Start with the first scenario's Nightmare Deck. Later chapters without one
+  -- use normal mode, while the game history retains the campaign's preference.
   let easy = fromMaybe False new.easyMode
       nightmare = fromMaybe False new.nightmare
-      scenarios = maybe [] (map fst . campaignDefScenarios) (lookupCampaign new.campaign)
-  when (nightmare && (easy || any (maybe True (isNothing . (.nightmareDeck) . toAttrs) . lookupScenario) scenarios))
+  when (nightmare && (easy || maybe True (isNothing . (.nightmareDeck) . toAttrs) (lookupScenario sid)))
     $ sendResponseStatus status400 (ikey "error.noNightmareMode")
   now <- liftIO getCurrentTime
   (cid, gid) <- runDB do
@@ -1619,7 +1622,7 @@ postCampaignNextR cid = do
   now <- liftIO getCurrentTime
   gid <- runDB do
     update cid [LotrCampaignLog =. toJSON l, LotrCampaignUpdatedAt =. now]
-    insert $ campaignGame userId user.userUsername cid campaign.lotrCampaignName sid row.lotrGameSeats row.lotrGameAllowSpectators row.lotrGameEasyMode row.lotrGameNightmare campaign.lotrCampaignPublicScoring now
+    insert $ campaignGame userId user.userUsername cid campaign.lotrCampaignName sid row.lotrGameSeats row.lotrGameAllowSpectators row.lotrGameEasyMode (any (lotrGameNightmare . entityVal) games) campaign.lotrCampaignPublicScoring now
   pure $ object ["id" .= gid]
 
 newtype SpendXp = SpendXp {card :: CardCode}

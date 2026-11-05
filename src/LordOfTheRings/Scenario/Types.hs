@@ -135,6 +135,12 @@ data ScenarioAttrs = ScenarioAttrs
 
 makeLensesWith suffixedFields ''ScenarioAttrs
 
+-- | A campaign uses its requested mode wherever a Nightmare Deck exists. Later
+-- saga chapters without a published Nightmare Deck use the standard scenario.
+campaignModeFor :: GameMode -> ScenarioAttrs -> GameMode
+campaignModeFor NightmareMode attrs | isNothing attrs.scenarioNightmareDeck = NormalMode
+campaignModeFor requested _ = requested
+
 instance ToJSON ScenarioAttrs where
   toJSON = genericToJSON (aesonOptions $ Just "scenario")
 

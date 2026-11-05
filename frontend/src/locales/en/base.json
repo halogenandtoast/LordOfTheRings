@@ -116,7 +116,8 @@
       "easy": "Easy",
       "easyHint": "Each hero starts with 1 extra resource, and the encounter deck leaves out the cards marked as difficult.",
       "nightmare": "Nightmare",
-      "nightmareHint": "The Nightmare Deck replaces some of the encounter cards, and its setup card stays in play all game."
+      "nightmareHint": "The Nightmare Deck replaces some of the encounter cards, and its setup card stays in play all game.",
+      "nightmareCampaignHint": "Use Nightmare Decks where available. Later scenarios without a Nightmare Deck use the normal deck."
     },
     "allowSpectators": "Allow spectators",
     "allowSpectatorsHint": "List this game on the Watch page so anyone can watch it. Spectators see the table but cannot take any actions. This cannot be changed once the game has started.",

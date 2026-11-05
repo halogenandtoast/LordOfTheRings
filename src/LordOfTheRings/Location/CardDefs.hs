@@ -4929,7 +4929,7 @@ darkPassages =
 
 theLowerGate :: CardDef
 theLowerGate =
-  (location "over-hill-and-under-hill-nightmare-dungeons-deep-and-caverns-dim-002" "The Lower Gate" DungeonsDeepAndCavernsDimNightmare 1 4 8)
+  unique (location "over-hill-and-under-hill-nightmare-dungeons-deep-and-caverns-dim-002" "The Lower Gate" DungeonsDeepAndCavernsDimNightmare 1 4 8)
     {cdCardTraits = setFromList [Mountain]}
 
 pineSlopes :: CardDef

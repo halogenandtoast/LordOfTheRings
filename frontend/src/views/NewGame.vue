@@ -232,7 +232,7 @@ const create = async () => {
                   @click="mode = m.value"
                 >{{ m.label }}</button>
               </div>
-              <p class="hint">{{ $t(`newGame.mode.${mode}Hint`) }}</p>
+              <p class="hint">{{ $t(asCampaign && mode === 'nightmare' ? 'newGame.mode.nightmareCampaignHint' : `newGame.mode.${mode}Hint`) }}</p>
             </div>
             <div class="toggle-row">
               <label class="switch">

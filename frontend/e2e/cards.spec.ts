@@ -350,3 +350,47 @@ test('Shelob’s Lair offers Nightmare mode', async ({ page, game: _session }) =
   await nightmare.click()
   await expect(nightmare).toHaveAttribute('aria-checked', 'true')
 })
+
+test('The Lord of the Rings campaign starts with its Nightmare Deck', async ({ page, game: _session }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' })
+  await page.goto('/#/new-game')
+  await page.getByRole('button', { name: 'The Lord of the Rings', exact: false }).click()
+  await page.getByRole('button', { name: 'Play as a campaign', exact: true }).click()
+  await page.getByRole('radio', { name: 'Nightmare', exact: true }).click()
+  await expect(page.getByText('Later scenarios without a Nightmare Deck use the normal deck.', { exact: false })).toBeVisible()
+  const response = page.waitForResponse(r => r.url().endsWith('/api/campaigns') && r.request().method() === 'POST')
+  await page.getByRole('button', { name: 'Create', exact: true }).click()
+  const created = await response
+  expect(created.ok(), await created.text()).toBe(true)
+  const { id, campaignId } = await created.json()
+  const session = await page.evaluate(() => JSON.parse(localStorage.getItem('lotr-session')!))
+  const headers = { Authorization: `Token ${session.token}` }
+  await ok(page.request.post(`/api/games/${id}/join`, { headers, data: { deck: { starter: 'spirit' } } }), false)
+  const game = await ok(page.request.get(`/api/games/${id}`, { headers }))
+  expect(game.started).toBe(true)
+  expect(game.game.scenario.mode).toBe('NightmareMode')
+  await page.request.delete(`/api/games/${id}`, { headers })
+  await page.request.delete(`/api/campaigns/${campaignId}`, { headers })
+})
+
+
+test('all eighteen saga Nightmare selections reach the running engine', async ({ page, game: _session }) => {
+  const session = await page.evaluate(() => JSON.parse(localStorage.getItem('lotr-session')!))
+  const headers = { Authorization: `Token ${session.token}` }
+  for (const scenario of [
+    'we-must-away-ere-break-of-day', 'over-the-misty-mountains-grim', 'dungeons-deep-and-caverns-dim',
+    'flies-and-spiders', 'the-lonely-mountain', 'the-battle-of-five-armies',
+    'a-shadow-of-the-past', 'a-knife-in-the-dark', 'flight-to-the-ford',
+    'the-ring-goes-south', 'journey-in-the-dark', 'breaking-of-the-fellowship',
+    'the-uruk-hai', 'helms-deep', 'the-road-to-isengard',
+    'the-passage-of-the-marshes', 'journey-to-the-cross-roads', 'shelobs-lair',
+  ]) {
+    const { id } = await ok(page.request.post('/api/games', {
+      headers, data: { name: `Nightmare audit: ${scenario}`, scenario, nightmare: true, deck: { starter: 'spirit' }, seed: 7, publicScoring: false },
+    }))
+    const state = await ok(page.request.get(`/api/games/${id}`, { headers }))
+    expect(state.game.scenario.mode, scenario).toBe('NightmareMode')
+    expect(state.game.scenario.nightmareDeck?.setupCard, scenario).toBeTruthy()
+    await page.request.delete(`/api/games/${id}`, { headers })
+  }
+})

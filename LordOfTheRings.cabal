@@ -4239,6 +4239,7 @@ test-suite LordOfTheRings-test
       LordOfTheRings.RingMaker.TheNinInEilphSpec
       LordOfTheRings.RingMaker.TheThreeTrialsSpec
       LordOfTheRings.RingMaker.TroubleInTharbadSpec
+      LordOfTheRings.SagaNightmareModeSpec
       LordOfTheRings.SerializationSpec
       LordOfTheRings.SetupSpec
       LordOfTheRings.ShadowsOfMirkwood.AJourneyToRhosgobelSpec
