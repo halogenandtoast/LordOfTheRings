@@ -1,7 +1,11 @@
 module LordOfTheRings.TheLandOfShadow.ThePassageOfTheMarshesNightmareSpec (spec) where
 
 import LordOfTheRings.Ally.CardDefs qualified as Allies
+import LordOfTheRings.Ability (isForcedAbility)
 import LordOfTheRings.Attachment.CardDefs qualified as Attachments
+import LordOfTheRings.Event.CardDefs qualified as Events
+import LordOfTheRings.Objective.CardDefs qualified as Objectives
+import LordOfTheRings.Treachery.CardDefs qualified as Treacheries
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Effect (Effect (..), EffectDuration (UntilEndOfRound, UntilEndOfAttack))
 import LordOfTheRings.Helpers.Modifiers (getModifiers)
@@ -10,7 +14,7 @@ import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Location.Types (LocationAttrs (locationCardId, locationTokens))
 import LordOfTheRings.Matcher
 import LordOfTheRings.Message.Lifted qualified as Lifted
-import LordOfTheRings.Modifier (ModifierType (Blank, CannotReduceThreat, CannotHaveAttachments, CannotTakeDamage, HitPointModifier, CancelNextDamage, DamageReducedTo, DamageRedirectedTo))
+import LordOfTheRings.Modifier (ModifierType (Blank, CannotReduceThreat, CannotHaveAttachments, CannotTakeDamage, HitPointModifier, CancelNextDamage, DamageReducedTo, DamageRedirectedTo, CannotBeTraveledTo, CannotDiscardFromHand, CannotSpendResources))
 import LordOfTheRings.Scenario (thePassageOfTheMarshes)
 import LordOfTheRings.Phase (Phase (PlanningPhase))
 import LordOfTheRings.Window (WindowType (EnemyAttacking), mkWhen)
@@ -30,11 +34,33 @@ activeLocation = activeLocationWith Locations.stagnantPools
 
 activeLocationWith :: CardDef -> GameT LocationId
 activeLocationWith def = do
-  card <- genEncounterCard def
-  run $ AddToStaging card
-  lid <- getsGame (toId . fromJustNote "active location" . find ((== card.id) . locationCardId . toAttrs) . toList . (.entities.locations))
+  lid <- stageLocation def
   run $ PlaceLocation lid ActiveLocation
   pure lid
+
+stageLocation :: CardDef -> GameT LocationId
+stageLocation def = do
+  card <- genEncounterCard def
+  run $ AddToStaging card
+  getsGame (toId . fromJustNote "staged location" . find ((== card.id) . locationCardId . toAttrs) . toList . (.entities.locations))
+
+emptyHand :: PlayerId -> GameT ()
+emptyHand pid = putGame . (playersL . ix pid . handL .~ []) =<< getGame
+
+putSmeagol :: PlayerId -> GameT AllyId
+putSmeagol pid = do
+  run . PutObjectiveAllyIntoPlayUnder pid =<< genEncounterCard Objectives.smeagolTheLandOfShadow
+  fromJustNote "Sméagol" . headMay <$> select (AllyWithCardCode $ toCardCode Objectives.smeagolTheLandOfShadow)
+
+resolveForcedChoices :: PlayerId -> GameT ()
+resolveForcedChoices pid = getQuestion pid >>= \case
+  Just q | any isForcedChoice (questionChoices q) ->
+    chooseOptionMatching "resolve a Forced ability" pid isForcedChoice >> resolveForcedChoices pid
+  _ -> pure ()
+ where
+  isForcedChoice = \case
+    AbilityLabel _ ability _ _ -> isForcedAbility ability
+    _ -> False
 
 mireTokens :: LocationId -> GameT Int
 mireTokens lid = countTokens Resource . locationTokens . toAttrs <$> getLocation lid
@@ -50,6 +76,169 @@ attack pid eid defender = do
 
 spec :: Spec
 spec = describe "The Passage of the Marshes Nightmare" do
+  it "Festering Mire makes each player discard one random card to travel" . twoPlayerTestIn thePassageOfTheMarshes testDeck $ \one two -> do
+    for_ [one, two] emptyHand
+    _ <- putCardIntoHand one Events.fortuneOrFate
+    _ <- putCardIntoHand two Events.fortuneOrFate
+    _ <- putCardIntoHand two Events.weAreNotIdle
+    lid <- stageLocation Locations.festeringMire
+    run $ TravelTo lid
+    length . (.hand) <$> getPlayer one `shouldReturn` 0
+    length . (.hand) <$> getPlayer two `shouldReturn` 1
+    (.placement) <$> getLocation lid `shouldReturn` ActiveLocation
+
+  it "Festering Mire bars travel if any player has no discardable card" . twoPlayerTestIn thePassageOfTheMarshes testDeck $ \one two -> do
+    for_ [one, two] emptyHand
+    kept <- putCardIntoHand one Events.fortuneOrFate
+    protected <- genEncounterCard Treacheries.theNecromancersReach
+    putGame . (playersL . ix two . handL .~ [EncounterCard protected]) =<< getGame
+    lid <- stageLocation Locations.festeringMire
+    getModifiers lid >>= (`shouldSatisfy` elem CannotBeTraveledTo)
+    run $ TravelTo lid
+    (.placement) <$> getLocation lid `shouldReturn` StagingArea
+    map (.id) . (.hand) <$> getPlayer one `shouldReturn` [kept.id]
+
+  it "Festering Mire bars travel when a player cannot discard from hand" . marshes $ \pid -> do
+    _ <- putCardIntoHand pid Events.fortuneOrFate
+    run $ CreateEffect $ Effect GameSource (PlayerTarget pid) [CannotDiscardFromHand] UntilEndOfRound
+    lid <- stageLocation Locations.festeringMire
+    getModifiers lid >>= (`shouldSatisfy` elem CannotBeTraveledTo)
+
+  it "Festering Mire discards each player's hand when discarded by Mire" . twoPlayerTestIn thePassageOfTheMarshes testDeck $ \one two -> do
+    for_ [one, two] \pid -> do
+      emptyHand pid
+      void $ putCardIntoHand pid Events.fortuneOrFate
+      void $ putCardIntoHand pid Events.weAreNotIdle
+    lid <- stageLocation Locations.festeringMire
+    run $ PlaceTokens GameSource (LocationTarget lid) Resource 2
+    resolveForcedChoices one
+    for_ [one, two] (\pid -> (.hand) <$> getPlayer pid `shouldReturn` [])
+    map toCardCode <$> getEncounterDiscard >>= (`shouldSatisfy` elem (toCardCode Locations.festeringMire))
+    getsGame (map toCardCode . (.victoryDisplay) . toAttrs . (.scenario)) `shouldReturn` []
+
+  it "Festering Mire spares protected encounter cards when discarding the hand" . marshes $ \pid -> do
+    emptyHand pid
+    protected <- genEncounterCard Treacheries.theNecromancersReach
+    putGame . (playersL . ix pid . handL .~ [EncounterCard protected]) =<< getGame
+    _ <- putCardIntoHand pid Events.fortuneOrFate
+    lid <- stageLocation Locations.festeringMire
+    run $ PlaceTokens GameSource (LocationTarget lid) Resource 2
+    resolveForcedChoices pid
+    map (.id) . (.hand) <$> getPlayer pid `shouldReturn` [protected.id]
+
+  it "Candle-lit Pool's travel cost can be split between different players' heroes" . twoPlayerTestIn thePassageOfTheMarshes testDeck $ \one two -> do
+    firstHero <- fromJustNote "first hero" . headMay <$> select (HeroControlledBy $ PlayerWithId one)
+    otherHero <- fromJustNote "other hero" . headMay <$> select (HeroControlledBy $ PlayerWithId two)
+    for_ [firstHero, otherHero] (\hid -> run $ PlaceTokens GameSource (HeroTarget hid) Resource 1)
+    lid <- stageLocation Locations.candleLitPool
+    getModifiers lid >>= (`shouldSatisfy` notElem CannotBeTraveledTo)
+    run $ TravelTo lid
+    (.placement) <$> getLocation lid `shouldReturn` StagingArea
+    chooseTarget one (HeroTarget firstHero)
+    chooseTarget one (HeroTarget otherHero)
+    (.resources) <$> getHero firstHero `shouldReturn` 0
+    (.resources) <$> getHero otherHero `shouldReturn` 0
+    (.placement) <$> getLocation lid `shouldReturn` ActiveLocation
+
+  it "Candle-lit Pool bars travel when fewer than two resources can be spent" . marshes $ \_ -> do
+    hero <- toId <$> getHeroWithCode "01012"
+    run $ PlaceTokens GameSource (HeroTarget hero) Resource 2
+    run $ CreateEffect $ Effect GameSource (HeroTarget hero) [CannotSpendResources] UntilEndOfRound
+    lid <- stageLocation Locations.candleLitPool
+    getModifiers lid >>= (`shouldSatisfy` elem CannotBeTraveledTo)
+    run $ TravelTo lid
+    (.placement) <$> getLocation lid `shouldReturn` StagingArea
+    (.resources) <$> getHero hero `shouldReturn` 2
+
+  it "Candle-lit Pool puts a searched enemy into play without revealing it" . marshes $ \pid -> do
+    deck <- setEncounterDeck [Enemies.cursedDead]
+    otherCard <- genEncounterCard Enemies.cursedDead
+    run $ AddToEncounterDiscard [otherCard]
+    lid <- stageLocation Locations.candleLitPool
+    run $ PlaceTokens GameSource (LocationTarget lid) Resource 3
+    resolveForcedChoices pid
+    chooseTarget pid (CardIdTarget $ (fromJustNote "deck card" $ headMay deck).id)
+    enemies <- select (EnemyWithCardCode $ toCardCode Enemies.cursedDead)
+    length enemies `shouldBe` 1
+    (.placement) <$> getEnemy (fromJustNote "enemy" $ headMay enemies) `shouldReturn` EngagedWith pid
+    map (.id) <$> getEncounterDiscard >>= (`shouldSatisfy` elem otherCard.id)
+
+  it "Candle-lit Pool reads the remaining search cards separately for each player" . twoPlayerTestIn thePassageOfTheMarshes testDeck $ \one two -> do
+    deck <- setEncounterDeck [Enemies.paleFaces, Enemies.rottingThing]
+    lid <- stageLocation Locations.candleLitPool
+    run $ PlaceTokens GameSource (LocationTarget lid) Resource 3
+    resolveForcedChoices one
+    chooseTarget one (CardIdTarget $ (fromJustNote "first card" $ headMay deck).id)
+    length <$> select (EnemyWithCardCode (toCardCode Enemies.paleFaces) <> EnemyEngagedWith (PlayerWithId one)) `shouldReturn` 1
+    length <$> select (EnemyWithCardCode (toCardCode Enemies.rottingThing) <> EnemyEngagedWith (PlayerWithId two)) `shouldReturn` 1
+    length <$> select AnyEnemy `shouldReturn` 2
+    getQuestion two `shouldReturn` Nothing
+
+  it "Candle-lit Pool has no search choice when no Undead enemy can be found" . marshes $ \pid -> do
+    _ <- setEncounterDeck [Enemies.forestSpider]
+    lid <- stageLocation Locations.candleLitPool
+    run $ PlaceTokens GameSource (LocationTarget lid) Resource 3
+    resolveForcedChoices pid
+    select AnyEnemy `shouldReturn` []
+    getQuestion pid `shouldReturn` Nothing
+
+  it "Great Reed Thicket requires and exhausts a ready Sméagol to travel" . marshes $ \pid -> do
+    lid <- stageLocation Locations.greatReedThicket
+    getModifiers lid >>= (`shouldSatisfy` elem CannotBeTraveledTo)
+    aid <- putSmeagol pid
+    getModifiers lid >>= (`shouldSatisfy` notElem CannotBeTraveledTo)
+    run $ Exhaust (AllyTarget aid)
+    getModifiers lid >>= (`shouldSatisfy` elem CannotBeTraveledTo)
+    run $ Ready (AllyTarget aid)
+    run $ TravelTo lid
+    allyExhausted . toAttrs <$> getAlly aid `shouldReturn` True
+    (.placement) <$> getLocation lid `shouldReturn` ActiveLocation
+
+  it "Great Reed Thicket flips Sméagol when discarded by Mire" . marshes $ \pid -> do
+    aid <- putSmeagol pid
+    lid <- stageLocation Locations.greatReedThicket
+    run $ PlaceTokens GameSource (LocationTarget lid) Resource 2
+    resolveForcedChoices pid
+    select (AllyWithId aid) `shouldReturn` []
+    length <$> select (EnemyWithCardCode (toCardCode Enemies.gollumTheLandOfShadow) <> EnemyEngagedWith (PlayerWithId pid)) `shouldReturn` 1
+
+  it "Great Reed Thicket makes Gollum attack if his enemy side is already faceup" . marshes $ \pid -> do
+    _ <- stage Enemies.gollumTheLandOfShadow
+    ally <- putAllyIntoPlay pid Allies.guardOfTheCitadel
+    _ <- setEncounterDeck [Enemies.hostOfIsengard]
+    lid <- stageLocation Locations.greatReedThicket
+    run $ PlaceTokens GameSource (LocationTarget lid) Resource 2
+    resolveForcedChoices pid
+    passActions pid
+    chooseTarget pid ally
+    passActions pid
+    resolveShadowsInOrder pid
+    passActions pid
+    getsGame (any ((== ally) . toTarget) . toList . (.entities.allies)) `shouldReturn` False
+    getEncounterDeck `shouldReturn` []
+
+  for_ [(Locations.festeringMire, 6), (Locations.candleLitPool, 5), (Locations.greatReedThicket, 3)] \(def, progress) -> do
+    it ("exploring " <> show (toCardCode def) <> " awards victory without its Mire effect") . marshes $ \pid -> do
+      aid <- putSmeagol pid
+      emptyHand pid
+      kept <- putCardIntoHand pid Events.fortuneOrFate
+      _ <- setEncounterDeck [Enemies.paleFaces]
+      lid <- stageLocation def
+      run $ PlaceTokens GameSource (LocationTarget lid) Progress progress
+      resolveForcedChoices pid
+      getsGame (map toCardCode . (.victoryDisplay) . toAttrs . (.scenario)) `shouldReturn` [toCardCode def]
+      map (.id) . (.hand) <$> getPlayer pid `shouldReturn` [kept.id]
+      select (AllyWithId aid) `shouldReturn` [aid]
+      select AnyEnemy `shouldReturn` []
+
+    it ("blanking " <> show (toCardCode def) <> " removes its travel cost") . marshes $ \pid -> do
+      emptyHand pid
+      lid <- stageLocation def
+      run $ CreateEffect $ Effect GameSource (LocationTarget lid) [Blank] UntilEndOfRound
+      run $ TravelTo lid
+      (.placement) <$> getLocation lid `shouldReturn` ActiveLocation
+      getQuestion pid `shouldReturn` Nothing
+
   it "Rotting Thing counts redirected attack damage against the character that actually takes it" . marshes $ \pid -> do
     lid <- activeLocationWith Locations.theOldFord
     eid <- stage Enemies.rottingThing

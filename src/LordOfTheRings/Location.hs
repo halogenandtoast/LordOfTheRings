@@ -6,11 +6,17 @@ import Data.Map.Strict qualified as Map
 import LordOfTheRings.Card
 import LordOfTheRings.Classes.Entity
 import LordOfTheRings.Classes.RunMessage
+import LordOfTheRings.Helpers.Modifiers (getModifiers)
+import LordOfTheRings.Message (Message (TravelTo))
+import LordOfTheRings.Modifier (ModifierType (Blank))
 import LordOfTheRings.Location.Cards.HelmsDike
 import LordOfTheRings.Location.Cards.HornburgWall
 import LordOfTheRings.Location.Cards.GlitteringCaves
 import LordOfTheRings.Location.Cards.PoisonousShaft
 import LordOfTheRings.Location.Cards.FortressOfIsengard
+import LordOfTheRings.Location.Cards.FesteringMire
+import LordOfTheRings.Location.Cards.CandleLitPool
+import LordOfTheRings.Location.Cards.GreatReedThicket
 import LordOfTheRings.Location.Cards.EnchantedLand
 import LordOfTheRings.Location.Cards.TheUruksTrail
 import LordOfTheRings.Location.Cards.WoldOfRohan
@@ -715,7 +721,13 @@ instance FromJSON Location where
     pure $ overAttrs (const attrs) $ lookupLocation (locationCardCode attrs) (locationCardId attrs) (locationId attrs)
 
 instance RunMessage Location where
-  runMessage msg (Location a) = Location <$> runMessage msg a
+  runMessage msg l@(Location a) = do
+    -- Travel costs and effects are printed text, including costs this location
+    -- adds when traveling to another location.
+    blanked <- case msg of
+      TravelTo _ -> elem Blank <$> getModifiers (toAttrs a)
+      _ -> pure False
+    if blanked then pure l else Location <$> runMessage msg a
 
 createLocation :: EncounterCard -> LocationId -> Location
 createLocation card = lookupLocation (toCardCode card) (ecId card)
@@ -754,6 +766,9 @@ allLocations =
         , SomeLocationCard glitteringCaves
         , SomeLocationCard poisonousShaft
         , SomeLocationCard fortressOfIsengard
+        , SomeLocationCard festeringMire
+        , SomeLocationCard candleLitPool
+        , SomeLocationCard greatReedThicket
         , SomeLocationCard enchantedLand
         , SomeLocationCard theUruksTrail
         , SomeLocationCard woldOfRohan

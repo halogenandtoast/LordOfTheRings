@@ -1794,6 +1794,7 @@ library
       LordOfTheRings.Location.Cards.BurningWatchtower
       LordOfTheRings.Location.Cards.BurntSands
       LordOfTheRings.Location.Cards.CalmWaters
+      LordOfTheRings.Location.Cards.CandleLitPool
       LordOfTheRings.Location.Cards.CaptainsQuarters
       LordOfTheRings.Location.Cards.CapturedTower
       LordOfTheRings.Location.Cards.Caradhras
@@ -1937,6 +1938,7 @@ library
       LordOfTheRings.Location.Cards.Fanuidhol
       LordOfTheRings.Location.Cards.FenOfReeds
       LordOfTheRings.Location.Cards.FensAndMires
+      LordOfTheRings.Location.Cards.FesteringMire
       LordOfTheRings.Location.Cards.FieryChasm
       LordOfTheRings.Location.Cards.FieryDepths
       LordOfTheRings.Location.Cards.FingerOfGlanduin
@@ -1996,6 +1998,7 @@ library
       LordOfTheRings.Location.Cards.GreatEastRoad
       LordOfTheRings.Location.Cards.GreatForestWeb
       LordOfTheRings.Location.Cards.GreatHall
+      LordOfTheRings.Location.Cards.GreatReedThicket
       LordOfTheRings.Location.Cards.GreenHillCountry
       LordOfTheRings.Location.Cards.GreenHillCountryNightmare
       LordOfTheRings.Location.Cards.GreenwayPath

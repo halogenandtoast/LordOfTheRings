@@ -15,7 +15,10 @@ allLocationCards =
   Map.fromList $
     map
       (\def -> (cdCardCode def, def))
-      [ fortressOfIsengard
+      [ festeringMire
+      , candleLitPool
+      , greatReedThicket
+      , fortressOfIsengard
       , poisonousShaft
       , helmsDike
       , hornburgWall
@@ -5167,3 +5170,17 @@ poisonousShaft = (location "the-treason-of-saruman-nightmare-the-road-to-isengar
 fortressOfIsengard :: CardDef
 fortressOfIsengard = (location "the-treason-of-saruman-nightmare-the-road-to-isengard-005" "Fortress of Isengard" TheRoadToIsengardNightmare 3 3 3)
   {cdCardTraits = setFromList [Isengard]}
+
+-- * The Passage of the Marshes Nightmare
+
+festeringMire :: CardDef
+festeringMire = (location "the-land-of-shadow-nightmare-the-passage-of-the-marshes-002" "Festering Mire" ThePassageOfTheMarshesNightmare 3 5 6)
+  {cdCardTraits = setFromList [Marsh], cdKeywords = setFromList [Mire 2], cdVictoryPoints = Just 2}
+
+candleLitPool :: CardDef
+candleLitPool = (location "the-land-of-shadow-nightmare-the-passage-of-the-marshes-003" "Candle-lit Pool" ThePassageOfTheMarshesNightmare 3 4 5)
+  {cdCardTraits = setFromList [Marsh], cdKeywords = setFromList [Mire 3], cdVictoryPoints = Just 3}
+
+greatReedThicket :: CardDef
+greatReedThicket = (location "the-land-of-shadow-nightmare-the-passage-of-the-marshes-004" "Great Reed Thicket" ThePassageOfTheMarshesNightmare 2 2 3)
+  {cdCardTraits = setFromList [Marsh], cdKeywords = setFromList [Mire 2], cdVictoryPoints = Just 2}

@@ -1,4 +1,12 @@
 {
+  "candleLitPool": {
+    "search": "Choose an Undead enemy to put into play engaged with you"
+  },
+  "greatReedThicket": {
+    "choose": "Choose Great Reed Thicket’s effect",
+    "flip": "Flip Sméagol to Gollum",
+    "attack": "Gollum makes an immediate attack"
+  },
   "traitorOfManyColors": {
     "choose": "Choose Traitor of Many Colors’ shadow effect",
     "discard": "Discard 1 random card from your hand",
