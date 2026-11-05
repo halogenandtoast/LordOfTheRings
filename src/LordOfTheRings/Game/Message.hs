@@ -1526,6 +1526,10 @@ runGameMessage msg g = case msg of
     -- damage redirected is applied where it goes, not redirected again, as two Songs of
     -- Mocking each choosing the other's hero
     let dealTo t = do
+          immune <- case source of
+            EnemyAttackSource _ -> pure False
+            PlayerAttackSource _ -> pure False
+            _ -> immuneToSource source t
           mods' <- getModifiers t
           damage <- getDamage t
           -- damage reduced to at most so much, as Nazgûl of Minas Morgul's to 1, and none past
@@ -1548,7 +1552,8 @@ runGameMessage msg g = case msg of
                   || maybe False (\p -> CannotBeDamagedByEffectsOf p `elem` mods') controller
                   || any (\s -> sourceTarget s /= sourceTarget source || isNothing (sourceTarget s)) [s | CannotTakeDamageExceptFrom s <- mods']
               blocked =
-                CannotTakeDamage `elem` mods'
+                immune
+                  || CannotTakeDamage `elem` mods'
                   || reduced <= 0
                   || (CannotTakeNonCombatDamage `elem` mods' && not combat)
                   || (CannotTakeNonQuestDamage `elem` mods' && not (isQuestSource source))

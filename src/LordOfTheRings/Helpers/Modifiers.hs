@@ -3,6 +3,7 @@ module LordOfTheRings.Helpers.Modifiers (module LordOfTheRings.Helpers.Modifiers
 import Control.Monad.Writer.Strict (execWriterT)
 import Data.Map.Monoidal.Strict (MonoidalMap (..))
 import Data.Map.Strict qualified as Map
+import Data.Set qualified as Set
 import LordOfTheRings.Card (Card (EncounterCard), CardCode, CardType (AllyType, ObjectiveAllyType), IsCard (toCard), cdCardTraits, cdCardType, cdSphere, isTreasure, toCardCode, toCardDef)
 import LordOfTheRings.Sphere (Sphere (Fellowship))
 import LordOfTheRings.Classes.HasGame
@@ -86,7 +87,23 @@ preloadModifiers g = do
       -- modifiers from its constant effects, as Arkham's applyBlank; lasting effects it
       -- already created stay
       blankIn = Map.keysSet . Map.filter (any ((== Blank) . modifierType))
-      blanked = blankIn fromEntities <> blankIn fromEffects <> blankIn attachedOut <> blankIn wearied
+      -- Resolve blanking dependencies first: a blanked Wooded Glade cannot blank
+      -- attachments in turn. For a cycle (Glade and Thrór's Key), retain the
+      -- blanking effect that was already active before the other became applicable.
+      fixedBlank = blankIn fromEffects <> blankIn attachedOut <> blankIn wearied
+      blankers = Map.fromListWith (<>)
+        [(sourceTarget m.modifierSource, Set.singleton t) | (t, ms) <- Map.toList fromEntities, m <- ms, m.modifierType == Blank]
+      established = Set.fromList
+        [sourceTarget m.modifierSource | ms <- toList g.gameModifiers, m <- ms, m.modifierType == Blank]
+      resolveBlanks blocked pending =
+        let live = Map.filterWithKey (\s _ -> maybe True (`notMember` blocked) s) pending
+            incoming = mconcat (Map.elems live)
+            roots = [s | s <- Map.keys live, maybe True (`notMember` incoming) s]
+            preferred = filter (`member` established) (Map.keys live)
+         in case headMay (roots <> preferred <> Map.keys live) of
+              Nothing -> blocked
+              Just s -> resolveBlanks (blocked <> Map.findWithDefault mempty s live) (Map.delete s live)
+      blanked = resolveBlanks fixedBlank blankers
       ownText m = maybe False (`member` blanked) (sourceTarget $ modifierSource m)
       -- a lasting effect on each location in the staging area reaches one that enters it
       -- after the effect began (FAQ 2.43)

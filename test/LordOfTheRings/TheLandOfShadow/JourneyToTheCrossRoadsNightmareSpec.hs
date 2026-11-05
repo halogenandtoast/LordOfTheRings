@@ -2,8 +2,10 @@ module LordOfTheRings.TheLandOfShadow.JourneyToTheCrossRoadsNightmareSpec (spec)
 
 import LordOfTheRings.Effect (Effect (..), EffectDuration (UntilEndOfRound, UntilEndOfAttack))
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
-import LordOfTheRings.Helpers.Staging (getEnemyAttack, getEngagementCost)
+import LordOfTheRings.Helpers.Staging (getEnemyAttack, getEngagementCost, getLocationThreat)
 import LordOfTheRings.Matcher
+import LordOfTheRings.Helpers.Modifiers (getModifiers)
+import LordOfTheRings.Helpers.Character (getWillpower)
 import LordOfTheRings.Entities (questsL)
 import LordOfTheRings.Attachment.CardDefs qualified as Attachments
 import LordOfTheRings.Phase (Phase (PlanningPhase))
@@ -14,7 +16,7 @@ import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Location.Types (LocationAttrs (locationUnderneath))
 import LordOfTheRings.Quest.CardDefs qualified as Quests
 import LordOfTheRings.Card (toCard)
-import LordOfTheRings.Modifier (ModifierType (Blank, AttackModifier))
+import LordOfTheRings.Modifier (ModifierType (Blank, AttackModifier, DoesNotReadyDuringRefresh))
 import LordOfTheRings.Objective.CardDefs qualified as Objectives
 import LordOfTheRings.Treachery.CardDefs qualified as Treacheries
 import LordOfTheRings.Objective.Types (ObjectiveAttrs (objectiveUnderneath))
@@ -30,6 +32,12 @@ stage def = do
   card <- genEncounterCard def
   run $ AddToStaging card
   getsGame (toId . fromJustNote "enemy" . find ((== card.id) . (.cardId) . toAttrs) . toList . (.entities.enemies))
+
+stageLocation :: CardDef -> GameT LocationId
+stageLocation def = do
+  card <- genEncounterCard def
+  run $ AddToStaging card
+  getsGame (toId . fromJustNote "location" . find ((== card.id) . (.cardId) . toAttrs) . toList . (.entities.locations))
 
 resolveForcedChoices :: PlayerId -> GameT ()
 resolveForcedChoices pid = getQuestion pid >>= \case
@@ -186,3 +194,163 @@ spec = describe "Journey to the Cross-roads Nightmare" do
     selectAny (EnemyWithId eid) `shouldReturn` True
     underneath <- getsGame (objectiveUnderneath . toAttrs . fromJustNote "gate" . headMay . toList . (.entities.objectives))
     underneath `shouldBe` []
+
+
+  it "Wooded Glade blanks an attachment only while active and restores its bonus when it leaves" . crossRoads $ \pid -> do
+    hero <- toTarget <$> getHeroWithCode "01012"
+    att <- putAttachmentOn pid Attachments.celebriansStone hero
+    getWillpower hero `shouldReturn` 4
+    lid <- stageLocation Locations.woodedGlade
+    getWillpower hero `shouldReturn` 4
+    run $ PlaceLocation lid ActiveLocation
+    getModifiers att >>= (`shouldSatisfy` elem Blank)
+    getWillpower hero `shouldReturn` 2
+    run $ Discard GameSource (LocationTarget lid)
+    getWillpower hero `shouldReturn` 4
+
+  it "Wooded Glade also blanks an attachment that enters after it becomes active" . crossRoads $ \pid -> do
+    lid <- stageLocation Locations.woodedGlade
+    run $ PlaceLocation lid ActiveLocation
+    hero <- toTarget <$> getHeroWithCode "01012"
+    _ <- putAttachmentOn pid Attachments.celebriansStone hero
+    getWillpower hero `shouldReturn` 2
+    run $ CreateEffect $ Effect GameSource (LocationTarget lid) [Blank] UntilEndOfRound
+    getWillpower hero `shouldReturn` 4
+    run $ EndEffects UntilEndOfRound
+    getWillpower hero `shouldReturn` 2
+
+  it "Wooded Glade blanks an attached encounter Condition" . crossRoads $ \pid -> do
+    hero <- toTarget <$> getHeroWithCode "01012"
+    _ <- setEncounterDeck [Treacheries.caughtInAWeb]
+    run RevealEncounterCard
+    resolveRevealed
+    chooseTarget pid hero
+    getModifiers hero >>= (`shouldSatisfy` elem DoesNotReadyDuringRefresh)
+    lid <- stageLocation Locations.woodedGlade
+    run $ PlaceLocation lid ActiveLocation
+    getModifiers hero >>= (`shouldSatisfy` notElem DoesNotReadyDuringRefresh)
+
+  it "Wooded Glade preserves objective attachments" . crossRoads $ \_ -> do
+    hero <- toTarget <$> getHeroWithCode "01012"
+    card <- genEncounterCard Objectives.theOneRingTheLandOfShadow
+    run $ PutObjectiveIntoPlayAttached card hero
+    ring <- getsGame (toTarget . fromJustNote "ring" . headMay . toList . (.entities.objectives))
+    lid <- stageLocation Locations.woodedGlade
+    run $ PlaceLocation lid ActiveLocation
+    getModifiers ring >>= (`shouldSatisfy` notElem Blank)
+
+  it "Wooded Glade's shadow discards an attachment controlled by the attacked player" . twoPlayerTestIn journeyToTheCrossRoads testDeck $ \p1 p2 -> do
+    hero1 <- toTarget . fromJustNote "hero" . headMay <$> (traverse getHero =<< select (HeroControlledBy $ PlayerWithId p1))
+    hero2 <- toTarget . fromJustNote "hero" . headMay <$> (traverse getHero =<< select (HeroControlledBy $ PlayerWithId p2))
+    own <- putAttachmentOn p1 Attachments.celebriansStone hero1
+    victim <- putAttachmentOn p2 Attachments.unexpectedCourage hero2
+    eid <- stage Enemies.forestSpider
+    run . AttachShadowCard eid =<< genEncounterCard Locations.woodedGlade
+    run $ ResolveShadow eid p2 []
+    for_ [p1, p2] \pid -> do
+      q <- getQuestion pid
+      when (maybe False (any (\case TargetLabel t _ -> t == victim; _ -> False) . questionChoices) q) $ chooseTarget pid victim
+    getAttachmentsOn hero1 `shouldReturn` [own]
+    getAttachmentsOn hero2 `shouldReturn` []
+
+  it "Dense Fern-brake protects staged enemies from player effects but allows encounter damage" . crossRoads $ \_ -> do
+    lid <- stageLocation Locations.denseFernBrake
+    eid <- stage Enemies.forestSpider
+    hero <- toId <$> getHeroWithCode "01012"
+    run $ PlaceLocation lid ActiveLocation
+    run $ DealDamage (HeroSource hero) (EnemyTarget eid) 1
+    getDamage (EnemyTarget eid) `shouldReturn` 0
+    run $ DealDamage (LocationSource lid) (EnemyTarget eid) 1
+    getDamage (EnemyTarget eid) `shouldReturn` 1
+
+  it "Dense Fern-brake's immunity follows staging and ends when its text is blanked" . crossRoads $ \pid -> do
+    lid <- stageLocation Locations.denseFernBrake
+    run $ PlaceLocation lid ActiveLocation
+    eid <- stage Enemies.forestSpider
+    hero <- toId <$> getHeroWithCode "01012"
+    run $ DealDamage (HeroSource hero) (EnemyTarget eid) 1
+    getDamage (EnemyTarget eid) `shouldReturn` 0
+    run $ EngageEnemy pid eid
+    run $ DealDamage (HeroSource hero) (EnemyTarget eid) 1
+    getDamage (EnemyTarget eid) `shouldReturn` 1
+    run $ PlaceEnemy eid StagingArea
+    run $ CreateEffect $ Effect GameSource (LocationTarget lid) [Blank] UntilEndOfRound
+    run $ DealDamage (HeroSource hero) (EnemyTarget eid) 1
+    getDamage (EnemyTarget eid) `shouldReturn` 2
+
+  it "Dense Fern-brake's shadow exhausts a character controlled by the attacked player" . crossRoads $ \pid -> do
+    hero <- toTarget <$> getHeroWithCode "01012"
+    eid <- stage Enemies.forestSpider
+    run . AttachShadowCard eid =<< genEncounterCard Locations.denseFernBrake
+    run $ ResolveShadow eid pid []
+    chooseTarget pid hero
+    heroExhausted . toAttrs <$> getHeroWithCode "01012" `shouldReturn` True
+
+  it "Shadowy Thicket gains two threat per card under The Black Gate" . crossRoads $ \_ -> do
+    lid <- stageLocation Locations.shadowyThicket
+    getLocationThreat lid `shouldReturn` 2
+    run . AddToStaging =<< genEncounterCard Objectives.theBlackGate
+    gate <- getsGame (toTarget . fromJustNote "gate" . headMay . toList . (.entities.objectives))
+    cards <- traverse genEncounterCard [Enemies.manOfHarad, Enemies.captainOfHarad]
+    run $ PlaceUnderneath gate (map toCard cards)
+    getLocationThreat lid `shouldReturn` 6
+    run $ CreateEffect $ Effect GameSource (LocationTarget lid) [Blank] UntilEndOfRound
+    getLocationThreat lid `shouldReturn` 2
+
+  it "Shadowy Thicket cannot be traveled to without a card under The Cross-roads" . crossRoads $ \_ -> do
+    lid <- stageLocation Locations.shadowyThicket
+    run $ TravelTo lid
+    (.placement) . toAttrs <$> getLocation lid `shouldReturn` StagingArea
+
+  it "Shadowy Thicket reveals the top card under The Cross-roads as its travel cost" . crossRoads $ \_ -> do
+    cr <- stageLocation Locations.theCrossRoadsTheLandOfShadow
+    card <- genEncounterCard Enemies.manOfHarad
+    run $ PlaceUnderneath (LocationTarget cr) [toCard card]
+    lid <- stageLocation Locations.shadowyThicket
+    run $ TravelTo lid
+    (.placement) . toAttrs <$> getLocation lid `shouldReturn` ActiveLocation
+    locationUnderneath . toAttrs <$> getLocation cr `shouldReturn` []
+    selectAny (EnemyWithCardCode $ toCardCode Enemies.manOfHarad) `shouldReturn` True
+
+  it "blanked Shadowy Thicket needs no travel cost" . crossRoads $ \_ -> do
+    lid <- stageLocation Locations.shadowyThicket
+    run $ CreateEffect $ Effect GameSource (LocationTarget lid) [Blank] UntilEndOfRound
+    run $ TravelTo lid
+    (.placement) . toAttrs <$> getLocation lid `shouldReturn` ActiveLocation
+
+
+  it "Wooded Glade's shadow leaves an objective attachment in play" . crossRoads $ \pid -> do
+    hero <- toTarget <$> getHeroWithCode "01012"
+    card <- genEncounterCard Objectives.theOneRingTheLandOfShadow
+    run $ PutObjectiveIntoPlayAttached card hero
+    eid <- stage Enemies.forestSpider
+    run . AttachShadowCard eid =<< genEncounterCard Locations.woodedGlade
+    run $ ResolveShadow eid pid []
+    getAttachmentsOn hero >>= (\xs -> length xs `shouldBe` 1)
+
+  it "Wooded Glade stays blank when Thror's Key blanked it before travel" . crossRoads $ \pid -> do
+    lid <- stageLocation Locations.woodedGlade
+    _ <- putAttachmentOn pid Attachments.throrsKey (LocationTarget lid)
+    hero <- toTarget <$> getHeroWithCode "01012"
+    _ <- putAttachmentOn pid Attachments.celebriansStone hero
+    run $ TravelTo lid
+    getWillpower hero `shouldReturn` 4
+    getModifiers (LocationTarget lid) >>= (`shouldSatisfy` elem Blank)
+
+
+  it "Dense Fern-brake does not protect enemies from player combat damage" . crossRoads $ \pid -> do
+    lid <- stageLocation Locations.denseFernBrake
+    run $ PlaceLocation lid ActiveLocation
+    eid <- stage Enemies.forestSpider
+    run $ DealDamage (PlayerAttackSource pid) (EnemyTarget eid) 1
+    getDamage (EnemyTarget eid) `shouldReturn` 1
+
+  it "removing Thror's Key restores Wooded Glade's attachment blanking" . crossRoads $ \pid -> do
+    lid <- stageLocation Locations.woodedGlade
+    key <- putAttachmentOn pid Attachments.throrsKey (LocationTarget lid)
+    hero <- toTarget <$> getHeroWithCode "01012"
+    _ <- putAttachmentOn pid Attachments.celebriansStone hero
+    run $ TravelTo lid
+    getWillpower hero `shouldReturn` 4
+    run $ Discard GameSource key
+    getWillpower hero `shouldReturn` 2

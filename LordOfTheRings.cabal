@@ -1875,6 +1875,7 @@ library
       LordOfTheRings.Location.Cards.DeepMines
       LordOfTheRings.Location.Cards.DeepRavine
       LordOfTheRings.Location.Cards.DenOfNight
+      LordOfTheRings.Location.Cards.DenseFernBrake
       LordOfTheRings.Location.Cards.DenseJungle
       LordOfTheRings.Location.Cards.DenseThickets
       LordOfTheRings.Location.Cards.DesecratedGrounds
@@ -2225,6 +2226,7 @@ library
       LordOfTheRings.Location.Cards.SeedyTavern
       LordOfTheRings.Location.Cards.Sewers
       LordOfTheRings.Location.Cards.ShadowedCorridor
+      LordOfTheRings.Location.Cards.ShadowyThicket
       LordOfTheRings.Location.Cards.ShadowyVale
       LordOfTheRings.Location.Cards.SharpJetties
       LordOfTheRings.Location.Cards.SharpPrecipice
@@ -2429,6 +2431,7 @@ library
       LordOfTheRings.Location.Cards.WindingCaverns
       LordOfTheRings.Location.Cards.WindingStairs
       LordOfTheRings.Location.Cards.WoldOfRohan
+      LordOfTheRings.Location.Cards.WoodedGlade
       LordOfTheRings.Location.Cards.WoodedRiverbank
       LordOfTheRings.Location.Cards.WoodedShoreline
       LordOfTheRings.Location.Cards.WoodElfPath

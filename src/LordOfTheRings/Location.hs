@@ -9,6 +9,9 @@ import LordOfTheRings.Classes.RunMessage
 import LordOfTheRings.Helpers.Modifiers (getModifiers)
 import LordOfTheRings.Message (Message (TravelTo))
 import LordOfTheRings.Modifier (ModifierType (Blank))
+import LordOfTheRings.Location.Cards.WoodedGlade
+import LordOfTheRings.Location.Cards.DenseFernBrake
+import LordOfTheRings.Location.Cards.ShadowyThicket
 import LordOfTheRings.Location.Cards.HelmsDike
 import LordOfTheRings.Location.Cards.HornburgWall
 import LordOfTheRings.Location.Cards.GlitteringCaves
@@ -766,6 +769,9 @@ allLocations =
         , SomeLocationCard glitteringCaves
         , SomeLocationCard poisonousShaft
         , SomeLocationCard fortressOfIsengard
+        , SomeLocationCard woodedGlade
+        , SomeLocationCard denseFernBrake
+        , SomeLocationCard shadowyThicket
         , SomeLocationCard festeringMire
         , SomeLocationCard candleLitPool
         , SomeLocationCard greatReedThicket

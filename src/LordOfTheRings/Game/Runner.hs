@@ -44,7 +44,7 @@ import LordOfTheRings.Game.Base (
 import LordOfTheRings.GameT (GameT)
 import LordOfTheRings.Helpers.Engagement (highestToughnessEngagements)
 import LordOfTheRings.Helpers.Discard (protectDiscardedHeroes)
-import LordOfTheRings.Helpers.Modifiers (getModifiers, isEncounterCardSource)
+import LordOfTheRings.Helpers.Modifiers (getModifiers, immuneToSource, isEncounterCardSource)
 import LordOfTheRings.Helpers.Staging (getLocationQuestPoints)
 import LordOfTheRings.Id (EnemyId, LocationId)
 import LordOfTheRings.Location (
@@ -72,6 +72,7 @@ import LordOfTheRings.Message (
     CheckWindows,
     CompleteQuest,
     CreateEffect,
+    DealDamage,
     Discard,
     DoStep,
     EngageEnemy,
@@ -142,7 +143,7 @@ import LordOfTheRings.Scenario (
   ScenarioAttrs (scenarioOutOfPlayResources),
   outOfPlayResourcesL,
  )
-import LordOfTheRings.Source (Source (GameSource))
+import LordOfTheRings.Source (Source (GameSource, EnemyAttackSource, PlayerAttackSource))
 import LordOfTheRings.Target (
   Target (
     AllyTarget,
@@ -196,6 +197,13 @@ runGame msg g = protectDiscardedHeroes g msg >>= maybe (pure g) (\allowed -> run
 
 runGameAllowed :: Message -> Game -> GameT Game
 runGameAllowed msg g = case msg of
+  -- Card-effect immunity does not prevent combat damage.
+  DealDamage source target _ -> do
+    immune <- case source of
+      EnemyAttackSource _ -> pure False
+      PlayerAttackSource _ -> pure False
+      _ -> immuneToSource source target
+    if immune then pure g else runGame'' msg g
   -- Filter before the host receives the cards or the original entities leave play.
   PlaceUnderneath host cards -> do
     allowed <- filterM (fmap (notElem $ CannotBePlacedUnder host) . getModifiers . CardIdTarget . (.id)) cards

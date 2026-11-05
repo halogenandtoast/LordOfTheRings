@@ -15,7 +15,10 @@ allLocationCards =
   Map.fromList $
     map
       (\def -> (cdCardCode def, def))
-      [ festeringMire
+      [ woodedGlade
+      , denseFernBrake
+      , shadowyThicket
+      , festeringMire
       , candleLitPool
       , greatReedThicket
       , fortressOfIsengard
@@ -5184,3 +5187,18 @@ candleLitPool = (location "the-land-of-shadow-nightmare-the-passage-of-the-marsh
 greatReedThicket :: CardDef
 greatReedThicket = (location "the-land-of-shadow-nightmare-the-passage-of-the-marshes-004" "Great Reed Thicket" ThePassageOfTheMarshesNightmare 2 2 3)
   {cdCardTraits = setFromList [Marsh], cdKeywords = setFromList [Mire 2], cdVictoryPoints = Just 2}
+
+
+-- * Journey to the Cross-roads Nightmare
+
+woodedGlade :: CardDef
+woodedGlade = (location "the-land-of-shadow-nightmare-journey-to-the-cross-roads-004" "Wooded Glade" JourneyToTheCrossRoadsNightmare 3 4 4)
+  {cdCardTraits = setFromList [Forest], cdShadowEffect = True}
+
+denseFernBrake :: CardDef
+denseFernBrake = (location "the-land-of-shadow-nightmare-journey-to-the-cross-roads-005" "Dense Fern-brake" JourneyToTheCrossRoadsNightmare 2 5 5)
+  {cdCardTraits = setFromList [Forest], cdShadowEffect = True}
+
+shadowyThicket :: CardDef
+shadowyThicket = (location "the-land-of-shadow-nightmare-journey-to-the-cross-roads-006" "Shadowy Thicket" JourneyToTheCrossRoadsNightmare 3 2 8)
+  {cdCardTraits = setFromList [Forest]}
