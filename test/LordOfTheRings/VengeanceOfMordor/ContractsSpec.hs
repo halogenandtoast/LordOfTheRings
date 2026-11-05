@@ -353,6 +353,42 @@ spec = describe "Contracts" do
       c.contractPlacement `shouldBe` AttachedTo (toTarget faramir)
       elem ImmuneToCardEffects <$> getModifiers c.contractId `shouldReturn` True
 
+    it "uses an imported MotKA ally at setup without adding a starting hero or doubling its threat" . gameTestWith (deckList [beravor, eowyn, "9901014"] [("22134", 1), ("01013", 3)]) $ \pid -> do
+      p <- getPlayer pid
+      p.playerMessengerOfTheKingAlly `shouldBe` Just "01014"
+      length p.deck `shouldBe` 4
+      run Setup
+      faramir <- getHeroWithCode "01014"
+      getsGame (Map.size . (.entities.heroes)) `shouldReturn` 3
+      getsGame (Map.size . (.entities.allies)) `shouldReturn` 0
+      player <- getPlayer pid
+      player.startingThreat `shouldBe` 27
+      length (filter ((== "01014") . toCardCode) (player.deck <> player.hand)) `shouldBe` 0
+      c <- contractAttrs
+      c.contractFlipped `shouldBe` True
+      c.contractPlacement `shouldBe` AttachedTo (toTarget faramir)
+      chooseLabel "$label.keepHand" pid
+      chooseOptionMatching "flip the quest" pid (const True)
+      getQuestion pid `shouldReturn` Nothing
+      let exhausted = heroExhausted . toAttrs <$> getHeroWithCode "01014"
+      run $ Exhaust (toTarget faramir)
+      run $ Ready (toTarget faramir)
+      exhausted `shouldReturn` False
+      run $ Exhaust (toTarget faramir)
+      run $ Ready (toTarget faramir)
+      exhausted `shouldReturn` True
+
+    it "offers another eligible ally when the imported choice is no longer in the deck" . gameTestWith (deckList [beravor, eowyn, "9901014"] [("22134", 1), ("01060", 1)]) $ \pid -> do
+      putGame . (playersL . ix pid . deckL %~ filter ((/= "01014") . toCardCode)) =<< getGame
+      run Setup
+      chooseOptionMatching "choose Henamarth instead" pid \case
+        TargetLabel (CardIdTarget _) _ -> True
+        _ -> False
+      henamarth <- getHeroWithCode "01060"
+      c <- contractAttrs
+      c.contractPlacement `shouldBe` AttachedTo (toTarget henamarth)
+      (.startingThreat) <$> getPlayer pid `shouldReturn` 22
+
     it "side B: its character readies at most once a phase, and it leaves the game with it" . gameTestWith deck $ \pid -> do
       run Setup
       chooseOptionMatching "choose Faramir" pid \case

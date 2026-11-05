@@ -1,7 +1,8 @@
 module LordOfTheRings.Decklist (module LordOfTheRings.Decklist) where
 
 import Data.Map.Strict qualified as Map
-import LordOfTheRings.Card
+import Data.Text qualified as T
+import LordOfTheRings.Card hiding (ally)
 import LordOfTheRings.Contract.CardDefs qualified as Contracts
 import LordOfTheRings.Player.Types
 import LordOfTheRings.Hero
@@ -19,6 +20,8 @@ data DeckList = DeckList
   , cards :: [(CardCode, Int)]
   , errata :: Bool
   -- ^ play the deck's cards as the FAQ's errata reads them, not as printed
+  , messengerOfTheKingAlly :: Maybe CardCode
+  -- ^ RingsDB's intended MotKA ally, still chosen from the deck during contract setup
   , contract :: Maybe CardCode
   -- ^ the contract chosen with the deck, never in it: it does not count toward its size
   -- (MEC77 rules, "Contracts")
@@ -28,22 +31,47 @@ data DeckList = DeckList
 
 -- decks stored before the errata toggle play with errata, and those before contracts have none
 instance FromJSON DeckList where
-  parseJSON = genericParseJSON defaultOptions . withDefaults [("errata", toJSON True), ("contract", Null)]
+  parseJSON = genericParseJSON defaultOptions . withDefaults [("errata", toJSON True), ("contract", Null), ("messengerOfTheKingAlly", Null)]
 
 {- | A deck played with errata, as every deck is unless its player turns them off. A
 contract among the cards, as a RingsDB deck list has it, is the deck's contract, not one of
 its cards; a second one stays among them, for 'deckProblem' to refuse.
 -}
 deckList :: [CardCode] -> [(CardCode, Int)] -> DeckList
-deckList hs cs = case break (isContract . fst) cs of
-  (before, (code, _) : after) -> DeckList hs (before <> after) True (Just code)
-  _ -> DeckList hs cs True Nothing
+deckList hs cs = normalizeMessengerOfTheKing $ case break (isContract . fst) cs of
+  (before, (code, _) : after) -> DeckList hs (before <> after) True Nothing (Just code)
+  _ -> DeckList hs cs True Nothing Nothing
  where
   isContract code = (cdCardType <$> Map.lookup code allPlayerCards) == Just ContractType
 
+-- | RingsDB represents a Messenger ally as a hero with "99" before its ally code.
+-- Only actual eligible allies are aliases; an arbitrary unknown code stays unknown.
+messengerOfTheKingOriginal :: CardCode -> Maybe CardCode
+messengerOfTheKingOriginal (CardCode code) = do
+  original <- CardCode <$> T.stripPrefix "99" code
+  def <- Map.lookup original allPlayerCards
+  guard (eligibleMessengerAlly def)
+  pure original
+
+eligibleMessengerAlly :: CardDef -> Bool
+eligibleMessengerAlly def = cdCardType def == AllyType && cdUnique def && cdSphere def `elem` map Just [Leadership, Tactics, Spirit, Lore]
+
+-- | The synthetic hero is one physical ally in the draw deck, in addition to any
+-- ordinary ally copies in the export. RingsDB repeats heroes in slots; the importer
+-- removes that repetition before calling this. Normalizing twice is harmless.
+normalizeMessengerOfTheKing :: DeckList -> DeckList
+normalizeMessengerOfTheKing dl = case mapMaybe messengerOfTheKingOriginal dl.heroes of
+  [ally] | dl.contract == Just (toCardCode Contracts.messengerOfTheKing) ->
+    dl
+      { heroes = filter (isNothing . messengerOfTheKingOriginal) dl.heroes
+      , cards = Map.toList $ Map.fromListWith (+) ((ally, 1) : dl.cards)
+      , messengerOfTheKingAlly = Just ally
+      }
+  _ -> dl
+
 -- | The deck with the contract chosen for it.
 withContract :: CardCode -> DeckList -> DeckList
-withContract code dl = dl {contract = Just code}
+withContract code dl = normalizeMessengerOfTheKing $ dl {contract = Just code}
 
 -- | The reference client's starter deck: Starter Set Leadership.
 starterDeck :: DeckList
@@ -80,12 +108,17 @@ lookupPlayerCardDef :: CardCode -> Either DeckException CardDef
 lookupPlayerCardDef cCode =
   maybe (Left $ DeckException $ "Missing card: " <> tshow cCode) Right $ Map.lookup cCode allPlayerCards
 
+-- | Include the ally the imported deck intends to turn into a hero when checking
+-- uniqueness and scenario restrictions, without counting it as a starting hero.
+intendedHeroes :: DeckList -> [CardCode]
+intendedHeroes dl = dl.heroes <> maybeToList dl.messengerOfTheKingAlly
+
 -- | Hero titles brought by more than one deck. Heroes are unique, so no two players may
 -- control heroes with the same title, whichever versions they are.
 sharedHeroes :: [DeckList] -> [Text]
 sharedHeroes deckLists = [title | (title, n) <- mapToList counts, n > (1 :: Int)]
  where
-  counts = Map.fromListWith (+) [(title, 1) | dl <- deckLists, title <- ordNub (mapMaybe heroTitle dl.heroes)]
+  counts = Map.fromListWith (+) [(title, 1) | dl <- deckLists, title <- ordNub (mapMaybe heroTitle (intendedHeroes dl))]
   heroTitle code = (\(Name title _) -> title) . (.cdName) <$> Map.lookup code allPlayerCards
 
 -- | Hero titles the decks bring that the scenario's rules keep out of play: The Fords of
@@ -101,7 +134,7 @@ barredHeroes scenarioId inCampaign deckLists =
       then ordNub [title | dl <- deckLists, (code, _) <- dl.cards, Just d <- [Map.lookup code allPlayerCards], Master `member` cdCardTraits d, let Name title _ = d.cdName]
       else []
   -- a Baggins or Fellowship sphere hero comes from the scenario, never from a deck
-  sagaHeroes = [title | dl <- deckLists, Just d <- map (`Map.lookup` allPlayerCards) dl.heroes, cdSphere d `elem` [Just Fellowship, Just Baggins], let Name title _ = d.cdName]
+  sagaHeroes = [title | dl <- deckLists, Just d <- map (`Map.lookup` allPlayerCards) (intendedHeroes dl), cdSphere d `elem` [Just Fellowship, Just Baggins], let Name title _ = d.cdName]
   cardTitles = [title | dl <- deckLists, (code, _) <- dl.cards, Just d <- [Map.lookup code allPlayerCards], let Name title _ = d.cdName]
   barred = case scenarioId of
     "the-fords-of-isen" -> ["Gríma"]
@@ -113,7 +146,7 @@ barredHeroes scenarioId inCampaign deckLists =
     "the-dead-marshes" -> ["Sméagol"]
     "return-to-mirkwood" -> ["Sméagol"]
     _ -> []
-  titles = [title | dl <- deckLists, Just d <- map (`Map.lookup` allPlayerCards) dl.heroes, let Name title _ = d.cdName]
+  titles = [title | dl <- deckLists, Just d <- map (`Map.lookup` allPlayerCards) (intendedHeroes dl), let Name title _ = d.cdName]
 
 -- | The most cards a deck may have in the scenario, its rules setting one: "Player decks
 -- cannot exceed 50 cards" (Assault on Dol Rhugar, The Fortress of Nurn's setup).
@@ -135,6 +168,10 @@ oversizedDecks scenarioId deckLists = do
 -- Its contract's restrictions must be met too (MEC77 rules, "Contracts").
 deckProblem :: DeckList -> Maybe Text
 deckProblem dl
+  | Just ally <- dl.messengerOfTheKingAlly
+  , dl.contract /= Just (toCardCode Contracts.messengerOfTheKing)
+      || not (maybe False eligibleMessengerAlly $ Map.lookup ally allPlayerCards)
+      || not (any (\(code, n) -> code == ally && n > 0) dl.cards) = Just $ ikeyWith "error.unknownCards" [textVar "cards" (tshow ally)]
   | notNull contractCards = Just $ ikey "error.oneContract"
   | null dl.heroes || length dl.heroes > maxHeroes = Just $ ikey "error.heroCount"
   | notNull twice = Just $ ikeyWith "error.duplicateHeroes" [textVar "heroes" (intercalate ", " twice)]
@@ -145,10 +182,11 @@ deckProblem dl
   defOf code = Map.lookup code allPlayerCards
   defs = [(d, n) | (code, n) <- dl.cards, Just d <- [defOf code]]
   heroDefs = mapMaybe defOf dl.heroes
+  intendedHeroDefs = mapMaybe defOf (intendedHeroes dl)
   contractCards = [d | (d, _) <- defs, cdCardType d == ContractType]
   -- Bond of Friendship allows a fourth
   maxHeroes = if dl.contract == Just (toCardCode Contracts.bondOfFriendship) then 4 else 3
-  twice = [t | (t, n) <- mapToList (Map.fromListWith (+) [(title d, 1 :: Int) | d <- heroDefs]), n > 1]
+  twice = [t | (t, n) <- mapToList (Map.fromListWith (+) [(title d, 1 :: Int) | d <- intendedHeroDefs]), n > 1]
   copies = Map.fromListWith (\(a, l) (b, l') -> (a + b, min l l')) [(title d, (n, cdDeckLimit d)) | (d, n) <- defs]
   over = [t | (t, (n, limit)) <- mapToList copies, n > limit]
   -- treasures do not count toward a deck's 50 cards (MEC115 rules, "Treasure")
@@ -202,4 +240,4 @@ loadPlayer name dl = do
     let (setAside, deck) = partition (member Encounter . cdKeywords . toCardDef) cards
     contractCard <- traverse (`genPlayerCard` Just pid) contractDef
     pure
-      ((newPlayer pid name deck) {playerErrata = dl.errata, playerStartingHeroes = dl.heroes, playerSetAsideCards = setAside, playerContract = contractCard}, heroes)
+      ((newPlayer pid name deck) {playerErrata = dl.errata, playerStartingHeroes = dl.heroes, playerMessengerOfTheKingAlly = dl.messengerOfTheKingAlly, playerSetAsideCards = setAside, playerContract = contractCard}, heroes)

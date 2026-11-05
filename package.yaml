@@ -1,4 +1,6 @@
 name:                LordOfTheRings
+extra-source-files:
+- test-decks/fixtures/*.json
 language: GHC2021
 default-extensions:
 - AllowAmbiguousTypes
@@ -107,3 +109,23 @@ tests:
     - LordOfTheRings
     - hspec
     - hspec-expectations-lifted
+  DeckImports-test:
+    main: ImportMain.hs
+    other-modules:
+    - CardDb
+    - Decks
+    - Model
+    source-dirs:
+    - test-decks
+    - app
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    dependencies:
+    - LordOfTheRings
+    - hspec
+    - persistent
+    - persistent-postgresql
+    - http-client
+    - http-client-tls
+    - time

@@ -36,7 +36,7 @@ import Data.Text qualified as T
 import Data.Time.Clock.POSIX (getPOSIXTime)
 import Database.Persist
 import Database.Persist.Sql (SqlBackend, fromSqlKey)
-import LordOfTheRings.Card (CardCode (..), allPlayerCards)
+import LordOfTheRings.Card (CardCode (..), allPlayerCards, cdWillpower, cdAttack, cdDefense, cdHitPoints)
 import LordOfTheRings.Decklist (DeckList (..), deckProblem)
 import LordOfTheRings.Decklist qualified as Decklist
 import LordOfTheRings.I18n (ikey, ikeyWith, textVar)
@@ -198,7 +198,7 @@ previewDeck db parsed =
   DeckPreview
     { deck = parsed
     , heroCodes = [c | s <- parsed.heroes, Just c <- [flip cardRingsdbCode db =<< s.cardCode]]
-    , cardCount = sum [s.quantity | s <- parsed.slots, not (maybe False (`isContract` db) s.cardCode)]
+    , cardCount = sum [s.quantity | s <- parsed.slots, not (maybe False (`isContract` db) s.cardCode)] + length [() | s <- parsed.heroes, isJust (Decklist.messengerOfTheKingOriginal $ CardCode s.sourceCode)]
     , list = either (const Nothing) Just dealt
     , problem = either Just (const Nothing) dealt
     }
@@ -235,7 +235,10 @@ toParsedDeck db source override deck =
  where
   heroes = slotsFrom deck.heroes
   -- keyed by card code, which is printing order: the order a deck list reads in
-  slotsFrom m = [slot db code (lookupRingsdbCode code db <|> ours code) quantity | (code, quantity) <- Map.toAscList m]
+  slotsFrom m = [slot db code (lookupRingsdbCode code db <|> messengerAlly code <|> ours code) quantity | (code, quantity) <- Map.toAscList m]
+  messengerAlly code = do
+    CardCode original <- Decklist.messengerOfTheKingOriginal (CardCode code)
+    lookupRingsdbCode original db
   -- a file written against our own database names our codes instead
   ours code = code <$ lookupCard code db
 
@@ -244,7 +247,13 @@ toParsedDeck db source override deck =
 heroThreat :: CardDb -> [Maybe Text] -> Maybe Int
 heroThreat db = \case
   [] -> Nothing
-  codes -> sum <$> traverse (>>= (`cardThreatCost` db)) codes
+  codes -> sum <$> traverse (>>= threat) codes
+ where
+  threat code = cardThreatCost code db <|> do
+    original <- cardRingsdbCode code db
+    _ <- Decklist.messengerOfTheKingOriginal (CardCode ("99" <> original))
+    def <- Map.lookup (CardCode original) allPlayerCards
+    sum <$> sequence [cdWillpower def, cdAttack def, cdDefense def, cdHitPoints def]
 
 slot :: CardDb -> Text -> Maybe Text -> Int -> Slot
 slot db sourceCode cardCode quantity = Slot {quantity, sourceCode, cardCode, card = flip lookupCard db =<< cardCode}
@@ -421,7 +430,7 @@ listDecks db userId = do
             , Just name <- [cardName ours db]
             ]
         , -- a contract goes with the deck, not in it (MEC77 rules)
-          cardCount = sum [s.lotrDeckSlotQuantity | s <- slots, s.lotrDeckSlotKind == "draw", not (maybe False (`isContract` db) s.lotrDeckSlotCardCode)]
+          cardCount = sum [s.lotrDeckSlotQuantity | s <- slots, s.lotrDeckSlotKind == "draw", not (maybe False (`isContract` db) s.lotrDeckSlotCardCode)] + length [() | s <- slots, s.lotrDeckSlotKind == "hero", isJust (Decklist.messengerOfTheKingOriginal $ CardCode s.lotrDeckSlotSourceCode)]
         , unresolvedCount = length [() | s <- slots, isNothing s.lotrDeckSlotCardCode]
         , updatedAt = d.lotrDeckUpdatedAt
         , usedAt = d.lotrDeckUsedAt
@@ -472,5 +481,7 @@ listFrom db heroes draw
   | otherwise = Left $ ikeyWith "error.unknownCards" [textVar "cards" (intercalate ", " unknown)]
  where
   dealt = Decklist.deckList (map (CardCode . code) heroes) [(CardCode (code l), n) | l@(_, _, n) <- draw]
-  code (source, ours, _) = fromMaybe source (flip cardRingsdbCode db =<< ours)
-  unknown = [fromMaybe (code l) (flip cardName db =<< ours) | l@(_, ours, _) <- heroes <> draw, not (Map.member (CardCode $ code l) allPlayerCards)]
+  code (source, ours, _)
+    | isJust (Decklist.messengerOfTheKingOriginal $ CardCode source) = source
+    | otherwise = fromMaybe source (flip cardRingsdbCode db =<< ours)
+  unknown = [fromMaybe (code l) (flip cardName db =<< ours) | l@(_, ours, _) <- heroes <> draw, let c = CardCode (code l), not (Map.member c allPlayerCards || (l `elem` heroes && c `notElem` dealt.heroes && isJust (Decklist.messengerOfTheKingOriginal c)))]

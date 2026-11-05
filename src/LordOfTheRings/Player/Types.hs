@@ -32,6 +32,8 @@ data Player = Player
   North: one Ranger Summons shuffles into the encounter deck stays here, known as the
   player's, until it is revealed
   -}
+  , playerMessengerOfTheKingAlly :: Maybe CardCode
+  -- ^ the imported Messenger ally to prefer, if it is still in the deck at setup
   , playerContract :: Maybe PlayerCard
   -- ^ the contract the player chose with his deck, put into play with his heroes
   , playerUnderThreatDial :: [Card]
@@ -46,7 +48,7 @@ instance ToJSON Player where
   toJSON = genericToJSON (aesonOptions $ Just "player")
 
 instance FromJSON Player where
-  parseJSON = genericParseJSON (aesonOptions $ Just "player") . withDefaults [("usedAbilities", toJSON ([] :: [UsedAbility])), ("startingThreat", toJSON (0 :: Int)), ("errata", toJSON True), ("startingHeroes", toJSON ([] :: [CardCode])), ("setAsideCards", toJSON ([] :: [Card])), ("contract", Null), ("underThreatDial", toJSON ([] :: [Card]))]
+  parseJSON = genericParseJSON (aesonOptions $ Just "player") . withDefaults [("usedAbilities", toJSON ([] :: [UsedAbility])), ("startingThreat", toJSON (0 :: Int)), ("errata", toJSON True), ("startingHeroes", toJSON ([] :: [CardCode])), ("setAsideCards", toJSON ([] :: [Card])), ("contract", Null), ("messengerOfTheKingAlly", Null), ("underThreatDial", toJSON ([] :: [Card]))]
 
 newPlayer :: PlayerId -> Text -> [Card] -> Player
 newPlayer pid name deck =
@@ -63,6 +65,7 @@ newPlayer pid name deck =
     , playerErrata = True
     , playerStartingHeroes = []
     , playerSetAsideCards = []
+    , playerMessengerOfTheKingAlly = Nothing
     , playerContract = Nothing
     , playerUnderThreatDial = []
     }

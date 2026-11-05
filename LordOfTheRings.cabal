@@ -9,6 +9,11 @@ version:        0.0.0
 license:        BSD3
 license-file:   LICENSE
 build-type:     Simple
+extra-source-files:
+    test-decks/fixtures/motka-codes.json
+    test-decks/fixtures/ringsdb-14632.json
+    test-decks/fixtures/ringsdb-15839.json
+    test-decks/fixtures/ringsdb-19545.json
 
 library
   exposed-modules:
@@ -3858,6 +3863,75 @@ executable LordOfTheRings-exe
     , uuid
     , yesod-core
     , yesod-persistent
+    , yesod-websockets
+  default-language: GHC2021
+
+test-suite DeckImports-test
+  type: exitcode-stdio-1.0
+  main-is: ImportMain.hs
+  other-modules:
+      CardDb
+      Decks
+      Model
+  hs-source-dirs:
+      test-decks
+      app
+  default-extensions:
+      AllowAmbiguousTypes
+      BlockArguments
+      DataKinds
+      DefaultSignatures
+      DeriveAnyClass
+      DerivingStrategies
+      DerivingVia
+      ExtendedDefaultRules
+      FunctionalDependencies
+      GADTs
+      LambdaCase
+      MultiWayIf
+      NoImplicitPrelude
+      NoMonomorphismRestriction
+      OverloadedLabels
+      OverloadedRecordDot
+      OverloadedStrings
+      PatternSynonyms
+      RecordWildCards
+      StrictData
+      TypeFamilies
+      TypeFamilyDependencies
+      TypeOperators
+      UndecidableInstances
+      ViewPatterns
+  ghc-options: -Wall -Werror -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -threaded -rtsopts
+  build-depends:
+      LordOfTheRings
+    , MonadRandom
+    , aeson
+    , base >=4.7 && <5
+    , bytestring
+    , classy-prelude
+    , conduit
+    , containers
+    , extra
+    , hspec
+    , http-client
+    , http-client-tls
+    , http-types
+    , lens
+    , monoidal-containers
+    , mtl
+    , persistent
+    , persistent-postgresql
+    , random
+    , random-shuffle
+    , safe
+    , template-haskell
+    , text
+    , time
+    , transformers
+    , unliftio
+    , uuid
+    , yesod-core
     , yesod-websockets
   default-language: GHC2021
 

@@ -73,6 +73,8 @@ export interface DeckList {
   cards: [string, number][]
   /** The contract chosen with the deck, never in it. */
   contract?: string | null
+  /** Imported MotKA ally to prefer during Messenger of the King setup. */
+  messengerOfTheKingAlly?: string | null
 }
 
 /** A deck loaded but not kept: what it holds, and its list, or why it cannot be played. */

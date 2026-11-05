@@ -2,13 +2,14 @@ module LordOfTheRings.Contract.Cards.MessengerOfTheKing (messengerOfTheKing) whe
 
 import Data.Aeson.Types (parseMaybe)
 import LordOfTheRings.Ally.Types (AllyAttrs (allyCardId))
-import LordOfTheRings.Card (Card (PlayerCard), CardType (AllyType), Sphere (Neutral), cdAttack, cdDefense, cdHitPoints, cdWillpower, toCardDef)
+import LordOfTheRings.Card (Card (PlayerCard), CardType (AllyType), Sphere (Neutral), cdAttack, cdDefense, cdHitPoints, cdWillpower, toCardDef, toCardCode)
 import LordOfTheRings.Classes.HasGame (getsGame)
 import LordOfTheRings.Contract.CardDefs qualified as Cards
 import LordOfTheRings.Contract.Import.Lifted
 import LordOfTheRings.Entities (entitiesAllies)
 import LordOfTheRings.Game.Base (gameEntities, gamePhase, gameRound)
 import LordOfTheRings.Phase (Phase)
+import LordOfTheRings.Player.Types (playerMessengerOfTheKingAlly)
 import LordOfTheRings.Placement (Placement (AttachedTo))
 
 newtype MessengerOfTheKing = MessengerOfTheKing ContractAttrs
@@ -48,15 +49,23 @@ instance RunMessage MessengerOfTheKing where
       let pid = attrs.owner
           eligible pc =
             cardMatches (CardWithType AllyType <> UniqueCard <> NotCard (CardWithSphere Neutral)) pc
-      allies <- filter eligible . (\p -> [pc | PlayerCard pc <- p.deck]) <$> getPlayer pid
-      chooseOneM pid do
-        questionLabeled "messengerOfTheKing.chooseAlly"
-        causedBy attrs
-        showing (map PlayerCard allies)
-        for_ allies \pc -> targeting (CardIdTarget pc.id) do
-          removeFromDeck pid pc.id
-          putAllyIntoPlayUnder pid pc
-          doStep 1 (WithTarget (CardIdTarget pc.id) msg)
+      player <- getPlayer pid
+      let allies = filter eligible [pc | PlayerCard pc <- player.deck]
+          preferred = find (\pc -> Just (toCardCode pc) == playerMessengerOfTheKingAlly player) allies
+          chooseMessenger pc = do
+            removeFromDeck pid pc.id
+            putAllyIntoPlayUnder pid pc
+            doStep 1 (WithTarget (CardIdTarget pc.id) msg)
+      case preferred of
+        Just pc -> chooseMessenger pc
+        Nothing -> chooseOneM pid do
+          questionLabeled "messengerOfTheKing.chooseAlly"
+          causedBy attrs
+          showing (map PlayerCard allies)
+          for_ allies \pc -> targeting (CardIdTarget pc.id) do
+            removeFromDeck pid pc.id
+            putAllyIntoPlayUnder pid pc
+            doStep 1 (WithTarget (CardIdTarget pc.id) msg)
       shufflePlayerDeck pid
       pure c
     DoStep 1 (WithTarget (CardIdTarget cid) (DoStep 3 Setup)) -> do
