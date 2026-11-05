@@ -341,6 +341,7 @@ library
       LordOfTheRings.Attachment.Cards.AncestralArmor
       LordOfTheRings.Attachment.Cards.AncientMathom
       LordOfTheRings.Attachment.Cards.AndurilTheRoadDarkens
+      LordOfTheRings.Attachment.Cards.AnvilOfGundabad
       LordOfTheRings.Attachment.Cards.AppointedByFate
       LordOfTheRings.Attachment.Cards.ArmoredDestrier
       LordOfTheRings.Attachment.Cards.ArmorOfErebor
@@ -348,6 +349,7 @@ library
       LordOfTheRings.Attachment.Cards.Arod
       LordOfTheRings.Attachment.Cards.Asfaloth
       LordOfTheRings.Attachment.Cards.Athelas
+      LordOfTheRings.Attachment.Cards.AxeOfTheEdain
       LordOfTheRings.Attachment.Cards.Ballista
       LordOfTheRings.Attachment.Cards.BannerOfElendil
       LordOfTheRings.Attachment.Cards.BeyondAllHope
@@ -384,6 +386,8 @@ library
       LordOfTheRings.Attachment.Cards.DunedainSignal
       LordOfTheRings.Attachment.Cards.DunedainWarning
       LordOfTheRings.Attachment.Cards.DurinsAxeTactics
+      LordOfTheRings.Attachment.Cards.DurinsDagger
+      LordOfTheRings.Attachment.Cards.DwarfLordsCrown
       LordOfTheRings.Attachment.Cards.DwarfPipe
       LordOfTheRings.Attachment.Cards.DwarrowdelfAxe
       LordOfTheRings.Attachment.Cards.DwarvenAxe
@@ -415,8 +419,10 @@ library
       LordOfTheRings.Attachment.Cards.Glamdring
       LordOfTheRings.Attachment.Cards.GlamdringTheRoadDarkens
       LordOfTheRings.Attachment.Cards.GlamdringTreasure
+      LordOfTheRings.Attachment.Cards.GlitteringLute
       LordOfTheRings.Attachment.Cards.GoldenBelt
       LordOfTheRings.Attachment.Cards.GoldenShield
+      LordOfTheRings.Attachment.Cards.GondolinShield
       LordOfTheRings.Attachment.Cards.GondorianFire
       LordOfTheRings.Attachment.Cards.GondorianShield
       LordOfTheRings.Attachment.Cards.GoodMeal
@@ -434,6 +440,7 @@ library
       LordOfTheRings.Attachment.Cards.HeirloomOfIarchon
       LordOfTheRings.Attachment.Cards.HeirOfMardil
       LordOfTheRings.Attachment.Cards.HeirOfValandil
+      LordOfTheRings.Attachment.Cards.HelmOfHeroes
       LordOfTheRings.Attachment.Cards.Herugrim
       LordOfTheRings.Attachment.Cards.Hithlain
       LordOfTheRings.Attachment.Cards.HobbitCloak
@@ -446,6 +453,7 @@ library
       LordOfTheRings.Attachment.Cards.InServiceOfTheSteward
       LordOfTheRings.Attachment.Cards.Intimidation
       LordOfTheRings.Attachment.Cards.IthilienPit
+      LordOfTheRings.Attachment.Cards.JewelsOfWilderland
       LordOfTheRings.Attachment.Cards.KahlielsHeaddress
       LordOfTheRings.Attachment.Cards.KeenLongbow
       LordOfTheRings.Attachment.Cards.KeepingCount
@@ -469,6 +477,7 @@ library
       LordOfTheRings.Attachment.Cards.MapOfEarnil
       LordOfTheRings.Attachment.Cards.MapOfRhovanion
       LordOfTheRings.Attachment.Cards.MarinersCompass
+      LordOfTheRings.Attachment.Cards.MasterworkBow
       LordOfTheRings.Attachment.Cards.MightyProwess
       LordOfTheRings.Attachment.Cards.MightyWarrior
       LordOfTheRings.Attachment.Cards.MirkwoodLongKnife
@@ -3898,6 +3907,7 @@ test-suite LordOfTheRings-test
       LordOfTheRings.Encounter.ScriptedCardsSpec
       LordOfTheRings.EncounterPhaseSpec
       LordOfTheRings.EndGameSpec
+      LordOfTheRings.EredMithrin.CampaignTreasuresSpec
       LordOfTheRings.EredMithrin.FireInTheNightPlayerCardsSpec
       LordOfTheRings.EredMithrin.FireInTheNightSpec
       LordOfTheRings.EredMithrin.JourneyUpTheAnduinSpec

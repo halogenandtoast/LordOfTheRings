@@ -4,7 +4,7 @@ import Data.Map.Strict qualified as Map
 import LordOfTheRings.Card.CardDef
 import LordOfTheRings.Card.CardType (CardType (..))
 import LordOfTheRings.Card.Code
-import LordOfTheRings.EncounterSet (EncounterSet (FliesAndSpiders, TheLonelyMountain, WeMustAwayEreBreakOfDay))
+import LordOfTheRings.EncounterSet (EncounterSet (FliesAndSpiders, JourneyUpTheAnduin, TheLonelyMountain, WeMustAwayEreBreakOfDay))
 import LordOfTheRings.Keyword
 import LordOfTheRings.Name (Name)
 import LordOfTheRings.Prelude
@@ -17,6 +17,19 @@ allAttachmentCards =
     map
       (\def -> (cdCardCode def, def))
       [ stewardOfGondor
+      , anvilOfGundabad
+      , axeOfTheEdain
+      , durinsDagger
+      , dwarfLordsCrown
+      , glitteringLute
+      , gondolinShield
+      , helmOfHeroes
+      , jewelsOfWilderland
+      , masterworkBow
+      , masterOfTheHunt
+      , unbroken
+      , theSteadfast
+      , dragonSlayer
       , iarionsPendant
       , cunning
       , hardy
@@ -2165,3 +2178,72 @@ throrsGoldenCup =
   (treasure "132024" "Thrór's Golden Cup" TheLonelyMountain [Artifact, Erebor, Item])
     { cdVictoryPoints = Just 3
     }
+
+-- * The Ered Mithrin campaign's treasures and Accolade boons
+
+{- | An Ered Mithrin treasure: a player card of its own type, discovered during the
+campaign and added to a deck afterwards, no more than 1 copy by title (MEC115 rules,
+"Treasure"). Each reads "Attach to", and carries the Journey Up the Anduin set icon.
+-}
+eredMithrinTreasure :: CardCode -> Name -> Int -> [Trait] -> CardDef
+eredMithrinTreasure code name cost traits =
+  (unique $ playerCard code name TreasureType Neutral)
+    { cdCost = Just (StaticCost cost)
+    , cdCardTraits = setFromList traits
+    , cdSetIcon = Just JourneyUpTheAnduin
+    , cdDeckLimit = 1
+    }
+
+anvilOfGundabad :: CardDef
+anvilOfGundabad = eredMithrinTreasure "EMC196" "Anvil of Gundabad" 0 [Artifact, Item]
+
+axeOfTheEdain :: CardDef
+axeOfTheEdain = (eredMithrinTreasure "EMC197" "Axe of the Edain" 0 [Artifact, Item, Weapon]) {cdKeywords = setFromList [Restricted]}
+
+durinsDagger :: CardDef
+durinsDagger = (eredMithrinTreasure "EMC198" "Durin's Dagger" 1 [Artifact, Item, Weapon]) {cdPlayableFrom = FromHandOrDiscard}
+
+dwarfLordsCrown :: CardDef
+dwarfLordsCrown = eredMithrinTreasure "EMC199" "Dwarf-Lord's Crown" 2 [Artifact, Item]
+
+glitteringLute :: CardDef
+glitteringLute = (eredMithrinTreasure "EMC200" "Glittering Lute" 0 [Artifact, Item]) {cdKeywords = setFromList [Restricted]}
+
+gondolinShield :: CardDef
+gondolinShield = (eredMithrinTreasure "EMC201" "Gondolin Shield" 0 [Artifact, Item, Armor]) {cdKeywords = setFromList [Restricted]}
+
+helmOfHeroes :: CardDef
+helmOfHeroes = (eredMithrinTreasure "EMC202" "Helm of Heroes" 0 [Artifact, Item, Armor]) {cdKeywords = setFromList [Restricted]}
+
+jewelsOfWilderland :: CardDef
+jewelsOfWilderland = eredMithrinTreasure "EMC203" "Jewels of Wilderland" 0 [Artifact, Item]
+
+masterworkBow :: CardDef
+masterworkBow = (eredMithrinTreasure "EMC204" "Masterwork Bow" 0 [Artifact, Item, Weapon]) {cdKeywords = setFromList [Restricted]}
+
+-- | The Ered Mithrin campaign's treasures, the pool "undiscovered treasures" are drawn from.
+eredMithrinTreasures :: [CardDef]
+eredMithrinTreasures = [anvilOfGundabad, axeOfTheEdain, durinsDagger, dwarfLordsCrown, glitteringLute, gondolinShield, helmOfHeroes, jewelsOfWilderland, masterworkBow]
+
+{- | An Accolade boon The Withered Heath's campaign card attaches as a main quest stage is
+defeated: Permanent, "Setup: Attach to a hero".
+-}
+accolade :: CardCode -> Name -> CardDef
+accolade code name =
+  (unique $ attachment code name Neutral (StaticCost 0))
+    { cdCardTraits = setFromList [Accolade, Title, Boon]
+    , cdKeywords = setFromList [Permanent]
+    , cdSetupAttach = True
+    }
+
+masterOfTheHunt :: CardDef
+masterOfTheHunt = accolade "EMC176" "Master of the Hunt"
+
+unbroken :: CardDef
+unbroken = accolade "EMC177" "Unbroken"
+
+theSteadfast :: CardDef
+theSteadfast = accolade "EMC178" "The Steadfast"
+
+dragonSlayer :: CardDef
+dragonSlayer = accolade "EMC179" "Dragon-slayer"

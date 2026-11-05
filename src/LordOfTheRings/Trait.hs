@@ -4,7 +4,8 @@ import Data.Char (isUpper)
 import LordOfTheRings.Prelude
 
 data Trait
-  = Archer
+  = Accolade
+  | Archer
   | Assault
   | Attack
   | Armor

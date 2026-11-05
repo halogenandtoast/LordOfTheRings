@@ -279,6 +279,15 @@ import LordOfTheRings.Attachment.Cards.MithrilShirtTreasure
 import LordOfTheRings.Attachment.Cards.ThrorsBattleAxe
 import LordOfTheRings.Attachment.Cards.ThrorsHuntingBow
 import LordOfTheRings.Attachment.Cards.ThrorsGoldenCup
+import LordOfTheRings.Attachment.Cards.AnvilOfGundabad
+import LordOfTheRings.Attachment.Cards.AxeOfTheEdain
+import LordOfTheRings.Attachment.Cards.DurinsDagger
+import LordOfTheRings.Attachment.Cards.DwarfLordsCrown
+import LordOfTheRings.Attachment.Cards.GlitteringLute
+import LordOfTheRings.Attachment.Cards.GondolinShield
+import LordOfTheRings.Attachment.Cards.HelmOfHeroes
+import LordOfTheRings.Attachment.Cards.JewelsOfWilderland
+import LordOfTheRings.Attachment.Cards.MasterworkBow
 import LordOfTheRings.Attachment.Runner ()
 import LordOfTheRings.Attachment.Types as X
 import LordOfTheRings.Id
@@ -595,5 +604,14 @@ allAttachments =
         , SomeAttachmentCard throrsBattleAxe
         , SomeAttachmentCard throrsHuntingBow
         , SomeAttachmentCard throrsGoldenCup
+        , SomeAttachmentCard anvilOfGundabad
+        , SomeAttachmentCard axeOfTheEdain
+        , SomeAttachmentCard durinsDagger
+        , SomeAttachmentCard dwarfLordsCrown
+        , SomeAttachmentCard glitteringLute
+        , SomeAttachmentCard gondolinShield
+        , SomeAttachmentCard helmOfHeroes
+        , SomeAttachmentCard jewelsOfWilderland
+        , SomeAttachmentCard masterworkBow
         ]
     ]

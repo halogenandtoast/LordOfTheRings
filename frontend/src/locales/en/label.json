@@ -3969,5 +3969,15 @@
     "choose": "Night Without End: remove 1 resource token from The Defense of Helm's Deep, or reveal 2 additional encounter cards",
     "removeToken": "Remove 1 resource token from The Defense of Helm's Deep",
     "reveal": "Reveal 2 additional encounter cards"
+  },
+  "anvilOfGundabad": {
+    "item": "Anvil of Gundabad: choose an Item attachment to play for 1 less"
+  },
+  "glitteringLute": {
+    "discard": "Glittering Lute: discard a card to reduce your threat by 2?",
+    "decline": "Do not discard"
+  },
+  "helmOfHeroes": {
+    "hero": "Helm of Heroes: choose a hero to add 1 resource to"
   }
 }
