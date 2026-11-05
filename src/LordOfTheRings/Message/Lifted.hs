@@ -1647,8 +1647,13 @@ discardResourceFromAHero source pid = do
 Outside the combat phase its shadow cards are discarded once the attack resolves.
 -}
 immediateAttack :: ReverseQueue m => PlayerId -> EnemyId -> m ()
-immediateAttack pid eid = do
-  push $ DealShadowCard eid
+immediateAttack = immediateAttackWithShadowCards 1
+
+-- | As 'immediateAttack', dealt this many shadow cards for it, as Saruman's Staff's "deal
+-- and resolve 2 shadow cards for this attack" reads.
+immediateAttackWithShadowCards :: ReverseQueue m => Int -> PlayerId -> EnemyId -> m ()
+immediateAttackWithShadowCards n pid eid = do
+  replicateM_ n $ push $ DealShadowCard eid
   push $ EnemyAttack pid eid
   phase <- getsGame gamePhase
   when (phase /= CombatPhase) $ push $ DiscardShadowCards eid
