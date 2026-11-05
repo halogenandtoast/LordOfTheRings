@@ -22,6 +22,6 @@ instance HasModifiersFor Isolated where
 instance RunMessage Isolated where
   runMessage msg (Isolated attrs) = case msg of
     CompleteQuest qid | qid == attrs.id -> do
-      eachPlayer \p -> push $ DrawCards $ Drawing p 1
+      eachPlayer \p -> push $ DrawCards $ DrawingFrom p 1 (toSource attrs)
       Isolated <$> runMessage msg attrs
     _ -> Isolated <$> runMessage msg attrs

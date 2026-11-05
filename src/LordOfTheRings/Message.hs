@@ -34,12 +34,20 @@ data DeckHandler = Shuffle
   deriving stock (Show, Eq, Generic)
   deriving anyclass (FromJSON, ToJSON)
 
-data Drawing = Drawing
+data Drawing = DrawingFrom
   { player :: PlayerId
   , count :: Int
+  , source :: Source
+  -- ^ what draws them, as Open Pit reads "from a player card effect"
   }
   deriving stock (Show, Eq, Generic)
   deriving anyclass (FromJSON, ToJSON)
+
+-- | A draw by the game's rules, as the resource phase's.
+pattern Drawing :: PlayerId -> Int -> Drawing
+pattern Drawing pid n <- DrawingFrom pid n _
+  where
+    Drawing pid n = DrawingFrom pid n GameSource
 
 -- | What characters count toward an escape test.
 data EscapeStat

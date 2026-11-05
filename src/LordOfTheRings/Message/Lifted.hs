@@ -265,7 +265,7 @@ drawCards :: (ReverseQueue m, Sourceable source) => source -> PlayerId -> Int ->
 drawCards source pid n = do
   mods <- getModifiers (PlayerTarget pid)
   let barred = CannotDrawCardsFromCardEffects `elem` mods || (CannotDrawCardsFromPlayerCardEffects `elem` mods && isPlayerCardSource (toSource source))
-  unless barred $ push $ DrawCards $ Drawing pid n
+  unless barred $ push $ DrawCards $ DrawingFrom pid n (toSource source)
 
 revealEncounterCard :: ReverseQueue m => m ()
 revealEncounterCard = push RevealEncounterCard

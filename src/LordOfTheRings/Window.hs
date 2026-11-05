@@ -136,6 +136,8 @@ data WindowType
     ThreatRaisedByDoomed PlayerId
   | -- | the player drew this many cards, by one draw
     CardsDrawn PlayerId Int
+  | -- | the player drew cards by the source's effect, alongside 'CardsDrawn'
+    CardsDrawnBy PlayerId Source
   | -- | a card effect reduced the player's threat: the player, and the card's source
     ThreatReduced PlayerId Source
   | -- | the players advanced to a quest stage, its When Revealed resolved
