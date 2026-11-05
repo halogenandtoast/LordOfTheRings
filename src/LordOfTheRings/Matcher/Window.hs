@@ -126,6 +126,8 @@ data WindowMatcher
     EnemyDeclaredAsAttackerWindow Timing
   | -- | the enemy's attack dealt excess damage, as The Cursed Sword reads
     EnemyDealtExcessDamageWindow Timing EnemyId
+  | -- | the excess damage destroyed the character, as Rotting Thing requires
+    EnemyDestroyedCharacterWithExcessDamageWindow Timing EnemyId
   | -- | characters attack the enemy, as "when it is attacked" reads
     EnemyAttackedWindow Timing EnemyId
   | -- | an encounter card revealed from the encounter deck with a When Revealed effect

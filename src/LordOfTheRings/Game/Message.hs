@@ -93,6 +93,7 @@ import LordOfTheRings.Classes.HasQueue (
   HasQueue (pushAll),
   clearQueue,
   insertAfterMatching,
+  popMessagesMatching,
   push,
   pushEnd,
   pushWhen,
@@ -1010,6 +1011,7 @@ import LordOfTheRings.Window (
     EliminatedByThreat,
     EnemyAttacked,
     EnemyAttacking,
+    AttackDealtExcessDamage,
     EnemyCardDestroyedByAttack,
     EnemyDeclaredAsAttacker,
     EnemyDefeated,
@@ -1590,6 +1592,13 @@ runGameMessage msg g = case msg of
           AllyTarget _ -> True
           _ -> False
         poisoned = [GivePoison target 1 | venom, n > 0, character]
+    -- Read the recipient after redirection and damage prevention, while its hit
+    -- points and existing wounds are still available. The window follows defeat.
+    excessDamage <- case source of
+      EnemyAttackSource eid | character && inPlay g target -> do
+        remaining <- max 0 <$> ((-) <$> getHitPoints target <*> getDamage target)
+        pure [CheckWindows [mkAfter $ AttackDealtExcessDamage eid target (n - remaining)] | n > remaining]
+      _ -> pure []
     pushAll
       $ [CreateEffect $ Effect GameSource target [DamagedWhileDefending] UntilEndOfAttack | defending]
       -- kept until the enemy attacks again, as what its attack destroyed is
@@ -1609,6 +1618,7 @@ runGameMessage msg g = case msg of
       <> [HealDamage source t n | AttackDamageHeals t <- attackMods]
       <> [CreateEffect $ Effect source t [m] UntilEndOfRound | n > 0, AttackDamageModifiesUntilEndOfRound t m <- attackMods]
       <> [CreateEffect $ Effect source target [m] UntilEndOfRound | n > 0, AttackDamageModifiesDamagedUntilEndOfRound m <- attackMods]
+      <> excessDamage
     pure $ recorded g
   GivePoison target n -> do
     barred <- elem CannotBePoisoned <$> getModifiers target
@@ -1727,6 +1737,11 @@ runGameMessage msg g = case msg of
     unless removed $ push $ AddToEncounterDiscard [MkEncounterCard (objectiveCardId $ toAttrs o) (toCardCode o)]
     pure $ g & entitiesL . objectivesL %~ Map.delete oid
   Destroy source target -> do
+    -- Destruction and excess damage from the same hit share the after window,
+    -- so their Forced abilities resolve before responses to the destruction.
+    excess <- popMessagesMatching \case
+      CheckWindows [Window After (AttackDealtExcessDamage eid damaged _)] -> source == EnemyAttackSource eid && damaged == target
+      _ -> False
     let (card, controller) = case target of
           HeroTarget hid | Just h <- Map.lookup hid g.entities.heroes -> (Just $ toCard h, Just h.owner)
           AllyTarget aid | Just a <- Map.lookup aid g.entities.allies -> (Just $ toCard a, placementController a.placement)
@@ -1742,6 +1757,7 @@ runGameMessage msg g = case msg of
              $ mkAfter (CharacterDestroyed target c)
              : map mkAfter under
              <> [mkAfter $ CharacterDestroyedByAttack eid target pid | (eid, _, pid) <- byAttack]
+             <> [w | CheckWindows windows <- excess, w <- windows]
          | Just c <- [card]
          ]
     let attacker eid = toCard <$> Map.lookup eid g.entities.enemies

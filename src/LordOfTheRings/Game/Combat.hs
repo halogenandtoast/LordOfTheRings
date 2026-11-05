@@ -155,7 +155,7 @@ import LordOfTheRings.Target (
 import LordOfTheRings.Token (Token (Damage, Progress))
 import LordOfTheRings.Treachery (createTreachery)
 import LordOfTheRings.Window (
-  WindowType (AttackDealtExcessDamage, ThreatRaisedByEncounter),
+  WindowType (ThreatRaisedByEncounter),
   mkAfter,
  )
 
@@ -330,7 +330,6 @@ attackDamage' pid eid target n = do
         <> [chooseOrRunOne pid [targetLabel t [DealDamage (EnemyAttackSource eid) t excess] | t <- excessTo] | notNull excessTo, excess > 0]
         <> toAflame
         <> [DiscardTopOfDeck pid excess | excessToDeck, excess > 0]
-        <> [CheckWindows [mkAfter $ AttackDealtExcessDamage eid target excess] | excess > 0]
 
 -- | The player's characters that may yet be declared as attackers against the enemy.
 ownAttackers :: PlayerId -> EnemyId -> GameT [Target]

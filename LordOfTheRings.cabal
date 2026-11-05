@@ -1054,6 +1054,7 @@ library
       LordOfTheRings.Enemy.Cards.PackHunters
       LordOfTheRings.Enemy.Cards.PackLeader
       LordOfTheRings.Enemy.Cards.PackOfWargs
+      LordOfTheRings.Enemy.Cards.PaleFaces
       LordOfTheRings.Enemy.Cards.PaleGreenTentacle
       LordOfTheRings.Enemy.Cards.PatrolLeader
       LordOfTheRings.Enemy.Cards.PatrolSentry
@@ -1098,6 +1099,7 @@ library
       LordOfTheRings.Enemy.Cards.RingwraithOfSauron
       LordOfTheRings.Enemy.Cards.RobAndBob
       LordOfTheRings.Enemy.Cards.RockAdder
+      LordOfTheRings.Enemy.Cards.RottingThing
       LordOfTheRings.Enemy.Cards.Rupert
       LordOfTheRings.Enemy.Cards.RupertNightmare
       LordOfTheRings.Enemy.Cards.RuthlessHillTroll
@@ -4235,6 +4237,7 @@ test-suite LordOfTheRings-test
       LordOfTheRings.StarterDeckSpec
       LordOfTheRings.TheLandOfShadow.JourneyToTheCrossRoadsSpec
       LordOfTheRings.TheLandOfShadow.ShelobsLairSpec
+      LordOfTheRings.TheLandOfShadow.ThePassageOfTheMarshesNightmareSpec
       LordOfTheRings.TheLandOfShadow.ThePassageOfTheMarshesSpec
       LordOfTheRings.TheLordOfTheRings.AKnifeInTheDarkNightmareSpec
       LordOfTheRings.TheLordOfTheRings.AKnifeInTheDarkSpec

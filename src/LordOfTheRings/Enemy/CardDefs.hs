@@ -14,7 +14,9 @@ allEnemyCards =
   Map.fromList $
     map
       (\def -> (cdCardCode def, def))
-      [ orthancArcher
+      [ paleFaces
+      , rottingThing
+      , orthancArcher
       , halfOrcOfIsengard
       , bloodiedBerserker
       , hostOfIsengard
@@ -5508,3 +5510,14 @@ orthancArcher = (enemy "the-treason-of-saruman-nightmare-the-road-to-isengard-00
 halfOrcOfIsengard :: CardDef
 halfOrcOfIsengard = (enemy "the-treason-of-saruman-nightmare-the-road-to-isengard-003" "Half-orc of Isengard" TheRoadToIsengardNightmare 3 33 3 3 2 4)
   {cdCardTraits = setFromList [Orc, Isengard], cdShadowEffect = True}
+
+
+-- * The Passage of the Marshes Nightmare
+
+paleFaces :: CardDef
+paleFaces = (enemy "the-land-of-shadow-nightmare-the-passage-of-the-marshes-005" "Pale Faces" ThePassageOfTheMarshesNightmare 3 30 2 4 3 5)
+  {cdCardTraits = setFromList [Undead], cdShadowEffect = True}
+
+rottingThing :: CardDef
+rottingThing = (enemy "the-land-of-shadow-nightmare-the-passage-of-the-marshes-006" "Rotting Thing" ThePassageOfTheMarshesNightmare 3 34 4 6 3 8)
+  {cdCardTraits = setFromList [Undead]}

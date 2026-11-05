@@ -6,6 +6,8 @@ import Data.Map.Strict qualified as Map
 import LordOfTheRings.Card
 import LordOfTheRings.Classes.Entity
 import LordOfTheRings.Classes.RunMessage
+import LordOfTheRings.Enemy.Cards.PaleFaces
+import LordOfTheRings.Enemy.Cards.RottingThing
 import LordOfTheRings.Enemy.Cards.OrthancArcher
 import LordOfTheRings.Enemy.Cards.HalfOrcOfIsengard
 import LordOfTheRings.Enemy.Cards.BloodiedBerserker
@@ -679,6 +681,8 @@ allEnemys =
     [ (toCardCode builder, card)
     | card@(SomeEnemyCard builder) <-
         [ SomeEnemyCard kingSpider
+        , SomeEnemyCard paleFaces
+        , SomeEnemyCard rottingThing
         , SomeEnemyCard orthancArcher
         , SomeEnemyCard halfOrcOfIsengard
         , SomeEnemyCard bloodiedBerserker

@@ -402,6 +402,14 @@ spec = describe "Challenge of the Wainriders" do
     run $ EngageEnemy pid racer
     guardian <- putAllyIntoPlay pid Allies.guardOfTheCitadel
     shadowAttack pid racer Locations.narrowPass guardian
+    -- Destruction and excess damage share a window: the first player orders
+    -- the Racer's Forced effect and the Chariot's mandatory excess damage.
+    choices <- maybe [] questionChoices <$> getQuestion pid
+    length [() | AbilityLabel {} <- choices] `shouldBe` 2
+    let resolveForced = getQuestion pid >>= \case
+          Just q | any (\case AbilityLabel {} -> True; _ -> False) (questionChoices q) -> chooseAbility pid >> resolveForced
+          _ -> pure ()
+    resolveForced
     -- 5 attack against 2 hit points: 3 excess, and 2 for destroying the Guard, past the
     -- stage's 4 quest points
     (\r -> (r.wainriders, r.wainridersDamage)) <$> getRace `shouldReturn` (1, 1)
