@@ -165,14 +165,15 @@ const campaign = (id: string, name: string, code: string, scenarios: ScenarioOpt
 
 // The boxes the engine plays in campaign mode, by the engine's campaign id (see
 // LordOfTheRings.Campaign): the Revised Core Set's Mirkwood Paths, Angmar Awakened, the
-// Lost Realm's scenarios with its cycle's, and the Dream-chaser Campaign Expansion's nine
-// scenarios, The Grey Havens' and the cycle's, one campaign.
+// Lost Realm's scenarios with its cycle's, the Dream-chaser Campaign Expansion's nine
+// scenarios, The Grey Havens' and the cycle's, one campaign, and Ered Mithrin's nine.
 export const campaignModes: Record<string, string> = {
   'core-set': 'revised-core',
   'angmar-awakened': 'angmar-awakened',
   'dream-chaser': 'dream-chaser',
   'the-hobbit': 'the-hobbit',
   'the-lord-of-the-rings': 'the-lord-of-the-rings',
+  'ered-mithrin': 'ered-mithrin',
 }
 
 export const campaigns: Campaign[] = [

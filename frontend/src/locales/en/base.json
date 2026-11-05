@@ -202,7 +202,14 @@
       "HaradEnemies": "Harad enemies underneath The Black Gate, set aside in The Battle of the Pelennor Fields: {cards}",
       "BlackGateResources": "Resources on The Black Gate as The Black Gate Opens ended, placed on Mount Doom's campaign card: {cards}",
       "CampaignLost": "The players lost the campaign: The One Ring was kept, and the power of Sauron endures.",
-      "Captives": "Taken captive at the end of Breaking of the Fellowship: {cards}"
+      "Captives": "Taken captive at the end of Breaking of the Fellowship: {cards}",
+      "Treasures": "Treasures discovered, each free to add to any player's deck before a game, 1 copy by title: {cards}",
+      "TuraynsOath": "Turayn has taken an oath of vigilance.",
+      "MelanwarsGuidance": "Melanwar has given you guidance on traversing Wilderland.",
+      "IsoldeOnTheHunt": "Isolde is on the hunt.",
+      "BeldisCare": "Beldis's care has bolstered the heroes' spirits.",
+      "DefeatedStage": "Stage just defeated: {cards}",
+      "FramsShadeTreasure": "A treasure has been attached to Fram's Shade this game."
     },
     "scenarios": "Scenarios",
     "total": "Campaign total",

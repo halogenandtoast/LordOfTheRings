@@ -2997,6 +2997,7 @@ library
       LordOfTheRings.Scenario.Scenarios.DungeonsDeepAndCavernsDim.Helpers
       LordOfTheRings.Scenario.Scenarios.EncounterAtAmonDin
       LordOfTheRings.Scenario.Scenarios.EncounterAtAmonDin.Helpers
+      LordOfTheRings.Scenario.Scenarios.EredMithrinCampaign
       LordOfTheRings.Scenario.Scenarios.EscapeFromDolGuldur
       LordOfTheRings.Scenario.Scenarios.EscapeFromMountGram
       LordOfTheRings.Scenario.Scenarios.EscapeFromMountGram.Helpers
@@ -3932,6 +3933,7 @@ test-suite LordOfTheRings-test
       LordOfTheRings.EndGameSpec
       LordOfTheRings.EredMithrin.CampaignBoonsSpec
       LordOfTheRings.EredMithrin.CampaignBurdensSpec
+      LordOfTheRings.EredMithrin.CampaignSpec
       LordOfTheRings.EredMithrin.CampaignTreasuresSpec
       LordOfTheRings.EredMithrin.FireInTheNightPlayerCardsSpec
       LordOfTheRings.EredMithrin.FireInTheNightSpec

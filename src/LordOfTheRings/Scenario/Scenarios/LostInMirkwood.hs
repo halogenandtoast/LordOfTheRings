@@ -6,14 +6,22 @@ import LordOfTheRings.EncounterSet qualified as EncounterSet
 import LordOfTheRings.Quest.Types (isSideQuest)
 import LordOfTheRings.Quest.CardDefs qualified as Quests
 import LordOfTheRings.Scenario.Import.Lifted
+import LordOfTheRings.Scenario.Scenarios.EredMithrinCampaign (eredMithrinAbilities, eredMithrinModifiers, runEredMithrinCampaign)
 import LordOfTheRings.Scenario.Scenarios.LostInMirkwood.Helpers (nextStage)
 
 newtype LostInMirkwood = LostInMirkwood ScenarioAttrs
-  deriving anyclass (IsScenario, HasAbilities, HasModifiersFor)
+  deriving anyclass IsScenario
   deriving newtype (Show, Eq, ToJSON, Entity)
 
 lostInMirkwood :: Scenario
 lostInMirkwood = Scenario $ scenario LostInMirkwood "lost-in-mirkwood" "Lost in Mirkwood"
+
+-- | The Ered Mithrin campaign card's abilities and modifiers, in campaign mode.
+instance HasAbilities LostInMirkwood where
+  getAbilities (LostInMirkwood a) = eredMithrinAbilities a
+
+instance HasModifiersFor LostInMirkwood where
+  getModifiersFor (LostInMirkwood a) = eredMithrinModifiers a
 
 {- | The encounter deck is built from Lost in Mirkwood, Dark Woods, Gathering Gloom,
 Passage Through Mirkwood, Spiders of Mirkwood and Dol Guldur Orcs (MEC65 rules); stage
@@ -69,4 +77,4 @@ instance RunMessage LostInMirkwood where
               pure $ LostInMirkwood $ attrs & questDeckL .~ (next : rest)
         _ -> pure $ LostInMirkwood attrs
     ScenarioSpecific "lostInMirkwood.nemesis" v -> pure $ LostInMirkwood $ attrs {scenarioMeta = v}
-    _ -> LostInMirkwood <$> runMessage msg attrs
+    _ -> LostInMirkwood <$> runEredMithrinCampaign msg attrs
