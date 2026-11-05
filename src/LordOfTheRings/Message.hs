@@ -279,6 +279,9 @@ data Message
   | FinishRevelation TreacheryId
   | -- | the revealed enemy or location surges if it has surge now, printed or gained
     ResolveSurge Target EncounterCard
+  | -- | the card's surge reveals one more card, unless every card of the encounter deck has
+    -- already surged in this chain
+    SurgeReveal CardId
   | {- | only the card's When Revealed effect resolves, as Lieutenant of Mordor's: it is
     not revealed, so no keyword, window or cancel touches it
     -}

@@ -460,7 +460,7 @@ spec = describe "The Lonely Mountain" do
       getWillpower (toTarget beravor) `shouldReturn` max 0 (willpower - (resources - 2))
 
   describe "campaign mode" do
-    it "records each treasure taken from under The Lonely Mountain for the player who took it" . tlmTest $ \pid -> do
+    it "has the players discover each treasure taken from under The Lonely Mountain" . campaignTestIn Scenarios.theLonelyMountain (newCampaignLog "the-hobbit") testDeck $ \pid -> do
       setUp pid
       _ <- toStageTwo
       top <- fromJustNote "treasure" . headMay <$> underTheMountain
@@ -469,9 +469,6 @@ spec = describe "The Lonely Mountain" do
       questSuccessfully
       chooseLabel "$label.theLonelyMountain.burgle.discard" pid
       chooseLabel "$label.theBurglarsTurnTheLonelyMountain.stay" pid
-      g <- getGame
-      putGame $ g & scenarioL %~ overAttrs (\a -> a {scenarioCampaign = Just (newCampaignLog "the-hobbit")})
-      run ResolveCampaign
       pool <- (.pool) <$> getCampaignLog
       [(p.code, p.seat) | p <- pool] `shouldBe` [(toCardCode top, Just 0)]
  where

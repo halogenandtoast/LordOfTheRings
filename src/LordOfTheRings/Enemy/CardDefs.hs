@@ -4634,7 +4634,7 @@ goblinMiners :: CardDef
 goblinMiners = goblin "131059" "Goblin Miners" 25 2 2 0 2
 
 goblinRunners :: CardDef
-goblinRunners = (goblin "131060" "Goblin Runners" 20 1 3 1 2) {cdKeywords = setFromList [Surge]}
+goblinRunners = (goblin "131060" "Goblin Runners" 20 1 3 1 2) {cdKeywords = setFromList [Surge], cdEasyModeQuantity = Just 1}
 
 goblinDriver :: CardDef
 goblinDriver = (goblin "131061" "Goblin Driver" 30 3 2 2 3) {cdWhenRevealed = True}
@@ -4642,7 +4642,7 @@ goblinDriver = (goblin "131061" "Goblin Driver" 30 3 2 2 3) {cdWhenRevealed = Tr
 -- * Over the Misty Mountains Grim
 
 stoneGiant :: CardDef
-stoneGiant = (enemy "131064" "Stone-giant" OverTheMistyMountainsGrim 3 40 4 6 3 9) {cdCardTraits = setFromList [Giant]}
+stoneGiant = (enemy "131064" "Stone-giant" OverTheMistyMountainsGrim 3 40 4 6 3 9) {cdCardTraits = setFromList [Giant], cdEasyModeQuantity = Just 1}
 
 -- * The Great Goblin
 
@@ -4671,6 +4671,7 @@ greatGrayWolf =
   (enemy "131075" "Great Gray Wolf" DungeonsDeepAndCavernsDim 1 30 4 5 2 5)
     { cdCardTraits = setFromList [Creature]
     , cdRiddle = Just $ Riddle [RiddleCardType, RiddleSphere, RiddleCost] 3
+    , cdEasyModeQuantity = Just 0
     }
 
 wildWargs :: CardDef

@@ -2994,7 +2994,7 @@ hatredRekindledTheBattleOfFiveArmies :: CardDef
 hatredRekindledTheBattleOfFiveArmies = (treachery "132064" "Hatred Rekindled" TheBattleOfFiveArmies 2) {cdShadowEffect = True, cdEasyModeQuantity = Just 1}
 
 goblinsAreUponYou :: CardDef
-goblinsAreUponYou = (treachery "132065" "Goblins are Upon You!" TheBattleOfFiveArmies 2) {cdShadowEffect = True}
+goblinsAreUponYou = (treachery "132065" "Goblins are Upon You!" TheBattleOfFiveArmies 2) {cdShadowEffect = True, cdEasyModeQuantity = Just 0}
 
 heedlessOfOrder :: CardDef
 heedlessOfOrder = (treachery "132066" "Heedless of Order" TheBattleOfFiveArmies 2) {cdKeywords = setFromList [Surge]}
@@ -3002,24 +3002,24 @@ heedlessOfOrder = (treachery "132066" "Heedless of Order" TheBattleOfFiveArmies 
 -- * We Must Away, Ere Break of Day
 
 lotsOrNoneAtAll :: CardDef
-lotsOrNoneAtAll = (treachery "131051" "Lots or None at All" WeMustAwayEreBreakOfDay 3) {cdShadowEffect = True}
+lotsOrNoneAtAll = (treachery "131051" "Lots or None at All" WeMustAwayEreBreakOfDay 3) {cdShadowEffect = True, cdEasyModeQuantity = Just 1}
 
 aNicePickle :: CardDef
 aNicePickle = (treachery "131052" "A Nice Pickle" WeMustAwayEreBreakOfDay 2) {cdKeywords = setFromList [Doomed 1], cdShadowEffect = True}
 
 roastEmOrBoilEm :: CardDef
-roastEmOrBoilEm = (treachery "131053" "Roast 'Em or Boil 'Em?" WeMustAwayEreBreakOfDay 3) {cdShadowEffect = True}
+roastEmOrBoilEm = (treachery "131053" "Roast 'Em or Boil 'Em?" WeMustAwayEreBreakOfDay 3) {cdShadowEffect = True, cdEasyModeQuantity = Just 2}
 
 hungryTroll :: CardDef
-hungryTroll = (treachery "131054" "Hungry Troll" WeMustAwayEreBreakOfDay 3) {cdShadowEffect = True}
+hungryTroll = (treachery "131054" "Hungry Troll" WeMustAwayEreBreakOfDay 3) {cdShadowEffect = True, cdEasyModeQuantity = Just 0}
 
 -- * Western Lands
 
 noCampfire :: CardDef
-noCampfire = (treachery "131055" "No Campfire" WesternLands 2) {cdKeywords = setFromList [Doomed 1], cdShadowEffect = True}
+noCampfire = (treachery "131055" "No Campfire" WesternLands 2) {cdKeywords = setFromList [Doomed 1], cdShadowEffect = True, cdEasyModeQuantity = Just 0}
 
 windWhippedRain :: CardDef
-windWhippedRain = (treachery "131056" "Wind-whipped Rain" WesternLands 2) {cdShadowEffect = True}
+windWhippedRain = (treachery "131056" "Wind-whipped Rain" WesternLands 2) {cdShadowEffect = True, cdEasyModeQuantity = Just 1}
 
 moreLikeAGrocer :: CardDef
 moreLikeAGrocer = (treachery "131057" "More Like a Grocer" WesternLands 1) {cdShadowEffect = True}
@@ -3027,12 +3027,12 @@ moreLikeAGrocer = (treachery "131057" "More Like a Grocer" WesternLands 1) {cdSh
 -- * Misty Mountain Goblins
 
 gripGrabPinchNab :: CardDef
-gripGrabPinchNab = (treachery "131070" "Grip, grab! Pinch, nab!" MistyMountainGoblins 3) {cdShadowEffect = True}
+gripGrabPinchNab = (treachery "131070" "Grip, grab! Pinch, nab!" MistyMountainGoblins 3) {cdShadowEffect = True, cdEasyModeQuantity = Just 0}
 
 -- * Over the Misty Mountains Grim
 
 gallopingBoulders :: CardDef
-gallopingBoulders = (treachery "131072" "Galloping Boulders" OverTheMistyMountainsGrim 4) {cdShadowEffect = True}
+gallopingBoulders = (treachery "131072" "Galloping Boulders" OverTheMistyMountainsGrim 4) {cdShadowEffect = True, cdEasyModeQuantity = Just 1}
 
 guffawingOfGiants :: CardDef
 guffawingOfGiants = treachery "131073" "Guffawing of Giants" OverTheMistyMountainsGrim 2
@@ -3040,7 +3040,7 @@ guffawingOfGiants = treachery "131073" "Guffawing of Giants" OverTheMistyMountai
 -- * The Great Goblin
 
 chaosInTheCavern :: CardDef
-chaosInTheCavern = (treachery "131071" "Chaos in the Cavern" TheGreatGoblin 2) {cdShadowEffect = True}
+chaosInTheCavern = (treachery "131071" "Chaos in the Cavern" TheGreatGoblin 2) {cdShadowEffect = True, cdEasyModeQuantity = Just 0}
 
 -- * Dungeons Deep and Caverns Dim
 
@@ -3049,13 +3049,13 @@ riddleTreachery code name quantity items discards =
   (treachery code name DungeonsDeepAndCavernsDim quantity) {cdRiddle = Just $ Riddle items discards}
 
 comeDownLittleBird :: CardDef
-comeDownLittleBird = riddleTreachery "131080" "Come down little bird" 2 [RiddleCardType, RiddleCost] 3
+comeDownLittleBird = (riddleTreachery "131080" "Come down little bird" 2 [RiddleCardType, RiddleCost] 3) {cdEasyModeQuantity = Just 1}
 
 itLikesRiddles :: CardDef
 itLikesRiddles = riddleTreachery "131081" "It Likes Riddles?" 3 [RiddleCost] 2
 
 hidingInTheTrees :: CardDef
-hidingInTheTrees = riddleTreachery "131082" "Hiding in the Trees" 2 [RiddleCardType, RiddleSphere] 3
+hidingInTheTrees = (riddleTreachery "131082" "Hiding in the Trees" 2 [RiddleCardType, RiddleSphere] 3) {cdEasyModeQuantity = Just 1}
 
 whatsInMyPocket :: CardDef
 whatsInMyPocket = riddleTreachery "131083" "What's In My Pocket?" 2 [RiddleSphere, RiddleCost] 2
@@ -3066,7 +3066,7 @@ notFairNotFair = treachery "131084" "Not fair! Not fair!" DungeonsDeepAndCaverns
 -- * The Lonely Mountain
 
 pretendingToSleep :: CardDef
-pretendingToSleep = (treachery "132048" "Pretending to Sleep" TheLonelyMountain 3) {cdKeywords = setFromList [Surge]}
+pretendingToSleep = (treachery "132048" "Pretending to Sleep" TheLonelyMountain 3) {cdKeywords = setFromList [Surge], cdEasyModeQuantity = Just 0}
 
 knownToAnOunce :: CardDef
 knownToAnOunce = treachery "132049" "Known to an Ounce" TheLonelyMountain 2
@@ -3075,7 +3075,7 @@ belchingFire :: CardDef
 belchingFire = treachery "132050" "Belching Fire" TheLonelyMountain 4
 
 dragonSpell :: CardDef
-dragonSpell = (treachery "132051" "Dragon-Spell" TheLonelyMountain 2) {cdCardTraits = setFromList [Enchantment]}
+dragonSpell = (treachery "132051" "Dragon-Spell" TheLonelyMountain 2) {cdCardTraits = setFromList [Enchantment], cdEasyModeQuantity = Just 0}
 
 -- * A Shadow of the Past
 

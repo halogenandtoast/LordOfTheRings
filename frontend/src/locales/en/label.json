@@ -3469,9 +3469,6 @@
   "gripGrabPinchNab": {
     "choose": "Choose a Goblin enemy in the discard pile to add to the staging area"
   },
-  "dawnTakeYouAllQuest": {
-    "treasure": "Choose the player who discovers {treasure}"
-  },
   "stoneGiant": {
     "discardAlly": "Stone-giant: choose an ally you control to discard"
   },

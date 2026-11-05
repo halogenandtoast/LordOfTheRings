@@ -4335,7 +4335,7 @@ theFrontGate = battlefieldLocation "132063" "The Front Gate" [Ruins, Mountain]
 -- * We Must Away, Ere Break of Day
 
 trollCamp :: CardDef
-trollCamp = (location "131036" "Troll Camp" WeMustAwayEreBreakOfDay 3 3 3) {cdCardTraits = setFromList [Forest, Trollshaws]}
+trollCamp = (location "131036" "Troll Camp" WeMustAwayEreBreakOfDay 3 3 3) {cdCardTraits = setFromList [Forest, Trollshaws], cdEasyModeQuantity = Just 1}
 
 -- | Set aside by stage 1A, added to the staging area by stage 2A.
 trollCave :: CardDef
@@ -4355,7 +4355,7 @@ hobbitLands =
 -- * Western Lands
 
 drearyHills :: CardDef
-drearyHills = (location "131039" "Dreary Hills" WesternLands 2 3 2) {cdCardTraits = setFromList [WesternLandsTrait]}
+drearyHills = (location "131039" "Dreary Hills" WesternLands 2 3 2) {cdCardTraits = setFromList [WesternLandsTrait], cdEasyModeQuantity = Just 1}
 
 loneLands :: CardDef
 loneLands = (location "131040" "Lone-Lands" WesternLands 2 2 3) {cdCardTraits = setFromList [WesternLandsTrait]}
@@ -4370,6 +4370,7 @@ theGoblinsCaves =
   (location "131065" "The Goblins' Caves" MistyMountainGoblins 3 3 3)
     { cdCardTraits = setFromList [Cave]
     , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 2
     }
 
 -- * Over the Misty Mountains Grim
@@ -4384,7 +4385,7 @@ theHighPass = unique (location "131069" "The High Pass" OverTheMistyMountainsGri
 -- * The Great Goblin
 
 frontPorch :: CardDef
-frontPorch = (location "131066" "Front Porch" TheGreatGoblin 2 4 4) {cdCardTraits = setFromList [Cave]}
+frontPorch = (location "131066" "Front Porch" TheGreatGoblin 2 4 4) {cdCardTraits = setFromList [Cave], cdEasyModeQuantity = Just 1}
 
 greatCavernRoom :: CardDef
 greatCavernRoom = (location "131067" "Great Cavern Room" TheGreatGoblin 3 2 3) {cdCardTraits = setFromList [Cave]}
@@ -4413,7 +4414,7 @@ theLonelyMountain =
       }
 
 greatHall :: CardDef
-greatHall = (location "132044" "Great Hall" TheLonelyMountain 3 4 4) {cdCardTraits = setFromList [Underground]}
+greatHall = (location "132044" "Great Hall" TheLonelyMountain 3 4 4) {cdCardTraits = setFromList [Underground], cdEasyModeQuantity = Just 0}
 
 -- | Of The Lonely Mountain's set, as its icon and the card database have it.
 secretEntrance :: CardDef

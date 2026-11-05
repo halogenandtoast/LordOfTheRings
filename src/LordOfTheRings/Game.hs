@@ -107,6 +107,7 @@ newTableIn gameScenario seats@((player, _) :| _) =
     , gameRevealer = Nothing
     , gamePeril = Nothing
     , gameFortitudeTests = []
+    , gameSurgeChain = []
     }
 
 answerQuestion :: PlayerId -> Int -> GameT Game
@@ -321,7 +322,7 @@ instance FromJSON Entities where
 instance FromJSON Game where
   parseJSON =
     genericParseJSON (aesonOptions $ Just "game")
-      . withDefaults [("logBlocks", toJSON ([] :: [Value])), ("leftPlay", object []), ("leftPlayLocations", object []), ("attackDestroyed", toJSON ([] :: [Value])), ("damageDealt", toJSON ([] :: [Value])), ("separation", Null), ("additionalPhases", toJSON ([] :: [Value])), ("resumeAfter", Null), ("revealer", Null), ("peril", Null), ("fortitudeTests", toJSON ([] :: [Value]))]
+      . withDefaults [("logBlocks", toJSON ([] :: [Value])), ("leftPlay", object []), ("leftPlayLocations", object []), ("attackDestroyed", toJSON ([] :: [Value])), ("damageDealt", toJSON ([] :: [Value])), ("separation", Null), ("additionalPhases", toJSON ([] :: [Value])), ("resumeAfter", Null), ("revealer", Null), ("peril", Null), ("fortitudeTests", toJSON ([] :: [Value])), ("surgeChain", toJSON ([] :: [Value]))]
 
 instance FromJSON Separation where
   parseJSON = genericParseJSON (aesonOptions $ Just "separation") . withDefaults [("shared", toJSON False)]
@@ -3524,8 +3525,7 @@ runGameMessage msg g = case msg of
     let def = toCardDef card
     players <- getPlayerOrder
     revealer <- maybe getLead pure (engaging <|> gameRevealer g)
-    let surge = [RevealEncounterCard | Surge `member` cdKeywords def]
-        doomed =
+    let doomed =
           concat
             [ [RaiseThreat p n, CheckWindows [mkAfter $ ThreatRaisedByEncounter p n, mkAfter $ ThreatRaisedByDoomed p]]
             | Doomed n <- toList (cdKeywords def)
@@ -3584,7 +3584,7 @@ runGameMessage msg g = case msg of
         -- and for the phase, as "the first treachery revealed each quest phase"
         let counted = CreateEffect $ Effect (TreacherySource $ toId treachery) GameTarget [TreacheryRevealedThisRound] UntilEndOfRound
             countedForPhase = CreateEffect $ Effect (TreacherySource $ toId treachery) GameTarget [TreacheryRevealedThisPhase] UntilEndOfPhase
-        pushAll . ([counted, countedForPhase] <>) . (<> [FinishRevelation (toId treachery), WhileInPlay (toTarget treachery) surge])
+        pushAll . ([counted, countedForPhase] <>) . (<> [FinishRevelation (toId treachery), ResolveSurge (toTarget treachery) card])
           =<< revealing (toTarget treachery)
         pure $ g & entitiesL . treacheriesL %~ insertEntity treachery
       -- a player card with the Encounter keyword, as Ranger of the North: it enters play
@@ -3609,7 +3609,7 @@ runGameMessage msg g = case msg of
       t | t `elem` [ObjectiveType, ObjectiveAllyType] -> do
         -- an objective ally a player gains control of, as Gildor Inglorion, goes to him
         let comesOut = if gainsController def then AddToStaging card else PutObjectiveIntoPlay card
-        pushAll . (<> doomed <> surge) =<< inLogBlock (RevealBlock card) [comesOut]
+        pushAll . (<> doomed <> [ResolveSurge (CardIdTarget card.id) card]) =<< inLogBlock (RevealBlock card) [comesOut]
         pure g
       -- an encounter side quest goes to the staging area, where the players may quest
       -- against it
@@ -3659,8 +3659,23 @@ runGameMessage msg g = case msg of
     pure g
   ResolveSurge t card -> do
     surges <- hasKeyword Surge t (toCardDef card)
-    pushWhen surges RevealEncounterCard
-    pure g
+    pushWhen surges $ SurgeReveal card.id
+    pure $ if surges then g else g & surgeChainL .~ []
+  -- With the encounter deck empty in the quest phase its discard pile is shuffled back in
+  -- at once, even before the last card revealed resolves, and a treachery's surge resolves
+  -- after it is discarded (Caleb Grace, Q&A on the sdajce forum, t1573). A discard pile
+  -- of surging treacheries alone would so be revealed again and again. The chain stops
+  -- once every card of the encounter deck has surged in it, each having been revealed
+  -- once, as Caleb rules a search through the whole deck for a card that is not there
+  -- resolves as best it can (ALeP FAQ 3.286).
+  SurgeReveal cid -> do
+    let chain = cid : gameSurgeChain g
+        deck = (toAttrs g.scenario).encounterDeck
+    if notNull deck && all ((`elem` chain) . (.id)) deck
+      then pure $ g & surgeChainL .~ []
+      else do
+        push RevealEncounterCard
+        pure $ g & surgeChainL .~ chain
   FinishRevelation tid -> do
     -- a treachery that did not attach itself to something is discarded once it resolves
     for_ (Map.lookup tid g.entities.treacheries) \treachery ->
