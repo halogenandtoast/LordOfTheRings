@@ -246,6 +246,7 @@
     "cost": "cost {n}"
   },
   "burgleAttempt": "{player} makes a burgle attempt",
+  "resolution": "The campaign card resolves",
   "burgleReveals": "The burgle attempt reveals {card}",
   "burgleSucceeds": "The burgle attempt succeeds",
   "burgleFails": "The burgle attempt fails",
