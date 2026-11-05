@@ -2,7 +2,7 @@ module LordOfTheRings.Hobbit.OverTheMistyMountainsGrimSpec (spec) where
 
 import LordOfTheRings.Ally.CardDefs qualified as Allies
 import LordOfTheRings.Attachment.CardDefs qualified as Attachments
-import LordOfTheRings.Campaign (CampaignLog (campaignLogPool), PoolCard (..), newCampaignLog)
+import LordOfTheRings.Campaign (CampaignLog (campaignLogCampaign, campaignLogHeroes, campaignLogPool), PoolCard (..), discoverTreasure, newCampaignLog)
 import LordOfTheRings.Card (CardDef (cdEncounterSet), HasCardCode, toCardDef)
 import LordOfTheRings.EncounterSet (EncounterSet (..))
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
@@ -143,6 +143,20 @@ spec = describe "Over the Misty Mountains Grim" do
         let stings pid = length . filter ((== toCardCode Attachments.stingTreasure) . toCardCode) . (.deck) <$> getPlayer pid
         stings p1 `shouldReturn` 1
         stings p2 `shouldReturn` 0
+
+    -- the test deck's heroes, discovered with in another order or with one changed
+    let discovered heroes = (discoverTreasure 0 (toCardCode Attachments.stingTreasure) (newCampaignLog "the-hobbit") {campaignLogHeroes = [heroes]}) {campaignLogHeroes = [["01012", "01007", "01002"]]}
+    it "offers a treasure discovered with the same group of heroes" . campaignTestIn overTheMistyMountainsGrim (discovered ["01002", "01012", "01007"]) testDeck $ \pid -> do
+      run $ DoStep 2 Setup
+      chooseLabel "$label.saga.addTreasureToDeck" pid
+
+    it "offers no treasure discovered with another group of heroes" . campaignTestIn overTheMistyMountainsGrim (discovered ["01012", "01007", "01001"]) testDeck $ \pid -> do
+      run $ DoStep 2 Setup
+      getQuestion pid `shouldReturn` Nothing
+
+    it "leaves the group of heroes unchecked outside The Hobbit" . campaignTestIn passageThroughMirkwood ((discovered ["01012", "01007", "01001"]) {campaignLogCampaign = "revised-core"}) testDeck $ \pid -> do
+      run $ DoStep 2 Setup
+      chooseLabel "$label.saga.addTreasureToDeck" pid
 
   describe "the stages" do
     it "A Short Rest lets each player search his deck for a treasure, then advances" . gameTestIn overTheMistyMountainsGrim treasureDeck $ \pid -> do
