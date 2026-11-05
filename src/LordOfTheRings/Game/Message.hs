@@ -619,6 +619,7 @@ import LordOfTheRings.Message (
     RemoveProgressFromQuest,
     RemoveShadowCard,
     RemoveTokens,
+    MoveResourcesFromHero,
     ReplaceWithTopOfCavesDeck,
     ResetToStage,
     ResolveArchery,
@@ -1237,6 +1238,8 @@ runGameMessage msg g = case msg of
       pure [HealDamage (toSource e) (toTarget e) n | n <- printed <> [n | GainKeyword (Regenerate n) <- mods]]
     heroes <- filterM (fmap (notElem DoesNotReadyDuringRefresh) . getModifiers) =<< select ExhaustedHero
     allies <- select ExhaustedAlly
+    attachments <- filterM (fmap (notElem DoesNotReadyDuringRefresh) . getModifiers) [a | a <- toList g.entities.attachments, attachmentExhausted (toAttrs a)]
+    objectives <- filterM (fmap (notElem DoesNotReadyDuringRefresh) . getModifiers) [o | o <- toList g.entities.objectives, o.exhausted]
     players <- getPlayerOrder
     -- a player who may refresh no more characters than some, as Heart of Fangorn reads,
     -- chooses which, if they would refresh more
@@ -1267,8 +1270,8 @@ runGameMessage msg g = case msg of
       $ concat regenerating
       <> concat readied
       <> [RefreshUpTo pid n cs | (pid, n, cs) <- limited]
-      <> [Ready (toTarget a) | a <- toList g.entities.attachments, attachmentExhausted (toAttrs a)]
-      <> [Ready (toTarget o) | o <- toList g.entities.objectives, o.exhausted]
+      <> [Ready (toTarget a) | a <- attachments]
+      <> [Ready (toTarget o) | o <- objectives]
       <> [Ready (toTarget c) | c <- toList g.entities.contracts, c.exhausted]
       <> [RaiseThreat pid n | (pid, n) <- raises, n > 0]
       <> passToken
@@ -2815,6 +2818,12 @@ runGameMessage msg g = case msg of
               <> [CheckWindows [mkAfter QuestedUnsuccessfully], CheckWindows [mkAfter QuestResolved]]
       | otherwise -> push $ CheckWindows [mkAfter QuestResolved]
     pure $ g & lastCommittedWillpowerL ?~ willpower & effectsL %~ filter (null . toPool)
+  MoveResourcesFromHero source hid target n | Just hero <- Map.lookup hid g.entities.heroes -> do
+    barred <- resourcesBarredFrom source target
+    let amount = min n hero.resources
+    when (amount > 0 && target /= HeroTarget hid && not barred) $
+      pushAll [Do (RemoveTokens source (HeroTarget hid) Resource amount), PlaceTokens source target Resource amount]
+    pure g
   PlaceTimeCounters target -> do
     x <- getTimeX target
     pushWhen (x > 0) $ PlaceTokens GameSource target TimeCounter x

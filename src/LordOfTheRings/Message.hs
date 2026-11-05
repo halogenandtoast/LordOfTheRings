@@ -987,6 +987,8 @@ data Message
   | -- | the two locations on the Island Map switch places, as Deceitful Island switches the
     -- active location with one next to it
     SwapIslandMapPositions LocationId LocationId
+  | -- | Move resources out of a hero pool without spending or discarding them.
+    MoveResourcesFromHero Source HeroId Target Int
   deriving stock (Show, Eq, Generic)
 
 uiToRun :: UI Message -> Message

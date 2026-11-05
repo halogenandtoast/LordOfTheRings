@@ -203,3 +203,32 @@ test.describe('with a seed whose mulligan draws a returned card again', () => {
     }
   })
 })
+
+test('long naming choices can be searched without changing their answer indexes', async ({ page, game }) => {
+  await page.getByRole('dialog').getByRole('button', { name: 'Continue', exact: true }).click()
+  const ask = (name: string, index: number) => game.debug({
+    tag: 'Ask', contents: [game.playerId, {
+      tag: 'QuestionLabel', label: '$label.riddle.nameTitle', source: null, targets: [],
+      question: { tag: 'ChooseOne', choices: Array.from({ length: 50 }, (_, i) => ({
+        tag: 'Label', label: i === index ? name : `Other title ${i}`, messages: [],
+      })) },
+    }],
+  })
+  const panel = page.locator('.seat .question')
+  const search = panel.getByRole('searchbox', { name: 'Find an option' })
+  await ask('Gandalf', 37)
+  await expect(search).toBeVisible()
+  await search.fill(' gAnDaLf ')
+  await expect(panel.locator('.options button')).toHaveCount(1)
+  const firstAnswer = page.waitForRequest(request => request.method() === 'POST' && request.url().endsWith(`/api/games/${game.id}`))
+  await panel.getByRole('button', { name: 'Gandalf', exact: true }).click()
+  expect((await firstAnswer).postDataJSON().choice).toBe(37)
+
+  await ask('Bilbo Baggins', 12)
+  await expect(search).toHaveValue('')
+  await search.fill('Bilbo')
+  await expect(panel.locator('.options button')).toHaveCount(1)
+  const secondAnswer = page.waitForRequest(request => request.method() === 'POST' && request.url().endsWith(`/api/games/${game.id}`))
+  await panel.getByRole('button', { name: 'Bilbo Baggins', exact: true }).click()
+  expect((await secondAnswer).postDataJSON().choice).toBe(12)
+})

@@ -944,6 +944,7 @@ library
       LordOfTheRings.Enemy.Cards.LostSoulOfLorien
       LordOfTheRings.Enemy.Cards.Louis
       LordOfTheRings.Enemy.Cards.LouisNightmare
+      LordOfTheRings.Enemy.Cards.LowerGateSentries
       LordOfTheRings.Enemy.Cards.ManOfHarad
       LordOfTheRings.Enemy.Cards.MaraudingOrc
       LordOfTheRings.Enemy.Cards.MarshAdder
@@ -1263,6 +1264,7 @@ library
       LordOfTheRings.Enemy.Cards.WhiteWarg
       LordOfTheRings.Enemy.Cards.WickedHuorn
       LordOfTheRings.Enemy.Cards.WickedSpider
+      LordOfTheRings.Enemy.Cards.WickedWolf
       LordOfTheRings.Enemy.Cards.WightOfRhudaur
       LordOfTheRings.Enemy.Cards.WildBear
       LordOfTheRings.Enemy.Cards.WilderlandBear
@@ -1894,6 +1896,7 @@ library
       LordOfTheRings.Location.Cards.ExpanseOfHarad
       LordOfTheRings.Location.Cards.ExposedRidge
       LordOfTheRings.Location.Cards.ExposedRiverbank
+      LordOfTheRings.Location.Cards.FallenStones
       LordOfTheRings.Location.Cards.Fanuidhol
       LordOfTheRings.Location.Cards.FenOfReeds
       LordOfTheRings.Location.Cards.FensAndMires
@@ -2094,6 +2097,7 @@ library
       LordOfTheRings.Location.Cards.PelennorField
       LordOfTheRings.Location.Cards.PerilousSwamp
       LordOfTheRings.Location.Cards.PillagedShip
+      LordOfTheRings.Location.Cards.PineSlopes
       LordOfTheRings.Location.Cards.PitchBlackTunnel
       LordOfTheRings.Location.Cards.PitchDarkThicket
       LordOfTheRings.Location.Cards.PlainOfGorgoroth
@@ -2260,6 +2264,7 @@ library
       LordOfTheRings.Location.Cards.TheLastBridge
       LordOfTheRings.Location.Cards.TheLeapingFish
       LordOfTheRings.Location.Cards.TheLonelyMountain
+      LordOfTheRings.Location.Cards.TheLowerGate
       LordOfTheRings.Location.Cards.TheMarish
       LordOfTheRings.Location.Cards.TheMereOfDeadFaces
       LordOfTheRings.Location.Cards.TheMountainsRoots
@@ -3714,6 +3719,7 @@ library
       LordOfTheRings.Treachery.Cards.WaylaidByAgents
       LordOfTheRings.Treachery.Cards.WearyLands
       LordOfTheRings.Treachery.Cards.WeCannotGetOut
+      LordOfTheRings.Treachery.Cards.WeHatesIt
       LordOfTheRings.Treachery.Cards.WeHatesThem
       LordOfTheRings.Treachery.Cards.WeighedDown
       LordOfTheRings.Treachery.Cards.WeighedDownWilderland
@@ -3721,6 +3727,7 @@ library
       LordOfTheRings.Treachery.Cards.WeightOfTheRing
       LordOfTheRings.Treachery.Cards.WeveBeenSeen
       LordOfTheRings.Treachery.Cards.WhatsInMyPocket
+      LordOfTheRings.Treachery.Cards.WhereIsssIt
       LordOfTheRings.Treachery.Cards.WhipLash
       LordOfTheRings.Treachery.Cards.WhispersInTheDark
       LordOfTheRings.Treachery.Cards.WickedMaster
@@ -4068,6 +4075,7 @@ test-suite LordOfTheRings-test
       LordOfTheRings.HeirsOfNumenor.PlayerCardsSpec
       LordOfTheRings.HeirsOfNumenor.TheSiegeOfCairAndrosSpec
       LordOfTheRings.Hero.HeroAbilitiesSpec
+      LordOfTheRings.Hobbit.DungeonsDeepAndCavernsDimNightmareSpec
       LordOfTheRings.Hobbit.DungeonsDeepAndCavernsDimSpec
       LordOfTheRings.Hobbit.EasyModeSpec
       LordOfTheRings.Hobbit.NightmareSpec

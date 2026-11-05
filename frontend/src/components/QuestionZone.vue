@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { useCardOverlay } from '../composables/useCardOverlay'
 import { useServerText } from '../i18n'
 import type { ChoiceView, ScoreView, QuestionView } from '../types'
@@ -20,15 +20,29 @@ const labelChoices = computed<ChoiceView[]>(() =>
   question?.amount ? [] : (question?.choices ?? []).filter((choice) => choice.targetId === null),
 )
 const targeted = computed(() => (question?.choices ?? []).length - labelChoices.value.length)
+const choiceSearch = ref('')
+watch(() => question, () => { choiceSearch.value = '' })
+const visibleLabelChoices = computed(() => {
+  const query = choiceSearch.value.trim().toLocaleLowerCase()
+  return query ? labelChoices.value.filter((choice) => tr(choice.label).toLocaleLowerCase().includes(query)) : labelChoices.value
+})
 </script>
 
 <template>
   <div class="question" :class="{ idle: !question }">
     <template v-if="question">
       <p class="prompt">{{ tr(question.prompt) }}</p>
+      <input
+        v-if="labelChoices.length > 20"
+        v-model="choiceSearch"
+        class="choice-search"
+        type="search"
+        :aria-label="$t('game.prompt.searchChoices')"
+        :placeholder="$t('game.prompt.searchChoices')"
+      />
       <div class="options">
         <button
-          v-for="choice in labelChoices"
+          v-for="choice in visibleLabelChoices"
           :key="choice.index"
           type="button"
           @click="choice.card && overlay.hide(); emit('choose', choice.index)"
@@ -61,6 +75,18 @@ const targeted = computed(() => (question?.choices ?? []).length - labelChoices.
 </template>
 
 <style scoped>
+.choice-search {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0.4rem 0.5rem;
+  color: var(--text);
+  background: var(--panel);
+  border: 1px solid var(--line-strong);
+  border-radius: 4px;
+  font: inherit;
+  font-size: 0.8rem;
+}
+.choice-search:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
 .score { display: grid; grid-template-columns: 1fr auto; gap: 0.25rem 1rem; margin: 0; font-size: 0.8rem; }
 .score dd { margin: 0; text-align: right; font-variant-numeric: tabular-nums; }
 .score dt:nth-last-of-type(1), .score dd:last-child { border-top: 1px solid var(--line); padding-top: 0.3rem; font-weight: 700; }

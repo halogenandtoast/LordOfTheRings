@@ -35,7 +35,6 @@ instance RunMessage DenethorLeadership where
         questionLabeled "denethorLeadership.moveTo"
         causedBy attrs
         targets heroes \other -> do
-          removeTokens attrs attrs Resource 1
-          placeResources attrs other 1
+          moveResourcesFromHero attrs attrs.id other 1
       pure h
     _ -> DenethorLeadership <$> runMessage msg attrs

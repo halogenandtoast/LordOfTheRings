@@ -418,6 +418,7 @@ data WindowMatcher
   | -- | an attack by a matching enemy that a matching hero defended has resolved, as Taste
     -- it Again! answers
     HeroDefendedAttackWindow Timing HeroMatcher EnemyMatcher
+  | BagginsResourceSpentOrDiscardedWindow Timing
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
@@ -461,6 +462,7 @@ windowMatches matcher (Window timing wType) = case (matcher, wType) of
   (MatchingEnemyEntersPlayWindow {}, _) -> False
   (TimeCountersRemovedFromEnemyWindow {}, _) -> False
   (PhaseEndsWindow t phase, PhaseEnds phase') -> t == timing && phase == phase'
+  (BagginsResourceSpentOrDiscardedWindow t, BagginsResourceSpentOrDiscarded) -> t == timing
   (RoundEndsWindow, RoundEnds) -> True
   (RoundBeginsWindow, RoundBegins) -> True
   (StagingStepBeginsWindow, StagingStepBegins) -> True

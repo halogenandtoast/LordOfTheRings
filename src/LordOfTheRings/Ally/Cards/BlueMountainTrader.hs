@@ -37,8 +37,7 @@ instance RunMessage BlueMountainTrader where
               questionLabeled "moveResourceTo"
               causedBy a
               targets yours \h' -> do
-                removeTokens a h Resource 1
-                placeResources a h' 1
+                moveResourcesFromHero a h h' 1
             labeled "blueMountainTrader.discard" $ discard a a
       pure s
     _ -> BlueMountainTrader <$> runMessage msg a

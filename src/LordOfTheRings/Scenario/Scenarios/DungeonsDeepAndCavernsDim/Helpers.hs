@@ -23,7 +23,16 @@ module LordOfTheRings.Scenario.Scenarios.DungeonsDeepAndCavernsDim.Helpers (
 ) where
 
 import Data.Aeson.Types (parseMaybe)
-import LordOfTheRings.Card (CardCode, CardCost (StaticCost), CardDef (..), CardType, EncounterCard, HasCardDef, toCardCode, toCardDef)
+import LordOfTheRings.Card (
+  CardCode,
+  CardCost (StaticCost),
+  CardDef (..),
+  CardType,
+  EncounterCard,
+  HasCardDef,
+  toCardCode,
+  toCardDef,
+ )
 import LordOfTheRings.Card.CardDef (Riddle, RiddleItem)
 import LordOfTheRings.Classes.Entity (toAttrs, toId)
 import LordOfTheRings.Classes.HasGame
@@ -33,14 +42,22 @@ import LordOfTheRings.Id (PlayerId, QuestId)
 import LordOfTheRings.Matcher (EnemyMatcher (EnemyWithCardCode))
 import LordOfTheRings.Message
 import LordOfTheRings.Message.Lifted (ReverseQueue)
+import LordOfTheRings.Name (Name (..))
 import LordOfTheRings.Prelude
 import LordOfTheRings.Quest.CardDefs qualified as Quests
 import LordOfTheRings.Scenario.Types (ScenarioAttrs (..))
 import LordOfTheRings.Source
 import LordOfTheRings.Sphere (Sphere)
+import LordOfTheRings.Trait (Trait)
 
 -- | An item the first player names: a card type, the treasure type, a sphere or a cost.
-data Named = NamedCardType CardType | NamedTreasure | NamedSphere Sphere | NamedCost Int
+data Named
+  = NamedCardType CardType
+  | NamedTreasure
+  | NamedSphere Sphere
+  | NamedCost Int
+  | NamedTitle Text
+  | NamedTrait Trait
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
@@ -86,8 +103,9 @@ answerRiddle source fromReveal card = do
   unless ignored $ for_ (cdRiddle $ toCardDef card) \(r :: Riddle) ->
     push $ ScenarioSpecific "riddle.answer" $ toJSON (toSource source, fromReveal, card, r)
 
--- | Discard more cards from the top of the answering player's deck for the riddle being
--- answered, as Bilbo's Magic Ring does.
+{- | Discard more cards from the top of the answering player's deck for the riddle being
+answered, as Bilbo's Magic Ring does.
+-}
 riddleDiscard :: ReverseQueue m => Int -> m ()
 riddleDiscard n = push $ ScenarioSpecific "riddle.discard" (toJSON n)
 
@@ -95,18 +113,27 @@ riddleDiscard n = push $ ScenarioSpecific "riddle.discard" (toJSON n)
 riddlesIgnored :: HasGame m => m Bool
 riddlesIgnored = getsGame (any ((== toCardCode Quests.intoTheFire) . toCardCode) . toList . (.entities.quests))
 
--- | Whether the card discarded matches the item named: a treasure is of the treasure type
--- alone, and only a printed cost is matched.
+{- | Whether the card discarded matches the item named: a treasure is of the treasure type
+alone, and only a printed cost is matched.
+-}
 matchesNamed :: CardDef -> Named -> Bool
 matchesNamed def = \case
   NamedTreasure -> cdTreasure def
   NamedCardType t -> cdCardType def == t && not (cdTreasure def)
   NamedSphere s -> cdSphere def == Just s
   NamedCost n -> cdCost def == Just (StaticCost n)
+  NamedTitle title -> let Name printed _ = cdName def in printed == title
+  NamedTrait trait -> trait `member` cdCardTraits def
 
 gollumEnemy :: EnemyMatcher
 gollumEnemy = EnemyWithCardCode (toCardCode Enemies.gollumDungeonsDeep)
 
 -- | Riddles in the Dark, while it is in play.
 getRiddleStage :: HasGame m => m (Maybe QuestId)
-getRiddleStage = getsGame (fmap toId . find ((== toCardCode Quests.riddlesInTheDark) . toCardCode) . toList . (.entities.quests))
+getRiddleStage =
+  getsGame
+    ( fmap toId
+        . find ((== toCardCode Quests.riddlesInTheDark) . toCardCode)
+        . toList
+        . (.entities.quests)
+    )

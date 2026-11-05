@@ -131,6 +131,7 @@
     "lowerIsBetter": "Lower scores are better."
   },
   "prompt": {
+    "searchChoices": "Find an option",
     "playersWin": "The players win",
     "playersLose": "The players lose",
     "victoryPoints": "{value} victory points",

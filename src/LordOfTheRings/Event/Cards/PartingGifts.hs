@@ -29,7 +29,6 @@ instance RunMessage PartingGifts where
               questionLabeled "chooseX"
               causedBy attrs
               for_ [1 .. giver.resources] \x -> labeledWith "xEquals" [intVar "x" x] do
-                removeTokens attrs giver Resource x
-                placeResources attrs receiver x
+                moveResourcesFromHero attrs giver.id receiver x
       pure e
     _ -> PartingGifts <$> runMessage msg attrs

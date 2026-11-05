@@ -3488,6 +3488,10 @@
     "spend": "Spend how many Baggins resources to reveal that many fewer encounter cards?"
   },
   "riddle": {
+    "nameTitle": "Name a card title",
+    "nameTrait": "Name a trait",
+    "namedTitle": "{title}",
+    "namedTrait": "{trait}",
     "choose": "{card} has a riddle: resolve the card, or answer its riddle?",
     "resolve": "Resolve it",
     "answer": "Answer its riddle",
@@ -4048,5 +4052,7 @@
   "oneByOne": {"destroy": "Choose a character with a Sack to destroy"},
   "darkPassages": {"makeActive": "Choose a location to make active"},
   "goblinProwler": {"discard": "Choose a character to discard"},
-  "lightningSplinters": {"discard": "Choose a card to discard"}
+  "lightningSplinters": {"discard": "Choose a card to discard"},
+  "fallenStones": {"spend": "Spend Baggins resources to reduce Fallen Stones' damage"},
+  "whereIsssIt": {"choose": "Discard resources or face Gollum's attack", "discard": "Discard 2 Baggins resources", "attack": "Gollum attacks Bilbo Baggins"}
 }

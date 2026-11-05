@@ -14,7 +14,9 @@ allTreacheryCards =
   Map.fromList $
     map
       (\def -> (cdCardCode def, def))
-      [ lightningSplinters
+      [ whereIsssIt
+      , weHatesIt
+      , lightningSplinters
       , swishSmackWhipCrack
       , minceThemFine
       , nightWanesSlow
@@ -3551,3 +3553,15 @@ swishSmackWhipCrack :: CardDef
 swishSmackWhipCrack =
   (treachery "over-hill-and-under-hill-nightmare-over-the-misty-mountains-grim-008" "Swish, smack! Whip crack!" TheGreatGoblinNightmare 2)
     {cdShadowEffect = True}
+
+-- * Dungeons Deep and Caverns Dim Nightmare
+
+whereIsssIt :: CardDef
+whereIsssIt =
+  (treachery "over-hill-and-under-hill-nightmare-dungeons-deep-and-caverns-dim-007" "Where Isss It?" DungeonsDeepAndCavernsDimNightmare 3)
+    {cdRiddle = Just $ Riddle [RiddleSphere, RiddleCost, RiddleCardType] 3}
+
+weHatesIt :: CardDef
+weHatesIt =
+  (treachery "over-hill-and-under-hill-nightmare-dungeons-deep-and-caverns-dim-008" "We Hates It!" DungeonsDeepAndCavernsDimNightmare 3)
+    {cdRiddle = Just $ Riddle [RiddleTrait] 1}

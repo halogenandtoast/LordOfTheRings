@@ -1,15 +1,21 @@
 module LordOfTheRings.Scenario.Scenarios.DungeonsDeepAndCavernsDim (dungeonsDeepAndCavernsDim) where
 
 import Data.Aeson.Types (parseMaybe)
+import LordOfTheRings.Classes.HasGame (getsGame)
 import LordOfTheRings.EncounterSet qualified as EncounterSet
-import LordOfTheRings.Matcher (getLead, getPlayer, getPlayerOrder)
+import LordOfTheRings.Enemy.CardDefs qualified as Enemies
+import LordOfTheRings.Location.CardDefs qualified as Locations
+import LordOfTheRings.Matcher (cardIs, getLead, getPlayer, getPlayerOrder, select)
 import LordOfTheRings.Message.Lifted.Choose
-import LordOfTheRings.Modifier (ModifierType (AnsweringRiddle))
+import LordOfTheRings.Modifier (ModifierType (AnsweringRiddle, CannotTakeDamage))
+import LordOfTheRings.Name (Name (..))
 import LordOfTheRings.Quest.CardDefs qualified as Quests
+import LordOfTheRings.Scenario.CardDefs qualified as Nightmare
 import LordOfTheRings.Scenario.Import.Lifted
 import LordOfTheRings.Scenario.Scenarios.DungeonsDeepAndCavernsDim.Helpers
 import LordOfTheRings.Source (Source (CardIdSource, ScenarioSource))
 import LordOfTheRings.Token (Token (Progress))
+import LordOfTheRings.Trait (Trait, traitName)
 import LordOfTheRings.Treachery.CardDefs qualified as Treacheries
 
 newtype DungeonsDeepAndCavernsDim = DungeonsDeepAndCavernsDim ScenarioAttrs
@@ -17,12 +23,33 @@ newtype DungeonsDeepAndCavernsDim = DungeonsDeepAndCavernsDim ScenarioAttrs
   deriving newtype (Show, Eq, ToJSON, Entity)
 
 dungeonsDeepAndCavernsDim :: Scenario
-dungeonsDeepAndCavernsDim = Scenario $ scenario DungeonsDeepAndCavernsDim "dungeons-deep-and-caverns-dim" "Dungeons Deep and Caverns Dim"
+dungeonsDeepAndCavernsDim =
+  Scenario
+    $ scenario
+      (DungeonsDeepAndCavernsDim . (nightmareDeckL ?~ nightmare))
+      "dungeons-deep-and-caverns-dim"
+      "Dungeons Deep and Caverns Dim"
+ where
+  -- https://hallofbeorn.com/LotR/Details/Dungeons-Deep-and-Caverns-Dim-Nightmare-DDaCDN
+  nightmare =
+    nightmareDeck
+      Nightmare.dungeonsDeepAndCavernsDimNightmare
+      EncounterSet.DungeonsDeepAndCavernsDimNightmare
+      [ (Enemies.goblinMiners, 3)
+      , (Enemies.goblinAxeman, 3)
+      , (Locations.theGoblinsCaves, 3)
+      , (Treacheries.gripGrabPinchNab, 3)
+      , (Treacheries.notFairNotFair, 1)
+      ]
 
--- | Once the items of a riddle are named and its cards discarded, the players may take
--- actions, as Bilbo's Magic Ring's first, before its matches are counted.
+{- | Once the items of a riddle are named and its cards discarded, the players may take
+actions, as Bilbo's Magic Ring's first, before its matches are counted.
+-}
 instance HasModifiersFor DungeonsDeepAndCavernsDim where
-  getModifiersFor (DungeonsDeepAndCavernsDim a) =
+  getModifiersFor (DungeonsDeepAndCavernsDim a) = do
+    when a.nightmare do
+      gollums <- select gollumEnemy
+      for_ gollums \g -> modified a g [CannotTakeDamage]
     for_ (getMeta a).riddle \r -> when (null r.riddleToName) $ modified a GameTarget [AnsweringRiddle]
 
 {- | The Dungeons Deep and Caverns Dim and Misty Mountain Goblins encounter sets make up the
@@ -42,24 +69,55 @@ that matches every item named.
 instance RunMessage DungeonsDeepAndCavernsDim where
   runMessage msg (DungeonsDeepAndCavernsDim attrs) = case msg of
     DoStep 1 Setup -> do
-      cards <- gatherEncounterSets attrs [EncounterSet.DungeonsDeepAndCavernsDim, EncounterSet.MistyMountainGoblins]
+      cards <-
+        gatherEncounterSets
+          attrs
+          [EncounterSet.DungeonsDeepAndCavernsDim, EncounterSet.MistyMountainGoblins]
       firstStage <- genEncounterCard Quests.outOfTheFryingPan
       laterStages <- traverse genEncounterCard [Quests.riddlesInTheDark, Quests.intoTheFire]
       putQuestIntoPlay firstStage
-      pure $ DungeonsDeepAndCavernsDim $ attrs & encounterDeckL .~ cards & questDeckL .~ laterStages
-    RevealEncounterCard | card : rest <- attrs.encounterDeck, hasRiddle card, not (answeredAsItResolves card) -> do
-      ignored <- riddlesIgnored
-      if ignored
-        then DungeonsDeepAndCavernsDim <$> runMessage msg attrs
-        else do
-          lead <- getLead
-          chooseOneM lead do
-            questionLabeledWith "riddle.choose" (cardVar "card" card)
-            showing [EncounterCard card]
-            labeled "riddle.resolve" $ push (RevealCard card)
-            labeled "riddle.answer" $ answerRiddle (CardIdSource card.id) True card
-          pure $ DungeonsDeepAndCavernsDim $ attrs & encounterDeckL .~ rest
-    ScenarioSpecific "riddle.answer" (parseMaybe parseJSON -> Just (source :: Source, fromReveal, card, Riddle items n)) -> do
+      let (gate, deck) = partition (\c -> attrs.nightmare && toCardCode c == toCardCode Locations.theLowerGate) cards
+      pure
+        $ DungeonsDeepAndCavernsDim
+        $ attrs
+        & encounterDeckL
+        .~ deck
+        & setAsideL
+        .~ gate
+        & questDeckL
+        .~ laterStages
+    Flip target | attrs.nightmare -> do
+      turning <-
+        getsGame
+          $ any
+            ( \q ->
+                toCardCode q
+                  == toCardCode Quests.intoTheFire
+                  && not q.flipped
+                  && (isTarget q target || CardIdTarget (toCard q).id == target)
+            )
+          . toList
+          . (.entities.quests)
+      when turning $ addSetAsideToStaging (cardIs Locations.theLowerGate)
+      DungeonsDeepAndCavernsDim <$> runMessage msg attrs
+    RevealEncounterCard
+      | card : rest <- attrs.encounterDeck
+      , hasRiddle card
+      , not (answeredAsItResolves card) -> do
+          ignored <- riddlesIgnored
+          if ignored
+            then DungeonsDeepAndCavernsDim <$> runMessage msg attrs
+            else do
+              lead <- getLead
+              chooseOneM lead do
+                questionLabeledWith "riddle.choose" (cardVar "card" card)
+                showing [EncounterCard card]
+                labeled "riddle.resolve" $ push (RevealCard card)
+                labeled "riddle.answer" $ answerRiddle (CardIdSource card.id) True card
+              pure $ DungeonsDeepAndCavernsDim $ attrs & encounterDeckL .~ rest
+    ScenarioSpecific
+      "riddle.answer"
+      (parseMaybe parseJSON -> Just (source :: Source, fromReveal, card, Riddle items n)) -> do
       lead <- getLead
       let state = RiddleState card source fromReveal lead items [] n []
       nameNext state
@@ -86,22 +144,49 @@ instance RunMessage DungeonsDeepAndCavernsDim where
     withRiddle r = DungeonsDeepAndCavernsDim $ attrs & metaL .~ toJSON (Meta r)
     answeredAsItResolves card = toCardCode card `elem` map toCardCode [Treacheries.itLikesRiddles, Treacheries.whatsInMyPocket]
 
--- | The first player names the next item, or, all named, shuffles his deck and discards the
--- top cards; the players may then act before the matches are counted.
+{- | The first player names the next item, or, all named, shuffles his deck and discards the
+top cards; the players may then act before the matches are counted.
+-}
 nameNext :: ReverseQueue m => RiddleState -> m ()
 nameNext r = case r.riddleToName of
   RiddleCardType : _ -> chooseOneM lead do
     questionLabeled "riddle.nameCardType"
     causedBy card
-    for_ [("ally", NamedCardType AllyType), ("event", NamedCardType EventType), ("attachment", NamedCardType AttachmentType), ("treasure", NamedTreasure)] \(k, n) ->
-      labeled ("riddle." <> k) $ name n
+    for_
+      [ ("ally", NamedCardType AllyType)
+      , ("event", NamedCardType EventType)
+      , ("attachment", NamedCardType AttachmentType)
+      , ("treasure", NamedTreasure)
+      ]
+      \(k, n) ->
+        labeled ("riddle." <> k) $ name n
   RiddleSphere : _ -> chooseOneM lead do
     questionLabeled "riddle.nameSphere"
     causedBy card
-    for_ [("leadership", Leadership), ("spirit", Spirit), ("lore", Lore), ("tactics", Tactics), ("baggins", Baggins)] \(k, sphere) ->
-      labeled ("riddle." <> k) $ name (NamedSphere sphere)
+    for_
+      [ ("leadership", Leadership)
+      , ("spirit", Spirit)
+      , ("lore", Lore)
+      , ("tactics", Tactics)
+      , ("baggins", Baggins)
+      ]
+      \(k, sphere) ->
+        labeled ("riddle." <> k) $ name (NamedSphere sphere)
   -- any cost may be named; no player card is printed with more than 9
   RiddleCost : _ -> chooseAmountM lead "riddle.nameCost" card 0 9 (name . NamedCost)
+  RiddleTitle : _ -> chooseOneM lead do
+    questionLabeled "riddle.nameTitle"
+    causedBy card
+    let titles =
+          sort
+            $ ordNub
+              [title | def <- toList allPlayerCards <> toList allEncounterCards, let Name title _ = cdName def]
+    for_ titles \title -> labeledWith "riddle.namedTitle" [textVar "title" title] $ name (NamedTitle title)
+  RiddleTrait : _ -> chooseOneM lead do
+    questionLabeled "riddle.nameTrait"
+    causedBy card
+    for_ ([minBound .. maxBound] :: [Trait]) \trait ->
+      labeledWith "riddle.namedTrait" [textVar "trait" (traitName trait)] $ name (NamedTrait trait)
   [] -> do
     shufflePlayerDeck lead
     riddleDiscard r.riddleDiscards

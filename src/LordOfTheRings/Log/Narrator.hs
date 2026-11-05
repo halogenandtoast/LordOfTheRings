@@ -31,7 +31,7 @@ import LordOfTheRings.Keyword (Keyword (DefenseKeyword))
 import LordOfTheRings.Log
 import LordOfTheRings.Log.Block
 import LordOfTheRings.Log.Refs
-import LordOfTheRings.Helpers.Modifiers (getModifiers, immuneToSource)
+import LordOfTheRings.Helpers.Modifiers (getModifiers, immuneToSource, resourcesBarredFrom)
 import LordOfTheRings.Matcher (currentQuestHas, getArcheryTotal, getDamage, getDiscoverValue, getLead, getTimeCounters)
 import LordOfTheRings.Modifier (ModifierType (CannotRemoveTimeCounters))
 import LordOfTheRings.Message
@@ -48,6 +48,7 @@ import LordOfTheRings.Scenario.Types
 import LordOfTheRings.Source
 import LordOfTheRings.Target
 import LordOfTheRings.Token
+import LordOfTheRings.Trait (traitName)
 import LordOfTheRings.Window (TimeOfDay (..), Window (..), WindowType (Became, FlippedTo))
 
 {- | What a message adds to the log, if anything. The match is pure, so a message that
@@ -184,6 +185,13 @@ narrationFor = \case
       TimeCounter -> tokens "log.timeCountersPlaced"
    where
     tokens key = whenRef target \t -> one $ mechanic [ikeyPart key ["target" ~> t, "count" ~> n]]
+  MoveResourcesFromHero source hid target n | n > 0 -> Just do
+    available <- getsGame (maybe 0 (.resources) . Map.lookup hid . (.entities.heroes))
+    barred <- resourcesBarredFrom source target
+    let moved = min n available
+    if moved <= 0 || target == HeroTarget hid || barred then pure [] else
+      whenRef (HeroTarget hid) \giverRef -> whenRef target \receiverRef ->
+        one $ mechanic [ikeyPart "log.movesResources" ["from" ~> giverRef, "to" ~> receiverRef, "count" ~> moved]]
   RemoveTokens source target token n | n > 0 -> case token of
     Progress -> Just $ whenRef target \t -> do
       -- a location immune to the source keeps its progress, as East-gate against Cave In
@@ -507,6 +515,8 @@ narrationFor = \case
           NamedTreasure -> ikeyPart "log.riddleItem.treasure" []
           NamedSphere sphere -> toLogPart sphere
           NamedCost n -> ikeyPart "log.riddleItem.cost" ["n" ~> n]
+          NamedTitle title -> toLogPart title
+          NamedTrait trait -> toLogPart (traitName trait)
     one $ action [ikeyPart "log.namesRiddle" ["player" ~> who, "item" ~> item]]
   ScenarioSpecific "riddle.answered" (parseMaybe parseJSON -> Just (_ :: Source, n :: Int)) ->
     Just $ one $ toned (if n > 0 then Good else Bad) $ mechanic [ikeyPart "log.riddleMatches" ["count" ~> n]]

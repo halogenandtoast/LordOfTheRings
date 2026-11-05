@@ -33,7 +33,7 @@ data RacingResult = Straight | Turn | Wild
 Hill and Under Hill rules insert, "Riddles"): a card type (ally, event, attachment or
 treasure), a sphere, a cost. A discarded card matches if it has each item named.
 -}
-data RiddleItem = RiddleCardType | RiddleSphere | RiddleCost
+data RiddleItem = RiddleCardType | RiddleSphere | RiddleCost | RiddleTitle | RiddleTrait
   deriving stock (Show, Eq, Ord, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

@@ -241,6 +241,8 @@ data WindowType
     ActiveLocationExplored LocationId
   | -- | the card of the enemy an attack destroyed, alongside 'EnemyDestroyedByAttack'
     EnemyCardDestroyedByAttack EnemyId CardId
+  | -- | One Baggins resource was actually spent or discarded, not transferred.
+    BagginsResourceSpentOrDiscarded
   deriving stock (Show, Eq, Generic)
 
 -- | Whether it is Day or Night, as The Wastes of Eriador's Time objective shows.

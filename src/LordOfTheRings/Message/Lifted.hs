@@ -594,6 +594,11 @@ chooseAndDiscard source pid cards = push $ ChooseAndDiscard (toSource source) pi
 dealShadowCard :: ReverseQueue m => EnemyId -> m ()
 dealShadowCard = push . DealShadowCard
 
+-- | Move resources from a hero's pool. Transferring them is neither spending nor
+-- discarding them, as Pine Slopes distinguishes.
+moveResourcesFromHero :: (ReverseQueue m, Sourceable source, Targetable target) => source -> HeroId -> target -> Int -> m ()
+moveResourcesFromHero source hid target n = push $ MoveResourcesFromHero (toSource source) hid (toTarget target) n
+
 -- | The player moves 1 resource from the pool of a hero they control to another hero's.
 moveResourceFromHero
   :: (ReverseQueue m, Sourceable source, Targetable source) => PlayerId -> source -> m ()
@@ -608,8 +613,7 @@ moveResourceFromHero pid source = do
         questionLabeled "moveResourceTo"
         causedBy source
         targets others \h' -> do
-          removeTokens source h Resource 1
-          placeResources source h' 1
+          moveResourcesFromHero source h h' 1
 
 -- | Act on the card this one is attached to; nothing when it is not attached.
 withHost :: (Applicative m, HasField "placement" a Placement) => a -> (Target -> m ()) -> m ()
@@ -2304,8 +2308,7 @@ takeResourceFromAHero a pid = do
     questionLabeled "takeResourceFromAHero"
     causedBy a
     targets heroes \h -> do
-      removeTokens a h Resource 1
-      placeResources a a 1
+      moveResourcesFromHero a h a 1
 
 -- | Deal the damage to the Aflame location in play with the lowest Aflame value, the first
 -- player choosing among those tied (Raid on the Grey Havens).

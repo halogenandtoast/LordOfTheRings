@@ -3,19 +3,20 @@
 module LordOfTheRings.Hero.Runner (module X) where
 
 import LordOfTheRings.Classes.HasQueue
-import LordOfTheRings.Card (cdHitPoints, toCardDef)
+import LordOfTheRings.Card (cdHitPoints, cdSphere, toCardDef)
 import LordOfTheRings.Classes.RunMessage
 import LordOfTheRings.Helpers.Modifiers (doesNotExhaustToCommit, getModifiers, resourcesBarredFrom)
 import LordOfTheRings.Hero.Types as X
 import LordOfTheRings.Message
 import LordOfTheRings.Effect (Effect (..), EffectDuration (UntilEndOfRound))
-import LordOfTheRings.Modifier (ModifierType (CannotCommitToQuest, CannotCollectResources, CannotExhaust, CannotReady, CannotReadyFromCardEffects, CollectsAdditionalResources, ControlledCardsCannotReady, DoesNotExhaustToAttack, ReadiedByRefresh, SpentResourcesThisRound))
+import LordOfTheRings.Modifier (ModifierType (GainResourceIcon, CannotCommitToQuest, CannotCollectResources, CannotExhaust, CannotReady, CannotReadyFromCardEffects, CollectsAdditionalResources, ControlledCardsCannotReady, DoesNotExhaustToAttack, ReadiedByRefresh, SpentResourcesThisRound))
 import LordOfTheRings.Phase
+import LordOfTheRings.Sphere (Sphere (Baggins))
 import LordOfTheRings.Prelude
 import LordOfTheRings.Source
 import LordOfTheRings.Target
 import LordOfTheRings.Token
-import LordOfTheRings.Window (WindowType (BecameReady, Exhausted, RemovedFromQuest), mkAfter)
+import LordOfTheRings.Window (WindowType (BagginsResourceSpentOrDiscarded, BecameReady, Exhausted, RemovedFromQuest), mkAfter)
 
 instance RunMessage HeroAttrs where
   runMessage msg attrs = case msg of
@@ -97,8 +98,14 @@ instance RunMessage HeroAttrs where
     PlaceTokens _ (isTarget attrs -> True) token n -> do
       pure $ attrs & tokensL %~ addTokens token n
     -- a player spending resources from its pool, as Tighten Our Belts reads
-    RemoveTokens (PlayerSource _) (isTarget attrs -> True) Resource n | n > 0 && attrs.resources > 0 -> do
-      push $ CreateEffect $ Effect GameSource (toTarget attrs) [SpentResourcesThisRound] UntilEndOfRound
+    Do (RemoveTokens _ (isTarget attrs -> True) Resource n) -> pure $ attrs & tokensL %~ subtractTokens Resource n
+    RemoveTokens source (isTarget attrs -> True) Resource n | n > 0 && attrs.resources > 0 -> do
+      case source of
+        PlayerSource _ -> push $ CreateEffect $ Effect GameSource (toTarget attrs) [SpentResourcesThisRound] UntilEndOfRound
+        _ -> pure ()
+      mods <- getModifiers attrs
+      when (cdSphere (toCardDef attrs) == Just Baggins || GainResourceIcon Baggins `elem` mods) $
+        replicateM_ (min n attrs.resources) $ push $ CheckWindows [mkAfter BagginsResourceSpentOrDiscarded]
       pure $ attrs & tokensL %~ subtractTokens Resource n
     RemoveTokens _ (isTarget attrs -> True) token n -> do
       pure $ attrs & tokensL %~ subtractTokens token n
