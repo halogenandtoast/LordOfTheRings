@@ -6,6 +6,8 @@ import Data.Map.Strict qualified as Map
 import LordOfTheRings.Card
 import LordOfTheRings.Classes.Entity
 import LordOfTheRings.Classes.RunMessage
+import LordOfTheRings.Treachery.Cards.RainOfArrows
+import LordOfTheRings.Treachery.Cards.CripplingWeariness
 import LordOfTheRings.Treachery.Cards.UgluksCommand
 import LordOfTheRings.Treachery.Cards.OrcDraught
 import LordOfTheRings.Treachery.Cards.HuntedInHollin
@@ -1163,6 +1165,8 @@ allTreacherys =
         , SomeTreacheryCard sarumansVoice
         , SomeTreacheryCard restByNight
         , SomeTreacheryCard strangeWeariness
+        , SomeTreacheryCard rainOfArrows
+        , SomeTreacheryCard cripplingWeariness
         , SomeTreacheryCard ugluksCommand
         , SomeTreacheryCard orcDraught
         , SomeTreacheryCard unseenBarrier

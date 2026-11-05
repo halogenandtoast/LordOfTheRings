@@ -3340,6 +3340,7 @@ library
       LordOfTheRings.Treachery.Cards.CrashingThunder
       LordOfTheRings.Treachery.Cards.CrawlingTowardsHim
       LordOfTheRings.Treachery.Cards.CreepingMarshes
+      LordOfTheRings.Treachery.Cards.CripplingWeariness
       LordOfTheRings.Treachery.Cards.CruelTorment
       LordOfTheRings.Treachery.Cards.CrueltyOfMordor
       LordOfTheRings.Treachery.Cards.CrumblingRuin
@@ -3621,6 +3622,7 @@ library
       LordOfTheRings.Treachery.Cards.RagingSquall
       LordOfTheRings.Treachery.Cards.RagingSquallNightmare
       LordOfTheRings.Treachery.Cards.RaidingTheCoasts
+      LordOfTheRings.Treachery.Cards.RainOfArrows
       LordOfTheRings.Treachery.Cards.RainWashedTracks
       LordOfTheRings.Treachery.Cards.RaiseTheAlarm
       LordOfTheRings.Treachery.Cards.RaisingTheCry

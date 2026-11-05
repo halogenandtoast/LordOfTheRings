@@ -1,6 +1,10 @@
 module LordOfTheRings.TreasonOfSaruman.HelmsDeepNightmareSpec (spec) where
 
 import LordOfTheRings.Ally.CardDefs qualified as Allies
+import LordOfTheRings.Treachery.CardDefs qualified as Treacheries
+import LordOfTheRings.Objective.CardDefs qualified as Objectives
+import LordOfTheRings.Objective.Types (ObjectiveAttrs (objectiveTokens))
+import LordOfTheRings.Scenario.Types (modeL, GameMode (NightmareMode), scenarioSetAside)
 import LordOfTheRings.Helpers.Modifiers (getModifiers)
 import LordOfTheRings.Helpers.Staging (getEnemyAttack, getEngagementCost)
 import LordOfTheRings.Location.Types (LocationAttrs (locationCardId))
@@ -10,7 +14,7 @@ import LordOfTheRings.Entities (questsL)
 import LordOfTheRings.Effect (Effect (..), EffectDuration (UntilEndOfRound))
 import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Matcher
-import LordOfTheRings.Modifier (ModifierType (Blank, AdditionalAttackAfterNextAttack, CannotAttack, ImmuneToCardEffects, CannotBeTraveledTo, SkipPhase))
+import LordOfTheRings.Modifier (ModifierType (Blank, AdditionalAttackAfterNextAttack, CannotAttack, ImmuneToCardEffects, CannotBeTraveledTo, SkipPhase, CannotBeReadiedByPlayerCards, CannotReady))
 import LordOfTheRings.Phase (Phase (PlanningPhase, CombatPhase))
 import LordOfTheRings.Quest.CardDefs qualified as Quests
 import LordOfTheRings.Scenario (helmsDeep)
@@ -19,6 +23,15 @@ import TestImport
 
 helms :: (PlayerId -> GameT ()) -> IO ()
 helms = gameTestIn helmsDeep testDeck
+
+nightmare :: (PlayerId -> GameT ()) -> IO ()
+nightmare = gameTestIn (overAttrs (modeL .~ NightmareMode) helmsDeep) testDeck
+
+reveal :: CardDef -> GameT ()
+reveal def = do
+  _ <- setEncounterDeck [def]
+  run RevealEncounterCard
+  resolveRevealed
 
 stage :: CardDef -> GameT EnemyId
 stage def = do
@@ -46,6 +59,83 @@ blankShadow pid eid = do
 
 spec :: Spec
 spec = describe "Helm's Deep Nightmare" do
+  it "Crippling Weariness exhausts a character for each player" . twoPlayerTestIn helmsDeep testDeck $ \one two -> do
+    firstAlly <- putAllyIntoPlay one Allies.guardOfTheCitadel
+    otherAlly <- putAllyIntoPlay two Allies.guardOfTheCitadel
+    reveal Treacheries.cripplingWeariness
+    chooseTarget one firstAlly
+    chooseTarget two otherAlly
+    for_ [firstAlly, otherAlly] \case
+      AllyTarget aid -> allyExhausted . toAttrs <$> getAlly aid `shouldReturn` True
+      _ -> error "expected ally"
+
+  it "builds the Nightmare deck with exact removals and preserves standard set-aside cards" . nightmare $ \_ -> do
+    run $ DoStep 1 Setup
+    deck <- getEncounterDeck
+    let copies def = length $ filter ((== toCardCode def) . toCardCode) deck
+    map copies [Enemies.isengardUruk, Enemies.urukHaiFighter, Enemies.wildHillman, Locations.theHornburg, Locations.deepingWall, Locations.posternDoor, Treacheries.recklessHate]
+      `shouldBe` [2, 0, 0, 0, 2, 0, 0]
+    map copies [Enemies.hostOfIsengard, Enemies.bloodiedBerserker, Locations.helmsDike, Locations.hornburgWall, Locations.glitteringCaves, Treacheries.rainOfArrows, Treacheries.cripplingWeariness]
+      `shouldBe` [3, 4, 2, 3, 2, 3, 2]
+    aside <- getsGame (map toCardCode . scenarioSetAside . toAttrs . (.scenario))
+    sort aside `shouldBe` sort (map toCardCode [Objectives.theDefenseOfHelmsDeep, Locations.deepingWall, Enemies.soldierOfIsengard])
+
+  it "keeps the standard deck unchanged in normal mode" . helms $ \_ -> do
+    run $ DoStep 1 Setup
+    deck <- getEncounterDeck
+    let copies def = length $ filter ((== toCardCode def) . toCardCode) deck
+    map copies [Enemies.isengardUruk, Enemies.urukHaiFighter, Enemies.wildHillman, Locations.theHornburg, Locations.deepingWall, Locations.posternDoor, Treacheries.recklessHate]
+      `shouldBe` [3, 3, 3, 3, 3, 2, 2]
+    map copies [Enemies.hostOfIsengard, Treacheries.rainOfArrows, Treacheries.cripplingWeariness] `shouldBe` [0, 0, 0]
+
+  it "Rain of Arrows grants archery to staged locations for the round" . helms $ \pid -> do
+    lid <- activeLocation Locations.helmsDike
+    run $ PlaceLocation lid StagingArea
+    _ <- activeLocation Locations.glitteringCaves
+    reveal Treacheries.rainOfArrows
+    getArcheryTotal `shouldReturn` 1
+    reveal Treacheries.rainOfArrows
+    getArcheryTotal `shouldReturn` 2
+    lateCard <- genEncounterCard Locations.hornburgWall
+    run $ AddToStaging lateCard
+    getArcheryTotal `shouldReturn` 2
+    run $ PlaceLocation lid ActiveLocation
+    getArcheryTotal `shouldReturn` 2
+    run $ EndEffects UntilEndOfRound
+    getArcheryTotal `shouldReturn` 0
+    getQuestion pid `shouldReturn` Nothing
+
+  it "Rain of Arrows can remove a defense resource instead of granting archery" . helms $ \pid -> do
+    run . AddToStaging =<< genEncounterCard Objectives.theDefenseOfHelmsDeep
+    oid <- getsGame (toId . fromJustNote "defense objective" . headMay . toList . (.entities.objectives))
+    run $ PlaceTokens GameSource (ObjectiveTarget oid) Resource 2
+    lid <- activeLocation Locations.helmsDike
+    run $ PlaceLocation lid StagingArea
+    reveal Treacheries.rainOfArrows
+    chooseLabel "$label.rainOfArrows.resource" pid
+    countTokens Resource . objectiveTokens . toAttrs <$> getObjective oid `shouldReturn` 1
+    getArcheryTotal `shouldReturn` 0
+
+  it "Crippling Weariness dooms, exhausts a controlled character and blocks player readying for the round" . helms $ \pid -> do
+    threatBefore <- (.threat) <$> getPlayer pid
+    hero <- toTarget <$> getHeroWithCode "01012"
+    reveal Treacheries.cripplingWeariness
+    chooseTarget pid hero
+    heroExhausted . toAttrs <$> getHeroWithCode "01012" `shouldReturn` True
+    (.threat) <$> getPlayer pid `shouldReturn` (threatBefore + 1)
+    getModifiers GameTarget >>= (`shouldSatisfy` elem CannotBeReadiedByPlayerCards)
+    run $ EndEffects UntilEndOfRound
+    getModifiers GameTarget >>= (`shouldSatisfy` notElem CannotBeReadiedByPlayerCards)
+
+  it "Crippling Weariness's shadow prevents its defender from readying for the round" . helms $ \pid -> do
+    eid <- stage Enemies.forestSpider
+    hero <- toTarget <$> getHeroWithCode "01012"
+    run . AttachShadowCard eid =<< genEncounterCard Treacheries.cripplingWeariness
+    run $ ResolveShadow eid pid [hero]
+    getModifiers hero >>= (`shouldSatisfy` elem CannotReady)
+    run $ EndEffects UntilEndOfRound
+    getModifiers hero >>= (`shouldSatisfy` notElem CannotReady)
+
   it "Glittering Caves permits travel at stage 4B and skips combat while active" . helms $ \_ -> do
     _ <- putQuestStage Quests.theWallIsBreached
     lid <- activeLocation Locations.glitteringCaves

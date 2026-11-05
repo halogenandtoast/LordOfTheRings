@@ -1,4 +1,9 @@
 {
+  "rainOfArrows": {
+    "choose": "Choose Rain of Arrows’ effect",
+    "resource": "Remove 1 resource from The Defense of Helm’s Deep",
+    "archery": "Each staged location gains archery 1 until the end of the round"
+  },
   "bloodiedBerserker": {
     "choose": "Choose Bloodied Berserker’s effect",
     "progress": "Place 2 progress on the active location",

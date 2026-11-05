@@ -14,7 +14,9 @@ allTreacheryCards =
   Map.fromList $
     map
       (\def -> (cdCardCode def, def))
-      [ ugluksCommand
+      [ rainOfArrows
+      , cripplingWeariness
+      , ugluksCommand
       , orcDraught
       , discordAndDistrust
       , huntingTheRing
@@ -3730,3 +3732,14 @@ ugluksCommand = (treachery "the-treason-of-saruman-nightmare-the-uruk-hai-008" "
 orcDraught :: CardDef
 orcDraught = (treachery "the-treason-of-saruman-nightmare-the-uruk-hai-009" "Orc-draught" TheUrukHaiNightmare 2)
   {cdKeywords = setFromList [Peril, Surge], cdShadowEffect = True}
+
+
+-- * Helm's Deep Nightmare
+
+rainOfArrows :: CardDef
+rainOfArrows = (treachery "the-treason-of-saruman-nightmare-helms-deep-007" "Rain of Arrows" HelmsDeepNightmare 3)
+  {cdShadowEffect = True}
+
+cripplingWeariness :: CardDef
+cripplingWeariness = (treachery "the-treason-of-saruman-nightmare-helms-deep-008" "Crippling Weariness" HelmsDeepNightmare 2)
+  {cdKeywords = setFromList [Doomed 1], cdShadowEffect = True}

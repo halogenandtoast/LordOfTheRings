@@ -8,6 +8,7 @@ import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Matcher (getRemainingPlayers)
 import LordOfTheRings.Objective.CardDefs qualified as Objectives
 import LordOfTheRings.Quest.CardDefs qualified as Quests
+import LordOfTheRings.Scenario.CardDefs qualified as Nightmare
 import LordOfTheRings.Scenario.Import.Lifted
 import LordOfTheRings.Treachery.CardDefs qualified as Treacheries
 
@@ -16,7 +17,11 @@ newtype HelmsDeep = HelmsDeep ScenarioAttrs
   deriving newtype (Show, Eq, ToJSON, Entity)
 
 helmsDeep :: Scenario
-helmsDeep = Scenario $ scenario HelmsDeep "helms-deep" "Helm's Deep"
+helmsDeep = Scenario $ scenario (HelmsDeep . (nightmareDeckL ?~ nightmare)) "helms-deep" "Helm's Deep"
+ where
+  -- https://hallofbeorn.com/LotR/Details/Helm's-Deep-Nightmare-HDN
+  nightmare = nightmareDeck Nightmare.helmsDeepNightmare EncounterSet.HelmsDeepNightmare
+    [(Enemies.isengardUruk, 1), (Enemies.urukHaiFighter, 3), (Enemies.wildHillman, 3), (Locations.theHornburg, 3), (Locations.deepingWall, 1), (Locations.posternDoor, 2), (Treacheries.recklessHate, 2)]
 
 {- | Helm's Deep and Orcs of the White Hand make up the encounter deck (MEC45 rules). Stage
 1A's setup sets aside The Defense of Helm's Deep, 1 copy of Deeping Wall and, for each
