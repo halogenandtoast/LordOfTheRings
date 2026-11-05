@@ -75,12 +75,12 @@ spec = describe "Revealing encounter cards" do
     putGame . (phaseL .~ QuestPhase) =<< getGame
     -- the first is shuffled back in as the second empties the deck; the second's surge
     -- would only reveal the first again
-    [first, second] <- setEncounterDeck [Treacheries.offTrack, Treacheries.offTrack]
+    [firstOff, secondOff] <- setEncounterDeck [Treacheries.offTrack, Treacheries.offTrack]
     run RevealEncounterCard
     resolveRevealed
     getsGame (length . (.entities.treacheries)) `shouldReturn` 0
-    getEncounterDeck `shouldReturn` [first]
-    getEncounterDiscard `shouldReturn` [second]
+    getEncounterDeck `shouldReturn` [firstOff]
+    getEncounterDiscard `shouldReturn` [secondOff]
 
   it "lets a surge chain go on while the encounter deck holds a card that has not surged in it" . gameTest $ \_ -> do
     putGame . (phaseL .~ QuestPhase) =<< getGame

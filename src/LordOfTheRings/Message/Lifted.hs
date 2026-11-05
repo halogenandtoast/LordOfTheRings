@@ -859,6 +859,7 @@ payOrDiscard pid card sphere = do
 revealEncounterCardAfter :: (MonadTrans t, HasQueue Message m) => Target -> t m ()
 revealEncounterCardAfter t = lift $ insertAfterMatching [RevealEncounterCard] \case
   WhileInPlay t' _ -> t == t'
+  ResolveSurge t' _ -> t == t'
   _ -> False
 
 {- | The player does not raise their threat for questing unsuccessfully, from the window
