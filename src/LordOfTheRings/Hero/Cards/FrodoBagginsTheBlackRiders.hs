@@ -27,13 +27,7 @@ instance RunMessage FrodoBagginsTheBlackRiders where
     UseCardAbility pid (isSource attrs -> True) 1 windows -> do
       exhaustTheOneRing
       for_ (take 1 [t | Window _ (Revealed t) <- windows]) \t -> do
-        cancelWhenRevealed pid t
-        -- what it keeps in play, its surge and doomed, goes with it into the deck
-        cancelMatching \case
-          FinishRevelation tid -> TreacheryTarget tid == t
-          ResolveSurge t' _ -> t' == t
-          _ -> False
-        shuffleIntoEncounterDeck t
-        revealEncounterCardAfter t
+        cancelEncounterCard pid t $ shuffleIntoEncounterDeck t
+        revealEncounterCard
       pure h
     _ -> FrodoBagginsTheBlackRiders <$> runMessage msg attrs

@@ -1,5 +1,11 @@
 module LordOfTheRings.TreasonOfSaruman.TheUrukHaiNightmareSpec (spec) where
 
+import LordOfTheRings.Hero.CardDefs qualified as Heroes
+import LordOfTheRings.Quest.CardDefs qualified as Quests
+import LordOfTheRings.Event.CardDefs qualified as Events
+import LordOfTheRings.Message.Lifted (cancelWhenRevealed, cancelShadowEffects)
+import LordOfTheRings.Scenario.Types (victoryDisplayL, modeL, GameMode (NightmareMode), scenarioSetAside)
+import LordOfTheRings.Window (WindowType (ShadowEffectTriggered, AdvancedToStage), mkWhen)
 import LordOfTheRings.Objective.CardDefs qualified as Objectives
 import LordOfTheRings.Attachment.CardDefs qualified as Attachments
 import LordOfTheRings.Helpers.Window (getActionAbilities, travelableLocations)
@@ -11,7 +17,7 @@ import LordOfTheRings.Helpers.Staging (getEnemyAttack)
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Helpers.Modifiers (getModifiers)
 import LordOfTheRings.Matcher
-import LordOfTheRings.Modifier (ModifierType (Blank, CannotTakeDamage, CannotAttack, CannotAttackPlayer, CannotExhaust, ImmuneToCardEffects))
+import LordOfTheRings.Modifier (ModifierType (Blank, CannotTakeDamage, CannotAttack, CannotAttackPlayer, CannotExhaust, ImmuneToCardEffects, ImmuneToPlayerCardEffects, WillpowerModifier))
 import LordOfTheRings.Effect (Effect (..), EffectDuration (UntilEndOfRound))
 import LordOfTheRings.Scenario (theUrukHai)
 import LordOfTheRings.Scenario.Scenarios.TheUrukHai.Helpers (getPursuit)
@@ -19,6 +25,12 @@ import TestImport
 
 uruk :: (PlayerId -> GameT ()) -> IO ()
 uruk = gameTestIn theUrukHai testDeck
+
+nightmareScenario :: Scenario
+nightmareScenario = overAttrs (modeL .~ NightmareMode) theUrukHai
+
+nightmare :: (PlayerId -> GameT ()) -> IO ()
+nightmare = gameTestIn nightmareScenario testDeck
 
 stage :: CardDef -> GameT EnemyId
 stage def = do
@@ -50,6 +62,27 @@ reveal defs = do
   _ <- setEncounterDeck defs
   run RevealEncounterCard
   resolveRevealed
+
+resolveForcedChoices :: PlayerId -> GameT ()
+resolveForcedChoices pid = getQuestion pid >>= \case
+  Just q | any (\case AbilityLabel {} -> True; _ -> False) (questionChoices q) -> chooseAbility pid >> resolveForcedChoices pid
+  _ -> pure ()
+
+cancelCommand :: PlayerId -> GameT ()
+cancelCommand pid = do
+  card <- putCardIntoHand pid Events.aTestOfWill
+  eowyn <- toTarget <$> getHeroWithCode "01007"
+  run $ PlaceTokens GameSource eowyn Resource 1
+  _ <- setEncounterDeck [Treacheries.ugluksCommand]
+  run RevealEncounterCard
+  chooseTarget pid (CardIdTarget card.id)
+  resolveForcedChoices pid
+  resolveRevealed
+
+intoVictoryDisplay :: CardDef -> GameT ()
+intoVictoryDisplay def = do
+  card <- genEncounterCard def
+  putGame . (scenarioL %~ overAttrs (victoryDisplayL %~ (EncounterCard card :))) =<< getGame
 
 spec :: Spec
 spec = describe "The Uruk-hai Nightmare" do
@@ -442,3 +475,265 @@ spec = describe "The Uruk-hai Nightmare" do
     run $ PlaceTokens GameSource (LocationTarget lid) Progress 6
     offersAbilityOf pid (LocationTarget lid) `shouldReturn` False
     getPursuit `shouldReturn` 10
+
+  it "Enchanted Land raises pursuit after a when-revealed effect is canceled" . uruk $ \pid -> do
+    _ <- stageLocation Locations.enchantedLand
+    cancelCommand pid
+    getPursuit `shouldReturn` 1
+
+  it "Enchanted Land still penalizes cancellation as the active location" . uruk $ \pid -> do
+    lid <- stageLocation Locations.enchantedLand
+    run $ TravelTo lid
+    cancelCommand pid
+    getPursuit `shouldReturn` 1
+
+  it "each Enchanted Land raises pursuit for a cancellation" . uruk $ \pid -> do
+    _ <- stageLocation Locations.enchantedLand
+    _ <- stageLocation Locations.enchantedLand
+    cancelCommand pid
+    getPursuit `shouldReturn` 2
+
+  it "blanking Enchanted Land disables its cancellation penalty" . uruk $ \pid -> do
+    lid <- stageLocation Locations.enchantedLand
+    run $ CreateEffect $ Effect GameSource (LocationTarget lid) [Blank] UntilEndOfRound
+    cancelCommand pid
+    getPursuit `shouldReturn` 0
+
+  it "Enchanted Land's penalty ends when it leaves play" . uruk $ \pid -> do
+    lid <- stageLocation Locations.enchantedLand
+    run $ Discard GameSource (LocationTarget lid)
+    cancelCommand pid
+    getPursuit `shouldReturn` 0
+
+  it "Enchanted Land raises pursuit when Hasty Stroke cancels a shadow" . uruk $ \pid -> do
+    _ <- stageLocation Locations.enchantedLand
+    eid <- stage Enemies.forestSpider
+    eowyn <- toTarget <$> getHeroWithCode "01007"
+    run $ PlaceTokens GameSource eowyn Resource 1
+    card <- putCardIntoHand pid Events.hastyStroke
+    run . AttachShadowCard eid =<< genEncounterCard Locations.enchantedLand
+    run $ ResolveShadow eid pid []
+    chooseTarget pid (CardIdTarget card.id)
+    getPursuit `shouldReturn` 1
+    getModifiers eid >>= (`shouldSatisfy` notElem CannotTakeDamage)
+    getQuestion pid >>= (`shouldSatisfy` isNothing)
+
+  it "Enchanted Land raises pursuit for A Burning Brand's shadow cancellation" . uruk $ \pid -> do
+    _ <- stageLocation Locations.enchantedLand
+    hero <- toTarget <$> getHeroWithCode "01012"
+    brand <- putAttachmentOn pid Attachments.aBurningBrand hero
+    eid <- stage Enemies.forestSpider
+    run . AttachShadowCard eid =<< genEncounterCard Locations.enchantedLand
+    run $ ResolveShadow eid pid [hero]
+    chooseAbilityOf pid brand
+    getPursuit `shouldReturn` 1
+    getQuestion pid >>= (`shouldSatisfy` isNothing)
+
+  it "Enchanted Land raises pursuit for Iarion's Pendant's shadow cancellation" . uruk $ \pid -> do
+    _ <- stageLocation Locations.enchantedLand
+    hero <- toTarget <$> getHeroWithCode "01012"
+    pendant <- putAttachmentOn pid Attachments.iarionsPendant hero
+    eid <- stage Enemies.forestSpider
+    run . AttachShadowCard eid =<< genEncounterCard Locations.enchantedLand
+    run $ ResolveShadow eid pid []
+    chooseAbilityOf pid pendant
+    getPursuit `shouldReturn` 1
+
+  it "Enchanted Land counts one cancellation when a whole card with when-revealed and surge is canceled" . uruk $ \pid -> do
+    _ <- stageLocation Locations.enchantedLand
+    intoVictoryDisplay Treacheries.orcDraught
+    hero <- toTarget <$> getHeroWithCode "01012"
+    run $ PlaceTokens GameSource hero Resource 1
+    card <- putCardIntoHand pid Events.theDoorIsClosed
+    _ <- setEncounterDeck [Treacheries.orcDraught, Locations.woldOfRohan]
+    run RevealEncounterCard
+    chooseTarget pid (CardIdTarget card.id)
+    resolveRevealed
+    getPursuit `shouldReturn` 1
+    map toCardCode <$> getEncounterDeck `shouldReturn` [toCardCode Locations.woldOfRohan]
+
+  it "Enchanted Land notices whole-card cancellation even without printed when-revealed text" . uruk $ \pid -> do
+    _ <- stageLocation Locations.enchantedLand
+    intoVictoryDisplay Treacheries.bladeTip
+    hero <- toTarget <$> getHeroWithCode "01012"
+    run $ PlaceTokens GameSource hero Resource 1
+    card <- putCardIntoHand pid Events.theDoorIsClosed
+    _ <- setEncounterDeck [Treacheries.bladeTip, Locations.woldOfRohan]
+    threatBefore <- (.threat) <$> getPlayer pid
+    run RevealEncounterCard
+    chooseTarget pid (CardIdTarget card.id)
+    resolveRevealed
+    getPursuit `shouldReturn` 1
+    (.threat) <$> getPlayer pid `shouldReturn` threatBefore
+    map toCardCode <$> getEncounterDeck `shouldReturn` [toCardCode Locations.woldOfRohan]
+
+  it "Enchanted Land does not trigger when no pending effect was canceled" . uruk $ \pid -> do
+    lid <- stageLocation Locations.enchantedLand
+    card <- genEncounterCard Locations.enchantedLand
+    eid <- stage Enemies.forestSpider
+    runQueueT $ cancelWhenRevealed pid (LocationTarget lid)
+    runQueueT $ cancelShadowEffects [mkWhen $ ShadowEffectTriggered card.id eid]
+    void mainLoop
+    getPursuit `shouldReturn` 0
+
+  it "Enchanted Land's shadow allows increasing pursuit instead of protecting the enemy" . uruk $ \pid -> do
+    eid <- stage Enemies.forestSpider
+    run . AttachShadowCard eid =<< genEncounterCard Locations.enchantedLand
+    run $ ResolveShadow eid pid []
+    chooseLabel "$label.enchantedLand.pursuit" pid
+    getPursuit `shouldReturn` 1
+    run $ DealDamage GameSource (EnemyTarget eid) 1
+    getDamage (EnemyTarget eid) `shouldReturn` 1
+
+  it "Enchanted Land's shadow protection lasts after discarding the shadow until round end" . uruk $ \pid -> do
+    eid <- stage Enemies.forestSpider
+    run . AttachShadowCard eid =<< genEncounterCard Locations.enchantedLand
+    run $ ResolveShadow eid pid []
+    chooseLabel "$label.enchantedLand.protect" pid
+    getPursuit `shouldReturn` 0
+    run $ DiscardShadowCards eid
+    run $ DealDamage GameSource (EnemyTarget eid) 1
+    getDamage (EnemyTarget eid) `shouldReturn` 0
+    run $ EndEffects UntilEndOfRound
+    run $ DealDamage GameSource (EnemyTarget eid) 1
+    getDamage (EnemyTarget eid) `shouldReturn` 1
+
+  it "Enchanted Land's shadow does not offer protection to an immune enemy" . uruk $ \pid -> do
+    eid <- stage Enemies.forestSpider
+    run $ CreateEffect $ Effect GameSource (EnemyTarget eid) [ImmuneToCardEffects] UntilEndOfRound
+    run . AttachShadowCard eid =<< genEncounterCard Locations.enchantedLand
+    run $ ResolveShadow eid pid []
+    getPursuit `shouldReturn` 1
+    getQuestion pid >>= (`shouldSatisfy` isNothing)
+
+  it "builds the Nightmare deck with exact removals and sets Mauhur aside" . nightmare $ \_ -> do
+    run $ DoStep 1 Setup
+    deck <- getEncounterDeck
+    let copies def = length $ filter ((== toCardCode def) . toCardCode) deck
+    map copies [Enemies.urukHaiFighter, Enemies.snaga, Locations.eastemnet, Locations.plainsOfRohan, Locations.theWold, Treacheries.unseenBarrier]
+      `shouldBe` [0, 2, 0, 2, 0, 0]
+    map copies [Enemies.mauhur, Enemies.lugdush, Enemies.orcOfTheWhiteHand, Locations.woldOfRohan, Locations.enchantedLand, Locations.theUruksTrail, Treacheries.ugluksCommand, Treacheries.orcDraught]
+      `shouldBe` [0, 1, 4, 2, 3, 3, 3, 2]
+    aside <- getsGame (map toCardCode . scenarioSetAside . toAttrs . (.scenario))
+    sort aside `shouldBe` sort (map toCardCode [Enemies.ugluk, Objectives.toIsengard, Locations.eastemnet, Enemies.mauhur])
+
+  it "keeps the standard encounter deck unchanged in normal mode" . uruk $ \_ -> do
+    run $ DoStep 1 Setup
+    deck <- getEncounterDeck
+    let copies def = length $ filter ((== toCardCode def) . toCardCode) deck
+    map copies [Enemies.urukHaiFighter, Enemies.snaga, Locations.eastemnet, Locations.plainsOfRohan, Locations.theWold, Treacheries.unseenBarrier]
+      `shouldBe` [3, 3, 2, 4, 3, 2]
+    copies Enemies.mauhur `shouldBe` 0
+    aside <- getsGame (map toCardCode . scenarioSetAside . toAttrs . (.scenario))
+    sort aside `shouldBe` sort (map toCardCode [Enemies.ugluk, Objectives.toIsengard, Locations.eastemnet])
+
+  it "Nightmare Captives ignore player card effects while remaining affected by game effects" . nightmare $ \_ -> do
+    captive <- toTarget <$> getHeroWithCode "01012"
+    other <- toId <$> getHeroWithCode "01007"
+    guardCard <- genEncounterCard Objectives.toIsengard
+    run $ GuardCharacter captive guardCard.id
+    getModifiers captive >>= (`shouldSatisfy` elem ImmuneToPlayerCardEffects)
+    run $ CreateEffect $ Effect (HeroSource other) captive [WillpowerModifier 3] UntilEndOfRound
+    getModifiers captive >>= (`shouldSatisfy` notElem (WillpowerModifier 3))
+    run $ CreateEffect $ Effect GameSource captive [WillpowerModifier 2] UntilEndOfRound
+    getModifiers captive >>= (`shouldSatisfy` elem (WillpowerModifier 2))
+
+  it "Nightmare Captives lose immunity after being rescued" . nightmare $ \_ -> do
+    captive <- toTarget <$> getHeroWithCode "01012"
+    guardCard <- genEncounterCard Objectives.toIsengard
+    run $ GuardCharacter captive guardCard.id
+    getModifiers captive >>= (`shouldSatisfy` elem ImmuneToPlayerCardEffects)
+    run $ RescueCharacter captive
+    getModifiers captive >>= (`shouldSatisfy` notElem ImmuneToPlayerCardEffects)
+
+  it "normal Captives do not gain Nightmare immunity" . uruk $ \_ -> do
+    captive <- toTarget <$> getHeroWithCode "01012"
+    guardCard <- genEncounterCard Objectives.toIsengard
+    run $ GuardCharacter captive guardCard.id
+    getModifiers captive >>= (`shouldSatisfy` notElem ImmuneToPlayerCardEffects)
+
+  it "adds Mauhur before resolving stage 2A and only takes him from set aside once" . nightmare $ \pid -> do
+    run $ DoStep 1 Setup
+    selectAny (EnemyWithCardCode $ toCardCode Enemies.mauhur) `shouldReturn` False
+    q <- getActiveQuest
+    run $ CompleteQuest (toId q)
+    selectAny (EnemyWithCardCode (toCardCode Enemies.mauhur) <> EnemyInStagingArea) `shouldReturn` True
+    toCardCode <$> getActiveQuest `shouldReturn` toCardCode Quests.rescueTheCaptives
+    getQuestion pid >>= (`shouldSatisfy` isJust)
+    aside <- getsGame (map toCardCode . scenarioSetAside . toAttrs . (.scenario))
+    aside `shouldSatisfy` notElem (toCardCode Enemies.mauhur)
+    -- No second copy is created if another advancement window is observed.
+    clearQueue
+    putGame . (questionL .~ mempty) =<< getGame
+    run $ CheckWindows [mkWhen AdvancedToStage]
+    length <$> select (EnemyWithCardCode $ toCardCode Enemies.mauhur) `shouldReturn` 1
+
+  it "does not add Mauhur when advancing in normal mode" . uruk $ \_ -> do
+    run $ DoStep 1 Setup
+    q <- getActiveQuest
+    run $ CompleteQuest (toId q)
+    selectAny (EnemyWithCardCode $ toCardCode Enemies.mauhur) `shouldReturn` False
+
+  it "Nightmare setup guards a Captive normally and leaves Mauhur set aside" . nightmare $ \pid -> do
+    flipFirstQuest pid
+    captive <- toTarget <$> getHeroWithCode "01002"
+    chooseTarget pid captive
+    getModifiers captive >>= (`shouldSatisfy` elem ImmuneToPlayerCardEffects)
+    getPursuit `shouldReturn` 10
+    selectAny (EnemyWithCardCode $ toCardCode Enemies.mauhur) `shouldReturn` False
+    aside <- getsGame (map toCardCode . scenarioSetAside . toAttrs . (.scenario))
+    aside `shouldBe` [toCardCode Enemies.mauhur]
+
+  it "a canceled Enchanted Land does not trigger its own cancellation penalty" . uruk $ \pid -> do
+    intoVictoryDisplay Locations.enchantedLand
+    hero <- toTarget <$> getHeroWithCode "01012"
+    run $ PlaceTokens GameSource hero Resource 1
+    card <- putCardIntoHand pid Events.theDoorIsClosed
+    _ <- setEncounterDeck [Locations.enchantedLand]
+    run RevealEncounterCard
+    chooseTarget pid (CardIdTarget card.id)
+    resolveRevealed
+    getPursuit `shouldReturn` 0
+    selectAny (LocationWithCardCode $ toCardCode Locations.enchantedLand) `shouldReturn` False
+
+  it "only Enchanted Lands remaining in play penalize cancellation of another copy" . uruk $ \pid -> do
+    _ <- stageLocation Locations.enchantedLand
+    intoVictoryDisplay Locations.enchantedLand
+    hero <- toTarget <$> getHeroWithCode "01012"
+    run $ PlaceTokens GameSource hero Resource 1
+    card <- putCardIntoHand pid Events.theDoorIsClosed
+    _ <- setEncounterDeck [Locations.enchantedLand]
+    run RevealEncounterCard
+    chooseTarget pid (CardIdTarget card.id)
+    resolveRevealed
+    getPursuit `shouldReturn` 1
+    length <$> select (LocationWithCardCode $ toCardCode Locations.enchantedLand) `shouldReturn` 1
+
+  it "whole-card cancellation removes its pending Hide test" . uruk $ \pid -> do
+    _ <- stageLocation Locations.enchantedLand
+    intoVictoryDisplay Enemies.blackRider
+    hero <- toTarget <$> getHeroWithCode "01012"
+    run $ PlaceTokens GameSource hero Resource 1
+    card <- putCardIntoHand pid Events.theDoorIsClosed
+    _ <- setEncounterDeck [Enemies.blackRider, Locations.woldOfRohan]
+    run RevealEncounterCard
+    chooseTarget pid (CardIdTarget card.id)
+    resolveRevealed
+    getQuestion pid >>= (`shouldSatisfy` isNothing)
+    getPursuit `shouldReturn` 1
+    map toCardCode <$> getEncounterDeck `shouldReturn` [toCardCode Locations.woldOfRohan]
+
+  it "whole-card cancellation does not offer responses to the canceled card being revealed" . uruk $ \pid -> do
+    _ <- stageLocation Locations.enchantedLand
+    merry <- genPlayerCard Heroes.merrySpirit (Just pid)
+    run $ PutHeroIntoPlay pid merry
+    intoVictoryDisplay Enemies.orcOfTheWhiteHand
+    hero <- toTarget <$> getHeroWithCode "01012"
+    run $ PlaceTokens GameSource hero Resource 1
+    card <- putCardIntoHand pid Events.theDoorIsClosed
+    _ <- setEncounterDeck [Enemies.orcOfTheWhiteHand]
+    run RevealEncounterCard
+    chooseTarget pid (CardIdTarget card.id)
+    resolveRevealed
+    getQuestion pid >>= (`shouldSatisfy` isNothing)
+    getPursuit `shouldReturn` 1

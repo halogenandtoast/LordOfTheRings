@@ -2,11 +2,18 @@ module LordOfTheRings.Scenario.Scenarios.TheUrukHai (theUrukHai) where
 
 import Data.Aeson.Types (parseMaybe)
 import Data.List (elemIndex)
+import LordOfTheRings.Ability (mkAbility, forced)
+import LordOfTheRings.Matcher.Window (WindowMatcher (AdvancedToStageWindow))
+import LordOfTheRings.Modifier (ModifierType (ImmuneToPlayerCardEffects))
+import LordOfTheRings.Source (Source (ScenarioSource))
+import LordOfTheRings.Timing (Timing (When))
+import LordOfTheRings.Scenario.CardDefs qualified as Nightmare
+import LordOfTheRings.Treachery.CardDefs qualified as Treacheries
 import LordOfTheRings.Campaign (CampaignLog (..), CampaignLogUpdate (..), PoolCard (..), updateLog)
 import LordOfTheRings.Classes.HasGame (HasGame, getsGame)
 import LordOfTheRings.Hero.Types (Hero)
 import LordOfTheRings.Id (PlayerId)
-import LordOfTheRings.Matcher (getHero, getLead, getRemainingPlayers)
+import LordOfTheRings.Matcher (cardIs, getHero, getLead, getRemainingPlayers)
 import LordOfTheRings.Name (Name (..))
 import LordOfTheRings.Trait (Trait (Healer, Noble, Ranger, Warrior))
 import LordOfTheRings.EncounterSet qualified as EncounterSet
@@ -15,14 +22,26 @@ import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Objective.CardDefs qualified as Objectives
 import LordOfTheRings.Quest.CardDefs qualified as Quests
 import LordOfTheRings.Scenario.Import.Lifted
-import LordOfTheRings.Scenario.Scenarios.TheUrukHai.Helpers (pursuitOf)
+import LordOfTheRings.Scenario.Scenarios.TheUrukHai.Helpers (pursuitOf, getCaptives)
 
 newtype TheUrukHai = TheUrukHai ScenarioAttrs
-  deriving anyclass (IsScenario, HasAbilities, HasModifiersFor)
+  deriving anyclass IsScenario
   deriving newtype (Show, Eq, ToJSON, Entity)
 
 theUrukHai :: Scenario
-theUrukHai = Scenario $ scenario TheUrukHai "the-uruk-hai" "The Uruk-hai"
+theUrukHai = Scenario $ scenario (TheUrukHai . (nightmareDeckL ?~ nightmare)) "the-uruk-hai" "The Uruk-hai"
+ where
+  -- https://hallofbeorn.com/LotR/Details/The-Uruk-hai-Nightmare-TUHN
+  nightmare = nightmareDeck Nightmare.theUrukHaiNightmare EncounterSet.TheUrukHaiNightmare
+    [(Enemies.urukHaiFighter, 3), (Enemies.snaga, 1), (Locations.eastemnet, 2), (Locations.plainsOfRohan, 2), (Locations.theWold, 3), (Treacheries.unseenBarrier, 2)]
+
+instance HasModifiersFor TheUrukHai where
+  getModifiersFor (TheUrukHai a) = when a.nightmare do
+    captives <- getCaptives
+    for_ captives (\hid -> modified a (HeroTarget hid) [ImmuneToPlayerCardEffects])
+
+instance HasAbilities TheUrukHai where
+  getAbilities (TheUrukHai a) = [mkAbility a 1 $ forced $ AdvancedToStageWindow When | a.nightmare]
 
 {- | The Uruk-hai, Orcs of the White Hand and Snaga Orcs make up the encounter deck (MEC45
 rules). Uglúk, To Isengard! and a copy of Eastemnet are set aside for stage 1A's setup.
@@ -38,6 +57,7 @@ instance RunMessage TheUrukHai where
     DoStep 1 Setup -> do
       cards <- gatherEncounterSets attrs [EncounterSet.TheUrukHai, EncounterSet.OrcsOfTheWhiteHand, EncounterSet.SnagaOrcs]
       let aside = take 1 (filter (isCard Enemies.ugluk) cards) <> take 1 (filter (isCard Objectives.toIsengard) cards) <> take 1 (filter (isCard Locations.eastemnet) cards)
+            <> [c | c <- cards, attrs.nightmare, isCard Enemies.mauhur c]
           deck = filter (`notElem` aside) cards
       firstStage <- genEncounterCard Quests.followTheOrcs
       secondStage <- genEncounterCard Quests.rescueTheCaptives
@@ -54,6 +74,9 @@ instance RunMessage TheUrukHai where
         -- Flight to the Ford and The Ring Goes South burden sets is left out of the
         -- encounter deck: see 'removedBurdenSets'.)
         & campaignL %~ fmap (updateLog (RemoveFromPool gildorInglorion) . updateLog (RemoveFromPool mrUnderhill))
+    UseCardAbility _ ScenarioSource 1 _ | attrs.nightmare -> do
+      addSetAsideToStaging (cardIs Enemies.mauhur)
+      pure $ TheUrukHai attrs
     ScenarioSpecific "urukHai.pursuit" (parseMaybe parseJSON -> Just (n :: Int)) -> do
       let p = max 0 (pursuitOf attrs.meta + n)
       checkStages

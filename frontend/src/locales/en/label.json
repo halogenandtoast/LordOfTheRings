@@ -1,4 +1,9 @@
 {
+  "enchantedLand": {
+    "choose": "Choose Enchanted Land’s shadow effect",
+    "pursuit": "Increase the pursuit value by 1",
+    "protect": "Attacking enemy cannot take damage until the end of the round"
+  },
   "ugluksCommand": {
     "choose": "Choose Uglúk’s Command’s effect",
     "pursuit": "Increase the pursuit value by 4",

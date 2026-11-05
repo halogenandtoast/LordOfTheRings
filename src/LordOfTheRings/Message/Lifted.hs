@@ -55,7 +55,7 @@ import LordOfTheRings.Token
 import LordOfTheRings.Window (
   Timing (After, When),
   Window (..),
-  WindowType (AttackUndefended, ShadowEffectAgainst, AllyDiscardedByCardEffect, AttackersDeclared, CharacterRescued, DeclaredAsAttacker, DeclaredAsDefender, DefendedAttack, DiscardedFromEncounterDeck, EnemyAttacking, ShadowCardRevealed, ShadowEffectTriggered, StagingStepEnds, ThreatRaisedByDoomed, ThreatRaisedByEncounter, ThreatReduced, Traveled, WhenRevealedCanceled),
+  WindowType (Revealed, AttackUndefended, ShadowEffectAgainst, AllyDiscardedByCardEffect, AttackersDeclared, CharacterRescued, DeclaredAsAttacker, DeclaredAsDefender, DefendedAttack, DiscardedFromEncounterDeck, EnemyAttacking, ShadowCardRevealed, ShadowEffectTriggered, StagingStepEnds, ThreatRaisedByDoomed, ThreatRaisedByEncounter, ThreatReduced, Traveled, WhenRevealedCanceled, EncounterEffectCanceled),
   mkAfter,
   mkWhen,
  )
@@ -480,23 +480,46 @@ cancelMatching = lift . void . popMessagesMatching
 click to resolve them.
 -}
 cancelWhenRevealed :: (MonadTrans t, HasQueue Message m, ReverseQueue (t m)) => PlayerId -> Target -> t m ()
-cancelWhenRevealed pid t = do
+cancelWhenRevealed = cancelRevealedEffects False
+
+-- | Cancel the whole encounter card (FAQ 1.54), including its keywords. It
+-- produces one general cancellation trigger, while the when-revealed trigger
+-- still requires printed when-revealed text (FAQ 1.53). Remove the card before
+-- the cancellation window, so it cannot answer its own cancellation as if in play.
+cancelEncounterCard :: (MonadTrans t, HasQueue Message m, ReverseQueue (t m)) => PlayerId -> Target -> t m () -> t m ()
+cancelEncounterCard pid target removeCard = do
+  removeCard
+  cancelRevealedEffects True pid target
+
+cancelRevealedEffects :: (MonadTrans t, HasQueue Message m, ReverseQueue (t m)) => Bool -> PlayerId -> Target -> t m ()
+cancelRevealedEffects wholeCard pid target = do
+  card <- getsGame \g -> case target of
+    EnemyTarget i -> toCard <$> lookup i g.entities.enemies
+    LocationTarget i -> toCard <$> lookup i g.entities.locations
+    TreacheryTarget i -> toCard <$> lookup i g.entities.treacheries
+    ObjectiveTarget i -> toCard <$> lookup i g.entities.objectives
+    QuestTarget i -> toCard <$> lookup i g.entities.quests
+    _ -> Nothing
+  let printed = maybe False (cdWhenRevealed . toCardDef) card
+      fromCard source = sourceTarget source == Just target || case (source, card) of
+        (CardIdSource cid, Just c) -> cid == c.id
+        _ -> False
+      revealing = any (\case Window _ (Revealed t) -> target == t; _ -> False)
   canceled <- lift $ popMessagesMatching \case
-    WhenRevealed t' -> t == t'
-    AskToResolveWhenRevealed t' _ -> t == t'
+    WhenRevealed t -> target == t
+    AskToResolveWhenRevealed t _ -> target == t
+    FinishRevelation tid -> wholeCard && target == TreacheryTarget tid
+    ResolveSurge t _ -> wholeCard && target == t
+    WhileInPlay t _ -> wholeCard && target == t
+    MakeHideTest hide -> wholeCard && fromCard (hideSource hide)
+    CheckWindows windows -> wholeCard && revealing windows
+    ResponseWindow windows _ _ _ -> wholeCard && revealing windows
     _ -> False
   -- Revealing a card with no printed when-revealed text still queues a silent
-  -- WhenRevealed message. Canceling that plumbing is not canceling an effect,
-  -- as Trollshaw Forest and Ruins of Arnor require.
-  printed <- getsGame \g -> fromMaybe False $ case t of
-    EnemyTarget i -> cdWhenRevealed . toCardDef <$> lookup i g.entities.enemies
-    LocationTarget i -> cdWhenRevealed . toCardDef <$> lookup i g.entities.locations
-    TreacheryTarget i -> cdWhenRevealed . toCardDef <$> lookup i g.entities.treacheries
-    ObjectiveTarget i -> cdWhenRevealed . toCardDef <$> lookup i g.entities.objectives
-    QuestTarget i -> cdWhenRevealed . toCardDef <$> lookup i g.entities.quests
-    _ -> Nothing
-  let real = printed || any (\case AskToResolveWhenRevealed _ card -> cdWhenRevealed (toCardDef card); _ -> False) canceled
-  pushWhen (notNull canceled && real) $ CheckWindows [Window After $ WhenRevealedCanceled pid t]
+  -- WhenRevealed message. Removing that plumbing alone is no effect cancellation.
+  let real = printed || any (\case AskToResolveWhenRevealed _ pendingCard -> cdWhenRevealed (toCardDef pendingCard); _ -> False) canceled
+  when (notNull canceled && (real || wholeCard)) $
+    push $ CheckWindows $ [Window After $ WhenRevealedCanceled pid target | real] <> [Window After $ EncounterEffectCanceled target]
 
 {- | Cancel damage about to be dealt to the target, from the window before it is dealt, as
 "before Patrol Leader is dealt damage ... cancel that damage" reads.
@@ -977,12 +1000,13 @@ cannotAttackEngagedPlayer source eid = do
 {- | Cancel the shadow effects of the shadow cards whose effects are about to resolve in the
 windows, as Hasty Stroke does.
 -}
-cancelShadowEffects :: (MonadTrans t, HasQueue Message m) => [Window] -> t m ()
+cancelShadowEffects :: (MonadTrans t, HasQueue Message m, ReverseQueue (t m)) => [Window] -> t m ()
 cancelShadowEffects windows =
-  for_ [cid | Window _ (ShadowEffectTriggered cid _) <- windows] \cid ->
-    cancelMatching \case
+  for_ (ordNub [cid | Window _ (ShadowEffectTriggered cid _) <- windows]) \cid -> do
+    canceled <- lift $ popMessagesMatching \case
       ResolveShadowCard cid' _ _ _ -> cid == cid'
       _ -> False
+    pushWhen (notNull canceled) $ CheckWindows [Window After $ EncounterEffectCanceled $ CardIdTarget cid]
 
 returnToHand :: (ReverseQueue m, Targetable target) => target -> m ()
 returnToHand (toTarget -> t) = cardEffectOn t (ReturnToHand t)

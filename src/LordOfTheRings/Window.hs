@@ -183,6 +183,8 @@ data WindowType
     FlippedTo Target CardCode
   | -- | the When Revealed effects of the card just revealed were canceled
     WhenRevealedCanceled PlayerId Target
+  | -- | an encounter card effect (including a shadow effect) was actually canceled
+    EncounterEffectCanceled Target
   | -- | the captured cards underneath the card were rescued, as Jailor Gornákh answers
     -- (Escape from Mount Gram)
     CapturedCardsRescued Card [Card]

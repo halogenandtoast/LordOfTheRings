@@ -30,7 +30,7 @@ import LordOfTheRings.Saga (Saga (..), removedBurdenSets, sagaOf, treasureSetsFo
 import LordOfTheRings.Scenario.Types as X
 import LordOfTheRings.Source (Source (ObjectiveSource), sourceTarget)
 import LordOfTheRings.Target
-import LordOfTheRings.Window (WindowType (AdvancedToStage, DiscardedFromEncounterDeck, LookedAtEncounterDeck), mkAfter)
+import LordOfTheRings.Window (mkWhen, WindowType (AdvancedToStage, DiscardedFromEncounterDeck, LookedAtEncounterDeck), mkAfter)
 
 -- | The copies of each card in the set, fewer of some in easy mode.
 gatherEncounterSet :: MonadRandom m => ScenarioAttrs -> EncounterSet -> m [EncounterCard]
@@ -523,7 +523,7 @@ instance RunMessage ScenarioAttrs where
     -- a stage put into play straight from the quest deck, as Hasty Council chooses one, leaves it
     PutQuestIntoPlay card -> pure $ attrs & questDeckL %~ filter (/= card)
     AdvanceToQuest card -> do
-      pushAll [PutQuestIntoPlay card, Flip (toTarget card), CheckWindows [mkAfter AdvancedToStage]]
+      pushAll [CheckWindows [mkWhen AdvancedToStage], PutQuestIntoPlay card, Flip (toTarget card), CheckWindows [mkAfter AdvancedToStage]]
       pure attrs
     TakeHiddenCard pid -> do
       (deck, discard) <-

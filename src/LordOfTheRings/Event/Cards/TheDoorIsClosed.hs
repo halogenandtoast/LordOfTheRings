@@ -20,12 +20,6 @@ instance RunMessage TheDoorIsClosed where
   runMessage msg e@(TheDoorIsClosed attrs) = case msg of
     PlayEvent pid card windows | card.id == toId attrs -> do
       for_ (take 1 [t | Window _ (Revealed t) <- windows]) \t -> do
-        cancelWhenRevealed pid t
-        -- what it keeps in play, its surge and doomed, goes with it as it is discarded
-        cancelMatching \case
-          FinishRevelation tid -> TreacheryTarget tid == t
-          ResolveSurge t' _ -> t' == t
-          _ -> False
-        discard attrs t
+        cancelEncounterCard pid t $ discard attrs t
       pure e
     _ -> TheDoorIsClosed <$> runMessage msg attrs

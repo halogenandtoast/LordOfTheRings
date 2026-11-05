@@ -21,9 +21,6 @@ instance RunMessage QuickerThanSight where
   runMessage msg e@(QuickerThanSight attrs) = case msg of
     PlayEvent pid card windows | card.id == toId attrs -> do
       returnAllyToHand pid attrs (AllyWithTrait Silvan)
-      for_ [cid | Window _ (ShadowEffectTriggered cid _) <- windows] \cid ->
-        cancelMatching \case
-          ResolveShadowCard cid' _ _ _ -> cid == cid'
-          _ -> False
+      cancelShadowEffects windows
       pure e
     _ -> QuickerThanSight <$> runMessage msg attrs

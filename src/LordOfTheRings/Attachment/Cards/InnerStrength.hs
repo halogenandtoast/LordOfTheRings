@@ -27,9 +27,6 @@ instance HasAbilities InnerStrength where
 instance RunMessage InnerStrength where
   runMessage msg s@(InnerStrength a) = case msg of
     UseCardAbility _ (isSource a -> True) 1 windows -> do
-      for_ [cid | Window _ (ShadowEffectTriggered cid _) <- windows] \cid ->
-        cancelMatching \case
-          ResolveShadowCard cid' _ _ _ -> cid == cid'
-          _ -> False
+      cancelShadowEffects windows
       pure s
     _ -> InnerStrength <$> runMessage msg a

@@ -157,6 +157,8 @@ data WindowMatcher
     TreacheryWhenRevealedCanceledWindow Timing
   | -- | the When Revealed effects of any card canceled, as Exposed Riverbank reads
     WhenRevealedCanceledWindow Timing
+  | -- | an encounter card effect or shadow effect canceled, as Enchanted Land reads
+    EncounterEffectCanceledWindow Timing
   | -- | the player played a matching card from their hand
     PlayedCardFromHandWindow Timing PlayerId CardMatcher
   | -- | any hero dealt damage
@@ -551,6 +553,7 @@ windowMatches matcher (Window timing wType) = case (matcher, wType) of
   (FlippedToWindow t code, FlippedTo _ code') -> t == timing && code == code'
   (TreacheryWhenRevealedCanceledWindow t, WhenRevealedCanceled _ (TreacheryTarget _)) -> t == timing
   (WhenRevealedCanceledWindow t, WhenRevealedCanceled _ _) -> t == timing
+  (EncounterEffectCanceledWindow t, EncounterEffectCanceled _) -> t == timing
   (CapturedCardsRescuedWindow t, CapturedCardsRescued {}) -> t == timing
   (DrewForResourcePhaseWindow t pid, DrewForResourcePhase pid' _) -> t == timing && pid == pid'
   (SetupHandDrawnWindow t pid, SetupHandDrawn pid') -> t == timing && pid == pid'

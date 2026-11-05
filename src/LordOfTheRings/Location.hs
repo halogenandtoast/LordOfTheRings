@@ -6,6 +6,7 @@ import Data.Map.Strict qualified as Map
 import LordOfTheRings.Card
 import LordOfTheRings.Classes.Entity
 import LordOfTheRings.Classes.RunMessage
+import LordOfTheRings.Location.Cards.EnchantedLand
 import LordOfTheRings.Location.Cards.TheUruksTrail
 import LordOfTheRings.Location.Cards.WoldOfRohan
 import LordOfTheRings.Location.Cards.ExpanseOfHollin
@@ -743,6 +744,7 @@ allLocations =
         [ SomeLocationCard greatForestWeb
         , SomeLocationCard expanseOfHollin
         , SomeLocationCard westernEmynMuil
+        , SomeLocationCard enchantedLand
         , SomeLocationCard theUruksTrail
         , SomeLocationCard woldOfRohan
         , SomeLocationCard langfloodRiver

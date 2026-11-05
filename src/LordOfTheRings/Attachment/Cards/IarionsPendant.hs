@@ -34,9 +34,6 @@ instance RunMessage IarionsPendant where
       pure s
     UseCardAbility _ (isSource a -> True) 2 windows -> do
       addToVictoryDisplay a
-      for_ [cid | Window _ (ShadowEffectTriggered cid _) <- windows] \cid ->
-        cancelMatching \case
-          ResolveShadowCard cid' _ _ _ -> cid == cid'
-          _ -> False
+      cancelShadowEffects windows
       pure s
     _ -> IarionsPendant <$> runMessage msg a
