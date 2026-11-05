@@ -348,11 +348,19 @@ immuneToPlayerCards t =
 
 -- | A unique card cannot enter play while a card with its title is in play.
 passesUnique :: HasGame m => Card -> m Bool
-passesUnique card
+passesUnique = passesUniqueWith AnyHero
+
+-- | The unique rule for a hero coming into play as the given hero leaves it, as Helm of
+-- Secrecy swaps them: the leaving hero's title does not bar it.
+passesUniqueReplacing :: HasGame m => HeroId -> Card -> m Bool
+passesUniqueReplacing hid = passesUniqueWith (not_ $ HeroWithId hid)
+
+passesUniqueWith :: HasGame m => HeroMatcher -> Card -> m Bool
+passesUniqueWith others card
   | card.unique =
       andM
         [ selectNone $ AllyWithTitle card.name
-        , selectNone $ HeroWithTitle card.name
+        , selectNone $ HeroWithTitle card.name <> others
         , getsGame $ all ((/= card.name) . cdName . toCardDef) . toList . (.entities.attachments)
         , -- separated players still keep to it across their areas (FAQ 2.36)
           getsGame $ all (notElem card.name . titles) . heldEntities

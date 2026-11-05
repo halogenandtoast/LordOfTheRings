@@ -20,14 +20,6 @@ thorongil = attachment Thorongil Cards.thorongil & fmap (overAttrs \a -> a {atta
 eligible :: AttachmentAttrs -> HeroMatcher
 eligible a = HeroControlledBy (PlayerWithId a.owner) <> not_ (HeroWithSphere Fellowship) <> not_ (HeroWithSphere Baggins)
 
--- | Once a version of its hero is attached to it, Thorongil belongs only on a hero that
--- card is a version of: a hero Helm of Secrecy swaps in is not, so Thorongil is not an
--- eligible attachment to move to it and is discarded (Caleb Grace, ALeP FAQ 3.374).
-holdingVersion :: AttachmentAttrs -> AttachmentAttrs
-holdingVersion a = case [pc | PlayerCard pc <- a.underneath] of
-  pc : _ -> a {attachmentAttachTo = AttachToHero $ eligible a <> HeroWithTitle (cdName $ toCardDef pc)}
-  [] -> a
-
 -- | The other non-Fellowship, non-Baggins versions of the hero: your collection is every
 -- hero the game has, as Helm of Secrecy reads it.
 versionsOf :: CardCode -> [CardCode]
@@ -78,4 +70,9 @@ instance RunMessage Thorongil where
           showing cards
           targets cards \c -> placeUnderneath a [c]
       pure s
-    _ -> Thorongil . holdingVersion <$> runMessage msg a
+    -- Helm of Secrecy swapping its hero out: Thorongil is connected to that hero, so it is
+    -- no eligible attachment to move to the hero swapped in, whatever version that is, and
+    -- is discarded (Caleb Grace, ALeP FAQ 3.374). Only the hero leaving can hold it.
+    SwapHero hid _ | a.placement == AttachedTo (HeroTarget hid) ->
+      pure $ Thorongil a {attachmentAttachTo = AttachToHero (HeroWithId hid)}
+    _ -> Thorongil <$> runMessage msg a

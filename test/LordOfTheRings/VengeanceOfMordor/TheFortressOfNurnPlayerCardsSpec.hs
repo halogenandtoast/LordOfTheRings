@@ -226,8 +226,9 @@ spec = describe "The Fortress of Nurn player cards" do
         _ -> False
       _ <- playWith pid eowynCode 4 Events.helmOfSecrecy
       chooseTarget pid aragorn
-      chooseOptionMatching "swap" pid \case
-        TargetLabel _ [SwapHero {}] -> True
+      -- even for another version of Aragorn
+      chooseOptionMatching "swap in the Tactics Aragorn" pid \case
+        TargetLabel _ [SwapHero _ c] -> toCardCode c == "09001"
         _ -> False
       getsGame (map toCardCode . toList . (.entities.heroes)) >>= (`shouldSatisfy` notElem aragornCode)
       getsGame (map toCardCode . toList . (.entities.attachments)) >>= (`shouldSatisfy` notElem (toCardCode Attachments.thorongil))
