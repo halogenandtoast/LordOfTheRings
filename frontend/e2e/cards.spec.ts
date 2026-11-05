@@ -259,11 +259,11 @@ test('all six Hobbit scenarios and the Hobbit campaign offer Nightmare mode', as
 })
 
 
-test('implemented Black Riders scenarios offer Nightmare mode', async ({ page, game: _session }) => {
+test('all three Black Riders scenarios offer Nightmare mode', async ({ page, game: _session }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' })
   await page.goto('/#/new-game')
   await page.getByRole('button', { name: 'The Lord of the Rings', exact: false }).click()
-  for (const name of ['A Shadow of the Past', 'A Knife in the Dark']) {
+  for (const name of ['A Shadow of the Past', 'A Knife in the Dark', 'Flight to the Ford']) {
     await page.getByRole('button').filter({ hasText: name }).click()
     const nightmare = page.getByRole('radio', { name: 'Nightmare', exact: true })
     await nightmare.click()

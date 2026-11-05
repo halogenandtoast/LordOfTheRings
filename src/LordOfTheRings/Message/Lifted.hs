@@ -10,7 +10,7 @@ module LordOfTheRings.Message.Lifted (
 
 import LordOfTheRings.Attachment.CardDefs qualified as Attachments
 import LordOfTheRings.Campaign (CampaignLogUpdate (DiscoverTreasure))
-import LordOfTheRings.Card (Card (..), CardCode, CardCost (StaticCost), CardDef, CardType, EncounterCard, HasCardCode (..), IsCard (..), PlayerCard, cdCardTraits, cdCardType, cdCost, genEncounterCard, genPlayerCard, lookupCardDef, toCardDef)
+import LordOfTheRings.Card (Card (..), CardCode, CardCost (StaticCost), CardDef, CardType, EncounterCard, HasCardCode (..), IsCard (..), PlayerCard, cdCardTraits, cdCardType, cdCost, cdWhenRevealed, genEncounterCard, genPlayerCard, lookupCardDef, toCardDef)
 import LordOfTheRings.Trait (Trait (Boon, Master))
 import LordOfTheRings.Classes.Entity (Entity (toAttrs, toId))
 import LordOfTheRings.Scenario.Types (ScenarioAttrs (scenarioSetAside))
@@ -479,14 +479,24 @@ cancelMatching = lift . void . popMessagesMatching
 {- | Cancel the When Revealed effects of a card just revealed, and with them the lead's
 click to resolve them.
 -}
-cancelWhenRevealed :: (MonadTrans t, HasQueue Message m, HasQueue Message (t m)) => PlayerId -> Target -> t m ()
+cancelWhenRevealed :: (MonadTrans t, HasQueue Message m, ReverseQueue (t m)) => PlayerId -> Target -> t m ()
 cancelWhenRevealed pid t = do
   canceled <- lift $ popMessagesMatching \case
     WhenRevealed t' -> t == t'
     AskToResolveWhenRevealed t' _ -> t == t'
     _ -> False
-  -- the window after it, as Ruins of Arnor answers
-  pushWhen (notNull canceled) $ CheckWindows [Window After $ WhenRevealedCanceled pid t]
+  -- Revealing a card with no printed when-revealed text still queues a silent
+  -- WhenRevealed message. Canceling that plumbing is not canceling an effect,
+  -- as Trollshaw Forest and Ruins of Arnor require.
+  printed <- getsGame \g -> fromMaybe False $ case t of
+    EnemyTarget i -> cdWhenRevealed . toCardDef <$> lookup i g.entities.enemies
+    LocationTarget i -> cdWhenRevealed . toCardDef <$> lookup i g.entities.locations
+    TreacheryTarget i -> cdWhenRevealed . toCardDef <$> lookup i g.entities.treacheries
+    ObjectiveTarget i -> cdWhenRevealed . toCardDef <$> lookup i g.entities.objectives
+    QuestTarget i -> cdWhenRevealed . toCardDef <$> lookup i g.entities.quests
+    _ -> Nothing
+  let real = printed || any (\case AskToResolveWhenRevealed _ card -> cdWhenRevealed (toCardDef card); _ -> False) canceled
+  pushWhen (notNull canceled && real) $ CheckWindows [Window After $ WhenRevealedCanceled pid t]
 
 {- | Cancel damage about to be dealt to the target, from the window before it is dealt, as
 "before Patrol Leader is dealt damage ... cancel that damage" reads.

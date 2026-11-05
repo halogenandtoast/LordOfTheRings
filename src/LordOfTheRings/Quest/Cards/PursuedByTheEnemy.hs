@@ -43,7 +43,7 @@ instance RunMessage PursuedByTheEnemy where
       deck <- getsGame ((.encounterDeck) . toAttrs . (.scenario))
       players <- length <$> getRemainingPlayers
       let bridge = take 1 $ filter (cardMatches $ cardIs Locations.theLastBridge) deck
-          riders = take players $ filter (cardMatches $ cardIs Enemies.fellRider) deck
+          riders = take players $ filter (cardMatches $ CardMatchAny $ map cardIs [Enemies.fellRider, Enemies.fellRiderNightmare]) deck
       for_ (bridge <> riders) \c -> do
         removeFromEncounterDeck c
         addToStaging c

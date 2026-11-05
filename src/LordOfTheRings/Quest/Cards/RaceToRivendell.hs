@@ -31,7 +31,7 @@ If the players defeat this stage, they have won the game.
 instance RunMessage RaceToRivendell where
   runMessage msg q@(RaceToRivendell attrs) = case msg of
     Flip (isTarget attrs -> True) | not attrs.flipped -> do
-      addSetAsideToStaging (cardIs Locations.fordOfBruinen)
+      addSetAsideToStaging (CardMatchAny $ map cardIs [Locations.fordOfBruinen, Locations.fordOfBruinenNightmare])
       addSetAsideToStaging (cardIs Enemies.theWitchKing)
       RaceToRivendell <$> runMessage msg attrs
     UseCardAbility _ (isSource attrs -> True) 1 _ -> do

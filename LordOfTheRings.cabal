@@ -834,6 +834,7 @@ library
       LordOfTheRings.Enemy.Cards.FangOfSahir
       LordOfTheRings.Enemy.Cards.FatSpider
       LordOfTheRings.Enemy.Cards.FellRider
+      LordOfTheRings.Enemy.Cards.FellRiderNightmare
       LordOfTheRings.Enemy.Cards.FierceVanguard
       LordOfTheRings.Enemy.Cards.FireDrake
       LordOfTheRings.Enemy.Cards.ForestBat
@@ -1905,6 +1906,7 @@ library
       LordOfTheRings.Location.Cards.EphelDuath
       LordOfTheRings.Location.Cards.Eregion
       LordOfTheRings.Location.Cards.EriadorWastes
+      LordOfTheRings.Location.Cards.Ettendales
       LordOfTheRings.Location.Cards.Ettenmoors
       LordOfTheRings.Location.Cards.EvilSmellingFens
       LordOfTheRings.Location.Cards.ExpanseOfHarad
@@ -1927,6 +1929,7 @@ library
       LordOfTheRings.Location.Cards.ForbiddenCoast
       LordOfTheRings.Location.Cards.ForbiddenDescent
       LordOfTheRings.Location.Cards.FordOfBruinen
+      LordOfTheRings.Location.Cards.FordOfBruinenNightmare
       LordOfTheRings.Location.Cards.FordsOfIsen
       LordOfTheRings.Location.Cards.ForecastleDeck
       LordOfTheRings.Location.Cards.ForestClearing
@@ -1966,6 +1969,7 @@ library
       LordOfTheRings.Location.Cards.GondorianHamlet
       LordOfTheRings.Location.Cards.GreatCavernRoom
       LordOfTheRings.Location.Cards.GreatCorsairShip
+      LordOfTheRings.Location.Cards.GreatEastRoad
       LordOfTheRings.Location.Cards.GreatForestWeb
       LordOfTheRings.Location.Cards.GreatHall
       LordOfTheRings.Location.Cards.GreenHillCountry
@@ -2107,6 +2111,7 @@ library
       LordOfTheRings.Location.Cards.PatchOfWoods
       LordOfTheRings.Location.Cards.PathlessCountry
       LordOfTheRings.Location.Cards.PathlessCountryHunted
+      LordOfTheRings.Location.Cards.PathlessWilderness
       LordOfTheRings.Location.Cards.PatrolRoom
       LordOfTheRings.Location.Cards.PeatBog
       LordOfTheRings.Location.Cards.PelargirAlley
@@ -2333,6 +2338,7 @@ library
       LordOfTheRings.Location.Cards.TrollCave
       LordOfTheRings.Location.Cards.TrollFells
       LordOfTheRings.Location.Cards.TrollLair
+      LordOfTheRings.Location.Cards.TrollshawForest
       LordOfTheRings.Location.Cards.TrystingPlace
       LordOfTheRings.Location.Cards.TunnelsOfMountGram
       LordOfTheRings.Location.Cards.TurbulentWaters
@@ -3294,6 +3300,7 @@ library
       LordOfTheRings.Treachery.Cards.ClosingIn
       LordOfTheRings.Treachery.Cards.ColdFromAngmar
       LordOfTheRings.Treachery.Cards.CollateralDamage
+      LordOfTheRings.Treachery.Cards.ComeBack
       LordOfTheRings.Treachery.Cards.ComeDownLittleBird
       LordOfTheRings.Treachery.Cards.ConflictAtTheCrossroads
       LordOfTheRings.Treachery.Cards.ConspicuousLot
@@ -3711,6 +3718,7 @@ library
       LordOfTheRings.Treachery.Cards.TheThievesPloy
       LordOfTheRings.Treachery.Cards.TheTowerBeckons
       LordOfTheRings.Treachery.Cards.TheTrailGoesCold
+      LordOfTheRings.Treachery.Cards.TheTwilightWorld
       LordOfTheRings.Treachery.Cards.TheWayIsShut
       LordOfTheRings.Treachery.Cards.TheyAreComing
       LordOfTheRings.Treachery.Cards.TheyreGettingAway
@@ -4185,6 +4193,7 @@ test-suite LordOfTheRings-test
       LordOfTheRings.TheLordOfTheRings.AKnifeInTheDarkSpec
       LordOfTheRings.TheLordOfTheRings.AShadowOfThePastNightmareSpec
       LordOfTheRings.TheLordOfTheRings.AShadowOfThePastSpec
+      LordOfTheRings.TheLordOfTheRings.FlightToTheFordNightmareSpec
       LordOfTheRings.TheLordOfTheRings.FlightToTheFordSpec
       LordOfTheRings.TheRoadDarkens.BreakingOfTheFellowshipSpec
       LordOfTheRings.TheRoadDarkens.JourneyInTheDarkSpec

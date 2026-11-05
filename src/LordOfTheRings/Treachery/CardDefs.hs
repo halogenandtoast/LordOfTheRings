@@ -14,7 +14,9 @@ allTreacheryCards =
   Map.fromList $
     map
       (\def -> (cdCardCode def, def))
-      [ theRingsWill
+      [ comeBack
+      , theTwilightWorld
+      , theRingsWill
       , bladeTip
       , inTheNameOfMordor
       , followedByShadows
@@ -3655,3 +3657,13 @@ theRingsWill = (treachery "the-black-riders-nightmare-a-knife-in-the-dark-008" "
 bladeTip :: CardDef
 bladeTip = (treachery "the-black-riders-nightmare-a-knife-in-the-dark-009" "Blade Tip" AKnifeInTheDarkNightmare 2)
   {cdCardTraits = setFromList [Morgul], cdKeywords = setFromList [Surge, Doomed 1], cdShadowEffect = True, cdWhenRevealed = False}
+
+-- * Flight to the Ford Nightmare
+
+comeBack :: CardDef
+comeBack = (treachery "the-black-riders-nightmare-flight-to-the-ford-008" "Come Back!" FlightToTheFordNightmare 2)
+  {cdCardTraits = setFromList [Enchantment], cdKeywords = setFromList [Peril, Doomed 1], cdShadowEffect = True}
+
+theTwilightWorld :: CardDef
+theTwilightWorld = (treachery "the-black-riders-nightmare-flight-to-the-ford-009" "The Twilight World" FlightToTheFordNightmare 2)
+  {cdCardTraits = setFromList [Morgul], cdKeywords = setFromList [Doomed 2]}

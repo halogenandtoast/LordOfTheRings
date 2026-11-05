@@ -15,7 +15,12 @@ allLocationCards =
   Map.fromList $
     map
       (\def -> (cdCardCode def, def))
-      [ weathertopNightmare
+      [ fordOfBruinenNightmare
+      , trollshawForest
+      , greatEastRoad
+      , pathlessWilderness
+      , ettendales
+      , weathertopNightmare
       , weatherHillsNightmare
       , theOldRoadNightmare
       , forsakenInn
@@ -5059,3 +5064,25 @@ theOldRoadNightmare = (location "the-black-riders-nightmare-a-knife-in-the-dark-
 forsakenInn :: CardDef
 forsakenInn = (location "the-black-riders-nightmare-a-knife-in-the-dark-007" "Forsaken Inn" AKnifeInTheDarkNightmare 2 0 4)
   {cdCardTraits = setFromList [Inn]}
+
+-- * Flight to the Ford Nightmare
+
+fordOfBruinenNightmare :: CardDef
+fordOfBruinenNightmare = (location "the-black-riders-nightmare-flight-to-the-ford-003" "Ford of Bruinen" FlightToTheFordNightmare 1 3 3)
+  {cdCardTraits = setFromList [River], cdUnique = True}
+
+trollshawForest :: CardDef
+trollshawForest = (location "the-black-riders-nightmare-flight-to-the-ford-004" "Trollshaw Forest" FlightToTheFordNightmare 3 3 5)
+  {cdCardTraits = setFromList [Forest]}
+
+greatEastRoad :: CardDef
+greatEastRoad = (location "the-black-riders-nightmare-flight-to-the-ford-005" "Great East Road" FlightToTheFordNightmare 3 0 5)
+  {cdCardTraits = setFromList [Road], cdShadowEffect = True}
+
+pathlessWilderness :: CardDef
+pathlessWilderness = (location "the-black-riders-nightmare-flight-to-the-ford-006" "Pathless Wilderness" FlightToTheFordNightmare 2 2 6)
+  {cdCardTraits = setFromList [Forest, Hills]}
+
+ettendales :: CardDef
+ettendales = (location "the-black-riders-nightmare-flight-to-the-ford-007" "Ettendales" FlightToTheFordNightmare 2 5 3)
+  {cdCardTraits = setFromList [Forest, Hills], cdShadowEffect = True}

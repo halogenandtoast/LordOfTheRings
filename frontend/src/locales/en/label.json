@@ -4067,5 +4067,7 @@
   "embattledValley": {"exhaust": "Exhaust a character to travel to Embattled Valley"},
   "sniffingAndHissing": {"choose": "Exhaust The One Ring and reveal a card, or make a Hide test", "exhaust": "Exhaust The One Ring and reveal an encounter card", "hide": "Make a Hide 3 test"},
   "southernSpy": {"choose": "Southern Spy: shuffle a Ringwraith or take an immediate attack", "attack": "Southern Spy makes an immediate attack"},
-  "bladeTip": {"attach": "Attach Blade Tip to a defending character damaged by this attack"}
+  "bladeTip": {"attach": "Attach Blade Tip to a defending character damaged by this attack"},
+  "comeBack": {"choose": "Come Back!: reduce the Ring-bearer's life or take this attack undefended", "life": "Reduce the Ring-bearer's life by 1", "undefended": "Treat this attack as undefended"},
+  "theTwilightWorld": {"choose": "The Twilight World: exhaust The One Ring or reduce the Ring-bearer's life", "exhaust": "Exhaust The One Ring", "life": "Reduce the Ring-bearer's life by 1"}
 }

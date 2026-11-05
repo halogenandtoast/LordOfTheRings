@@ -4,33 +4,76 @@ import Data.Aeson.Types (parseMaybe)
 import LordOfTheRings.Ability (anyPlayer, response, restricted)
 import LordOfTheRings.Campaign (CampaignLogUpdate (AddToPool), PoolCard (..), updateLog)
 import LordOfTheRings.Classes.HasGame (getsGame)
+import LordOfTheRings.Criteria (Criterion (BurdenDeckNotEmpty))
 import LordOfTheRings.EncounterSet qualified as EncounterSet
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Location.CardDefs qualified as Locations
-import LordOfTheRings.Matcher (cardIs, cardMatches)
-import LordOfTheRings.Criteria (Criterion (BurdenDeckNotEmpty))
+import LordOfTheRings.Matcher (
+  LocationMatcher (LocationWithCardCode),
+  cardIs,
+  cardMatches,
+  selectAny,
+ )
 import LordOfTheRings.Matcher.Window (WindowMatcher (EnemyDeclaredAsAttackerWindow))
+import LordOfTheRings.Modifier (ModifierType (CannotBeDefeated, PlayersCannotWin))
 import LordOfTheRings.Outcome (Outcome (Lost))
 import LordOfTheRings.Quest.CardDefs qualified as Quests
+import LordOfTheRings.Scenario.CardDefs qualified as Nightmare
 import LordOfTheRings.Scenario.Import.Lifted
 import LordOfTheRings.Scenario.Scenarios.FlightToTheFord.Helpers (ringBearersLifeOf)
 import LordOfTheRings.Source (Source (ScenarioSource))
 import LordOfTheRings.Trait (Trait (Burden))
+import LordOfTheRings.Treachery.CardDefs qualified as Treacheries
 import LordOfTheRings.Window (Timing (After), Window (..), WindowType (EnemyDeclaredAsAttacker))
 
 newtype FlightToTheFord = FlightToTheFord ScenarioAttrs
-  deriving anyclass (IsScenario, HasModifiersFor)
+  deriving anyclass IsScenario
   deriving newtype (Show, Eq, ToJSON, Entity)
 
 flightToTheFord :: Scenario
-flightToTheFord = Scenario $ scenario FlightToTheFord "flight-to-the-ford" "Flight to the Ford"
+flightToTheFord =
+  Scenario
+    $ scenario (FlightToTheFord . (nightmareDeckL ?~ nightmare)) "flight-to-the-ford" "Flight to the Ford"
+ where
+  -- https://hallofbeorn.com/LotR/Details/Flight-to-the-Ford-Nightmare-FttFN
+  nightmare =
+    nightmareDeck
+      Nightmare.flightToTheFordNightmare
+      EncounterSet.FlightToTheFordNightmare
+      [ (Enemies.fellRider, 4)
+      , (Locations.fordOfBruinen, 1)
+      , (Locations.theTrollsCamp, 1)
+      , (Locations.ettenmoors, 3)
+      , (Treacheries.painAssailedHim, 3)
+      , (Locations.theOldRoad, 3)
+      , (Locations.pathlessCountryHunted, 3)
+      , (Treacheries.strickenDumb, 3)
+      , (Treacheries.rodeLikeAGale, 2)
+      ]
 
--- | Campaign: Response: After an enemy is declared as an attacker, shuffle the top card of
--- the burden deck into the encounter deck to cancel that attack. (Any player may trigger
--- that ability.)
+instance HasModifiersFor FlightToTheFord where
+  getModifiersFor (FlightToTheFord a) = when a.nightmare do
+    ford <- selectAny (LocationWithCardCode $ toCardCode Locations.fordOfBruinenNightmare)
+    when ford do
+      modified a GameTarget [PlayersCannotWin]
+      stages <-
+        getsGame
+          ( map toTarget
+              . filter ((== toCardCode Quests.raceToRivendell) . toCardCode)
+              . toList
+              . (.entities.quests)
+          )
+      for_ stages $ \q -> modified a q [CannotBeDefeated]
+
+{- | Campaign: Response: After an enemy is declared as an attacker, shuffle the top card of
+the burden deck into the encounter deck to cancel that attack. (Any player may trigger
+that ability.)
+-}
 instance HasAbilities FlightToTheFord where
   getAbilities (FlightToTheFord a) =
-    [anyPlayer $ restricted a 1 BurdenDeckNotEmpty $ response $ EnemyDeclaredAsAttackerWindow After | isJust a.campaign]
+    [ anyPlayer $ restricted a 1 BurdenDeckNotEmpty $ response $ EnemyDeclaredAsAttackerWindow After
+    | isJust a.campaign
+    ]
 
 {- | Flight to the Ford, Hunted, The Black Riders and The Nazgûl make up the encounter deck
 (The Black Riders rules insert). Stage 1A sets Ford of Bruinen and The Witch-king aside,
@@ -44,17 +87,30 @@ instance RunMessage FlightToTheFord where
       cards <-
         gatherEncounterSets
           attrs
-          [EncounterSet.FlightToTheFord, EncounterSet.Hunted, EncounterSet.TheBlackRiders, EncounterSet.TheNazgul]
-      let aside c = any (`cardMatches` c) [cardIs Locations.fordOfBruinen, cardIs Enemies.theWitchKing]
+          [ EncounterSet.FlightToTheFord
+          , EncounterSet.Hunted
+          , EncounterSet.TheBlackRiders
+          , EncounterSet.TheNazgul
+          ]
+      let aside c =
+            any
+              (`cardMatches` c)
+              [ cardIs Locations.fordOfBruinen
+              , cardIs Locations.fordOfBruinenNightmare
+              , cardIs Enemies.theWitchKing
+              ]
           (setAside', deck) = partition aside cards
       putQuestIntoPlay =<< genEncounterCard Quests.pursuedByTheEnemy
       laterStages <- traverse genEncounterCard [Quests.raceToRivendell]
       pure
         $ FlightToTheFord
         $ attrs
-        & encounterDeckL .~ deck
-        & setAsideL .~ setAside'
-        & questDeckL .~ laterStages
+        & encounterDeckL
+        .~ deck
+        & setAsideL
+        .~ setAside'
+        & questDeckL
+        .~ laterStages
     ScenarioSpecific "flightToTheFord.setLife" (parseMaybe parseJSON -> Just (n :: Int)) ->
       pure $ FlightToTheFord $ attrs & metaL .~ object ["ringBearersLife" .= n]
     ScenarioSpecific "flightToTheFord.reduceLife" (parseMaybe parseJSON -> Just (n :: Int)) -> do
@@ -71,7 +127,11 @@ instance RunMessage FlightToTheFord where
     ResolveCampaign | Just l <- attrs.campaign -> do
       treacheries <- getsGame (map toCardDef . toList . (.entities.treacheries))
       objectives <- getsGame (map toCardDef . toList . (.entities.objectives))
-      let found = treacheries <> objectives <> map toCardDef attrs.encounterDeck <> map toCardDef attrs.encounterDiscard
+      let found =
+            treacheries
+              <> objectives
+              <> map toCardDef attrs.encounterDeck
+              <> map toCardDef attrs.encounterDiscard
           pooled = map (.code) l.pool
           earned = ordNub [toCardCode d | d <- found, Burden `member` cdCardTraits d, toCardCode d `notElem` pooled]
           l' = foldl' (\lg code -> updateLog (AddToPool $ PoolCard code Nothing Nothing) lg) l earned
