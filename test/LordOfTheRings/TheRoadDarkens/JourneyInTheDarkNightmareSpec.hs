@@ -1,11 +1,14 @@
 module LordOfTheRings.TheRoadDarkens.JourneyInTheDarkNightmareSpec (spec) where
 
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
+import LordOfTheRings.Ally.CardDefs qualified as Allies
+import LordOfTheRings.Effect (EffectDuration (UntilEndOfRound, UntilEndOfPhase))
+import LordOfTheRings.Quest.CardDefs qualified as Quests
 import LordOfTheRings.Event.CardDefs qualified as Events
 import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Helpers.Character (getWillpower)
 import LordOfTheRings.Helpers.Staging (getLocationThreat)
-import LordOfTheRings.Matcher (select, HeroMatcher (HeroControlledBy), PlayerMatcher (PlayerWithId))
+import LordOfTheRings.Matcher (select, HeroMatcher (HeroControlledBy), PlayerMatcher (PlayerWithId), getMainQuestProgress)
 import LordOfTheRings.Scenario (journeyInTheDark)
 import LordOfTheRings.Window (WindowType (CommittedToQuest), mkAfter)
 import LordOfTheRings.Helpers.Modifiers (getModifiers)
@@ -172,11 +175,78 @@ spec = describe "Journey in the Dark Nightmare" do
 
   it "Glowing Fissure makes only the committing player choose his own character" . twoPlayerTestIn journeyInTheDark testDeck $ \one two -> do
     _ <- stageLocation Locations.glowingFissure
-    own <- toTarget . fromJustNote "firstHero player's hero" . headMay <$> select (HeroControlledBy $ PlayerWithId one)
-    committing <- toTarget . fromJustNote "secondHero player's hero" . headMay <$> select (HeroControlledBy $ PlayerWithId two)
+    own <- toTarget . fromJustNote "first player's hero" . headMay <$> select (HeroControlledBy $ PlayerWithId one)
+    committing <- toTarget . fromJustNote "second player's hero" . headMay <$> select (HeroControlledBy $ PlayerWithId two)
     run $ CommitToQuest committing
     run $ CheckWindows [mkAfter $ CommittedToQuest committing]
     getQuestion one >>= (`shouldSatisfy` isNothing)
     chooseTarget two committing
     getDamage own `shouldReturn` 0
     getDamage committing `shouldReturn` 1
+
+  it "Cut Off lets its revealer damage only his own characters" . twoPlayerTestIn journeyInTheDark testDeck $ \one two -> do
+    run $ SetRevealer (Just two)
+    own <- map toTarget <$> select (HeroControlledBy $ PlayerWithId one)
+    others <- map toTarget <$> select (HeroControlledBy $ PlayerWithId two)
+    _ <- setEncounterDeck [Treacheries.cutOff]
+    run RevealEncounterCard
+    resolveRevealed
+    getQuestion one >>= (`shouldSatisfy` isNothing)
+    chooseLabel "$label.cutOff.damage" two
+    for_ own (\h -> getDamage h `shouldReturn` 0)
+    for_ others (\h -> getDamage h `shouldReturn` 1)
+
+  it "Cut Off blocks quest progress for the round, including later stages, but permits location progress" . gameTest $ \pid -> do
+    putGame . (phaseL .~ PlanningPhase) =<< getGame
+    q <- putQuestStage Quests.theLongDarkOfMoria
+    lid <- stageLocation Locations.theOldFord
+    _ <- setEncounterDeck [Treacheries.cutOff]
+    run RevealEncounterCard
+    resolveRevealed
+    chooseLabel "$label.cutOff.noProgress" pid
+    run $ PlaceTokens GameSource q Progress 2
+    getMainQuestProgress `shouldReturn` 0
+    run $ PlaceTokens GameSource (LocationTarget lid) Progress 1
+    (.progress) <$> getLocation lid `shouldReturn` 1
+    run $ EndEffects UntilEndOfPhase
+    run $ PlaceTokens GameSource q Progress 1
+    getMainQuestProgress `shouldReturn` 0
+    old <- getActiveQuest
+    run $ LeaveQuestStage (toId old)
+    next <- putQuestStage Quests.drumsInTheDeep
+    run $ PlaceTokens GameSource next Progress 1
+    getMainQuestProgress `shouldReturn` 0
+    run $ EndEffects UntilEndOfRound
+    run $ PlaceTokens GameSource next Progress 1
+    getMainQuestProgress `shouldReturn` 1
+
+  it "Cut Off's shadow removes quest progress after the attack destroys a character, leaving locations alone" . gameTest $ \pid -> do
+    q <- putQuestStage Quests.theLongDarkOfMoria
+    run $ PlaceTokens GameSource q Progress 3
+    lid <- stageLocation Locations.theOldFord
+    run $ PlaceTokens GameSource (LocationTarget lid) Progress 1
+    run . AddToStaging =<< genEncounterCard Enemies.goblinSniper
+    eid <- getsGame (toId . fromJustNote "attacker" . headMay . toList . (.entities.enemies))
+    run $ EngageEnemy pid eid
+    defender <- putAllyIntoPlay pid Allies.guardOfTheCitadel
+    run . AttachShadowCard eid =<< genEncounterCard Treacheries.cutOff
+    run $ EnemyAttack pid eid
+    passActions pid
+    chooseTarget pid defender
+    passActions pid
+    getMainQuestProgress `shouldReturn` 0
+    (.progress) <$> getLocation lid `shouldReturn` 1
+
+  it "Cut Off's shadow keeps quest progress when the defender survives" . gameTest $ \pid -> do
+    q <- putQuestStage Quests.theLongDarkOfMoria
+    run $ PlaceTokens GameSource q Progress 3
+    run . AddToStaging =<< genEncounterCard Enemies.goblinSniper
+    eid <- getsGame (toId . fromJustNote "attacker" . headMay . toList . (.entities.enemies))
+    run $ EngageEnemy pid eid
+    defender <- toTarget <$> getHeroWithCode "01012"
+    run . AttachShadowCard eid =<< genEncounterCard Treacheries.cutOff
+    run $ EnemyAttack pid eid
+    passActions pid
+    chooseTarget pid defender
+    passActions pid
+    getMainQuestProgress `shouldReturn` 3

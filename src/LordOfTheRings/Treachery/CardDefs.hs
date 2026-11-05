@@ -14,7 +14,8 @@ allTreacheryCards =
   Map.fromList $
     map
       (\def -> (cdCardCode def, def))
-      [ veryWeary
+      [ cutOff
+      , veryWeary
       , huntedInHollin
       , shelterlessLand
       , comeBack
@@ -3686,3 +3687,7 @@ shelterlessLand = (treachery "the-road-darkens-nightmare-the-ring-goes-south-008
 veryWeary :: CardDef
 veryWeary = (treachery "the-road-darkens-nightmare-journey-in-the-dark-008" "Very Weary" JourneyInTheDarkNightmare 3)
   {cdShadowEffect = True}
+
+cutOff :: CardDef
+cutOff = (treachery "the-road-darkens-nightmare-journey-in-the-dark-009" "Cut Off" JourneyInTheDarkNightmare 2)
+  {cdKeywords = setFromList [Peril], cdShadowEffect = True}
