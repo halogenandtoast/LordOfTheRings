@@ -6,17 +6,28 @@ import LordOfTheRings.EncounterSet qualified as EncounterSet
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Helpers.Fellowship (ringBearer)
 import LordOfTheRings.Location.CardDefs qualified as Locations
-import LordOfTheRings.Matcher (select)
+import LordOfTheRings.Matcher (LocationMatcher (..), select, selectAny)
+import LordOfTheRings.Modifier (ModifierType (KeepUnresolvedShadowCards, CannotBeTraveledTo))
+import LordOfTheRings.Scenario.Scenarios.ShelobsLair.Helpers (getShelob)
 import LordOfTheRings.Objective.CardDefs qualified as Objectives
 import LordOfTheRings.Quest.CardDefs qualified as Quests
 import LordOfTheRings.Scenario.Import.Lifted
 
 newtype ShelobsLair = ShelobsLair ScenarioAttrs
-  deriving anyclass (IsScenario, HasAbilities, HasModifiersFor)
+  deriving anyclass (IsScenario, HasAbilities)
   deriving newtype (Show, Eq, ToJSON, Entity)
 
 shelobsLair :: Scenario
 shelobsLair = Scenario $ scenario ShelobsLair "shelobs-lair" "Shelob's Lair"
+
+instance HasModifiersFor ShelobsLair where
+  getModifiersFor (ShelobsLair a) = when a.nightmare do
+    spider <- getShelob
+    for_ spider \eid -> modified a eid [KeepUnresolvedShadowCards]
+    cleft <- selectAny (LocationInStagingArea <> LocationWithCardCode (toCardCode Locations.cleftOfCirithUngol))
+    when cleft do
+      others <- select (NotLocation $ LocationWithCardCode $ toCardCode Locations.cleftOfCirithUngol)
+      for_ others \lid -> modified a lid [CannotBeTraveledTo]
 
 {- | Shelob's Lair, The Great Spider, Gollum and Morgul Nazgûl make up the encounter deck
 (The Land of Shadow rules insert). Gollum is not gathered, having no encounter card back.

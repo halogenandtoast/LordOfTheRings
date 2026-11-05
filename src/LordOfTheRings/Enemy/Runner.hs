@@ -53,7 +53,9 @@ instance RunMessage EnemyAttrs where
     -- the unresolved ones may stay, as The Clutches of Carn Dûm reads: those resolved, face
     -- up and no longer waiting to, go
     EndPhase CombatPhase | notNull attrs.shadowCards -> do
-      keep <- elem KeepUnresolvedShadowCards <$> getModifiers GameTarget
+      globalMods <- getModifiers GameTarget
+      ownMods <- getModifiers attrs
+      let keep = KeepUnresolvedShadowCards `elem` (globalMods <> ownMods)
       let resolved c = c.id `elem` attrs.enemyShadowRevealed && c.id `notElem` attrs.enemyShadowFaceUp
       if keep
         then do

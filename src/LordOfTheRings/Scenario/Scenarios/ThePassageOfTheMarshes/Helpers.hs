@@ -21,12 +21,13 @@ import LordOfTheRings.Classes.HasGame
 import LordOfTheRings.Classes.HasModifiersFor (HasModifiersM, modified)
 import LordOfTheRings.Enemy.Types (EnemyAttrs)
 import LordOfTheRings.Campaign (CampaignLogUpdate (AddToPool, AdjustSeatThreatPenalty), PoolCard (..))
+import LordOfTheRings.Helpers.Modifiers (getModifiers)
 import LordOfTheRings.Id
 import LordOfTheRings.Location.Types (LocationAttrs)
 import LordOfTheRings.Matcher
 import LordOfTheRings.Message
 import LordOfTheRings.Message.Lifted
-import LordOfTheRings.Modifier (ModifierType (CannotBeTraveledTo, CannotReduceThreat))
+import LordOfTheRings.Modifier (ModifierType (CannotBeTraveledTo, CannotReduceThreat, CannotExhaust))
 import LordOfTheRings.Objective.CardDefs qualified as Objectives
 import LordOfTheRings.Placement (Placement (EngagedWith))
 import LordOfTheRings.Prelude
@@ -52,11 +53,14 @@ firstPlayerControlsSmeagol = do
 -- | "Travel: Exhaust Sméagol to travel here": not without a ready Sméagol to exhaust.
 smeagolTravelModifiers :: HasModifiersM m => LocationAttrs -> m ()
 smeagolTravelModifiers a = do
-  none <- selectNone readySmeagol
-  when none $ modified a a [CannotBeTraveledTo]
+  available <- exhaustableSmeagol
+  when (null available) $ modified a a [CannotBeTraveledTo]
+
+exhaustableSmeagol :: HasGame m => m [AllyId]
+exhaustableSmeagol = filterM (fmap (notElem CannotExhaust) . getModifiers) =<< select readySmeagol
 
 exhaustSmeagolToTravel :: ReverseQueue m => m ()
-exhaustSmeagolToTravel = traverse_ exhaust =<< select readySmeagol
+exhaustSmeagolToTravel = traverse_ exhaust =<< exhaustableSmeagol
 
 undeadEnemy :: CardMatcher
 undeadEnemy = CardMatchAll [CardWithType EnemyType, CardWithTrait Undead]

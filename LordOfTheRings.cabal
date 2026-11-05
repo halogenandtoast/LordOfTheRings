@@ -1823,6 +1823,7 @@ library
       LordOfTheRings.Location.Cards.CoastOfAnfalas
       LordOfTheRings.Location.Cards.CobasHaven
       LordOfTheRings.Location.Cards.CobwebbedCavern
+      LordOfTheRings.Location.Cards.CobwebbedTunnel
       LordOfTheRings.Location.Cards.CollapsedTower
       LordOfTheRings.Location.Cards.ComfortableLight
       LordOfTheRings.Location.Cards.ConcealedOrcCamp
@@ -1974,6 +1975,7 @@ library
       LordOfTheRings.Location.Cards.FortressWalls
       LordOfTheRings.Location.Cards.FortressWallsTheFortressOfNurn
       LordOfTheRings.Location.Cards.FouledWell
+      LordOfTheRings.Location.Cards.FoulSmellingCave
       LordOfTheRings.Location.Cards.FrightfulDen
       LordOfTheRings.Location.Cards.FrontPorch
       LordOfTheRings.Location.Cards.FrozenSilverlode
@@ -2361,6 +2363,7 @@ library
       LordOfTheRings.Location.Cards.TombsOfCarnDum
       LordOfTheRings.Location.Cards.TopmostChamber
       LordOfTheRings.Location.Cards.TorchLitHall
+      LordOfTheRings.Location.Cards.TorechUngol
       LordOfTheRings.Location.Cards.TortureChamber
       LordOfTheRings.Location.Cards.TortureChamberMountGram
       LordOfTheRings.Location.Cards.TortureRoom
@@ -4249,6 +4252,7 @@ test-suite LordOfTheRings-test
       LordOfTheRings.StarterDeckSpec
       LordOfTheRings.TheLandOfShadow.JourneyToTheCrossRoadsNightmareSpec
       LordOfTheRings.TheLandOfShadow.JourneyToTheCrossRoadsSpec
+      LordOfTheRings.TheLandOfShadow.ShelobsLairNightmareSpec
       LordOfTheRings.TheLandOfShadow.ShelobsLairSpec
       LordOfTheRings.TheLandOfShadow.ThePassageOfTheMarshesNightmareSpec
       LordOfTheRings.TheLandOfShadow.ThePassageOfTheMarshesSpec

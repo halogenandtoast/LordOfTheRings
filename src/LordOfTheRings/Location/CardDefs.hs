@@ -15,7 +15,10 @@ allLocationCards =
   Map.fromList $
     map
       (\def -> (cdCardCode def, def))
-      [ woodedGlade
+      [ foulSmellingCave
+      , torechUngol
+      , cobwebbedTunnel
+      , woodedGlade
       , denseFernBrake
       , shadowyThicket
       , festeringMire
@@ -5202,3 +5205,18 @@ denseFernBrake = (location "the-land-of-shadow-nightmare-journey-to-the-cross-ro
 shadowyThicket :: CardDef
 shadowyThicket = (location "the-land-of-shadow-nightmare-journey-to-the-cross-roads-006" "Shadowy Thicket" JourneyToTheCrossRoadsNightmare 3 2 8)
   {cdCardTraits = setFromList [Forest]}
+
+
+-- * Shelob's Lair Nightmare
+
+foulSmellingCave :: CardDef
+foulSmellingCave = (location "the-land-of-shadow-nightmare-shelobs-lair-002" "Foul-smelling Cave" ShelobsLairNightmare 2 4 1)
+  {cdCardTraits = setFromList [Underground], cdShadowEffect = True}
+
+torechUngol :: CardDef
+torechUngol = (location "the-land-of-shadow-nightmare-shelobs-lair-003" "Torech Ungol" ShelobsLairNightmare 3 2 4)
+  {cdCardTraits = setFromList [Underground]}
+
+cobwebbedTunnel :: CardDef
+cobwebbedTunnel = (location "the-land-of-shadow-nightmare-shelobs-lair-004" "Cobwebbed Tunnel" ShelobsLairNightmare 3 2 5)
+  {cdCardTraits = setFromList [Underground]}

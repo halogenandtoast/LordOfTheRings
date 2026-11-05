@@ -90,9 +90,14 @@ preloadModifiers g = do
       -- Resolve blanking dependencies first: a blanked Wooded Glade cannot blank
       -- attachments in turn. For a cycle (Glade and Thrór's Key), retain the
       -- blanking effect that was already active before the other became applicable.
-      fixedBlank = blankIn fromEffects <> blankIn attachedOut <> blankIn wearied
+      -- Immunity is checked before blanking can remove the text that grants it,
+      -- as Thrór's Key cannot blank an immune Cobwebbed Tunnel.
+      unblocked = Map.mapWithKey unaffected $ Map.unionsWith (<>) [fromEntities, fromEffects, attachedOut, wearied]
+      eligible t m = m `elem` Map.findWithDefault [] t unblocked
+      effective = Map.mapWithKey (\t -> filter (eligible t))
+      fixedBlank = blankIn (effective fromEffects) <> blankIn (effective attachedOut) <> blankIn (effective wearied)
       blankers = Map.fromListWith (<>)
-        [(sourceTarget m.modifierSource, Set.singleton t) | (t, ms) <- Map.toList fromEntities, m <- ms, m.modifierType == Blank]
+        [(sourceTarget m.modifierSource, Set.singleton t) | (t, ms) <- Map.toList fromEntities, m <- ms, m.modifierType == Blank, eligible t m]
       established = Set.fromList
         [sourceTarget m.modifierSource | ms <- toList g.gameModifiers, m <- ms, m.modifierType == Blank]
       resolveBlanks blocked pending =
