@@ -5,7 +5,7 @@ import Data.Map.Strict qualified as Map
 import LordOfTheRings.Ability
 import LordOfTheRings.Ally.Types (allyTokens)
 import LordOfTheRings.Attachment.Types
-import LordOfTheRings.Card (cdCardTraits, cdHitPoints, cdKeywords, cdName, cdShadowCannotBeCanceled, cdVictoryPoints, cdWhenRevealed, ecId, toCard, toCardCode, toCardDef)
+import LordOfTheRings.Card (cdShadowEffect, cdCardTraits, cdHitPoints, cdKeywords, cdName, cdShadowCannotBeCanceled, cdVictoryPoints, cdWhenRevealed, ecId, toCard, toCardCode, toCardDef)
 import LordOfTheRings.Effect (Effect (..))
 import LordOfTheRings.Classes.Entity
 import LordOfTheRings.Classes.HasGame
@@ -29,7 +29,7 @@ import LordOfTheRings.Name (Name (..))
 import LordOfTheRings.Modifier (
   ModifierType (Blank, BlankAttachments, CannotBeTraveledTo, CannotCancelEncounterEffects, CannotExhaust, CannotTriggerAbilities, Defending, ShadowCannotBeCanceled, WhenRevealedCannotBeCanceled),
   ModifierType (Blank, BlankAttachments, CannotBeTraveledTo, CannotCancelEncounterEffects, CannotExhaust, CannotTriggerAbilities, StagingStepBegun, TravelRange, TravelableWithActiveLocation),
-  ModifierType (CannotTriggerActionsOrResponses, TravelRequiresEngagingHighestToughness, CannotDiscardFromHand, CannotTakeDamage, GainKeyword, TreacheryRevealedThisRound),
+  ModifierType (ShadowlessCardsGainEffect, CannotTriggerActionsOrResponses, TravelRequiresEngagingHighestToughness, CannotDiscardFromHand, CannotTakeDamage, GainKeyword, TreacheryRevealedThisRound),
   Modifier (..),
  )
 import LordOfTheRings.Phase (Phase (QuestPhase))
@@ -108,6 +108,10 @@ getWindowAbilities windows = do
 -- | Whether the window matches, reading the game for the matchers that need it.
 windowMatchesM :: HasGame m => WindowMatcher -> Window -> m Bool
 windowMatchesM matcher w@(Window timing wType) = case (matcher, wType) of
+  (ShadowCardWithoutEffectWindow t eid, ShadowCardRevealed eid' cid _ _) | t == timing && eid == eid' -> do
+    gained <- elem ShadowlessCardsGainEffect <$> getModifiers GameTarget
+    enemy <- getEnemy eid
+    pure $ not gained && any (\c -> c.id == cid && not (cdShadowEffect $ toCardDef c)) enemy.shadowCards
   (HostControllersCharacterDestroyedWindow t (HeroTarget hid), CharacterDestroyedUnder pid _) | t == timing ->
     maybe False ((== pid) . (.owner)) . Map.lookup hid . (.heroes) <$> getsGame gameEntities
   (LeftPlaySharingTraitWindow t host, LeftPlay _ _ traits) | t == timing -> do

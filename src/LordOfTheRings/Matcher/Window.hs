@@ -63,6 +63,8 @@ data WindowMatcher
     TreacheryWithTraitRevealedWindow Timing Trait
   | -- | an encounter side quest revealed from the encounter deck, as Iârion answers
     SideQuestRevealedWindow Timing
+  | -- | an enemy turns up a dealt shadow card with no shadow effect
+    ShadowCardWithoutEffectWindow Timing EnemyId
   | ShadowEffectWindow Timing
   | ExploredWindow Timing LocationId
   | -- | the location left play, however it did, for its own abilities to answer

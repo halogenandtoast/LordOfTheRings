@@ -333,6 +333,7 @@ import LordOfTheRings.Log.Block (
  )
 import LordOfTheRings.Log.Refs (cardTitle, sourceCardTitle)
 import LordOfTheRings.Matcher (
+  getRemainingPlayers,
   AllyMatcher (
     AllyControlledBy,
     AllyWithTrait,
@@ -2066,6 +2067,15 @@ runGameMessage msg g = case msg of
           targetLabel eid . (<> [ChooseEnemyAttack pid (filter (/= eid) enemies)]) <$> attack eid
         push $ questionLabelWith (ikey "label.chooseNextAttack") Nothing (map toTarget enemies) pid choices
     pure g
+  -- Additional attacks start after the completed attack's Forced effects and
+  -- responses, which may have removed the enemy or barred it from attacking.
+  DoStep 1 (EnemyAttack pid eid) -> do
+    remaining <- getRemainingPlayers
+    mods <- getModifiers (EnemyTarget eid)
+    when (inPlay g (EnemyTarget eid) && pid `elem` remaining && CannotAttack `notElem` mods && CannotAttackPlayer pid `notElem` mods) do
+      combat <- (== CombatPhase) <$> getsGame gamePhase
+      pushAll $ [DealShadowCard eid, EnemyAttack pid eid] <> [DiscardShadowCards eid | not combat]
+    pure g
   -- players may act at the end of each step of the attack: once its enemy is chosen,
   -- its defenders declared, its shadow resolved and its damage dealt
   EnemyAttack pid eid -> do
@@ -3196,11 +3206,10 @@ runGameMessage msg g = case msg of
           EnemyTarget eid -> [(eid, pid) | AdditionalAttackAfterNextAttack pid <- effectModifiers e, (eid, pid) `elem` finished]
           _ -> []
         attacksAgain = concatMap again (gameEffects g)
-    combat <- (== CombatPhase) <$> getsGame gamePhase
     pushAll
       $ forcedMsgs
       <> [ResponseWindow windows order [] 0]
-      <> concat [[DealShadowCard eid, EnemyAttack pid eid] <> [DiscardShadowCards eid | not combat] | (eid, pid) <- attacksAgain]
+      <> [DoStep 1 (EnemyAttack pid eid) | (eid, pid) <- attacksAgain]
     -- after an enemy's attack has resolved, what lasted for that attack ends
     let attackOver = any (\case Window After (EnemyAttacking _ _) -> True; _ -> False) windows
         -- an effect waiting for the next enemy in the staging area passes to it

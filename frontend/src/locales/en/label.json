@@ -1,4 +1,10 @@
 {
+  "bloodiedBerserker": {
+    "choose": "Choose Bloodied Berserker’s effect",
+    "progress": "Place 2 progress on the active location",
+    "location": "Choose the active location to receive progress",
+    "attack": "Bloodied Berserker makes an additional attack against you"
+  },
   "enchantedLand": {
     "choose": "Choose Enchanted Land’s shadow effect",
     "pursuit": "Increase the pursuit value by 1",
