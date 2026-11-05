@@ -442,6 +442,7 @@ import LordOfTheRings.Message (
     AskToResolveWhenRevealed,
     AttachCard,
     AttachFreedCard,
+    AttachEncounterCardFromHand,
     AttachFromEncounterDiscard,
     AttachPoison,
     AttackDamage,
@@ -612,6 +613,7 @@ import LordOfTheRings.Message (
     RemoveFromDeck,
     RemoveFromDiscard,
     RemoveFromGame,
+    RemoveFromHand,
     RemoveProgressFromQuest,
     RemoveShadowCard,
     RemoveTokens,
@@ -2510,6 +2512,10 @@ runGameMessage msg g = case msg of
       %~ insertEntity treachery
       & scenarioL
       %~ overAttrs ((encounterDiscardL %~ filter (/= card)) . (encounterDeckL %~ filter (/= card)))
+  AttachEncounterCardFromHand pid card host -> do
+    treachery <- overAttrs (\a -> a {treacheryPlacement = AttachedTo host}) <$> newTreachery card
+    push $ RemoveFromHand pid card.id
+    pure $ g & entitiesL . treacheriesL %~ insertEntity treachery
   PutShadowTreacheryIntoPlay host cid placement -> do
     for_ (Map.lookup host g.entities.enemies) \hostEnemy ->
       for_ (find ((== cid) . ecId) hostEnemy.shadowCards) \card -> do

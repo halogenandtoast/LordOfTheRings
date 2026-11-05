@@ -722,6 +722,10 @@ data ModifierType
     QuestedSuccessfullyThisPhase
   | -- | on the game: the players quested unsuccessfully this round, as Melanwar reads
     QuestedUnsuccessfullyThisRound
+  | -- | on a card, a lasting effect of its own: while it lasts the card gives each
+    -- encounter card in play immunity to player card effects, as The Threat to
+    -- Wilderland's "all encounter cards are immune to player card effects"
+    EncounterCardsImmune
   | -- | on the game, until the end of the phase: if the players quest unsuccessfully, the
     -- effect's source places this much progress on the target, as Dark Clouds reads
     ProgressIfQuestUnsuccessful Target Int
