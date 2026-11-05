@@ -4331,5 +4331,19 @@
         "text": "An extra threat tracker beside the quest deck tracks the pursuit value, set to 10 during setup. Each quest stage needs as much progress as the pursuit value to be defeated. If the pursuit value is 30 at the end of the round, the players lose the game."
       }
     ]
+  },
+  "helms-deep": {
+    "intro": [
+      "The Riders of Rohan cut down the Orcs before they reached Isengard, and Gandalf turned Aragorn and his companions from the eaves of Fangorn toward Edoras. Now King Théoden must ready his people, for the armies of Saruman are marching on the fortress of Helm's Deep."
+    ],
+    "setup": [
+      "Build the encounter deck from the Helm's Deep and Orcs of the White Hand encounter sets."
+    ],
+    "rules": [
+      {
+        "title": "Defense",
+        "text": "While the current quest has the defense keyword, the players cannot place progress on the quest or the active location by questing successfully. If the total threat in the staging area is greater than the willpower committed, the players raise no threat: the first player places the difference as progress on the current quest instead, the active location taking it first. If the encounter deck defeats stage 4B, the players lose the game."
+      }
+    ]
   }
 }
