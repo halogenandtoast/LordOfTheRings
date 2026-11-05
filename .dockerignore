@@ -1,4 +1,4 @@
-.stack-work/
+.stack-work*/
 .git/
 .claude/
 .DS_Store
@@ -9,3 +9,5 @@ tags
 client_session_key.aes
 frontend/
 !frontend/public/data/cards.json
+
+dist-newstyle/

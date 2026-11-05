@@ -1,0 +1,17 @@
+# One original amd64 build measured 0.6 GiB Stack root + 1.4 GiB app cache.
+# Allow headroom for optimized objects, two architectures, and compiler upgrades.
+[worker.oci]
+  gc = true
+
+  [[worker.oci.gcpolicy]]
+    filters = ["type==exec.cachemount"]
+    keepDuration = "2160h"
+    reservedSpace = "12GB"
+    maxUsedSpace = "24GB"
+
+  [[worker.oci.gcpolicy]]
+    all = true
+    keepDuration = "720h"
+    reservedSpace = "24GB"
+    maxUsedSpace = "48GB"
+    minFreeSpace = "15GB"

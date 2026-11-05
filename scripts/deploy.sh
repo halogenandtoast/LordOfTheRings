@@ -12,6 +12,7 @@
 #   LOTR_DOCKERHUB_USER   Docker Hub namespace (default: halogenandtoast)
 #   LOTR_BUILD_PLATFORM   buildx platform (default: linux/amd64)
 #   LOTR_CLUSTER          DOKS cluster name (default: lord-of-the-rings)
+#   LOTR_BUILDER          Persistent builder (default: lotr-builder-v2)
 
 set -euo pipefail
 
@@ -19,6 +20,7 @@ ROOT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)"
 DOCKER_USER="${LOTR_DOCKERHUB_USER:-halogenandtoast}"
 PLATFORM="${LOTR_BUILD_PLATFORM:-linux/amd64}"
 CLUSTER="${LOTR_CLUSTER:-lord-of-the-rings}"
+BUILDER="${LOTR_BUILDER:-lotr-builder-v2}"
 
 SHA="$(git -C "$ROOT_DIR" rev-parse --short HEAD)"
 echo "deploy.sh: shipping $SHA"
@@ -29,15 +31,15 @@ fi
 
 # Make sure a multi-platform-capable builder exists. The default
 # `docker-container` driver cross-builds via QEMU.
-if ! docker buildx inspect lotr-builder >/dev/null 2>&1; then
-  docker buildx create --name lotr-builder --driver docker-container --bootstrap >/dev/null
+if ! docker buildx inspect "$BUILDER" >/dev/null 2>&1; then
+  docker buildx create --name "$BUILDER" --driver docker-container \
+    --buildkitd-config "$ROOT_DIR/scripts/buildkitd.toml" --bootstrap >/dev/null
 fi
-docker buildx use lotr-builder >/dev/null
 
 build_and_push() {
   local image="$1" ctx="$2"
   echo "deploy.sh: building $image:{$SHA,latest} for $PLATFORM"
-  docker buildx build \
+  docker buildx build --builder "$BUILDER" \
     --platform "$PLATFORM" \
     --tag "$image:$SHA" \
     --tag "$image:latest" \

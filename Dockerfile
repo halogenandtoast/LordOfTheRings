@@ -2,14 +2,17 @@
 
 # Stage 1: build the Haskell binary with stack. The haskell image's ghc matches
 # stack.yaml's compiler, which stack.yaml tells stack to use (system-ghc).
-FROM haskell:9.14.1 AS builder
+FROM haskell:9.14.1 AS dependencies
+
+ARG TARGETARCH
+ARG BUILD_CACHE_VERSION=1
 
 WORKDIR /build
 
 RUN apt-get update \
   && apt-get install -y --no-install-recommends \
        ca-certificates curl gnupg lsb-release \
-       libgmp-dev zlib1g-dev pkg-config \
+       libgmp-dev zlib1g-dev pkg-config python3 \
   && install -d /usr/share/postgresql-common/pgdg \
   && curl -fsSLo /usr/share/postgresql-common/pgdg/apt.postgresql.org.asc \
        https://www.postgresql.org/media/keys/ACCC4CF8.asc \
@@ -22,14 +25,19 @@ RUN apt-get update \
 # Pull in just the dependency descriptors first so dependency compilation
 # can be cached independently from source changes.
 COPY stack.yaml stack.yaml.lock package.yaml LordOfTheRings.cabal ./
-RUN --mount=type=cache,id=lotr-stack-root,target=/root/.stack \
-    stack build --only-dependencies
+RUN --mount=type=cache,id=lotr-stack-${TARGETARCH}-ghc9.14.1-v${BUILD_CACHE_VERSION},target=/root/.stack,sharing=locked \
+    --mount=type=cache,id=lotr-work-${TARGETARCH}-ghc9.14.1-v${BUILD_CACHE_VERSION},target=/build/.stack-work,sharing=locked \
+    stack build --only-dependencies --no-terminal
 
-COPY . .
-# .stack-work is a cache mount so a deploy only recompiles changed modules.
-RUN --mount=type=cache,id=lotr-stack-root,target=/root/.stack \
-    --mount=type=cache,id=lotr-stack-work,target=/build/.stack-work \
-    stack install --local-bin-path /out LordOfTheRings:exe:LordOfTheRings-exe
+FROM dependencies AS builder
+
+COPY src/ src/
+COPY app/ app/
+COPY scripts/docker-build-backend.sh scripts/recover-stack-cache.py scripts/
+ARG BUILD_TIMINGS=0
+RUN --mount=type=cache,id=lotr-stack-${TARGETARCH}-ghc9.14.1-v${BUILD_CACHE_VERSION},target=/root/.stack,sharing=locked \
+    --mount=type=cache,id=lotr-work-${TARGETARCH}-ghc9.14.1-v${BUILD_CACHE_VERSION},target=/build/.stack-work,sharing=locked \
+    LOTR_BUILD_TIMINGS="$BUILD_TIMINGS" sh scripts/docker-build-backend.sh
 
 # Stage 2: minimal runtime.
 FROM debian:bookworm-slim AS runtime
