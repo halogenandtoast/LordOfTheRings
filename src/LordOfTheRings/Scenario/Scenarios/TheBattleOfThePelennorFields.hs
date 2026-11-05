@@ -63,6 +63,10 @@ instance RunMessage TheBattleOfThePelennorFields where
     -- The first player attaches Andúril and Banner of Elendil to Aragorn and sets him
     -- aside, out of play. Add The Corsair Fleet to the staging area (Gondor side faceup)
     -- and place X resources on it, where X is the number recorded in the campaign log.
+    -- Aragorn never enters play here, so his loss text does not trigger: the first player
+    -- adds The Corsair Fleet instead of taking control of him at the start of the game
+    -- (FFG's preview article "The Battle of the Pelennor Fields", 29 June 2016; see
+    -- 'leavesPlay').
     -- Remove each burden with the following burden set icons from the encounter deck (see
     -- 'LordOfTheRings.Saga.removedBurdenSets').
     DoStep 9 Setup | Just l <- attrs.campaign -> do
