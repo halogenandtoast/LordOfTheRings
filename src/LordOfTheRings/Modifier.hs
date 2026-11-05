@@ -1077,26 +1077,22 @@ sailingCharacters :: [ModifierType] -> Int
 sailingCharacters ms = fromMaybe 1 (headMay [n | CountsAsSailingCharacters n <- ms]) + sum [n | AdditionalSailingCharacters n <- ms]
 
 {- | A saved game from before one 'PlayedCardThisRound' marker per card played holds the
-old markers. 'PlayedThisRound' was the once-per-round flag 'UsedThisRound' is now, and
-'PlayedCardTypeThisRound' loads as a card of the type played, its code unknown. The
-markers it was saved beside say nothing more, and an 'Effect' drops them on load: see
-'legacyPlayedMarkers'. Anything else is read by the generated parser.
+old markers, in its effects and in its modifiers. 'PlayedThisRound' was the once-per-round
+flag 'UsedThisRound' is now, and 'PlayedCardTypeThisRound' loads as a card of the type
+played, its code unknown. The rest were always saved beside a 'PlayedCardTypeThisRound'
+and say nothing more: each loads as a use keyed by no card, which nothing reads. Anything
+else is read by the generated parser.
 -}
 parseLegacyModifierType :: (Value -> Parser ModifierType) -> Value -> Parser ModifierType
 parseLegacyModifierType generated v = case v of
-  Object o
-    | Just (String "PlayedThisRound") <- KeyMap.lookup "tag" o
-    , Just contents <- KeyMap.lookup "contents" o ->
-        UsedThisRound <$> parseJSON contents
-    | Just (String "PlayedCardTypeThisRound") <- KeyMap.lookup "tag" o
-    , Just contents <- KeyMap.lookup "contents" o ->
-        PlayedCardThisRound "" <$> parseJSON contents
+  Object o -> case (KeyMap.lookup "tag" o, KeyMap.lookup "contents" o) of
+    (Just (String "PlayedThisRound"), Just contents) -> UsedThisRound <$> parseJSON contents
+    (Just (String "PlayedCardTypeThisRound"), Just contents) -> PlayedCardThisRound "" <$> parseJSON contents
+    (Just (String tag), _)
+      | tag `elem` ["PlayedACardThisRound", "PlayedEventThisRound", "PlayedAnAllyThisRound", "AllyPlayedThisRound" :: Text] ->
+          pure $ UsedThisRound ""
+    _ -> generated v
   _ -> generated v
-
--- | Tags of saved markers whose meaning a saved 'PlayedCardTypeThisRound' beside them
--- already carries.
-legacyPlayedMarkers :: [Text]
-legacyPlayedMarkers = ["PlayedACardThisRound", "PlayedEventThisRound", "PlayedAnAllyThisRound", "AllyPlayedThisRound"]
 
 -- Direct codecs avoid specializing Generic traversal for this large sum.
 $(do

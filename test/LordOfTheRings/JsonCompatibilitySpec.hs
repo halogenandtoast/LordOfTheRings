@@ -58,7 +58,11 @@ spec = describe "Generic codec compatibility" do
             , "effectDuration" .= UntilEndOfRound
             ]
     (fromJSON old :: Result Effect)
-      `shouldBe` Success (Effect GameSource target [M.PlayedCardThisRound "" AllyType, M.UsedThisRound "01001"] UntilEndOfRound) :: Expectation
+      `shouldBe` Success (Effect GameSource target [M.UsedThisRound "", M.PlayedCardThisRound "" AllyType, M.UsedThisRound "", M.UsedThisRound "01001"] UntilEndOfRound)
+    let cached = toJSON (M.Modifier GameSource (M.UsedThisRound "01001")) & \case
+          Object o -> Object $ KeyMap.insert "modifierType" (tagged "PlayedACardThisRound") o
+          v -> v
+    (fromJSON cached :: Result M.Modifier) `shouldBe` Success (M.Modifier GameSource (M.UsedThisRound "")) :: Expectation
 
   it "preserves nullary tags, positional contents, recursive messages and questions" do
     mapM_
