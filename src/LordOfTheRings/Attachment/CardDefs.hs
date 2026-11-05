@@ -2105,9 +2105,10 @@ expertTreasureHunter =
 -- * The Hobbit saga's treasures
 
 {- | A treasure: a player card discovered in the scenario its set icon names, then added to
-its discoverer's deck, 1 copy, in a later scenario whose setup lists that set (The Hobbit:
-Over Hill and Under Hill rules insert, "Treasure"). No deck is built with one: the campaign
-adds those discovered (see 'LordOfTheRings.Campaign.seatPoolCards'). Each reads "Attach to".
+its discoverer's deck if he chooses, 1 copy, in a later scenario whose setup lists that set
+(The Hobbit: Over Hill and Under Hill rules insert, "Treasure"). No deck is built with one:
+each player is asked at that scenario's setup (see 'LordOfTheRings.Scenario.Runner'). Each
+reads "Attach to".
 -}
 treasure :: CardCode -> Name -> EncounterSet -> [Trait] -> CardDef
 treasure code name set traits =

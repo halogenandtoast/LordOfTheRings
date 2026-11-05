@@ -1,6 +1,8 @@
 module LordOfTheRings.Hobbit.OverTheMistyMountainsGrimSpec (spec) where
 
 import LordOfTheRings.Ally.CardDefs qualified as Allies
+import LordOfTheRings.Attachment.CardDefs qualified as Attachments
+import LordOfTheRings.Campaign (CampaignLog (campaignLogPool), PoolCard (..), newCampaignLog)
 import LordOfTheRings.Card (CardDef (cdEncounterSet), HasCardCode, toCardDef)
 import LordOfTheRings.EncounterSet (EncounterSet (..))
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
@@ -128,6 +130,19 @@ spec = describe "Over the Misty Mountains Grim" do
       activeQuestCode `shouldReturn` toCardCode Quests.aShortRest
       bilbo <- getHeroWithCode "131001"
       bilbo.owner `shouldBe` pid
+
+    it "lets each player choose whether to add a discovered treasure its setup lists, 1 copy by title" $ do
+      let pool = [PoolCard (toCardCode t) (Just seat) Nothing | (t, seat) <- [(Attachments.stingTreasure, 0), (Attachments.stingTreasure, 0), (Attachments.mithrilShirtTreasure, 0), (Attachments.stingTreasure, 1)]]
+      twoPlayerCampaignTestIn overTheMistyMountainsGrim ((newCampaignLog "the-hobbit") {campaignLogPool = pool}) testDeck $ \p1 p2 -> do
+        run $ DoStep 2 Setup
+        -- the Mithril Shirt is of a set the setup does not list, the second Sting a second copy
+        chooseLabel "$label.saga.addTreasureToDeck" p1
+        chooseLabel "$label.saga.leaveTreasureOut" p2
+        getQuestion p1 `shouldReturn` Nothing
+        getQuestion p2 `shouldReturn` Nothing
+        let stings pid = length . filter ((== toCardCode Attachments.stingTreasure) . toCardCode) . (.deck) <$> getPlayer pid
+        stings p1 `shouldReturn` 1
+        stings p2 `shouldReturn` 0
 
   describe "the stages" do
     it "A Short Rest lets each player search his deck for a treasure, then advances" . gameTestIn overTheMistyMountainsGrim treasureDeck $ \pid -> do

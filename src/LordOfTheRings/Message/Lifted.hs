@@ -2533,7 +2533,7 @@ updateCampaignLog = push . UpdateCampaignLog
 
 {- | The players have discovered the treasure card: in campaign mode it goes to the
 Campaign Pool of every seat, each player then free to add 1 copy to his deck in a later
-scenario whose setup lists its set (see 'LordOfTheRings.Campaign.seatPoolCards'). The
+scenario whose setup lists its set, as he is asked at its setup. The
 cards read "the players have discovered", and a player may add a treasure he has
 discovered, no more than 1 copy by title to his deck (The Hobbit: Over Hill and Under Hill
 rules insert, "Treasure"). Kept only if the scenario is won, as the cards make winning it

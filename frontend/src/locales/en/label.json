@@ -523,7 +523,10 @@
     "choosePlayer": "Choose the player whose copy of The One Ring goes into play"
   },
   "saga": {
-    "chooseFellowshipHero": "Choose the hero you take control of"
+    "chooseFellowshipHero": "Choose the hero you take control of",
+    "addTreasure": "Add this discovered treasure to your deck?",
+    "addTreasureToDeck": "Add it to my deck",
+    "leaveTreasureOut": "Leave it out"
   },
   "setupAttach": "Setup: Attach it to a hero in play",
   "aLightInTheDark": {
