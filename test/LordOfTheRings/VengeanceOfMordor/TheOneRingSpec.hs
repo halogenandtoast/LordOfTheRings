@@ -4,7 +4,7 @@ import Data.Map.Strict qualified as Map
 import LordOfTheRings.Ally.CardDefs qualified as Allies
 import LordOfTheRings.Attachment (AttachmentAttrs (attachmentExhausted))
 import LordOfTheRings.Attachment.CardDefs qualified as Attachments
-import LordOfTheRings.Decklist (loadPlayer)
+import LordOfTheRings.Decklist (barredHeroes, loadPlayer)
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Event.CardDefs qualified as Events
 import LordOfTheRings.Helpers.Character (getAttack, getDefense, getHitPoints, getWillpower)
@@ -22,6 +22,9 @@ import TestImport
 beravorCode, eowynCode :: CardCode
 beravorCode = "01012"
 eowynCode = "01007"
+
+check :: IO () -> IO ()
+check = id
 
 hero :: CardCode -> GameT Target
 hero code = toTarget <$> getHeroWithCode code
@@ -121,6 +124,12 @@ spec = describe "The One Ring" do
       card <- putCardIntoHand pid Events.theRingOfPower
       run $ ActionWindow pid
       choices pid >>= (`shouldSatisfy` notElem (CardIdTarget card.id))
+
+    it "cannot be used in the saga expansions' scenarios" $ check do
+      let deck = deckList testDeck.heroes (testDeck.cards <> [(toCardCode Attachments.theOneRing, 1), (toCardCode Attachments.innerStrength, 1)])
+      barredHeroes "a-shadow-of-the-past" False [deck] `shouldBe` ["The One Ring", "Inner Strength"]
+      barredHeroes "we-must-away-ere-break-of-day" False [deck] `shouldBe` ["The One Ring", "Inner Strength"]
+      barredHeroes "the-hunt-for-gollum" False [deck] `shouldBe` []
 
   describe "The Ring of Power" do
     it "exhausts the ring to ready its hero, with +1 willpower, attack and defense" . gameTest $ \pid -> do
