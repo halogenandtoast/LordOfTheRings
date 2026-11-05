@@ -142,6 +142,9 @@ data CampaignLog = CampaignLog
   , campaignLogSeatThreatPenalty :: Map Int Int
   -- ^ a starting threat penalty of one seat's alone, as The Passage of the Marshes'
   -- resolution gives a player who chooses it
+  , campaignLogTreasureHeroes :: Map Int (Map CardCode [[CardCode]])
+  -- ^ by seat and treasure, each group of heroes the seat had as it discovered the
+  -- treasure, sorted ('discoveredWith')
   }
   deriving stock (Show, Eq, Generic)
 
@@ -162,7 +165,7 @@ instance ToJSON CampaignLog where
 
 -- | A log kept before XP was recorded has none.
 instance FromJSON CampaignLog where
-  parseJSON = genericParseJSON (aesonOptions $ Just "campaignLog") . withDefaults [("xp", Number 0), ("marked", object []), ("cardResources", Number 0), ("counts", object []), ("seatThreatPenalty", object [])]
+  parseJSON = genericParseJSON (aesonOptions $ Just "campaignLog") . withDefaults [("xp", Number 0), ("marked", object []), ("cardResources", Number 0), ("counts", object []), ("seatThreatPenalty", object []), ("treasureHeroes", object [])]
 
 instance HasField "campaign" CampaignLog CampaignId where
   getField = campaignLogCampaign
@@ -199,6 +202,9 @@ instance HasField "counts" CampaignLog (Map CampaignLogKey (Map CardCode Int)) w
 
 instance HasField "seatThreatPenalty" CampaignLog (Map Int Int) where
   getField = campaignLogSeatThreatPenalty
+
+instance HasField "treasureHeroes" CampaignLog (Map Int (Map CardCode [[CardCode]])) where
+  getField = campaignLogTreasureHeroes
 
 -- | The seat's starting threat penalty: the campaign's and its own.
 seatThreatPenalty :: Int -> CampaignLog -> Int
@@ -300,7 +306,7 @@ lookupCampaign :: CampaignId -> Maybe CampaignDef
 lookupCampaign cid = find ((== cid) . campaignDefId) allCampaigns
 
 newCampaignLog :: CampaignId -> CampaignLog
-newCampaignLog cid = CampaignLog cid [] [] 0 [] mempty [] 0 mempty 0 mempty mempty
+newCampaignLog cid = CampaignLog cid [] [] 0 [] mempty [] 0 mempty 0 mempty mempty mempty
 
 -- | The scenario's part number in its campaign, from 1, as Ominous Fate's X reads it.
 partNumber :: CampaignLog -> ScenarioId -> Int
@@ -490,6 +496,28 @@ recordFallen heroes l =
     , campaignLogPool = filter (maybe True (`notElem` heroes) . (.attachedTo)) l.pool
     }
 
+{- | The seat discovers the treasure: it joins the seat's Campaign Pool, with the seat's
+heroes noted, as a player may add it to his deck only "using the same group of heroes he
+is currently playing with" (The Hobbit: Over Hill and Under Hill rules insert,
+"Treasure"). The heroes are told by card code, not by title: The Hobbit's scenarios are
+played with the same hero cards throughout, so another version of a hero is another group.
+-}
+discoverTreasure :: Int -> CardCode -> CampaignLog -> CampaignLog
+discoverTreasure seat code l =
+  addToPool (PoolCard code (Just seat) Nothing) l
+    { campaignLogTreasureHeroes = Map.insertWith (Map.unionWith (\new old -> ordNub (old <> new))) seat (Map.singleton code [seatGroup seat l]) l.treasureHeroes
+    }
+
+seatGroup :: Int -> CampaignLog -> [CardCode]
+seatGroup seat l = sort $ fromMaybe [] (atMay l.heroes seat)
+
+{- | Whether the seat's heroes now are a group it discovered the treasure with. A
+treasure in a log kept before the groups were noted has none, and is taken as discovered
+with these heroes.
+-}
+discoveredWith :: Int -> CardCode -> CampaignLog -> Bool
+discoveredWith seat code l = maybe True (seatGroup seat l `elem`) (Map.lookup code =<< Map.lookup seat l.treasureHeroes)
+
 -- | Earn a boon or burden.
 addToPool :: PoolCard -> CampaignLog -> CampaignLog
 addToPool p l = l {campaignLogPool = l.pool <> [p]}
@@ -520,6 +548,8 @@ data CampaignLogUpdate
   | -- | the hero comes off it, as Beyond All Hope's, or The Black Gate Opens' resolution
     -- keeps a hero off it
     RemoveFallenHero CardCode
+  | -- | the seat discovers the treasure ('discoverTreasure')
+    DiscoverTreasure Int CardCode
   | -- | a permanent starting threat penalty for the seat alone
     AdjustSeatThreatPenalty Int Int
   | -- | the seat's recorded heroes: the first taken off, if one is given, the second put on,
@@ -532,6 +562,7 @@ data CampaignLogUpdate
 updateLog :: CampaignLogUpdate -> CampaignLog -> CampaignLog
 updateLog = \case
   AddToPool p -> addToPool p
+  DiscoverTreasure seat code -> discoverTreasure seat code
   RemoveFromPool code -> \l -> l {campaignLogPool = filter ((/= code) . (.code)) l.pool}
   AdjustThreatPenalty n -> \l -> l {campaignLogThreatPenalty = l.threatPenalty + n}
   Record key cards -> record key cards
