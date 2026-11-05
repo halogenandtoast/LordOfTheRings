@@ -30,6 +30,9 @@ import LordOfTheRings.Helpers.Modifiers (
   getModifiers,
   preloadModifiers,
  )
+import LordOfTheRings.Location.Types (locationTokens)
+import LordOfTheRings.Token (Token (Resource), countTokens)
+import LordOfTheRings.Window (WindowType (DiscardedByMire), mkWhen)
 import LordOfTheRings.I18n (ikey)
 import LordOfTheRings.Id (PlayerId)
 import LordOfTheRings.Log.Narrator (narrationFor)
@@ -39,6 +42,10 @@ import LordOfTheRings.Matcher (
   HeroMatcher (AnyHero, HeroControlledBy),
   PlayerMatcher (PlayerWithId),
   getLead,
+  LocationMatcher (AnyLocation),
+  getLocation,
+  getMire,
+  select,
   selectAny,
   selectCharacters,
  )
@@ -47,6 +54,7 @@ import LordOfTheRings.Message (
     AddToVictoryDisplay,
     Ask,
     ChooseAndDiscardFromHand,
+    CheckWindows,
     ClaimFreeObjective,
     ClaimObjective,
     Discard,
@@ -77,10 +85,10 @@ import LordOfTheRings.Question (
   questionRebuild,
  )
 import LordOfTheRings.Source (
-  Source (GameSource, ObjectiveSource),
+  Source (GameSource, ObjectiveSource, LocationSource),
  )
 import LordOfTheRings.Target (
-  Target (ObjectiveTarget, PlayerTarget),
+  Target (ObjectiveTarget, PlayerTarget, LocationTarget),
   Targetable (toTarget),
  )
 
@@ -158,6 +166,7 @@ runNext =
       putGame . gainedAbilities =<< withHandModifiers =<< preloadModifiers g
       checkUnblockedQuests g
       discardAtNoWillpower
+      discardAtMireThreshold
       discardDownToHandLimit
       claimFreeObjectives
       endWaitingGame
@@ -231,5 +240,24 @@ discardAtNoWillpower = do
           LeavePlay (Discard _ t) -> t == c
           _ -> False
     pushAll [Discard GameSource c | c <- doomed, not (any (discarding c) queued)]
+
+-- | Mire X is a state requirement (The Land of Shadow rules insert), including
+-- when blanking ends with X resource tokens already on the location. As for
+-- zero-willpower discards above, do not queue it twice while its Forced window resolves.
+discardAtMireThreshold :: GameT ()
+discardAtMireThreshold = do
+  over <- getsGame gameEnding
+  unless over do
+    locations <- select AnyLocation
+    queued <- peekQueue
+    for_ locations \lid -> do
+      mire <- getMire lid
+      tokens <- countTokens Resource . locationTokens . toAttrs <$> getLocation lid
+      let discarding = \case
+            Discard _ (LocationTarget target) -> target == lid
+            LeavePlay (Discard _ (LocationTarget target)) -> target == lid
+            _ -> False
+      when (mire > 0 && tokens >= mire && not (any discarding queued)) $
+        pushAll [CheckWindows [mkWhen $ DiscardedByMire lid], Discard (LocationSource lid) (LocationTarget lid)]
 
 -- | Each hero's gained abilities, kept in step with its 'GainGameTextOf' modifiers.

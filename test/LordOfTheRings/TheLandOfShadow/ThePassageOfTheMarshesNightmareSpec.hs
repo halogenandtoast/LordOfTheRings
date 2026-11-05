@@ -602,3 +602,22 @@ spec = describe "The Passage of the Marshes Nightmare" do
     run $ CreateEffect $ Effect GameSource (EnemyTarget eid) [Blank] UntilEndOfRound
     getModifiers eid >>= (`shouldSatisfy` notElem CannotHaveAttachments)
     canPlay player card `shouldReturn` True
+
+  it "restoring Mire after Thror's Key leaves immediately discards a location already at its threshold" . marshes $ \pid -> do
+    lid <- activeLocationWith Locations.festeringMire
+    key <- putAttachmentOn pid Attachments.throrsKey (LocationTarget lid)
+    run $ PlaceTokens GameSource (LocationTarget lid) Resource 2
+    selectAny (LocationWithId lid) `shouldReturn` True
+    run $ Discard GameSource key
+    resolveForcedChoices pid
+    selectAny (LocationWithId lid) `shouldReturn` False
+    map toCardCode <$> getEncounterDiscard >>= (`shouldSatisfy` elem (toCardCode Locations.festeringMire))
+
+  it "restoring Mire when a blanking effect expires checks the tokens already on the location" . marshes $ \pid -> do
+    lid <- activeLocationWith Locations.festeringMire
+    run $ CreateEffect $ Effect GameSource (LocationTarget lid) [Blank] UntilEndOfRound
+    run $ PlaceTokens GameSource (LocationTarget lid) Resource 2
+    selectAny (LocationWithId lid) `shouldReturn` True
+    run $ EndEffects UntilEndOfRound
+    resolveForcedChoices pid
+    selectAny (LocationWithId lid) `shouldReturn` False
