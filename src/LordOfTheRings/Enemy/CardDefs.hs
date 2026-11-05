@@ -14,7 +14,9 @@ allEnemyCards =
   Map.fromList $
     map
       (\def -> (cdCardCode def, def))
-      [ zirakzigilArcher
+      [ isengardArcher
+      , isengardTracker
+      , zirakzigilArcher
       , slabBearer
       , paleGreenTentacle
       , huntingHawk
@@ -5454,3 +5456,13 @@ slabBearer = (enemy "the-road-darkens-nightmare-journey-in-the-dark-002" "Slab-b
 zirakzigilArcher :: CardDef
 zirakzigilArcher = (enemy "the-road-darkens-nightmare-journey-in-the-dark-003" "Zirakzigil Archer" JourneyInTheDarkNightmare 4 42 3 4 3 4)
   {cdCardTraits = setFromList [Orc], cdKeywords = setFromList [Peril, Archery 2], cdWhenRevealed = True}
+
+-- * Breaking of the Fellowship Nightmare
+
+isengardArcher :: CardDef
+isengardArcher = (enemy "the-road-darkens-nightmare-breaking-of-the-fellowship-002" "Isengard Archer" BreakingOfTheFellowshipNightmare 3 44 2 4 2 4)
+  {cdCardTraits = setFromList [Orc, UrukHai], cdKeywords = setFromList [Toughness 1, Archery 2], cdShadowEffect = True}
+
+isengardTracker :: CardDef
+isengardTracker = (enemy "the-road-darkens-nightmare-breaking-of-the-fellowship-003" "Isengard Tracker" BreakingOfTheFellowshipNightmare 4 35 3 5 1 3)
+  {cdCardTraits = setFromList [Orc, UrukHai], cdKeywords = setFromList [Toughness 2, Archery 1], cdShadowEffect = True}

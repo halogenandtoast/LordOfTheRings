@@ -931,7 +931,9 @@ library
       LordOfTheRings.Enemy.Cards.HuornOfFangorn
       LordOfTheRings.Enemy.Cards.IllFatedGuard
       LordOfTheRings.Enemy.Cards.InvadingOrc
+      LordOfTheRings.Enemy.Cards.IsengardArcher
       LordOfTheRings.Enemy.Cards.IsengardOrc
+      LordOfTheRings.Enemy.Cards.IsengardTracker
       LordOfTheRings.Enemy.Cards.IsengardUruk
       LordOfTheRings.Enemy.Cards.IslandWatcher
       LordOfTheRings.Enemy.Cards.JailerOfCirithGurat
@@ -4212,6 +4214,7 @@ test-suite LordOfTheRings-test
       LordOfTheRings.TheLordOfTheRings.AShadowOfThePastSpec
       LordOfTheRings.TheLordOfTheRings.FlightToTheFordNightmareSpec
       LordOfTheRings.TheLordOfTheRings.FlightToTheFordSpec
+      LordOfTheRings.TheRoadDarkens.BreakingOfTheFellowshipNightmareSpec
       LordOfTheRings.TheRoadDarkens.BreakingOfTheFellowshipSpec
       LordOfTheRings.TheRoadDarkens.JourneyInTheDarkNightmareSpec
       LordOfTheRings.TheRoadDarkens.JourneyInTheDarkSpec

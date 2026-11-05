@@ -10,6 +10,9 @@
     "damage": "Deal 1 damage to each character you control",
     "noProgress": "Progress cannot be placed on the quest until the end of the round"
   },
+  "isengardArcher": {
+    "shadow": "Choose an ally you control to take 2 damage"
+  },
   "choosePlayer": "Choose a player",
   "placeProgressOnQuestCard": "Choose a quest card to place the progress on",
   "playAttachmentFromDiscard": "Choose an attachment in your discard pile to play on the hero",

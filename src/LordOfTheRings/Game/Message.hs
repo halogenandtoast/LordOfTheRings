@@ -1318,8 +1318,16 @@ runGameMessage msg g = case msg of
     , Just dest <- find (elem pid . areaPlayers) (separationAreas s)
     , held <- [a | a <- separationAreas s, not (isFocusedArea g a)]
     , Just from <- find (holds target . snd) ((Nothing, g.entities) : [(Just (areaPlayers a), areaHeldEntities a) | a <- held])
-    , not (isFocusedArea g dest && isNothing (fst from)) -> do
-        pushAll $ discardShadowsOf g target
+    , not (isFocusedArea g dest && isNothing (fst from))
+    , fst from /= Just (areaPlayers dest) -> do
+        pushAll $ discardShadowsOf (g & entitiesL .~ snd from) target
+        -- Moving to a different staging area is entering that area. Resolve its
+        -- entry effects there, then restore the area that was in focus.
+        case target of
+          EnemyTarget _ -> do
+            here <- getStageLead
+            pushAll [FocusArea pid, CheckWindows [mkAfter $ EntersStagingArea target], FocusArea here]
+          _ -> pure ()
         let (moving, staying) = splitCards [target] (snd from)
             moved = toStagingArea target moving
             fromHere a = Just (areaPlayers a) == fst from
