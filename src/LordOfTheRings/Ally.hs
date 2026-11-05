@@ -344,6 +344,8 @@ newAlly pid card = do
   hid <- getRandom
   pure $ createAlly card hid pid
 
+-- Keep card dictionaries inside the registry instead of exporting its unfolding.
+{-# NOINLINE allAllies #-}
 allAllies :: Map CardCode SomeAllyCard
 allAllies =
   Map.fromList
