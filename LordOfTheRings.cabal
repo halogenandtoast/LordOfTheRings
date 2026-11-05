@@ -3931,6 +3931,7 @@ test-suite LordOfTheRings-test
       LordOfTheRings.HeirsOfNumenor.TheSiegeOfCairAndrosSpec
       LordOfTheRings.Hero.HeroAbilitiesSpec
       LordOfTheRings.Hobbit.DungeonsDeepAndCavernsDimSpec
+      LordOfTheRings.Hobbit.EasyModeSpec
       LordOfTheRings.Hobbit.OverTheMistyMountainsGrimSpec
       LordOfTheRings.Hobbit.PlayerCardsSpec
       LordOfTheRings.Hobbit.WeMustAwayEreBreakOfDaySpec
