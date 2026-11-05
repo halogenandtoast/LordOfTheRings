@@ -4004,8 +4004,11 @@ runGameMessage msg g = case msg of
         -- Prowl, a keyword, resolves before the When Revealed effect (ALeP 3.094)
         revealing t =
           inLogBlock (RevealBlock card)
-            $ [CheckWindows [mkAfter $ EntersStagingArea t] | cdCardType def `elem` [EnemyType, LocationType, EncounterSideQuestType], isNothing engaging]
-            <> [CheckWindows [mkWhen $ Revealed t]] <> mischiefDamage t <> [WhileInPlay t prowl | notNull prowl] <> hide <> [whenRevealed t, WhileInPlay t doomed]
+            $ [CheckWindows [mkWhen $ Revealed t]] <> mischiefDamage t <> [WhileInPlay t prowl | notNull prowl] <> hide <> [whenRevealed t, WhileInPlay t doomed]
+            -- Resolve the card's revelation before its staging-entry triggers. A
+            -- canceled card is treated as never revealed (FAQ 1.54), so its entry
+            -- Forced effects cannot resolve before the cancellation window.
+            <> [WhileInPlay t [CheckWindows [mkAfter $ EntersStagingArea t]] | cdCardType def `elem` [EnemyType, LocationType, EncounterSideQuestType], isNothing engaging]
             <> [CheckWindows [mkAfter $ Revealed t]]
     case cdCardType def of
       -- an enemy revealed to be put into play engaged never enters the staging area

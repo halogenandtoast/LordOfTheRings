@@ -12,6 +12,7 @@ import LordOfTheRings.Objective.CardDefs qualified as Objectives
 import LordOfTheRings.Quest.CardDefs qualified as Quests
 import LordOfTheRings.Helpers.Staging (getEngagementCost)
 import LordOfTheRings.Matcher (getArcheryTotal, getEnemy, getMainQuestProgress)
+import LordOfTheRings.Scenario.Types (victoryDisplayL)
 import LordOfTheRings.Scenario (breakingOfTheFellowship, modeL, GameMode (NightmareMode), scenarioSetAside)
 import LordOfTheRings.Phase (Phase (PlanningPhase, QuestPhase))
 import LordOfTheRings.Helpers.Window (travelableLocations, getAllAbilities, getActionAbilities, actionsAndResponsesAllowed)
@@ -802,3 +803,32 @@ spec = describe "Breaking of the Fellowship Nightmare" do
     getsGame (length . (.entities.enemies)) `shouldReturn` 0
     run $ FocusArea two
     (.placement) <$> getEnemy eid `shouldReturn` StagingArea
+
+  it "cancels Isengard Archer before its entry Forced effect can deal damage" . botf $ \pid -> do
+    previous <- genEncounterCard Enemies.isengardArcher
+    putGame . (scenarioL %~ overAttrs (victoryDisplayL %~ (EncounterCard previous :))) =<< getGame
+    hero <- beravorOf pid
+    run $ PlaceTokens GameSource hero Resource 1
+    cancellationCard <- putCardIntoHand pid Events.theDoorIsClosed
+    _ <- setEncounterDeck [Enemies.isengardArcher]
+    run RevealEncounterCard
+    chooseTarget pid (CardIdTarget cancellationCard.id)
+    resolveRevealed
+    getDamage hero `shouldReturn` 0
+    getArcheryTotal `shouldReturn` 0
+    getQuestion pid >>= (`shouldSatisfy` isNothing)
+
+  it "still resolves Isengard Archer's entry damage when whole-card cancellation is declined" . botf $ \pid -> do
+    previous <- genEncounterCard Enemies.isengardArcher
+    putGame . (scenarioL %~ overAttrs (victoryDisplayL %~ (EncounterCard previous :))) =<< getGame
+    hero <- beravorOf pid
+    run $ PlaceTokens GameSource hero Resource 1
+    _ <- putCardIntoHand pid Events.theDoorIsClosed
+    _ <- setEncounterDeck [Enemies.isengardArcher]
+    run RevealEncounterCard
+    chooseLabel "$label.pass" pid
+    resolveRevealed
+    chooseTarget pid hero
+    getDamage hero `shouldReturn` 2
+    getArcheryTotal `shouldReturn` 2
+    getQuestion pid >>= (`shouldSatisfy` isNothing)
