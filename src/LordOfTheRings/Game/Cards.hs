@@ -110,6 +110,7 @@ import LordOfTheRings.Keyword (
   GrappleLocation (..),
   Keyword (
     FirstPlayerGainsControl,
+    FunctionsLikeAPlayerCard,
     GuardedBy,
     Hinder,
     LastPlayerGainsControl,
@@ -231,7 +232,7 @@ import LordOfTheRings.Target (
  )
 import LordOfTheRings.Trait (Trait)
 import LordOfTheRings.Treachery (
-  TreacheryAttrs (treacheryPlacement),
+  TreacheryAttrs (treacheryOwner, treacheryPlacement),
  )
 import LordOfTheRings.Window (
   Window,
@@ -410,6 +411,13 @@ discardFromPlay target g = case target of
           | ShuffledIntoEncounterDeckWhenDefeated `elem` mods -> do
               deck <- shuffleM (ec : (toAttrs g.scenario).encounterDeck)
               pure $ removed & scenarioL %~ overAttrs (encounterDeckL .~ deck)
+        -- an encounter card with a player card back, as Misplaced Trust, goes to its
+        -- owner's discard pile, not the encounter discard pile (The Land of Shadow rules
+        -- insert, on The Searching Eye: "functions like a player card")
+        EncounterCard ec
+          | FunctionsLikeAPlayerCard `member` cdKeywords (toCardDef ec)
+          , Just owner <- encounterOwner ->
+              pure $ removed & playersL . ix owner . discardL %~ (EncounterCard ec :)
         PlayerCard pc
           | AllyTarget _ <- target
           , Just owner <- pcOwner pc -> do
@@ -419,6 +427,9 @@ discardFromPlay target g = case target of
                   then removed & playersL . ix owner . handL %~ (<> [PlayerCard pc])
                   else addToDiscard (PlayerCard pc) removed
         card -> pure $ addToDiscard card removed
+  encounterOwner = case target of
+    TreacheryTarget tid -> treacheryOwner . toAttrs =<< Map.lookup tid g.entities.treacheries
+    _ -> Nothing
   addToDiscard card = case card of
     PlayerCard pc | Just owner <- pcOwner pc -> playersL . ix owner . discardL %~ (card :)
     -- a card of the Corsair deck to its own discard pile (Dream-chaser rules)

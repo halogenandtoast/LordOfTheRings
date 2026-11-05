@@ -41,6 +41,9 @@ data TreacheryAttrs = TreacheryAttrs
   , treacheryCardCode :: CardCode
   , treacheryPlacement :: Placement
   , treacheryTokens :: Tokens
+  , -- | the player whose card it is, an encounter card with a player card back attached
+    -- from his hand, as Misplaced Trust: it leaves play to his discard pile
+    treacheryOwner :: Maybe PlayerId
   }
   deriving stock (Show, Eq, Generic)
 
@@ -64,6 +67,7 @@ treachery f cardDef =
             , treacheryCardCode = cdCardCode cardDef
             , treacheryPlacement = Unplaced
             , treacheryTokens = mempty
+            , treacheryOwner = Nothing
             }
     }
 

@@ -110,6 +110,17 @@ spec = describe "Ered Mithrin campaign burdens" do
       getModifiers beravor >>= (`shouldSatisfy` \ms -> ImmuneToPlayerCardEffects `elem` ms && CannotHavePlayerAttachments `elem` ms)
       map (.id) . (.hand) <$> getPlayer pid >>= (`shouldSatisfy` notElem trust.id)
 
+    it "leaves play to its owner's discard pile, not the encounter discard pile" . gameTest $ \pid -> do
+      beravor <- hero beravorCode
+      trust <- EncounterCard <$> genEncounterCard Treacheries.misplacedTrust
+      putGame . (playersL . ix pid . deckL .~ [trust]) =<< getGame
+      run $ DrawCards (DrawingFrom pid 1 GameSource)
+      chooseTarget pid beravor
+      tid <- getsGame (toId . fromJustNote "not attached" . headMay . toList . (.entities.treacheries))
+      run $ Discard (toTarget tid)
+      map (.id) . (.discard) <$> getPlayer pid `shouldReturn` [trust.id]
+      map toCardCode <$> getEncounterDiscard >>= (`shouldSatisfy` notElem (toCardCode Treacheries.misplacedTrust))
+
   describe "Gundabad Stalker" do
     it "cannot be optionally engaged but by a player engaged with a unique enemy" . gameTest $ \_ -> do
       eid <- stagedEnemy Enemies.gundabadStalker

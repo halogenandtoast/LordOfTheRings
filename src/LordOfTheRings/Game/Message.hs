@@ -967,7 +967,7 @@ import LordOfTheRings.Token (
  )
 import LordOfTheRings.Trait (Trait (Grotto, Hazard))
 import LordOfTheRings.Treachery (
-  TreacheryAttrs (treacheryCardId, treacheryPlacement),
+  TreacheryAttrs (treacheryCardId, treacheryOwner, treacheryPlacement),
   createTreachery,
   newTreachery,
  )
@@ -2518,7 +2518,7 @@ runGameMessage msg g = case msg of
       & scenarioL
       %~ overAttrs ((encounterDiscardL %~ filter (/= card)) . (encounterDeckL %~ filter (/= card)))
   AttachEncounterCardFromHand pid card host -> do
-    treachery <- overAttrs (\a -> a {treacheryPlacement = AttachedTo host}) <$> newTreachery card
+    treachery <- overAttrs (\a -> a {treacheryPlacement = AttachedTo host, treacheryOwner = Just pid}) <$> newTreachery card
     push $ RemoveFromHand pid card.id
     pure $ g & entitiesL . treacheriesL %~ insertEntity treachery
   PutShadowTreacheryIntoPlay host cid placement -> do
