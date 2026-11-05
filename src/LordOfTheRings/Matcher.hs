@@ -2,6 +2,7 @@
 
 module LordOfTheRings.Matcher (module LordOfTheRings.Matcher, module X) where
 
+import Data.List (elemIndex)
 import Data.Map.Strict qualified as Map
 import LordOfTheRings.Ability.Types (UsedAbility (..))
 import LordOfTheRings.Ally.Types hiding (ally)
@@ -29,7 +30,8 @@ import LordOfTheRings.Placement
 import LordOfTheRings.Quest.Types (Quest, QuestAttrs (questTokens), isEncounterSideQuest, isSideQuest)
 import LordOfTheRings.Player.Types
 import LordOfTheRings.Prelude
-import LordOfTheRings.Scenario.Types (GameMode (NightmareMode), scenarioGuardedPlayerCards, scenarioMode)
+import LordOfTheRings.Scenario.Types (GameMode (NightmareMode), scenarioCampaign, scenarioGuardedPlayerCards, scenarioMode)
+import LordOfTheRings.Campaign (CampaignLogKey (CardUses), recordedCount, seatUseCode)
 import LordOfTheRings.Source (Source (EnemyAttackSource), Sourceable (..))
 import LordOfTheRings.Target
 import LordOfTheRings.Token (Token (Damage, Resource, TimeCounter), Tokens, countTokens)
@@ -57,6 +59,12 @@ matchPlayer matcher player = case matcher of
   PlayerMatchAll ms -> allM (`matchPlayer` player) ms
   PlayerWithCardsInDeck n -> pure $ length player.deck >= n
   PlayerUsingErrata -> pure player.errata
+  PlayerWithCampaignUsesBelow code n -> do
+    seat <- elemIndex player.id <$> getsGame gamePlayerOrder
+    l <- getsGame (scenarioCampaign . toAttrs . gameScenario)
+    pure $ case (seat, l) of
+      (Just s, Just lg) -> recordedCount CardUses (seatUseCode code s) lg < n
+      _ -> False
   PlayerWithThreatAtLeastEngagementCostOf eid -> getsGame (Map.lookup eid . (.enemies) . gameEntities) >>= \case
     Nothing -> pure False
     Just e -> (<=) <$> modifiedValue engagementCostOf (toTarget eid) e.engagementCost <*> getThreat player.id

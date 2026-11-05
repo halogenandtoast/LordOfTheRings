@@ -827,6 +827,7 @@ import LordOfTheRings.Modifier (
     QuestFailureDamagesInstead,
     QuestProgressCanceledBy,
     QuestedSuccessfullyThisPhase,
+    QuestedUnsuccessfullyThisRound,
     RaisesThreatAtEndOfPhase,
     ReadiedByRefresh,
     ReadyUndamagedDefenders,
@@ -2786,7 +2787,8 @@ runGameMessage msg g = case msg of
                 damaged = [t | QuestFailureDamagesInstead t <- gameMods]
                 delayed = [PlaceTokens (effectSource e) t Progress n | e <- gameEffects g, ProgressIfQuestUnsuccessful t n <- effectModifiers e]
             pushAll
-              $ CheckWindows [mkWhen QuestedUnsuccessfully]
+              $ CreateEffect (Effect GameSource GameTarget [QuestedUnsuccessfullyThisRound] UntilEndOfRound)
+              : CheckWindows [mkWhen QuestedUnsuccessfully]
               : delayed
               <> [RaiseThreat pid (threat - willpower) | not defense, not spared, null damaged, pid <- players]
               <> [PlaceProgressOnQuest (threat - willpower) | defense]

@@ -41,6 +41,9 @@ data PlayerMatcher
     PlayerWithThreatAtLeastEngagementCostOf EnemyId
   | -- | a player at the stage in focus: see 'LordOfTheRings.Matcher.getStagePlayers'
     PlayerAtThisStage
+  | -- | in campaign mode, a player whose seat has marked fewer than so many uses of the
+    -- card in the campaign log, as Beldis allows each player 4
+    PlayerWithCampaignUsesBelow CardCode Int
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

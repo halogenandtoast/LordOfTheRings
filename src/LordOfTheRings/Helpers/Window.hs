@@ -118,6 +118,7 @@ windowMatchesM matcher w@(Window timing wType) = case (matcher, wType) of
           _ -> pure False
   (EnemyWithTraitRevealedWindow t trait, Revealed (EnemyTarget eid)) | t == timing -> selectAny (EnemyWithId eid <> EnemyWithTrait trait)
   (EnemyWithTraitEntersStagingAreaWindow t trait, EntersStagingArea (EnemyTarget eid)) | t == timing -> selectAny (EnemyWithId eid <> EnemyWithTrait trait)
+  (MatchingEnemyEntersStagingAreaWindow t m, EntersStagingArea (EnemyTarget eid)) | t == timing -> selectAny (EnemyWithId eid <> m)
   (TreacheryWithTraitRevealedWindow t trait, Revealed target@(TreacheryTarget tid)) | t == timing ->
     maybe (pure False) (hasTrait trait target . toCardDef) . Map.lookup tid . (.treacheries) =<< getsGame gameEntities
   (EnemyWithModifierEngagedWindow t m, EnemyEngaged eid _) | t == timing -> elem m . Map.findWithDefault [] (toTarget eid) <$> getsGame gameModifiers

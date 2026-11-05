@@ -104,6 +104,9 @@ data CampaignLogKey
   | -- | The Lord of the Rings: the heroes taken captive at the end of Breaking of the
     -- Fellowship, one for each player
     Captives
+  | -- | Ered Mithrin: the uses of a card's campaign-long ability each seat has marked
+    -- ('counted', by 'seatUseCode'), as Beldis's 4 uses for each player
+    CardUses
   deriving stock (Show, Eq, Ord, Generic, Enum, Bounded)
   deriving anyclass (ToJSON, FromJSON)
 
@@ -535,6 +538,10 @@ recordCount key code n l = l {campaignLogCounts = Map.insertWith (<>) key (Map.s
 recordedCount :: CampaignLogKey -> CardCode -> CampaignLog -> Int
 recordedCount key code = Map.findWithDefault 0 code . Map.findWithDefault mempty key . (.counts)
 
+-- | How 'CardUses' notes the seat's uses of the card.
+seatUseCode :: CardCode -> Int -> CardCode
+seatUseCode code seat = CardCode (unCardCode code <> ":" <> tshow seat)
+
 -- | What a card writes to the log while its scenario is played, as Mysterious Omens' boons
 -- or Fend Off Despair's threat. Kept if the scenario is won, as the rest of its log.
 data CampaignLogUpdate
@@ -552,6 +559,8 @@ data CampaignLogUpdate
     DiscoverTreasure Int CardCode
   | -- | a permanent starting threat penalty for the seat alone
     AdjustSeatThreatPenalty Int Int
+  | -- | so much more of the number noted for the card, as a seat marks a use of Beldis
+    AddToCount CampaignLogKey CardCode Int
   | -- | the seat's recorded heroes: the first taken off, if one is given, the second put on,
     -- the change at no threat penalty, as a hero Beyond All Hope brings back from the
     -- fallen joins its player (The Uruk-hai's resolution)
@@ -570,4 +579,5 @@ updateLog = \case
   AddFallenHero code -> recordFallen [code]
   RemoveFallenHero code -> \l -> l {campaignLogFallenHeroes = filter (/= code) l.fallenHeroes}
   AdjustSeatThreatPenalty seat n -> \l -> l {campaignLogSeatThreatPenalty = Map.insertWith (+) seat n l.seatThreatPenalty}
+  AddToCount key code n -> \l -> recordCount key code (recordedCount key code l + n) l
   ReplaceSeatHero seat old new -> \l -> l {campaignLogHeroes = [if i == seat then filter ((/= old) . Just) hs <> [new] else hs | (i, hs) <- zip [0 ..] l.heroes]}

@@ -27,6 +27,8 @@ data WindowMatcher
   | EnemyEntersStagingAreaWindow Timing
   | -- | an enemy with the trait added to the staging area, as Amon Forn reads
     EnemyWithTraitEntersStagingAreaWindow Timing Trait
+  | -- | a matching enemy added to the staging area, as Dragon-slayer's non-unique one
+    MatchingEnemyEntersStagingAreaWindow Timing EnemyMatcher
   | GainedResourcesWindow Timing Target
   | DealtDamageWindow Timing Target
   | TraveledWindow Timing LocationId
@@ -572,6 +574,7 @@ windowMatches matcher (Window timing wType) = case (matcher, wType) of
   (EnemyDestroyedByCharacterWindow {}, _) -> False
   (EnemyWithTraitRevealedWindow {}, _) -> False
   (EnemyWithTraitEntersStagingAreaWindow {}, _) -> False
+  (MatchingEnemyEntersStagingAreaWindow {}, _) -> False
   (EnemyWithModifierEngagedWindow {}, _) -> False
   (CardRevealedWindow {}, _) -> False
   (EnemyCardRevealedWindow {}, _) -> False
