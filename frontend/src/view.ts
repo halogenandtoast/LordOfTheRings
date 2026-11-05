@@ -1,4 +1,5 @@
 import { ikey } from './i18n'
+import { pendingResourcePayments } from './resourcePayments'
 import type { Card, CardDef, Entity, GameData, Message, Question, ServerGame, Target, UI } from './server'
 import type { CardView, ChoiceView, CircuitStageView, GameView, PlayerView, QuestionView, SearchGroup } from './types'
 
@@ -63,6 +64,7 @@ export const toView = (data: GameData, defs: Record<string, CardDef>, previous: 
   const isSideQuest = (e: Entity) => ['PlayerSideQuestType', 'EncounterSideQuestType'].includes(def(e.cardCode).cardType ?? '')
   const threatening = new Set(game.threatening ?? [])
   const entities = game.entities
+  const pendingResources = pendingResourcePayments(game.question)
 
   // The card an entity target refers to, so a choice can highlight it on the board.
   const targetCardId = (target: Target | undefined): string | null => {
@@ -150,7 +152,9 @@ export const toView = (data: GameData, defs: Record<string, CardDef>, previous: 
       spheres: [...new Set([...(d.sphere ? [d.sphere] : []), ...gainedIcons(target)])],
       target,
       // villagers are resource tokens on the table
-      resources: e.tokens.Resource ?? e.tokens.Villager ?? null,
+      resources: kind === 'heroes' && pendingResources.has(e.id)
+        ? Math.max(0, (e.tokens.Resource ?? 0) - pendingResources.get(e.id)!)
+        : e.tokens.Resource ?? e.tokens.Villager ?? null,
       time: e.tokens.TimeCounter ?? null,
       damage: e.tokens.Damage ?? 0,
       progress: e.tokens.Progress ?? null,
