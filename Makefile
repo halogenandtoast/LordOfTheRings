@@ -1,7 +1,7 @@
 .PHONY: api.watch
 api.watch:
 	stack build --no-run-tests --fast LordOfTheRings \
-		--ghc-options "-DDEVELOPMENT $(GHC_OPTIONS)" \
+		--ghc-options "$(GHC_OPTIONS)" \
 		--interleaved-output \
 		--file-watch \
 		$(EXTRA_STACK_FLAGS) \
@@ -10,7 +10,7 @@ api.watch:
 .PHONY: pedantic.watch
 pedantic.watch:
 	stack build --no-run-tests --fast LordOfTheRings \
-		--ghc-options "-DDEVELOPMENT $(GHC_OPTIONS)" \
+		--ghc-options "$(GHC_OPTIONS)" \
 		--interleaved-output \
 		--file-watch \
 		--pedantic \

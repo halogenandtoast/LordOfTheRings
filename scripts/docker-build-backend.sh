@@ -26,5 +26,5 @@ if [ "${LOTR_BUILD_TIMINGS:-0}" = 1 ]; then
 fi
 # Keep the marker on ANY failure, including a killed compiler or lost build client.
 # Recovery validates pairs on the next invocation, rather than clearing the cache.
-stack install --no-terminal "$@" --local-bin-path "$output_dir" LordOfTheRings:exe:LordOfTheRings-exe
+stack install --no-terminal --ghc-options -O1 "$@" --local-bin-path "$output_dir" LordOfTheRings:exe:LordOfTheRings-exe
 rm -f "$dirty"

@@ -4,7 +4,10 @@ packages:
 - .
 system-ghc: true
 install-ghc: false
-# Compile independent modules in parallel at Cabal's normal optimization level.
+# Compile independent modules in parallel. Our own modules build at -O0, as in
+# ArkhamHorror, and -fignore-optim-changes keeps a plain `stack build` and a
+# `--fast` one from recompiling all ~3700 modules whenever they alternate. The
+# Docker image asks for -O1 itself (scripts/docker-build-backend.sh).
 ghc-options:
   "$targets": -j +RTS -A128M -n4m -c -RTS
-  "$locals": -fno-write-ide-info
+  "$locals": -O0 -fignore-optim-changes -fno-write-ide-info
