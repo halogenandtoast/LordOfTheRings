@@ -64,7 +64,8 @@ instance RunMessage AllyAttrs where
       pure $ attrs & poisonL %~ filter ((/= cid) . (.id))
     MakeUnconscious (isTarget attrs -> True) -> do
       pushAll $ map PutInDiscard attrs.allyPoison
-      pure $ attrs & poisonL .~ [] & unconsciousL .~ True & exhaustedL .~ True
+      pushWhen attrs.allyCommitted $ RemoveFromQuest (toTarget attrs)
+      pure $ attrs & poisonL .~ [] & unconsciousL .~ True & exhaustedL .~ True & attackingL .~ False
     ReadyUnconscious (isTarget attrs -> True) | attrs.allyUnconscious -> do
       push $ CheckWindows [mkAfter $ BecameReady (toTarget attrs)]
       pure $ attrs & unconsciousL .~ False & exhaustedL .~ False

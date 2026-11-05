@@ -14,7 +14,9 @@ allTreacheryCards =
   Map.fromList $
     map
       (\def -> (cdCardCode def, def))
-      [ whereIsssIt
+      [ aHorribleBattle
+      , spiderBite
+      , whereIsssIt
       , weHatesIt
       , lightningSplinters
       , swishSmackWhipCrack
@@ -3565,3 +3567,22 @@ weHatesIt :: CardDef
 weHatesIt =
   (treachery "over-hill-and-under-hill-nightmare-dungeons-deep-and-caverns-dim-008" "We Hates It!" DungeonsDeepAndCavernsDimNightmare 3)
     {cdRiddle = Just $ Riddle [RiddleTrait] 1}
+
+-- * Flies and Spiders Nightmare
+
+aHorribleBattle :: CardDef
+aHorribleBattle =
+  ( treachery
+      "on-the-doorstep-nightmare-flies-and-spiders-007"
+      "A Horrible Battle"
+      FliesAndSpidersNightmare
+      2
+  )
+    { cdShadowEffect = True
+    }
+
+spiderBite :: CardDef
+spiderBite =
+  (treachery "on-the-doorstep-nightmare-flies-and-spiders-008" "Spider Bite" FliesAndSpidersNightmare 2)
+    { cdKeywords = setFromList [Surge]
+    }

@@ -6,6 +6,8 @@ import Data.Map.Strict qualified as Map
 import LordOfTheRings.Card
 import LordOfTheRings.Classes.Entity
 import LordOfTheRings.Classes.RunMessage
+import LordOfTheRings.Treachery.Cards.AHorribleBattle
+import LordOfTheRings.Treachery.Cards.SpiderBite
 import LordOfTheRings.Treachery.Cards.WeHatesIt
 import LordOfTheRings.Treachery.Cards.WhereIsssIt
 import LordOfTheRings.Treachery.Cards.LightningSplinters
@@ -583,6 +585,8 @@ allTreacherys =
     [ (toCardCode builder, card)
     | card@(SomeTreacheryCard builder) <-
         [ SomeTreacheryCard eyesOfTheForest
+        , SomeTreacheryCard aHorribleBattle
+        , SomeTreacheryCard spiderBite
         , SomeTreacheryCard weHatesIt
         , SomeTreacheryCard whereIsssIt
         , SomeTreacheryCard lightningSplinters

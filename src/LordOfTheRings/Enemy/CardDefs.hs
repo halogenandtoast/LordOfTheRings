@@ -14,7 +14,9 @@ allEnemyCards =
   Map.fromList $
     map
       (\def -> (cdCardCode def, def))
-      [ wickedWolf
+      [ attercop
+      , venomousSpider
+      , wickedWolf
       , lowerGateSentries
       , theGreatGoblinNightmare
       , goblinProwler
@@ -5281,3 +5283,40 @@ lowerGateSentries :: CardDef
 lowerGateSentries =
   (enemy "over-hill-and-under-hill-nightmare-dungeons-deep-and-caverns-dim-004" "Lower Gate Sentries" DungeonsDeepAndCavernsDimNightmare 3 15 2 3 4 5)
     {cdCardTraits = setFromList [Goblin, Orc], cdShadowEffect = True}
+
+-- * Flies and Spiders Nightmare
+
+attercop :: CardDef
+attercop =
+  ( enemy
+      "on-the-doorstep-nightmare-flies-and-spiders-002"
+      "Attercop"
+      FliesAndSpidersNightmare
+      3
+      35
+      4
+      6
+      3
+      6
+  )
+    { cdCardTraits = setFromList [Creature, Spider]
+    , cdKeywords = setFromList [Venom]
+    }
+
+venomousSpider :: CardDef
+venomousSpider =
+  ( enemy
+      "on-the-doorstep-nightmare-flies-and-spiders-003"
+      "Venomous Spider"
+      FliesAndSpidersNightmare
+      5
+      25
+      3
+      4
+      2
+      5
+  )
+    { cdCardTraits = setFromList [Creature, Spider]
+    , cdKeywords = setFromList [Venom]
+    , cdShadowEffect = True
+    }

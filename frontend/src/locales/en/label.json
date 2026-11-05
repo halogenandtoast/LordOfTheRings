@@ -4054,5 +4054,9 @@
   "goblinProwler": {"discard": "Choose a character to discard"},
   "lightningSplinters": {"discard": "Choose a card to discard"},
   "fallenStones": {"spend": "Spend Baggins resources to reduce Fallen Stones' damage"},
-  "whereIsssIt": {"choose": "Discard resources or face Gollum's attack", "discard": "Discard 2 Baggins resources", "attack": "Gollum attacks Bilbo Baggins"}
+  "whereIsssIt": {"choose": "Discard resources or face Gollum's attack", "discard": "Discard 2 Baggins resources", "attack": "Gollum attacks Bilbo Baggins"},
+  "darkColony": {"poison": "Choose a hero to receive 1 poison to travel"},
+  "mirkwoodPath": {"unconscious": "Choose a hero to become unconscious"},
+  "aHorribleBattle": {"choose": "Give each hero poison or reveal an encounter card", "poison": "Give each hero you control 1 poison", "reveal": "Reveal an encounter card"},
+  "spiderBite": {"attach": "Attach Spider Bite to a conscious hero"}
 }

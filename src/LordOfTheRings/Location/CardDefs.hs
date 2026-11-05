@@ -15,7 +15,10 @@ allLocationCards =
   Map.fromList $
     map
       (\def -> (cdCardCode def, def))
-      [ theLowerGate
+      [ darkColony
+      , mirkwoodPath
+      , patchOfMidnight
+      , theLowerGate
       , pineSlopes
       , fallenStones
       , narrowLedge
@@ -4898,3 +4901,46 @@ fallenStones :: CardDef
 fallenStones =
   (location "over-hill-and-under-hill-nightmare-dungeons-deep-and-caverns-dim-006" "Fallen Stones" DungeonsDeepAndCavernsDimNightmare 3 4 3)
     {cdCardTraits = setFromList [Mountain], cdRiddle = Just $ Riddle [RiddleTitle] 5}
+
+-- * Flies and Spiders Nightmare
+
+darkColony :: CardDef
+darkColony =
+  ( location
+      "on-the-doorstep-nightmare-flies-and-spiders-004"
+      "Dark Colony"
+      FliesAndSpidersNightmare
+      2
+      4
+      4
+  )
+    { cdCardTraits = setFromList [Forest]
+    }
+
+mirkwoodPath :: CardDef
+mirkwoodPath =
+  ( location
+      "on-the-doorstep-nightmare-flies-and-spiders-005"
+      "Mirkwood Path"
+      FliesAndSpidersNightmare
+      2
+      0
+      3
+  )
+    { cdCardTraits = setFromList [Forest]
+    , cdShadowEffect = True
+    }
+
+patchOfMidnight :: CardDef
+patchOfMidnight =
+  ( location
+      "on-the-doorstep-nightmare-flies-and-spiders-006"
+      "Patch of Midnight"
+      FliesAndSpidersNightmare
+      3
+      3
+      5
+  )
+    { cdCardTraits = setFromList [Forest]
+    , cdShadowEffect = True
+    }

@@ -683,6 +683,7 @@ library
       LordOfTheRings.Enemy.Cards.ArmyOfTheDead
       LordOfTheRings.Enemy.Cards.AshMountainWerewolf
       LordOfTheRings.Enemy.Cards.ASuspiciousCrow
+      LordOfTheRings.Enemy.Cards.Attercop
       LordOfTheRings.Enemy.Cards.AttercopAttercop
       LordOfTheRings.Enemy.Cards.BalefulShade
       LordOfTheRings.Enemy.Cards.BatteringRam
@@ -1243,6 +1244,7 @@ library
       LordOfTheRings.Enemy.Cards.UrukWargRider
       LordOfTheRings.Enemy.Cards.VanguardOfBolg
       LordOfTheRings.Enemy.Cards.VengefulHillman
+      LordOfTheRings.Enemy.Cards.VenomousSpider
       LordOfTheRings.Enemy.Cards.VenomsBite
       LordOfTheRings.Enemy.Cards.VeteranWainrider
       LordOfTheRings.Enemy.Cards.ViciousMarauder
@@ -1817,6 +1819,7 @@ library
       LordOfTheRings.Location.Cards.DagnirsHoard
       LordOfTheRings.Location.Cards.DarkAbyss
       LordOfTheRings.Location.Cards.DarkBlackWoods
+      LordOfTheRings.Location.Cards.DarkColony
       LordOfTheRings.Location.Cards.DarkCornerOfFangorn
       LordOfTheRings.Location.Cards.DarkDoor
       LordOfTheRings.Location.Cards.DarkenedStairway
@@ -2032,6 +2035,7 @@ library
       LordOfTheRings.Location.Cards.MinesOfCirithGurat
       LordOfTheRings.Location.Cards.MinesOfGundabad
       LordOfTheRings.Location.Cards.MinesOfMoria
+      LordOfTheRings.Location.Cards.MirkwoodPath
       LordOfTheRings.Location.Cards.MithlondHarbor
       LordOfTheRings.Location.Cards.MithrilLode
       LordOfTheRings.Location.Cards.MoonlitPassage
@@ -2086,6 +2090,7 @@ library
       LordOfTheRings.Location.Cards.PalaceRuins
       LordOfTheRings.Location.Cards.ParchedWadi
       LordOfTheRings.Location.Cards.ParthGalen
+      LordOfTheRings.Location.Cards.PatchOfMidnight
       LordOfTheRings.Location.Cards.PatchOfWoods
       LordOfTheRings.Location.Cards.PathlessCountry
       LordOfTheRings.Location.Cards.PathlessCountryHunted
@@ -3202,6 +3207,7 @@ library
       LordOfTheRings.Treachery.Cards.AFrightenedBeast
       LordOfTheRings.Treachery.Cards.AGreatHost
       LordOfTheRings.Treachery.Cards.AGrowingThreat
+      LordOfTheRings.Treachery.Cards.AHorribleBattle
       LordOfTheRings.Treachery.Cards.AHurryingDarkness
       LordOfTheRings.Treachery.Cards.AimlessWandering
       LordOfTheRings.Treachery.Cards.AKnifeInTheBack
@@ -3610,6 +3616,7 @@ library
       LordOfTheRings.Treachery.Cards.SoundTheAlarm
       LordOfTheRings.Treachery.Cards.SouthronSupport
       LordOfTheRings.Treachery.Cards.SpellsOfRuin
+      LordOfTheRings.Treachery.Cards.SpiderBite
       LordOfTheRings.Treachery.Cards.SpiesFromMordor
       LordOfTheRings.Treachery.Cards.StalkedByDunlendings
       LordOfTheRings.Treachery.Cards.StampedingOliphaunt
@@ -4105,6 +4112,7 @@ test-suite LordOfTheRings-test
       LordOfTheRings.MountainOfFire.MountDoomSpec
       LordOfTheRings.MountainOfFire.TheBlackGateOpensSpec
       LordOfTheRings.MountainOfFire.TheTowerOfCirithUngolSpec
+      LordOfTheRings.OnTheDoorstep.FliesAndSpidersNightmareSpec
       LordOfTheRings.OnTheDoorstep.FliesAndSpidersSpec
       LordOfTheRings.OnTheDoorstep.TheBattleOfFiveArmiesSpec
       LordOfTheRings.OnTheDoorstep.TheLonelyMountainSpec

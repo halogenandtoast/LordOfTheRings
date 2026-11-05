@@ -6,6 +6,9 @@ import Data.Map.Strict qualified as Map
 import LordOfTheRings.Card
 import LordOfTheRings.Classes.Entity
 import LordOfTheRings.Classes.RunMessage
+import LordOfTheRings.Location.Cards.DarkColony
+import LordOfTheRings.Location.Cards.MirkwoodPath
+import LordOfTheRings.Location.Cards.PatchOfMidnight
 import LordOfTheRings.Location.Cards.FallenStones
 import LordOfTheRings.Location.Cards.PineSlopes
 import LordOfTheRings.Location.Cards.TheLowerGate
@@ -713,6 +716,9 @@ allLocations =
     [ (toCardCode builder, card)
     | card@(SomeLocationCard builder) <-
         [ SomeLocationCard greatForestWeb
+        , SomeLocationCard darkColony
+        , SomeLocationCard mirkwoodPath
+        , SomeLocationCard patchOfMidnight
         , SomeLocationCard fallenStones
         , SomeLocationCard pineSlopes
         , SomeLocationCard theLowerGate

@@ -551,6 +551,7 @@ import LordOfTheRings.Message (
     LookAtFacedownSide,
     MakeEscapeTest,
     MakeFortitudeTest,
+    MakeUnconscious,
     MakeHideTest,
     NextPhase,
     OpenLogBlock,
@@ -2163,7 +2164,7 @@ runGameMessage msg g = case msg of
             <> [Label (ikey "label.doNotDefend") [DeclareSentinels pid eid chosen rest]]
     pure g
   DefendedByMany _ eid _ | dealsNoDamage g eid -> pure g
-  DefendedByMany pid eid (filter (inPlay g) -> []) -> g <$ push (UndefendedDamage pid eid)
+  DefendedByMany pid eid (filter (inPlay g) -> []) -> g <$ pushAll [CheckWindows [mkAfter $ AttackUndefended pid eid], UndefendedDamage pid eid]
   DefendedByMany pid eid (filter (inPlay g) -> defenders) -> do
     attack <- getEnemyAttack eid
     defense <- sum <$> traverse (getDefenseAgainst eid) defenders
@@ -2411,6 +2412,27 @@ runGameMessage msg g = case msg of
       DefendedByMany _ eid' _ | eid' == eid -> AttackDamage eid target
       CheckWindows ws -> CheckWindows (filter (not . attacking) ws)
       m -> m
+    pure g
+  -- Caleb Grace, 30 Jan 2021 (ALeP FAQ 3.365): a defender made unconscious
+  -- before the attack resolves leaves it undefended. Remove it from the pending
+  -- combat steps at once, even if an action subsequently readies it.
+  -- https://alongextendedparty.com/semi-official-errata-faq-1-10/
+  MakeUnconscious target -> do
+    lead <- getLead
+    let fallbackPlayer eid = fromMaybe lead $ Map.lookup eid g.entities.enemies >>= placementController . (.placement)
+        withoutDefender = filter (/= target)
+        pending playerFor = \case
+          AttackDamage eid defender | defender == target -> Run [CheckWindows [mkAfter $ AttackUndefended (playerFor eid) eid], UndefendedDamage (playerFor eid) eid]
+          DefendedByMany pid eid defenders -> DefendedByMany pid eid (withoutDefender defenders)
+          ResolveShadow eid pid defenders -> ResolveShadow eid pid (withoutDefender defenders)
+          ResolveShadowCard cid eid pid defenders -> ResolveShadowCard cid eid pid (withoutDefender defenders)
+          AttackDefended pid eid defenders -> AttackDefended pid eid (withoutDefender defenders)
+          CheckWindows windows -> CheckWindows $ filter (\case Window _ (DefendedAttack defender _) -> defender /= target; _ -> True) windows
+          other -> other
+    withQueue_ \queue ->
+      let playerFor eid = fromMaybe (fallbackPlayer eid) $ listToMaybe
+            [pid | CheckWindows windows <- queue, Window After (EnemyAttacking eid' pid) <- windows, eid' == eid]
+       in map (pending playerFor) queue
     pure g
   -- an attack that deals no damage, as Frodo Baggins (The Road Darkens) makes one
   AttackDamage eid _ | dealsNoDamage g eid -> pure g

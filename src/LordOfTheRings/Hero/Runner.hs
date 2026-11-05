@@ -42,7 +42,8 @@ instance RunMessage HeroAttrs where
       pure $ attrs & poisonL %~ filter ((/= cid) . (.id))
     MakeUnconscious (isTarget attrs -> True) -> do
       pushAll $ map PutInDiscard attrs.heroPoison
-      pure $ attrs & poisonL .~ [] & unconsciousL .~ True & exhaustedL .~ True
+      pushWhen attrs.heroCommitted $ RemoveFromQuest (toTarget attrs)
+      pure $ attrs & poisonL .~ [] & unconsciousL .~ True & exhaustedL .~ True & attackingL .~ False
     ReadyUnconscious (isTarget attrs -> True) | attrs.heroUnconscious -> do
       push $ CheckWindows [mkAfter $ BecameReady (toTarget attrs)]
       pure $ attrs & unconsciousL .~ False & exhaustedL .~ False
