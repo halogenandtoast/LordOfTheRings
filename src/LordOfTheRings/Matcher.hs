@@ -348,11 +348,19 @@ immuneToPlayerCards t =
 
 -- | A unique card cannot enter play while a card with its title is in play.
 passesUnique :: HasGame m => Card -> m Bool
-passesUnique card
+passesUnique = passesUniqueWith AnyHero
+
+-- | The unique rule for a hero coming into play as the given hero leaves it, as Helm of
+-- Secrecy swaps them: the leaving hero's title does not bar it.
+passesUniqueReplacing :: HasGame m => HeroId -> Card -> m Bool
+passesUniqueReplacing hid = passesUniqueWith (not_ $ HeroWithId hid)
+
+passesUniqueWith :: HasGame m => HeroMatcher -> Card -> m Bool
+passesUniqueWith others card
   | card.unique =
       andM
         [ selectNone $ AllyWithTitle card.name
-        , selectNone $ HeroWithTitle card.name
+        , selectNone $ HeroWithTitle card.name <> others
         , getsGame $ all ((/= card.name) . cdName . toCardDef) . toList . (.entities.attachments)
         , -- separated players still keep to it across their areas (FAQ 2.36)
           getsGame $ all (notElem card.name . titles) . heldEntities
@@ -951,7 +959,10 @@ getEliminationLevel :: HasGame m => PlayerId -> m Int
 getEliminationLevel pid = do
   mods <- map modifierType . Map.findWithDefault [] (PlayerTarget pid) <$> getsGame gameModifiers
   dire <- mainQuestIsDire
-  pure $ (if dire then 99 else 50) + sum [n | EliminationThreatModifier n <- mods]
+  -- Dire: each player's threat elimination level "is increased to 99" (The Mountain of
+  -- Fire rules insert). Read literally it is set to 99, so modifiers that move the level,
+  -- as The One Ring's -5, do not apply while the main quest is dire. No ruling found.
+  pure $ if dire then 99 else 50 + sum [n | EliminationThreatModifier n <- mods]
 
 -- | The main quest has the dire keyword (The Mountain of Fire rules insert, "Dire").
 mainQuestIsDire :: HasGame m => m Bool

@@ -134,6 +134,10 @@ spec = describe "Mount Doom" do
     it "raises the elimination level to 99 and the Valour threshold to 80; stage 1B gets 4 quest points a player" . doomTest $ \pid -> do
       setUp pid
       getEliminationLevel pid `shouldReturn` 99
+      -- "increased to 99": a modifier to the level, as The One Ring's -5, leaves it at 99
+      b <- getHeroWithCode beravor
+      _ <- putAttachmentOn pid Attachments.theOneRing (toTarget b)
+      getEliminationLevel pid `shouldReturn` 99
       threatAt30 pid
       run $ RaiseThreat pid 20
       selectAny PlayerAtValourThreat `shouldReturn` False

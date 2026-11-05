@@ -168,3 +168,49 @@ spec = describe "Under the Ash Mountains player cards" do
       swaps <- maybe [] (\q -> [toCardCode c | TargetLabel _ [SwapHero _ c] <- questionChoices q]) <$> getQuestion pid
       swaps `shouldSatisfy` notNull
       swaps `shouldSatisfy` all (\c -> cdSphere (toCardDef c) `notElem` [Just Fellowship, Just Baggins])
+
+    it "swaps in a hero fully healed, exhausted as the one it replaces (Caleb Grace, ALeP FAQ 3.391, 3.367)" . gameTest $ \pid -> do
+      beravor <- hero beravorCode
+      run $ PlaceTokens GameSource beravor Damage 2
+      run $ Exhaust beravor
+      _ <- playWith pid beravorCode 4 Events.helmOfSecrecy
+      chooseTarget pid beravor
+      chooseOptionMatching "swap in Thalin" pid \case
+        TargetLabel _ [SwapHero _ c] -> toCardCode c == "01006"
+        _ -> False
+      passResponses pid
+      thalin <- hero "01006"
+      getCharacterDamage thalin `shouldReturn` 0
+      isExhausted thalin `shouldReturn` True
+
+    it "may swap a hero for another version of itself, which leaves play in the swap" . gameTest $ \pid -> do
+      eowyn <- hero eowynCode
+      _ <- playWith pid beravorCode 4 Events.helmOfSecrecy
+      chooseTarget pid eowyn
+      swaps <- maybe [] (\q -> [toCardCode c | TargetLabel _ [SwapHero _ c] <- questionChoices q]) <$> getQuestion pid
+      -- the Tactics Éowyn is a different card; the chosen one herself is not offered
+      swaps `shouldSatisfy` elem "145002"
+      swaps `shouldSatisfy` notElem eowynCode
+      chooseOptionMatching "swap in the Tactics Éowyn" pid \case
+        TargetLabel _ [SwapHero _ c] -> toCardCode c == "145002"
+        _ -> False
+      passResponses pid
+      getsGame (map toCardCode . toList . (.entities.heroes)) >>= (`shouldSatisfy` elem "145002")
+      getsGame (map toCardCode . toList . (.entities.heroes)) >>= (`shouldSatisfy` notElem eowynCode)
+
+    it "does not offer a version of another hero you have in play" . gameTest $ \pid -> do
+      beravor <- hero beravorCode
+      _ <- playWith pid beravorCode 4 Events.helmOfSecrecy
+      chooseTarget pid beravor
+      swaps <- maybe [] (\q -> [toCardCode c | TargetLabel _ [SwapHero _ c] <- questionChoices q]) <$> getQuestion pid
+      swaps `shouldSatisfy` notNull
+      swaps `shouldSatisfy` notElem "145002"
+
+    it "may be played on a hero with no hero of its threat cost or less to swap for, discarding its tokens" . gameTestWith (deckList ["141001", beravorCode, eowynCode] testDeck.cards) $ \pid -> do
+      frodo <- hero "141001"
+      run $ PlaceTokens GameSource frodo Damage 1
+      _ <- playWith pid beravorCode 4 Events.helmOfSecrecy
+      chooseTarget pid frodo
+      getQuestion pid >>= (`shouldSatisfy` maybe True (\q -> null [() | TargetLabel _ [SwapHero {}] <- questionChoices q]))
+      getCharacterDamage frodo `shouldReturn` 0
+      getsGame (map toCardCode . toList . (.entities.heroes)) >>= (`shouldSatisfy` elem "141001")

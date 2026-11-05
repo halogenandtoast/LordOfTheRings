@@ -216,6 +216,23 @@ spec = describe "The Fortress of Nurn player cards" do
       isExhausted aragorn `shouldReturn` False
       (getHeroResources . toId =<< getHeroWithCode aragornCode) `shouldReturn` 0
 
+    it "is discarded when Helm of Secrecy swaps its hero out: it is no eligible attachment (Caleb Grace, ALeP FAQ 3.374)" . gameTestWith aragornDeck $ \pid -> do
+      aragorn <- hero aragornCode
+      thorongil <- putAttachmentOn pid Attachments.thorongil aragorn
+      run $ CheckWindows [mkAfter $ Attached thorongil aragorn mempty]
+      chooseAbilityOf pid thorongil
+      chooseOptionMatching "attach the Core Set Aragorn" pid \case
+        TargetLabel (CardIdTarget _) msgs -> any (\case PlaceUnderneath _ [c] -> toCardCode c == "01001"; _ -> False) msgs
+        _ -> False
+      _ <- playWith pid eowynCode 4 Events.helmOfSecrecy
+      chooseTarget pid aragorn
+      -- even for another version of Aragorn
+      chooseOptionMatching "swap in the Tactics Aragorn" pid \case
+        TargetLabel _ [SwapHero _ c] -> toCardCode c == "09001"
+        _ -> False
+      getsGame (map toCardCode . toList . (.entities.heroes)) >>= (`shouldSatisfy` notElem aragornCode)
+      getsGame (map toCardCode . toList . (.entities.attachments)) >>= (`shouldSatisfy` notElem (toCardCode Attachments.thorongil))
+
     it "cannot be attached to a Fellowship hero" . gameTestWith frodoDeck $ \pid -> do
       frodo <- hero sagaFrodoCode
       hosts <- cardHosts pid (toCardCode Attachments.thorongil)

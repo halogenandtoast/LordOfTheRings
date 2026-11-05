@@ -3,6 +3,7 @@ module LordOfTheRings.MountainOfFire.TheTowerOfCirithUngolSpec (spec) where
 import LordOfTheRings.Attachment.CardDefs qualified as Attachments
 import LordOfTheRings.Campaign (CampaignLog (..), CompletedScenario (..), PoolCard (..), newCampaignLog)
 import LordOfTheRings.Card (cdCardCode)
+import LordOfTheRings.Effect (Effect (..), EffectDuration (UntilEndOfPhase))
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Helpers.Modifiers (getModifiers)
 import LordOfTheRings.Hero.CardDefs qualified as Heroes
@@ -116,6 +117,23 @@ spec :: Spec
 spec = describe "The Tower of Cirith Ungol" do
   it "is a scenario the game can be dealt" . towerTest $ \_ ->
     isJust (lookupScenario "the-tower-of-cirith-ungol") `shouldBe` True
+
+  -- "the quest" is the current quest (The Lost Realm rules insert, "Side Quests")
+  it "gives Shagrat -X engagement cost only for progress placed on the current quest" . gameTest $ \pid -> do
+    main <- putQuestStage Quests.fliesAndSpiders
+    run . AddToStaging =<< genEncounterCard Enemies.shagrat
+    shagrat <- enemyOf Enemies.shagrat
+    base <- getEngagementCost shagrat
+    card <- playWith pid "01012" 0 Quests.gatherInformation
+    passActions pid
+    side <- getsGame (toTarget . fromJustNote "no side quest" . find ((== card.id) . (.cardId) . toAttrs) . toList . (.entities.quests))
+    run $ PlaceTokens GameSource main Progress 2
+    getEngagementCost shagrat `shouldReturn` (base - 2)
+    run $ CreateEffect $ Effect GameSource side [CurrentQuest] UntilEndOfPhase
+    run $ PlaceTokens GameSource main Progress 3
+    getEngagementCost shagrat `shouldReturn` (base - 2)
+    run $ PlaceTokens GameSource side Progress 1
+    getEngagementCost shagrat `shouldReturn` (base - 3)
 
   describe "setup" do
     it "builds the encounter deck from its three sets, its set-aside cards out of it" . towerTest $ \_ -> do

@@ -72,6 +72,9 @@ data WindowType
   | -- | the staging step ends, its cards revealed
     StagingStepEnds
   | ProgressPlaced Target Int
+  | -- | progress was placed on the current quest (see 'getCurrentQuest'), as well as the
+    -- 'ProgressPlaced' window for its card
+    ProgressPlacedOnCurrentQuest Int
   | QuestedUnsuccessfully
   | QuestedSuccessfully
   | -- | the progress from questing successfully has been placed

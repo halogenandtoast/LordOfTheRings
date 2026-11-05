@@ -365,8 +365,10 @@ and the saga's Fellowship heroes (their rules inserts) do.
 
 A hero a setup instruction sets aside ('SetAsideHero') has not left play in that sense:
 The Battle of the Pelennor Fields' campaign card sets Aragorn aside until The Corsair Fleet
-brings him back, and his "If Aragorn leaves play, the players lose" cannot end the game
-before it begins.
+brings him, and his "If Aragorn leaves play, the players lose" does not trigger. He never
+entered play: in campaign mode the first player adds The Corsair Fleet to the staging area
+instead of taking control of Aragorn at the start of the game (FFG's preview article "The
+Battle of the Pelennor Fields", fantasyflightgames.com news, 29 June 2016).
 -}
 leavesPlay :: Targetable target => target -> Message -> Bool
 leavesPlay (toTarget -> t) = \case
