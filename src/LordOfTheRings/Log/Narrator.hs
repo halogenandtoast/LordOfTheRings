@@ -469,6 +469,8 @@ narrationFor = \case
       [ mechanic [ikeyPart "log.discardsFromHand" ["player" ~> who, "card" ~> card]]
       | card <- filter ((== cid) . (.id)) (discardableHand player)
       ]
+  DiscardedChosenFromHand _ pid cards -> Just $ withPlayer pid \_ who ->
+    pure [mechanic [ikeyPart "log.discardsFromHand" ["player" ~> who, "card" ~> card]] | card <- cards]
   DiscardedRandomFromHand _ pid cards -> narrationFor $ DiscardRandomFromHand pid (length cards)
   DiscardRandomFromHand pid n | n > 0 -> Just $ withPlayer pid \_ who ->
     one $ mechanic [ikeyPart "log.discardsAtRandom" ["player" ~> who, "count" ~> n]]

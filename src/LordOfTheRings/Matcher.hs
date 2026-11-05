@@ -616,7 +616,7 @@ getArcheryTotal = do
   onQuest <- getCurrentQuest >>= \case
     Just t@(QuestTarget qid) -> maybe (pure 0) (getArchery t . toCardDef) =<< getsGame (Map.lookup qid . entitiesQuests . gameEntities)
     _ -> pure 0
-  bonus <- sum . (\ms -> [n | ArcheryBonus n <- map modifierType ms]) . Map.findWithDefault [] GameTarget <$> getsGame gameModifiers
+  bonus <- sum . (\ms -> [n | ArcheryBonus n <- map modifierType ms] <> [n | ArcheryBonusAtStage p n <- map modifierType ms, p `elem` atStage]) . Map.findWithDefault [] GameTarget <$> getsGame gameModifiers
   -- a reduction, as The Hornburg's, takes it no lower than 0
   pure $ max 0 $ sum fromEnemies + sum fromLocations + onQuest + bonus
 

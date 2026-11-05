@@ -380,6 +380,9 @@ data Message
   | DiscardRandomFromHand PlayerId Int
   | DiscardRandomFromHandWithResult Source PlayerId Int
   | DiscardedRandomFromHand Source PlayerId [Card]
+  | ChooseAnyDiscardFromHand Source PlayerId [CardId]
+  | DiscardChosenFromHand Source PlayerId [CardId]
+  | DiscardedChosenFromHand Source PlayerId [Card]
   | RemoveFromQuest Target
   | AttachTreachery TreacheryId Target
   | ClaimObjective ObjectiveId Target

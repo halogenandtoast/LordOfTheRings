@@ -463,6 +463,8 @@ import LordOfTheRings.Message (
     CheckWindows,
     ChooseAndDiscard,
     ChooseAndDiscardFromHand,
+    ChooseAnyDiscardFromHand,
+    DiscardChosenFromHand,
     ChooseAndExhaust,
     ChooseAndExhaustHero,
     ChooseAttackTarget,
@@ -1643,6 +1645,17 @@ runGameMessage msg g = case msg of
             [DiscardFromHand pid c.id, ChooseAndDiscardFromHand pid source (n - 1)]
         | c <- discardableHand player
         ]
+    pure g
+  ChooseAnyDiscardFromHand source pid selected -> do
+    player <- getPlayer pid
+    barred <- elem CannotDiscardFromHand <$> getModifiers (PlayerTarget pid)
+    let candidates = [c | not barred, c <- discardableHand player, c.id `notElem` selected]
+    push $
+      if null candidates
+        then DiscardChosenFromHand source pid selected
+        else questionLabelWith (ikeyWith "label.chooseAnyDiscard" [intVar "n" $ length selected]) (sourceTarget source) [] pid $
+          [targetLabel (CardIdTarget c.id) [ChooseAnyDiscardFromHand source pid (selected <> [c.id])] | c <- candidates]
+            <> [Label (ikey "label.doneDiscarding") [DiscardChosenFromHand source pid selected]]
     pure g
   EachDiscardAnyFromHand source (pid : rest) discarded -> do
     player <- getPlayer pid

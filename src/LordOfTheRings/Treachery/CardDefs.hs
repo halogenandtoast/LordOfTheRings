@@ -14,7 +14,8 @@ allTreacheryCards =
   Map.fromList $
     map
       (\def -> (cdCardCode def, def))
-      [ fieryWhip
+      [ arrowsInTheNight
+      , fieryWhip
       , flamingSword
       , cutOff
       , veryWeary
@@ -3701,3 +3702,9 @@ fieryWhip = (unique $ treachery "the-road-darkens-nightmare-journey-in-the-dark-
 flamingSword :: CardDef
 flamingSword = (unique $ treachery "the-road-darkens-nightmare-journey-in-the-dark-007" "Flaming Sword" JourneyInTheDarkNightmare 1)
   {cdShadowEffect = True}
+
+-- * Breaking of the Fellowship Nightmare
+
+arrowsInTheNight :: CardDef
+arrowsInTheNight = (treachery "the-road-darkens-nightmare-breaking-of-the-fellowship-006" "Arrows in the Night" BreakingOfTheFellowshipNightmare 2)
+  {cdKeywords = setFromList [Peril], cdShadowEffect = True}

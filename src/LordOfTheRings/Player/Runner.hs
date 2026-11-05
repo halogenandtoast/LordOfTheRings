@@ -430,6 +430,12 @@ runPlayer msg player = case msg of
       moved <- movableDiscardCards (take n player.discard)
       deck <- shuffleM (moved <> player.deck)
       pure $ player & discardL %~ filter (`notElem` moved) & deckL .~ deck
+    DiscardChosenFromHand source pid selected | pid == player.id -> do
+      barred <- elem CannotDiscardFromHand <$> getModifiers (PlayerTarget pid)
+      let discarded = [c | not barred, c <- discardableHand player, c.id `elem` selected]
+      pushWhen (notNull discarded) $ CheckWindows [mkAfter $ DiscardedFromHand pid c.id | c <- discarded]
+      push $ DiscardedChosenFromHand source pid discarded
+      pure $ player & handL %~ filter (`notElem` discarded) & discardL %~ (discarded <>)
     request | Just (pid, n, resultSource) <- randomDiscardRequest request, pid == player.id -> do
       barred <- elem CannotDiscardFromHand <$> getModifiers (PlayerTarget pid)
       discarded <- if barred then pure [] else take n <$> shuffleM (discardableHand player)

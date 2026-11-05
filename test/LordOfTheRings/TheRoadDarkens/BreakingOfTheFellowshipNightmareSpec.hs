@@ -6,12 +6,14 @@ import LordOfTheRings.Attachment.CardDefs qualified as Attachments
 import LordOfTheRings.Decklist (loadPlayer)
 import LordOfTheRings.Effect (Effect (..), EffectDuration (UntilEndOfRound))
 import LordOfTheRings.Location.CardDefs qualified as Locations
+import LordOfTheRings.Event.CardDefs qualified as Events
+import LordOfTheRings.Treachery.CardDefs qualified as Treacheries
 import LordOfTheRings.Quest.CardDefs qualified as Quests
 import LordOfTheRings.Helpers.Staging (getEngagementCost)
 import LordOfTheRings.Matcher (getArcheryTotal, getEnemy, getMainQuestProgress)
 import LordOfTheRings.Scenario (breakingOfTheFellowship)
 import LordOfTheRings.Helpers.Window (travelableLocations)
-import LordOfTheRings.Modifier (ModifierType (Blank, GainKeyword, CannotEngagePlayer, CannotLeaveStagingArea, CannotBeOptionallyEngagedBy))
+import LordOfTheRings.Modifier (ModifierType (Blank, GainKeyword, CannotEngagePlayer, CannotLeaveStagingArea, CannotBeOptionallyEngagedBy, CannotDiscardFromHand))
 import LordOfTheRings.Keyword (Keyword (Toughness))
 import LordOfTheRings.Matcher (PlayerMatcher (AnyPlayer))
 import TestImport
@@ -57,6 +59,12 @@ passTableActions one two = do
     passActions one
     passActions two
     passTableActions one two
+
+revealTreachery :: CardDef -> GameT ()
+revealTreachery def = do
+  _ <- setEncounterDeck [def]
+  run RevealEncounterCard
+  resolveRevealed
 
 spec :: Spec
 spec = describe "Breaking of the Fellowship Nightmare" do
@@ -451,3 +459,102 @@ spec = describe "Breaking of the Fellowship Nightmare" do
     run $ TravelTo lid
     (.placement) <$> getEnemy eid `shouldReturn` EngagedWith pid
     (.placement) <$> getLocation lid `shouldReturn` ActiveLocation
+
+  it "Arrows in the Night adds six archery for the round with an empty hand, lasting after the treachery is discarded" . botf $ \pid -> do
+    putGame . (playersL . ix pid . handL .~ []) =<< getGame
+    revealTreachery Treacheries.arrowsInTheNight
+    getArcheryTotal `shouldReturn` 6
+    getsGame (length . (.entities.treacheries)) `shouldReturn` 0
+    run $ EndEffects UntilEndOfRound
+    getArcheryTotal `shouldReturn` 0
+
+  it "Arrows in the Night allows declining the optional discard" . botf $ \pid -> do
+    putGame . (playersL . ix pid . handL .~ []) =<< getGame
+    card <- putCardIntoHand pid Events.fortuneOrFate
+    revealTreachery Treacheries.arrowsInTheNight
+    chooseLabel "$label.doneDiscarding" pid
+    map (.id) . (.hand) <$> getPlayer pid `shouldReturn` [card.id]
+    getArcheryTotal `shouldReturn` 6
+
+  it "Arrows in the Night selects distinct cards before discarding them together" . botf $ \pid -> do
+    putGame . (playersL . ix pid . handL .~ []) =<< getGame
+    firstCard <- putCardIntoHand pid Events.fortuneOrFate
+    secondCard <- putCardIntoHand pid Events.aTestOfWill
+    kept <- putCardIntoHand pid Events.gandalfsSearch
+    revealTreachery Treacheries.arrowsInTheNight
+    chooseTarget pid (CardIdTarget firstCard.id)
+    length . (.hand) <$> getPlayer pid `shouldReturn` 3
+    question <- getQuestion pid
+    let offered = maybe [] questionChoices question
+    offered `shouldSatisfy` not . any (\case TargetLabel (CardIdTarget cid) _ -> cid == firstCard.id; _ -> False)
+    chooseTarget pid (CardIdTarget secondCard.id)
+    chooseLabel "$label.doneDiscarding" pid
+    map (.id) . (.hand) <$> getPlayer pid `shouldReturn` [kept.id]
+    length . (.discard) <$> getPlayer pid `shouldReturn` 2
+    getArcheryTotal `shouldReturn` 4
+
+  it "Arrows in the Night can reduce existing archery by discarding more than six cards" . botf $ \pid -> do
+    putGame . (playersL . ix pid . handL .~ []) =<< getGame
+    _ <- stage Enemies.isengardTracker
+    cards <- replicateM 8 (putCardIntoHand pid Events.fortuneOrFate) :: GameT [Card]
+    revealTreachery Treacheries.arrowsInTheNight
+    for_ cards (\c -> chooseTarget pid (CardIdTarget c.id))
+    length . (.hand) <$> getPlayer pid `shouldReturn` 0
+    length . (.discard) <$> getPlayer pid `shouldReturn` 8
+    getArcheryTotal `shouldReturn` 0
+
+  it "Arrows in the Night cannot reduce archery when discarding is prohibited" . botf $ \pid -> do
+    putGame . (playersL . ix pid . handL .~ []) =<< getGame
+    card <- putCardIntoHand pid Events.fortuneOrFate
+    run $ CreateEffect $ Effect GameSource (PlayerTarget pid) [CannotDiscardFromHand] UntilEndOfRound
+    revealTreachery Treacheries.arrowsInTheNight
+    map (.id) . (.hand) <$> getPlayer pid `shouldReturn` [card.id]
+    getArcheryTotal `shouldReturn` 6
+    getQuestion pid >>= (`shouldSatisfy` isNothing)
+
+  it "Arrows in the Night cannot select an encounter card that is protected from discarding" . botf $ \pid -> do
+    protected <- genEncounterCard Treacheries.theNecromancersReach
+    putGame . (playersL . ix pid . handL .~ [EncounterCard protected]) =<< getGame
+    card <- putCardIntoHand pid Events.fortuneOrFate
+    revealTreachery Treacheries.arrowsInTheNight
+    chooseTarget pid (CardIdTarget card.id)
+    map (.id) . (.hand) <$> getPlayer pid `shouldReturn` [protected.id]
+    getArcheryTotal `shouldReturn` 5
+
+  it "Arrows in the Night changes archery only at the revealed stage, and expires even while another area is in focus" . botfTwo $ \one two -> do
+    putGame . (playersL . ix one . handL .~ []) . (playersL . ix two . handL .~ []) =<< getGame
+    run $ SeparateStagingAreas [[one], [two]]
+    run $ FocusArea two
+    run $ SetRevealer (Just two)
+    revealTreachery Treacheries.arrowsInTheNight
+    getArcheryTotal `shouldReturn` 6
+    run $ FocusArea one
+    getArcheryTotal `shouldReturn` 0
+    run $ EndEffects UntilEndOfRound
+    run $ FocusArea two
+    getArcheryTotal `shouldReturn` 0
+
+  it "Arrows in the Night's shadow discards one random card without increasing archery" . botf $ \pid -> do
+    putGame . (playersL . ix pid . handL .~ []) =<< getGame
+    card <- putCardIntoHand pid Events.fortuneOrFate
+    eid <- stage Enemies.forestSpider
+    run . AttachShadowCard eid =<< genEncounterCard Treacheries.arrowsInTheNight
+    run $ ResolveShadow eid pid []
+    length . (.hand) <$> getPlayer pid `shouldReturn` 0
+    map (.id) . (.discard) <$> getPlayer pid `shouldReturn` [card.id]
+    getArcheryTotal `shouldReturn` 0
+
+  it "Arrows in the Night counts cards actually discarded even if Silver Harp returns one afterward" . botf $ \pid -> do
+    putGame . (playersL . ix pid . handL .~ []) =<< getGame
+    eowyn <- toTarget <$> getHeroWithCode "01007"
+    harp <- putAttachmentOn pid Attachments.silverHarp eowyn
+    firstCard <- putCardIntoHand pid Events.fortuneOrFate
+    secondCard <- putCardIntoHand pid Events.gandalfsSearch
+    revealTreachery Treacheries.arrowsInTheNight
+    chooseTarget pid (CardIdTarget firstCard.id)
+    offersAbilityOf pid harp `shouldReturn` False
+    chooseTarget pid (CardIdTarget secondCard.id)
+    length . (.discard) <$> getPlayer pid `shouldReturn` 2
+    chooseAbilityOf pid harp
+    length . (.hand) <$> getPlayer pid `shouldReturn` 1
+    getArcheryTotal `shouldReturn` 4

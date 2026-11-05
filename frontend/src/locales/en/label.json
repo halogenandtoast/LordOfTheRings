@@ -17,6 +17,7 @@
     "player": "Choose a player at this stage to engage an enemy",
     "enemy": "Engage an enemy tied for the highest Toughness in the staging area"
   },
+  "chooseAnyDiscard": "Choose cards to discard ({n} selected)",
   "choosePlayer": "Choose a player",
   "placeProgressOnQuestCard": "Choose a quest card to place the progress on",
   "playAttachmentFromDiscard": "Choose an attachment in your discard pile to play on the hero",

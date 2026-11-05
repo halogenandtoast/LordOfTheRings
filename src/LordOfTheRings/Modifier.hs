@@ -119,6 +119,9 @@ data ModifierType
     StagingThreatPerAllyInDiscardOf PlayerId
   | -- | on the game: the archery total is raised by this much, as Pinned Down reads
     ArcheryBonus Int
+  | -- | on the game: archery changes only at the stage containing this player,
+    -- as Arrows in the Night reads; shared staging areas keep lasting effects global
+    ArcheryBonusAtStage PlayerId Int
   | -- | on the game: archery damage must be assigned to allies, if able, as An Untimely
     -- End reads
     ArcheryDamageToAllies

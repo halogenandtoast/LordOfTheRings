@@ -1686,6 +1686,11 @@ eachPlayerMayDiscardFromHand source = do
 discardRandomFromHand :: ReverseQueue m => PlayerId -> Int -> m ()
 discardRandomFromHand pid n = push $ DiscardRandomFromHand pid n
 
+-- | Choose any number of distinct cards before discarding them together. The
+-- source receives the actual discarded cards in DiscardedChosenFromHand.
+discardAnyFromHandWithResult :: (ReverseQueue m, Sourceable source) => source -> PlayerId -> m ()
+discardAnyFromHandWithResult source pid = push $ ChooseAnyDiscardFromHand (toSource source) pid []
+
 -- | Report the cards actually discarded in DiscardedRandomFromHand, after their
 -- discard windows resolve. An empty result also reports a prevented discard.
 discardRandomFromHandWithResult :: (ReverseQueue m, Sourceable source) => source -> PlayerId -> Int -> m ()
