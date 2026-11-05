@@ -2,7 +2,6 @@ module LordOfTheRings.Location.Cards.BuckleburyFerry (buckleburyFerry) where
 
 import LordOfTheRings.Location.CardDefs qualified as Cards
 import LordOfTheRings.Location.Import.Lifted
-import LordOfTheRings.Scenario.Scenarios.AShadowOfThePast.Helpers (winAShadowOfThePast)
 
 newtype BuckleburyFerry = BuckleburyFerry LocationAttrs
   deriving anyclass (IsLocation, HasAbilities)
@@ -31,6 +30,6 @@ instance RunMessage BuckleburyFerry where
       hideTest lead a 3
       BuckleburyFerry <$> runMessage msg a
     CheckWindows ws | Window When (Explored a.id) `elem` ws -> do
-      winAShadowOfThePast
+      winGame
       BuckleburyFerry <$> runMessage msg a
     _ -> BuckleburyFerry <$> runMessage msg a
