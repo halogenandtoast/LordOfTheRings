@@ -747,9 +747,11 @@ dolGuldurOrcs =
     , cdCardTraits = setFromList [DolGuldur, Orc]
     }
 
+-- | Unique, as the printed card is; the card data drops the unique mark and misspells the
+-- title "Chieftan".
 chieftanUfthak :: CardDef
 chieftanUfthak =
-  (enemy "01090" "Chieftan Ufthak" DolGuldurOrcs 1 35 2 3 3 6)
+  (unique $ enemy "01090" "Chieftain Ufthak" DolGuldurOrcs 1 35 2 3 3 6)
     { cdCardTraits = setFromList [DolGuldur, Orc]
     , cdVictoryPoints = Just 4
     , cdEasyModeQuantity = Just 0

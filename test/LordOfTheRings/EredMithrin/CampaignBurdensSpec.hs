@@ -3,7 +3,7 @@ module LordOfTheRings.EredMithrin.CampaignBurdensSpec (spec) where
 import Data.Map.Strict qualified as Map
 import LordOfTheRings.Attachment.CardDefs qualified as Attachments
 import LordOfTheRings.Campaign (CampaignLog (campaignLogPool), PoolCard (..), newCampaignLog)
-import LordOfTheRings.Card (cdCardCode, isTreasure)
+import LordOfTheRings.Card (cdCardCode, cdUnique, isTreasure)
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Helpers.Modifiers (getModifiers)
 import LordOfTheRings.Location.CardDefs qualified as Locations
@@ -116,13 +116,27 @@ spec = describe "Ered Mithrin campaign burdens" do
       getModifiers (toTarget eid) >>= (`shouldSatisfy` elem (CannotBeOptionallyEngagedBy (NotPlayer $ PlayerEngagedWith UniqueEnemy)))
 
   describe "Gundabad Hunter" do
-    it "attacks the player engaged with a unique enemy as it is revealed" . gameTest $ \pid -> do
+    -- Chieftain Ufthak is unique (Core Set 90): the second player, engaged with him, is
+    -- the only one to choose, not the first, engaged with a Forest Spider
+    it "attacks the player engaged with a unique enemy as it is revealed" . twoPlayerTest testDeck $ \p1 p2 -> do
+      cdUnique Enemies.chieftanUfthak `shouldBe` True
       ufthak <- stagedEnemy Enemies.chieftanUfthak
-      run $ EngageEnemy pid ufthak
+      run $ EngageEnemy p2 ufthak
+      spider <- stagedEnemy Enemies.forestSpider
+      run $ EngageEnemy p1 spider
       _ <- setEncounterDeck [Enemies.gundabadHunter, Locations.oldForestRoad, Locations.oldForestRoad]
       run RevealEncounterCard
-      q <- getQuestion pid
-      q `shouldSatisfy` isJust
+      resolveRevealed
+      -- no player is chosen: the attack is against the second player, who is asked to
+      -- declare a defender
+      let labelled prefix = \case
+            Just (QuestionLabel l _ _ _) -> prefix `isPrefixOf` l
+            _ -> False
+      getQuestion p1 >>= (`shouldSatisfy` not . labelled "$label.choosePlayer")
+      -- past the action windows, the second player, not the first, declares a defender
+      replicateM_ 3 (passActions p1 >> passActions p2)
+      getQuestion p1 >>= (`shouldSatisfy` isNothing)
+      getQuestion p2 >>= (`shouldSatisfy` isJust)
 
   describe "Dragon-sickness" do
     it "attaches to a character with a treasure, gathers every treasure there, and raises threat as it exhausts" . gameTest $ \pid -> do
