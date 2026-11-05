@@ -216,7 +216,7 @@ data Trait
   | Fear
   | FellowshipTrait
   | Gift
-  | HelmsDeep
+  | HelmsDeepTrait
   | Hill
   | Information
   | Lawn
@@ -248,7 +248,7 @@ traitName = \case
   WilderlandsTrait -> "Wilderlands"
   DoomedTrait -> "Doomed"
   FellowshipTrait -> "Fellowship"
-  HelmsDeep -> "Helm's Deep"
+  HelmsDeepTrait -> "Helm's Deep"
   PerilTrait -> "Peril"
   RingBearer -> "Ring-bearer"
   SiegeTrait -> "Siege"

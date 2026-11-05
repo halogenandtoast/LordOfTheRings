@@ -620,6 +620,9 @@ allEnemyCards =
       , isengardUruk
       , urukHaiFighter
       , snaga
+      , wildHillman
+      , warriorOfDunland
+      , soldierOfIsengard
       ]
 
 namelessThing :: CardDef
@@ -5179,4 +5182,27 @@ snaga =
     , cdKeywords = setFromList [Peril, Archery 1]
     , cdWhenRevealed = True
     , cdEasyModeQuantity = Just 2
+    }
+
+-- * Helm's Deep
+
+wildHillman :: CardDef
+wildHillman = (enemy "143034" "Wild Hillman" HelmsDeep 3 24 3 3 2 3) {cdCardTraits = setFromList [Dunland], cdShadowEffect = True}
+
+warriorOfDunland :: CardDef
+warriorOfDunland =
+  (enemy "143035" "Warrior of Dunland" HelmsDeep 2 44 4 5 1 5)
+    { cdCardTraits = setFromList [Dunland]
+    , cdKeywords = setFromList [Peril, Archery 1]
+    , cdWhenRevealed = True
+    }
+
+-- | Set aside, one for each player, as stage 1A is set up; stage 2A adds them to the
+-- staging area.
+soldierOfIsengard :: CardDef
+soldierOfIsengard =
+  (enemy "143036" "Soldier of Isengard" HelmsDeep 4 39 4 4 1 4)
+    { cdCardTraits = setFromList [Orc, UrukHai]
+    , cdKeywords = setFromList [Toughness 1, Archery 1]
+    , cdShadowEffect = True
     }

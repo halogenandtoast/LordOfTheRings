@@ -3952,5 +3952,19 @@
     "chooseFallen": "Choose a fallen hero to take control of",
     "fallenHero": "{hero}",
     "removeHero": "You control more than 3 heroes: choose a hero to remove from the Campaign Log"
+  },
+  "theKingOfTheGoldenHall": {
+    "choose": "The King of the Golden Hall: each player shuffles 1 copy of Poisoned Counsels into his deck, or advance to stage 2A",
+    "poisonedCounsels": "Each player shuffles 1 copy of Poisoned Counsels into his deck",
+    "advance": "Advance to stage 2A (bypassing stage 1B)",
+    "chooseAlly": "Choose an ally in your hand that matches the sphere of a hero you control to put into play"
+  },
+  "recklessHate": {
+    "choose": "Reckless Hate: choose the enemy in the staging area with the highest attack to attack you"
+  },
+  "nightWithoutEnd": {
+    "choose": "Night Without End: remove 1 resource token from The Defense of Helm's Deep, or reveal 2 additional encounter cards",
+    "removeToken": "Remove 1 resource token from The Defense of Helm's Deep",
+    "reveal": "Reveal 2 additional encounter cards"
   }
 }

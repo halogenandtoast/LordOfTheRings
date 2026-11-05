@@ -672,6 +672,11 @@ allLocationCards =
       , eastemnet
       , plainsOfRohan
       , banksOfEntwash
+      , theHornburg
+      , deepingWall
+      , deepingCulvert
+      , posternDoor
+      , helmsGate
       ]
 
 drownedTreasury :: CardDef
@@ -4798,3 +4803,22 @@ plainsOfRohan =
 
 banksOfEntwash :: CardDef
 banksOfEntwash = (location "143029" "Banks of Entwash" TheUrukHai 2 3 5) {cdCardTraits = setFromList [Plains, River], cdShadowEffect = True}
+
+-- * Helm's Deep
+
+theHornburg :: CardDef
+theHornburg = (location "143037" "The Hornburg" HelmsDeep 3 3 3) {cdCardTraits = setFromList [HelmsDeepTrait]}
+
+deepingWall :: CardDef
+deepingWall = (location "143038" "Deeping Wall" HelmsDeep 4 4 4) {cdCardTraits = setFromList [HelmsDeepTrait]}
+
+-- | X threat, 1 more than the number of allies the first player controls: given by its
+-- own modifiers.
+deepingCulvert :: CardDef
+deepingCulvert = (location "143039" "Deeping Culvert" HelmsDeep 2 0 2) {cdCardTraits = setFromList [HelmsDeepTrait], cdEasyModeQuantity = Just 1}
+
+posternDoor :: CardDef
+posternDoor = (location "143040" "Postern Door" HelmsDeep 2 3 2) {cdCardTraits = setFromList [HelmsDeepTrait]}
+
+helmsGate :: CardDef
+helmsGate = (location "143041" "Helm's Gate" HelmsDeep 2 5 3) {cdCardTraits = setFromList [HelmsDeepTrait], cdEasyModeQuantity = Just 1}

@@ -191,6 +191,7 @@ allObjectiveCards =
       , entOfFangorn
       , sarumansStaffTheRoadToIsengard
       , toIsengard
+      , theDefenseOfHelmsDeep
       ]
 
 durinsAxe :: CardDef
@@ -1372,3 +1373,13 @@ sarumansStaffTheRoadToIsengard = unique (objective "143048" "Saruman's Staff" Th
 -- | Added to the staging area as stage 1A is set up, the Captives faceup under it.
 toIsengard :: CardDef
 toIsengard = objective "143022" "To Isengard!" TheUrukHai 1
+
+-- * Helm's Deep
+
+-- | Set aside as stage 1A is set up; stage 2A adds it to the staging area.
+theDefenseOfHelmsDeep :: CardDef
+theDefenseOfHelmsDeep =
+  (objective "143033" "The Defense of Helm's Deep" HelmsDeep 1)
+    { cdCardTraits = setFromList [SiegeTrait]
+    , cdVictoryPoints = Just 8
+    }

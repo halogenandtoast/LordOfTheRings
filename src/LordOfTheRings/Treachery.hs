@@ -536,6 +536,11 @@ import LordOfTheRings.Treachery.Cards.StrangeWeariness
 import LordOfTheRings.Treachery.Cards.UnseenBarrier
 import LordOfTheRings.Treachery.Cards.FightingUrukHai
 import LordOfTheRings.Treachery.Cards.SarumansOrders
+import LordOfTheRings.Treachery.Cards.ScalingLadders
+import LordOfTheRings.Treachery.Cards.DevilryOfSaruman
+import LordOfTheRings.Treachery.Cards.RecklessHate
+import LordOfTheRings.Treachery.Cards.NightWithoutEnd
+import LordOfTheRings.Treachery.Cards.PoisonedCounselsTheTreasonOfSaruman
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -1099,5 +1104,10 @@ allTreacherys =
         , SomeTreacheryCard unseenBarrier
         , SomeTreacheryCard fightingUrukHai
         , SomeTreacheryCard sarumansOrders
+        , SomeTreacheryCard scalingLadders
+        , SomeTreacheryCard devilryOfSaruman
+        , SomeTreacheryCard recklessHate
+        , SomeTreacheryCard nightWithoutEnd
+        , SomeTreacheryCard poisonedCounselsTheTreasonOfSaruman
         ]
     ]

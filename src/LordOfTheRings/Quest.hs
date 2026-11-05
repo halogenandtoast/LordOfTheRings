@@ -429,6 +429,11 @@ import LordOfTheRings.Quest.Cards.BreakingIsengard
 import LordOfTheRings.Quest.Cards.TheVoiceOfSaruman
 import LordOfTheRings.Quest.Cards.FollowTheOrcs
 import LordOfTheRings.Quest.Cards.RescueTheCaptives
+import LordOfTheRings.Quest.Cards.TheKingOfTheGoldenHall
+import LordOfTheRings.Quest.Cards.AssaultOnHelmsDeep
+import LordOfTheRings.Quest.Cards.TheHostsOfIsengard
+import LordOfTheRings.Quest.Cards.TheWallIsBreached
+import LordOfTheRings.Quest.Cards.TheKingRidesOut
 import LordOfTheRings.Quest.Runner ()
 import LordOfTheRings.Quest.Types as X
 import LordOfTheRings.Id
@@ -890,5 +895,10 @@ allQuests =
         , SomeQuestCard theVoiceOfSaruman
         , SomeQuestCard followTheOrcs
         , SomeQuestCard rescueTheCaptives
+        , SomeQuestCard theKingOfTheGoldenHall
+        , SomeQuestCard assaultOnHelmsDeep
+        , SomeQuestCard theHostsOfIsengard
+        , SomeQuestCard theWallIsBreached
+        , SomeQuestCard theKingRidesOut
         ]
     ]

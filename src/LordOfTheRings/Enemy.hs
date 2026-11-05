@@ -610,6 +610,9 @@ import LordOfTheRings.Enemy.Cards.UgluksUrukHai
 import LordOfTheRings.Enemy.Cards.IsengardUruk
 import LordOfTheRings.Enemy.Cards.UrukHaiFighter
 import LordOfTheRings.Enemy.Cards.Snaga
+import LordOfTheRings.Enemy.Cards.WildHillman
+import LordOfTheRings.Enemy.Cards.WarriorOfDunland
+import LordOfTheRings.Enemy.Cards.SoldierOfIsengard
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -1250,5 +1253,8 @@ allEnemys =
         , SomeEnemyCard isengardUruk
         , SomeEnemyCard urukHaiFighter
         , SomeEnemyCard snaga
+        , SomeEnemyCard wildHillman
+        , SomeEnemyCard warriorOfDunland
+        , SomeEnemyCard soldierOfIsengard
         ]
     ]

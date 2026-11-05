@@ -601,7 +601,8 @@ getArcheryTotal = do
     Just t@(QuestTarget qid) -> maybe (pure 0) (getArchery t . toCardDef) =<< getsGame (Map.lookup qid . entitiesQuests . gameEntities)
     _ -> pure 0
   bonus <- sum . (\ms -> [n | ArcheryBonus n <- map modifierType ms]) . Map.findWithDefault [] GameTarget <$> getsGame gameModifiers
-  pure $ sum fromEnemies + sum fromLocations + onQuest + bonus
+  -- a reduction, as The Hornburg's, takes it no lower than 0
+  pure $ max 0 $ sum fromEnemies + sum fromLocations + onQuest + bonus
 
 -- | The current quest has the keyword, printed or gained, as battle or siege.
 currentQuestHas :: HasGame m => Keyword -> m Bool

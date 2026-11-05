@@ -96,6 +96,8 @@ data WindowMatcher
   | QuestedSuccessfullyWindow Timing
   | -- | after the progress from questing successfully is placed, as Surprise Attack reads
     PlacedProgressFromQuestingWindow Timing
+  | -- | after the quest is resolved, whatever its result, as The Hosts of Isengard reads
+    QuestResolvedWindow
   | -- | after an attack the character, or any character, defended
     DefendedAttackWindow Timing (Maybe Target)
   | -- | after an attack by the enemy was defended, as Noose of Vines reads
@@ -465,6 +467,7 @@ windowMatches matcher (Window timing wType) = case (matcher, wType) of
   (CharacterRescuedWindow t mt, CharacterRescued c) -> t == timing && maybe True (== c) mt
   (QuestedSuccessfullyWindow t, QuestedSuccessfully) -> t == timing
   (PlacedProgressFromQuestingWindow t, PlacedProgressFromQuesting) -> t == timing
+  (QuestResolvedWindow, QuestResolved) -> timing == After
   (DefendedAttackWindow t who, DefendedAttack target _) -> t == timing && maybe True (== target) who
   (DefendedAttackAgainstWindow t eid, DefendedAttack _ eid') -> t == timing && eid == eid'
   (PlayedFromHandWindow t target, PlayedFromHand target') -> t == timing && target == target'
