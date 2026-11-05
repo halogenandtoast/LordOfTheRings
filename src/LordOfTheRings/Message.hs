@@ -2,7 +2,9 @@
 
 module LordOfTheRings.Message (module LordOfTheRings.Message) where
 
-import Data.Aeson.TH (deriveJSON, deriveToJSON)
+import Data.Aeson.KeyMap qualified as KeyMap
+import Data.Aeson.TH (deriveJSON, deriveToJSON, mkParseJSON)
+import Data.Aeson.Types (Parser)
 import LordOfTheRings.Ability.Types
 import LordOfTheRings.Campaign (CampaignLogUpdate)
 import LordOfTheRings.Card
@@ -1058,11 +1060,27 @@ removedEnemy = \case
   AddToVictoryDisplay (EnemyTarget eid) -> Just eid
   _ -> Nothing
 
--- Generate the mutually recursive codecs together; keep the legacy escape parser.
+{- | A saved game from before 'Discard' named its source holds @Discard Target@, its
+contents the target alone: it loads as the game's discard, 'GameSource', since nothing
+says whose effect it was. Anything else is read by the generated parser.
+-}
+parseLegacyDiscard :: (Value -> Parser Message) -> Value -> Parser Message
+parseLegacyDiscard generated v = case v of
+  Object o
+    | Just (String "Discard") <- KeyMap.lookup "tag" o
+    , Just contents@(Object _) <- KeyMap.lookup "contents" o ->
+        Discard GameSource <$> parseJSON contents
+  _ -> generated v
+
+-- Generate the mutually recursive codecs together; keep the legacy escape parser, and
+-- the legacy one-field Discard.
 $(do
-  codecs <- concat <$> traverse (deriveJSON defaultOptions) [''Message, ''FortitudeTest]
+  message <- deriveToJSON defaultOptions ''Message
+  parser <- mkParseJSON defaultOptions ''Message
+  fromMessage <- [d|instance FromJSON Message where parseJSON = parseLegacyDiscard $(pure parser)|]
+  fortitude <- deriveJSON defaultOptions ''FortitudeTest
   escape <- deriveToJSON defaultOptions ''EscapeTest
-  pure $ codecs <> escape)
+  pure $ message <> fromMessage <> fortitude <> escape)
 
 instance FromJSON EscapeTest where
   parseJSON = genericParseJSON defaultOptions . withDefaults [("escapeParty", toJSON ([] :: [PlayerId]))]

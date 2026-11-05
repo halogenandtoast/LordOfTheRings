@@ -36,6 +36,13 @@ spec = describe "Generic codec compatibility" do
       target = PlayerTarget pid
       escape = EscapeTest pid GameSource 2 EscapeDefense [target] [BeginRound] [EndRound] [pid]
       fortitude = FortitudeTest pid GameSource [] 2 1 [] [] [BeginRound] [EndRound]
+  it "loads a saved Discard from before it named its source as the game's" do
+    let old = object ["tag" .= ("Discard" :: Text), "contents" .= target]
+    (fromJSON old :: Result Message) `shouldBe` Success (Discard GameSource target)
+    (fromJSON (object ["tag" .= ("Run" :: Text), "contents" .= [old]]) :: Result Message) `shouldBe` Success (Run [Discard GameSource target])
+    let new = Discard (EnemySource eid) target
+    (fromJSON (toJSON new) :: Result Message) `shouldBe` Success new :: Expectation
+
   it "preserves nullary tags, positional contents, recursive messages and questions" do
     mapM_
       (compatible (genericToJSON defaultOptions) (genericParseJSON defaultOptions))
