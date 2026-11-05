@@ -33,10 +33,7 @@ instance RunMessage ThePassageOfTheMarshes where
       players <- getRemainingPlayers
       for_ players \pid -> shuffleIntoDeck pid =<< genEncounterCard Treacheries.theSearchingEye
       ThePassageOfTheMarshes <$> runMessage msg attrs
-    -- the last stage defeated, the campaign card's resolution is asked before the game is
-    -- won
-    AdvanceQuest | null attrs.questDeck, isJust attrs.campaign -> do
+    ResolveCampaign | isJust attrs.campaign -> do
       passageOfTheMarshesResolution
-      winGame
-      pure $ ThePassageOfTheMarshes attrs
+      ThePassageOfTheMarshes <$> runMessage msg attrs
     _ -> ThePassageOfTheMarshes <$> runMessage msg attrs
