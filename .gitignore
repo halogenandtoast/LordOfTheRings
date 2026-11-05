@@ -4,3 +4,6 @@
 .DS_Store
 /tags
 dist*/
+
+# Python build/recovery tooling
+__pycache__/

@@ -1,4 +1,4 @@
-# One original amd64 build measured 0.6 GiB Stack root + 1.4 GiB app cache.
+# Optimized amd64 caches measured 625 MB Stack root + 1.754 GB app artifacts.
 # Allow headroom for optimized objects, two architectures, and compiler upgrades.
 [worker.oci]
   gc = true
