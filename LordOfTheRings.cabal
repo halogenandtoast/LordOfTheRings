@@ -1981,6 +1981,7 @@ library
       LordOfTheRings.Location.Cards.GladdenMarshlands
       LordOfTheRings.Location.Cards.GladeOfCleansing
       LordOfTheRings.Location.Cards.GladeOfTheSpawn
+      LordOfTheRings.Location.Cards.GlitteringCaves
       LordOfTheRings.Location.Cards.GlowingFissure
       LordOfTheRings.Location.Cards.GoblinGate
       LordOfTheRings.Location.Cards.GoblinTunnels
@@ -2011,6 +2012,7 @@ library
       LordOfTheRings.Location.Cards.HauntedPillars
       LordOfTheRings.Location.Cards.HeartOfFangorn
       LordOfTheRings.Location.Cards.HelmOfTheStormcaller
+      LordOfTheRings.Location.Cards.HelmsDike
       LordOfTheRings.Location.Cards.HelmsGate
       LordOfTheRings.Location.Cards.HennethAnnun
       LordOfTheRings.Location.Cards.HiddenAlleyway
@@ -2034,6 +2036,7 @@ library
       LordOfTheRings.Location.Cards.HithaeglirWoods
       LordOfTheRings.Location.Cards.HivesAndHives
       LordOfTheRings.Location.Cards.HobbitLands
+      LordOfTheRings.Location.Cards.HornburgWall
       LordOfTheRings.Location.Cards.HousesOfTheDead
       LordOfTheRings.Location.Cards.HuntersLookout
       LordOfTheRings.Location.Cards.IcyCavern

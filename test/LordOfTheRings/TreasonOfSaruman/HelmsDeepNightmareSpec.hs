@@ -2,7 +2,7 @@ module LordOfTheRings.TreasonOfSaruman.HelmsDeepNightmareSpec (spec) where
 
 import LordOfTheRings.Ally.CardDefs qualified as Allies
 import LordOfTheRings.Helpers.Modifiers (getModifiers)
-import LordOfTheRings.Helpers.Staging (getEnemyAttack)
+import LordOfTheRings.Helpers.Staging (getEnemyAttack, getEngagementCost)
 import LordOfTheRings.Location.Types (LocationAttrs (locationCardId))
 import LordOfTheRings.Attachment.CardDefs qualified as Attachments
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
@@ -10,8 +10,8 @@ import LordOfTheRings.Entities (questsL)
 import LordOfTheRings.Effect (Effect (..), EffectDuration (UntilEndOfRound))
 import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Matcher
-import LordOfTheRings.Modifier (ModifierType (Blank, AdditionalAttackAfterNextAttack, CannotAttack, ImmuneToCardEffects))
-import LordOfTheRings.Phase (Phase (PlanningPhase))
+import LordOfTheRings.Modifier (ModifierType (Blank, AdditionalAttackAfterNextAttack, CannotAttack, ImmuneToCardEffects, CannotBeTraveledTo, SkipPhase))
+import LordOfTheRings.Phase (Phase (PlanningPhase, CombatPhase))
 import LordOfTheRings.Quest.CardDefs qualified as Quests
 import LordOfTheRings.Scenario (helmsDeep)
 import LordOfTheRings.Window (WindowType (RoundEnds, EnemyAttacking), mkWhen, mkAfter)
@@ -46,6 +46,70 @@ blankShadow pid eid = do
 
 spec :: Spec
 spec = describe "Helm's Deep Nightmare" do
+  it "Glittering Caves permits travel at stage 4B and skips combat while active" . helms $ \_ -> do
+    _ <- putQuestStage Quests.theWallIsBreached
+    lid <- activeLocation Locations.glitteringCaves
+    getModifiers (LocationTarget lid) >>= (`shouldSatisfy` elem CannotBeTraveledTo)
+    putGame . (entitiesL . questsL . traverse %~ overAttrs (\a -> a {questFlipped = True})) =<< getGame
+    run $ SetRevealer Nothing
+    getModifiers (LocationTarget lid) >>= (`shouldSatisfy` notElem CannotBeTraveledTo)
+    getModifiers GameTarget >>= (`shouldSatisfy` elem (SkipPhase CombatPhase))
+    run $ PlaceLocation lid StagingArea
+    getModifiers GameTarget >>= (`shouldSatisfy` notElem (SkipPhase CombatPhase))
+
+  it "Helm's Dike lowers enemy engagement cost only while active" . helms $ \_ -> do
+    eid <- stage Enemies.hostOfIsengard
+    lid <- activeLocation Locations.helmsDike
+    getEngagementCost eid `shouldReturn` 38
+    run $ PlaceLocation lid StagingArea
+    getEngagementCost eid `shouldReturn` 48
+
+  it "Helm's Dike shuffles the discard before searching and stages the enemy" . helms $ \pid -> do
+    _ <- setEncounterDeck []
+    enemyCard <- genEncounterCard Enemies.isengardUruk
+    run $ AddToEncounterDiscard [enemyCard]
+    lid <- activeLocation Locations.helmsDike
+    run $ PlaceTokens GameSource (LocationTarget lid) Progress 2
+    resolveForcedChoices pid
+    select (EnemyWithCardCode $ toCardCode Enemies.isengardUruk) >>= (`shouldSatisfy` (not . null))
+    map toCardCode <$> getEncounterDiscard `shouldReturn` [toCardCode Locations.helmsDike]
+    getQuestion pid `shouldReturn` Nothing
+
+  it "Hornburg Wall grants stacking Toughness to staged and engaged enemies" . helms $ \pid -> do
+    _ <- activeLocation Locations.hornburgWall
+    wallCard <- genEncounterCard Locations.hornburgWall
+    run $ AddToStaging wallCard
+    host <- stage Enemies.hostOfIsengard
+    berserker <- stage Enemies.bloodiedBerserker
+    run $ EngageEnemy pid berserker
+    run $ DealDamage GameSource (EnemyTarget host) 5
+    run $ DealDamage GameSource (EnemyTarget berserker) 3
+    getDamage (EnemyTarget host) `shouldReturn` 1
+    getDamage (EnemyTarget berserker) `shouldReturn` 1
+
+  it "exploring Hornburg Wall exhausts allies" . helms $ \pid -> do
+    ally <- putAllyIntoPlay pid Allies.guardOfTheCitadel
+    lid <- activeLocation Locations.hornburgWall
+    run $ PlaceTokens GameSource (LocationTarget lid) Progress 3
+    case ally of
+      AllyTarget aid -> allyExhausted . toAttrs <$> getAlly aid `shouldReturn` True
+      _ -> error "expected ally"
+
+  it "Glittering Caves leaves at round end and raises threat" . helms $ \pid -> do
+    _ <- activeLocation Locations.glitteringCaves
+    threatBefore <- (.threat) <$> getPlayer pid
+    run $ CheckWindows [mkWhen RoundEnds]
+    resolveForcedChoices pid
+    (.threat) <$> getPlayer pid `shouldReturn` (threatBefore + 2)
+    getsGame (map toCardCode . (.victoryDisplay) . toAttrs . (.scenario)) `shouldReturn` [toCardCode Locations.glitteringCaves]
+
+  it "exploring Glittering Caves awards victory without raising threat" . helms $ \pid -> do
+    lid <- activeLocation Locations.glitteringCaves
+    threatBefore <- (.threat) <$> getPlayer pid
+    run $ PlaceTokens GameSource (LocationTarget lid) Progress 2
+    (.threat) <$> getPlayer pid `shouldReturn` threatBefore
+    getsGame (map toCardCode . (.victoryDisplay) . toAttrs . (.scenario)) `shouldReturn` [toCardCode Locations.glitteringCaves]
+
   it "Host of Isengard has Toughness 2" . helms $ \_ -> do
     eid <- stage Enemies.hostOfIsengard
     run $ DealDamage GameSource (EnemyTarget eid) 3

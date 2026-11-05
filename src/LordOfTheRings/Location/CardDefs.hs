@@ -15,7 +15,10 @@ allLocationCards =
   Map.fromList $
     map
       (\def -> (cdCardCode def, def))
-      [ enchantedLand
+      [ helmsDike
+      , hornburgWall
+      , glitteringCaves
+      , enchantedLand
       , theUruksTrail
       , woldOfRohan
       , westernEmynMuil
@@ -5139,3 +5142,18 @@ theUruksTrail = (location "the-treason-of-saruman-nightmare-the-uruk-hai-007" "T
 enchantedLand :: CardDef
 enchantedLand = (location "the-treason-of-saruman-nightmare-the-uruk-hai-006" "Enchanted Land" TheUrukHaiNightmare 3 3 4)
   {cdCardTraits = setFromList [Plains], cdShadowEffect = True}
+
+
+-- * Helm's Deep Nightmare
+
+helmsDike :: CardDef
+helmsDike = (location "the-treason-of-saruman-nightmare-helms-deep-004" "Helm's Dike" HelmsDeepNightmare 2 3 2)
+  {cdCardTraits = setFromList [HelmsDeepTrait]}
+
+hornburgWall :: CardDef
+hornburgWall = (location "the-treason-of-saruman-nightmare-helms-deep-005" "Hornburg Wall" HelmsDeepNightmare 3 3 3)
+  {cdCardTraits = setFromList [HelmsDeepTrait], cdShadowEffect = True}
+
+glitteringCaves :: CardDef
+glitteringCaves = (location "the-treason-of-saruman-nightmare-helms-deep-006" "Glittering Caves" HelmsDeepNightmare 2 2 2)
+  {cdCardTraits = setFromList [HelmsDeepTrait], cdVictoryPoints = Just 2}
