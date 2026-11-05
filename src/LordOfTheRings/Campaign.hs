@@ -14,8 +14,8 @@ module LordOfTheRings.Campaign (module LordOfTheRings.Campaign) where
 import Data.List (elemIndex)
 import Data.Map.Strict qualified as Map
 import LordOfTheRings.Campaign.CardDefs qualified as Cards
-import LordOfTheRings.Card (allPlayerCards)
-import LordOfTheRings.Card.CardDef (CardDef, cdCardCode, cdName, cdTreasure)
+import LordOfTheRings.Card (allEncounterCards, allPlayerCards)
+import LordOfTheRings.Card.CardDef (CardDef, cdCardCode, cdEncounterSetQuantity, cdName, cdTreasure)
 import LordOfTheRings.Card.Code
 import LordOfTheRings.Hero.CardDefs qualified as Heroes
 import LordOfTheRings.Id (ScenarioId (..))
@@ -104,6 +104,26 @@ data CampaignLogKey
   | -- | The Lord of the Rings: the heroes taken captive at the end of Breaking of the
     -- Fellowship, one for each player
     Captives
+  | -- | Ered Mithrin: the treasures the players have discovered, by title, as the campaign
+    -- log writes them alongside the boons (MEC115 rules, "Treasure")
+    Treasures
+  | -- | Ered Mithrin: "Turayn has taken an oath of vigilance" (Journey Up the Anduin's
+    -- resolution)
+    TuraynsOath
+  | -- | Ered Mithrin: "Melanwar has given you guidance on traversing Wilderland" (Lost in
+    -- Mirkwood's resolution)
+    MelanwarsGuidance
+  | -- | Ered Mithrin: "Isolde is on the hunt" (The King's Quest's resolution)
+    IsoldeOnTheHunt
+  | -- | Ered Mithrin: "Beldis's care has bolstered the heroes' spirits" (Fire in the
+    -- Night's resolution)
+    BeldisCare
+  | -- | Ered Mithrin: the main quest stage of The Withered Heath just defeated, while its
+    -- window is open, as its Accolade boon is offered
+    DefeatedStage
+  | -- | Ered Mithrin: The Ghost of Framsburg's campaign card has attached its treasure to
+    -- Fram's Shade (group limit once per game)
+    FramsShadeTreasure
   deriving stock (Show, Eq, Ord, Generic, Enum, Bounded)
   deriving anyclass (ToJSON, FromJSON)
 
@@ -299,8 +319,26 @@ theLordOfTheRings =
     , ("mount-doom", Just Cards.mountDoomCampaign)
     ]
 
+-- | The Ered Mithrin Campaign Expansion: the Ered Mithrin cycle's nine scenarios, one
+-- campaign (MEC115 rules, "Campaign Mode").
+eredMithrin :: CampaignDef
+eredMithrin =
+  CampaignDef
+    "ered-mithrin"
+    "Ered Mithrin"
+    [ ("journey-up-the-anduin", Just Cards.journeyUpTheAnduinCampaign)
+    , ("lost-in-mirkwood", Just Cards.lostInMirkwoodCampaign)
+    , ("the-kings-quest", Just Cards.theKingsQuestCampaign)
+    , ("the-withered-heath", Just Cards.theWitheredHeathCampaign)
+    , ("roam-across-rhovanion", Just Cards.roamAcrossRhovanionCampaign)
+    , ("fire-in-the-night", Just Cards.fireInTheNightCampaign)
+    , ("the-ghost-of-framsburg", Just Cards.theGhostOfFramsburgCampaign)
+    , ("mount-gundabad", Just Cards.mountGundabadCampaign)
+    , ("the-fate-of-wilderland", Just Cards.theFateOfWilderlandCampaign)
+    ]
+
 allCampaigns :: [CampaignDef]
-allCampaigns = [revisedCore, angmarAwakened, dreamChaser, theHobbit, theLordOfTheRings]
+allCampaigns = [revisedCore, angmarAwakened, dreamChaser, theHobbit, theLordOfTheRings, eredMithrin]
 
 lookupCampaign :: CampaignId -> Maybe CampaignDef
 lookupCampaign cid = find ((== cid) . campaignDefId) allCampaigns
@@ -449,16 +487,24 @@ freeHeroChange =
   , "the-tower-of-cirith-ungol"
   , "the-black-gate-opens"
   , "mount-doom"
+  , "the-kings-quest"
+  , "the-ghost-of-framsburg"
   ]
 
 -- | Heroes the campaign does not allow yet: the Amarthiúl hero, in Angmar Awakened, until
--- The Battle of Carn Dûm's campaign card lets him in.
+-- The Battle of Carn Dûm's campaign card lets him in. In Ered Mithrin the Haldan hero,
+-- save in The King's Quest: "Haldan cannot be used as a hero in this campaign" (MEC115
+-- rules, "Campaign Mode"), and its campaign card reads "Haldan may be included among a
+-- player's heroes".
 lockedHeroes :: CampaignLog -> [CardCode]
 lockedHeroes l
   | l.campaign == "angmar-awakened"
   , "the-battle-of-carn-dum" `notElem` map completedScenario l.completed
   , nextScenario l /= Just "the-battle-of-carn-dum" =
       [cdCardCode Heroes.amarthiul]
+  | l.campaign == "ered-mithrin"
+  , nextScenario l /= Just "the-kings-quest" =
+      [cdCardCode Heroes.haldan]
   | otherwise = []
 
 -- | A seat's deck as the campaign deals it: its boons and burdens that are player cards
@@ -518,6 +564,37 @@ with these heroes.
 discoveredWith :: Int -> CardCode -> CampaignLog -> Bool
 discoveredWith seat code l = maybe True (seatGroup seat l `elem`) (Map.lookup code =<< Map.lookup seat l.treasureHeroes)
 
+{- | Ered Mithrin's treasures (MEC115 rules, "Treasure"): Anvil of Gundabad, Axe of the
+Edain, Durin's Dagger, Dwarf-Lord's Crown, Glittering Lute, Gondolin Shield, Helm of Heroes,
+Jewels of Wilderland and Masterwork Bow. Once discovered, a treasure is the group's, not a
+seat's or a group of heroes': any player may add it to their deck before a later game.
+-}
+eredMithrinTreasures :: [CardCode]
+eredMithrinTreasures = ["EMC196", "EMC197", "EMC198", "EMC199", "EMC200", "EMC201", "EMC202", "EMC203", "EMC204"]
+
+-- | "When the players discover a treasure during scenario resolution, they write that
+-- treasure's title in the campaign log alongside the boons they have earned."
+markTreasure :: CardCode -> CampaignLog -> CampaignLog
+markTreasure code l = record Treasures (ordNub $ recorded Treasures l <> [code]) l
+
+-- | The treasures not yet in the log.
+undiscoveredTreasures :: CampaignLog -> [CardCode]
+undiscoveredTreasures l = filter (`notElem` recorded Treasures l) eredMithrinTreasures
+
+{- | "When an encounter card is added to the campaign pool, write the name of that card in
+the campaign log. If it is already in the campaign log, mark that a second (or third, etc.)
+copy of that card has been added to the campaign pool. The players cannot add more copies
+of a card to the campaign pool than they own in a single collection." (MEC115 rules,
+"Encounter Cards in the Campaign Pool"). A collection holds as many as the card's
+encounter set does.
+-}
+addEncounterCardToPool :: CardCode -> CampaignLog -> CampaignLog
+addEncounterCardToPool code l
+  | length [p | p <- l.pool, p.code == code] < owned = addToPool (PoolCard code Nothing Nothing) l
+  | otherwise = l
+ where
+  owned = maybe 1 (fromMaybe 1 . cdEncounterSetQuantity) (Map.lookup code allEncounterCards)
+
 -- | Earn a boon or burden.
 addToPool :: PoolCard -> CampaignLog -> CampaignLog
 addToPool p l = l {campaignLogPool = l.pool <> [p]}
@@ -540,6 +617,9 @@ recordedCount key code = Map.findWithDefault 0 code . Map.findWithDefault mempty
 data CampaignLogUpdate
   = AddToPool PoolCard
   | RemoveFromPool CardCode
+  | -- | one copy comes out of the Campaign Pool, as Fire in the Night's resolution lets each
+    -- player remove a card
+    RemoveOneFromPool PoolCard
   | AdjustThreatPenalty Int
   | Record CampaignLogKey [CardCode]
   | Unrecord CampaignLogKey
@@ -552,6 +632,12 @@ data CampaignLogUpdate
     DiscoverTreasure Int CardCode
   | -- | a permanent starting threat penalty for the seat alone
     AdjustSeatThreatPenalty Int Int
+  | -- | Ered Mithrin: the players discover the treasure, its title written in the log
+    -- ('markTreasure')
+    MarkTreasure CardCode
+  | -- | Ered Mithrin: a copy of the encounter card joins the Campaign Pool, if a collection
+    -- holds one more ('addEncounterCardToPool')
+    AddEncounterCardToPool CardCode
   | -- | the seat's recorded heroes: the first taken off, if one is given, the second put on,
     -- the change at no threat penalty, as a hero Beyond All Hope brings back from the
     -- fallen joins its player (The Uruk-hai's resolution)
@@ -563,7 +649,10 @@ updateLog :: CampaignLogUpdate -> CampaignLog -> CampaignLog
 updateLog = \case
   AddToPool p -> addToPool p
   DiscoverTreasure seat code -> discoverTreasure seat code
+  MarkTreasure code -> markTreasure code
+  AddEncounterCardToPool code -> addEncounterCardToPool code
   RemoveFromPool code -> \l -> l {campaignLogPool = filter ((/= code) . (.code)) l.pool}
+  RemoveOneFromPool p -> \l -> l {campaignLogPool = delete p l.pool}
   AdjustThreatPenalty n -> \l -> l {campaignLogThreatPenalty = l.threatPenalty + n}
   Record key cards -> record key cards
   Unrecord key -> \l -> l {campaignLogNotes = Map.delete key l.notes, campaignLogCounts = Map.delete key l.counts}

@@ -54,6 +54,15 @@ allCampaignCards =
       , theTowerOfCirithUngolCampaign
       , theBlackGateOpensCampaign
       , mountDoomCampaign
+      , journeyUpTheAnduinCampaign
+      , lostInMirkwoodCampaign
+      , theKingsQuestCampaign
+      , theWitheredHeathCampaign
+      , roamAcrossRhovanionCampaign
+      , fireInTheNightCampaign
+      , theGhostOfFramsburgCampaign
+      , mountGundabadCampaign
+      , theFateOfWilderlandCampaign
       ]
 
 -- | Double-sided, in no encounter set, so no encounter deck gathers it.
@@ -181,3 +190,32 @@ theBlackGateOpensCampaign = campaignCard "146074" "The Black Gate Opens"
 
 mountDoomCampaign :: CardDef
 mountDoomCampaign = campaignCard "146079" "Mount Doom"
+
+-- * The Ered Mithrin Campaign Expansion
+
+journeyUpTheAnduinCampaign :: CardDef
+journeyUpTheAnduinCampaign = campaignCard "EMC165" "Journey Up the Anduin"
+
+lostInMirkwoodCampaign :: CardDef
+lostInMirkwoodCampaign = campaignCard "EMC168" "Lost In Mirkwood"
+
+theKingsQuestCampaign :: CardDef
+theKingsQuestCampaign = campaignCard "EMC170" "The King's Quest"
+
+theWitheredHeathCampaign :: CardDef
+theWitheredHeathCampaign = campaignCard "EMC175" "The Withered Heath"
+
+roamAcrossRhovanionCampaign :: CardDef
+roamAcrossRhovanionCampaign = campaignCard "EMC184" "Roam Across Rhovanion"
+
+fireInTheNightCampaign :: CardDef
+fireInTheNightCampaign = campaignCard "EMC187" "Fire in the Night"
+
+theGhostOfFramsburgCampaign :: CardDef
+theGhostOfFramsburgCampaign = campaignCard "EMC189" "The Ghost of Framsburg"
+
+mountGundabadCampaign :: CardDef
+mountGundabadCampaign = campaignCard "EMC193" "Mount Gundabad"
+
+theFateOfWilderlandCampaign :: CardDef
+theFateOfWilderlandCampaign = campaignCard "EMC195" "The Fate of Wilderland"
