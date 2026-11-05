@@ -1,5 +1,9 @@
 module LordOfTheRings.TreasonOfSaruman.TheUrukHaiNightmareSpec (spec) where
 
+import LordOfTheRings.Objective.CardDefs qualified as Objectives
+import LordOfTheRings.Attachment.CardDefs qualified as Attachments
+import LordOfTheRings.Helpers.Window (getActionAbilities)
+import LordOfTheRings.Location.Types (LocationAttrs (locationCardId))
 import LordOfTheRings.Ally.CardDefs qualified as Allies
 import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Treachery.CardDefs qualified as Treacheries
@@ -28,6 +32,18 @@ attack pid eid defender = do
   passActions pid
   chooseTarget pid defender
   passActions pid
+
+stageLocation :: CardDef -> GameT LocationId
+stageLocation def = do
+  card <- genEncounterCard def
+  run $ AddToStaging card
+  getsGame (toId . fromJustNote "staged location" . find ((== card.id) . locationCardId . toAttrs) . toList . (.entities.locations))
+
+useLocationAction :: PlayerId -> LocationId -> GameT ()
+useLocationAction pid lid = do
+  abilities <- getActionAbilities pid
+  let ab = fromJustNote "location action" $ find ((== LocationSource lid) . abilitySource) abilities
+  run $ UseAbility pid ab []
 
 reveal :: [CardDef] -> GameT ()
 reveal defs = do
@@ -263,3 +279,77 @@ spec = describe "The Uruk-hai Nightmare" do
     getQuestion pid >>= (`shouldSatisfy` isNothing)
     length <$> select (HeroControlledBy (PlayerWithId pid) <> ReadyHero) `shouldReturn` 3
     length <$> select (AllyControlledBy (PlayerWithId pid) <> ReadyAlly) `shouldReturn` 1
+
+  it "Wold of Rohan charges one pursuit for each progress placed by its action" . uruk $ \pid -> do
+    lid <- stageLocation Locations.woldOfRohan
+    useLocationAction pid lid
+    getPursuit `shouldReturn` 1
+    (.progress) <$> getLocation lid `shouldReturn` 1
+    useLocationAction pid lid
+    getPursuit `shouldReturn` 2
+    (.progress) <$> getLocation lid `shouldReturn` 2
+
+  it "Wold of Rohan's action explores it after paying for five progress" . uruk $ \pid -> do
+    lid <- stageLocation Locations.woldOfRohan
+    replicateM_ 5 (useLocationAction pid lid)
+    getPursuit `shouldReturn` 5
+    selectAny (LocationWithId lid) `shouldReturn` False
+    map toCardCode <$> getEncounterDiscard `shouldReturn` [toCardCode Locations.woldOfRohan]
+
+  it "Wold of Rohan's action works while it is active" . uruk $ \pid -> do
+    lid <- stageLocation Locations.woldOfRohan
+    run $ TravelTo lid
+    useLocationAction pid lid
+    getPursuit `shouldReturn` 1
+    (.progress) <$> getLocation lid `shouldReturn` 1
+
+  it "either player may use Wold of Rohan's action" . twoPlayerTestIn theUrukHai testDeck $ \one two -> do
+    lid <- stageLocation Locations.woldOfRohan
+    useLocationAction one lid
+    useLocationAction two lid
+    getPursuit `shouldReturn` 2
+    (.progress) <$> getLocation lid `shouldReturn` 2
+
+  it "blanking Wold of Rohan removes its action" . uruk $ \pid -> do
+    lid <- stageLocation Locations.woldOfRohan
+    run $ CreateEffect $ Effect GameSource (LocationTarget lid) [Blank] UntilEndOfRound
+    getActionAbilities pid >>= (`shouldSatisfy` all ((/= LocationSource lid) . abilitySource))
+    getPursuit `shouldReturn` 0
+
+  it "Wold of Rohan's shadow discards a non-objective attachment" . uruk $ \pid -> do
+    hero <- toTarget <$> getHeroWithCode "01012"
+    _ <- putAttachmentOn pid Attachments.stewardOfGondor hero
+    eid <- stage Enemies.forestSpider
+    run . AttachShadowCard eid =<< genEncounterCard Locations.woldOfRohan
+    run $ ResolveShadow eid pid []
+    map toCardCode . (.discard) <$> getPlayer pid `shouldReturn` [toCardCode Attachments.stewardOfGondor]
+    getPursuit `shouldReturn` 0
+
+  it "Wold of Rohan's shadow does nothing without an attachment" . uruk $ \pid -> do
+    eid <- stage Enemies.forestSpider
+    run . AttachShadowCard eid =<< genEncounterCard Locations.woldOfRohan
+    run $ ResolveShadow eid pid []
+    getQuestion pid >>= (`shouldSatisfy` isNothing)
+    getPursuit `shouldReturn` 0
+
+  it "Wold of Rohan's shadow leaves objective attachments in play" . uruk $ \pid -> do
+    hero <- toTarget <$> getHeroWithCode "01012"
+    ring <- genEncounterCard Objectives.theOneRingTheRoadDarkens
+    run $ PutObjectiveIntoPlayAttached ring hero
+    _ <- putAttachmentOn pid Attachments.stewardOfGondor hero
+    eid <- stage Enemies.forestSpider
+    run . AttachShadowCard eid =<< genEncounterCard Locations.woldOfRohan
+    run $ ResolveShadow eid pid []
+    getsGame (map toCardCode . toList . (.entities.objectives)) `shouldReturn` [toCardCode Objectives.theOneRingTheRoadDarkens]
+    map toCardCode . (.discard) <$> getPlayer pid `shouldReturn` [toCardCode Attachments.stewardOfGondor]
+
+  it "Wold of Rohan's shadow lets its player choose which attachment to discard" . uruk $ \pid -> do
+    hero <- toTarget <$> getHeroWithCode "01012"
+    kept <- putAttachmentOn pid Attachments.stewardOfGondor hero
+    lost <- putAttachmentOn pid Attachments.unexpectedCourage hero
+    eid <- stage Enemies.forestSpider
+    run . AttachShadowCard eid =<< genEncounterCard Locations.woldOfRohan
+    run $ ResolveShadow eid pid []
+    chooseTarget pid lost
+    getsGame (map toTarget . toList . (.entities.attachments)) `shouldReturn` [kept]
+    map toCardCode . (.discard) <$> getPlayer pid `shouldReturn` [toCardCode Attachments.unexpectedCourage]

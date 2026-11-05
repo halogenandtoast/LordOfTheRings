@@ -16,6 +16,8 @@ data AbilityCost
   | ResourceCost Target Int
   | DiscardFromHandCost PlayerId Int
   | RaiseThreatCost Int
+  | -- | the player advances The Uruk-hai pursuit tracker before resolving the effect
+    IncreasePursuitCost Int
   | -- | the player spends resources of the sphere from their heroes' pools
     SphereResourceCost PlayerId Sphere Int
   | -- | the player exhausts a hero the matcher picks out, chosen as they pay, as Arkham's

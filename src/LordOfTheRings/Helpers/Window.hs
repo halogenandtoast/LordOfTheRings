@@ -436,6 +436,7 @@ canPay = \case
   DiscardFromHandCost pid n ->
     andM [(>= n) . length . (.hand) <$> getPlayer pid, notElem CannotDiscardFromHand <$> getModifiers (PlayerTarget pid)]
   RaiseThreatCost _ -> pure True
+  IncreasePursuitCost _ -> pure True
   SphereResourceCost pid sphere n -> (>= n) <$> getResourcesOfSphere pid sphere
   ExhaustHeroCost m -> notNull <$> exhaustableHeroes m
   DamageHeroCost m _ -> notNull <$> damageableHeroes m
@@ -495,6 +496,7 @@ costMessages source = \case
   RaiseThreatCost n -> case source of
     PlayerSource pid -> [RaiseThreat pid n]
     _ -> []
+  IncreasePursuitCost n -> [ScenarioSpecific "urukHai.pursuit" $ toJSON n]
   SphereResourceCost pid sphere n -> [SpendResources pid sphere n]
   ExhaustHeroCost _ -> [] -- chosen as it is paid, by 'payCost'
   DamageHeroCost _ _ -> []
