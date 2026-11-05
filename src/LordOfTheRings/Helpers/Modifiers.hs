@@ -7,15 +7,15 @@ import LordOfTheRings.Card (Card, CardCode, CardType (AllyType, ObjectiveAllyTyp
 import LordOfTheRings.Sphere (Sphere (Fellowship))
 import LordOfTheRings.Classes.HasGame
 import LordOfTheRings.Classes.HasModifiersFor
-import LordOfTheRings.Ally.Types (allyCardId, allyExhausted)
-import LordOfTheRings.Hero.Types (heroCardId, heroExhausted)
+import LordOfTheRings.Ally.Types (allyCardId, allyExhausted, allyTokens)
+import LordOfTheRings.Hero.Types (heroCardId, heroExhausted, heroTokens)
 import LordOfTheRings.Classes.Entity (toAttrs, toId)
 import LordOfTheRings.Effect
 import LordOfTheRings.Enemy.Types (enemyTokens)
 import LordOfTheRings.Location.Types (locationTokens)
 import LordOfTheRings.Objective.Types (objectiveTokens)
 import LordOfTheRings.Quest.Types (questTokens)
-import LordOfTheRings.Token (countTokens)
+import LordOfTheRings.Token (Token (Damage), countTokens)
 import LordOfTheRings.Entities
 import LordOfTheRings.Game.Base
 import LordOfTheRings.Id (PlayerId)
@@ -86,7 +86,7 @@ preloadModifiers g = do
       -- modifiers from its constant effects, as Arkham's applyBlank; lasting effects it
       -- already created stay
       blankIn = Map.keysSet . Map.filter (any ((== Blank) . modifierType))
-      blanked = blankIn fromEntities <> blankIn fromEffects <> blankIn attachedOut
+      blanked = blankIn fromEntities <> blankIn fromEffects <> blankIn attachedOut <> blankIn wearied
       ownText m = maybe False (`member` blanked) (sourceTarget $ modifierSource m)
       -- a lasting effect on each location in the staging area reaches one that enters it
       -- after the effect began (FAQ 2.43)
@@ -124,6 +124,19 @@ preloadModifiers g = do
              , EachExhaustedCharacter m <- effectModifiers e
              , a <- toList es.allies
              , allyExhausted (toAttrs a)
+             ]
+          -- or damaged
+          <> [ (toTarget (toId h), [Modifier (effectSource e) m])
+             | e <- gameEffects g
+             , EachDamagedCharacter m <- effectModifiers e
+             , h <- toList es.heroes
+             , countTokens Damage (heroTokens $ toAttrs h) > 0
+             ]
+          <> [ (toTarget (toId a), [Modifier (effectSource e) m])
+             | e <- gameEffects g
+             , EachDamagedCharacter m <- effectModifiers e
+             , a <- toList es.allies
+             , countTokens Damage (allyTokens $ toAttrs a) > 0
              ]
       all0 = Map.unionsWith (<>) [Map.map (filter (not . ownText)) fromEntities, fromEffects, followed, staged, allied, wearied, attachedOut]
       -- an encounter card's lasting effect counted from tokens is recalculated as they

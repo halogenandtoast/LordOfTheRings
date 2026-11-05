@@ -263,6 +263,18 @@ spec = describe "Dungeons Deep and Caverns Dim" do
       run $ ResolveShadow wargs pid []
       getEnemyAttack wargs `shouldReturn` 5
 
+    it "gives Wild Wargs +2 attack once for each riddle shadow card, as each turns faceup" . ddTest $ \pid -> do
+      atRiddles pid
+      _ <- setEncounterDeck [Enemies.wildWargs]
+      run RevealEncounterCard
+      chooseLabel "$label.riddle.resolve" pid
+      wargs <- enemyOf Enemies.wildWargs
+      run . AttachShadowCard wargs =<< genEncounterCard Treacheries.hidingInTheTrees
+      run . AttachShadowCard wargs =<< genEncounterCard Treacheries.hidingInTheTrees
+      run $ ResolveShadow wargs pid []
+      resolveShadowsInOrder pid
+      getEnemyAttack wargs `shouldReturn` 7
+
     it "has Great Gray Wolf, dealt a riddle, return the Creature enemies to the staging area at the end of the combat phase" . ddTest $ \pid -> do
       atRiddles pid
       wolf <- do

@@ -14,19 +14,18 @@ wargRider :: EnemyCard WargRider
 wargRider = enemy WargRider Cards.wargRider
 
 {- | Forced: After Warg-rider is dealt a shadow card with no effect, either return it to the
-staging area or place 1 progress on The Goblins' Assault. Read as its shadow cards resolve,
-as Mountain Warg's, once for each such card; the player it attacks chooses. Returned to
+staging area or place 1 progress on The Goblins' Assault. Read as each shadow card turns
+faceup ('revealedShadowCards'), once for each such card; the player it attacks chooses. Returned to
 the staging area, its attack still resolves.
 -}
 instance RunMessage WargRider where
   runMessage msg (WargRider attrs) = case msg of
-    ResolveShadow eid pid _ | eid == attrs.id -> do
-      let faceDown = filter ((`notElem` attrs.enemyShadowRevealed) . (.id)) attrs.shadowCards
-      for_ (filter (not . cdShadowEffect . toCardDef) faceDown) \_ ->
+    CheckWindows ws -> do
+      for_ [pid | (c, pid, _) <- revealedShadowCards attrs ws, not (cdShadowEffect $ toCardDef c)] \pid ->
         chooseOrRunOneM pid do
           questionLabeled "wargRider.choose"
           causedBy attrs
-          when (attrs.placement /= StagingArea) $ labeled "wargRider.return" $ placeEnemy eid StagingArea
+          when (attrs.placement /= StagingArea) $ labeled "wargRider.return" $ placeEnemy attrs.id StagingArea
           assaultProgressLabeled attrs
       WargRider <$> runMessage msg attrs
     _ -> WargRider <$> runMessage msg attrs

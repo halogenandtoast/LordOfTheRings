@@ -13,17 +13,16 @@ packOfWargs = enemy PackOfWargs Cards.packOfWargs
 
 {- | Forced: If Pack of Wargs is dealt a shadow card with no effect, Pack of Wargs makes an
 additional attack after this one. (Do not deal it a shadow card.)
-Read as its shadow cards resolve, as Mountain Warg's: the additional attack resolves no
-shadow card, the one dealt for this attack already turned faceup.
+Read as each shadow card turns faceup ('revealedShadowCards'): the additional attack
+resolves no shadow card, the one dealt for this attack already turned faceup.
 Shadow: Return attacking enemy to the staging area after this attack.
 -}
 instance RunMessage PackOfWargs where
   runMessage msg e@(PackOfWargs attrs) = case msg of
-    ResolveShadow eid pid _ | eid == attrs.id -> do
-      let faceDown = filter ((`notElem` attrs.enemyShadowRevealed) . (.id)) attrs.shadowCards
-      when (any (not . cdShadowEffect . toCardDef) faceDown) do
-        again <- capture $ immediateAttackWithoutShadow pid eid
-        afterAttack eid again
+    CheckWindows ws -> do
+      for_ [pid | (c, pid, _) <- revealedShadowCards attrs ws, not (cdShadowEffect $ toCardDef c)] \pid -> do
+        again <- capture $ immediateAttackWithoutShadow pid attrs.id
+        afterAttack attrs.id again
       PackOfWargs <$> runMessage msg attrs
     ResolveShadowEffect cid eid _ _ | cid == attrs.cardId -> do
       returnToStagingAfterAttack eid

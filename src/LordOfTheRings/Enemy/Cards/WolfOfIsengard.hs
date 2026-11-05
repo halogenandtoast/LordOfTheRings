@@ -14,16 +14,16 @@ wolfOfIsengard = enemy WolfOfIsengard Cards.wolfOfIsengard
 
 {- | Forced: When Wolf of Isengard is dealt a shadow card with a Wizardry effect, either
 discard 1 card from your hand, or Wolf of Isengard makes an additional attack against you
-after this one. "You" is the player it is engaged with; with no card in hand he takes the
-attack. The attack the card is dealt for is yet to begin, so the additional one waits for
-that attack to resolve.
+after this one. "You" is the player it attacks; with no card in hand he takes the attack.
+"Dealt a shadow card with ..." is checked as the card turns faceup in the attack's shadow
+step: one discarded before then never triggers it (Nate French, ALeP 3.003; Caleb, ALeP
+3.274 #3). The additional attack follows the attack that card is resolving for.
 Shadow: Deal 1 damage to the defending character.
 -}
 instance RunMessage WolfOfIsengard where
   runMessage msg e@(WolfOfIsengard attrs) = case msg of
     CheckWindows ws -> do
-      let dealt = [(cid, pid) | Window _ (ShadowCardDealt eid cid pid) <- ws, eid == attrs.id]
-      for_ [pid | (cid, pid) <- dealt, c <- attrs.shadowCards, c.id == cid, hasWizardry (toCardCode c)] \pid -> do
+      for_ [pid | (c, pid, _) <- revealedShadowCards attrs ws, hasWizardry (toCardCode c)] \pid -> do
         hand <- (.hand) <$> getPlayer pid
         chooseOrRunOneM pid do
           questionLabeled "wolfOfIsengard.choose"

@@ -1,9 +1,9 @@
 {-# OPTIONS_GHC -Wno-orphans #-}
 
-module LordOfTheRings.Enemy.Runner (module X, placeDamageWithinRoundLimit) where
+module LordOfTheRings.Enemy.Runner (module X, placeDamageWithinRoundLimit, revealedShadowCards) where
 
 import LordOfTheRings.Classes.HasQueue
-import LordOfTheRings.Card (Card (EncounterCard))
+import LordOfTheRings.Card (Card (EncounterCard), EncounterCard)
 import LordOfTheRings.Classes.RunMessage
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Helpers.Modifiers (getModifiers)
@@ -20,7 +20,17 @@ import LordOfTheRings.Source (sourceTarget, toSource)
 import LordOfTheRings.Prelude
 import LordOfTheRings.Target
 import LordOfTheRings.Token
-import LordOfTheRings.Window (WindowType (ShadowCardDealt), mkAfter)
+import LordOfTheRings.Id (PlayerId)
+import LordOfTheRings.Window (Timing (When), Window (..), WindowType (ShadowCardDealt, ShadowCardRevealed), mkAfter)
+
+{- | The enemy's shadow cards turning faceup in these windows, still dealt to it, with the
+defending player and characters: "When/If/After ... is dealt a shadow card with ..." is
+checked here, once for each card, and never for one discarded before it turned faceup
+(Nate French, ALeP 3.003; Caleb, ALeP 3.274 #3).
+-}
+revealedShadowCards :: EnemyAttrs -> [Window] -> [(EncounterCard, PlayerId, [Target])]
+revealedShadowCards attrs ws =
+  [(c, pid, defenders) | Window When (ShadowCardRevealed eid cid pid defenders) <- ws, eid == attrs.id, c <- attrs.shadowCards, c.id == cid]
 
 instance RunMessage EnemyAttrs where
   runMessage msg attrs = case msg of
