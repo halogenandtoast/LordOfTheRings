@@ -15,6 +15,10 @@ allTreacheryCards =
     map
       (\def -> (cdCardCode def, def))
       [ eyesOfTheForest
+      , aGrowingThreat
+      , urdugsCunning
+      , misplacedTrust
+      , dragonSickness
       , losingTime
       , bedlamInTheStreets
       , theThievesPloy
@@ -3472,4 +3476,50 @@ poisonedCounselsTheTreasonOfSaruman =
     , cdCardTraits = setFromList [Corruption]
     , cdKeywords = setFromList [FunctionsLikeAPlayerCard]
     , cdWhenRevealed = False
+    }
+
+-- * The Ered Mithrin campaign's burden treacheries: set icons, never gathered
+
+-- | Journey Up the Anduin's burden, shuffled in by its campaign card.
+aGrowingThreat :: CardDef
+aGrowingThreat =
+  (treachery "EMC167" "A Growing Threat" JourneyUpTheAnduin 1)
+    { cdEncounterSet = Nothing
+    , cdSetIcon = Just JourneyUpTheAnduin
+    , cdCardTraits = setFromList [Burden]
+    , cdKeywords = setFromList [Surge]
+    }
+
+-- | Roam Across Rhovanion's burden: 4 copies, one for each player who does not trust Urdug.
+urdugsCunning :: CardDef
+urdugsCunning =
+  (treachery "EMC185" "Urdug's Cunning" RoamAcrossRhovanion 4)
+    { cdEncounterSet = Nothing
+    , cdSetIcon = Just RoamAcrossRhovanion
+    , cdCardTraits = setFromList [Burden]
+    , cdKeywords = setFromList [Doomed 1, Surge]
+    , cdShadowEffect = True
+    }
+
+-- | A burden with a player card back, shuffled into its player's deck after his starting
+-- hand is drawn ("Setup: Shuffle Misplaced Trust into your deck."): it functions like a
+-- player card (see 'FunctionsLikeAPlayerCard').
+misplacedTrust :: CardDef
+misplacedTrust =
+  (treachery "EMC186" "Misplaced Trust" RoamAcrossRhovanion 4)
+    { cdEncounterSet = Nothing
+    , cdSetIcon = Just RoamAcrossRhovanion
+    , cdCardTraits = setFromList [Burden, Condition]
+    , cdKeywords = setFromList [FunctionsLikeAPlayerCard]
+    , cdWhenRevealed = False
+    }
+
+-- | Mount Gundabad's burden, for a campaign log of 6 or more treasures.
+dragonSickness :: CardDef
+dragonSickness =
+  (treachery "EMC194" "Dragon-sickness" MountGundabad 1)
+    { cdEncounterSet = Nothing
+    , cdSetIcon = Just MountGundabad
+    , cdCardTraits = setFromList [Burden, Condition]
+    , cdKeywords = setFromList [Surge]
     }

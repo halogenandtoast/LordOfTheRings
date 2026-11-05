@@ -66,3 +66,9 @@ attachDiscount :: (HasGame m) => Card -> Target -> m Int
 attachDiscount card host = do
   mods <- getModifiers host
   pure $ sum [n | ReduceCostToAttach m n <- mods, cardMatches m card]
+
+-- | The heroes the card is attached to, as "the hero with Master of the Hunt attached"
+-- reads.
+heroesWithAttached :: HasGame m => CardDef -> m [Target]
+heroesWithAttached def = getsGame \g ->
+  [h | a <- toList g.entities.attachments, toCardCode a == toCardCode def, AttachedTo h@(HeroTarget _) <- [(toAttrs a).placement]]

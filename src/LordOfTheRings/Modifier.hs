@@ -506,6 +506,10 @@ data ModifierType
     CannotLeavePlay
   | -- | on a character or enemy: any amount of damage dealt to it is reduced to this much
     DamageReducedTo Int
+  | -- | on a character, as a lasting effect: the next time it would be dealt damage, so
+    -- much of that damage is canceled, and the effect ends, as Turayn's "The next time
+    -- that character would be dealt damage this round, cancel 1 of that damage"
+    CancelNextDamage Int
   | -- | the card is considered to be there too, wherever it is, as Tide-runner off-course is
     -- in the staging area and the Stormcaller's area: what reads where it is reads that, but
     -- it does not move there
@@ -716,6 +720,12 @@ data ModifierType
     HeroCommittedThisRound
   | -- | on the game: the players quested successfully this phase, as Bofur reads
     QuestedSuccessfullyThisPhase
+  | -- | on the game: the players quested unsuccessfully this round, as Melanwar reads
+    QuestedUnsuccessfullyThisRound
+  | -- | on a card, a lasting effect of its own: while it lasts the card gives each
+    -- encounter card in play immunity to player card effects, as The Threat to
+    -- Wilderland's "all encounter cards are immune to player card effects"
+    EncounterCardsImmune
   | -- | on the game, until the end of the phase: if the players quest unsuccessfully, the
     -- effect's source places this much progress on the target, as Dark Clouds reads
     ProgressIfQuestUnsuccessful Target Int

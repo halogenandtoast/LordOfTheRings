@@ -17,6 +17,8 @@ allObjectiveCards =
     map
       (\def -> (cdCardCode def, def))
       [ gandalfsMap
+      , theThreatToWilderland
+      , ashenBrazier
       , arnorRavaged
       , thaurdirsLegacy
       , thaurdirsMajesty
@@ -1383,3 +1385,29 @@ theDefenseOfHelmsDeep =
     { cdCardTraits = setFromList [SiegeTrait]
     , cdVictoryPoints = Just 8
     }
+
+-- * The Ered Mithrin campaign's boon and burden objectives
+
+-- | The King's Quest's burden: "Setup: Add The Threat to Wilderland to the staging area with
+-- X resources on it" (the campaign places the resources).
+theThreatToWilderland :: CardDef
+theThreatToWilderland =
+  (objective "EMC172" "The Threat to Wilderland" TheKingsQuest 1)
+    { cdEncounterSet = Nothing
+    , cdEncounterSetQuantity = Nothing
+    , cdSetIcon = Just TheKingsQuest
+    , cdCardTraits = setFromList [Doom, Burden]
+    , cdSetupToStaging = True
+    }
+
+-- | The Ghost of Framsburg's boon, a loot objective its campaign card shuffles in.
+ashenBrazier :: CardDef
+ashenBrazier =
+  unique
+    (objective "EMC190" "Ashen Brazier" TheGhostOfFramsburg 1)
+      { cdEncounterSet = Nothing
+      , cdEncounterSetQuantity = Nothing
+      , cdSetIcon = Just TheGhostOfFramsburg
+      , cdCardTraits = setFromList [Artifact, Item, Boon]
+      , cdKeywords = setFromList [Loot]
+      }

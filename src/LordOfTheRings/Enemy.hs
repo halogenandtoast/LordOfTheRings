@@ -613,6 +613,9 @@ import LordOfTheRings.Enemy.Cards.Snaga
 import LordOfTheRings.Enemy.Cards.WildHillman
 import LordOfTheRings.Enemy.Cards.WarriorOfDunland
 import LordOfTheRings.Enemy.Cards.SoldierOfIsengard
+import LordOfTheRings.Enemy.Cards.DagnirsSpawn
+import LordOfTheRings.Enemy.Cards.GundabadHunter
+import LordOfTheRings.Enemy.Cards.GundabadStalker
 import LordOfTheRings.Enemy.Runner ()
 import LordOfTheRings.Enemy.Types as X
 import LordOfTheRings.Id
@@ -1256,5 +1259,8 @@ allEnemys =
         , SomeEnemyCard wildHillman
         , SomeEnemyCard warriorOfDunland
         , SomeEnemyCard soldierOfIsengard
+        , SomeEnemyCard dagnirsSpawn
+        , SomeEnemyCard gundabadHunter
+        , SomeEnemyCard gundabadStalker
         ]
     ]

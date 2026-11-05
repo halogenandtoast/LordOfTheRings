@@ -541,6 +541,10 @@ import LordOfTheRings.Treachery.Cards.DevilryOfSaruman
 import LordOfTheRings.Treachery.Cards.RecklessHate
 import LordOfTheRings.Treachery.Cards.NightWithoutEnd
 import LordOfTheRings.Treachery.Cards.PoisonedCounselsTheTreasonOfSaruman
+import LordOfTheRings.Treachery.Cards.AGrowingThreat
+import LordOfTheRings.Treachery.Cards.UrdugsCunning
+import LordOfTheRings.Treachery.Cards.MisplacedTrust
+import LordOfTheRings.Treachery.Cards.DragonSickness
 import LordOfTheRings.Treachery.Runner ()
 import LordOfTheRings.Treachery.Types as X
 import LordOfTheRings.Id
@@ -1109,5 +1113,9 @@ allTreacherys =
         , SomeTreacheryCard recklessHate
         , SomeTreacheryCard nightWithoutEnd
         , SomeTreacheryCard poisonedCounselsTheTreasonOfSaruman
+        , SomeTreacheryCard aGrowingThreat
+        , SomeTreacheryCard urdugsCunning
+        , SomeTreacheryCard misplacedTrust
+        , SomeTreacheryCard dragonSickness
         ]
     ]

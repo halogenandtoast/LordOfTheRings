@@ -27,6 +27,8 @@ data WindowMatcher
   | EnemyEntersStagingAreaWindow Timing
   | -- | an enemy with the trait added to the staging area, as Amon Forn reads
     EnemyWithTraitEntersStagingAreaWindow Timing Trait
+  | -- | a matching enemy added to the staging area, as Dragon-slayer's non-unique one
+    MatchingEnemyEntersStagingAreaWindow Timing EnemyMatcher
   | GainedResourcesWindow Timing Target
   | DealtDamageWindow Timing Target
   | TraveledWindow Timing LocationId
@@ -104,6 +106,7 @@ data WindowMatcher
   | -- | after an attack by the enemy was defended, as Noose of Vines reads
     DefendedAttackAgainstWindow Timing EnemyId
   | PlayedFromHandWindow Timing Target
+  | ClaimedWindow Timing Target
   | LocationRevealedWindow Timing
   | ShadowEffectAgainstWindow Timing Target
   | AnyEnemyAttacksWindow Timing
@@ -472,6 +475,7 @@ windowMatches matcher (Window timing wType) = case (matcher, wType) of
   (DefendedAttackWindow t who, DefendedAttack target _) -> t == timing && maybe True (== target) who
   (DefendedAttackAgainstWindow t eid, DefendedAttack _ eid') -> t == timing && eid == eid'
   (PlayedFromHandWindow t target, PlayedFromHand target') -> t == timing && target == target'
+  (ClaimedWindow t target, Claimed target') -> t == timing && target == target'
   (LocationRevealedWindow t, Revealed (LocationTarget _)) -> t == timing
   (ShadowEffectAgainstWindow t target, ShadowEffectAgainst _ target') -> t == timing && target == target'
   (AnyEnemyAttacksWindow t, EnemyAttacking _ _) -> t == timing
@@ -570,6 +574,7 @@ windowMatches matcher (Window timing wType) = case (matcher, wType) of
   (EnemyDestroyedByCharacterWindow {}, _) -> False
   (EnemyWithTraitRevealedWindow {}, _) -> False
   (EnemyWithTraitEntersStagingAreaWindow {}, _) -> False
+  (MatchingEnemyEntersStagingAreaWindow {}, _) -> False
   (EnemyWithModifierEngagedWindow {}, _) -> False
   (CardRevealedWindow {}, _) -> False
   (EnemyCardRevealedWindow {}, _) -> False

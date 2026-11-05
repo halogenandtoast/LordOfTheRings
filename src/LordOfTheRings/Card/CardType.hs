@@ -27,6 +27,11 @@ data CardType
   | -- | a contract, never in a deck: its player puts it into play with his heroes, side A
     -- faceup, and it may flip (MEC77 rules, "Contracts")
     ContractType
+  | -- | an Ered Mithrin treasure: a player card discovered during the campaign, then added
+    -- to a deck, 1 copy by title, not counting toward its 50 card minimum. It reads
+    -- "Attach to", and is played and attached as an attachment is (MEC115 rules,
+    -- "Treasure")
+    TreasureType
   deriving stock (Show, Eq, Ord, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
@@ -36,7 +41,12 @@ isSideQuestType :: CardType -> Bool
 isSideQuestType = (`elem` [PlayerSideQuestType, EncounterSideQuestType])
 
 isPlayerCardType :: CardType -> Bool
-isPlayerCardType = (`elem` [HeroType, AllyType, AttachmentType, EventType, PlayerSideQuestType, ContractType])
+isPlayerCardType = (`elem` [HeroType, AllyType, AttachmentType, EventType, PlayerSideQuestType, ContractType, TreasureType])
+
+-- | A card played onto a host and in play as an attachment: an attachment, or an Ered
+-- Mithrin treasure, which reads "Attach to" as one does.
+isAttachmentType :: CardType -> Bool
+isAttachmentType = (`elem` [AttachmentType, TreasureType])
 
 instance IsLabel "ally" CardType where
   fromLabel = AllyType

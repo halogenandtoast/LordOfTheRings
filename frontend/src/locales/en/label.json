@@ -3969,5 +3969,54 @@
     "choose": "Night Without End: remove 1 resource token from The Defense of Helm's Deep, or reveal 2 additional encounter cards",
     "removeToken": "Remove 1 resource token from The Defense of Helm's Deep",
     "reveal": "Reveal 2 additional encounter cards"
+  },
+  "anvilOfGundabad": {
+    "item": "Anvil of Gundabad: choose an Item attachment to play for 1 less"
+  },
+  "glitteringLute": {
+    "discard": "Glittering Lute: discard a card to reduce your threat by 2?",
+    "decline": "Do not discard"
+  },
+  "helmOfHeroes": {
+    "hero": "Helm of Heroes: choose a hero to add 1 resource to"
+  },
+  "turayn": {
+    "character": "Turayn: choose another character to cancel 1 of the next damage dealt to it this round"
+  },
+  "beldis": {
+    "character": "Beldis: choose a character to heal 3 damage from"
+  },
+  "masterOfTheHunt": {
+    "top": "Master of the Hunt: choose the card to keep on top of your deck",
+    "bottom": "Master of the Hunt: choose the next card to put on the bottom of your deck"
+  },
+  "theCannyHuntsman": {
+    "putBack": "The Canny Huntsman: choose the next card to put back",
+    "topOrBottom": "Put it on the top or the bottom of the encounter deck?",
+    "onTop": "On top",
+    "onBottom": "On the bottom"
+  },
+  "treasure": {
+    "guard": "Choose an undiscovered treasure to attach as a guarded objective"
+  },
+  "dagnirsSpawn": {
+    "distribute": "Dagnir's Spawn: distribute {n} damage among your characters to shuffle it into the encounter deck?",
+    "deal": "Distribute the damage",
+    "decline": "Do not"
+  },
+  "ashenBrazier": {
+    "enemy": "Ashen Brazier: choose an enemy",
+    "shadow": "Ashen Brazier: choose a facedown shadow card to look at"
+  },
+  "theThreatToWilderland": {
+    "choose": "The Threat to Wilderland: choose one",
+    "threat": "Raise each player's threat by 2",
+    "immune": "All encounter cards are immune to player card effects this phase"
+  },
+  "misplacedTrust": {
+    "hero": "Misplaced Trust: choose a hero you control to attach it to"
+  },
+  "dragonSickness": {
+    "character": "Dragon-sickness: choose a character with a treasure attached"
   }
 }

@@ -2634,3 +2634,8 @@ setUpTheOneRing lead = do
     _ -> chooseOneM lead do
       questionLabeled "theOneRing.choosePlayer"
       for_ holders \pid -> targeting (PlayerTarget pid) (setUp pid)
+
+-- | The encounter card in the player's hand comes into play attached to the host, as
+-- Misplaced Trust attaches itself after it is drawn.
+attachEncounterCardFromHand :: (ReverseQueue m, Targetable host) => PlayerId -> EncounterCard -> host -> m ()
+attachEncounterCardFromHand pid card = push . AttachEncounterCardFromHand pid card . toTarget

@@ -196,10 +196,10 @@ emptyCardDef cCode name cType =
     , cdSetupToStaging = False
     }
 
--- | Whether the card is a Hobbit saga treasure, the card type riddles and Expert
--- Treasure-hunter name.
+-- | Whether the card is a treasure, a Hobbit saga one or an Ered Mithrin one: the card
+-- type riddles and Expert Treasure-hunter name.
 isTreasure :: HasCardDef a => a -> Bool
-isTreasure = cdTreasure . toCardDef
+isTreasure c = cdTreasure def || cdCardType def == TreasureType where def = toCardDef c
 
 unique :: CardDef -> CardDef
 unique def = def {cdUnique = True}

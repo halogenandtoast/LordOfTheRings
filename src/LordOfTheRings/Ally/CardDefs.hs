@@ -4,6 +4,7 @@ import Data.Map.Strict qualified as Map
 import LordOfTheRings.Card.CardDef
 import LordOfTheRings.Card.Code
 import LordOfTheRings.Keyword
+import LordOfTheRings.Name (Name)
 import LordOfTheRings.Prelude
 import LordOfTheRings.Sphere
 import LordOfTheRings.Trait
@@ -14,6 +15,10 @@ allAllyCards =
     map
       (\def -> (cdCardCode def, def))
       [ guardOfTheCitadel
+      , turayn
+      , melanwar
+      , isolde
+      , beldis
       , berelind
       , coruhaer
       , laermuin
@@ -2024,3 +2029,23 @@ dwalin =
     , cdCardTraits = setFromList [Dwarf]
     , cdKeywords = setFromList [Sentinel]
     }
+
+-- * The Ered Mithrin campaign's boon allies
+
+eredMithrinBoonAlly :: CardCode -> Name -> Int -> Int -> Int -> Int -> Int -> [Trait] -> CardDef
+eredMithrinBoonAlly code name cost willpower attack defense hitPoints traits =
+  (unique $ ally code name Neutral (StaticCost cost) willpower attack defense hitPoints) {cdCardTraits = setFromList (Boon : traits)}
+
+turayn :: CardDef
+turayn = (eredMithrinBoonAlly "EMC166" "Turayn" 2 1 2 3 3 [Harad, Warrior]) {cdKeywords = setFromList [Sentinel]}
+
+melanwar :: CardDef
+melanwar = (eredMithrinBoonAlly "EMC169" "Melanwar" 1 2 2 0 3 [Silvan, Ranger]) {cdKeywords = setFromList [Ranged]}
+
+isolde :: CardDef
+isolde = eredMithrinBoonAlly "EMC171" "Isolde" 2 1 3 1 3 [Dale, Warrior]
+
+-- | The card data spells her trait "Woodsman"; the card reads Woodman, the trait of the
+-- Woodmen of Wilderland.
+beldis :: CardDef
+beldis = eredMithrinBoonAlly "EMC188" "Beldis" 1 2 1 1 3 [Woodman, Healer]

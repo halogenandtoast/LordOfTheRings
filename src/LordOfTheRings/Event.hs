@@ -255,6 +255,10 @@ import LordOfTheRings.Event.Cards.DesperateAlliance
 import LordOfTheRings.Event.Cards.RavensOfTheMountain
 import LordOfTheRings.Event.Cards.ToMeOMyKinsfolk
 import LordOfTheRings.Event.Cards.TheLuckyNumber
+import LordOfTheRings.Event.Cards.TheCannyHuntsman
+import LordOfTheRings.Event.Cards.ATaleOfVictories
+import LordOfTheRings.Event.Cards.LayOfCourage
+import LordOfTheRings.Event.Cards.RhymeOfTheSlayer
 import LordOfTheRings.Event.Types as X
 import LordOfTheRings.Id
 import LordOfTheRings.Prelude
@@ -529,5 +533,9 @@ allEvents =
         , SomeEventCard ravensOfTheMountain
         , SomeEventCard toMeOMyKinsfolk
         , SomeEventCard theLuckyNumber
+        , SomeEventCard theCannyHuntsman
+        , SomeEventCard aTaleOfVictories
+        , SomeEventCard layOfCourage
+        , SomeEventCard rhymeOfTheSlayer
         ]
     ]

@@ -318,6 +318,8 @@ data Message
     EndEffects EffectDuration
   | -- | the lasting effects the source created end, as one held while a card resolves
     EndEffectsFrom Source
+  | -- | the one lasting effect ends, as one canceling the next damage once it has
+    EndEffect Effect
   | AttachCard AttachmentId Target
   | -- | the character's restricted cards are counted again, after one is discarded
     CheckRestricted Target
@@ -510,6 +512,9 @@ data Message
     as its shadow reads, as Dark Bats
     -}
     PutShadowTreacheryIntoPlay EnemyId CardId Placement
+  | -- | the encounter card in the player's hand comes into play attached to the target, as
+    -- Misplaced Trust attaches itself to a hero after it is drawn
+    AttachEncounterCardFromHand PlayerId EncounterCard Target
   | -- | the treachery leaves the encounter discard pile attached to the target, its When
     -- Revealed effect not resolved, as Broken Rudder's *Forced effect attaches it
     AttachFromEncounterDiscard EncounterCard Target

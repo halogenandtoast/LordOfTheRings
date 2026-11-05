@@ -16,6 +16,7 @@ allLocationCards =
     map
       (\def -> (cdCardCode def, def))
       [ greatForestWeb
+      , abandonedRuin
       , docksideStreet
       , pelargirAlley
       , ithilienOverlook
@@ -4823,3 +4824,17 @@ posternDoor = (location "143040" "Postern Door" HelmsDeep 2 3 2) {cdCardTraits =
 
 helmsGate :: CardDef
 helmsGate = (location "143041" "Helm's Gate" HelmsDeep 2 5 3) {cdCardTraits = setFromList [HelmsDeepTrait], cdEasyModeQuantity = Just 1}
+
+-- * The Ered Mithrin campaign's burden locations
+
+-- | The King's Quest's burden: its campaign card, and the campaign's setup after, shuffle
+-- it into the Caves deck ("Setup: Shuffle Abandoned Ruin into the Caves deck, if able.
+-- Otherwise, remove it from the game.").
+abandonedRuin :: CardDef
+abandonedRuin =
+  (location "EMC174" "Abandoned Ruin" TheKingsQuest 1 6 9)
+    { cdEncounterSet = Nothing
+    , cdSetIcon = Just TheKingsQuest
+    , cdCardTraits = setFromList [Underground, Dark, Burden]
+    , cdVictoryPoints = Just 1
+    }

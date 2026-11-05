@@ -251,7 +251,7 @@ publicGameFor seesHand g = hideDecks $ toJSON merged
       , p <- toList v.players
       , seesHand p.id
       , c <- p.hand
-      , c.cardType == AttachmentType
+      , isAttachmentType c.cardType
       ]
   -- the cards in hand an effect forbids playing, with what is forbidding them: empty
   -- when it cannot be named, the card is still forbidden

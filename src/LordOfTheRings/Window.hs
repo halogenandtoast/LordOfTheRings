@@ -90,6 +90,9 @@ data WindowType
     DefendedAttack Target EnemyId
   | -- | a card played from its owner's hand, as its card id
     PlayedFromHand Target
+  | -- | a card freed of the encounters guarding it, or chosen for a character, claimed
+    -- and attached by the players, as its card id: an Ered Mithrin treasure is "claimed"
+    Claimed Target
   | ShadowEffectResolved CardId EnemyId
   | -- | a shadow card dealt to an enemy: the enemy, the card, and the player it is engaged with
     ShadowCardDealt EnemyId CardId PlayerId
