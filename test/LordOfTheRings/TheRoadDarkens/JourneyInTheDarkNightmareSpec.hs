@@ -3,6 +3,9 @@ module LordOfTheRings.TheRoadDarkens.JourneyInTheDarkNightmareSpec (spec) where
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Event.CardDefs qualified as Events
 import LordOfTheRings.Location.CardDefs qualified as Locations
+import LordOfTheRings.Helpers.Character (getWillpower)
+import LordOfTheRings.Phase (Phase (PlanningPhase))
+import LordOfTheRings.Treachery.CardDefs qualified as Treacheries
 import TestImport
 
 stageLocation :: CardDef -> GameT LocationId
@@ -47,3 +50,47 @@ spec = describe "Journey in the Dark Nightmare" do
     run . AttachShadowCard eid =<< genEncounterCard Locations.darkenedMine
     run $ ResolveShadow eid pid []
     length . (.hand) <$> getPlayer pid `shouldReturn` (handBefore - 1)
+
+  it "Very Weary damages a quester and reduces damaged characters' willpower even when they are not questing" . gameTest $ \_ -> do
+    putGame . (phaseL .~ PlanningPhase) =<< getGame
+    quester <- toTarget <$> getHeroWithCode "01012"
+    other <- toTarget <$> getHeroWithCode "01007"
+    base <- getWillpower quester
+    otherBase <- getWillpower other
+    run $ CommitToQuest quester
+    run $ PlaceTokens GameSource other Damage 1
+    _ <- setEncounterDeck [Treacheries.veryWeary]
+    run RevealEncounterCard
+    resolveRevealed
+    getDamage quester `shouldReturn` 1
+    getDamage other `shouldReturn` 1
+    getWillpower quester `shouldReturn` max 0 (base - 2)
+    getWillpower other `shouldReturn` max 0 (otherBase - 2)
+
+  it "Very Weary tracks newly damaged and healed characters until the phase ends" . gameTest $ \_ -> do
+    putGame . (phaseL .~ PlanningPhase) =<< getGame
+    hero <- toTarget <$> getHeroWithCode "01012"
+    base <- getWillpower hero
+    _ <- setEncounterDeck [Treacheries.veryWeary]
+    run RevealEncounterCard
+    resolveRevealed
+    getDamage hero `shouldReturn` 0
+    getWillpower hero `shouldReturn` base
+    run $ PlaceTokens GameSource hero Damage 1
+    getWillpower hero `shouldReturn` max 0 (base - 2)
+    run $ RemoveTokens GameSource hero Damage 1
+    getWillpower hero `shouldReturn` base
+    run $ PlaceTokens GameSource hero Damage 1
+    run $ EndPhase PlanningPhase
+    getDamage hero `shouldReturn` 1
+    getWillpower hero `shouldReturn` base
+
+  it "Very Weary's shadow damages the defender without applying its when-revealed penalty" . gameTest $ \pid -> do
+    hero <- toTarget <$> getHeroWithCode "01012"
+    base <- getWillpower hero
+    run . AddToStaging =<< genEncounterCard Enemies.forestSpider
+    eid <- getsGame (toId . fromJustNote "shadow enemy" . headMay . toList . (.entities.enemies))
+    run . AttachShadowCard eid =<< genEncounterCard Treacheries.veryWeary
+    run $ ResolveShadow eid pid [hero]
+    getDamage hero `shouldReturn` 1
+    getWillpower hero `shouldReturn` base

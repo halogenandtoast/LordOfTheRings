@@ -7,6 +7,7 @@ import LordOfTheRings.Card
 import LordOfTheRings.Classes.Entity
 import LordOfTheRings.Classes.RunMessage
 import LordOfTheRings.Treachery.Cards.HuntedInHollin
+import LordOfTheRings.Treachery.Cards.VeryWeary
 import LordOfTheRings.Treachery.Cards.ShelterlessLand
 import LordOfTheRings.Treachery.Cards.ComeBack
 import LordOfTheRings.Treachery.Cards.TheTwilightWorld
@@ -598,6 +599,7 @@ allTreacherys =
     | card@(SomeTreacheryCard builder) <-
         [ SomeTreacheryCard eyesOfTheForest
         , SomeTreacheryCard huntedInHollin
+        , SomeTreacheryCard veryWeary
         , SomeTreacheryCard shelterlessLand
         , SomeTreacheryCard comeBack
         , SomeTreacheryCard theTwilightWorld
