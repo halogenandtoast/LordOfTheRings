@@ -4,6 +4,10 @@ import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Event.CardDefs qualified as Events
 import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Helpers.Character (getWillpower)
+import LordOfTheRings.Helpers.Staging (getLocationThreat)
+import LordOfTheRings.Matcher (select, HeroMatcher (HeroControlledBy), PlayerMatcher (PlayerWithId))
+import LordOfTheRings.Scenario (journeyInTheDark)
+import LordOfTheRings.Window (WindowType (CommittedToQuest), mkAfter)
 import LordOfTheRings.Helpers.Modifiers (getModifiers)
 import LordOfTheRings.Modifier (ModifierType (CannotHaveAttachments))
 import LordOfTheRings.Phase (Phase (PlanningPhase))
@@ -130,3 +134,49 @@ spec = describe "Journey in the Dark Nightmare" do
     run $ Discard GameSource (EnemyTarget eid)
     getsGame (length . (.entities.enemies)) `shouldReturn` 0
     map toCardCode <$> getEncounterDiscard `shouldReturn` [toCardCode Enemies.slabBearer]
+
+  it "Glowing Fissure's threat counts damaged characters rather than damage tokens" . gameTest $ \_ -> do
+    lid <- stageLocation Locations.glowingFissure
+    firstHero <- toTarget <$> getHeroWithCode "01012"
+    secondHero <- toTarget <$> getHeroWithCode "01007"
+    getLocationThreat lid `shouldReturn` 1
+    run $ PlaceTokens GameSource firstHero Damage 2
+    getLocationThreat lid `shouldReturn` 2
+    run $ PlaceTokens GameSource secondHero Damage 1
+    getLocationThreat lid `shouldReturn` 3
+    run $ RemoveTokens GameSource firstHero Damage 2
+    getLocationThreat lid `shouldReturn` 2
+
+  it "Glowing Fissure damages only one character when a player commits several, and can damage a non-quester" . gameTest $ \pid -> do
+    _ <- stageLocation Locations.glowingFissure
+    firstHero <- toTarget <$> getHeroWithCode "01012"
+    secondHero <- toTarget <$> getHeroWithCode "01007"
+    other <- toTarget <$> getHeroWithCode "01002"
+    run $ CommitToQuest firstHero
+    run $ CommitToQuest secondHero
+    run $ CheckWindows [mkAfter $ CommittedToQuest firstHero, mkAfter $ CommittedToQuest secondHero]
+    chooseTarget pid other
+    getDamage firstHero `shouldReturn` 0
+    getDamage secondHero `shouldReturn` 0
+    getDamage other `shouldReturn` 1
+    getQuestion pid >>= (`shouldSatisfy` isNothing)
+
+  it "Glowing Fissure's forced damage still applies while it is active" . gameTest $ \pid -> do
+    lid <- stageLocation Locations.glowingFissure
+    run $ PlaceLocation lid ActiveLocation
+    hero <- toTarget <$> getHeroWithCode "01012"
+    run $ CommitToQuest hero
+    run $ CheckWindows [mkAfter $ CommittedToQuest hero]
+    chooseTarget pid hero
+    getDamage hero `shouldReturn` 1
+
+  it "Glowing Fissure makes only the committing player choose his own character" . twoPlayerTestIn journeyInTheDark testDeck $ \one two -> do
+    _ <- stageLocation Locations.glowingFissure
+    own <- toTarget . fromJustNote "firstHero player's hero" . headMay <$> select (HeroControlledBy $ PlayerWithId one)
+    committing <- toTarget . fromJustNote "secondHero player's hero" . headMay <$> select (HeroControlledBy $ PlayerWithId two)
+    run $ CommitToQuest committing
+    run $ CheckWindows [mkAfter $ CommittedToQuest committing]
+    getQuestion one >>= (`shouldSatisfy` isNothing)
+    chooseTarget two committing
+    getDamage own `shouldReturn` 0
+    getDamage committing `shouldReturn` 1

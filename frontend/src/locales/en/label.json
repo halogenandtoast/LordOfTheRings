@@ -2,6 +2,9 @@
   "veryWeary": {
     "damage": "Choose a questing character you control to take 1 damage"
   },
+  "glowingFissure": {
+    "damage": "Choose a character you control to take 1 damage"
+  },
   "choosePlayer": "Choose a player",
   "placeProgressOnQuestCard": "Choose a quest card to place the progress on",
   "playAttachmentFromDiscard": "Choose an attachment in your discard pile to play on the hero",
