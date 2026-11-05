@@ -3976,6 +3976,7 @@ test-suite LordOfTheRings-test
       LordOfTheRings.TheRoadDarkens.JourneyInTheDarkSpec
       LordOfTheRings.TheRoadDarkens.TheRingGoesSouthSpec
       LordOfTheRings.TravelPhaseSpec
+      LordOfTheRings.TreasonOfSaruman.HelmsDeepSpec
       LordOfTheRings.VengeanceOfMordor.AShadowInTheEastPlayerCardsSpec
       LordOfTheRings.VengeanceOfMordor.ChallengeOfTheWainridersPlayerCardsSpec
       LordOfTheRings.VengeanceOfMordor.ChallengeOfTheWainridersSpec
