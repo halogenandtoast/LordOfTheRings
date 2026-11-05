@@ -395,6 +395,25 @@ spec = describe "The Road to Isengard" do
       passAll [one, two]
       traverse threatOf [one, two] `shouldReturn` threat0
 
+    it "has the defending player assign Steaming Vent's damage, X counting him alone" . twoPlayerTestIn theRoadToIsengard testDeck $ \one two -> do
+      saruman <- stage Enemies.sarumanTheRoadToIsengard
+      _ <- setEncounterDeck [Locations.steamingVent]
+      run $ DealShadowCard saruman
+      run $ EnemyAttack one saruman
+      passAll [one, two]
+      chooseLabel "$label.takeAttackUndefended" one
+      passAll [one, two]
+      mine <- heroOf one "01012"
+      theirs <- heroOf two "01012"
+      offered <- maybe [] (\q -> [t | TargetLabel t _ <- questionChoices q]) <$> getQuestion one
+      offered `shouldSatisfy` elem mine
+      offered `shouldSatisfy` notElem theirs
+      chooseTarget one mine
+      chooseTarget one mine
+      getDamage mine `shouldReturn` 2
+      getDamage theirs `shouldReturn` 0
+      getQuestion one >>= (`shouldSatisfy` maybe True (\q -> notElem mine [t | TargetLabel t _ <- questionChoices q]))
+
   describe "Wolf of Isengard" do
     it "makes an additional attack after this one, as its player chooses when a Wizardry card it is dealt turns faceup" . isengardTest $ \pid -> do
       setUp pid
