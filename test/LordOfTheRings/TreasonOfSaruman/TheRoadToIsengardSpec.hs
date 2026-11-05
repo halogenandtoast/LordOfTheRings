@@ -565,6 +565,23 @@ spec = describe "The Road to Isengard" do
       heroExhausted . toAttrs <$> getHeroWithCode "01012" `shouldReturn` True
       getEncounterDeck `shouldReturn` []
 
+    it "blanks whichever characters are damaged until the end of the combat phase" . isengardTest $ \pid -> do
+      setUp pid
+      beravor <- hero "01012"
+      eowyn <- hero "01007"
+      run $ DealDamage GameSource beravor 1
+      reveal [Treacheries.poisonedVapour, Locations.openPit]
+      run $ HealDamage GameSource beravor 1
+      getModifiers beravor >>= (`shouldSatisfy` notElem Blank)
+      heroExhausted . toAttrs <$> getHeroWithCode "01012" `shouldReturn` True
+      getModifiers eowyn >>= (`shouldSatisfy` notElem Blank)
+      run $ DealDamage GameSource eowyn 1
+      getModifiers eowyn >>= (`shouldSatisfy` elem Blank)
+      heroExhausted . toAttrs <$> getHeroWithCode "01007" `shouldReturn` False
+      inPhase CombatPhase
+      runOnly $ EndPhase CombatPhase
+      getModifiers eowyn >>= (`shouldSatisfy` notElem Blank)
+
   describe "Saruman's Voice" do
     it "removes a questing hero from the quest and has its controller discard as it defends" . campaignTest $ \pid -> do
       setUp pid

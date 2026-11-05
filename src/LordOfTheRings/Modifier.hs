@@ -207,6 +207,10 @@ data ModifierType
   | -- | on the game: each character takes the modifier while it is exhausted, as Weighed
     -- Down's "until the end of the round, exhausted characters get -1 willpower" reads
     EachExhaustedCharacter ModifierType
+  | -- | on the game: each character takes the modifier while it is damaged, as Poisoned
+    -- Vapour's "until the end of the combat phase, treat each damaged character's text box
+    -- as if it was blank" reads, recalculated as the game state changes (FAQ 1.55)
+    EachDamagedCharacter ModifierType
   | -- | on an enemy: it has attacked this phase, as Howling of Wargs reads
     AttackedThisPhase
   | -- | on the game: no more than this much progress may be placed on locations with the
