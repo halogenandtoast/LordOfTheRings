@@ -61,7 +61,7 @@ instance RunMessage TheUrukHai where
     ScenarioSpecific "urukHai.setPursuit" (parseMaybe parseJSON -> Just (n :: Int)) -> do
       checkStages
       pure $ TheUrukHai $ attrs & metaL .~ object ["pursuit" .= max 0 n]
-    AdvanceQuest | null attrs.questDeck, Just l <- attrs.campaign, pursuitOf attrs.meta <= 25 -> do
+    ResolveCampaign | Just l <- attrs.campaign, pursuitOf attrs.meta <= 25 -> do
       resolution l
       TheUrukHai <$> runMessage msg attrs
     _ -> TheUrukHai <$> runMessage msg attrs
@@ -82,10 +82,8 @@ remove heroes from the Campaign Log until he controls only 3 heroes. Changing he
 result of earning Beyond All Hope does not incur a +1 threat penalty. Add the earned cards
 to the Campaign Pool.
 
-The choices are made as the last stage is defeated and the quest deck runs out, the
-pursuit value then final: once the game is over nothing more can be asked, and the hero Beyond All Hope brings back must be on the
-log before the next scenario's decks are chosen. What is earned is written to the log,
-kept as the game is won; a Permanent boon is attached as its hero comes into play.
+What is earned is written to the log; a Permanent boon is attached as its hero comes into
+play.
 
 A player's heroes are the non-Fellowship heroes he owns still in play, his Captive among
 them: the heroes the log records for him (the Fellowship hero is not recorded). Each Skill
