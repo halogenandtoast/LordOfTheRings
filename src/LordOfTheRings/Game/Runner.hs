@@ -42,6 +42,7 @@ import LordOfTheRings.Game.Base (
   scenarioL,
  )
 import LordOfTheRings.GameT (GameT)
+import LordOfTheRings.Helpers.Engagement (highestToughnessEngagements)
 import LordOfTheRings.Helpers.Discard (protectDiscardedHeroes)
 import LordOfTheRings.Helpers.Modifiers (getModifiers, isEncounterCardSource)
 import LordOfTheRings.Helpers.Staging (getLocationQuestPoints)
@@ -109,6 +110,7 @@ import LordOfTheRings.Modifier (
   Modifier (modifierType),
   ModifierType (
     CannotBeDefeated,
+    TravelRequiresEngagingHighestToughness,
     CannotBeDiscardedByEncounterCards,
     CannotEnterStagingArea,
     CannotLeavePlay,
@@ -279,9 +281,14 @@ runGameAllowed msg g = case msg of
   -- a location's Travel cost, which its card pushes as it sees TravelTo, is paid before
   -- it becomes the active location, so it is still in the staging area as it is paid (as
   -- Hills of Dunland's draws are, FAQ 3.123)
-  TravelTo _ -> do
-    push $ DoStep 1 msg
-    runGame'' msg g
+  TravelTo lid -> do
+    requires <- elem TravelRequiresEngagingHighestToughness <$> getModifiers lid
+    payable <- if requires then notNull <$> highestToughnessEngagements else pure True
+    if payable
+      then do
+        push $ DoStep 1 msg
+        runGame'' msg g
+      else pure g
   -- the location's Travel effect without traveling, as Under Guard resolves the active
   -- location's: only its own card reads the 'TravelTo' its effect answers, and no one
   -- travels, so nothing else that answers traveling does

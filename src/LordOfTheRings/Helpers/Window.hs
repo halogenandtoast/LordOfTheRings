@@ -16,6 +16,7 @@ import LordOfTheRings.Campaign (recorded)
 import LordOfTheRings.Helpers.Attachment (cardHosts, playableAttachmentsInHand)
 import LordOfTheRings.Helpers.Campaign (getCampaignLog)
 import LordOfTheRings.Helpers.Fellowship (readySagaOneRing, theOneRingExhausted)
+import LordOfTheRings.Helpers.Engagement (highestToughnessEngagements)
 import LordOfTheRings.Helpers.Modifiers (cardsPlayedThisRound, getModifiers)
 import LordOfTheRings.Helpers.Staging (getLocationQuestPoints)
 import LordOfTheRings.Location.Grid (distance)
@@ -28,7 +29,7 @@ import LordOfTheRings.Name (Name (..))
 import LordOfTheRings.Modifier (
   ModifierType (Blank, BlankAttachments, CannotBeTraveledTo, CannotCancelEncounterEffects, CannotExhaust, CannotTriggerAbilities, Defending, ShadowCannotBeCanceled, WhenRevealedCannotBeCanceled),
   ModifierType (Blank, BlankAttachments, CannotBeTraveledTo, CannotCancelEncounterEffects, CannotExhaust, CannotTriggerAbilities, StagingStepBegun, TravelRange, TravelableWithActiveLocation),
-  ModifierType (CannotDiscardFromHand, CannotTakeDamage, GainKeyword, TreacheryRevealedThisRound),
+  ModifierType (TravelRequiresEngagingHighestToughness, CannotDiscardFromHand, CannotTakeDamage, GainKeyword, TreacheryRevealedThisRound),
   Modifier (..),
  )
 import LordOfTheRings.Phase (Phase (QuestPhase))
@@ -594,13 +595,20 @@ abilityKey ab = (ab.abilitySource, ab.abilityIndex)
 travelableLocations :: HasGame m => m [LocationId]
 travelableLocations = do
   actives <- traverse getLocation =<< select IsActiveLocation
-  staged <- filterM (fmap (notElem CannotBeTraveledTo) . getModifiers) =<< select LocationInStagingArea
+  staged <- filterM travelAllowed =<< select LocationInStagingArea
   case actives of
     [l] | Just pos <- l.position -> islandTravel l pos
     [] -> pure staged
     [_] -> filterM (fmap (elem TravelableWithActiveLocation) . getModifiers) staged
     _ -> pure []
  where
+  travelAllowed lid = do
+    mods <- getModifiers lid
+    if CannotBeTraveledTo `elem` mods
+      then pure False
+      else if TravelRequiresEngagingHighestToughness `elem` mods
+        then notNull <$> highestToughnessEngagements
+        else pure True
   islandTravel l pos = do
     questPoints <- getLocationQuestPoints l.id
     range <- (\ms -> foldr max 1 [n | TravelRange n <- ms]) <$> getModifiers l.id
@@ -608,7 +616,7 @@ travelableLocations = do
     laid <- getsGame (filter near . toList . entitiesLocations . gameEntities)
     if l.progress < questPoints
       then pure []
-      else filterM (fmap (notElem CannotBeTraveledTo) . getModifiers) (map toId laid)
+      else filterM travelAllowed (map toId laid)
 
 -- | Whether the character is a hero matching the one or an ally matching the other.
 characterMatches :: HasGame m => HeroMatcher -> AllyMatcher -> Target -> m Bool

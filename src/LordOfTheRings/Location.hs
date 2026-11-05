@@ -7,6 +7,7 @@ import LordOfTheRings.Card
 import LordOfTheRings.Classes.Entity
 import LordOfTheRings.Classes.RunMessage
 import LordOfTheRings.Location.Cards.ExpanseOfHollin
+import LordOfTheRings.Location.Cards.WesternEmynMuil
 import LordOfTheRings.Location.Cards.LangfloodRiver
 import LordOfTheRings.Location.Cards.GlowingFissure
 import LordOfTheRings.Location.Cards.DarkenedMine
@@ -739,6 +740,7 @@ allLocations =
     | card@(SomeLocationCard builder) <-
         [ SomeLocationCard greatForestWeb
         , SomeLocationCard expanseOfHollin
+        , SomeLocationCard westernEmynMuil
         , SomeLocationCard langfloodRiver
         , SomeLocationCard glowingFissure
         , SomeLocationCard darkenedMine

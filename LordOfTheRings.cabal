@@ -1592,6 +1592,7 @@ library
       LordOfTheRings.Helpers.Character
       LordOfTheRings.Helpers.ControlledLocation
       LordOfTheRings.Helpers.Discard
+      LordOfTheRings.Helpers.Engagement
       LordOfTheRings.Helpers.Fellowship
       LordOfTheRings.Helpers.IslandMap
       LordOfTheRings.Helpers.Modifiers
@@ -2394,6 +2395,7 @@ library
       LordOfTheRings.Location.Cards.WeathertopNightmare
       LordOfTheRings.Location.Cards.WeatherTornValley
       LordOfTheRings.Location.Cards.WebWall
+      LordOfTheRings.Location.Cards.WesternEmynMuil
       LordOfTheRings.Location.Cards.WesternHall
       LordOfTheRings.Location.Cards.WesternQuarter
       LordOfTheRings.Location.Cards.WesternShore

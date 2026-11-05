@@ -4,12 +4,16 @@ import LordOfTheRings.Ally.CardDefs qualified as Allies
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Attachment.CardDefs qualified as Attachments
 import LordOfTheRings.Decklist (loadPlayer)
-import LordOfTheRings.Effect (EffectDuration (UntilEndOfRound))
+import LordOfTheRings.Effect (Effect (..), EffectDuration (UntilEndOfRound))
 import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Quest.CardDefs qualified as Quests
 import LordOfTheRings.Helpers.Staging (getEngagementCost)
 import LordOfTheRings.Matcher (getArcheryTotal, getEnemy, getMainQuestProgress)
 import LordOfTheRings.Scenario (breakingOfTheFellowship)
+import LordOfTheRings.Helpers.Window (travelableLocations)
+import LordOfTheRings.Modifier (ModifierType (Blank, GainKeyword, CannotEngagePlayer, CannotLeaveStagingArea, CannotBeOptionallyEngagedBy))
+import LordOfTheRings.Keyword (Keyword (Toughness))
+import LordOfTheRings.Matcher (PlayerMatcher (AnyPlayer))
 import TestImport
 
 botf :: (PlayerId -> GameT ()) -> IO ()
@@ -328,3 +332,122 @@ spec = describe "Breaking of the Fellowship Nightmare" do
     run $ FocusArea three
     arrived <- riverAtThisStage
     (.placement) <$> getLocation arrived `shouldReturn` StagingArea
+
+  it "Western Emyn Muil gives staged and engaged Uruk-hai Toughness, but not other enemies, only while staged" . botf $ \pid -> do
+    lid <- stageLocation Locations.westernEmynMuil
+    uruk <- stage Enemies.isengardTracker
+    other <- stage Enemies.forestSpider
+    run $ EngageEnemy pid uruk
+    run $ DealDamage GameSource (EnemyTarget uruk) 3
+    getDamage (EnemyTarget uruk) `shouldReturn` 0
+    run $ DealDamage GameSource (EnemyTarget other) 2
+    getDamage (EnemyTarget other) `shouldReturn` 2
+    run $ PlaceLocation lid ActiveLocation
+    run $ DealDamage GameSource (EnemyTarget uruk) 3
+    getDamage (EnemyTarget uruk) `shouldReturn` 1
+
+  it "Western Emyn Muil's Toughness bonus stacks across copies" . botf $ \_ -> do
+    _ <- stageLocation Locations.westernEmynMuil
+    _ <- stageLocation Locations.westernEmynMuil
+    uruk <- stage Enemies.isengardTracker
+    run $ DealDamage GameSource (EnemyTarget uruk) 4
+    getDamage (EnemyTarget uruk) `shouldReturn` 0
+    run $ DealDamage GameSource (EnemyTarget uruk) 5
+    getDamage (EnemyTarget uruk) `shouldReturn` 1
+
+  it "Western Emyn Muil requires engaging the highest current Toughness enemy before becoming active" . botf $ \pid -> do
+    lid <- stageLocation Locations.westernEmynMuil
+    strongest <- stage Enemies.isengardTracker
+    weaker <- stage Enemies.forestSpider
+    run $ TravelTo lid
+    (.placement) <$> getEnemy strongest `shouldReturn` EngagedWith pid
+    (.placement) <$> getEnemy weaker `shouldReturn` StagingArea
+    (.placement) <$> getLocation lid `shouldReturn` ActiveLocation
+
+  it "Western Emyn Muil allows choosing among ties, counting its own bonus before it becomes active" . botf $ \pid -> do
+    lid <- stageLocation Locations.westernEmynMuil
+    uruk <- stage Enemies.isengardTracker
+    other <- stage Enemies.forestSpider
+    run $ CreateEffect $ Effect GameSource (EnemyTarget other) [GainKeyword $ Toughness 3] UntilEndOfRound
+    run $ TravelTo lid
+    chooseTarget pid uruk
+    (.placement) <$> getEnemy uruk `shouldReturn` EngagedWith pid
+    (.placement) <$> getEnemy other `shouldReturn` StagingArea
+    (.placement) <$> getLocation lid `shouldReturn` ActiveLocation
+
+  it "Western Emyn Muil cannot be traveled to with no enemy to engage" . botf $ \_ -> do
+    lid <- stageLocation Locations.westernEmynMuil
+    travelableLocations >>= (`shouldSatisfy` notElem lid)
+    run $ TravelTo lid
+    (.placement) <$> getLocation lid `shouldReturn` StagingArea
+
+  it "Western Emyn Muil cannot substitute a weaker enemy when the toughest cannot engage the player" . botf $ \pid -> do
+    lid <- stageLocation Locations.westernEmynMuil
+    strongest <- stage Enemies.isengardTracker
+    _ <- stage Enemies.forestSpider
+    run $ CreateEffect $ Effect GameSource (EnemyTarget strongest) [CannotEngagePlayer pid] UntilEndOfRound
+    travelableLocations >>= (`shouldSatisfy` notElem lid)
+    run $ TravelTo lid
+    (.placement) <$> getLocation lid `shouldReturn` StagingArea
+    (.placement) <$> getEnemy strongest `shouldReturn` StagingArea
+
+  it "Western Emyn Muil cannot engage a toughest enemy that cannot leave staging" . botf $ \_ -> do
+    lid <- stageLocation Locations.westernEmynMuil
+    strongest <- stage Enemies.isengardTracker
+    run $ CreateEffect $ Effect GameSource (EnemyTarget strongest) [CannotLeaveStagingArea] UntilEndOfRound
+    travelableLocations >>= (`shouldSatisfy` notElem lid)
+    run $ TravelTo lid
+    (.placement) <$> getLocation lid `shouldReturn` StagingArea
+
+  it "Western Emyn Muil's forced engagement ignores optional-engagement restrictions" . botf $ \pid -> do
+    lid <- stageLocation Locations.westernEmynMuil
+    strongest <- stage Enemies.isengardTracker
+    run $ CreateEffect $ Effect GameSource (EnemyTarget strongest) [CannotBeOptionallyEngagedBy AnyPlayer] UntilEndOfRound
+    travelableLocations >>= (`shouldSatisfy` elem lid)
+    run $ TravelTo lid
+    (.placement) <$> getEnemy strongest `shouldReturn` EngagedWith pid
+
+  it "Western Emyn Muil's travel cost is paid by a player at its own separate stage" . botfTwo $ \one two -> do
+    run $ SeparateStagingAreas [[one], [two]]
+    run $ FocusArea two
+    lid <- stageLocation Locations.westernEmynMuil
+    strongest <- stage Enemies.isengardTracker
+    run $ TravelTo lid
+    (.placement) <$> getEnemy strongest `shouldReturn` EngagedWith two
+    getQuestion one >>= (`shouldSatisfy` isNothing)
+    (.placement) <$> getLocation lid `shouldReturn` ActiveLocation
+
+  it "Western Emyn Muil does not toughen an Uruk-hai engaged at another stage" . botfTwo $ \one two -> do
+    run $ SeparateStagingAreas [[one], [two]]
+    run $ FocusArea two
+    uruk <- stage Enemies.isengardTracker
+    run $ EngageEnemy two uruk
+    run $ FocusArea one
+    _ <- stageLocation Locations.westernEmynMuil
+    run $ FocusArea two
+    run $ DealDamage GameSource (EnemyTarget uruk) 3
+    getDamage (EnemyTarget uruk) `shouldReturn` 1
+
+  it "a blanked Western Emyn Muil has no travel cost" . botf $ \_ -> do
+    lid <- stageLocation Locations.westernEmynMuil
+    eid <- stage Enemies.isengardTracker
+    run $ CreateEffect $ Effect GameSource (LocationTarget lid) [Blank] UntilEndOfRound
+    travelableLocations >>= (`shouldSatisfy` elem lid)
+    run $ TravelTo lid
+    (.placement) <$> getLocation lid `shouldReturn` ActiveLocation
+    (.placement) <$> getEnemy eid `shouldReturn` StagingArea
+
+  it "Western Emyn Muil allows either player at a shared stage to pay its travel cost" . botfTwo $ \one two -> do
+    lid <- stageLocation Locations.westernEmynMuil
+    strongest <- stage Enemies.isengardTracker
+    run $ TravelTo lid
+    chooseTarget one (PlayerTarget two)
+    (.placement) <$> getEnemy strongest `shouldReturn` EngagedWith two
+    (.placement) <$> getLocation lid `shouldReturn` ActiveLocation
+
+  it "Western Emyn Muil still requires an engagement when the highest Toughness is zero" . botf $ \pid -> do
+    lid <- stageLocation Locations.westernEmynMuil
+    eid <- stage Enemies.forestSpider
+    run $ TravelTo lid
+    (.placement) <$> getEnemy eid `shouldReturn` EngagedWith pid
+    (.placement) <$> getLocation lid `shouldReturn` ActiveLocation

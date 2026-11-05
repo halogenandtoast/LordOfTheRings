@@ -788,6 +788,9 @@ data ModifierType
   | -- | on the game: hero cards in player discard piles cannot leave them, as
     -- Journey in the Dark's Nightmare setup card reads
     HeroesCannotLeaveDiscard
+  | -- | on a location: travel requires a player at its stage to engage a staged
+    -- enemy tied for the highest current Toughness, as Western Emyn Muil reads
+    TravelRequiresEngagingHighestToughness
   | -- | on the game: event cards cannot shuffle cards from a player's discard pile into his
     -- deck, as Passage into Mordor reads
     EventsCannotShuffleDiscardIntoDeck
