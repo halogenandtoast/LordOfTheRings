@@ -32,6 +32,11 @@ import LordOfTheRings.Trait (Trait (Master, Modification))
 preloadModifiers :: (HasGame m) => Game -> m Game
 preloadModifiers g = do
   let es = g.entities
+      -- Shadow effects with no stated duration end when their card leaves play:
+      -- core rules, "Shadow Cards Leaving Play", and FAQ 1.28 / 1.42.
+      liveEffects = filter (\e -> case e.effectDuration of
+        UntilShadowCardLeaves eid cid -> maybe False (any ((== cid) . (.id)) . (.shadowCards)) (Map.lookup eid es.enemies)
+        _ -> True) (gameEffects g)
   -- a location may blank the attachments' text, so the locations go first
   MonoidalMap fromLocations <- execWriterT $ traverse_ getModifiersFor es.locations
   let blank = BlankAttachments `elem` map modifierType (Map.findWithDefault [] GameTarget fromLocations)
@@ -65,7 +70,7 @@ preloadModifiers g = do
       fromEffects =
         Map.fromListWith
           (<>)
-          [(effectTarget e, map (Modifier (effectSource e)) (effectModifiers e)) | e <- gameEffects g, lasting e]
+          [(effectTarget e, map (Modifier (effectSource e)) (effectModifiers e)) | e <- liveEffects, lasting e]
       -- an effect on a card follows it into play as an ally or a hero
       followed =
         Map.fromListWith (<>)
@@ -116,7 +121,7 @@ preloadModifiers g = do
         Map.fromListWith
           (<>)
           [ (toTarget (toId l), [Modifier (effectSource e) m])
-          | e <- gameEffects g
+          | e <- liveEffects
           , (matches, m) <- [(const True, m) | EachLocationInStagingArea m <- effectModifiers e] <> [(cardMatches cm, m) | EachMatchingLocationInStagingArea cm m <- effectModifiers e]
           , l <- toList es.locations
           , l.placement == StagingArea
@@ -124,7 +129,7 @@ preloadModifiers g = do
           ]
       stagedEnemies = Map.fromListWith (<>)
         [(toTarget e, [Modifier effect.effectSource m])
-        | effect <- gameEffects g
+        | effect <- liveEffects
         , EachMatchingEnemyInStagingArea cm m <- effect.effectModifiers
         , e <- toList es.enemies
         , e.placement == StagingArea
@@ -134,7 +139,7 @@ preloadModifiers g = do
         Map.fromListWith
           (<>)
           [ (toTarget (toId a), [Modifier (effectSource e) m])
-          | e <- gameEffects g
+          | e <- liveEffects
           , EachAlly m <- effectModifiers e
           , a <- toList es.allies
           ]
@@ -143,24 +148,24 @@ preloadModifiers g = do
         Map.fromListWith
           (<>)
           $ [ (toTarget (toId h), [Modifier (effectSource e) m])
-            | e <- gameEffects g
+            | e <- liveEffects
             , h <- toList es.heroes
             , m <- [m | EachCharacter m <- effectModifiers e] <> [m | EachExhaustedCharacter m <- effectModifiers e, heroExhausted (toAttrs h)]
             ]
           <> [ (toTarget (toId a), [Modifier (effectSource e) m])
-             | e <- gameEffects g
+             | e <- liveEffects
              , a <- toList es.allies
              , m <- [m | EachCharacter m <- effectModifiers e] <> [m | EachExhaustedCharacter m <- effectModifiers e, allyExhausted (toAttrs a)]
              ]
           -- or damaged
           <> [ (toTarget (toId h), [Modifier (effectSource e) m])
-             | e <- gameEffects g
+             | e <- liveEffects
              , EachDamagedCharacter m <- effectModifiers e
              , h <- toList es.heroes
              , countTokens Damage (heroTokens $ toAttrs h) > 0
              ]
           <> [ (toTarget (toId a), [Modifier (effectSource e) m])
-             | e <- gameEffects g
+             | e <- liveEffects
              , EachDamagedCharacter m <- effectModifiers e
              , a <- toList es.allies
              , countTokens Damage (allyTokens $ toAttrs a) > 0
@@ -209,7 +214,7 @@ preloadModifiers g = do
       gained m = case m.modifierType of
         WillpowerModifier n -> frozen && n > 0 && isPlayerCardSource m.modifierSource
         _ -> False
-  pure $ g {gameModifiers = Map.mapWithKey (\t -> filter (not . gained) . unaffected t) all'}
+  pure $ g {gameEffects = liveEffects, gameModifiers = Map.mapWithKey (\t -> filter (not . gained) . unaffected t) all'}
 
 -- | Whether the character commits to the quest without exhausting.
 doesNotExhaustToCommit :: (HasGame m) => Target -> m Bool

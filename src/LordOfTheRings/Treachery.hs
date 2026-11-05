@@ -6,6 +6,8 @@ import Data.Map.Strict qualified as Map
 import LordOfTheRings.Card
 import LordOfTheRings.Classes.Entity
 import LordOfTheRings.Classes.RunMessage
+import LordOfTheRings.Treachery.Cards.ImpenetrableDark
+import LordOfTheRings.Treachery.Cards.GrowingStench
 import LordOfTheRings.Treachery.Cards.BlindWrath
 import LordOfTheRings.Treachery.Cards.WareWare
 import LordOfTheRings.Treachery.Cards.RainOfArrows
@@ -1177,6 +1179,8 @@ allTreacherys =
         , SomeTreacheryCard traitorOfManyColors
         , SomeTreacheryCard fireAndFoulFumes
         , SomeTreacheryCard dauntingPower
+        , SomeTreacheryCard impenetrableDark
+        , SomeTreacheryCard growingStench
         , SomeTreacheryCard blindWrath
         , SomeTreacheryCard wareWare
         , SomeTreacheryCard rotAndVapors

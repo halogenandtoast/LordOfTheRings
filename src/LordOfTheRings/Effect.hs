@@ -1,5 +1,6 @@
 module LordOfTheRings.Effect (module LordOfTheRings.Effect) where
 
+import LordOfTheRings.Id (EnemyId, CardId)
 import LordOfTheRings.Modifier
 import LordOfTheRings.Phase (Phase)
 import LordOfTheRings.Prelude
@@ -17,6 +18,8 @@ data EffectDuration
   | -- | until the end of the next such phase, this one if it is the phase now, as
     -- Enfeebled's "until the end of the combat phase"
     UntilEndOfPhaseOf Phase
+  | -- | a shadow effect with no printed duration, while that card remains dealt
+    UntilShadowCardLeaves EnemyId CardId
   | -- | until the engagement checks being made are over, as Fight Your Way Out's lowered
     -- engagement costs
     UntilEndOfEngagementChecks

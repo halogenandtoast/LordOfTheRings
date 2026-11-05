@@ -1030,6 +1030,7 @@ library
       LordOfTheRings.Enemy.Cards.OrcHunter
       LordOfTheRings.Enemy.Cards.OrcInterceptor
       LordOfTheRings.Enemy.Cards.OrcOfCirithUngol
+      LordOfTheRings.Enemy.Cards.OrcOfMinasMorgul
       LordOfTheRings.Enemy.Cards.OrcOfMordor
       LordOfTheRings.Enemy.Cards.OrcOfThaurdir
       LordOfTheRings.Enemy.Cards.OrcOfTheEye
@@ -1242,6 +1243,7 @@ library
       LordOfTheRings.Enemy.Cards.UmbarSlaver
       LordOfTheRings.Enemy.Cards.UndeadHorde
       LordOfTheRings.Enemy.Cards.UndeadThrall
+      LordOfTheRings.Enemy.Cards.UnderGateSentry
       LordOfTheRings.Enemy.Cards.UnderseaCaveTroll
       LordOfTheRings.Enemy.Cards.UnderworldDissident
       LordOfTheRings.Enemy.Cards.UngoliantsBrood
@@ -3487,6 +3489,7 @@ library
       LordOfTheRings.Treachery.Cards.GrabbedBySpiders
       LordOfTheRings.Treachery.Cards.Grappled
       LordOfTheRings.Treachery.Cards.GripGrabPinchNab
+      LordOfTheRings.Treachery.Cards.GrowingStench
       LordOfTheRings.Treachery.Cards.GrowingThreat
       LordOfTheRings.Treachery.Cards.GuffawingOfGiants
       LordOfTheRings.Treachery.Cards.HarshWeather
@@ -3515,6 +3518,7 @@ library
       LordOfTheRings.Treachery.Cards.IllPurpose
       LordOfTheRings.Treachery.Cards.IllTidings
       LordOfTheRings.Treachery.Cards.ImpassableChasm
+      LordOfTheRings.Treachery.Cards.ImpenetrableDark
       LordOfTheRings.Treachery.Cards.ImpenetrableFog
       LordOfTheRings.Treachery.Cards.Infiltration
       LordOfTheRings.Treachery.Cards.InjuredCompanion

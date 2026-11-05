@@ -4141,5 +4141,8 @@
   "theTwilightWorld": {"choose": "The Twilight World: exhaust The One Ring or reduce the Ring-bearer's life", "exhaust": "Exhaust The One Ring", "life": "Reduce the Ring-bearer's life by 1"},
   "huntingHawk": {"choose": "Hunting Hawk: exhaust the ally or damage an active location", "exhaust": "Exhaust the ally just played", "damage": "Place 1 damage on an active location"},
   "huntedInHollin": {"choose": "Hunted in Hollin: raise your threat or engage an enemy and reveal a card", "threat": "Raise your threat by 6", "engage": "Engage the lowest engagement cost enemy and reveal a card", "enemy": "Choose an enemy with the lowest engagement cost"},
-  "wareWare": {"choose": "Ware! Ware!: add this card under The Black Gate or engage the top card under The Cross-roads", "blackGate": "Place Ware! Ware! facedown under The Black Gate", "engage": "Put the top card under The Cross-roads into play engaged with you", "enemy": "Choose an enemy in staging to engage and deal a shadow card"}
+  "wareWare": {"choose": "Ware! Ware!: add this card under The Black Gate or engage the top card under The Cross-roads", "blackGate": "Place Ware! Ware! facedown under The Black Gate", "engage": "Put the top card under The Cross-roads into play engaged with you", "enemy": "Choose an enemy in staging to engage and deal a shadow card"},
+  "orcOfMinasMorgul": {"choose": "Orc of Minas Morgul: discard a random card or engage it and reveal another card", "discard": "Discard a random card from your hand", "engage": "Engage Orc of Minas Morgul and reveal an encounter card"},
+  "underGateSentry": {"choose": "Under-gate Sentry: discard a random card or exhaust a character", "discard": "Discard a random card from your hand", "exhaust": "Exhaust a character you control"},
+  "impenetrableDark": {"remove": "Remove a character you control from the quest and exhaust it", "exhaust": "Exhaust a character you control; it cannot ready this round"}
 }

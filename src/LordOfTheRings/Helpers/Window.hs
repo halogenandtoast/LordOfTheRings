@@ -235,6 +235,10 @@ windowMatchesM matcher w@(Window timing wType) = case (matcher, wType) of
   -- Doomed it gained is on the card for the round, as Gríma's
   (PlayedCardWithDoomedWindow t pid, PlayedCard pid' card) | t == timing && pid == pid' ->
     (> 0) <$> keywordValue (\case Doomed n -> Just n; _ -> Nothing) (CardIdTarget card.id) (toCardDef card)
+  -- FAQ 1.52: "you" is the attacked player, even if another player supplies a Sentinel.
+  -- https://hallofgondor.com/wp-content/uploads/2021/01/rrg19.pdf
+  (EnemyAttacksAndDestroysYourCharacterWindow t eid, EnemyAttacking eid' pid) | t == timing && eid == eid' ->
+    any ((== Just pid) . (.controller)) <$> attackDestroyed eid
   (EnemyDestroyedCharacterWithExcessDamageWindow t eid, AttackDealtExcessDamage eid' target _) | t == timing && eid == eid' ->
     any ((== target) . (.target)) <$> attackDestroyed eid
   -- the character is gone: it was defending as the attack's effects still say, and its

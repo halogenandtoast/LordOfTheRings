@@ -124,6 +124,8 @@ data WindowMatcher
   | -- | a shadow card dealt to an enemy engaged with the player
     ShadowCardDealtWindow Timing PlayerId
   | EnemyAttacksWindow Timing EnemyId
+  | -- | after attacking and destroying a character controlled by the attacked player
+    EnemyAttacksAndDestroysYourCharacterWindow Timing EnemyId
   | -- | any enemy declared as an attacker
     EnemyDeclaredAsAttackerWindow Timing
   | -- | the enemy's attack dealt excess damage, as The Cursed Sword reads

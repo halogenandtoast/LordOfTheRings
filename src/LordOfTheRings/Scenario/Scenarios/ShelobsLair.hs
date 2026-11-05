@@ -11,6 +11,8 @@ import LordOfTheRings.Modifier (ModifierType (KeepUnresolvedShadowCards, CannotB
 import LordOfTheRings.Scenario.Scenarios.ShelobsLair.Helpers (getShelob)
 import LordOfTheRings.Objective.CardDefs qualified as Objectives
 import LordOfTheRings.Quest.CardDefs qualified as Quests
+import LordOfTheRings.Scenario.CardDefs qualified as Nightmare
+import LordOfTheRings.Treachery.CardDefs qualified as Treacheries
 import LordOfTheRings.Scenario.Import.Lifted
 
 newtype ShelobsLair = ShelobsLair ScenarioAttrs
@@ -18,7 +20,11 @@ newtype ShelobsLair = ShelobsLair ScenarioAttrs
   deriving newtype (Show, Eq, ToJSON, Entity)
 
 shelobsLair :: Scenario
-shelobsLair = Scenario $ scenario ShelobsLair "shelobs-lair" "Shelob's Lair"
+shelobsLair = Scenario $ scenario (ShelobsLair . (nightmareDeckL ?~ nightmare)) "shelobs-lair" "Shelob's Lair"
+
+ where
+  nightmare = nightmareDeck Nightmare.shelobsLairNightmare EncounterSet.ShelobsLairNightmare
+    [(Enemies.morgulOrc, 4), (Locations.theUnderWay, 2), (Locations.deepDarkPassage, 3), (Treacheries.manyOpenings, 2)]
 
 instance HasModifiersFor ShelobsLair where
   getModifiersFor (ShelobsLair a) = when a.nightmare do

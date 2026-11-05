@@ -14,7 +14,9 @@ allEnemyCards =
   Map.fromList $
     map
       (\def -> (cdCardCode def, def))
-      [ southronWarrior
+      [ orcOfMinasMorgul
+      , underGateSentry
+      , southronWarrior
       , southronRearguard
       , paleFaces
       , rottingThing
@@ -5534,3 +5536,14 @@ southronWarrior = (enemy "the-land-of-shadow-nightmare-journey-to-the-cross-road
 southronRearguard :: CardDef
 southronRearguard = (enemy "the-land-of-shadow-nightmare-journey-to-the-cross-roads-003" "Southron Rearguard" JourneyToTheCrossRoadsNightmare 2 38 4 6 4 8)
   {cdCardTraits = setFromList [Harad], cdShadowEffect = True}
+
+
+-- * Shelob's Lair Nightmare
+
+orcOfMinasMorgul :: CardDef
+orcOfMinasMorgul = (enemy "the-land-of-shadow-nightmare-shelobs-lair-005" "Orc of Minas Morgul" ShelobsLairNightmare 3 35 2 3 2 4)
+  {cdCardTraits = setFromList [Orc], cdKeywords = setFromList [Peril], cdShadowEffect = True}
+
+underGateSentry :: CardDef
+underGateSentry = (enemy "the-land-of-shadow-nightmare-shelobs-lair-006" "Under-gate Sentry" ShelobsLairNightmare 3 30 3 5 3 5)
+  {cdCardTraits = setFromList [Orc, Uruk], cdShadowEffect = True}
