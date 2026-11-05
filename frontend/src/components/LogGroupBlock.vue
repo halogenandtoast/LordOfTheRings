@@ -5,6 +5,7 @@
 import { computed } from 'vue'
 import { Undo2 } from 'lucide-vue-next'
 import LogPart from './LogPart.vue'
+import LogShadowEffect from './LogShadowEffect.vue'
 import GameLogEntry from './GameLogEntry.vue'
 import { logPartsText, type LogGroupItem } from '../gameLog'
 
@@ -60,6 +61,8 @@ const requestUndo = () => {
       <span v-else class="log-caret-spacer" />
       <span class="log-group__body"><LogPart v-for="(part, i) in header.body" :key="i" :part="part" /></span>
     </component>
+
+    <LogShadowEffect v-if="header" :body="header.body" />
 
     <ul v-if="open" class="log-group__detail">
       <template v-for="(member, i) in group.members" :key="member.kind === 'group' ? `g${member.id}` : `e${i}`">

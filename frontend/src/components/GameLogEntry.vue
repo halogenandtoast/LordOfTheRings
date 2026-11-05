@@ -5,6 +5,7 @@
 import { computed } from 'vue'
 import { Undo2 } from 'lucide-vue-next'
 import LogPart from './LogPart.vue'
+import LogShadowEffect from './LogShadowEffect.vue'
 import { logPartsText, type LogEntry } from '../gameLog'
 
 const props = defineProps<{
@@ -142,6 +143,8 @@ const requestUndo = () => {
     <button v-if="undoStep !== null" class="log-undo" type="button" :title="$t('log.undoToHere')" :aria-label="$t('log.undoToHere')" @click.stop="requestUndo">
       <Undo2 aria-hidden="true" />
     </button>
+
+    <LogShadowEffect :body="entry.body" />
 
     <ul v-if="open" class="log-children" :class="{ 'log-children--annotation': annotated }">
       <GameLogEntry

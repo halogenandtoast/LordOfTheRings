@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 470 45" fill="currentColor">
+  <title>Skull shadow effect divider</title>
+  <!-- Traced from the shadow divider on Evil Crow (141040). -->
+  <path d="m5 19 29-3 14-12-1 10 13 4 10 8-17-1-31 13 14-15Zm460 2-29-4-12-12 1 11-14 2-11 9 17-1 29 13-12-15Z"/>
+  <path d="M42 17h181v5H43Zm210 0h175v5H252Z"/>
+  <!-- Each side has two separate vines: an upper fork with two pods,
+       and a lower fork whose two curls return to the bar. -->
+  <defs>
+    <g id="shadow-vines">
+      <g fill="none" stroke="currentColor" stroke-width="1.15" stroke-linecap="round">
+        <!-- The upper stem forks above the bar; its inner branch crosses it. -->
+        <path d="M222 18 C211 10 200 6 190 8
+                 C182 6 174 6 169 8
+                 M190 8 C181 10 178 18 177 30"/>
+        <!-- A separate lower stem splits immediately into two returning curls. -->
+        <path transform="translate(-18 0)" d="M145 21 C145 25 148 27 153 28
+                 C162 33 175 27 183 21
+                 M183 21 C177 27 166 28 160 21"/>
+      </g>
+      <!-- Rounded teardrop pods at both upper tips and the outer lower tip. -->
+      <path d="M173 7 C170 7 166 6 165 9
+               C164 12 171 12 173 7 Z
+               M178 28 C175 30 172 34 175 36
+               C179 38 180 32 178 28 Z"/>
+      <path transform="translate(-18 0)" d="M146 20 C143 20 142 22 144 25
+               C145 27 148 28 150 27
+               C148 25 148 22 146 20 Z"/>
+    </g>
+  </defs>
+  <use href="#shadow-vines"/>
+  <use href="#shadow-vines" transform="translate(474 0) scale(-1 1)"/>
+  <!-- Eye sockets and nose remain transparent when used as a CSS mask. -->
+  <path fill-rule="evenodd" d="
+    M237 5
+    C226 5 220 11 220 20
+    C220 26 222 30 226 32
+    L227 38 Q227 41 231 41
+    H243 Q247 41 247 38
+    L248 32 C252 30 254 26 254 20
+    C254 11 248 5 237 5 Z
+    M225 23
+    C227 21 231 22 234 25
+    C234 28 232 31 230 31
+    C227 31 224 26 225 23 Z
+    M249 23
+    C247 21 243 22 240 25
+    C240 28 242 31 244 31
+    C247 31 250 26 249 23 Z
+    M237 29 L234 35 Q237 34 240 35 Z
+    M231 37 H232 V41 H231 Z
+    M236.5 37 H237.5 V41 H236.5 Z
+    M242 37 H243 V41 H242 Z
+  "/>
+</svg>
