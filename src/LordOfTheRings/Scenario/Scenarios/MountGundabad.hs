@@ -9,15 +9,23 @@ import LordOfTheRings.Matcher (CardMatcher (CardMatchAny), cardIs, cardMatches)
 import LordOfTheRings.Objective.CardDefs qualified as Objectives
 import LordOfTheRings.Quest.CardDefs qualified as Quests
 import LordOfTheRings.Scenario.Import.Lifted
+import LordOfTheRings.Scenario.Scenarios.EredMithrinCampaign (eredMithrinAbilities, eredMithrinModifiers, runEredMithrinCampaign)
 import LordOfTheRings.Scenario.Scenarios.MountGundabad.Helpers (returnDagnirToStaging)
 import LordOfTheRings.Window (WindowType (AdvancedToStage), mkAfter)
 
 newtype MountGundabad = MountGundabad ScenarioAttrs
-  deriving anyclass (IsScenario, HasAbilities, HasModifiersFor)
+  deriving anyclass IsScenario
   deriving newtype (Show, Eq, ToJSON, Entity)
 
 mountGundabad :: Scenario
 mountGundabad = Scenario $ scenario MountGundabad "mount-gundabad" "Mount Gundabad"
+
+-- | The Ered Mithrin campaign card's abilities and modifiers, in campaign mode.
+instance HasAbilities MountGundabad where
+  getAbilities (MountGundabad a) = eredMithrinAbilities a
+
+instance HasModifiersFor MountGundabad where
+  getModifiersFor (MountGundabad a) = eredMithrinModifiers a
 
 {- | Mount Gundabad, Fell Beasts, Deep Underground, Afraid of the Dark, Lost Caves and Dragon
 Might make up the encounter deck (MEC70 rules). Lost Caves is the Caves deck, and so are
@@ -82,6 +90,6 @@ instance RunMessage MountGundabad where
       returnDagnirToStaging
       push $ CheckWindows [mkAfter AdvancedToStage]
       pure $ MountGundabad attrs
-    _ -> MountGundabad <$> runMessage msg attrs
+    _ -> MountGundabad <$> runEredMithrinCampaign msg attrs
    where
     flippedInDeck = join (parseMaybe parseJSON attrs.meta) :: Maybe CardId

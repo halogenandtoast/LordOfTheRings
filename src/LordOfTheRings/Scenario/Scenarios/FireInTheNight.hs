@@ -4,14 +4,22 @@ import LordOfTheRings.EncounterSet qualified as EncounterSet
 import LordOfTheRings.Quest.CardDefs qualified as Quests
 import LordOfTheRings.Quest.Types (isEncounterSideQuest)
 import LordOfTheRings.Scenario.Import.Lifted
+import LordOfTheRings.Scenario.Scenarios.EredMithrinCampaign (eredMithrinAbilities, eredMithrinModifiers, runEredMithrinCampaign)
 import LordOfTheRings.Scenario.Scenarios.FireInTheNight.Helpers (sideQuestDeckOf)
 
 newtype FireInTheNight = FireInTheNight ScenarioAttrs
-  deriving anyclass (IsScenario, HasAbilities, HasModifiersFor)
+  deriving anyclass IsScenario
   deriving newtype (Show, Eq, ToJSON, Entity)
 
 fireInTheNight :: Scenario
 fireInTheNight = Scenario $ scenario FireInTheNight "fire-in-the-night" "Fire in the Night"
+
+-- | The Ered Mithrin campaign card's abilities and modifiers, in campaign mode.
+instance HasAbilities FireInTheNight where
+  getAbilities (FireInTheNight a) = eredMithrinAbilities a
+
+instance HasModifiersFor FireInTheNight where
+  getModifiersFor (FireInTheNight a) = eredMithrinModifiers a
 
 {- | The encounter deck is built from Fire in the Night, Grey Mountain Goblins, Dark Woods
 and Gathering Gloom. Stage 1A's setup searches it for the 8 encounter side quests,
@@ -38,4 +46,4 @@ instance RunMessage FireInTheNight where
       top : rest -> do
         revealSetAsideCard top
         pure $ FireInTheNight $ attrs & metaL .~ object ["sideQuestDeck" .= rest]
-    _ -> FireInTheNight <$> runMessage msg attrs
+    _ -> FireInTheNight <$> runEredMithrinCampaign msg attrs

@@ -7,14 +7,22 @@ import LordOfTheRings.Matcher (CardMatcher (CardMatchAny), cardIs, cardMatches)
 import LordOfTheRings.Objective.CardDefs qualified as Objectives
 import LordOfTheRings.Quest.CardDefs qualified as Quests
 import LordOfTheRings.Scenario.Import.Lifted
+import LordOfTheRings.Scenario.Scenarios.EredMithrinCampaign (eredMithrinAbilities, eredMithrinModifiers, runEredMithrinCampaign)
 import LordOfTheRings.Scenario.Scenarios.TheWitheredHeath.Helpers (setAsideDamageOf)
 
 newtype TheWitheredHeath = TheWitheredHeath ScenarioAttrs
-  deriving anyclass (IsScenario, HasAbilities, HasModifiersFor)
+  deriving anyclass IsScenario
   deriving newtype (Show, Eq, ToJSON, Entity)
 
 theWitheredHeath :: Scenario
 theWitheredHeath = Scenario $ scenario TheWitheredHeath "the-withered-heath" "The Withered Heath"
+
+-- | The Ered Mithrin campaign card's abilities and modifiers, in campaign mode.
+instance HasAbilities TheWitheredHeath where
+  getAbilities (TheWitheredHeath a) = eredMithrinAbilities a
+
+instance HasModifiersFor TheWitheredHeath where
+  getModifiersFor (TheWitheredHeath a) = eredMithrinModifiers a
 
 {- | The encounter deck is built from The Withered Heath, Lost Caves, Wild Creatures and Lost
 in Wilderland; the Lost Caves cards are the Caves deck (MEC66 rules). Stage 1A's "Set
@@ -42,4 +50,4 @@ instance RunMessage TheWitheredHeath where
     ScenarioSpecific "witheredHeath.drakeSetAside" v -> pure $ TheWitheredHeath $ attrs & metaL .~ v
     ScenarioSpecific "witheredHeath.drakeHealed" (parseMaybe parseJSON -> Just (n :: Int)) ->
       pure $ TheWitheredHeath $ attrs & metaL .~ object ["setAsideDamage" .= fmap (max 0 . subtract n) (setAsideDamageOf attrs.meta)]
-    _ -> TheWitheredHeath <$> runMessage msg attrs
+    _ -> TheWitheredHeath <$> runEredMithrinCampaign msg attrs

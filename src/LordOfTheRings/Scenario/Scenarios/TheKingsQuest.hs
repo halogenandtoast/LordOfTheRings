@@ -6,13 +6,21 @@ import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Matcher (cardIs, cardMatches)
 import LordOfTheRings.Quest.CardDefs qualified as Quests
 import LordOfTheRings.Scenario.Import.Lifted
+import LordOfTheRings.Scenario.Scenarios.EredMithrinCampaign (eredMithrinAbilities, eredMithrinModifiers, runEredMithrinCampaign)
 
 newtype TheKingsQuest = TheKingsQuest ScenarioAttrs
-  deriving anyclass (IsScenario, HasAbilities, HasModifiersFor)
+  deriving anyclass IsScenario
   deriving newtype (Show, Eq, ToJSON, Entity)
 
 theKingsQuest :: Scenario
 theKingsQuest = Scenario $ scenario TheKingsQuest "the-kings-quest" "The King's Quest"
+
+-- | The Ered Mithrin campaign card's abilities and modifiers, in campaign mode.
+instance HasAbilities TheKingsQuest where
+  getAbilities (TheKingsQuest a) = eredMithrinAbilities a
+
+instance HasModifiersFor TheKingsQuest where
+  getModifiersFor (TheKingsQuest a) = eredMithrinModifiers a
 
 {- | The encounter deck is built from The King's Quest, Fell Beasts, Wild Creatures, Deep
 Underground, Afraid of the Dark, Dragon Might and Lost Caves (MEC65 rules). The Lost
@@ -48,4 +56,4 @@ instance RunMessage TheKingsQuest where
         & cavesDeckL .~ cavesDeck
         & questDeckL .~ laterStages
         & setAsideL .~ aside
-    _ -> TheKingsQuest <$> runMessage msg attrs
+    _ -> TheKingsQuest <$> runEredMithrinCampaign msg attrs

@@ -6,13 +6,21 @@ import LordOfTheRings.Matcher (CardMatcher (CardMatchAny), cardIs, cardMatches)
 import LordOfTheRings.Objective.CardDefs qualified as Objectives
 import LordOfTheRings.Quest.CardDefs qualified as Quests
 import LordOfTheRings.Scenario.Import.Lifted
+import LordOfTheRings.Scenario.Scenarios.EredMithrinCampaign (eredMithrinAbilities, eredMithrinModifiers, runEredMithrinCampaign)
 
 newtype TheFateOfWilderland = TheFateOfWilderland ScenarioAttrs
-  deriving anyclass (IsScenario, HasAbilities, HasModifiersFor)
+  deriving anyclass IsScenario
   deriving newtype (Show, Eq, ToJSON, Entity)
 
 theFateOfWilderland :: Scenario
 theFateOfWilderland = Scenario $ scenario TheFateOfWilderland "the-fate-of-wilderland" "The Fate of Wilderland"
+
+-- | The Ered Mithrin campaign card's abilities and modifiers, in campaign mode.
+instance HasAbilities TheFateOfWilderland where
+  getAbilities (TheFateOfWilderland a) = eredMithrinAbilities a
+
+instance HasModifiersFor TheFateOfWilderland where
+  getModifiersFor (TheFateOfWilderland a) = eredMithrinModifiers a
 
 {- | The encounter deck is built from The Fate of Wilderland, Grey Mountain Goblins,
 Gathering Gloom and Hills of Wilderland (MEC71 rules). The Goblins' Assault, The Heroes'
@@ -38,4 +46,4 @@ instance RunMessage TheFateOfWilderland where
         & encounterDeckL .~ encounterDeck
         & questDeckL .~ laterStages
         & setAsideL .~ aside
-    _ -> TheFateOfWilderland <$> runMessage msg attrs
+    _ -> TheFateOfWilderland <$> runEredMithrinCampaign msg attrs

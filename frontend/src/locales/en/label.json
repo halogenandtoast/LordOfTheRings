@@ -3969,5 +3969,30 @@
     "choose": "Night Without End: remove 1 resource token from The Defense of Helm's Deep, or reveal 2 additional encounter cards",
     "removeToken": "Remove 1 resource token from The Defense of Helm's Deep",
     "reveal": "Reveal 2 additional encounter cards"
+  },
+  "eredMithrin": {
+    "twilightHall": "Campaign: the first player may search the encounter deck for Twilight Hall and add it to the staging area, a treasure guarded by it",
+    "searchTwilightHall": "Add Twilight Hall to the staging area",
+    "removeFromGame": "Campaign: choose a card to remove from the game ({n} left to remove)",
+    "searchForBoonAlly": "Campaign: a player may search their deck for a unique boon ally and add it to their hand",
+    "trustInUrdug": "Campaign: put your trust in Urdug, or shuffle a copy of Urdug's Cunning into the encounter deck",
+    "trustUrdug": "Place a resource on Urdug",
+    "distrustUrdug": "Shuffle in Urdug's Cunning",
+    "addTreasure": "Campaign: a discovered treasure may be added to one player's deck",
+    "leaveTreasureOut": "Leave it out",
+    "chooseTreasure": "Campaign: choose 1 of these treasures",
+    "framsShade": "Campaign: Fram's Shade engaged a player. Attach a random undiscovered treasure to it as a guarded objective?",
+    "guardTreasure": "Attach a treasure to Fram's Shade",
+    "accolade": "Campaign: a player who controls no Accolade boon may attach this one to one of their heroes",
+    "threatOrSpawn": "Campaign: choose The Threat to Wilderland or Dagnir's Spawn to add to the campaign pool",
+    "chooseSong": "Campaign: you may choose a Song boon to add to the campaign pool",
+    "removeFromPool": "Campaign: you may remove a non-burden card from the campaign pool",
+    "hunterOrStalker": "Campaign: choose Gundabad Hunter or Gundabad Stalker to add to the campaign pool",
+    "hazardToPool": "Campaign: choose 1 of these Hazard cards to add to the campaign pool",
+    "lookAtTreasures": "Campaign: the players may look at 3 random undiscovered treasures and choose 1 to attach",
+    "takeTreasure": "Look at the treasures",
+    "allyJoins": "Campaign: accept this ally's aid? Choose the player whose deck it joins",
+    "allyDeclined": "Decline the aid",
+    "locationToPool": "Campaign: choose a location in the staging area to add a copy of to the campaign pool"
   }
 }

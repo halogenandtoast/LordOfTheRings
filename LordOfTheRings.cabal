@@ -2970,6 +2970,7 @@ library
       LordOfTheRings.Scenario.Scenarios.DungeonsDeepAndCavernsDim.Helpers
       LordOfTheRings.Scenario.Scenarios.EncounterAtAmonDin
       LordOfTheRings.Scenario.Scenarios.EncounterAtAmonDin.Helpers
+      LordOfTheRings.Scenario.Scenarios.EredMithrinCampaign
       LordOfTheRings.Scenario.Scenarios.EscapeFromDolGuldur
       LordOfTheRings.Scenario.Scenarios.EscapeFromMountGram
       LordOfTheRings.Scenario.Scenarios.EscapeFromMountGram.Helpers

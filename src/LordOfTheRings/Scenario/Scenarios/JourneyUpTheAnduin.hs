@@ -5,13 +5,21 @@ import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Matcher (cardIs, cardMatches)
 import LordOfTheRings.Quest.CardDefs qualified as Quests
 import LordOfTheRings.Scenario.Import.Lifted
+import LordOfTheRings.Scenario.Scenarios.EredMithrinCampaign (eredMithrinAbilities, eredMithrinModifiers, runEredMithrinCampaign)
 
 newtype JourneyUpTheAnduin = JourneyUpTheAnduin ScenarioAttrs
-  deriving anyclass (IsScenario, HasAbilities, HasModifiersFor)
+  deriving anyclass IsScenario
   deriving newtype (Show, Eq, ToJSON, Entity)
 
 journeyUpTheAnduin :: Scenario
 journeyUpTheAnduin = Scenario $ scenario JourneyUpTheAnduin "journey-up-the-anduin" "Journey Up the Anduin"
+
+-- | The Ered Mithrin campaign card's abilities and modifiers, in campaign mode.
+instance HasAbilities JourneyUpTheAnduin where
+  getAbilities (JourneyUpTheAnduin a) = eredMithrinAbilities a
+
+instance HasModifiersFor JourneyUpTheAnduin where
+  getModifiersFor (JourneyUpTheAnduin a) = eredMithrinModifiers a
 
 {- | The encounter deck is built from Journey Up the Anduin, Grey Mountain Goblins, Hills of
 Wilderland, Lost in Wilderland, Journey Along the Anduin and Wilderlands. Wilderlands'
@@ -54,4 +62,4 @@ instance RunMessage JourneyUpTheAnduin where
         & setAsideL .~ aside
         & evilCreaturesDeckL ?~ evilCreaturesDeck
         & evilCreaturesDiscardL .~ []
-    _ -> JourneyUpTheAnduin <$> runMessage msg attrs
+    _ -> JourneyUpTheAnduin <$> runEredMithrinCampaign msg attrs
