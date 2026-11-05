@@ -330,10 +330,15 @@ immuneToEncounterSource g mods = \case
 {- | Whether the source is an encounter card's effect: an enemy (its attack too), location,
 treachery, objective or quest card, as Mount Gundabad's campaign card reads "encounter card
 effects". One in play is, if its card is an encounter card and not a player card turned
-enemy; one out of play, as a shadow card resolving, is. The game's rules, the scenario's
-and a player card's effects are not.
+enemy; one out of play, as a shadow card resolving, is, and so is a shadow card known by
+its card id while it is dealt to an enemy. The game's rules, the scenario's and a player
+card's effects are not.
 -}
 isEncounterCardSource :: Game -> Source -> Bool
+isEncounterCardSource g (AbilitySource source _) = isEncounterCardSource g source
+-- a shadow card known by its card id, still dealt to its enemy as its effect resolves
+isEncounterCardSource g (CardIdSource cid) =
+  any (any ((== cid) . (.id)) . (.shadowCards)) g.entities.enemies
 isEncounterCardSource g source = case sourceTarget source of
   Just (EnemyTarget i) -> encounter $ Map.lookup i es.enemies
   Just (LocationTarget i) -> encounter $ Map.lookup i es.locations

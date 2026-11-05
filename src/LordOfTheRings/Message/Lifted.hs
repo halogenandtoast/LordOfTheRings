@@ -916,11 +916,19 @@ ifThisAttackDestroys eid shadow = afterAttack eid [IfAttackDestroyed eid [DoStep
 -- | The player discards a non-objective attachment he controls, as Spies from Mordor's
 -- shadow reads.
 discardNonObjectiveAttachment :: (ReverseQueue m, Targetable source, Sourceable source) => source -> PlayerId -> m ()
-discardNonObjectiveAttachment source pid = do
+discardNonObjectiveAttachment source = discardNonObjectiveAttachmentBy source source
+
+{- | As 'discardNonObjectiveAttachment', the question shown as caused by one card and the
+discard by another source: a shadow card shows itself, by its card id, and discards as
+that encounter card ('CardIdSource').
+-}
+discardNonObjectiveAttachmentBy
+  :: (ReverseQueue m, Targetable shown, Sourceable source) => shown -> source -> PlayerId -> m ()
+discardNonObjectiveAttachmentBy shown source pid = do
   attachments <- filter (\case ObjectiveTarget _ -> False; _ -> True) <$> getAttachmentsControlledBy pid
   chooseOrRunOneM pid do
     questionLabeled "discardNonObjectiveAttachment"
-    causedBy source
+    causedBy shown
     targets attachments (discard source)
 
 -- | The player discards the highest cost attachment he controls, picking among those tied,

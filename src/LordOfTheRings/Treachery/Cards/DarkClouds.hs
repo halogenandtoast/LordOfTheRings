@@ -27,6 +27,6 @@ instance RunMessage DarkClouds where
       getGoblinsAssault >>= traverse_ \oid -> phaseModifier attrs GameTarget (ProgressIfQuestUnsuccessful (ObjectiveTarget oid) 1)
       pure t
     ResolveShadowEffect cid _ pid _ | cid == attrs.cardId -> do
-      discardNonObjectiveAttachment attrs pid
+      discardNonObjectiveAttachmentBy (CardIdTarget cid) (CardIdSource cid) pid
       pure t
     _ -> DarkClouds <$> runMessage msg attrs

@@ -4,7 +4,7 @@ import Data.Map.Strict qualified as Map
 import LordOfTheRings.Attachment.CardDefs qualified as Attachments
 import LordOfTheRings.Campaign
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
-import LordOfTheRings.Helpers.Modifiers (getModifiers)
+import LordOfTheRings.Helpers.Modifiers (getModifiers, isEncounterCardSource)
 import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Modifier (ModifierType (AttackModifier, DefenseModifier, IgnoreDeep, IgnoreDiscover, WillpowerModifier))
 import LordOfTheRings.Outcome (Outcome (..))
@@ -364,6 +364,23 @@ spec = describe "Ered Mithrin campaign" do
       beravor <- getHeroWithCode "01012"
       run $ Discard (HeroSource beravor.id) (toTarget road)
       stillInPlay road `shouldReturn` False
+
+    it "counts a shadow card's discard as an encounter card's, the question shown as caused by the card" . gameTest $ \pid -> do
+      beravor <- getHeroWithCode "01012"
+      _ <- putAttachmentOn pid Attachments.citadelPlate (toTarget beravor.id)
+      _ <- putAttachmentOn pid Attachments.bladeOfGondolin (toTarget beravor.id)
+      run . AddToStaging =<< genEncounterCard Enemies.forestSpider
+      spider <- getsGame (fromJustNote "no spider" . headMay . map toId . toList . (.entities.enemies))
+      run $ EngageEnemy pid spider
+      _ <- setEncounterDeck [Treacheries.spiesFromMordor]
+      run $ DealShadowCard spider
+      shadow <- getsGame (fromJustNote "no shadow card" . headMay . (.shadowCards) . fromJustNote "no spider" . Map.lookup spider . (.entities.enemies))
+      g <- getGame
+      isEncounterCardSource g (CardIdSource shadow.id) `shouldBe` True
+      run $ ResolveShadow spider pid []
+      getQuestion pid >>= (`shouldSatisfy` \case
+        Just (QuestionLabel l (Just source) _ _) -> "$label.discardNonObjectiveAttachment" `isPrefixOf` l && source == CardIdTarget shadow.id
+        _ -> False)
 
   describe "The Fate of Wilderland" do
     it "ignores the deep and discover keywords, and ends the campaign once won" . campaignTestIn theFateOfWilderland (wonFirst ["journey-up-the-anduin", "lost-in-mirkwood", "the-kings-quest", "the-withered-heath", "roam-across-rhovanion", "fire-in-the-night", "the-ghost-of-framsburg", "mount-gundabad"] emLog) testDeck $ \_ -> do

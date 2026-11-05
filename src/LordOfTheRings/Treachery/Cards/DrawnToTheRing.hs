@@ -36,6 +36,6 @@ instance RunMessage DrawnToTheRing where
       for_ (find (cardMatches $ CardWithType EnemyType) cards) (putEnemyIntoPlayEngagedFromDiscard lead)
       pure t
     ResolveShadowEffect cid _ pid _ | cid == attrs.cardId -> do
-      discardNonObjectiveAttachment attrs pid
+      discardNonObjectiveAttachmentBy (CardIdTarget cid) (CardIdSource cid) pid
       pure t
     _ -> DrawnToTheRing <$> runMessage msg attrs

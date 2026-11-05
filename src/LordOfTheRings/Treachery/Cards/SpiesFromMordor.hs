@@ -25,6 +25,6 @@ instance RunMessage SpiesFromMordor where
         else revealEncounterCard
       pure t
     ResolveShadowEffect cid _ pid _ | cid == attrs.cardId -> do
-      discardNonObjectiveAttachment attrs pid
+      discardNonObjectiveAttachmentBy (CardIdTarget cid) (CardIdSource cid) pid
       pure t
     _ -> SpiesFromMordor <$> runMessage msg attrs
