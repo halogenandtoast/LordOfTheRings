@@ -19,7 +19,7 @@ module LordOfTheRings.Scenario.Scenarios.TheRoadToIsengard.Helpers (
 ) where
 
 import Data.Aeson.Types (parseMaybe)
-import LordOfTheRings.Card (CardCode, toCardCode)
+import LordOfTheRings.Card (CardCode, CardType (EnemyType), toCardCode)
 import LordOfTheRings.Classes.Entity (toAttrs)
 import LordOfTheRings.Classes.HasGame (HasGame, getsGame)
 import LordOfTheRings.Classes.HasQueue (push)
@@ -36,7 +36,7 @@ import LordOfTheRings.Target (toTarget)
 
 -- | The locations printed with a Wizardry effect.
 hasWizardry :: CardCode -> Bool
-hasWizardry = (`elem` map toCardCode [Locations.ringWallOfIsengard, Locations.undergroundArmoury, Locations.steamingVent, Locations.plainOfIsengard, Locations.openPit])
+hasWizardry = (`elem` map toCardCode [Locations.ringWallOfIsengard, Locations.undergroundArmoury, Locations.steamingVent, Locations.plainOfIsengard, Locations.openPit, Locations.poisonousShaft, Locations.fortressOfIsengard])
 
 {- | The location card's Wizardry effect, resolved for the players given, as if they were
 the only players in the game: each of them when it triggers, the defending player alone
@@ -48,6 +48,8 @@ when Saruman is dealt it. The first of them makes the choices no one else is nam
   players in the game.
 * Plain of Isengard: Each player discards 1 ally he controls.
 * Open Pit: Each player raises his threat by 2.
+* Poisonous Shaft: Each player discards a damaged character he controls.
+* Fortress of Isengard: Return the topmost enemy in the encounter discard pile to staging.
 -}
 wizardry :: (ReverseQueue m, Sourceable source) => source -> CardCode -> [PlayerId] -> m ()
 wizardry source code players
@@ -60,6 +62,12 @@ wizardry source code players
       allies <- map toTarget <$> select (AllyControlledBy $ PlayerWithId p)
       when (notNull allies) $ chooseAndDiscard source p allies
   | code == toCardCode Locations.openPit = for_ players \p -> encounterRaisesThreat p 2
+  | code == toCardCode Locations.poisonousShaft = for_ players \p -> do
+      damaged <- filterM (fmap (> 0) . getDamage) =<< charactersControlledBy p
+      chooseAndDiscard source p damaged
+  | code == toCardCode Locations.fortressOfIsengard = do
+      discards <- getEncounterDiscard
+      for_ (find (cardMatches $ CardWithType EnemyType) discards) addToStagingFromDiscard
   | otherwise = pure ()
 
 -- | The progress placed on the quest this phase, kept in the scenario's meta.

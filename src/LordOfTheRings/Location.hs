@@ -9,6 +9,8 @@ import LordOfTheRings.Classes.RunMessage
 import LordOfTheRings.Location.Cards.HelmsDike
 import LordOfTheRings.Location.Cards.HornburgWall
 import LordOfTheRings.Location.Cards.GlitteringCaves
+import LordOfTheRings.Location.Cards.PoisonousShaft
+import LordOfTheRings.Location.Cards.FortressOfIsengard
 import LordOfTheRings.Location.Cards.EnchantedLand
 import LordOfTheRings.Location.Cards.TheUruksTrail
 import LordOfTheRings.Location.Cards.WoldOfRohan
@@ -750,6 +752,8 @@ allLocations =
         , SomeLocationCard helmsDike
         , SomeLocationCard hornburgWall
         , SomeLocationCard glitteringCaves
+        , SomeLocationCard poisonousShaft
+        , SomeLocationCard fortressOfIsengard
         , SomeLocationCard enchantedLand
         , SomeLocationCard theUruksTrail
         , SomeLocationCard woldOfRohan

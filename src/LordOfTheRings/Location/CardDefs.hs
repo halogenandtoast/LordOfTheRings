@@ -15,7 +15,9 @@ allLocationCards =
   Map.fromList $
     map
       (\def -> (cdCardCode def, def))
-      [ helmsDike
+      [ fortressOfIsengard
+      , poisonousShaft
+      , helmsDike
       , hornburgWall
       , glitteringCaves
       , enchantedLand
@@ -5157,3 +5159,11 @@ hornburgWall = (location "the-treason-of-saruman-nightmare-helms-deep-005" "Horn
 glitteringCaves :: CardDef
 glitteringCaves = (location "the-treason-of-saruman-nightmare-helms-deep-006" "Glittering Caves" HelmsDeepNightmare 2 2 2)
   {cdCardTraits = setFromList [HelmsDeepTrait], cdVictoryPoints = Just 2}
+
+poisonousShaft :: CardDef
+poisonousShaft = (location "the-treason-of-saruman-nightmare-the-road-to-isengard-004" "Poisonous Shaft" TheRoadToIsengardNightmare 3 2 5)
+  {cdCardTraits = setFromList [Isengard]}
+
+fortressOfIsengard :: CardDef
+fortressOfIsengard = (location "the-treason-of-saruman-nightmare-the-road-to-isengard-005" "Fortress of Isengard" TheRoadToIsengardNightmare 3 3 3)
+  {cdCardTraits = setFromList [Isengard]}

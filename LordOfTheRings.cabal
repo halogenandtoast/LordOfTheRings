@@ -1963,6 +1963,7 @@ library
       LordOfTheRings.Location.Cards.FornostStreet
       LordOfTheRings.Location.Cards.ForsakenCity
       LordOfTheRings.Location.Cards.ForsakenInn
+      LordOfTheRings.Location.Cards.FortressOfIsengard
       LordOfTheRings.Location.Cards.FortressWalls
       LordOfTheRings.Location.Cards.FortressWallsTheFortressOfNurn
       LordOfTheRings.Location.Cards.FouledWell
@@ -2154,6 +2155,7 @@ library
       LordOfTheRings.Location.Cards.PlainsOfRohan
       LordOfTheRings.Location.Cards.PlazaOfNurn
       LordOfTheRings.Location.Cards.PlunderedArmoury
+      LordOfTheRings.Location.Cards.PoisonousShaft
       LordOfTheRings.Location.Cards.PortOfHarad
       LordOfTheRings.Location.Cards.PortOfPelargir
       LordOfTheRings.Location.Cards.PosternDoor
