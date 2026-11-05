@@ -1,5 +1,6 @@
 module LordOfTheRings.Effect (module LordOfTheRings.Effect) where
 
+import Data.Aeson.KeyMap qualified as KeyMap
 import LordOfTheRings.Modifier
 import LordOfTheRings.Phase (Phase)
 import LordOfTheRings.Prelude
@@ -31,4 +32,15 @@ data Effect = Effect
   , effectDuration :: EffectDuration
   }
   deriving stock (Show, Eq, Generic)
-  deriving anyclass (ToJSON, FromJSON)
+  deriving anyclass (ToJSON)
+
+-- | Drops the saved markers 'legacyPlayedMarkers' names before reading the effect.
+instance FromJSON Effect where
+  parseJSON = \case
+    Object o | Just (Array ms) <- KeyMap.lookup "effectModifiers" o ->
+      genericParseJSON defaultOptions $ Object $ KeyMap.insert "effectModifiers" (Array $ filter (not . legacy) ms) o
+    v -> genericParseJSON defaultOptions v
+   where
+    legacy = \case
+      Object m | Just (String tag) <- KeyMap.lookup "tag" m -> tag `elem` legacyPlayedMarkers
+      _ -> False

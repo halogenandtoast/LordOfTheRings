@@ -2,7 +2,9 @@
 
 module LordOfTheRings.Modifier (module LordOfTheRings.Modifier) where
 
-import Data.Aeson.TH (deriveJSON)
+import Data.Aeson.KeyMap qualified as KeyMap
+import Data.Aeson.TH (deriveJSON, deriveToJSON, mkParseJSON)
+import Data.Aeson.Types (Parser)
 import LordOfTheRings.Campaign (CampaignLogKey)
 import LordOfTheRings.Card.CardType (CardType)
 import LordOfTheRings.Card.Code (CardCode)
@@ -1074,5 +1076,32 @@ data Modifier = Modifier
 sailingCharacters :: [ModifierType] -> Int
 sailingCharacters ms = fromMaybe 1 (headMay [n | CountsAsSailingCharacters n <- ms]) + sum [n | AdditionalSailingCharacters n <- ms]
 
+{- | A saved game from before one 'PlayedCardThisRound' marker per card played holds the
+old markers. 'PlayedThisRound' was the once-per-round flag 'UsedThisRound' is now, and
+'PlayedCardTypeThisRound' loads as a card of the type played, its code unknown. The
+markers it was saved beside say nothing more, and an 'Effect' drops them on load: see
+'legacyPlayedMarkers'. Anything else is read by the generated parser.
+-}
+parseLegacyModifierType :: (Value -> Parser ModifierType) -> Value -> Parser ModifierType
+parseLegacyModifierType generated v = case v of
+  Object o
+    | Just (String "PlayedThisRound") <- KeyMap.lookup "tag" o
+    , Just contents <- KeyMap.lookup "contents" o ->
+        UsedThisRound <$> parseJSON contents
+    | Just (String "PlayedCardTypeThisRound") <- KeyMap.lookup "tag" o
+    , Just contents <- KeyMap.lookup "contents" o ->
+        PlayedCardThisRound "" <$> parseJSON contents
+  _ -> generated v
+
+-- | Tags of saved markers whose meaning a saved 'PlayedCardTypeThisRound' beside them
+-- already carries.
+legacyPlayedMarkers :: [Text]
+legacyPlayedMarkers = ["PlayedACardThisRound", "PlayedEventThisRound", "PlayedAnAllyThisRound", "AllyPlayedThisRound"]
+
 -- Direct codecs avoid specializing Generic traversal for this large sum.
-$(concat <$> traverse (deriveJSON defaultOptions) [''ModifierType, ''Modifier])
+$(do
+  toModifierType <- deriveToJSON defaultOptions ''ModifierType
+  parser <- mkParseJSON defaultOptions ''ModifierType
+  fromModifierType <- [d|instance FromJSON ModifierType where parseJSON = parseLegacyModifierType $(pure parser)|]
+  modifier <- deriveJSON defaultOptions ''Modifier
+  pure $ toModifierType <> fromModifierType <> modifier)

@@ -7,6 +7,8 @@ import Data.Aeson (Result (..))
 import Data.Aeson.KeyMap qualified as KeyMap
 import Data.Aeson.Types (Parser, parseEither)
 import Data.UUID qualified as UUID
+import LordOfTheRings.Card.CardType (CardType (..))
+import LordOfTheRings.Effect (Effect (..), EffectDuration (..))
 import LordOfTheRings.Json (aesonOptions)
 import LordOfTheRings.Modifier qualified as M
 import LordOfTheRings.Phase
@@ -42,6 +44,21 @@ spec = describe "Generic codec compatibility" do
     (fromJSON (object ["tag" .= ("Run" :: Text), "contents" .= [old]]) :: Result Message) `shouldBe` Success (Run [Discard GameSource target])
     let new = Discard (EnemySource eid) target
     (fromJSON (toJSON new) :: Result Message) `shouldBe` Success new :: Expectation
+
+  it "loads a saved effect from before one marker per card played" do
+    let tagged :: Text -> Value
+        tagged t = object ["tag" .= t]
+        taggedWith :: Text -> Value -> Value
+        taggedWith t c = object ["tag" .= t, "contents" .= c]
+        old =
+          object
+            [ "effectSource" .= GameSource
+            , "effectTarget" .= target
+            , "effectModifiers" .= [tagged "PlayedACardThisRound", taggedWith "PlayedCardTypeThisRound" (toJSON AllyType), tagged "PlayedEventThisRound", taggedWith "PlayedThisRound" (toJSON ("01001" :: CardCode))]
+            , "effectDuration" .= UntilEndOfRound
+            ]
+    (fromJSON old :: Result Effect)
+      `shouldBe` Success (Effect GameSource target [M.PlayedCardThisRound "" AllyType, M.UsedThisRound "01001"] UntilEndOfRound) :: Expectation
 
   it "preserves nullary tags, positional contents, recursive messages and questions" do
     mapM_
