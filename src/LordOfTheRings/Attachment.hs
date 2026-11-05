@@ -288,6 +288,10 @@ import LordOfTheRings.Attachment.Cards.GondolinShield
 import LordOfTheRings.Attachment.Cards.HelmOfHeroes
 import LordOfTheRings.Attachment.Cards.JewelsOfWilderland
 import LordOfTheRings.Attachment.Cards.MasterworkBow
+import LordOfTheRings.Attachment.Cards.MasterOfTheHunt
+import LordOfTheRings.Attachment.Cards.Unbroken
+import LordOfTheRings.Attachment.Cards.TheSteadfast
+import LordOfTheRings.Attachment.Cards.DragonSlayer
 import LordOfTheRings.Attachment.Runner ()
 import LordOfTheRings.Attachment.Types as X
 import LordOfTheRings.Id
@@ -613,5 +617,9 @@ allAttachments =
         , SomeAttachmentCard helmOfHeroes
         , SomeAttachmentCard jewelsOfWilderland
         , SomeAttachmentCard masterworkBow
+        , SomeAttachmentCard masterOfTheHunt
+        , SomeAttachmentCard unbroken
+        , SomeAttachmentCard theSteadfast
+        , SomeAttachmentCard dragonSlayer
         ]
     ]

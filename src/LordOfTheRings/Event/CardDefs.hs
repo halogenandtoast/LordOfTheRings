@@ -4,6 +4,7 @@ import Data.Map.Strict qualified as Map
 import LordOfTheRings.Card.CardDef
 import LordOfTheRings.Card.Code
 import LordOfTheRings.Keyword
+import LordOfTheRings.Name (Name)
 import LordOfTheRings.Prelude
 import LordOfTheRings.Sphere
 import LordOfTheRings.Trait
@@ -14,6 +15,10 @@ allEventCards =
     map
       (\def -> (cdCardCode def, def))
       [ everVigilant
+      , theCannyHuntsman
+      , aTaleOfVictories
+      , layOfCourage
+      , rhymeOfTheSlayer
       , determination
       , loreOfAncientArnor
       , commonCause
@@ -1125,3 +1130,20 @@ toMeOMyKinsfolk = event "132012" "To me! O my kinsfolk!" Leadership (StaticCost 
 
 theLuckyNumber :: CardDef
 theLuckyNumber = event "132013" "The Lucky Number" Baggins (StaticCost 1)
+
+-- * The Ered Mithrin campaign's Song boons, one for each Accolade
+
+eredMithrinSong :: CardCode -> Name -> CardDef
+eredMithrinSong code name = (event code name Neutral (StaticCost 1)) {cdCardTraits = setFromList [Song, Boon]}
+
+theCannyHuntsman :: CardDef
+theCannyHuntsman = eredMithrinSong "EMC180" "The Canny Huntsman"
+
+aTaleOfVictories :: CardDef
+aTaleOfVictories = eredMithrinSong "EMC181" "A Tale of Victories"
+
+layOfCourage :: CardDef
+layOfCourage = eredMithrinSong "EMC182" "Lay of Courage"
+
+rhymeOfTheSlayer :: CardDef
+rhymeOfTheSlayer = eredMithrinSong "EMC183" "Rhyme of the Slayer"
