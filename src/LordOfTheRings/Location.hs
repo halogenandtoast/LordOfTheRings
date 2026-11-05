@@ -647,6 +647,11 @@ import LordOfTheRings.Location.Cards.TheWold
 import LordOfTheRings.Location.Cards.Eastemnet
 import LordOfTheRings.Location.Cards.PlainsOfRohan
 import LordOfTheRings.Location.Cards.BanksOfEntwash
+import LordOfTheRings.Location.Cards.TheHornburg
+import LordOfTheRings.Location.Cards.DeepingWall
+import LordOfTheRings.Location.Cards.DeepingCulvert
+import LordOfTheRings.Location.Cards.PosternDoor
+import LordOfTheRings.Location.Cards.HelmsGate
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -1340,5 +1345,10 @@ allLocations =
         , SomeLocationCard eastemnet
         , SomeLocationCard plainsOfRohan
         , SomeLocationCard banksOfEntwash
+        , SomeLocationCard theHornburg
+        , SomeLocationCard deepingWall
+        , SomeLocationCard deepingCulvert
+        , SomeLocationCard posternDoor
+        , SomeLocationCard helmsGate
         ]
     ]
