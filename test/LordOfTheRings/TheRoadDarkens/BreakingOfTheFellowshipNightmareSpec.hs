@@ -8,17 +8,20 @@ import LordOfTheRings.Effect (Effect (..), EffectDuration (UntilEndOfRound))
 import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Event.CardDefs qualified as Events
 import LordOfTheRings.Treachery.CardDefs qualified as Treacheries
+import LordOfTheRings.Objective.CardDefs qualified as Objectives
 import LordOfTheRings.Quest.CardDefs qualified as Quests
 import LordOfTheRings.Helpers.Staging (getEngagementCost)
 import LordOfTheRings.Matcher (getArcheryTotal, getEnemy, getMainQuestProgress)
-import LordOfTheRings.Scenario (breakingOfTheFellowship)
-import LordOfTheRings.Helpers.Window (travelableLocations)
-import LordOfTheRings.Modifier (ModifierType (Blank, GainTrait, GainKeyword, CannotEngagePlayer, CannotLeaveStagingArea, CannotBeOptionallyEngagedBy, CannotDiscardFromHand))
+import LordOfTheRings.Scenario (breakingOfTheFellowship, modeL, GameMode (NightmareMode), scenarioSetAside)
+import LordOfTheRings.Phase (Phase (PlanningPhase, QuestPhase))
+import LordOfTheRings.Helpers.Window (travelableLocations, getAllAbilities, getActionAbilities, actionsAndResponsesAllowed)
+import LordOfTheRings.Ability (isForcedAbility)
+import LordOfTheRings.Modifier (ModifierType (CannotReady, Blank, GainTrait, GainKeyword, CannotEngagePlayer, CannotLeaveStagingArea, CannotBeOptionallyEngagedBy, CannotDiscardFromHand))
 import LordOfTheRings.Keyword (Keyword (Toughness))
 import LordOfTheRings.Matcher (PlayerMatcher (AnyPlayer))
 import LordOfTheRings.Helpers.Modifiers (getModifiers)
 import LordOfTheRings.Trait (Trait (Condition))
-import LordOfTheRings.Window (WindowType (RoundEnds), mkWhen)
+import LordOfTheRings.Window (WindowType (RoundEnds, DiscardedFromDeck, Revealed), mkWhen, mkAfter)
 import TestImport
 
 botf :: (PlayerId -> GameT ()) -> IO ()
@@ -87,6 +90,115 @@ resolveForcedChoices pid = getQuestion pid >>= \case
 
 spec :: Spec
 spec = describe "Breaking of the Fellowship Nightmare" do
+  it "builds the Nightmare encounter deck with the exact removals and nineteen new cards" . gameTestIn (overAttrs (modeL .~ NightmareMode) breakingOfTheFellowship) testDeck $ \_ -> do
+    run $ DoStep 1 Setup
+    deck <- getEncounterDeck
+    let copies def = length $ filter ((== toCardCode def) . toCardCode) deck
+    map copies [Enemies.urukHaiArcher, Locations.riverAnduin, Locations.slopesOfAmonHen, Treacheries.blackFeatheredArrows]
+      `shouldBe` [0, 2, 2, 1]
+    map copies [Enemies.isengardArcher, Enemies.isengardTracker, Locations.langfloodRiver, Locations.westernEmynMuil, Treacheries.arrowsInTheNight, Treacheries.huntingTheRing, Treacheries.discordAndDistrust]
+      `shouldBe` [3, 4, 3, 3, 2, 2, 2]
+    aside <- getsGame (map toCardCode . scenarioSetAside . toAttrs . (.scenario))
+    sort aside `shouldBe` sort (map toCardCode [Objectives.frodosChoice, Locations.seatOfSeeing, Locations.parthGalen, Locations.theArgonath, Locations.sarnGebir])
+
+  it "Discord and Distrust prevents in-play actions until the end of the round" . botf $ \pid -> do
+    getActionAbilities pid >>= (`shouldSatisfy` notNull)
+    threatBefore <- (.threat) <$> getPlayer pid
+    revealTreachery Treacheries.discordAndDistrust
+    (.threat) <$> getPlayer pid `shouldReturn` (threatBefore + 2)
+    actionsAndResponsesAllowed `shouldReturn` False
+    getActionAbilities pid `shouldReturn` []
+    getsGame (length . (.entities.treacheries)) `shouldReturn` 0
+    run $ EndEffects UntilEndOfRound
+    getActionAbilities pid >>= (`shouldSatisfy` notNull)
+
+  it "Discord and Distrust blocks action events but still permits playing allies" . botf $ \pid -> do
+    hero <- beravorOf pid
+    run $ PlaceTokens GameSource hero Resource 10
+    eventCard <- putCardIntoHand pid Events.daeronsRunes
+    allyCard <- putCardIntoHand pid Allies.henamarthRiversong
+    putGame . (phaseL .~ PlanningPhase) =<< getGame
+    player <- getPlayer pid
+    canPlay player eventCard `shouldReturn` True
+    canPlay player allyCard `shouldReturn` True
+    revealTreachery Treacheries.discordAndDistrust
+    canPlay player eventCard `shouldReturn` False
+    canPlay player allyCard `shouldReturn` True
+    run $ EndEffects UntilEndOfRound
+    canPlay player eventCard `shouldReturn` True
+
+  it "Discord and Distrust prevents actions from hand" . botf $ \pid -> do
+    eowyn <- toTarget <$> getHeroWithCode "01007"
+    run $ PlaceTokens GameSource eowyn Resource 1
+    bofurCard <- putCardIntoHand pid Allies.bofur
+    putGame . (phaseL .~ QuestPhase) =<< getGame
+    player <- getPlayer pid
+    handActions player >>= (`shouldSatisfy` elem bofurCard)
+    revealTreachery Treacheries.discordAndDistrust
+    handActions player `shouldReturn` []
+    run $ EndEffects UntilEndOfRound
+    handActions player >>= (`shouldSatisfy` elem bofurCard)
+
+  it "Discord and Distrust can itself be canceled before its restriction applies" . botf $ \pid -> do
+    cancellationCard <- putCardIntoHand pid Events.aTestOfWill
+    eowyn <- toTarget <$> getHeroWithCode "01007"
+    run $ PlaceTokens GameSource eowyn Resource 1
+    _ <- setEncounterDeck [Treacheries.discordAndDistrust]
+    run RevealEncounterCard
+    chooseTarget pid (CardIdTarget cancellationCard.id)
+    resolveRevealed
+    actionsAndResponsesAllowed `shouldReturn` True
+    getActionAbilities pid >>= (`shouldSatisfy` notNull)
+
+  it "Discord and Distrust prevents response events from hand" . botf $ \pid -> do
+    eowyn <- toTarget <$> getHeroWithCode "01007"
+    run $ PlaceTokens GameSource eowyn Resource 1
+    revealTreachery Treacheries.discordAndDistrust
+    eid <- stage Enemies.zirakzigilArcher
+    _ <- putCardIntoHand pid Events.aTestOfWill
+    let windows = [mkWhen $ Revealed $ EnemyTarget eid]
+    handResponses pid windows (DoStep 1 Setup) `shouldReturn` []
+    run $ EndEffects UntilEndOfRound
+    handResponses pid windows (DoStep 1 Setup) >>= (`shouldSatisfy` notNull)
+
+  it "Discord and Distrust prevents responses from the discard pile" . botf $ \pid -> do
+    miner <- putCardIntoHand pid Allies.eredLuinMiner
+    run $ DiscardFromHand pid miner.id
+    let windows = [mkAfter $ DiscardedFromDeck pid miner.id]
+    discardResponses pid windows [] (const $ DoStep 1 Setup) >>= (`shouldSatisfy` notNull)
+    revealTreachery Treacheries.discordAndDistrust
+    discardResponses pid windows [] (const $ DoStep 1 Setup) `shouldReturn` []
+    run $ EndEffects UntilEndOfRound
+    discardResponses pid windows [] (const $ DoStep 1 Setup) >>= (`shouldSatisfy` notNull)
+
+  it "Discord and Distrust preserves Forced effects" . botf $ \pid -> do
+    revealTreachery Treacheries.discordAndDistrust
+    getAllAbilities >>= (`shouldSatisfy` all isForcedAbility)
+    hero <- beravorOf pid
+    _ <- stage Enemies.isengardArcher
+    chooseTarget pid hero
+    getDamage hero `shouldReturn` 2
+
+  it "Discord and Distrust applies across separated staging areas" . botfTwo $ \one two -> do
+    run $ SeparateStagingAreas [[one], [two]]
+    revealTreachery Treacheries.discordAndDistrust
+    getActionAbilities one `shouldReturn` []
+    run $ FocusArea two
+    actionsAndResponsesAllowed `shouldReturn` False
+    getActionAbilities two `shouldReturn` []
+    run $ EndEffects UntilEndOfRound
+    getActionAbilities two >>= (`shouldSatisfy` notNull)
+
+  it "Discord and Distrust's shadow stops its defender readying only for this round" . botf $ \pid -> do
+    hero <- beravorOf pid
+    eid <- stage Enemies.forestSpider
+    run . AttachShadowCard eid =<< genEncounterCard Treacheries.discordAndDistrust
+    run $ ResolveShadow eid pid [hero]
+    getModifiers hero >>= (`shouldSatisfy` elem CannotReady)
+    actionsAndResponsesAllowed `shouldReturn` True
+    run $ EndEffects UntilEndOfRound
+    getModifiers hero >>= (`shouldSatisfy` notElem CannotReady)
+
   it "Isengard Archer damages a character when staged and has Archery 2 and Toughness 1" . botf $ \pid -> do
     hero <- beravorOf pid
     eid <- stage Enemies.isengardArcher

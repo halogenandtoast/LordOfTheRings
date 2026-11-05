@@ -94,6 +94,7 @@ import LordOfTheRings.Helpers.Attachment (cardHosts)
 import LordOfTheRings.Helpers.Character (characterCardDef)
 import LordOfTheRings.Helpers.Modifiers (getModifiers)
 import LordOfTheRings.Helpers.Window (
+  actionsAndResponsesAllowed,
   passesCriteria,
   windowMatchesM,
  )
@@ -673,6 +674,11 @@ deck too, while he may play that card as if it was in his hand, as Gandalf lets 
 -}
 handResponses :: PlayerId -> [Window] -> Message -> GameT [UI Message]
 handResponses pid windows continue = do
+  allowed <- actionsAndResponsesAllowed
+  if allowed then handResponsesAllowed pid windows continue else pure []
+
+handResponsesAllowed :: PlayerId -> [Window] -> Message -> GameT [UI Message]
+handResponsesAllowed pid windows continue = do
   player <- getPlayer pid
   fromTop <- elem MayPlayTopOfDeck <$> getModifiers (PlayerTarget pid)
   let matches = maybe (pure False) (\w -> anyM (windowMatchesM w) windows)
@@ -718,6 +724,11 @@ continuation gets the card id, to mark the card as used.
 discardResponses
   :: PlayerId -> [Window] -> [(Source, Int)] -> (CardId -> Message) -> GameT [UI Message]
 discardResponses pid windows used continue = do
+  allowed <- actionsAndResponsesAllowed
+  if allowed then discardResponsesAllowed pid windows used continue else pure []
+
+discardResponsesAllowed :: PlayerId -> [Window] -> [(Source, Int)] -> (CardId -> Message) -> GameT [UI Message]
+discardResponsesAllowed pid windows used continue = do
   player <- getPlayer pid
   let matches = maybe False (\w -> any (windowMatches w) windows)
   fmap catMaybes $ for player.discard \case

@@ -313,6 +313,8 @@ data ModifierType
     MustCommitToQuest
   | -- | on a card in play: its abilities cannot be used, nor its Forced effects trigger
     CannotTriggerAbilities
+  | -- | on the game: players cannot trigger Actions or Responses, including events
+    CannotTriggerActionsOrResponses
   | -- | on a character: it cannot be given poison, as an unconscious character in Flies and
     -- Spiders
     CannotBePoisoned

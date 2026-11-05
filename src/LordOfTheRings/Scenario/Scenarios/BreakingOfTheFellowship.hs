@@ -5,6 +5,8 @@ import LordOfTheRings.Attachment.CardDefs qualified as Attachments
 import LordOfTheRings.Campaign (CampaignLogKey (Captives), CampaignLogUpdate (AddFallenHero, AddToPool, Record), PoolCard (..), updateLog)
 import LordOfTheRings.Classes.HasGame (getsGame)
 import LordOfTheRings.EncounterSet qualified as EncounterSet
+import LordOfTheRings.Enemy.CardDefs qualified as Enemies
+import LordOfTheRings.Scenario.CardDefs qualified as Nightmare
 import LordOfTheRings.Enemy.Types (enemyOwner)
 import LordOfTheRings.Game.Base (gameEntities, gameRevealer)
 import LordOfTheRings.Helpers.Staging (getStagingThreat)
@@ -30,7 +32,11 @@ newtype BreakingOfTheFellowship = BreakingOfTheFellowship ScenarioAttrs
   deriving newtype (Show, Eq, ToJSON, Entity)
 
 breakingOfTheFellowship :: Scenario
-breakingOfTheFellowship = Scenario $ scenario BreakingOfTheFellowship "breaking-of-the-fellowship" "Breaking of the Fellowship"
+breakingOfTheFellowship = Scenario $ scenario (BreakingOfTheFellowship . (nightmareDeckL ?~ nightmare)) "breaking-of-the-fellowship" "Breaking of the Fellowship"
+ where
+  -- https://hallofbeorn.com/LotR/Details/Breaking-of-the-Fellowship-Nightmare-BotFN
+  nightmare = nightmareDeck Nightmare.breakingOfTheFellowshipNightmare EncounterSet.BreakingOfTheFellowshipNightmare
+    [(Enemies.urukHaiArcher, 4), (Locations.riverAnduin, 2), (Locations.slopesOfAmonHen, 1), (Treacheries.blackFeatheredArrows, 2)]
 
 -- | The Ring-bearer, removed from the game by stage 2A, waits as Frodo's Choice's captive:
 -- the cards attached to him are out of the game with him, their text not there to use.

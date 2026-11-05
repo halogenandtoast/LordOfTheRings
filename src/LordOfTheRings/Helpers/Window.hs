@@ -29,7 +29,7 @@ import LordOfTheRings.Name (Name (..))
 import LordOfTheRings.Modifier (
   ModifierType (Blank, BlankAttachments, CannotBeTraveledTo, CannotCancelEncounterEffects, CannotExhaust, CannotTriggerAbilities, Defending, ShadowCannotBeCanceled, WhenRevealedCannotBeCanceled),
   ModifierType (Blank, BlankAttachments, CannotBeTraveledTo, CannotCancelEncounterEffects, CannotExhaust, CannotTriggerAbilities, StagingStepBegun, TravelRange, TravelableWithActiveLocation),
-  ModifierType (TravelRequiresEngagingHighestToughness, CannotDiscardFromHand, CannotTakeDamage, GainKeyword, TreacheryRevealedThisRound),
+  ModifierType (CannotTriggerActionsOrResponses, TravelRequiresEngagingHighestToughness, CannotDiscardFromHand, CannotTakeDamage, GainKeyword, TreacheryRevealedThisRound),
   Modifier (..),
  )
 import LordOfTheRings.Phase (Phase (QuestPhase))
@@ -40,6 +40,10 @@ import LordOfTheRings.Source
 import LordOfTheRings.Target
 import LordOfTheRings.Token
 import LordOfTheRings.Window
+
+-- | A round-wide restriction, including abilities used from hand or discard.
+actionsAndResponsesAllowed :: HasGame m => m Bool
+actionsAndResponsesAllowed = notElem CannotTriggerActionsOrResponses <$> getModifiers GameTarget
 
 getAllAbilities :: HasGame m => m [Ability]
 getAllAbilities = do
@@ -83,7 +87,8 @@ getAllAbilities = do
           , leftPlayAbilities
           ]
   -- a card a condition has blanked offers none
-  flip filterM abilities \ab ->
+  allowed <- actionsAndResponsesAllowed
+  flip filterM [ab | ab <- abilities, allowed || isForcedAbility ab] \ab ->
     not . any (`elem` [CannotTriggerAbilities, Blank]) <$> maybe (pure []) getModifiers (sourceTarget ab.abilitySource)
 
 -- | Abilities whose window matches one of the windows and that can be used right now.

@@ -7,6 +7,7 @@ import LordOfTheRings.Card
 import LordOfTheRings.Classes.Entity
 import LordOfTheRings.Classes.RunMessage
 import LordOfTheRings.Treachery.Cards.HuntedInHollin
+import LordOfTheRings.Treachery.Cards.DiscordAndDistrust
 import LordOfTheRings.Treachery.Cards.HuntingTheRing
 import LordOfTheRings.Treachery.Cards.ArrowsInTheNight
 import LordOfTheRings.Treachery.Cards.FieryWhip
@@ -604,6 +605,7 @@ allTreacherys =
     | card@(SomeTreacheryCard builder) <-
         [ SomeTreacheryCard eyesOfTheForest
         , SomeTreacheryCard huntedInHollin
+        , SomeTreacheryCard discordAndDistrust
         , SomeTreacheryCard huntingTheRing
         , SomeTreacheryCard arrowsInTheNight
         , SomeTreacheryCard fieryWhip

@@ -277,7 +277,7 @@ test('implemented Road Darkens scenarios offer Nightmare mode', async ({ page, g
   await page.emulateMedia({ reducedMotion: 'reduce' })
   await page.goto('/#/new-game')
   await page.getByRole('button', { name: 'The Lord of the Rings', exact: false }).click()
-  for (const name of ['The Ring Goes South', 'Journey in the Dark']) {
+  for (const name of ['The Ring Goes South', 'Journey in the Dark', 'Breaking of the Fellowship']) {
     await page.getByRole('button').filter({ hasText: name }).click()
     const nightmare = page.getByRole('radio', { name: 'Nightmare', exact: true })
     await nightmare.click()

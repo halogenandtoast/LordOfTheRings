@@ -24,7 +24,7 @@ import LordOfTheRings.GameT (GameT)
 import LordOfTheRings.Helpers.Attachment
 import LordOfTheRings.Helpers.Discard (movableDiscardCards)
 import LordOfTheRings.Helpers.Modifiers (getModifiers, modifiedValue, playProhibitions, threatOf)
-import LordOfTheRings.Helpers.Window (exhaustableCharacters, getActionAbilities, limitSource, passesCriteria, passesCriteriaFor, travelableLocations)
+import LordOfTheRings.Helpers.Window (actionsAndResponsesAllowed, exhaustableCharacters, getActionAbilities, limitSource, passesCriteria, passesCriteriaFor, travelableLocations)
 import LordOfTheRings.Hero.Types
 import LordOfTheRings.I18n
 import LordOfTheRings.Keyword (Keyword (Doomed, GuardedBy, Secrecy))
@@ -534,7 +534,12 @@ runPlayer msg player = case msg of
 
 -- | Cards in the player's hand whose action from there can be used now, as Bofur's.
 handActions :: HasGame m => Player -> m [Card]
-handActions p = flip filterM p.hand \case
+handActions p = do
+  allowed <- actionsAndResponsesAllowed
+  if allowed then handActionsAllowed p else pure []
+
+handActionsAllowed :: HasGame m => Player -> m [Card]
+handActionsAllowed p = flip filterM p.hand \case
   c@(PlayerCard pc) | c.cardType == AllyType -> case (toAttrs $ createAlly pc (AllyId UUID.nil) p.id).allyHandAction of
     Just criteria -> andM [passesCriteriaFor p.id criteria, passesUnique c]
     Nothing -> pure False
@@ -593,7 +598,8 @@ canPayAdditional p c = case cdAdditionalCost (toCardDef c) of
 cannotPlay :: HasGame m => PlayerId -> Card -> m Bool
 cannotPlay pid c =
   orM
-    [ notNull <$> playProhibitions pid c
+    [ andM [pure $ c.cardType == EventType, not <$> actionsAndResponsesAllowed]
+    , notNull <$> playProhibitions pid c
     , andM [pure $ Master `member` cdCardTraits (toCardDef c), not <$> controlsTheOneRing pid]
     ]
 
@@ -710,7 +716,12 @@ correctPhase (EncounterCard _) = pure False
 
 -- | Whether an event is an action whose criteria let it be played now.
 actionEventPlayable :: HasGame m => PlayerCard -> m Bool
-actionEventPlayable card = case card.owner >>= lookupEvent (toCardCode card) card.id of
+actionEventPlayable card = do
+  allowed <- actionsAndResponsesAllowed
+  if allowed then actionEventPlayableAllowed card else pure False
+
+actionEventPlayableAllowed :: HasGame m => PlayerCard -> m Bool
+actionEventPlayableAllowed card = case card.owner >>= lookupEvent (toCardCode card) card.id of
   Just e | Nothing <- (toAttrs e).eventWindow -> passesCriteria (toAttrs e).eventCriteria
   Just e | Just criteria <- (toAttrs e).eventActionCriteria -> passesCriteria criteria
   _ -> pure False
