@@ -45,6 +45,11 @@ spec = describe "Generic codec compatibility" do
     let new = Discard (EnemySource eid) target
     (fromJSON (toJSON new) :: Result Message) `shouldBe` Success new :: Expectation
 
+  it "loads a saved effect duration from before one took a phase" do
+    (fromJSON (String "UntilEndOfRound") :: Result EffectDuration) `shouldBe` Success UntilEndOfRound
+    let new = UntilEndOfPhaseOf CombatPhase
+    (fromJSON (toJSON new) :: Result EffectDuration) `shouldBe` Success new :: Expectation
+
   it "loads a saved effect from before one marker per card played" do
     let tagged :: Text -> Value
         tagged t = object ["tag" .= t]

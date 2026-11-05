@@ -21,7 +21,14 @@ data EffectDuration
     -- engagement costs
     UntilEndOfEngagementChecks
   deriving stock (Show, Eq, Generic)
-  deriving anyclass (ToJSON, FromJSON)
+  deriving anyclass (ToJSON)
+
+-- | A saved game from before 'UntilEndOfPhaseOf' holds a duration as its bare tag, as
+-- aeson writes a type whose constructors all take nothing.
+instance FromJSON EffectDuration where
+  parseJSON = \case
+    String tag -> genericParseJSON defaultOptions (object ["tag" .= tag])
+    v -> genericParseJSON defaultOptions v
 
 -- | A lasting effect: modifiers on a target until the end of a phase or round.
 data Effect = Effect
