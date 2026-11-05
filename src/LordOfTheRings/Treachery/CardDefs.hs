@@ -543,6 +543,11 @@ allTreacheryCards =
       , unseenBarrier
       , fightingUrukHai
       , sarumansOrders
+      , scalingLadders
+      , devilryOfSaruman
+      , recklessHate
+      , nightWithoutEnd
+      , poisonedCounselsTheTreasonOfSaruman
       ]
 
 deepDeepDark :: CardDef
@@ -3404,3 +3409,40 @@ fightingUrukHai = (treachery "143065" "Fighting Uruk-hai" OrcsOfTheWhiteHand 2) 
 
 sarumansOrders :: CardDef
 sarumansOrders = (treachery "143067" "Saruman's Orders" SnagaOrcs 2) {cdShadowEffect = True, cdEasyModeQuantity = Just 1}
+
+-- * Helm's Deep
+
+-- | Attached to the active location, it counts as a Siege attachment.
+scalingLadders :: CardDef
+scalingLadders =
+  (treachery "143042" "Scaling Ladders" HelmsDeep 3)
+    { cdKeywords = setFromList [Surge]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
+    }
+
+devilryOfSaruman :: CardDef
+devilryOfSaruman = (treachery "143043" "Devilry of Saruman" HelmsDeep 3) {cdShadowEffect = True, cdEasyModeQuantity = Just 2}
+
+recklessHate :: CardDef
+recklessHate = (treachery "143044" "Reckless Hate" HelmsDeep 2) {cdKeywords = setFromList [Peril], cdShadowEffect = True}
+
+nightWithoutEnd :: CardDef
+nightWithoutEnd =
+  (treachery "143045" "Night Without End" HelmsDeep 2)
+    { cdKeywords = setFromList [Peril, Doomed 2]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
+    }
+
+-- | A burden of Helm's Deep's burden set, with a player card back: shuffled into a
+-- player's deck as stage 1A is set up, never gathered, and never revealed.
+poisonedCounselsTheTreasonOfSaruman :: CardDef
+poisonedCounselsTheTreasonOfSaruman =
+  (treachery "143021" "Poisoned Counsels" HelmsDeep 4)
+    { cdEncounterSet = Nothing
+    , cdSetIcon = Just HelmsDeep
+    , cdCardTraits = setFromList [Corruption]
+    , cdKeywords = setFromList [FunctionsLikeAPlayerCard]
+    , cdWhenRevealed = False
+    }

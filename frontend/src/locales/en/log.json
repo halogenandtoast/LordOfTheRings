@@ -123,6 +123,8 @@
   "questSucceeds": "The quest succeeds: {progress}",
   "questFails": "The quest fails: threat rises by {count}",
   "questTied": "The quest is held: no progress, no threat",
+  "questDefended": "The defenders hold: the encounter deck places no progress",
+  "questOverrun": "The defenders are pushed back: the encounter deck places {progress}",
   "versus": "{willpower} against {threat}",
   "escapePasses": "The escape test is passed",
   "escapeFails": "The escape test is failed",

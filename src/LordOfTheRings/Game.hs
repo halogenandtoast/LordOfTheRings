@@ -2367,6 +2367,10 @@ runGameMessage msg g = case msg of
     willpower <- getCommittedWillpower
     threat <- getStagingThreat
     players <- getStagePlayers
+    -- the encounter deck tries to place progress on a stage with the Defense keyword: the
+    -- players place none by questing, and raise no threat by failing (The Treason of
+    -- Saruman rules insert, "Defense")
+    defense <- currentQuestHas DefenseKeyword
     if
       | willpower > threat -> do
           -- a delayed effect resolves before the reactions to its moment, whether or not
@@ -2386,10 +2390,9 @@ runGameMessage msg g = case msg of
             $ CreateEffect (Effect GameSource GameTarget [QuestedSuccessfullyThisPhase] UntilEndOfPhase)
             : delayed
             <> lowered
-            <> [ CheckWindows [mkAfter QuestedSuccessfully]
-               , PlaceProgressOnQuest (willpower - threat)
-               , CheckWindows [mkAfter PlacedProgressFromQuesting]
-               ]
+            <> [CheckWindows [mkAfter QuestedSuccessfully]]
+            <> (if defense then [] else [PlaceProgressOnQuest (willpower - threat), CheckWindows [mkAfter PlacedProgressFromQuesting]])
+            <> [CheckWindows [mkAfter QuestResolved]]
       | threat > willpower ->
           -- responses before the threat is raised may stop it, as Ever Onward's: see
           -- 'doesNotRaiseThreat'
@@ -2403,10 +2406,11 @@ runGameMessage msg g = case msg of
             pushAll
               $ CheckWindows [mkWhen QuestedUnsuccessfully]
               : delayed
-              <> [RaiseThreat pid (threat - willpower) | not spared, null damaged, pid <- players]
+              <> [RaiseThreat pid (threat - willpower) | not defense, not spared, null damaged, pid <- players]
+              <> [PlaceProgressOnQuest (threat - willpower) | defense]
               <> take 1 [DealDamage GameSource t (threat - willpower) | t <- damaged, inPlay g t]
-              <> [CheckWindows [mkAfter QuestedUnsuccessfully]]
-      | otherwise -> pure ()
+              <> [CheckWindows [mkAfter QuestedUnsuccessfully], CheckWindows [mkAfter QuestResolved]]
+      | otherwise -> push $ CheckWindows [mkAfter QuestResolved]
     pure $ g & lastCommittedWillpowerL ?~ willpower
   PlaceTimeCounters target -> do
     x <- getTimeX target

@@ -4,7 +4,7 @@ import Data.Map.Strict qualified as Map
 import LordOfTheRings.Card.CardDef
 import LordOfTheRings.Card.Code
 import LordOfTheRings.EncounterSet
-import LordOfTheRings.Keyword (Keyword (Battle, Capture, Dire, Race, Sailing, Siege, Surge, Time))
+import LordOfTheRings.Keyword (Keyword (Battle, Capture, DefenseKeyword, Dire, Race, Sailing, Siege, Surge, Time))
 import LordOfTheRings.Name (Name (..))
 import LordOfTheRings.Prelude
 import LordOfTheRings.Sphere (Sphere (Leadership, Lore, Neutral, Spirit, Tactics))
@@ -510,6 +510,11 @@ allQuestCards =
       , theRingBearerSetsOut
       , followTheOrcs
       , rescueTheCaptives
+      , theKingOfTheGoldenHall
+      , assaultOnHelmsDeep
+      , theHostsOfIsengard
+      , theWallIsBreached
+      , theKingRidesOut
       ]
 
 theDrippingWalls :: CardDef
@@ -2181,3 +2186,20 @@ followTheOrcs = quest "143069" "Follow the Orcs" TheUrukHai 1 1
 -- | X quest points, X the pursuit value, as 'followTheOrcs'.
 rescueTheCaptives :: CardDef
 rescueTheCaptives = quest "143070" "Rescue the Captives" TheUrukHai 2 1
+
+-- * Helm's Deep
+
+theKingOfTheGoldenHall :: CardDef
+theKingOfTheGoldenHall = (quest "143072" "The King of the Golden Hall" HelmsDeep 1 0) {cdQuestPoints = Nothing}
+
+assaultOnHelmsDeep :: CardDef
+assaultOnHelmsDeep = (quest "143073" "Assault on Helm's Deep" HelmsDeep 2 8) {cdKeywords = setFromList [DefenseKeyword]}
+
+theHostsOfIsengard :: CardDef
+theHostsOfIsengard = (quest "143074" "The Hosts of Isengard" HelmsDeep 3 8) {cdKeywords = setFromList [DefenseKeyword]}
+
+theWallIsBreached :: CardDef
+theWallIsBreached = (quest "143075" "The Wall is Breached!" HelmsDeep 4 8) {cdKeywords = setFromList [DefenseKeyword]}
+
+theKingRidesOut :: CardDef
+theKingRidesOut = (quest "143076" "The King Rides Out" HelmsDeep 5 0) {cdQuestPoints = Nothing}
