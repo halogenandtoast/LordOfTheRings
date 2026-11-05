@@ -338,6 +338,17 @@ spec = describe "We Must Away, Ere Break of Day" do
       l <- getCampaignLog
       sort (map (\p -> (p.code, p.seat)) (campaignLogPool l)) `shouldBe` sort [("131020", Just 0), ("131021", Just 0), ("131022", Just 0)]
 
+    it "Dawn Take You All has every player discover the troll hoard" . twoPlayerCampaignTestIn weMustAwayEreBreakOfDay (newCampaignLog "the-hobbit") testDeck $ \pid _ -> do
+      _ <- withBilbo pid
+      cave <- genEncounterCard Locations.trollCave
+      putGame . (scenarioL %~ overAttrs (victoryDisplayL .~ [EncounterCard cave])) =<< getGame
+      card <- genEncounterCard Quests.dawnTakeYouAll
+      run $ AdvanceToQuest card
+      resolveWhenRevealed pid
+      getsGame (.outcome) `shouldReturn` Just Won
+      l <- getCampaignLog
+      sort (map (\p -> (p.code, p.seat)) (campaignLogPool l)) `shouldBe` sort [(code, Just seat) | code <- ["131020", "131021", "131022"], seat <- [0, 1]]
+
     it "Dawn Take You All discovers nothing without Troll Cave in the victory display" . campaignTestIn weMustAwayEreBreakOfDay (newCampaignLog "the-hobbit") testDeck $ \pid -> do
       _ <- withBilbo pid
       card <- genEncounterCard Quests.dawnTakeYouAll

@@ -7,7 +7,6 @@ Doorstep rules insert, "Burgle" and "Treasure").
 module LordOfTheRings.Scenario.Scenarios.TheLonelyMountain (theLonelyMountain) where
 
 import Data.Aeson.Types (parseMaybe)
-import LordOfTheRings.Campaign (PoolCard (..), addToPool)
 import LordOfTheRings.EncounterSet qualified as EncounterSet
 import LordOfTheRings.Id (PlayerId)
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
@@ -16,7 +15,6 @@ import LordOfTheRings.Matcher
 import LordOfTheRings.Objective.CardDefs qualified as Objectives
 import LordOfTheRings.Quest.CardDefs qualified as Quests
 import LordOfTheRings.Scenario.Import.Lifted
-import LordOfTheRings.Scenario.Scenarios.AngmarAwakened (seatOf)
 import LordOfTheRings.Scenario.Scenarios.TheLonelyMountain.Helpers
 import LordOfTheRings.Source (Source (ScenarioSource))
 
@@ -152,18 +150,13 @@ instance RunMessage TheLonelyMountain where
                       push $ ScenarioSpecific "burgle.discard" (toJSON (n - 1))
                   pure $ TheLonelyMountain attrs
     ScenarioSpecific "burgle.fail" _ | Just b <- st.metaBurgling -> burgleResult b False
-    -- a treasure taken from under The Lonely Mountain into a player's hand
+    -- a treasure taken from under The Lonely Mountain into a player's hand: successfully
+    -- burgled, the players have discovered it if they win (stage 3B)
     PutInHand pc | toCardCode pc `elem` map toCardCode lonelyMountainTreasures, Just owner <- pc.owner -> do
-      let taken = st.metaTaken <> [(toCardCode pc, owner) | (toCardCode pc, owner) `notElem` st.metaTaken]
+      let new = toCardCode pc `notElem` map fst st.metaTaken
+          taken = st.metaTaken <> [(toCardCode pc, owner) | new]
+      when new $ discoverTreasure pc
       TheLonelyMountain <$> runMessage msg (attrs & metaL .~ toJSON st {metaTaken = taken})
-    -- Won, the players have discovered each treasure successfully burgled: the player who
-    -- took it may add it to his deck in the scenarios that list its set (The Hobbit: On the
-    -- Doorstep rules insert, "Treasure").
-    ResolveCampaign | Just l <- attrs.campaign -> do
-      found <- for st.metaTaken \(code, pid) -> fmap (code,) <$> seatOf pid
-      let treasure (code, seat) = PoolCard {poolCardCode = code, poolCardSeat = Just seat, poolCardAttachedTo = Nothing}
-          l' = foldl' (flip addToPool) l (map treasure $ catMaybes found)
-      TheLonelyMountain <$> runMessage msg (attrs & campaignL ?~ l')
     _ -> TheLonelyMountain <$> runMessage msg attrs
    where
     st = metaOf attrs

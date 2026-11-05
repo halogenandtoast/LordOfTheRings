@@ -9,7 +9,7 @@ module LordOfTheRings.Message.Lifted (
 ) where
 
 import LordOfTheRings.Attachment.CardDefs qualified as Attachments
-import LordOfTheRings.Campaign (CampaignLogUpdate)
+import LordOfTheRings.Campaign (CampaignLogUpdate (AddToPool), PoolCard (..))
 import LordOfTheRings.Card (Card (..), CardCode, CardCost (StaticCost), CardDef, CardType, EncounterCard, HasCardCode (..), IsCard (..), PlayerCard, cdCardTraits, cdCardType, cdCost, genEncounterCard, genPlayerCard, lookupCardDef, toCardDef)
 import LordOfTheRings.Trait (Trait (Boon, Master))
 import LordOfTheRings.Classes.Entity (Entity (toAttrs, toId))
@@ -21,7 +21,7 @@ import LordOfTheRings.Log.Refs (sourceCardCode)
 import LordOfTheRings.Classes.HasQueue
 import LordOfTheRings.Effect
 import LordOfTheRings.Entities (entitiesLocations, entitiesQuests)
-import LordOfTheRings.Game.Base (gameEffects, gameEntities, gamePhase, gameRevealer, gameScenario)
+import LordOfTheRings.Game.Base (gameEffects, gameEntities, gamePhase, gamePlayerOrder, gameRevealer, gameScenario)
 import LordOfTheRings.Saga (FellowshipSetup (..), fellowshipSetup)
 import LordOfTheRings.Scenario.Types (scenarioId)
 import LordOfTheRings.Helpers.Modifiers (cardsPlayedThisRound, getModifiers, immuneToSource, onlyMasterCardsAffect)
@@ -2529,6 +2529,19 @@ putObjectiveAllyIntoPlayUnder pid = push . PutObjectiveAllyIntoPlayUnder pid
 -- boons join the Campaign Pool: kept if the scenario is won.
 updateCampaignLog :: ReverseQueue m => CampaignLogUpdate -> m ()
 updateCampaignLog = push . UpdateCampaignLog
+
+{- | The players have discovered the treasure card: in campaign mode it goes to the
+Campaign Pool of every seat, each player then free to add 1 copy to his deck in a later
+scenario whose setup lists its set (see 'LordOfTheRings.Campaign.seatPoolCards'). The
+cards read "the players have discovered", and a player may add a treasure he has
+discovered, no more than 1 copy by title to his deck (The Hobbit: Over Hill and Under Hill
+rules insert, "Treasure"). Kept only if the scenario is won, as the cards make winning it
+the condition.
+-}
+discoverTreasure :: (ReverseQueue m, HasCardCode card) => card -> m ()
+discoverTreasure card = do
+  seats <- getsGame (length . gamePlayerOrder)
+  for_ [0 .. seats - 1] \seat -> updateCampaignLog $ AddToPool $ PoolCard (toCardCode card) (Just seat) Nothing
 
 -- | The card, from out of play, is shuffled into the player's deck, as Iârion's Pendant
 -- once the players choose it, or Recurring Nightmare.
