@@ -416,7 +416,7 @@ narrationFor = \case
     one $ mechanic [ikeyPart "log.makesHideTest" ["player" ~> who, "count" ~> t.hideValue]]
   ResolveHideTest t -> Just do
     (willpower, threat) <- hideTestTotals t
-    let versus = ikeyPart "log.hideVersus" ["willpower" ~> willpower, "threat" ~> threat]
+    let versus = ikeyPart "log.hideVersus" ["willpower" ~> stat "willpower" willpower, "threat" ~> stat "threat" threat]
         discarded = [mechanic [ikeyPart "log.discardedFromEncounterDeck" ["cards" ~> map EncounterCard t.hideDiscarded]] | notNull t.hideDiscarded]
     pure
       $ discarded

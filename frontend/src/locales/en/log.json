@@ -132,7 +132,7 @@
   "makesHideTest": "{player} makes a Hide {count} test",
   "hidePasses": "The Hide test is passed",
   "hideFails": "The Hide test is failed",
-  "hideVersus": "{willpower} willpower against {threat} threat",
+  "hideVersus": "{willpower} against {threat}",
   "lostEffects": "Lost: every Lost effect in play triggers",
   "questComplete": "{quest} is complete",
   "currentQuest": "{quest} is the current quest",

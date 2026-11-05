@@ -128,7 +128,13 @@ const requestUndo = () => {
     >
       <span v-if="hasKids" class="log-caret" :class="{ 'log-caret--open': open }">&#9654;</span>
       <span v-else class="log-caret-spacer" />
-      <span class="log-body"><LogPart v-for="(part, i) in entry.body" :key="i" :part="part" /></span>
+      <span class="log-body">
+        <template v-if="entry.kind === 'Test'">
+          <LogPart v-for="(part, i) in testSentence" :key="i" :part="part" />
+          <template v-if="testStats"> — <LogPart :part="testStats" /></template>
+        </template>
+        <template v-else><LogPart v-for="(part, i) in entry.body" :key="i" :part="part" /></template>
+      </span>
       <span v-if="hasKids && isPinned(path)" class="log-pin" :title="$t('log.pinned')" />
     </component>
 
