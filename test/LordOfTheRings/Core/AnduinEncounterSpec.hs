@@ -36,6 +36,31 @@ prompt pid = getQuestion pid <&> \case
   Just (QuestionLabel l _ _ _) -> Just l
   _ -> Nothing
 
+engagedWargs :: PlayerId -> GameT EnemyId
+engagedWargs pid = do
+  reveal Enemies.wargs []
+  eid <- theEnemy Enemies.wargs
+  run $ EngageEnemy pid eid
+  pure eid
+
+wargsPlacement :: EnemyId -> GameT (Maybe Placement)
+wargsPlacement eid = getsGame (fmap (enemyPlacement . toAttrs) . lookup eid . mapToList . (.entities.enemies))
+
+undefendedAttack :: PlayerId -> EnemyId -> GameT ()
+undefendedAttack pid eid = do
+  run $ EnemyAttack pid eid
+  passActions pid
+  chooseLabel "$label.takeAttackUndefended" pid
+  finishUndefended pid
+
+-- | Pass the actions and give the undefended damage to a hero.
+finishUndefended :: PlayerId -> GameT ()
+finishUndefended pid = do
+  passActions pid
+  getQuestion pid >>= \case
+    Just (QuestionLabel "$label.undefendedDamage" _ _ _) -> chooseOptionMatching "take the damage" pid (const True) >> finishUndefended pid
+    _ -> pure ()
+
 spec :: Spec
 spec = do
   describe "Wolf Rider" do
@@ -91,13 +116,29 @@ spec = do
 
   describe "Wargs" do
     it "returns to the staging area after attacking with a blank shadow card" . gameTest $ \pid -> do
-      reveal Enemies.wargs []
-      eid <- theEnemy Enemies.wargs
-      run $ EngageEnemy pid eid
-      [blank] <- traverse genEncounterCard [Locations.forestGate]
-      run $ AttachShadowCard eid blank
-      run $ CheckWindows [mkAfter $ EnemyAttacking eid pid]
-      getsGame (fmap (enemyPlacement . toAttrs) . lookup eid . mapToList . (.entities.enemies)) `shouldReturn` Just StagingArea
+      eid <- engagedWargs pid
+      run . AttachShadowCard eid =<< genEncounterCard Locations.forestGate
+      undefendedAttack pid eid
+      wargsPlacement eid `shouldReturn` Just StagingArea
+
+    it "still returns when the blank shadow card is discarded after it turned faceup" . gameTest $ \pid -> do
+      eid <- engagedWargs pid
+      run . AttachShadowCard eid =<< genEncounterCard Locations.forestGate
+      run $ EnemyAttack pid eid
+      passActions pid
+      chooseLabel "$label.takeAttackUndefended" pid
+      passActions pid
+      prompt pid `shouldReturn` Just "$label.undefendedDamage"
+      runOnly $ DiscardShadowCards eid
+      finishUndefended pid
+      wargsPlacement eid `shouldReturn` Just StagingArea
+
+    it "stays engaged when the blank shadow card is discarded before the shadow step" . gameTest $ \pid -> do
+      eid <- engagedWargs pid
+      run . AttachShadowCard eid =<< genEncounterCard Locations.forestGate
+      run $ DiscardShadowCards eid
+      undefendedAttack pid eid
+      wargsPlacement eid `shouldReturn` Just (EngagedWith pid)
 
     it "as a shadow gives the attacker +2 attack when undefended" . gameTest $ \pid -> do
       reveal Enemies.hummerhorns []
