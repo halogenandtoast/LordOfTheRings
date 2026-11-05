@@ -1517,9 +1517,22 @@ library
       LordOfTheRings.Event.Types
       LordOfTheRings.Frontend
       LordOfTheRings.Game
+      LordOfTheRings.Game.Areas
       LordOfTheRings.Game.Base
+      LordOfTheRings.Game.Cards
+      LordOfTheRings.Game.Combat
+      LordOfTheRings.Game.Dispatch
+      LordOfTheRings.Game.End
+      LordOfTheRings.Game.Loop
+      LordOfTheRings.Game.Message
+      LordOfTheRings.Game.Modifiers
+      LordOfTheRings.Game.Payment
       LordOfTheRings.Game.Public
+      LordOfTheRings.Game.Query
+      LordOfTheRings.Game.Runner
       LordOfTheRings.Game.SearchZones
+      LordOfTheRings.Game.Serialization
+      LordOfTheRings.Game.Setup
       LordOfTheRings.GameT
       LordOfTheRings.Heading
       LordOfTheRings.Helpers.Attachment
