@@ -188,6 +188,7 @@ spec = describe "The Siege of Gondor" do
       getModifiers (LocationTarget ship) >>= (`shouldSatisfy` notElem CannotBeTraveledTo)
 
     it "has each player search for a Corsair as the players travel to Great Corsair Ship, a Captain if able" . siegeTest $ \pid -> do
+      shipsInVictoryDisplay 3
       ship <- stageLocation Locations.greatCorsairShip
       _ <- setEncounterDeck [Enemies.corsairOfUmbar, Enemies.corsairCaptain, Enemies.haradrimPirate]
       run $ TravelTo ship
@@ -198,6 +199,7 @@ spec = describe "The Siege of Gondor" do
       enemyCodes `shouldReturn` [toCardCode Enemies.corsairCaptain]
 
     it "lets a player of two take any Corsair, the last a Captain when none was taken" . twoPlayerTestIn theSiegeOfGondor testDeck $ \p1 p2 -> do
+      shipsInVictoryDisplay 3
       ship <- stageLocation Locations.greatCorsairShip
       cards <- setEncounterDeck [Enemies.corsairOfUmbar, Enemies.corsairCaptain]
       run $ TravelTo ship

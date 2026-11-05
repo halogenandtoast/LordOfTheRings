@@ -97,7 +97,9 @@ putCardIntoHand :: PlayerId -> CardDef -> GameT Card
 putCardIntoHand pid def = do
   card <- PlayerCard <$> genPlayerCard def (Just pid)
   g <- getGame
-  putGame $ g & playersL . ix pid . handL %~ (card :)
+  let updated = g & playersL . ix pid . handL %~ (card :)
+  putGame updated
+  putGame . gainedAbilities =<< withHandModifiers =<< preloadModifiers updated
   pure card
 
 -- | Play the player's cards as printed, as a deck loaded without the FAQ's errata.
@@ -156,7 +158,9 @@ setEncounterDeck :: [CardDef] -> GameT [EncounterCard]
 setEncounterDeck defs = do
   cards <- traverse genEncounterCard defs
   g <- getGame
-  putGame $ g & scenarioL %~ overAttrs (encounterDeckL .~ cards)
+  let updated = g & scenarioL %~ overAttrs (encounterDeckL .~ cards)
+  putGame updated
+  putGame . gainedAbilities =<< withHandModifiers =<< preloadModifiers updated
   pure cards
 
 

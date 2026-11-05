@@ -344,6 +344,10 @@ spec = describe "Wrath and Ruin" do
     getModifiers gate >>= (`shouldSatisfy` elem ImmuneToPlayerCardEffects)
 
   it "has Thane Ulchor attack each player as the players travel to Gate of Dorwinion" . warTest $ \pid -> do
+    q <- stageB Quests.driveThemOut
+    run $ PlaceTokens GameSource q Progress 12
+    _ <- controlled pid Locations.ransackedHouse
+    _ <- controlled pid Locations.contestedSquare
     thane <- stage Enemies.thaneUlchorWrathAndRuin
     gate <- stageLocation Locations.gateOfDorwinion
     run $ TravelTo gate

@@ -15,7 +15,8 @@ allLocationCards =
   Map.fromList $
     map
       (\def -> (cdCardCode def, def))
-      [ woldOfRohan
+      [ theUruksTrail
+      , woldOfRohan
       , westernEmynMuil
       , langfloodRiver
       , glowingFissure
@@ -5129,3 +5130,7 @@ westernEmynMuil = (location "the-road-darkens-nightmare-breaking-of-the-fellowsh
 woldOfRohan :: CardDef
 woldOfRohan = (location "the-treason-of-saruman-nightmare-the-uruk-hai-005" "Wold of Rohan" TheUrukHaiNightmare 2 5 5)
   {cdCardTraits = setFromList [Plains, Hills], cdShadowEffect = True}
+
+theUruksTrail :: CardDef
+theUruksTrail = (location "the-treason-of-saruman-nightmare-the-uruk-hai-007" "The Uruk's Trail" TheUrukHaiNightmare 3 3 6)
+  {cdCardTraits = setFromList [Plains]}

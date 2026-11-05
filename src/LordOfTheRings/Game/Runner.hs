@@ -111,6 +111,7 @@ import LordOfTheRings.Modifier (
   ModifierType (
     CannotBeDefeated,
     TravelRequiresEngagingHighestToughness,
+    CannotBeTraveledTo,
     CannotBeDiscardedByEncounterCards,
     CannotEnterStagingArea,
     CannotLeavePlay,
@@ -282,9 +283,10 @@ runGameAllowed msg g = case msg of
   -- it becomes the active location, so it is still in the staging area as it is paid (as
   -- Hills of Dunland's draws are, FAQ 3.123)
   TravelTo lid -> do
-    requires <- elem TravelRequiresEngagingHighestToughness <$> getModifiers lid
+    mods <- getModifiers lid
+    let requires = TravelRequiresEngagingHighestToughness `elem` mods
     payable <- if requires then notNull <$> highestToughnessEngagements else pure True
-    if payable
+    if CannotBeTraveledTo `notElem` mods && payable
       then do
         push $ DoStep 1 msg
         runGame'' msg g

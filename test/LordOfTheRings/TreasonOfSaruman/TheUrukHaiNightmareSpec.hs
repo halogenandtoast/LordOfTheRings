@@ -2,7 +2,7 @@ module LordOfTheRings.TreasonOfSaruman.TheUrukHaiNightmareSpec (spec) where
 
 import LordOfTheRings.Objective.CardDefs qualified as Objectives
 import LordOfTheRings.Attachment.CardDefs qualified as Attachments
-import LordOfTheRings.Helpers.Window (getActionAbilities)
+import LordOfTheRings.Helpers.Window (getActionAbilities, travelableLocations)
 import LordOfTheRings.Location.Types (LocationAttrs (locationCardId))
 import LordOfTheRings.Ally.CardDefs qualified as Allies
 import LordOfTheRings.Location.CardDefs qualified as Locations
@@ -353,3 +353,92 @@ spec = describe "The Uruk-hai Nightmare" do
     chooseTarget pid lost
     getsGame (map toTarget . toList . (.entities.attachments)) `shouldReturn` [kept]
     map toCardCode . (.discard) <$> getPlayer pid `shouldReturn` [toCardCode Attachments.unexpectedCourage]
+
+  it "The Uruk's Trail searches for a non-unique Uruk-hai before becoming active" . uruk $ \pid -> do
+    lid <- stageLocation Locations.theUruksTrail
+    cards <- setEncounterDeck [Enemies.mauhur, Enemies.lugdush, Enemies.forestSpider, Enemies.isengardUruk]
+    travelableLocations >>= (`shouldSatisfy` elem lid)
+    run $ TravelTo lid
+    (.placement) <$> getLocation lid `shouldReturn` StagingArea
+    chooseTarget pid (CardIdTarget $ (fromJustNote "searched enemy" $ lastMay cards).id)
+    (.placement) <$> getLocation lid `shouldReturn` ActiveLocation
+    selectAny (EnemyWithCardCode $ toCardCode Enemies.isengardUruk) `shouldReturn` True
+    getQuestion pid >>= (`shouldSatisfy` isNothing)
+    heroes <- select (HeroControlledBy $ PlayerWithId pid)
+    for_ heroes (\hid -> getDamage (HeroTarget hid) `shouldReturn` 0)
+    sort . map toCardCode <$> getEncounterDeck `shouldReturn` sort (map toCardCode [Enemies.mauhur, Enemies.lugdush, Enemies.forestSpider])
+
+  it "The Uruk's Trail can find its enemy in the encounter discard pile" . uruk $ \pid -> do
+    lid <- stageLocation Locations.theUruksTrail
+    card <- genEncounterCard Enemies.orcOfTheWhiteHand
+    run $ AddToEncounterDiscard [card]
+    _ <- setEncounterDeck [Enemies.mauhur]
+    travelableLocations >>= (`shouldSatisfy` elem lid)
+    run $ TravelTo lid
+    chooseTarget pid (CardIdTarget card.id)
+    (.placement) <$> getLocation lid `shouldReturn` ActiveLocation
+    selectAny (EnemyWithCardCode $ toCardCode Enemies.orcOfTheWhiteHand) `shouldReturn` True
+    getEncounterDiscard `shouldReturn` []
+
+  it "The Uruk's Trail cannot be traveled to without an eligible enemy" . uruk $ \pid -> do
+    lid <- stageLocation Locations.theUruksTrail
+    _ <- setEncounterDeck [Enemies.mauhur, Enemies.lugdush, Enemies.forestSpider]
+    travelableLocations >>= (`shouldSatisfy` notElem lid)
+    run $ TravelTo lid
+    (.placement) <$> getLocation lid `shouldReturn` StagingArea
+    getQuestion pid >>= (`shouldSatisfy` isNothing)
+
+  it "The Uruk's Trail rechecks whether its travel cost can be paid" . uruk $ \_ -> do
+    lid <- stageLocation Locations.theUruksTrail
+    _ <- setEncounterDeck [Enemies.mauhur]
+    travelableLocations >>= (`shouldSatisfy` notElem lid)
+    _ <- setEncounterDeck [Enemies.urukHaiFighter]
+    travelableLocations >>= (`shouldSatisfy` elem lid)
+
+  it "The Uruk's Trail can be explored as the active location to reduce pursuit" . uruk $ \pid -> do
+    lid <- stageLocation Locations.theUruksTrail
+    cards <- setEncounterDeck [Enemies.urukHaiFighter]
+    run $ TravelTo lid
+    chooseTarget pid (CardIdTarget $ (fromJustNote "searched enemy" $ headMay cards).id)
+    run $ ScenarioSpecific "urukHai.setPursuit" (toJSON (10 :: Int))
+    run $ PlaceTokens GameSource (LocationTarget lid) Progress 6
+    offersAbilityOf pid (LocationTarget lid) `shouldReturn` True
+    selectAny (LocationWithId lid) `shouldReturn` False
+    chooseAbilityOf pid (LocationTarget lid)
+    getPursuit `shouldReturn` 7
+
+  it "The Uruk's Trail does not gain its response while explored in staging" . uruk $ \pid -> do
+    lid <- stageLocation Locations.theUruksTrail
+    run $ ScenarioSpecific "urukHai.setPursuit" (toJSON (10 :: Int))
+    run $ PlaceTokens GameSource (LocationTarget lid) Progress 6
+    offersAbilityOf pid (LocationTarget lid) `shouldReturn` False
+    getPursuit `shouldReturn` 10
+
+  it "The Uruk's Trail's pursuit reduction is optional" . uruk $ \pid -> do
+    lid <- stageLocation Locations.theUruksTrail
+    run $ PlaceLocation lid ActiveLocation
+    run $ ScenarioSpecific "urukHai.setPursuit" (toJSON (10 :: Int))
+    run $ PlaceTokens GameSource (LocationTarget lid) Progress 6
+    chooseLabel "$label.pass" pid
+    getPursuit `shouldReturn` 10
+
+  it "The Uruk's Trail's pursuit reduction stops at zero" . uruk $ \pid -> do
+    lid <- stageLocation Locations.theUruksTrail
+    run $ PlaceLocation lid ActiveLocation
+    run $ ScenarioSpecific "urukHai.setPursuit" (toJSON (1 :: Int))
+    run $ PlaceTokens GameSource (LocationTarget lid) Progress 6
+    chooseAbilityOf pid (LocationTarget lid)
+    getPursuit `shouldReturn` 0
+
+  it "blanking The Uruk's Trail removes its travel cost and exploration response" . uruk $ \pid -> do
+    lid <- stageLocation Locations.theUruksTrail
+    _ <- setEncounterDeck [Enemies.mauhur]
+    run $ CreateEffect $ Effect GameSource (LocationTarget lid) [Blank] UntilEndOfRound
+    travelableLocations >>= (`shouldSatisfy` elem lid)
+    run $ TravelTo lid
+    getQuestion pid >>= (`shouldSatisfy` isNothing)
+    (.placement) <$> getLocation lid `shouldReturn` ActiveLocation
+    run $ ScenarioSpecific "urukHai.setPursuit" (toJSON (10 :: Int))
+    run $ PlaceTokens GameSource (LocationTarget lid) Progress 6
+    offersAbilityOf pid (LocationTarget lid) `shouldReturn` False
+    getPursuit `shouldReturn` 10

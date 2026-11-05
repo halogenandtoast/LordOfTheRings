@@ -204,6 +204,7 @@ spec = describe "The Ghost of Framsburg" do
 
   it "brings out Fram's Shade to attack as the players travel to The Cursed Tomb" . framsburgTest $ \pid -> do
     tomb <- staged Locations.theCursedTomb
+    onHero [Objectives.cryptKey, Objectives.oldLantern, Objectives.scathasTeeth]
     _ <- setEncounterDeck [filler, Enemies.framsShade]
     run $ TravelTo tomb
     chooseOptionMatching "search for Fram's Shade" pid (const True)
