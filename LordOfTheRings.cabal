@@ -1834,6 +1834,7 @@ library
       LordOfTheRings.Location.Cards.DarkColony
       LordOfTheRings.Location.Cards.DarkCornerOfFangorn
       LordOfTheRings.Location.Cards.DarkDoor
+      LordOfTheRings.Location.Cards.DarkenedMine
       LordOfTheRings.Location.Cards.DarkenedStairway
       LordOfTheRings.Location.Cards.DarkHalls
       LordOfTheRings.Location.Cards.DarkPassages
@@ -4203,6 +4204,7 @@ test-suite LordOfTheRings-test
       LordOfTheRings.TheLordOfTheRings.FlightToTheFordNightmareSpec
       LordOfTheRings.TheLordOfTheRings.FlightToTheFordSpec
       LordOfTheRings.TheRoadDarkens.BreakingOfTheFellowshipSpec
+      LordOfTheRings.TheRoadDarkens.JourneyInTheDarkNightmareSpec
       LordOfTheRings.TheRoadDarkens.JourneyInTheDarkSpec
       LordOfTheRings.TheRoadDarkens.TheRingGoesSouthNightmareSpec
       LordOfTheRings.TheRoadDarkens.TheRingGoesSouthSpec
