@@ -65,8 +65,7 @@ Overcome by Grief) to add to the Campaign Pool. If The Balrog is still in play, 
 player must choose all 4 burden cards instead. The chosen burdens have been earned by the
 players.
 
-The scenario asks as the last stage is defeated, before the game is won, as the game over
-asks nothing. A burden already in the pool is not added again.
+A burden already in the pool is not added again.
 -}
 earnBurdens :: ReverseQueue m => m ()
 earnBurdens = getsGame (scenarioCampaign . toAttrs . (.scenario)) >>= traverse_ \l -> do
