@@ -920,6 +920,7 @@ library
       LordOfTheRings.Enemy.Cards.HiveGuardian
       LordOfTheRings.Enemy.Cards.HoarwellRiverSerpent
       LordOfTheRings.Enemy.Cards.Hobgoblin
+      LordOfTheRings.Enemy.Cards.HostOfIsengard
       LordOfTheRings.Enemy.Cards.HoundOfSauron
       LordOfTheRings.Enemy.Cards.HowlingWarg
       LordOfTheRings.Enemy.Cards.Hummerhorns
@@ -4235,6 +4236,7 @@ test-suite LordOfTheRings-test
       LordOfTheRings.TheRoadDarkens.TheRingGoesSouthNightmareSpec
       LordOfTheRings.TheRoadDarkens.TheRingGoesSouthSpec
       LordOfTheRings.TravelPhaseSpec
+      LordOfTheRings.TreasonOfSaruman.HelmsDeepNightmareSpec
       LordOfTheRings.TreasonOfSaruman.HelmsDeepSpec
       LordOfTheRings.TreasonOfSaruman.TheRoadToIsengardSpec
       LordOfTheRings.TreasonOfSaruman.TheUrukHaiNightmareSpec
