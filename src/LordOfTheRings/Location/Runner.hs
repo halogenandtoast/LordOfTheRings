@@ -41,7 +41,7 @@ instance RunMessage LocationAttrs where
       gameMods <- getModifiers GameTarget
       -- reduced by so much first, as Deep Dark Passage reduces what a location in the
       -- staging area would take
-      let n = foldr min (max 0 $ n0 - sum [k | ProgressReducedBy k <- mods]) [k | ProgressReducedTo k <- mods]
+      let n = max 0 $ foldr min (max 0 $ n0 - sum [k | ProgressReducedBy k <- mods]) ([k | ProgressReducedTo k <- mods] <> [k | ProgressLimit k <- mods])
           limits = [k | ProgressPerRoundLimit k <- mods]
           placed = sum [k | ProgressPlacedThisRound k <- mods]
           room = foldr (\k -> min (max 0 $ k - placed)) n limits
@@ -56,6 +56,7 @@ instance RunMessage LocationAttrs where
           room' = foldr (min . snd) room shared
           record = [CreateEffect $ Effect GameSource GameTarget [ProgressPlacedOnTraitThisPhase trait room'] UntilEndOfPhase | (trait, _) <- shared, room' > 0]
       if
+        | n <= 0 -> pure attrs
         | null limits && null shared -> placeTokens source Progress n
         | room' <= 0 -> pure attrs
         | otherwise -> do

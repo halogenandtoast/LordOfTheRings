@@ -93,6 +93,7 @@ data Trait
   | Hills
   | Hobbit
   | Huorn
+  | Inn
   | Insect
   | Instrument
   | Isengard

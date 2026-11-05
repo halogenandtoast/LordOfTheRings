@@ -21,10 +21,6 @@ instance RunMessage GreenHillCountryNightmare where
       hideTest lead a 1
       GreenHillCountryNightmare <$> runMessage msg a
     ResolveShadowEffect cid eid pid _ | cid == a.cardId -> do
-      getNextPlayer pid >>= traverse_ \next -> do
-        again <- capture do
-          engageEnemy next eid
-          immediateAttack next eid
-        afterAttack eid again
+      attackNextPlayerAfterAttack eid pid
       pure l
     _ -> GreenHillCountryNightmare <$> runMessage msg a

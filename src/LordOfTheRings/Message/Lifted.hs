@@ -1313,6 +1313,15 @@ resolveWhenRevealedFromDiscard card = do
 returnToStagingAfterAttack :: (MonadTrans t, HasQueue Message m) => EnemyId -> t m ()
 returnToStagingAfterAttack eid = afterAttack eid [PlaceEnemy eid StagingArea]
 
+-- | After this attack, the enemy engages the next player and attacks with a shadow.
+attackNextPlayerAfterAttack
+  :: (MonadTrans t, HasQueue Message m, ReverseQueue (t m)) => EnemyId -> PlayerId -> t m ()
+attackNextPlayerAfterAttack eid pid = getNextPlayer pid >>= traverse_ \next -> do
+  again <- capture do
+    engageEnemy next eid
+    immediateAttack next eid
+  afterAttack eid again
+
 -- | The defending character is removed from the attack, which is now undefended.
 makeUndefended
   :: (MonadTrans t, HasQueue Message m, ReverseQueue (t m)) => PlayerId -> EnemyId -> t m ()

@@ -14,7 +14,9 @@ allEnemyCards =
   Map.fromList $
     map
       (\def -> (cdCardCode def, def))
-      [ khamulTheEasterlingNightmare
+      [ menacingWraith
+      , southernSpy
+      , khamulTheEasterlingNightmare
       , darkHorseman
       , greatWarg
       , frenziedWargRider
@@ -5406,3 +5408,13 @@ khamulTheEasterlingNightmare = (unique $ enemy "the-black-riders-nightmare-a-sha
 darkHorseman :: CardDef
 darkHorseman = (enemy "the-black-riders-nightmare-a-shadow-of-the-past-003" "Dark Horseman" AShadowOfThePastNightmare 2 25 3 4 4 6)
   {cdCardTraits = setFromList [Nazgul], cdKeywords = setFromList [Peril, Hide 2]}
+
+-- * A Knife in the Dark Nightmare
+
+menacingWraith :: CardDef
+menacingWraith = (enemy "the-black-riders-nightmare-a-knife-in-the-dark-002" "Menacing Wraith" AKnifeInTheDarkNightmare 2 40 4 5 4 6)
+  {cdCardTraits = setFromList [Nazgul]}
+
+southernSpy :: CardDef
+southernSpy = (enemy "the-black-riders-nightmare-a-knife-in-the-dark-003" "Southern Spy" AKnifeInTheDarkNightmare 4 25 3 4 2 4)
+  {cdCardTraits = setFromList [Spy], cdShadowEffect = True, cdWhenRevealed = True}

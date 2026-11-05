@@ -5,6 +5,8 @@ module LordOfTheRings.Objective.Runner (module X) where
 import LordOfTheRings.Card (cdCardType, cdKeywords, toCardDef)
 import LordOfTheRings.Classes.HasQueue (pushAll, pushWhen)
 import LordOfTheRings.Classes.RunMessage
+import LordOfTheRings.Helpers.Modifiers (getModifiers)
+import LordOfTheRings.Modifier (ModifierType (CannotReady))
 import LordOfTheRings.Keyword (Keyword (GuardedBy))
 import LordOfTheRings.Matcher (getLead)
 import LordOfTheRings.Message
@@ -42,7 +44,9 @@ instance RunMessage ObjectiveAttrs where
       pushAll $ doFrame msg (Exhausted $ toTarget attrs)
       pure attrs
     Do (Exhaust (isTarget attrs -> True)) -> pure $ attrs & exhaustedL .~ True
-    Ready (isTarget attrs -> True) -> pure $ attrs & exhaustedL .~ False
+    Ready (isTarget attrs -> True) -> do
+      blocked <- elem CannotReady <$> getModifiers attrs
+      pure $ attrs & exhaustedL %~ (&& blocked)
     PlaceUnderneath (isTarget attrs -> True) cards -> pure $ attrs & underneathL <>~ cards
     PlaceTokens _ (isTarget attrs -> True) token n -> do
       pure $ attrs & tokensL %~ addTokens token n

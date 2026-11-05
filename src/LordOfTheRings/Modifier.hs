@@ -437,7 +437,8 @@ data ModifierType
     DamagePlacedFirstOn Target Int
   | -- | on a character: it commits to the quest without exhausting
     DoesNotExhaustToCommit
-  | -- | on the game: no player card may cancel an encounter card's effects
+  | -- | on the game: no player card may cancel an encounter card's effects; on a hero,
+    -- its own effect cannot cancel them
     CannotCancelEncounterEffects
   | -- | on an encounter card: its When Revealed effect cannot be canceled; on the game:
     -- no encounter card's can be

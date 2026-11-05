@@ -15,7 +15,11 @@ allLocationCards =
   Map.fromList $
     map
       (\def -> (cdCardCode def, def))
-      [ eastfarthing
+      [ weathertopNightmare
+      , weatherHillsNightmare
+      , theOldRoadNightmare
+      , forsakenInn
+      , eastfarthing
       , greenHillCountryNightmare
       , stockWoods
       , embattledValley
@@ -5037,3 +5041,21 @@ greenHillCountryNightmare = (location "the-black-riders-nightmare-a-shadow-of-th
 stockWoods :: CardDef
 stockWoods = (location "the-black-riders-nightmare-a-shadow-of-the-past-006" "Stock Woods" AShadowOfThePastNightmare 3 4 5)
   {cdCardTraits = setFromList [Forest], cdShadowEffect = True}
+
+-- * A Knife in the Dark Nightmare
+
+weathertopNightmare :: CardDef
+weathertopNightmare = (location "the-black-riders-nightmare-a-knife-in-the-dark-004" "Weathertop" AKnifeInTheDarkNightmare 1 4 6)
+  {cdCardTraits = setFromList [Hills, Ruins], cdUnique = True, cdVictoryPoints = Just 3}
+
+weatherHillsNightmare :: CardDef
+weatherHillsNightmare = (location "the-black-riders-nightmare-a-knife-in-the-dark-005" "Weather Hills" AKnifeInTheDarkNightmare 3 3 5)
+  {cdCardTraits = setFromList [Hills], cdShadowEffect = True}
+
+theOldRoadNightmare :: CardDef
+theOldRoadNightmare = (location "the-black-riders-nightmare-a-knife-in-the-dark-006" "The Old Road" AKnifeInTheDarkNightmare 3 2 8)
+  {cdCardTraits = setFromList [Road]}
+
+forsakenInn :: CardDef
+forsakenInn = (location "the-black-riders-nightmare-a-knife-in-the-dark-007" "Forsaken Inn" AKnifeInTheDarkNightmare 2 0 4)
+  {cdCardTraits = setFromList [Inn]}

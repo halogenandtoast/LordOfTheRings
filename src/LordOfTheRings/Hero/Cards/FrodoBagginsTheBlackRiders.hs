@@ -18,7 +18,7 @@ frodoBagginsTheBlackRiders = hero FrodoBagginsTheBlackRiders Cards.frodoBagginsT
 -- Revealed effects resolve, as The Master Ring is.
 instance HasAbilities FrodoBagginsTheBlackRiders where
   getAbilities (FrodoBagginsTheBlackRiders a) =
-    [ restricted a 1 (EncounterEffectsCancelable <> sagaOneRingReady)
+    [ restricted a 1 (EncounterEffectsCancelable <> TargetLacksModifier (toTarget a) CannotCancelEncounterEffects <> sagaOneRingReady)
         $ ResponseAbility (EncounterCardRevealedWindow When) (SphereResourceCost a.owner Fellowship 1)
     ]
 

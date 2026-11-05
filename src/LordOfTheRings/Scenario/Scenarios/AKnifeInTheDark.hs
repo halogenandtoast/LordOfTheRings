@@ -8,8 +8,10 @@ import LordOfTheRings.EncounterSet qualified as EncounterSet
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Matcher (cardIs, cardMatches, getHero, select)
-import LordOfTheRings.Matcher.Types (CardMatcher (CardMatchAny), EnemyMatcher (AnyEnemy), HeroMatcher (HeroControlledBy), PlayerMatcher (PlayerWithId))
-import LordOfTheRings.Modifier (ModifierType (ThreatModifier))
+import LordOfTheRings.Matcher.Types (CardMatcher (CardMatchAny), EnemyMatcher (AnyEnemy, EnemyWithCardCode, EnemyInStagingArea), HeroMatcher (HeroControlledBy), PlayerMatcher (PlayerWithId))
+import LordOfTheRings.Modifier (ModifierType (ThreatModifier, ImmuneToPlayerCardEffects))
+import LordOfTheRings.Scenario.CardDefs qualified as Nightmare
+import LordOfTheRings.Treachery.CardDefs qualified as Treacheries
 import LordOfTheRings.Quest.CardDefs qualified as Quests
 import LordOfTheRings.Scenario.Import.Lifted
 
@@ -18,11 +20,18 @@ newtype AKnifeInTheDark = AKnifeInTheDark ScenarioAttrs
   deriving newtype (Show, Eq, ToJSON, Entity)
 
 aKnifeInTheDark :: Scenario
-aKnifeInTheDark = Scenario $ scenario AKnifeInTheDark "a-knife-in-the-dark" "A Knife in the Dark"
+aKnifeInTheDark = Scenario $ scenario (AKnifeInTheDark . (nightmareDeckL ?~ nightmare)) "a-knife-in-the-dark" "A Knife in the Dark"
+ where
+  -- https://hallofbeorn.com/LotR/Details/A-Knife-in-the-Dark-Nightmare-AKitDN
+  nightmare = nightmareDeck Nightmare.aKnifeInTheDarkNightmare EncounterSet.AKnifeInTheDarkNightmare
+    [(Enemies.shadyBreeLander, 4), (Locations.weatherHills, 3), (Treacheries.unwantedAttention, 1), (Locations.pathlessCountryHunted, 3), (Locations.weathertop, 1)]
 
 -- | While Weathertop is in the victory display, each enemy in play gets -1 threat.
 instance HasModifiersFor AKnifeInTheDark where
-  getModifiersFor (AKnifeInTheDark a) =
+  getModifiersFor (AKnifeInTheDark a) = do
+    when a.nightmare do
+      bills <- select (EnemyWithCardCode (toCardCode Enemies.billFerny) <> EnemyInStagingArea)
+      for_ bills \bill -> modified a bill [ImmuneToPlayerCardEffects]
     when (toCardCode Locations.weathertop `elem` map toCardCode a.victoryDisplay) do
       enemies <- select AnyEnemy
       for_ enemies \e -> modified a e [ThreatModifier (-1)]
@@ -44,7 +53,7 @@ instance RunMessage AKnifeInTheDark where
         gatherEncounterSets
           attrs
           [EncounterSet.AKnifeInTheDark, EncounterSet.Hunted, EncounterSet.TheRing, EncounterSet.TheNazgul]
-      let aside = CardMatchAny $ map cardIs [Enemies.ringwraith, Enemies.theWitchKing, Locations.midgewater, Locations.weathertop]
+      let aside = CardMatchAny $ map cardIs [Enemies.ringwraith, Enemies.theWitchKing, Locations.midgewater, Locations.weathertop, Locations.weathertopNightmare]
           (outOfPlay, deck) = partition (cardMatches aside) cards
       putQuestIntoPlay =<< genEncounterCard Quests.troubleInBree
       laterStages <- traverse genEncounterCard [Quests.intoTheWild, Quests.theRingwraithsAttack]

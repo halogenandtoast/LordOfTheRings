@@ -3621,6 +3621,8 @@
     "reveal": "Reveal an additional encounter card"
   },
   "aKnifeInTheDark": {
+    "chooseRingwraith": "Choose an out-of-play Ringwraith to shuffle into the encounter deck",
+    "ringwraithFrom": {"setAside": "From the set-aside cards", "discard": "From the encounter discard pile", "victory": "From the victory display"},
     "shuffleRingwraith": "Shuffle 1 out of play Ringwraith into the encounter deck",
     "chooseBoon": "A Knife in the Dark: choose a boon to attach to a hero you control"
   },
@@ -4063,5 +4065,7 @@
   "greatWarg": {"discard": "Choose an attachment you control to discard"},
   "gundabadElite": {"choose": "Remove progress or face Gundabad Elite's attack", "remove": "Remove 2 progress from the current quest", "attack": "Gundabad Elite attacks the first player"},
   "embattledValley": {"exhaust": "Exhaust a character to travel to Embattled Valley"},
-  "sniffingAndHissing": {"choose": "Exhaust The One Ring and reveal a card, or make a Hide test", "exhaust": "Exhaust The One Ring and reveal an encounter card", "hide": "Make a Hide 3 test"}
+  "sniffingAndHissing": {"choose": "Exhaust The One Ring and reveal a card, or make a Hide test", "exhaust": "Exhaust The One Ring and reveal an encounter card", "hide": "Make a Hide 3 test"},
+  "southernSpy": {"choose": "Southern Spy: shuffle a Ringwraith or take an immediate attack", "attack": "Southern Spy makes an immediate attack"},
+  "bladeTip": {"attach": "Attach Blade Tip to a defending character damaged by this attack"}
 }

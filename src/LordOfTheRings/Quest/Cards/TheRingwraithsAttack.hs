@@ -25,7 +25,7 @@ however it does (The Witch-king, added here, keeps one in play until then).
 instance RunMessage TheRingwraithsAttack where
   runMessage msg (TheRingwraithsAttack attrs) = case msg of
     Flip (isTarget attrs -> True) | not attrs.flipped -> do
-      addSetAsideToStaging (cardIs Locations.weathertop)
+      addSetAsideToStaging (CardMatchAny $ map cardIs [Locations.weathertop, Locations.weathertopNightmare])
       addSetAsideToStaging (cardIs Enemies.theWitchKing)
       (deck, pile) <- getsGame \g -> let s = toAttrs g.scenario in (s.encounterDeck, s.encounterDiscard)
       let nazgul = filter (cardMatches $ CardWithTrait Nazgul <> CardWithType EnemyType)
