@@ -400,6 +400,46 @@ spec = describe "Journey to the Cross-roads" do
       underBlackGate `shouldReturn` [toCardCode Enemies.captainOfHarad]
 
   describe "Arrows Thick in the Air" do
+    it "places the enemy under The Black Gate after its attack only when that option is chosen" . crossRoadsTest $ \pid -> do
+      run . AddToStaging =<< genEncounterCard Objectives.theBlackGate
+      eid <- engagedEnemy pid Enemies.forestSpider
+      defender <- toTarget <$> getHeroWithCode "01012"
+      _ <- setEncounterDeck [Enemies.hostOfIsengard]
+      run . AttachShadowCard eid =<< genEncounterCard Treacheries.arrowsThickInTheAir
+      run $ EnemyAttack pid eid
+      passActions pid
+      chooseTarget pid defender
+      passActions pid
+      chooseLabel "$label.arrowsThickInTheAir.blackGate" pid
+      passActions pid
+      getDamage defender `shouldReturn` 1
+      underBlackGate `shouldReturn` [toCardCode Enemies.forestSpider]
+      getsGame (Map.member eid . (.entities.enemies)) `shouldReturn` False
+      map toCardCode <$> getEncounterDeck `shouldReturn` [toCardCode Enemies.hostOfIsengard]
+
+    it "makes the additional attack without taking the unchosen Black Gate option" . crossRoadsTest $ \pid -> do
+      run . AddToStaging =<< genEncounterCard Objectives.theBlackGate
+      eid <- engagedEnemy pid Enemies.forestSpider
+      defender <- toTarget <$> getHeroWithCode "01012"
+      otherDefender <- toTarget <$> getHeroWithCode "01007"
+      _ <- setEncounterDeck [Enemies.hostOfIsengard]
+      run . AttachShadowCard eid =<< genEncounterCard Treacheries.arrowsThickInTheAir
+      run $ EnemyAttack pid eid
+      passActions pid
+      chooseTarget pid defender
+      passActions pid
+      chooseLabel "$label.arrowsThickInTheAir.attack" pid
+      passActions pid
+      getDamage defender `shouldReturn` 1
+      underBlackGate `shouldReturn` []
+      chooseTarget pid otherDefender
+      passActions pid
+      resolveShadowsInOrder pid
+      passActions pid
+      getDamage otherDefender `shouldReturn` 2
+      getsGame (Map.member eid . (.entities.enemies)) `shouldReturn` True
+      getEncounterDeck `shouldReturn` []
+
     it "gives each Harad enemy Archery 2 until the end of the round" . crossRoadsTest $ \pid -> do
       setUp pid
       _ <- stageEnemy Enemies.captainOfHarad

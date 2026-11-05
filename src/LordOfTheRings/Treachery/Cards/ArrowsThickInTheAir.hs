@@ -27,8 +27,11 @@ instance RunMessage ArrowsThickInTheAir where
       chooseOrRunOneM pid do
         questionLabeled "arrowsThickInTheAir.choose"
         causedBy attrs
-        when (isJust gate) $ labeled "arrowsThickInTheAir.blackGate" $ afterAttack eid [DoStep 1 msg]
+        when (isJust gate) $ labeled "arrowsThickInTheAir.blackGate" $ doStep 2 msg
         labeled "arrowsThickInTheAir.attack" $ additionalAttack pid eid
+      pure t
+    DoStep 2 shadow@(ResolveShadowEffect cid eid _ _) | cid == attrs.cardId -> do
+      afterAttack eid [DoStep 1 shadow]
       pure t
     DoStep 1 (ResolveShadowEffect cid eid _ _) | cid == attrs.cardId -> do
       placeUnderTheBlackGate eid
