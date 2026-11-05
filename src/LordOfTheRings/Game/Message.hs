@@ -63,7 +63,6 @@ import LordOfTheRings.Card (
   ),
   CardType (
     AllyType,
-    AttachmentType,
     EncounterSideQuestType,
     EnemyType,
     EventType,
@@ -78,6 +77,7 @@ import LordOfTheRings.Card (
   HasCardDef (toCardDef),
   IsCard (..),
   Sphere (Neutral),
+  isAttachmentType,
   lookupCardDef,
  )
 import LordOfTheRings.Card.Synthetic (orcGuard, reanimatedDead)
@@ -506,6 +506,7 @@ import LordOfTheRings.Message (
     EliminatePlayer,
     EncounterCardDrawn,
     EncounterCardEnteredHand,
+    EndEffect,
     EndEffects,
     EndEffectsFrom,
     EndGame,
@@ -764,6 +765,7 @@ import LordOfTheRings.Modifier (
     DamageNextRevealedEnemy,
     DamagePlacedFirstOn,
     DamageRedirectedTo,
+    CancelNextDamage,
     DamageReducedTo,
     DamagedWhileDefending,
     Defending,
@@ -969,6 +971,7 @@ import LordOfTheRings.Window (
   Window (Window),
   WindowType (
     AttackDealtDamage,
+    Claimed,
     AttackUndefended,
     AttackedAlone,
     AttackedEnemy,
@@ -1498,7 +1501,10 @@ runGameMessage msg g = case msg of
                   | Just e <- Map.lookup eid g.entities.enemies ->
                       sum $ [k | Blank `notElem` mods', Toughness k <- toList (cdKeywords $ toCardDef e)] <> [k | GainKeyword (Toughness k) <- mods']
                 _ -> 0
-              n' = foldr min (n - toughness) $ [k | DamageReducedTo k <- mods'] <> [max 0 (k - damage) | MaxDamage k <- mods']
+              reduced = foldr min (n - toughness) $ [k | DamageReducedTo k <- mods'] <> [max 0 (k - damage) | MaxDamage k <- mods']
+              -- the first effect canceling the next damage dealt to it cancels some, and ends
+              canceling = take 1 [e | e <- gameEffects g, effectTarget e == t, notNull [() | CancelNextDamage _ <- effectModifiers e]]
+              n' = reduced - sum [k | e <- canceling, CancelNextDamage k <- effectModifiers e]
               combat = case source of
                 PlayerAttackSource _ -> True
                 _ -> False
@@ -1506,14 +1512,16 @@ runGameMessage msg g = case msg of
                 (CannotBeDamagedByPlayerCardEffects `elem` mods' && isPlayerCardSource source)
                   || maybe False (\p -> CannotBeDamagedByEffectsOf p `elem` mods') controller
                   || any (\s -> sourceTarget s /= sourceTarget source || isNothing (sourceTarget s)) [s | CannotTakeDamageExceptFrom s <- mods']
+              blocked =
+                CannotTakeDamage `elem` mods'
+                  || reduced <= 0
+                  || (CannotTakeNonCombatDamage `elem` mods' && not combat)
+                  || (CannotTakeNonQuestDamage `elem` mods' && not (isQuestSource source))
+                  || barred
           pure
-            $ if CannotTakeDamage `elem` mods'
-              || n' <= 0
-              || (CannotTakeNonCombatDamage `elem` mods' && not combat)
-              || (CannotTakeNonQuestDamage `elem` mods' && not (isQuestSource source))
-              || barred
+            $ if blocked
               then []
-              else [CheckWindows [mkWhen $ DealtDamage t n'], DoStep 1 (DealDamage source t n')]
+              else map EndEffect canceling <> [m | n' > 0, m <- [CheckWindows [mkWhen $ DealtDamage t n'], DoStep 1 (DealDamage source t n')]]
     unless (CannotTakeDamage `elem` mods) $ pushAll =<< case redirected of
       [t] -> dealTo t
       -- the first player picks which takes it, as "dealt to 1 Morgul Bodyguard" reads
@@ -2899,7 +2907,7 @@ runGameMessage msg g = case msg of
         pure g
   PayForCard pid card fromHand windows
     -- a Guarded (X) attachment is not attached until it is free of encounters
-    | card.cardType == AttachmentType
+    | isAttachmentType card.cardType
     , not (any (\case GuardedBy _ -> True; _ -> False) (cdKeywords $ toCardDef card)) -> do
         -- a host that lowers the cost is chosen before paying
         hosts <- cardHosts pid (toCardCode card)
@@ -2935,6 +2943,7 @@ runGameMessage msg g = case msg of
   CreateEffect effect -> pure $ g & effectsL %~ (effect :)
   EndEffects duration -> pure $ g & effectsL %~ filter ((/= duration) . effectDuration)
   EndEffectsFrom source -> pure $ g & effectsL %~ filter ((/= source) . effectSource)
+  EndEffect e -> pure $ g & effectsL %~ (\es -> let (before, after) = break (== e) es in before <> drop 1 after)
   AdditionalPhases phases -> pure $ g & additionalPhasesL %~ (phases <>)
   -- the round goes on from its own phase once the additional instances after it are done
   NextPhase phase -> case gameAdditionalPhases g of
@@ -3719,9 +3728,14 @@ runGameMessage msg g = case msg of
   PlayAttachment pid card | Just types <- guardedTypes card -> g <$ push (ResolveGuardedPlayerCard pid card types)
   PlayAttachment pid card -> playAttachment pid card g
   -- free of encounters, it attaches to an eligible card, or with none is discarded
+  -- the card is claimed once attached, as an Ered Mithrin treasure's "After you claim"
   AttachFreedCard pid card -> do
     hosts <- cardHosts pid (toCardCode card)
-    if null hosts then g <$ push (PutInDiscard card) else playAttachment pid card g
+    if null hosts
+      then g <$ push (PutInDiscard card)
+      else do
+        push $ CheckWindows [mkAfter $ Claimed (CardIdTarget card.id)]
+        playAttachment pid card g
   -- a character can have at most 2 restricted attachments, claimed objectives among
   -- them: with a third, its controller discards one of them
   AttachCard aid host

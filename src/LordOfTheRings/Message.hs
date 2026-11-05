@@ -318,6 +318,8 @@ data Message
     EndEffects EffectDuration
   | -- | the lasting effects the source created end, as one held while a card resolves
     EndEffectsFrom Source
+  | -- | the one lasting effect ends, as one canceling the next damage once it has
+    EndEffect Effect
   | AttachCard AttachmentId Target
   | -- | the character's restricted cards are counted again, after one is discarded
     CheckRestricted Target
