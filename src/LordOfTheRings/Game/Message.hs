@@ -797,6 +797,8 @@ import LordOfTheRings.Modifier (
     HealedThisRound,
     IgnoreAmbush,
     IgnoreDeep,
+    IgnoreDiscover,
+    CannotBeDiscardedByEncounterCards,
     IgnoresDefenseOfWhenAttackingAlone,
     IgnoresDefenseWhenAttackingAlone,
     ImmuneToRangedDamage,
@@ -1761,7 +1763,9 @@ runGameMessage msg g = case msg of
   ResolveDeep lid | Just l <- Map.lookup lid g.entities.locations -> do
     deep <- hasKeyword Deep (toTarget l) (toCardDef l)
     ignored <- elem IgnoreDeep <$> getModifiers GameTarget
-    pushWhen (deep && not ignored && l.placement == ActiveLocation && notNull (toAttrs g.scenario).cavesDeck)
+    -- the Deep keyword is the location's own text discarding it
+    kept <- elem CannotBeDiscardedByEncounterCards <$> getModifiers (toTarget l)
+    pushWhen (deep && not ignored && not kept && l.placement == ActiveLocation && notNull (toAttrs g.scenario).cavesDeck)
       $ ReplaceWithTopOfCavesDeck lid
     pure g
   ResolveDeep _ -> pure g
@@ -1771,7 +1775,8 @@ runGameMessage msg g = case msg of
   -- it to the staging area, and discards the rest (MEC69 rules). A change to X made for
   -- this resolution, as Crypt Key's, is spent by it.
   ResolveDiscover pid lid | Just l <- Map.lookup lid g.entities.locations -> do
-    value <- discoverValue (toTarget l) (toCardDef l)
+    ignored <- elem IgnoreDiscover <$> getModifiers GameTarget
+    value <- if ignored then pure Nothing else discoverValue (toTarget l) (toCardDef l)
     let spent e = effectDuration e == UntilSpent && effectTarget e == toTarget lid && any isDiscoverValueModifier (effectModifiers e)
         g' = g & effectsL %~ filter (not . spent)
         s = toAttrs g.scenario

@@ -396,6 +396,11 @@ data ModifierType
     BlankAttachments
   | -- | on the game: the Deep keyword is ignored, as The Fire Worm reads
     IgnoreDeep
+  | -- | on the game: the Discover keyword is ignored, as Mount Gundabad's campaign card reads
+    IgnoreDiscover
+  | -- | on a location: encounter card effects cannot discard it from play, as Mount
+    -- Gundabad's campaign card reads for unique locations
+    CannotBeDiscardedByEncounterCards
   | -- | on a location: its Discover value moves by this much, as Hidden Staircase's X and
     -- Crypt Key's 1 read
     DiscoverValueModifier Int
