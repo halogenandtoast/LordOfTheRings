@@ -13,7 +13,7 @@ import LordOfTheRings.Enemy.Types (enemyCardId)
 import LordOfTheRings.Entities
 import LordOfTheRings.Game.Base
 import LordOfTheRings.Campaign (recorded)
-import LordOfTheRings.Helpers.Attachment (cardHosts)
+import LordOfTheRings.Helpers.Attachment (cardHosts, playableAttachmentsInHand)
 import LordOfTheRings.Helpers.Campaign (getCampaignLog)
 import LordOfTheRings.Helpers.Fellowship (readySagaOneRing, theOneRingExhausted)
 import LordOfTheRings.Helpers.Modifiers (cardsPlayedThisRound, getModifiers)
@@ -362,6 +362,7 @@ passesCriteria = \case
   AffordableAttachmentInDiscard pid sphere ->
     anyM (\(_, pc, _) -> notNull <$> cardHosts pid (toCardCode pc)) =<< affordableDiscardedAttachments pid sphere
   AffordableAllyInHand pid sphere reduction minimumCost -> notNull <$> affordableAlliesInHand pid sphere reduction minimumCost
+  PlayableAttachmentInHand pid matcher reduction -> notNull <$> playableAttachmentsInHand pid matcher reduction
   AffordableAllyInHandWithoutMatch pid matcher -> notNull <$> affordableAlliesInHandWithoutMatch pid matcher
   BeforeCommitting ->
     andM [(== QuestPhase) <$> getsGame gamePhase, selectNone CommittedHero, selectNone CommittedAlly]

@@ -3,7 +3,7 @@ module LordOfTheRings.Attachment.Cards.AnvilOfGundabad (anvilOfGundabad) where
 import LordOfTheRings.Attachment.CardDefs qualified as Cards
 import LordOfTheRings.Attachment.Import.Lifted
 import LordOfTheRings.Card (CardType (AttachmentType), costAsResources)
-import LordOfTheRings.Sphere (Sphere (Neutral))
+import LordOfTheRings.Helpers.Attachment (playableAttachmentsInHand)
 import LordOfTheRings.Trait (Trait (Item))
 
 newtype AnvilOfGundabad = AnvilOfGundabad AttachmentAttrs
@@ -25,7 +25,7 @@ your hand, reducing its cost by 1.
 instance HasAbilities AnvilOfGundabad where
   getAbilities (AnvilOfGundabad a) =
     [mkAbility a 1 $ response $ AnyWindowOf [PlayedFromHandWindow After self, ClaimedWindow After self]]
-      <> [ restricted a 2 (CardInHandMatching a.controller itemAttachment) $ ActionAbility (Costs [exhaustCost a, ExhaustCost host])
+      <> [ restricted a 2 (PlayableAttachmentInHand a.controller itemAttachment 1) $ ActionAbility (Costs [exhaustCost a, ExhaustCost host])
          | AttachedTo host <- [a.placement]
          ]
    where
@@ -37,11 +37,9 @@ instance RunMessage AnvilOfGundabad where
       searchDeck pid a 5 itemAttachment True
       pure s
     UseCardAbility pid (isSource a -> True) 2 _ -> do
-      player <- getPlayer pid
+      -- only an Item attachment with a legal host it could go on
+      playable <- playableAttachmentsInHand pid itemAttachment 1
       let cost c = maybe 0 costAsResources c.cost
-      playable <- flip filterM [c | c <- player.hand, cardMatches itemAttachment c] \c -> do
-        resources <- getResourcesOfSphere pid (fromMaybe Neutral c.sphere)
-        andM [passesUnique c, pure (resources >= cost c - 1)]
       chooseOneM pid do
         questionLabeled "anvilOfGundabad.item"
         causedBy a

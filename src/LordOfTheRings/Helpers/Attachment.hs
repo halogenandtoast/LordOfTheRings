@@ -1,7 +1,8 @@
 module LordOfTheRings.Helpers.Attachment (module LordOfTheRings.Helpers.Attachment) where
 
 import Data.UUID qualified as UUID
-import LordOfTheRings.Attachment
+import {-# SOURCE #-} LordOfTheRings.Attachment (lookupAttachment)
+import LordOfTheRings.Attachment.Types
 import LordOfTheRings.Card
 import LordOfTheRings.Classes.Entity
 import LordOfTheRings.Classes.HasGame
@@ -44,6 +45,19 @@ cardHosts owner code = do
       && and [tr `member` cdCardTraits def | CannotHaveAttachmentsWithoutTrait tr <- mods]
  where
   def = toCardDef code
+
+{- | The matching attachment cards in the player's hand he could play now for so much less:
+the unique rule lets each in, his heroes have the resources of its sphere, and it has a
+host to go on, as Anvil of Gundabad's action plays an Item attachment "reducing its cost
+by 1".
+-}
+playableAttachmentsInHand :: (HasGame m) => PlayerId -> CardMatcher -> Int -> m [Card]
+playableAttachmentsInHand pid matcher reduction = do
+  player <- getPlayer pid
+  flip filterM [c | c@(PlayerCard _) <- player.hand, cardMatches matcher c] \c -> do
+    resources <- getResourcesOfSphere pid (fromMaybe Neutral c.sphere)
+    let cost = maybe 0 costAsResources c.cost
+    andM [passesUnique c, pure (resources >= cost - reduction), notNull <$> cardHosts pid (toCardCode c)]
 
 attachmentHosts :: (HasGame m) => AttachMatcher -> m [Target]
 attachmentHosts matcher = filterM (fmap (\ms -> CannotHaveAttachments `notElem` ms && CannotHavePlayerAttachments `notElem` ms) . getModifiers) =<< hosts matcher

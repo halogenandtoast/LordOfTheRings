@@ -38,6 +38,9 @@ data Criterion
     AffordableAttachmentInDiscard PlayerId Sphere
   | -- | an ally in hand affordable after a reduction, with a minimum cost
     AffordableAllyInHand PlayerId Sphere Int Int
+  | -- | a matching attachment in hand the player could play for so much less, on a host it
+    -- could go on, as Anvil of Gundabad's action needs
+    PlayableAttachmentInHand PlayerId CardMatcher Int
   | -- | a matching ally in hand affordable with resources of any sphere
     AffordableAllyInHandWithoutMatch PlayerId CardMatcher
   | -- | in the quest phase, before any character is committed

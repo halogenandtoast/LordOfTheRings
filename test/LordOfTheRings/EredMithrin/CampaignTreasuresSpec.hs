@@ -151,6 +151,25 @@ spec = describe "Ered Mithrin treasures" do
       chooseTarget pid (CardIdTarget blade.id)
       map (.id) . (.hand) <$> getPlayer pid >>= (`shouldSatisfy` \hand -> plate.id `elem` hand && blade.id `elem` hand)
 
+    it "plays only an Item attachment from hand that has a legal host, for 1 less" . gameTest $ \pid -> do
+      beravor <- hero beravorCode
+      anvil <- putAttachmentOn pid Attachments.anvilOfGundabad beravor
+      -- Boots from Erebor would go on a Dwarf or Hobbit, and none is in play; Healing
+      -- Herbs goes on a Lore hero, as Beravor is
+      _ <- putCardIntoHand pid Attachments.bootsFromErebor
+      herbs <- putCardIntoHand pid Attachments.healingHerbs
+      run $ ActionWindow pid
+      chooseAbilityOf pid anvil
+      question <- fromJustNote "no question" <$> getQuestion pid
+      [t | TargetLabel t _ <- questionChoices question] `shouldBe` [CardIdTarget herbs.id]
+
+    it "offers no action with only Item attachments that have no legal host" . gameTest $ \pid -> do
+      beravor <- hero beravorCode
+      anvil <- putAttachmentOn pid Attachments.anvilOfGundabad beravor
+      _ <- putCardIntoHand pid Attachments.bootsFromErebor
+      run $ ActionWindow pid
+      offersAbilityOf pid anvil `shouldReturn` False
+
   describe "Gondolin Shield" do
     it "exhausts and spends a resource to cancel a shadow effect against its defender, dealing another" . gameTest $ \pid -> do
       beravor <- hero beravorCode
