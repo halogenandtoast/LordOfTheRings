@@ -74,6 +74,9 @@ data WindowType
   | -- | the staging step ends, its cards revealed
     StagingStepEnds
   | ProgressPlaced Target Int
+  | -- | progress was placed on the current quest (see 'getCurrentQuest'), as well as the
+    -- 'ProgressPlaced' window for its card
+    ProgressPlacedOnCurrentQuest Int
   | QuestedUnsuccessfully
   | QuestedSuccessfully
   | -- | the progress from questing successfully has been placed
@@ -90,6 +93,10 @@ data WindowType
   | ShadowEffectResolved CardId EnemyId
   | -- | a shadow card dealt to an enemy: the enemy, the card, and the player it is engaged with
     ShadowCardDealt EnemyId CardId PlayerId
+  | -- | a shadow card turned faceup as the attack's shadow effects resolve: the enemy, the
+    -- card, the defending player and the defending characters. "When ... is dealt a shadow card with ..." is read
+    -- here (Nate French, ALeP 3.003; Caleb, ALeP 3.274 #3)
+    ShadowCardRevealed EnemyId CardId PlayerId [Target]
   | -- | a shadow card's effect about to resolve: the card, and the enemy it was dealt to
     ShadowEffectTriggered CardId EnemyId
   | -- | a shadow card's effect about to resolve during an attack the character defends:

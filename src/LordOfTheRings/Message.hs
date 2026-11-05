@@ -280,6 +280,8 @@ data Message
   | -- | the card's surge reveals one more card, unless every card of the encounter deck has
     -- already surged in this chain
     SurgeReveal CardId
+  | -- | the staging of the encounter deck's last card has resolved: see 'isResetHeld'
+    FinishEncounterDeckReset
   | {- | only the card's When Revealed effect resolves, as Lieutenant of Mordor's: it is
     not revealed, so no keyword, window or cancel touches it
     -}

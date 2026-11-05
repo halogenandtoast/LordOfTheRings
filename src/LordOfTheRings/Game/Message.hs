@@ -907,6 +907,7 @@ import LordOfTheRings.Saga (
 import LordOfTheRings.Scenario (
   ScenarioAttrs (scenarioId),
   cavesDeckL,
+  encounterDeckAfterHeldReset,
   encounterDeckL,
   encounterDiscardL,
   gainedVictoryPointsL,
@@ -1010,6 +1011,7 @@ import LordOfTheRings.Window (
     PhaseEnds,
     PlacedProgressFromQuesting,
     ProgressPlaced,
+    ProgressPlacedOnCurrentQuest,
     QuestDefeated,
     QuestResolved,
     QuestedSuccessfully,
@@ -1020,6 +1022,7 @@ import LordOfTheRings.Window (
     RoundEnds,
     ShadowEffectAgainst,
     ShadowEffectResolved,
+    ShadowCardRevealed,
     ShadowEffectTriggered,
     ShadowIncreasedAttack,
     StagingStepBegins,
@@ -2417,6 +2420,7 @@ runGameMessage msg g = case msg of
       -- dealt face up
       let resolving card =
             RevealShadowCard eid (ecId card)
+              : CheckWindows [mkWhen $ ShadowCardRevealed eid (ecId card) pid defenders]
               : if gained || cdShadowEffect (toCardDef card)
                 then
                   [ CheckWindows $ mkWhen (ShadowEffectTriggered (ecId card) eid)
@@ -2787,7 +2791,8 @@ runGameMessage msg g = case msg of
     pushWhen (x > 0) $ PlaceTokens GameSource target TimeCounter x
     pure g
   PlaceTokens _ target Progress n | n > 0, isQuestOrLocation target -> do
-    push $ CheckWindows [mkAfter $ ProgressPlaced target n]
+    current <- (== Just target) <$> getCurrentQuest
+    push $ CheckWindows $ mkAfter (ProgressPlaced target n) : [mkAfter $ ProgressPlacedOnCurrentQuest n | current]
     pure g
   -- tokens for a character by its card, as one put into play is known before it has an id
   PlaceTokens source (CardIdTarget cid) token n
@@ -4016,16 +4021,15 @@ runGameMessage msg g = case msg of
     surges <- hasKeyword Surge t (toCardDef card)
     pushWhen surges $ SurgeReveal card.id
     pure $ if surges then g else g & surgeChainL .~ []
-  -- With the encounter deck empty in the quest phase its discard pile is shuffled back in
-  -- at once, even before the last card revealed resolves, and a treachery's surge resolves
-  -- after it is discarded (Caleb Grace, Q&A on the sdajce forum, t1573). A discard pile
-  -- of surging treacheries alone would so be revealed again and again. The chain stops
-  -- once every card of the encounter deck has surged in it, each having been revealed
-  -- once, as Caleb rules a search through the whole deck for a card that is not there
-  -- resolves as best it can (ALeP FAQ 3.286).
+  -- In the quest phase the encounter deck is reset as it empties (after the staging of
+  -- its last card: see 'HeldReset'), so a deck of surging treacheries alone, each
+  -- discarded before its surge reveals the next, would be revealed again and again: the
+  -- rules as written never end the chain. The engine stops it once every card of the
+  -- encounter deck has surged in it, each having been revealed once. No ruling covers
+  -- this; it is a stop the game needs, not one a rule or FAQ gives.
   SurgeReveal cid -> do
     let chain = cid : gameSurgeChain g
-        deck = (toAttrs g.scenario).encounterDeck
+        deck = encounterDeckAfterHeldReset (toAttrs g.scenario)
     if notNull deck && all ((`elem` chain) . (.id)) deck
       then pure $ g & surgeChainL .~ []
       else do

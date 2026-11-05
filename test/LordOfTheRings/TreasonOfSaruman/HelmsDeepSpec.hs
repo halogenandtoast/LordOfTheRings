@@ -3,6 +3,7 @@ module LordOfTheRings.TreasonOfSaruman.HelmsDeepSpec (spec) where
 import LordOfTheRings.Campaign
 import LordOfTheRings.Card (CardDef (cdEncounterSet), toCardDef)
 import LordOfTheRings.EncounterSet (EncounterSet (..))
+import LordOfTheRings.Effect (Effect (..), EffectDuration (UntilEndOfPhase))
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Helpers.Modifiers (getModifiers)
 import LordOfTheRings.Helpers.Staging (getLocationThreat, getStagingThreat)
@@ -250,6 +251,18 @@ spec = describe "Helm's Deep" do
       questProgress `shouldReturn` 3
       -- Deeping Wall explored raises each player's threat by 4, questing nothing
       threatOf pid `shouldReturn` (threat + 4)
+
+    it "has no Defense while a side quest is the current quest: failing raises threat (Caleb Grace, ALeP FAQ 3.265)" . helmsTest $ \pid -> do
+      toStageTwo pid
+      card <- playWith pid "01012" 0 Quests.gatherInformation
+      passActions pid
+      side <- getsGame (toTarget . fromJustNote "no side quest" . find ((== card.id) . (.cardId) . toAttrs) . toList . (.entities.quests))
+      run $ CreateEffect $ Effect GameSource side [CurrentQuest] UntilEndOfPhase
+      threat <- threatOf pid
+      staging <- getStagingThreat
+      run QuestResolution
+      threatOf pid `shouldReturn` (threat + staging)
+      (.progress) <$> (locationAttrs =<< locationOf Locations.deepingWall) `shouldReturn` 0
 
     it "places no progress when the players quest successfully" . helmsTest $ \pid -> do
       toStageTwo pid

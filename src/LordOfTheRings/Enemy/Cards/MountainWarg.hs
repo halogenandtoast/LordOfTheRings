@@ -18,9 +18,9 @@ mountainWarg = enemy MountainWarg Cards.mountainWarg
 -- active location.)
 instance RunMessage MountainWarg where
   runMessage msg e@(MountainWarg attrs) = case msg of
-    ResolveShadow eid _ _ | eid == attrs.id -> do
-      let faceDown = filter ((`notElem` attrs.enemyShadowRevealed) . (.id)) attrs.shadowCards
-      when (any (not . cdShadowEffect . toCardDef) faceDown) $ returnToStagingAfterAttack eid
+    -- read as each shadow card turns faceup ('revealedShadowCards')
+    CheckWindows ws -> do
+      for_ [c | (c, _, _) <- revealedShadowCards attrs ws, not (cdShadowEffect $ toCardDef c)] \_ -> returnToStagingAfterAttack attrs.id
       MountainWarg <$> runMessage msg attrs
     ResolveShadowEffect cid eid _ _ | cid == attrs.cardId -> do
       mountain <- selectAny (IsActiveLocation <> LocationWithTrait Mountain)

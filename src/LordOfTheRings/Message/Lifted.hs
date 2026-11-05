@@ -55,8 +55,9 @@ import LordOfTheRings.Token
 import LordOfTheRings.Window (
   Timing (After, When),
   Window (..),
-  WindowType (AllyDiscardedByCardEffect, AttackersDeclared, CharacterRescued, DeclaredAsAttacker, DeclaredAsDefender, DefendedAttack, DiscardedFromEncounterDeck, EnemyAttacking, ShadowEffectTriggered, StagingStepEnds, ThreatRaisedByDoomed, ThreatRaisedByEncounter, ThreatReduced, Traveled, WhenRevealedCanceled),
+  WindowType (AllyDiscardedByCardEffect, AttackersDeclared, CharacterRescued, DeclaredAsAttacker, DeclaredAsDefender, DefendedAttack, DiscardedFromEncounterDeck, EnemyAttacking, ShadowCardRevealed, ShadowEffectTriggered, StagingStepEnds, ThreatRaisedByDoomed, ThreatRaisedByEncounter, ThreatReduced, Traveled, WhenRevealedCanceled),
   mkAfter,
+  mkWhen,
  )
 
 dealDamage
@@ -365,8 +366,10 @@ and the saga's Fellowship heroes (their rules inserts) do.
 
 A hero a setup instruction sets aside ('SetAsideHero') has not left play in that sense:
 The Battle of the Pelennor Fields' campaign card sets Aragorn aside until The Corsair Fleet
-brings him back, and his "If Aragorn leaves play, the players lose" cannot end the game
-before it begins.
+brings him, and his "If Aragorn leaves play, the players lose" does not trigger. He never
+entered play: in campaign mode the first player adds The Corsair Fleet to the staging area
+instead of taking control of Aragorn at the start of the game (FFG's preview article "The
+Battle of the Pelennor Fields", fantasyflightgames.com news, 29 June 2016).
 -}
 leavesPlay :: Targetable target => target -> Message -> Bool
 leavesPlay (toTarget -> t) = \case
@@ -1463,6 +1466,7 @@ resolveNewShadowCards eid pid defenders = do
   cancelMatching \case
     RevealShadowCard eid' _ -> eid' == eid
     ResolveShadowCard _ eid' _ _ -> eid' == eid
+    CheckWindows [Window When (ShadowCardRevealed eid' _ _ _)] -> eid' == eid
     CheckWindows (Window When (ShadowEffectTriggered _ eid') : _) -> eid' == eid
     _ -> False
   resolveShadowCards eid pid defenders
@@ -1474,6 +1478,7 @@ dealAndResolveShadowCard eid pid defenders card = do
   removeFromEncounterDiscard card
   push $ AttachShadowCard eid card
   push $ RevealShadowCard eid card.id
+  push $ CheckWindows [mkWhen $ ShadowCardRevealed eid card.id pid defenders]
   push $ ResolveShadowCard card.id eid pid defenders
 
 -- | Put the shadow card dealt to the enemy into play, engaged with the player.

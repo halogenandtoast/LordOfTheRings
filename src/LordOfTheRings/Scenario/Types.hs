@@ -127,6 +127,9 @@ data ScenarioAttrs = ScenarioAttrs
   , scenarioInResolution :: Bool
   -- ^ the game won or lost, the campaign card's resolution under way, as Arkham's
   -- 'inResolution': the game ends once it has resolved
+  , scenarioHeldReset :: Maybe [EncounterCard]
+  -- ^ the discard pile, top first, shuffled into the encounter deck as the quest phase
+  -- revealed the deck's last card, while that card's staging resolves: see 'HeldReset'
   }
   deriving stock (Show, Eq, Generic)
 
@@ -136,7 +139,7 @@ instance ToJSON ScenarioAttrs where
   toJSON = genericToJSON (aesonOptions $ Just "scenario")
 
 instance FromJSON ScenarioAttrs where
-  parseJSON = genericParseJSON (aesonOptions $ Just "scenario") . withDefaults [("setAside", toJSON ([] :: [EncounterCard])), ("orcGuards", object []), ("nightmareDeck", Null), ("meta", Null), ("hiddenCards", object []), ("heading", Null), ("corsairDeck", Null), ("corsairDiscard", toJSON ([] :: [EncounterCard])), ("unchartedDeck", toJSON ([] :: [EncounterCard])), ("grottoDeck", toJSON ([] :: [EncounterCard])), ("campaign", Null), ("campaignCardFlipped", toJSON False), ("outOfPlayResources", object []), ("guardedPlayerCards", object []), ("cavesDeck", toJSON ([] :: [EncounterCard])), ("evilCreaturesDeck", Null), ("evilCreaturesDiscard", toJSON ([] :: [EncounterCard])), ("gainedVictoryPoints", object []), ("powerOfMordorDeck", toJSON ([] :: [EncounterCard])), ("sackDeck", toJSON ([] :: [EncounterCard])), ("burdenDeck", toJSON ([] :: [EncounterCard])), ("inResolution", toJSON False)] . withMode
+  parseJSON = genericParseJSON (aesonOptions $ Just "scenario") . withDefaults [("setAside", toJSON ([] :: [EncounterCard])), ("orcGuards", object []), ("nightmareDeck", Null), ("meta", Null), ("hiddenCards", object []), ("heading", Null), ("corsairDeck", Null), ("corsairDiscard", toJSON ([] :: [EncounterCard])), ("unchartedDeck", toJSON ([] :: [EncounterCard])), ("grottoDeck", toJSON ([] :: [EncounterCard])), ("campaign", Null), ("campaignCardFlipped", toJSON False), ("outOfPlayResources", object []), ("guardedPlayerCards", object []), ("cavesDeck", toJSON ([] :: [EncounterCard])), ("evilCreaturesDeck", Null), ("evilCreaturesDiscard", toJSON ([] :: [EncounterCard])), ("gainedVictoryPoints", object []), ("powerOfMordorDeck", toJSON ([] :: [EncounterCard])), ("sackDeck", toJSON ([] :: [EncounterCard])), ("burdenDeck", toJSON ([] :: [EncounterCard])), ("inResolution", toJSON False), ("heldReset", Null)] . withMode
    where
     -- a game saved before modes kept only whether it was easy
     withMode = \case
@@ -177,6 +180,7 @@ scenario f sid name =
       , scenarioSackDeck = []
       , scenarioBurdenDeck = []
       , scenarioInResolution = False
+      , scenarioHeldReset = Nothing
       }
 
 instance Entity ScenarioAttrs where
@@ -296,3 +300,43 @@ instance HasField "campaign" ScenarioAttrs (Maybe CampaignLog) where
 
 instance HasField "inResolution" ScenarioAttrs Bool where
   getField = scenarioInResolution
+
+instance HasField "heldReset" ScenarioAttrs (Maybe [EncounterCard]) where
+  getField = scenarioHeldReset
+
+{- | The reset of an encounter deck the quest phase emptied by revealing its last card
+waits on that card's staging: the staging, When Revealed effects included, resolves
+before the deck is reset, if able; if it has to use the encounter deck, the deck is reset
+then and the effect finishes (FAQ v1.9, "When I reveal the last card of the encounter
+deck..."; ALeP FAQ 2.73). The discard pile is shuffled in as the card is revealed, so an
+effect that uses the deck finds it reset. Once the staging is done, or as it reveals
+another card, the held reset settles:
+-}
+data HeldReset
+  = -- | a card of the reset deck has left it: the deck was used, so reset as it was
+    ResetUsed
+  | -- | cards were added to the deck, none of the reset deck's taken, as Eastern Crows
+    -- shuffles itself back in: the deck is not empty, so it is not reset, and holds only
+    -- them (Caleb Grace, ALeP FAQ 3.110)
+    ResetUndone [EncounterCard]
+  | -- | nothing has used the deck: it is reset now, the cards discarded during the
+    -- staging shuffled in too
+    ResetPending
+
+heldResetState :: ScenarioAttrs -> Maybe HeldReset
+heldResetState a = settle <$> a.scenarioHeldReset
+ where
+  settle pile
+    | any ((`notElem` deckIds) . (.id)) pile = ResetUsed
+    | notNull added = ResetUndone added
+    | otherwise = ResetPending
+   where
+    deckIds = map (.id) a.scenarioEncounterDeck
+    added = filter ((`notElem` map (.id) pile) . (.id)) a.scenarioEncounterDeck
+
+-- | The encounter deck as the held reset will leave it, unshuffled.
+encounterDeckAfterHeldReset :: ScenarioAttrs -> [EncounterCard]
+encounterDeckAfterHeldReset a = case heldResetState a of
+  Just ResetPending -> a.scenarioEncounterDeck <> a.scenarioEncounterDiscard
+  Just (ResetUndone added) -> added
+  _ -> a.scenarioEncounterDeck

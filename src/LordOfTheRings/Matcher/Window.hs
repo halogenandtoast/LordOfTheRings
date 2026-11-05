@@ -87,8 +87,9 @@ data WindowMatcher
   | -- | at the end of the staging step, as The Fate of Balin reads
     StagingStepEndsWindow
   | ProgressPlacedWindow Timing Target
-  | -- | progress was placed on a quest card, as Shagrat reads "after progress is placed on
-    -- the quest"
+  | -- | progress was placed on the current quest, as Shagrat reads "after progress is
+    -- placed on the quest": "the quest" is the current quest, not any quest card (The Lost
+    -- Realm rules insert, "Side Quests")
     ProgressPlacedOnQuestWindow Timing
   | QuestedUnsuccessfullyWindow Timing
   | -- | a guarded character, or the given one, was rescued (see 'GuardCharacter')
@@ -462,7 +463,7 @@ windowMatches matcher (Window timing wType) = case (matcher, wType) of
   (StagingStepBeginsWindow, StagingStepBegins) -> True
   (StagingStepEndsWindow, StagingStepEnds) -> True
   (ProgressPlacedWindow t target, ProgressPlaced target' _) -> t == timing && target == target'
-  (ProgressPlacedOnQuestWindow t, ProgressPlaced (QuestTarget _) _) -> t == timing
+  (ProgressPlacedOnQuestWindow t, ProgressPlacedOnCurrentQuest _) -> t == timing
   (QuestedUnsuccessfullyWindow t, QuestedUnsuccessfully) -> t == timing
   (CharacterRescuedWindow t mt, CharacterRescued c) -> t == timing && maybe True (== c) mt
   (QuestedSuccessfullyWindow t, QuestedSuccessfully) -> t == timing

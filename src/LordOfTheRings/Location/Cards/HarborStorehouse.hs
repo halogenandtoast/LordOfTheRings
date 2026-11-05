@@ -27,13 +27,7 @@ instance RunMessage HarborStorehouse where
       thugs <- length <$> select (EnemyWithTrait Thug)
       when (thugs > 0) do
         replicateM_ thugs $ dealShadowCard eid
-        -- the new resolution turns over every shadow card still face down, so the rest of
-        -- this one's would resolve twice
-        cancelMatching \case
-          RevealShadowCard eid' _ -> eid' == eid
-          ResolveShadowCard _ eid' _ _ -> eid' == eid
-          CheckWindows (Window When (ShadowEffectTriggered _ eid') : _) -> eid' == eid
-          _ -> False
-        resolveShadowCards eid pid defenders
+        -- the new resolution turns over every shadow card still face down
+        resolveNewShadowCards eid pid defenders
       pure l
     _ -> HarborStorehouse <$> runMessage msg a

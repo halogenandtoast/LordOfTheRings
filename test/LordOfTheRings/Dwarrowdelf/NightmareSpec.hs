@@ -282,11 +282,13 @@ spec = describe "Dwarrowdelf nightmare decks" do
       for_ helpless (chooseTarget pid)
       getsGame (length . (.entities.heroes)) `shouldReturn` 2
 
-    it "Goblin Stalker gets +2 attack when dealt a shadow card with the pass icon" . nightmare theLongDark $ \pid -> do
+    it "Goblin Stalker gets +2 attack when dealt a shadow card with the pass icon, as it turns faceup" . nightmare theLongDark $ \pid -> do
       reveal Enemies.goblinStalker []
       eid <- enemyOf Enemies.goblinStalker
       run $ EngageEnemy pid eid
       run . AttachShadowCard eid =<< genEncounterCard Locations.dwarvenForge
+      getEnemyAttack eid `shouldReturn` 2
+      run $ ResolveShadow eid pid []
       getEnemyAttack eid `shouldReturn` 4
 
     it "Sentinel of the Deep stops its player drawing from any card effect" . nightmare theLongDark $ \pid -> do
