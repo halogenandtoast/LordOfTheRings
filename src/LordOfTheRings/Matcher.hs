@@ -951,7 +951,10 @@ getEliminationLevel :: HasGame m => PlayerId -> m Int
 getEliminationLevel pid = do
   mods <- map modifierType . Map.findWithDefault [] (PlayerTarget pid) <$> getsGame gameModifiers
   dire <- mainQuestIsDire
-  pure $ (if dire then 99 else 50) + sum [n | EliminationThreatModifier n <- mods]
+  -- Dire: each player's threat elimination level "is increased to 99" (The Mountain of
+  -- Fire rules insert). Read literally it is set to 99, so modifiers that move the level,
+  -- as The One Ring's -5, do not apply while the main quest is dire. No ruling found.
+  pure $ if dire then 99 else 50 + sum [n | EliminationThreatModifier n <- mods]
 
 -- | The main quest has the dire keyword (The Mountain of Fire rules insert, "Dire").
 mainQuestIsDire :: HasGame m => m Bool
