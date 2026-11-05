@@ -1,6 +1,6 @@
 cabal-version: 1.12
 
--- This file has been generated from package.yaml by hpack version 0.37.0.
+-- This file has been generated from package.yaml by hpack version 0.39.6.
 --
 -- see: https://github.com/sol/hpack
 
@@ -1086,6 +1086,7 @@ library
       LordOfTheRings.Enemy.Cards.SnowTroll
       LordOfTheRings.Enemy.Cards.SnowWarg
       LordOfTheRings.Enemy.Cards.SoldierOfAngmar
+      LordOfTheRings.Enemy.Cards.SoldierOfIsengard
       LordOfTheRings.Enemy.Cards.SoldierOfNurn
       LordOfTheRings.Enemy.Cards.SoullessCadaver
       LordOfTheRings.Enemy.Cards.SouthronArcher
@@ -1217,6 +1218,7 @@ library
       LordOfTheRings.Enemy.Cards.WargRider
       LordOfTheRings.Enemy.Cards.Wargs
       LordOfTheRings.Enemy.Cards.WarMumak
+      LordOfTheRings.Enemy.Cards.WarriorOfDunland
       LordOfTheRings.Enemy.Cards.WarriorOfNurn
       LordOfTheRings.Enemy.Cards.WarriorOfRhun
       LordOfTheRings.Enemy.Cards.WarriorOfRhunTheBlackGateOpens
@@ -1231,6 +1233,7 @@ library
       LordOfTheRings.Enemy.Cards.WightOfRhudaur
       LordOfTheRings.Enemy.Cards.WildBear
       LordOfTheRings.Enemy.Cards.WilderlandBear
+      LordOfTheRings.Enemy.Cards.WildHillman
       LordOfTheRings.Enemy.Cards.WildMumak
       LordOfTheRings.Enemy.Cards.WildWargs
       LordOfTheRings.Enemy.Cards.William
@@ -1776,6 +1779,8 @@ library
       LordOfTheRings.Location.Cards.DecrepitRooftops
       LordOfTheRings.Location.Cards.DeepChasm
       LordOfTheRings.Location.Cards.DeepDarkPassage
+      LordOfTheRings.Location.Cards.DeepingCulvert
+      LordOfTheRings.Location.Cards.DeepingWall
       LordOfTheRings.Location.Cards.DeepMines
       LordOfTheRings.Location.Cards.DeepRavine
       LordOfTheRings.Location.Cards.DenOfNight
@@ -1908,6 +1913,7 @@ library
       LordOfTheRings.Location.Cards.HauntedPillars
       LordOfTheRings.Location.Cards.HeartOfFangorn
       LordOfTheRings.Location.Cards.HelmOfTheStormcaller
+      LordOfTheRings.Location.Cards.HelmsGate
       LordOfTheRings.Location.Cards.HennethAnnun
       LordOfTheRings.Location.Cards.HiddenAlleyway
       LordOfTheRings.Location.Cards.HiddenCove
@@ -2038,6 +2044,7 @@ library
       LordOfTheRings.Location.Cards.PlunderedArmoury
       LordOfTheRings.Location.Cards.PortOfHarad
       LordOfTheRings.Location.Cards.PortOfPelargir
+      LordOfTheRings.Location.Cards.PosternDoor
       LordOfTheRings.Location.Cards.PrisonCell
       LordOfTheRings.Location.Cards.PrisonCellNightmare
       LordOfTheRings.Location.Cards.QuarterDeck
@@ -2181,6 +2188,7 @@ library
       LordOfTheRings.Location.Cards.TheHighlands
       LordOfTheRings.Location.Cards.TheHighPass
       LordOfTheRings.Location.Cards.TheHoarwell
+      LordOfTheRings.Location.Cards.TheHornburg
       LordOfTheRings.Location.Cards.TheIslet
       LordOfTheRings.Location.Cards.TheKingsLawn
       LordOfTheRings.Location.Cards.TheKingsLibrary
@@ -2428,6 +2436,7 @@ library
       LordOfTheRings.Objective.Cards.TheCorsairFleet
       LordOfTheRings.Objective.Cards.TheCorsairFleetGondor
       LordOfTheRings.Objective.Cards.TheCursedSword
+      LordOfTheRings.Objective.Cards.TheDefenseOfHelmsDeep
       LordOfTheRings.Objective.Cards.TheGoblinsAssault
       LordOfTheRings.Objective.Cards.TheHavensBurn
       LordOfTheRings.Objective.Cards.TheHeroesDefense
@@ -2492,6 +2501,7 @@ library
       LordOfTheRings.Quest.Cards.AShortcutToMushrooms
       LordOfTheRings.Quest.Cards.AShortRest
       LordOfTheRings.Quest.Cards.AssaultOnDolRhugar
+      LordOfTheRings.Quest.Cards.AssaultOnHelmsDeep
       LordOfTheRings.Quest.Cards.AttackOnPelargir
       LordOfTheRings.Quest.Cards.AWarmWelcome
       LordOfTheRings.Quest.Cards.AWayUp
@@ -2794,9 +2804,12 @@ library
       LordOfTheRings.Quest.Cards.TheHavenOfUmbar
       LordOfTheRings.Quest.Cards.TheHiddenWay
       LordOfTheRings.Quest.Cards.TheHillsOfEmynMuil
+      LordOfTheRings.Quest.Cards.TheHostsOfIsengard
       LordOfTheRings.Quest.Cards.TheHuntBegins
       LordOfTheRings.Quest.Cards.TheHuntIsUp
       LordOfTheRings.Quest.Cards.TheIronHills
+      LordOfTheRings.Quest.Cards.TheKingOfTheGoldenHall
+      LordOfTheRings.Quest.Cards.TheKingRidesOut
       LordOfTheRings.Quest.Cards.TheLandOfMordor
       LordOfTheRings.Quest.Cards.TheLastBattle
       LordOfTheRings.Quest.Cards.TheLastGasp
@@ -2844,6 +2857,7 @@ library
       LordOfTheRings.Quest.Cards.TheTunnelsOfTorechGorgor
       LordOfTheRings.Quest.Cards.TheTurnaround
       LordOfTheRings.Quest.Cards.TheUpperLevels
+      LordOfTheRings.Quest.Cards.TheWallIsBreached
       LordOfTheRings.Quest.Cards.TheWatersEdge
       LordOfTheRings.Quest.Cards.TheWeatherTurnsFoul
       LordOfTheRings.Quest.Cards.TheWhiteCityBesieged
@@ -2941,6 +2955,8 @@ library
       LordOfTheRings.Scenario.Scenarios.FlightToTheFord.Helpers
       LordOfTheRings.Scenario.Scenarios.FoundationsOfStone
       LordOfTheRings.Scenario.Scenarios.FoundationsOfStone.Helpers
+      LordOfTheRings.Scenario.Scenarios.HelmsDeep
+      LordOfTheRings.Scenario.Scenarios.HelmsDeep.Helpers
       LordOfTheRings.Scenario.Scenarios.IntoFangorn
       LordOfTheRings.Scenario.Scenarios.IntoFangorn.Helpers
       LordOfTheRings.Scenario.Scenarios.IntoIthilien
@@ -3213,6 +3229,7 @@ library
       LordOfTheRings.Treachery.Cards.DesecratedRuins
       LordOfTheRings.Treachery.Cards.Despair
       LordOfTheRings.Treachery.Cards.DeterminedDefense
+      LordOfTheRings.Treachery.Cards.DevilryOfSaruman
       LordOfTheRings.Treachery.Cards.DevilryOfTheDarkLand
       LordOfTheRings.Treachery.Cards.Disappearances
       LordOfTheRings.Treachery.Cards.Discovered
@@ -3376,6 +3393,7 @@ library
       LordOfTheRings.Treachery.Cards.MysteriousFog
       LordOfTheRings.Treachery.Cards.NewDevilry
       LordOfTheRings.Treachery.Cards.Nightfall
+      LordOfTheRings.Treachery.Cards.NightWithoutEnd
       LordOfTheRings.Treachery.Cards.NoCampfire
       LordOfTheRings.Treachery.Cards.NoQuarter
       LordOfTheRings.Treachery.Cards.NoRest
@@ -3417,6 +3435,7 @@ library
       LordOfTheRings.Treachery.Cards.PlaceOfEvil
       LordOfTheRings.Treachery.Cards.PoisonDarts
       LordOfTheRings.Treachery.Cards.PoisonedBySpiders
+      LordOfTheRings.Treachery.Cards.PoisonedCounselsTheTreasonOfSaruman
       LordOfTheRings.Treachery.Cards.Possession
       LordOfTheRings.Treachery.Cards.PowerBeyondDeath
       LordOfTheRings.Treachery.Cards.PowerfulInWrath
@@ -3444,6 +3463,7 @@ library
       LordOfTheRings.Treachery.Cards.RammingSpeed
       LordOfTheRings.Treachery.Cards.RansackedSupplies
       LordOfTheRings.Treachery.Cards.RavenTalisman
+      LordOfTheRings.Treachery.Cards.RecklessHate
       LordOfTheRings.Treachery.Cards.RecurveBow
       LordOfTheRings.Treachery.Cards.RegimentsOfCrows
       LordOfTheRings.Treachery.Cards.RelentlessAttack
@@ -3471,6 +3491,7 @@ library
       LordOfTheRings.Treachery.Cards.SavageAttack
       LordOfTheRings.Treachery.Cards.SavageFray
       LordOfTheRings.Treachery.Cards.SaveUs
+      LordOfTheRings.Treachery.Cards.ScalingLadders
       LordOfTheRings.Treachery.Cards.ScorchingSun
       LordOfTheRings.Treachery.Cards.ScourgeOfMordor
       LordOfTheRings.Treachery.Cards.SecretCultist
