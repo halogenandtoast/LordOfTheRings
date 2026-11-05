@@ -35,7 +35,7 @@ spider = do
 
 spec :: Spec
 spec = describe "Dwarrowdelf engine" do
-  it "heals an enemy with regenerate as the refresh phase begins" . gameTest $ \_ -> do
+  it "heals an enemy with regenerate during refresh, before player actions" . gameTest $ \_ -> do
     eid <- spider
     run $ CreateEffect $ Effect GameSource (toTarget eid) [GainKeyword (Regenerate 2)] UntilEndOfRound
     run $ PlaceTokens GameSource (toTarget eid) Damage 3

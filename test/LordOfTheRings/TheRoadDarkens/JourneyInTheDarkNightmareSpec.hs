@@ -7,14 +7,17 @@ import LordOfTheRings.Quest.CardDefs qualified as Quests
 import LordOfTheRings.Event.CardDefs qualified as Events
 import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Helpers.Character (getWillpower)
-import LordOfTheRings.Helpers.Staging (getLocationThreat, getEngagementCost)
-import LordOfTheRings.Matcher (select, HeroMatcher (HeroControlledBy), PlayerMatcher (PlayerWithId), getMainQuestProgress, getArcheryTotal)
+import LordOfTheRings.Helpers.Staging (getLocationThreat, getEngagementCost, getEnemyAttack, getEnemyDefense)
+import LordOfTheRings.Matcher (CardMatcher (CardWithCode), select, HeroMatcher (HeroControlledBy), PlayerMatcher (PlayerWithId), getMainQuestProgress, getArcheryTotal, getEnemy)
 import LordOfTheRings.Scenario (journeyInTheDark)
 import LordOfTheRings.Window (WindowType (CommittedToQuest), mkAfter)
 import LordOfTheRings.Helpers.Modifiers (getModifiers)
-import LordOfTheRings.Modifier (ModifierType (CannotHaveAttachments, CannotDiscardFromHand))
-import LordOfTheRings.Phase (Phase (PlanningPhase))
+import LordOfTheRings.Modifier (ModifierType (CannotHaveAttachments, CannotDiscardFromHand, ConsideredOutOfPlay, GainTrait, GainKeyword))
+import LordOfTheRings.Phase (Phase (PlanningPhase, RefreshPhase))
 import LordOfTheRings.Treachery.CardDefs qualified as Treacheries
+import LordOfTheRings.Scenario.Types (scenarioSetAside, setAsideL, victoryDisplayL)
+import LordOfTheRings.Trait (Trait (Weapon))
+import LordOfTheRings.Keyword (Keyword (Regenerate))
 import TestImport
 
 stageLocation :: CardDef -> GameT LocationId
@@ -35,6 +38,23 @@ stageSlabBearer = do
     ( toId . fromJustNote "Slab-bearer" . find ((== toCardCode Enemies.slabBearer) . toCardCode)
         . toList . (.entities.enemies)
     )
+
+stageBalrog :: GameT EnemyId
+stageBalrog = do
+  run . AddToStaging =<< genEncounterCard Enemies.theBalrog
+  getsGame (toId . fromJustNote "Balrog" . find ((== toCardCode Enemies.theBalrog) . toCardCode) . toList . (.entities.enemies))
+
+weaponOf :: CardDef -> GameT (TreacheryId, Placement)
+weaponOf def = getsGame
+  ( (\t -> (toId t, t.placement)) . fromJustNote "Balrog weapon"
+      . find ((== toCardCode def) . toCardCode) . toList . (.entities.treacheries)
+  )
+
+revealWeapon :: CardDef -> GameT ()
+revealWeapon def = do
+  _ <- setEncounterDeck [def]
+  run RevealEncounterCard
+  resolveRevealed
 
 spec :: Spec
 spec = describe "Journey in the Dark Nightmare" do
@@ -352,3 +372,99 @@ spec = describe "Journey in the Dark Nightmare" do
     heroes <- map toTarget <$> select (HeroControlledBy $ PlayerWithId pid)
     for_ heroes (\h -> getDamage h `shouldReturn` 0)
     getArcheryTotal `shouldReturn` 2
+
+  it "Fiery Whip and Flaming Sword attach to the Balrog and grant their traits, stats, and keywords" . gameTest $ \_ -> do
+    eid <- stageBalrog
+    baseDefense <- getEnemyDefense eid
+    baseAttack <- getEnemyAttack eid
+    revealWeapon Treacheries.fieryWhip
+    revealWeapon Treacheries.flamingSword
+    (whip, whipPlacement) <- weaponOf Treacheries.fieryWhip
+    (sword, swordPlacement) <- weaponOf Treacheries.flamingSword
+    whipPlacement `shouldBe` AttachedTo (EnemyTarget eid)
+    swordPlacement `shouldBe` AttachedTo (EnemyTarget eid)
+    getEnemyDefense eid `shouldReturn` (baseDefense + 1)
+    getEnemyAttack eid `shouldReturn` (baseAttack + 1)
+    getArcheryTotal `shouldReturn` 4
+    getModifiers (TreacheryTarget whip) >>= (`shouldSatisfy` elem (GainTrait Weapon))
+    getModifiers (TreacheryTarget sword) >>= (`shouldSatisfy` elem (GainTrait Weapon))
+    getModifiers (EnemyTarget eid) >>= (`shouldSatisfy` elem (GainKeyword $ Regenerate 4))
+
+  it "the weapons attach to the set-aside Balrog without bringing it into play, then follow it into staging" . gameTest $ \_ -> do
+    balrogCard <- genEncounterCard Enemies.theBalrog
+    putGame . (scenarioL %~ overAttrs (setAsideL .~ [balrogCard])) =<< getGame
+    revealWeapon Treacheries.fieryWhip
+    revealWeapon Treacheries.flamingSword
+    for_ [Treacheries.fieryWhip, Treacheries.flamingSword] \def -> do
+      (tid, placement) <- weaponOf def
+      placement `shouldBe` AttachedTo (CardIdTarget balrogCard.id)
+      getModifiers (TreacheryTarget tid) >>= (`shouldSatisfy` elem ConsideredOutOfPlay)
+    getsGame (length . (.entities.enemies)) `shouldReturn` 0
+    getsGame (map (.id) . scenarioSetAside . toAttrs . (.scenario)) `shouldReturn` [balrogCard.id]
+    getArcheryTotal `shouldReturn` 0
+    run $ AddSetAsideToStaging (CardWithCode $ toCardCode Enemies.theBalrog)
+    eid <- getsGame (toId . fromJustNote "Balrog" . headMay . toList . (.entities.enemies))
+    for_ [Treacheries.fieryWhip, Treacheries.flamingSword] \def -> do
+      (tid, placement) <- weaponOf def
+      placement `shouldBe` AttachedTo (EnemyTarget eid)
+      getModifiers (TreacheryTarget tid) >>= (`shouldSatisfy` notElem ConsideredOutOfPlay)
+    getArcheryTotal `shouldReturn` 4
+
+  it "the weapons can attach to the Balrog in the victory display without adding archery" . gameTest $ \_ -> do
+    balrogCard <- genEncounterCard Enemies.theBalrog
+    putGame . (scenarioL %~ overAttrs (victoryDisplayL .~ [EncounterCard balrogCard])) =<< getGame
+    revealWeapon Treacheries.fieryWhip
+    revealWeapon Treacheries.flamingSword
+    for_ [Treacheries.fieryWhip, Treacheries.flamingSword] \def -> do
+      (_, placement) <- weaponOf def
+      placement `shouldBe` AttachedTo (CardIdTarget balrogCard.id)
+    getArcheryTotal `shouldReturn` 0
+
+  it "Flaming Sword regenerates four damage during refresh" . gameTest $ \_ -> do
+    eid <- stageBalrog
+    revealWeapon Treacheries.flamingSword
+    run $ PlaceTokens GameSource (EnemyTarget eid) Damage 6
+    run $ BeginPhase RefreshPhase
+    getDamage (EnemyTarget eid) `shouldReturn` 2
+
+  for_ [Treacheries.fieryWhip, Treacheries.flamingSword] \def -> do
+    it ("attaches " <> show (toCardCode def) <> " to the Balrog from a shadow card") . gameTest $ \pid -> do
+      eid <- stageBalrog
+      baseDefense <- getEnemyDefense eid
+      baseAttack <- getEnemyAttack eid
+      run . AttachShadowCard eid =<< genEncounterCard def
+      run $ ResolveShadow eid pid []
+      (_, placement) <- weaponOf def
+      placement `shouldBe` AttachedTo (EnemyTarget eid)
+      length . (.shadowCards) <$> getEnemy eid `shouldReturn` 0
+      if toCardCode def == toCardCode Treacheries.fieryWhip
+        then do
+          getEnemyDefense eid `shouldReturn` (baseDefense + 1)
+          getArcheryTotal `shouldReturn` 4
+        else do
+          getEnemyAttack eid `shouldReturn` (baseAttack + 1)
+          getModifiers (EnemyTarget eid) >>= (`shouldSatisfy` elem (GainKeyword $ Regenerate 4))
+
+    it ("does not attach " <> show (toCardCode def) <> " to another attacking enemy") . gameTest $ \pid -> do
+      run . AddToStaging =<< genEncounterCard Enemies.goblinSniper
+      eid <- getsGame (toId . fromJustNote "enemy" . headMay . toList . (.entities.enemies))
+      run . AttachShadowCard eid =<< genEncounterCard def
+      run $ ResolveShadow eid pid []
+      getsGame (length . (.entities.treacheries)) `shouldReturn` 0
+
+  it "the Balrog's weapons are discarded with it and stop contributing archery" . gameTest $ \_ -> do
+    eid <- stageBalrog
+    revealWeapon Treacheries.fieryWhip
+    revealWeapon Treacheries.flamingSword
+    run $ Discard GameSource (EnemyTarget eid)
+    getsGame (length . (.entities.treacheries)) `shouldReturn` 0
+    getArcheryTotal `shouldReturn` 0
+    map toCardCode <$> getEncounterDiscard >>= (\codes -> codes `shouldSatisfy` (\xs -> all (`elem` xs) (map toCardCode [Treacheries.fieryWhip, Treacheries.flamingSword])))
+
+  it "discards the weapons when the Balrog enters the victory display" . gameTest $ \_ -> do
+    eid <- stageBalrog
+    revealWeapon Treacheries.fieryWhip
+    revealWeapon Treacheries.flamingSword
+    run $ AddToVictoryDisplay (EnemyTarget eid)
+    getsGame (length . (.entities.treacheries)) `shouldReturn` 0
+    getArcheryTotal `shouldReturn` 0

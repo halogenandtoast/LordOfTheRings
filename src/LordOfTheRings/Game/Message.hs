@@ -1233,12 +1233,6 @@ runGameMessage msg g = case msg of
       pushEnd step
     pure $ if isJust g.outcome then g' & effectsL %~ filter ((/= UntilEndOfRound) . effectDuration) else g'
   BeginPhase RefreshPhase -> do
-    -- an enemy with regenerate heals as much damage, unless Saruman holds it out of play
-    present <- filterM (notOutOfPlay . toTarget) (toList g.entities.enemies)
-    regenerating <- for present \e -> do
-      mods <- getModifiers e
-      let printed = [n | Blank `notElem` mods, Regenerate n <- toList (cdKeywords $ toCardDef e)]
-      pure [HealDamage (toSource e) (toTarget e) n | n <- printed <> [n | GainKeyword (Regenerate n) <- mods]]
     heroes <- filterM (fmap (notElem DoesNotReadyDuringRefresh) . getModifiers) =<< select ExhaustedHero
     allies <- select ExhaustedAlly
     attachments <- filterM (fmap (notElem DoesNotReadyDuringRefresh) . getModifiers) [a | a <- toList g.entities.attachments, attachmentExhausted (toAttrs a)]
@@ -1270,17 +1264,29 @@ runGameMessage msg g = case msg of
       traits <- characterTraits c
       pure [refreshing c, Ready c, CheckWindows [mkAfter $ Readied c traits]]
     pushAll
-      $ concat regenerating
-      <> concat readied
+      $ concat readied
       <> [RefreshUpTo pid n cs | (pid, n, cs) <- limited]
       <> [Ready (toTarget a) | a <- attachments]
       <> [Ready (toTarget o) | o <- objectives]
       <> [Ready (toTarget c) | c <- toList g.entities.contracts, c.exhausted]
       <> [RaiseThreat pid n | (pid, n) <- raises, n > 0]
       <> passToken
+      -- Shadow and Flame rulesheet: Regenerate resolves immediately after the first
+      -- player token passes, before player actions (not before cards ready).
+      -- https://www.fantasyflightgames.com/ffg_content/lotr-lcg/support/rulesheets/Shadow_and_Flame_rulesheet.pdf
+      <> [DoStep 1 (BeginPhase RefreshPhase)]
       -- the phase ends with an action window, for Refresh Actions as Escape from Darkness gives
       <> map OptionalActionWindow players
     pure $ g & phaseL .~ RefreshPhase
+  DoStep 1 (BeginPhase RefreshPhase) -> do
+    -- an enemy with regenerate heals as much damage, unless Saruman holds it out of play
+    present <- filterM (notOutOfPlay . toTarget) (toList g.entities.enemies)
+    regenerating <- for present \e -> do
+      mods <- getModifiers e
+      let printed = [n | Blank `notElem` mods, Regenerate n <- toList (cdKeywords $ toCardDef e)]
+      pure [HealDamage (toSource e) (toTarget e) n | n <- printed <> [n | GainKeyword (Regenerate n) <- mods]]
+    pushAll $ concat regenerating
+    pure g
   SetFirstPlayer pid -> do
     -- the first player gains control of Bilbo Baggins, or the Ring-bearer, as the token passes
     following <- filterM (\h -> hasKeyword FirstPlayerGainsControl (toTarget h) (toCardDef h)) (toList g.entities.heroes)

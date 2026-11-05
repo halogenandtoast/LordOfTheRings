@@ -3085,6 +3085,7 @@ library
       LordOfTheRings.Scenario.Scenarios.JourneyAlongTheAnduin
       LordOfTheRings.Scenario.Scenarios.JourneyInTheDark
       LordOfTheRings.Scenario.Scenarios.JourneyInTheDark.Helpers
+      LordOfTheRings.Scenario.Scenarios.JourneyInTheDark.Weapons
       LordOfTheRings.Scenario.Scenarios.JourneyToTheCrossRoads
       LordOfTheRings.Scenario.Scenarios.JourneyToTheCrossRoads.Helpers
       LordOfTheRings.Scenario.Scenarios.JourneyUpTheAnduin
@@ -3410,10 +3411,12 @@ library
       LordOfTheRings.Treachery.Cards.FierceFolk
       LordOfTheRings.Treachery.Cards.FierceSouthrons
       LordOfTheRings.Treachery.Cards.FierySword
+      LordOfTheRings.Treachery.Cards.FieryWhip
       LordOfTheRings.Treachery.Cards.FightingAmongFriends
       LordOfTheRings.Treachery.Cards.FightingUrukHai
       LordOfTheRings.Treachery.Cards.FiresInTheDeep
       LordOfTheRings.Treachery.Cards.FlameOfUdun
+      LordOfTheRings.Treachery.Cards.FlamingSword
       LordOfTheRings.Treachery.Cards.Flooding
       LordOfTheRings.Treachery.Cards.FoesOfEcthelion
       LordOfTheRings.Treachery.Cards.FollowedByNight
