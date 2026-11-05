@@ -424,6 +424,9 @@ import LordOfTheRings.Quest.Cards.TheLandOfMordor
 import LordOfTheRings.Quest.Cards.TheRoadToIsenmouthe
 import LordOfTheRings.Quest.Cards.TheLastGasp
 import LordOfTheRings.Quest.Cards.TheCrackOfDoom
+import LordOfTheRings.Quest.Cards.RouseTheEnts
+import LordOfTheRings.Quest.Cards.BreakingIsengard
+import LordOfTheRings.Quest.Cards.TheVoiceOfSaruman
 import LordOfTheRings.Quest.Cards.FollowTheOrcs
 import LordOfTheRings.Quest.Cards.RescueTheCaptives
 import LordOfTheRings.Quest.Cards.TheKingOfTheGoldenHall
@@ -887,6 +890,9 @@ allQuests =
         , SomeQuestCard theRoadToIsenmouthe
         , SomeQuestCard theLastGasp
         , SomeQuestCard theCrackOfDoom
+        , SomeQuestCard rouseTheEnts
+        , SomeQuestCard breakingIsengard
+        , SomeQuestCard theVoiceOfSaruman
         , SomeQuestCard followTheOrcs
         , SomeQuestCard rescueTheCaptives
         , SomeQuestCard theKingOfTheGoldenHall

@@ -508,6 +508,9 @@ allQuestCards =
       , theSeatOfAmonHen
       , orcHunting
       , theRingBearerSetsOut
+      , rouseTheEnts
+      , breakingIsengard
+      , theVoiceOfSaruman
       , followTheOrcs
       , rescueTheCaptives
       , theKingOfTheGoldenHall
@@ -2175,6 +2178,19 @@ theSpidersPass = quest "144071" "The Spider's Pass" ShelobsLair 2 16
 
 gollumsBetrayal :: CardDef
 gollumsBetrayal = quest "144072" "Gollum's Betrayal" ShelobsLair 3 8
+
+-- * The Road to Isengard
+
+-- | No quest points: its Forced effect at the end of the round lets the players advance.
+rouseTheEnts :: CardDef
+rouseTheEnts = (quest "143078" "Rouse the Ents" TheRoadToIsengard 1 0) {cdQuestPoints = Nothing}
+
+-- | No quest points: it advances as its fifth damage token is placed.
+breakingIsengard :: CardDef
+breakingIsengard = (quest "143079" "Breaking Isengard" TheRoadToIsengard 2 0) {cdQuestPoints = Nothing}
+
+theVoiceOfSaruman :: CardDef
+theVoiceOfSaruman = quest "143080" "The Voice of Saruman" TheRoadToIsengard 3 15
 
 -- * The Uruk-hai
 

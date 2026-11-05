@@ -643,6 +643,13 @@ import LordOfTheRings.Location.Cards.SarnGebir
 import LordOfTheRings.Location.Cards.RiverAnduin
 import LordOfTheRings.Location.Cards.WoodedShoreline
 import LordOfTheRings.Location.Cards.SlopesOfAmonHen
+import LordOfTheRings.Location.Cards.Orthanc
+import LordOfTheRings.Location.Cards.GatesOfIsengard
+import LordOfTheRings.Location.Cards.RingWallOfIsengard
+import LordOfTheRings.Location.Cards.UndergroundArmoury
+import LordOfTheRings.Location.Cards.SteamingVent
+import LordOfTheRings.Location.Cards.PlainOfIsengard
+import LordOfTheRings.Location.Cards.OpenPit
 import LordOfTheRings.Location.Cards.TheWold
 import LordOfTheRings.Location.Cards.Eastemnet
 import LordOfTheRings.Location.Cards.PlainsOfRohan
@@ -1341,6 +1348,13 @@ allLocations =
         , SomeLocationCard riverAnduin
         , SomeLocationCard woodedShoreline
         , SomeLocationCard slopesOfAmonHen
+        , SomeLocationCard orthanc
+        , SomeLocationCard gatesOfIsengard
+        , SomeLocationCard ringWallOfIsengard
+        , SomeLocationCard undergroundArmoury
+        , SomeLocationCard steamingVent
+        , SomeLocationCard plainOfIsengard
+        , SomeLocationCard openPit
         , SomeLocationCard theWold
         , SomeLocationCard eastemnet
         , SomeLocationCard plainsOfRohan

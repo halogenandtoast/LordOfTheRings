@@ -609,6 +609,11 @@ allEnemyCards =
       , urukHaiArcher
       , urukHaiTracker
       , urukHaiHunter
+      , sarumanTheRoadToIsengard
+      , grimaTheRoadToIsengard
+      , lieutenantOfOrthanc
+      , isengardOrc
+      , wolfOfIsengard
       , ugluk
       , grishnakh
       , ugluksUrukHai
@@ -5077,6 +5082,47 @@ orcOfCirithUngol =
     , cdKeywords = setFromList [Peril]
     , cdWhenRevealed = True
     , cdEasyModeQuantity = Just 2
+    }
+
+-- * The Road to Isengard
+
+-- | Indestructible. Immune to player card effects and cannot leave the staging area, from
+-- its own modifiers.
+sarumanTheRoadToIsengard :: CardDef
+sarumanTheRoadToIsengard =
+  unique
+    (enemy "143047" "Saruman" TheRoadToIsengard 1 50 4 6 4 6)
+      { cdCardTraits = setFromList [Istari, Traitor]
+      , cdKeywords = setFromList [Indestructible]
+      }
+
+grimaTheRoadToIsengard :: CardDef
+grimaTheRoadToIsengard =
+  unique
+    (enemy "143049" "Gríma" TheRoadToIsengard 1 1 3 2 3 3)
+      { cdCardTraits = setFromList [Rohan, Traitor]
+      , cdKeywords = setFromList [Doomed 2]
+      , cdShadowEffect = True
+      }
+
+lieutenantOfOrthanc :: CardDef
+lieutenantOfOrthanc = (enemy "143050" "Lieutenant of Orthanc" TheRoadToIsengard 2 36 3 4 3 5) {cdCardTraits = setFromList [Isengard]}
+
+isengardOrc :: CardDef
+isengardOrc =
+  (enemy "143051" "Isengard Orc" TheRoadToIsengard 2 29 1 2 1 3)
+    { cdCardTraits = setFromList [Orc]
+    , cdKeywords = setFromList [Peril, Archery 1]
+    , cdWhenRevealed = True
+    , cdShadowEffect = True
+    }
+
+wolfOfIsengard :: CardDef
+wolfOfIsengard =
+  (enemy "143052" "Wolf of Isengard" TheRoadToIsengard 2 25 2 3 1 4)
+    { cdCardTraits = setFromList [Creature]
+    , cdShadowEffect = True
+    , cdEasyModeQuantity = Just 1
     }
 
 -- * The Uruk-hai

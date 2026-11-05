@@ -240,6 +240,8 @@ data WindowMatcher
     PlayedCardWithDoomedWindow Timing PlayerId
   | -- | the player, or any player, drew any number of cards
     DrewCardsWindow Timing (Maybe PlayerId)
+  | -- | any player drew any number of cards from a player card effect, as Open Pit reads
+    DrewCardsFromPlayerCardWindow Timing
   | -- | any location explored
     AnyExploredWindow Timing
   | -- | the character destroyed
@@ -516,6 +518,7 @@ windowMatches matcher (Window timing wType) = case (matcher, wType) of
   (LastTimeCounterRemovedWindow t target, LastTimeCounterRemoved target') -> t == timing && target == target'
   (ThreatRaisedByDoomedWindow t pid, ThreatRaisedByDoomed pid') -> t == timing && pid == pid'
   (DrewCardsWindow t who, CardsDrawn pid _) -> t == timing && maybe True (== pid) who
+  (DrewCardsFromPlayerCardWindow t, CardsDrawnBy _ source) -> t == timing && isPlayerCardSource source
   (AnyExploredWindow t, Explored _) -> t == timing
   (TargetDestroyedWindow t target, CharacterDestroyed target' _) -> t == timing && target == target'
   (EncounterCardRevealedWindow t, Revealed _) -> t == timing

@@ -2727,7 +2727,17 @@ runGameMessage msg g = case msg of
         controller <- fromMaybe lead <$> abilityController ab
         pure [UseAbility controller ab windows]
       abs' -> pure [Ask lead $ ChooseOneAtATime [AbilityLabel lead ab windows [] | ab <- abs']]
-    pushAll $ forcedMsgs <> [ResponseWindow windows order [] 0]
+    -- an enemy to attack again once this attack is over does, the effect spent
+    let finished = [(eid, pid) | Window After (EnemyAttacking eid pid) <- windows]
+        again e = case effectTarget e of
+          EnemyTarget eid -> [(eid, pid) | AdditionalAttackAfterNextAttack pid <- effectModifiers e, (eid, pid) `elem` finished]
+          _ -> []
+        attacksAgain = concatMap again (gameEffects g)
+    combat <- (== CombatPhase) <$> getsGame gamePhase
+    pushAll
+      $ forcedMsgs
+      <> [ResponseWindow windows order [] 0]
+      <> concat [[DealShadowCard eid, EnemyAttack pid eid] <> [DiscardShadowCards eid | not combat] | (eid, pid) <- attacksAgain]
     -- after an enemy's attack has resolved, what lasted for that attack ends
     let attackOver = any (\case Window After (EnemyAttacking _ _) -> True; _ -> False) windows
         -- an effect waiting for the next enemy in the staging area passes to it
@@ -2742,7 +2752,7 @@ runGameMessage msg g = case msg of
         nextAttack = map \e -> case [m | ForNextAttack m <- effectModifiers e] of
           ms@(_ : _) | effectTarget e `elem` attackers -> e {effectModifiers = ms, effectDuration = UntilEndOfAttack}
           _ -> e
-    pure $ g & effectsL %~ passed . (if attackOver then filter ((/= UntilEndOfAttack) . effectDuration) else id)
+    pure $ g & effectsL %~ filter (null . again) . passed . (if attackOver then filter ((/= UntilEndOfAttack) . effectDuration) else id)
   ResponseWindow windows order used passes
     | passes < length order
     , (pid : _) <- order -> do

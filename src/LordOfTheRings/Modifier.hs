@@ -43,6 +43,10 @@ data ModifierType
   | -- | on a character, until the end of the phase: the modifier applies to its next attack
     -- only, as Tides of Fate's "+3 attack for its next attack this phase"
     ForNextAttack ModifierType
+  | -- | on an enemy, until the end of the phase: once its next attack against the player
+    -- resolves it makes an additional attack against him, as Wolf of Isengard's Forced
+    -- effect has it as it is dealt its shadow card, before that attack begins
+    AdditionalAttackAfterNextAttack PlayerId
   | -- | on the game: if the players win the scenario, the card is recorded under the key in
     -- the campaign log, as Determination marks its character "determined"
     RecordedIfWon CampaignLogKey CardCode

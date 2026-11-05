@@ -48,7 +48,7 @@ import LordOfTheRings.Trait (Trait (Master))
 import LordOfTheRings.Treachery.Types ()
 import LordOfTheRings.Window (
   Window (Window),
-  WindowType (CardsDrawn, DiscardedFromDeck, DrewForResourcePhase, SetupHandDrawn, DiscardedFromHand, EnemyAttacking, PlayedCard, PlayedCardFromHand, PlayedFromHand, ResourcesSpent, ThreatRaised),
+  WindowType (CardsDrawn, CardsDrawnBy, DiscardedFromDeck, DrewForResourcePhase, SetupHandDrawn, DiscardedFromHand, EnemyAttacking, PlayedCard, PlayedCardFromHand, PlayedFromHand, ResourcesSpent, ThreatRaised),
   Timing (After),
   mkAfter,
   mkWhen,
@@ -163,7 +163,7 @@ runPlayer msg player = case msg of
           (heroes, drawn) = partition ((== HeroType) . (.cardType)) cards
       pushAll [PutHeroIntoPlay player.id pc | PlayerCard pc <- heroes]
       pushAll $ concat [[EncounterCardEnteredHand player.id ec, EncounterCardDrawn player.id ec] | EncounterCard ec <- drawn]
-      pushWhen (notNull cards) $ CheckWindows [mkAfter $ CardsDrawn player.id (length cards)]
+      pushWhen (notNull cards) $ CheckWindows [mkAfter $ CardsDrawn player.id (length cards), mkAfter $ CardsDrawnBy player.id drawing.source]
       pure $ player & handL <>~ drawn & deckL .~ deck
     WithTarget (isTarget player -> True) (DoPhase PlanningPhase) -> do
       actionWindow (ikey "label.planningActions") (ikey "label.donePlanning") (Just QuestPhase)

@@ -538,6 +538,10 @@ allTreacheryCards =
       , fallenIntoEvil
       , followedByNightTheRoadDarkens
       , illFate
+      , blastOfSorcery
+      , poisonedVapour
+      , machinesOfIsengard
+      , sarumansVoice
       , restByNight
       , strangeWeariness
       , unseenBarrier
@@ -3383,6 +3387,29 @@ lurkingMalice =
 
 rageAndHunger :: CardDef
 rageAndHunger = (treachery "144062" "Rage and Hunger" TheGreatSpider 3) {cdShadowEffect = True, cdEasyModeQuantity = Just 2}
+
+-- * The Road to Isengard
+
+blastOfSorcery :: CardDef
+blastOfSorcery = (treachery "143060" "Blast of Sorcery" TheRoadToIsengard 3) {cdShadowEffect = True}
+
+poisonedVapour :: CardDef
+poisonedVapour = (treachery "143061" "Poisoned Vapour" TheRoadToIsengard 2) {cdKeywords = setFromList [Surge], cdShadowEffect = True}
+
+machinesOfIsengard :: CardDef
+machinesOfIsengard = (treachery "143062" "Machines of Isengard" TheRoadToIsengard 3) {cdShadowEffect = True}
+
+-- | A burden of The Road to Isengard's set icon, shuffled in by its campaign card: in no
+-- encounter set.
+sarumansVoice :: CardDef
+sarumansVoice =
+  (treachery "143068" "Saruman's Voice" TheRoadToIsengard 1)
+    { cdEncounterSet = Nothing
+    , cdEncounterSetQuantity = Nothing
+    , cdSetIcon = Just TheRoadToIsengard
+    , cdCardTraits = setFromList [Enchantment]
+    , cdKeywords = setFromList [Peril, Doomed 2]
+    }
 
 -- * The Uruk-hai
 

@@ -599,6 +599,11 @@ import LordOfTheRings.Enemy.Cards.UrukHaiCaptain
 import LordOfTheRings.Enemy.Cards.UrukHaiArcher
 import LordOfTheRings.Enemy.Cards.UrukHaiTracker
 import LordOfTheRings.Enemy.Cards.UrukHaiHunter
+import LordOfTheRings.Enemy.Cards.SarumanTheRoadToIsengard
+import LordOfTheRings.Enemy.Cards.GrimaTheRoadToIsengard
+import LordOfTheRings.Enemy.Cards.LieutenantOfOrthanc
+import LordOfTheRings.Enemy.Cards.IsengardOrc
+import LordOfTheRings.Enemy.Cards.WolfOfIsengard
 import LordOfTheRings.Enemy.Cards.Ugluk
 import LordOfTheRings.Enemy.Cards.Grishnakh
 import LordOfTheRings.Enemy.Cards.UgluksUrukHai
@@ -1237,6 +1242,11 @@ allEnemys =
         , SomeEnemyCard urukHaiArcher
         , SomeEnemyCard urukHaiTracker
         , SomeEnemyCard urukHaiHunter
+        , SomeEnemyCard sarumanTheRoadToIsengard
+        , SomeEnemyCard grimaTheRoadToIsengard
+        , SomeEnemyCard lieutenantOfOrthanc
+        , SomeEnemyCard isengardOrc
+        , SomeEnemyCard wolfOfIsengard
         , SomeEnemyCard ugluk
         , SomeEnemyCard grishnakh
         , SomeEnemyCard ugluksUrukHai
