@@ -151,7 +151,8 @@ deckProblem dl
   twice = [t | (t, n) <- mapToList (Map.fromListWith (+) [(title d, 1 :: Int) | d <- heroDefs]), n > 1]
   copies = Map.fromListWith (\(a, l) (b, l') -> (a + b, min l l')) [(title d, (n, cdDeckLimit d)) | (d, n) <- defs]
   over = [t | (t, (n, limit)) <- mapToList copies, n > limit]
-  deckSize = sum (map snd defs)
+  -- treasures do not count toward a deck's 50 cards (MEC115 rules, "Treasure")
+  deckSize = sum [n | (d, n) <- defs, not (isTreasure d)]
   named c = [textVar "contract" (display $ cdName c)]
   barred c key = Just $ ikeyWith key (named c)
   copyLimit c limit = case [t | (t, (n, _)) <- mapToList copies, n > limit] of

@@ -21,6 +21,8 @@ const cardTypes: Record<string, string> = {
   EncounterSideQuestType: 'Encounter Side Quest',
   NightmareType: 'Nightmare',
   ContractType: 'Contract',
+  // an Ered Mithrin treasure, played onto a host as an attachment is
+  TreasureType: 'Treasure',
 }
 
 const phases: Record<string, string> = {

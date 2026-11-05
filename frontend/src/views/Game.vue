@@ -229,7 +229,7 @@ const onDragStart = (event: DragEvent) => {
   if (!card || !event.dataTransfer?.types.includes(cardDrag)) return
   dragging.value = {
     cardId: card.id,
-    hosts: card.type === 'Attachment' ? game.value?.attachmentHosts[card.id] ?? [] : null,
+    hosts: ['Attachment', 'Treasure'].includes(card.type) ? game.value?.attachmentHosts[card.id] ?? [] : null,
   }
 }
 

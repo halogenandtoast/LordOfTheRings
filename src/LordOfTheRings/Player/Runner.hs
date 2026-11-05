@@ -270,10 +270,10 @@ runPlayer msg player = case msg of
           able <- canPlayAtNoCost top
           -- an ally or attachment is put into play, not played: only an event is played
           -- (ruling, Vilya)
-          let putIntoPlay = top.cardType `elem` [AllyType, AttachmentType]
+          let putIntoPlay = top.cardType == AllyType || isAttachmentType top.cardType
               resolve = case top.cardType of
                 AllyType -> [PutAllyIntoPlayUnder pid pc]
-                AttachmentType -> [PutAttachmentIntoPlay pid pc]
+                t | isAttachmentType t -> [PutAttachmentIntoPlay pid pc]
                 _ -> [PlayAtNoCost pid pc]
           push
             $ Ask pid
@@ -663,7 +663,7 @@ payerHeroes pid cards = do
 hasHost :: HasGame m => Card -> m Bool
 hasHost c
   | PlayerCard pc <- c
-  , c.cardType == AttachmentType =
+  , isAttachmentType c.cardType =
       if attachMatcherFor (cardOwner pc) (toCardCode c) `elem` [PlayIntoStagingArea, PlayIntoPlayArea]
         then pure True
         -- an attachment's play criteria are checked here too, with its hosts
@@ -673,7 +673,7 @@ hasHost c
 -- | Where an attachment card could go, for its owner, none for any other card.
 attachableHosts :: HasGame m => Card -> m [Target]
 attachableHosts = \case
-  c@(PlayerCard pc) | c.cardType == AttachmentType -> cardHosts (cardOwner pc) (toCardCode c)
+  c@(PlayerCard pc) | isAttachmentType c.cardType -> cardHosts (cardOwner pc) (toCardCode c)
   _ -> pure []
 
 cardOwner :: PlayerCard -> PlayerId
@@ -683,6 +683,7 @@ correctPhase :: HasGame m => Card -> m Bool
 correctPhase (PlayerCard card) = case cdCardType (toCardDef card) of
   AllyType -> isPhase PlanningPhase
   AttachmentType -> isPhase PlanningPhase
+  TreasureType -> isPhase PlanningPhase
   PlayerSideQuestType -> isPhase PlanningPhase
   -- an action event can be played in any action window; responses are offered by theirs
   EventType -> actionEventPlayable card

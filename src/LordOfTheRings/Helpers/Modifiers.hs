@@ -3,7 +3,7 @@ module LordOfTheRings.Helpers.Modifiers (module LordOfTheRings.Helpers.Modifiers
 import Control.Monad.Writer.Strict (execWriterT)
 import Data.Map.Monoidal.Strict (MonoidalMap (..))
 import Data.Map.Strict qualified as Map
-import LordOfTheRings.Card (Card, CardCode, CardType (AllyType, ObjectiveAllyType), cdCardTraits, cdCardType, cdSphere, cdTreasure, toCardCode, toCardDef)
+import LordOfTheRings.Card (Card, CardCode, CardType (AllyType, ObjectiveAllyType), cdCardTraits, cdCardType, cdSphere, isTreasure, toCardCode, toCardDef)
 import LordOfTheRings.Sphere (Sphere (Fellowship))
 import LordOfTheRings.Classes.HasGame
 import LordOfTheRings.Classes.HasModifiersFor
@@ -275,7 +275,7 @@ resourcesBarredFrom GameSource _ = pure False
 resourcesBarredFrom source a = do
   mods <- getModifiers a
   g <- getGame
-  let treasure = maybe False (cdTreasure . toCardDef) (cardCodeOf g =<< sourceTarget source)
+  let treasure = maybe False isTreasure (cardCodeOf g =<< sourceTarget source)
   pure
     $ CannotGainResourcesFromCardEffects `elem` mods
     || (isPlayerCardSource source && CannotGainResourcesFromPlayerCardEffects `elem` mods)

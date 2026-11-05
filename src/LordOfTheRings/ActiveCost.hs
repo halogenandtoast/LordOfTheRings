@@ -124,6 +124,7 @@ playCard :: PlayerId -> PlayerCard -> [Window] -> [Message]
 playCard pid card windows = case cdCardType (toCardDef card) of
   AllyType -> [PlayAlly pid card]
   AttachmentType -> [PlayAttachment pid card]
+  TreasureType -> [PlayAttachment pid card]
   -- the When window comes first, for an effect that cancels it, as Counter-Spell's
   EventType ->
     [ CheckWindows [mkWhen $ PlayingEvent pid card.id]

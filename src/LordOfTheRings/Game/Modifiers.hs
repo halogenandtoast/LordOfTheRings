@@ -15,7 +15,8 @@ import LordOfTheRings.Attachment (lookupAttachment)
 import LordOfTheRings.Card (
   Card (..),
   CardDef (cdCardType),
-  CardType (AllyType, AttachmentType, EventType, PlayerSideQuestType),
+  CardType (AllyType, EventType, PlayerSideQuestType),
+  isAttachmentType,
   HasCardCode (toCardCode),
   HasCardDef (toCardDef),
  )
@@ -80,7 +81,7 @@ handCardModifiers pid = \case
     AllyType -> getModifiersFor $ createAlly pc (AllyId UUID.nil) pid
     EventType -> traverse_ getModifiersFor $ lookupEvent (toCardCode pc) pc.id pid
     -- an attachment's builder is unplaced, as a Record that costs less in hand reads it
-    AttachmentType -> getModifiersFor $ lookupAttachment (toCardCode pc) pc.id (AttachmentId UUID.nil) pid
+    t | isAttachmentType t -> getModifiersFor $ lookupAttachment (toCardCode pc) pc.id (AttachmentId UUID.nil) pid
     _ -> pure ()
   EncounterCard _ -> pure ()
 

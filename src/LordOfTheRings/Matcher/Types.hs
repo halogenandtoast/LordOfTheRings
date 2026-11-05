@@ -410,7 +410,7 @@ cardMatches matcher (toCardDef -> def) = case matcher of
     Just (StaticCost c) -> c >= n
     _ -> False
   CardWithKeyword k -> k `member` cdKeywords def
-  TreasureCard -> cdTreasure def
+  TreasureCard -> isTreasure def
 
 -- | The player cards printed with a Valour trigger.
 valourCards :: [CardCode]
