@@ -15,7 +15,9 @@ allLocationCards =
   Map.fromList $
     map
       (\def -> (cdCardCode def, def))
-      [ secretTunnel
+      [ embattledValley
+      , easternRidge
+      , secretTunnel
       , southernSpur
       , theFrontGateNightmare
       , darkColony
@@ -4988,4 +4990,33 @@ theFrontGateNightmare =
       2
   )
     { cdCardTraits = setFromList [Mountain]
+    }
+
+-- * The Battle of Five Armies Nightmare
+
+embattledValley :: CardDef
+embattledValley =
+  ( location
+      "on-the-doorstep-nightmare-the-battle-of-five-armies-005"
+      "Embattled Valley"
+      TheBattleOfFiveArmiesNightmare
+      2
+      5
+      5
+  )
+    { cdCardTraits = setFromList [Valley]
+    }
+
+easternRidge :: CardDef
+easternRidge =
+  ( location
+      "on-the-doorstep-nightmare-the-battle-of-five-armies-006"
+      "Eastern Ridge"
+      TheBattleOfFiveArmiesNightmare
+      3
+      3
+      6
+  )
+    { cdCardTraits = setFromList [Mountain]
+    , cdShadowEffect = True
     }

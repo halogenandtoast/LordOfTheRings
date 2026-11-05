@@ -14,7 +14,10 @@ allEnemyCards =
   Map.fromList $
     map
       (\def -> (cdCardCode def, def))
-      [ ereborBats
+      [ greatWarg
+      , frenziedWargRider
+      , gundabadElite
+      , ereborBats
       , attercop
       , venomousSpider
       , wickedWolf
@@ -5338,4 +5341,56 @@ ereborBats =
       5
   )
     { cdCardTraits = setFromList [Creature]
+    }
+
+-- * The Battle of Five Armies Nightmare
+
+greatWarg :: CardDef
+greatWarg =
+  ( enemy
+      "on-the-doorstep-nightmare-the-battle-of-five-armies-002"
+      "Great Warg"
+      TheBattleOfFiveArmiesNightmare
+      3
+      25
+      4
+      5
+      3
+      5
+  )
+    { cdCardTraits = setFromList [Creature]
+    , cdShadowEffect = True
+    }
+
+frenziedWargRider :: CardDef
+frenziedWargRider =
+  ( enemy
+      "on-the-doorstep-nightmare-the-battle-of-five-armies-003"
+      "Frenzied Warg-Rider"
+      TheBattleOfFiveArmiesNightmare
+      4
+      15
+      3
+      3
+      2
+      4
+  )
+    { cdCardTraits = setFromList [Goblin, Orc]
+    , cdShadowEffect = True
+    }
+
+gundabadElite :: CardDef
+gundabadElite =
+  ( enemy
+      "on-the-doorstep-nightmare-the-battle-of-five-armies-004"
+      "Gundabad Elite"
+      TheBattleOfFiveArmiesNightmare
+      4
+      40
+      2
+      5
+      3
+      5
+  )
+    { cdCardTraits = setFromList [Goblin, Orc]
     }

@@ -14,7 +14,8 @@ allTreacheryCards =
   Map.fromList $
     map
       (\def -> (cdCardCode def, def))
-      [ lustForTreasure
+      [ dreadHasCome
+      , lustForTreasure
       , theDragonsIre
       , aHorribleBattle
       , spiderBite
@@ -3611,4 +3612,17 @@ lustForTreasure =
       3
   )
     { cdKeywords = setFromList [Doomed 1]
+    }
+
+-- * The Battle of Five Armies Nightmare
+
+dreadHasCome :: CardDef
+dreadHasCome =
+  ( treachery
+      "on-the-doorstep-nightmare-the-battle-of-five-armies-007"
+      "Dread Has Come!"
+      TheBattleOfFiveArmiesNightmare
+      3
+  )
+    { cdShadowEffect = True
     }

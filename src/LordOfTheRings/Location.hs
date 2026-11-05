@@ -6,6 +6,8 @@ import Data.Map.Strict qualified as Map
 import LordOfTheRings.Card
 import LordOfTheRings.Classes.Entity
 import LordOfTheRings.Classes.RunMessage
+import LordOfTheRings.Location.Cards.EmbattledValley
+import LordOfTheRings.Location.Cards.EasternRidge
 import LordOfTheRings.Location.Cards.SecretTunnel
 import LordOfTheRings.Location.Cards.SouthernSpur
 import LordOfTheRings.Location.Cards.TheFrontGateNightmare
@@ -719,6 +721,8 @@ allLocations =
     [ (toCardCode builder, card)
     | card@(SomeLocationCard builder) <-
         [ SomeLocationCard greatForestWeb
+        , SomeLocationCard embattledValley
+        , SomeLocationCard easternRidge
         , SomeLocationCard secretTunnel
         , SomeLocationCard southernSpur
         , SomeLocationCard theFrontGateNightmare

@@ -135,7 +135,7 @@ const implemented: Record<string, Gateable & { nightmare?: boolean }> = {
   'journey-to-the-cross-roads': { beta: true },
   'shelobs-lair': { beta: true },
   'flies-and-spiders': { beta: true, nightmare: true },
-  'the-battle-of-five-armies': { beta: true },
+  'the-battle-of-five-armies': { beta: true, nightmare: true },
   'we-must-away-ere-break-of-day': { beta: true, nightmare: true },
   'over-the-misty-mountains-grim': { beta: true, nightmare: true },
   'dungeons-deep-and-caverns-dim': { beta: true, nightmare: true },

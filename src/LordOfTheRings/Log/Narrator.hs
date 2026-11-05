@@ -33,7 +33,7 @@ import LordOfTheRings.Log.Block
 import LordOfTheRings.Log.Refs
 import LordOfTheRings.Helpers.Modifiers (getModifiers, immuneToSource, resourcesBarredFrom)
 import LordOfTheRings.Matcher (currentQuestHas, getArcheryTotal, getDamage, getDiscoverValue, getLead, getTimeCounters)
-import LordOfTheRings.Modifier (ModifierType (CannotRemoveTimeCounters))
+import LordOfTheRings.Modifier (ModifierType (CannotRemoveTimeCounters, QuestProgressRemovalBecomes))
 import LordOfTheRings.Message
 import LordOfTheRings.Outcome
 import LordOfTheRings.Phase
@@ -170,6 +170,7 @@ narrationFor = \case
   HealDamage _ target n | n > 0 -> Just $ whenRef target \t -> do
     healed <- min n <$> getDamage target
     pure [mechanic [ikeyPart "log.heals" ["target" ~> t, "count" ~> healed]] | healed > 0]
+  PlaceTokens _ ScenarioTarget Progress n | n > 0 -> Just $ one $ mechanic [ikeyPart "log.nightmareProgressPlaced" ["count" ~> n]]
   PlaceTokens source target token n | n > 0 -> Just do
     phase <- getsGame gamePhase
     case token of
@@ -198,8 +199,11 @@ narrationFor = \case
       immune <- case target of
         LocationTarget _ -> immuneToSource source target
         _ -> pure False
+      replaced <- case target of
+        QuestTarget _ -> any (\case QuestProgressRemovalBecomes _ -> True; _ -> False) <$> getModifiers GameTarget
+        _ -> pure False
       mSource <- sourceRefFor source
-      one $ mechanic $ pure $ case mSource of
+      if replaced then pure [] else one $ mechanic $ pure $ case mSource of
         Just s | immune -> ikeyPart "log.immuneTo" ["target" ~> t, "source" ~> s]
         _ -> ikeyPart "log.progressRemoved" ["target" ~> t, "progress" ~> stat "progress" n]
     Resource -> Just $ whenRef target \t -> one $ notice [ikeyPart "log.spendsResources" ["target" ~> t, "count" ~> n]]

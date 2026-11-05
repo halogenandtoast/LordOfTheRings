@@ -4059,5 +4059,8 @@
   "darkColony": {"poison": "Choose a hero to receive 1 poison to travel"},
   "mirkwoodPath": {"unconscious": "Choose a hero to become unconscious"},
   "aHorribleBattle": {"choose": "Give each hero poison or reveal an encounter card", "poison": "Give each hero you control 1 poison", "reveal": "Reveal an encounter card"},
-  "spiderBite": {"attach": "Attach Spider Bite to a conscious hero"}
+  "spiderBite": {"attach": "Attach Spider Bite to a conscious hero"},
+  "greatWarg": {"discard": "Choose an attachment you control to discard"},
+  "gundabadElite": {"choose": "Remove progress or face Gundabad Elite's attack", "remove": "Remove 2 progress from the current quest", "attack": "Gundabad Elite attacks the first player"},
+  "embattledValley": {"exhaust": "Exhaust a character to travel to Embattled Valley"}
 }

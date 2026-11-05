@@ -839,6 +839,7 @@ library
       LordOfTheRings.Enemy.Cards.ForestFlies
       LordOfTheRings.Enemy.Cards.ForestSpider
       LordOfTheRings.Enemy.Cards.FramsShade
+      LordOfTheRings.Enemy.Cards.FrenziedWargRider
       LordOfTheRings.Enemy.Cards.GhostsOfMen
       LordOfTheRings.Enemy.Cards.Ghulat
       LordOfTheRings.Enemy.Cards.GiantArm
@@ -886,6 +887,7 @@ library
       LordOfTheRings.Enemy.Cards.GreatCaveTrollJourneyInTheDark
       LordOfTheRings.Enemy.Cards.GreatGrayWolf
       LordOfTheRings.Enemy.Cards.GreatShark
+      LordOfTheRings.Enemy.Cards.GreatWarg
       LordOfTheRings.Enemy.Cards.GreatWargChief
       LordOfTheRings.Enemy.Cards.GreyMountainGiant
       LordOfTheRings.Enemy.Cards.GrimaTheRoadToIsengard
@@ -897,6 +899,7 @@ library
       LordOfTheRings.Enemy.Cards.GuardWarg
       LordOfTheRings.Enemy.Cards.GundabadArcher
       LordOfTheRings.Enemy.Cards.GundabadClimber
+      LordOfTheRings.Enemy.Cards.GundabadElite
       LordOfTheRings.Enemy.Cards.GundabadHunter
       LordOfTheRings.Enemy.Cards.GundabadStalker
       LordOfTheRings.Enemy.Cards.GundabadWolfRider
@@ -1878,6 +1881,7 @@ library
       LordOfTheRings.Location.Cards.Eastemnet
       LordOfTheRings.Location.Cards.EasternMines
       LordOfTheRings.Location.Cards.EasternQuarter
+      LordOfTheRings.Location.Cards.EasternRidge
       LordOfTheRings.Location.Cards.EasternShore
       LordOfTheRings.Location.Cards.EastGate
       LordOfTheRings.Location.Cards.EastQuarter
@@ -1889,6 +1893,7 @@ library
       LordOfTheRings.Location.Cards.Eilenach
       LordOfTheRings.Location.Cards.ElvenCaravel
       LordOfTheRings.Location.Cards.ElvenWaveRunner
+      LordOfTheRings.Location.Cards.EmbattledValley
       LordOfTheRings.Location.Cards.EnchantedStream
       LordOfTheRings.Location.Cards.EndlessCaverns
       LordOfTheRings.Location.Cards.Entwood
@@ -3336,6 +3341,7 @@ library
       LordOfTheRings.Treachery.Cards.DrawnToTheRing
       LordOfTheRings.Treachery.Cards.DreadAndDespair
       LordOfTheRings.Treachery.Cards.DreadfulDeep
+      LordOfTheRings.Treachery.Cards.DreadHasCome
       LordOfTheRings.Treachery.Cards.DreamsOfNumenor
       LordOfTheRings.Treachery.Cards.DrivenBack
       LordOfTheRings.Treachery.Cards.DrivenByShadow
@@ -4120,6 +4126,7 @@ test-suite LordOfTheRings-test
       LordOfTheRings.MountainOfFire.TheTowerOfCirithUngolSpec
       LordOfTheRings.OnTheDoorstep.FliesAndSpidersNightmareSpec
       LordOfTheRings.OnTheDoorstep.FliesAndSpidersSpec
+      LordOfTheRings.OnTheDoorstep.TheBattleOfFiveArmiesNightmareSpec
       LordOfTheRings.OnTheDoorstep.TheBattleOfFiveArmiesSpec
       LordOfTheRings.OnTheDoorstep.TheLonelyMountainNightmareSpec
       LordOfTheRings.OnTheDoorstep.TheLonelyMountainSpec

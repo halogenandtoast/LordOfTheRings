@@ -29,6 +29,6 @@ instance RunMessage VanguardOfBolg where
     DoStep 1 (ResolveShadowEffect cid _ _ _) | cid == attrs.cardId -> do
       current <- getCurrentQuest
       progress <- getsGame (sum . map (.progress) . filter ((== current) . Just . toTarget) . toList . (.quests) . (.entities))
-      when (progress > 0) $ removeProgressFromQuest (CardIdSource cid) progress
+      removeProgressFromQuest (CardIdSource cid) progress
       pure e
     _ -> VanguardOfBolg <$> runMessage msg attrs

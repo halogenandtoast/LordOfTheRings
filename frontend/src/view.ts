@@ -483,7 +483,7 @@ export const toView = (data: GameData, defs: Record<string, CardDef>, previous: 
       // its image is the flipped side, the one kept beside the quest deck
       nightmareCard:
         game.scenario.mode === 'NightmareMode' && game.scenario.nightmareDeck
-          ? card(game.scenario.nightmareDeck.setupCard, 'nightmare-setup')
+          ? card(game.scenario.nightmareDeck.setupCard, 'nightmare-setup', { progress: game.nightmareProgress ?? 0 })
           : null,
       corsairDeck: game.scenario.corsairDeckSize ?? null,
       corsairDiscard: (game.scenario.corsairDiscard ?? []).map((c) => card(c.cardCode, c.id)),

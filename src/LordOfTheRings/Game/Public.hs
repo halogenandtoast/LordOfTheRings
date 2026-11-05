@@ -165,6 +165,8 @@ publicGameFor seesHand g = hideDecks $ toJSON merged
         -- the Stormcaller's quest stage and its progress (Flight of the Stormcaller)
         $ KeyMap.insert "stormcallerStage" (metaValue "stormcallerStage")
         $ KeyMap.insert "stormcallerProgress" (metaValue "stormcallerProgress")
+        -- progress on The Battle of Five Armies Nightmare setup card
+        $ KeyMap.insert "nightmareProgress" (metaValue "nightmareProgress")
         -- the heat tracker's temperature (Desert Crossing)
         $ KeyMap.insert "temperature" (metaValue "temperature")
         -- the Ring-bearer's life on the life tracker (Flight to the Ford)

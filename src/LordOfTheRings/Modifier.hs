@@ -1053,6 +1053,9 @@ data ModifierType
     WhileShowing CardCode
   | -- | on the game: progress cannot be placed on quest cards, as Chaos in the Night reads
     NoProgressOnQuestCards
+  | -- | on the game: an instruction to remove quest progress places 1 progress on
+    -- this target instead (The Battle of Five Armies Nightmare, stage 5B)
+    QuestProgressRemovalBecomes Target
   | -- | on the game: the total threat of the cards in the Orcs' area is added to the staging
     -- area's, as Howling at their Heels reads (Race Across Harad)
     OrcsAreaThreatAddsToStaging

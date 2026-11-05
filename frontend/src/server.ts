@@ -181,6 +181,8 @@ export interface ServerGame {
   /** The Stormcaller's quest stage and the progress on it (Flight of the Stormcaller). */
   stormcallerStage?: Card | null
   stormcallerProgress?: number | null
+  /** Progress on the Nightmare setup card (The Battle of Five Armies). */
+  nightmareProgress?: number | null
   /** The heat tracker's temperature (Desert Crossing). */
   temperature?: number | null
   /** The Ring-bearer's life on the life tracker (Flight to the Ford). */

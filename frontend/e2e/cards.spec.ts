@@ -232,3 +232,28 @@ test('long naming choices can be searched without changing their answer indexes'
   await panel.getByRole('button', { name: 'Bilbo Baggins', exact: true }).click()
   expect((await secondAnswer).postDataJSON().choice).toBe(12)
 })
+
+test('all six Hobbit scenarios and the Hobbit campaign offer Nightmare mode', async ({ page, game: _session }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' })
+  await page.goto('/#/new-game')
+  await page.getByRole('button', { name: 'The Hobbit', exact: false }).click()
+  const scenarios = [
+    'We Must Away, Ere Break of Day',
+    'Over the Misty Mountains Grim',
+    'Dungeons Deep and Caverns Dim',
+    'Flies and Spiders',
+    'The Lonely Mountain',
+    'The Battle of Five Armies',
+  ]
+  for (const name of scenarios) {
+    await page.getByRole('button').filter({ hasText: name }).click()
+    const nightmare = page.getByRole('radio', { name: 'Nightmare', exact: true })
+    await nightmare.click()
+    await expect(nightmare).toHaveAttribute('aria-checked', 'true')
+    await page.getByRole('button', { name: 'Back', exact: true }).click()
+  }
+  await page.getByRole('button', { name: 'Play as a campaign', exact: true }).click()
+  const nightmare = page.getByRole('radio', { name: 'Nightmare', exact: true })
+  await nightmare.click()
+  await expect(nightmare).toHaveAttribute('aria-checked', 'true')
+})

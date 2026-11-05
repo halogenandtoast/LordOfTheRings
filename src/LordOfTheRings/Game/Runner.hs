@@ -88,6 +88,7 @@ import LordOfTheRings.Message (
     PutOnBottomOfOwnersDeck,
     RemoveFromGame,
     RemoveTokens,
+    RemoveProgressFromQuest,
     ResolveDiscover,
     ResolveTravelEffect,
     ReturnToBottomOfEncounterDeck,
@@ -112,6 +113,7 @@ import LordOfTheRings.Modifier (
     CannotLeavePlay,
     CannotLeaveStagingArea,
     CannotRemoveTimeCounters,
+    QuestProgressRemovalBecomes,
     EngagesOnly,
     NoProgressOnQuestCards,
     ProgressCanceledThisRound,
@@ -189,6 +191,18 @@ runGame msg g = case msg of
     | n > 0
     , Just other <- progressRedirect g target ->
         g <$ push (PlaceTokens source other Progress n)
+  -- Replacement instructions apply before progress is clamped to what is present:
+  -- stage 5B can hold no progress, but the Nightmare setup still counts removals.
+  RemoveProgressFromQuest source n -> do
+    mods <- getModifiers GameTarget
+    case [t | QuestProgressRemovalBecomes t <- mods] of
+      target : _ | n >= 0 -> g <$ push (PlaceTokens source target Progress 1)
+      _ -> runGame' msg g
+  RemoveTokens source (QuestTarget _) Progress n -> do
+    mods <- getModifiers GameTarget
+    case [t | QuestProgressRemovalBecomes t <- mods] of
+      target : _ | n >= 0 -> g <$ push (PlaceTokens source target Progress 1)
+      _ -> runGame' msg g
   RemoveTokens _ target TimeCounter _ -> do
     barred <- elem CannotRemoveTimeCounters <$> getModifiers target
     if barred

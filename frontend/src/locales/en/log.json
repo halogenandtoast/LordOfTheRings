@@ -260,5 +260,6 @@
   "fortitudePasses": "{player} passes the Fortitude test",
   "fortitudeFails": "{player} fails the Fortitude test",
   "fortitudeVersus": "{willpower} willpower against {eyes} Eye icons, discarding {cards}",
-  "movesResources": "{from} moves {count} resources to {to}"
+  "movesResources": "{from} moves {count} resources to {to}",
+  "nightmareProgressPlaced": "Place {count} progress on the Nightmare setup card"
 }
