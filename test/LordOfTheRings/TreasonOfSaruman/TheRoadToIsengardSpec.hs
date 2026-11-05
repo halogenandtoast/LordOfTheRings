@@ -582,6 +582,13 @@ spec = describe "The Road to Isengard" do
       chooseOptionMatching "discard a card" pid (const True)
       handSize pid `shouldReturn` (hand - 1)
 
+    it "is discarded, attaching to no one, with no hero committed to the quest" . campaignTest $ \pid -> do
+      setUp pid
+      reveal [Treacheries.sarumansVoice]
+      questionKey pid >>= (`shouldSatisfy` (/= Just "$label.sarumansVoice.attach"))
+      getsGame (any ((== toCardCode Treacheries.sarumansVoice) . toCardCode) . toList . (.entities.treacheries)) `shouldReturn` False
+      copies Treacheries.sarumansVoice . (.encounterDiscard) <$> scenarioAttrs `shouldReturn` 1
+
   -- \* The campaign
 
   describe "the campaign resolution" do

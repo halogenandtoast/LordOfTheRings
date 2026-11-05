@@ -17,22 +17,22 @@ sarumansVoice = treachery SarumansVoice Cards.sarumansVoice
 the quest, is declared as an attacker or defender, or triggers its ability, its controller
 must discard 1 card from his hand.")
 
-Its player resolves it alone (Peril), so he chooses the hero: one committed to the quest,
-or any hero when none is, as it is revealed outside the quest phase. The attached hero is
-read off its windows for committing and being declared, and its abilities as they are
-used.
+Its player resolves it alone (Peril), so he chooses the hero, among the heroes committed to
+the quest by any player. With none committed there is no hero to remove or to attach to,
+and like any treachery that does not say otherwise it goes to the discard pile once it has
+resolved (Rules Reference, "Staging Area"). The attached hero is read off its windows for
+committing and being declared, and its abilities as they are used.
 -}
 instance RunMessage SarumansVoice where
   runMessage msg t@(SarumansVoice attrs) = case msg of
     WhenRevealed (isTarget attrs -> True) -> do
       you <- getRevealer
       committed <- select CommittedHero
-      heroes <- if null committed then select AnyHero else pure committed
       chooseOrRunOneM you do
         questionLabeled "sarumansVoice.attach"
         causedBy attrs
-        targets heroes \h -> do
-          when (h `elem` committed) $ removeFromQuest h
+        targets committed \h -> do
+          removeFromQuest h
           attachTreachery attrs.treacheryId h
       pure t
     CheckWindows ws | AttachedTo host <- attrs.placement -> do
