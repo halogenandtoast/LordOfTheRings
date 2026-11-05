@@ -659,6 +659,7 @@ import LordOfTheRings.Location.Cards.DeepingWall
 import LordOfTheRings.Location.Cards.DeepingCulvert
 import LordOfTheRings.Location.Cards.PosternDoor
 import LordOfTheRings.Location.Cards.HelmsGate
+import LordOfTheRings.Location.Cards.AbandonedRuin
 import LordOfTheRings.Location.Runner ()
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Id
@@ -1364,5 +1365,6 @@ allLocations =
         , SomeLocationCard deepingCulvert
         , SomeLocationCard posternDoor
         , SomeLocationCard helmsGate
+        , SomeLocationCard abandonedRuin
         ]
     ]

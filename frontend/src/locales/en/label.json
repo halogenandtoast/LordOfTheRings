@@ -3995,5 +3995,28 @@
     "topOrBottom": "Put it on the top or the bottom of the encounter deck?",
     "onTop": "On top",
     "onBottom": "On the bottom"
+  },
+  "treasure": {
+    "guard": "Choose an undiscovered treasure to attach as a guarded objective"
+  },
+  "dagnirsSpawn": {
+    "distribute": "Dagnir's Spawn: distribute {n} damage among your characters to shuffle it into the encounter deck?",
+    "deal": "Distribute the damage",
+    "decline": "Do not"
+  },
+  "ashenBrazier": {
+    "enemy": "Ashen Brazier: choose an enemy",
+    "shadow": "Ashen Brazier: choose a facedown shadow card to look at"
+  },
+  "theThreatToWilderland": {
+    "choose": "The Threat to Wilderland: choose one",
+    "threat": "Raise each player's threat by 2",
+    "immune": "All encounter cards are immune to player card effects this phase"
+  },
+  "misplacedTrust": {
+    "hero": "Misplaced Trust: choose a hero you control to attach it to"
+  },
+  "dragonSickness": {
+    "character": "Dragon-sickness: choose a character with a treasure attached"
   }
 }

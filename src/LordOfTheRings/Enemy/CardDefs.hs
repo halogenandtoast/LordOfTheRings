@@ -15,6 +15,9 @@ allEnemyCards =
     map
       (\def -> (cdCardCode def, def))
       [ kingSpider
+      , dagnirsSpawn
+      , gundabadHunter
+      , gundabadStalker
       , cunningInformant
       , harborBrute
       , pelargirRingleader
@@ -5205,5 +5208,36 @@ soldierOfIsengard =
   (enemy "143036" "Soldier of Isengard" HelmsDeep 4 39 4 4 1 4)
     { cdCardTraits = setFromList [Orc, UrukHai]
     , cdKeywords = setFromList [Toughness 1, Archery 1]
+    , cdShadowEffect = True
+    }
+
+-- * The Ered Mithrin campaign's burden enemies: set icons, never gathered
+
+-- | Threat and defense X, the campaign card's part number: 0 printed, raised by its card.
+dagnirsSpawn :: CardDef
+dagnirsSpawn =
+  (unique $ enemy "EMC173" "Dagnir's Spawn" TheKingsQuest 1 40 0 6 0 12)
+    { cdEncounterSet = Nothing
+    , cdSetIcon = Just TheKingsQuest
+    , cdCardTraits = setFromList [Dragon, Burden]
+    , cdVictoryPoints = Just 9
+    }
+
+gundabadHunter :: CardDef
+gundabadHunter =
+  (enemy "EMC191" "Gundabad Hunter" TheGhostOfFramsburg 1 20 2 5 4 3)
+    { cdEncounterSet = Nothing
+    , cdSetIcon = Just TheGhostOfFramsburg
+    , cdCardTraits = setFromList [Orc, Goblin, Hazard, Burden]
+    , cdShadowEffect = True
+    , cdWhenRevealed = True
+    }
+
+gundabadStalker :: CardDef
+gundabadStalker =
+  (enemy "EMC192" "Gundabad Stalker" TheGhostOfFramsburg 1 40 4 3 2 5)
+    { cdEncounterSet = Nothing
+    , cdSetIcon = Just TheGhostOfFramsburg
+    , cdCardTraits = setFromList [Orc, Goblin, Hazard, Burden]
     , cdShadowEffect = True
     }

@@ -768,6 +768,7 @@ library
       LordOfTheRings.Enemy.Cards.Dagnir
       LordOfTheRings.Enemy.Cards.DagnirMountGundabad
       LordOfTheRings.Enemy.Cards.DagnirsSlave
+      LordOfTheRings.Enemy.Cards.DagnirsSpawn
       LordOfTheRings.Enemy.Cards.DarkBats
       LordOfTheRings.Enemy.Cards.DarkHeartedHuorn
       LordOfTheRings.Enemy.Cards.DaughterOfBeruthiel
@@ -887,6 +888,8 @@ library
       LordOfTheRings.Enemy.Cards.GuardWarg
       LordOfTheRings.Enemy.Cards.GundabadArcher
       LordOfTheRings.Enemy.Cards.GundabadClimber
+      LordOfTheRings.Enemy.Cards.GundabadHunter
+      LordOfTheRings.Enemy.Cards.GundabadStalker
       LordOfTheRings.Enemy.Cards.GundabadWolfRider
       LordOfTheRings.Enemy.Cards.HaradrimArcher
       LordOfTheRings.Enemy.Cards.HaradrimCaptain
@@ -1564,6 +1567,7 @@ library
       LordOfTheRings.Helpers.IslandMap
       LordOfTheRings.Helpers.Modifiers
       LordOfTheRings.Helpers.Staging
+      LordOfTheRings.Helpers.Treasure
       LordOfTheRings.Helpers.Window
       LordOfTheRings.Hero
       LordOfTheRings.Hero.AllyHero
@@ -1696,6 +1700,7 @@ library
       LordOfTheRings.Location.Cards.AbandonedCamp
       LordOfTheRings.Location.Cards.AbandonedCampNightmare
       LordOfTheRings.Location.Cards.AbandonedMine
+      LordOfTheRings.Location.Cards.AbandonedRuin
       LordOfTheRings.Location.Cards.AbandonedVillage
       LordOfTheRings.Location.Cards.AccursedBattlefield
       LordOfTheRings.Location.Cards.AccursedForest
@@ -2384,6 +2389,7 @@ library
       LordOfTheRings.Objective.Cards.ArnorRavaged
       LordOfTheRings.Objective.Cards.ArwenUndomielObjective
       LordOfTheRings.Objective.Cards.AScrapOfHistory
+      LordOfTheRings.Objective.Cards.AshenBrazier
       LordOfTheRings.Objective.Cards.ASmellySack
       LordOfTheRings.Objective.Cards.Assassination
       LordOfTheRings.Objective.Cards.AStrongSack
@@ -2492,6 +2498,7 @@ library
       LordOfTheRings.Objective.Cards.TheOneRingSaga
       LordOfTheRings.Objective.Cards.TheOrcsSearch
       LordOfTheRings.Objective.Cards.TheSerpentsGarb
+      LordOfTheRings.Objective.Cards.TheThreatToWilderland
       LordOfTheRings.Objective.Cards.TheTowerOfBaradDurMountDoom
       LordOfTheRings.Objective.Cards.TheWainriders
       LordOfTheRings.Objective.Cards.ToIsengard
@@ -3174,6 +3181,7 @@ library
       LordOfTheRings.Treachery.Cards.AfraidOfTheDark
       LordOfTheRings.Treachery.Cards.AFrightenedBeast
       LordOfTheRings.Treachery.Cards.AGreatHost
+      LordOfTheRings.Treachery.Cards.AGrowingThreat
       LordOfTheRings.Treachery.Cards.AHurryingDarkness
       LordOfTheRings.Treachery.Cards.AimlessWandering
       LordOfTheRings.Treachery.Cards.AKnifeInTheBack
@@ -3293,6 +3301,7 @@ library
       LordOfTheRings.Treachery.Cards.DownFromTheHills
       LordOfTheRings.Treachery.Cards.DragonBreath
       LordOfTheRings.Treachery.Cards.DragonScales
+      LordOfTheRings.Treachery.Cards.DragonSickness
       LordOfTheRings.Treachery.Cards.DragonSpell
       LordOfTheRings.Treachery.Cards.DrawnToTheRing
       LordOfTheRings.Treachery.Cards.DreadAndDespair
@@ -3440,6 +3449,7 @@ library
       LordOfTheRings.Treachery.Cards.MassingInTheDeep
       LordOfTheRings.Treachery.Cards.MenInTheDark
       LordOfTheRings.Treachery.Cards.Mirage
+      LordOfTheRings.Treachery.Cards.MisplacedTrust
       LordOfTheRings.Treachery.Cards.MordorLooms
       LordOfTheRings.Treachery.Cards.MoreLikeAGrocer
       LordOfTheRings.Treachery.Cards.MorgothsBidding
@@ -3673,6 +3683,7 @@ library
       LordOfTheRings.Treachery.Cards.UnwantedAttention
       LordOfTheRings.Treachery.Cards.UnwelcomeDiscovery
       LordOfTheRings.Treachery.Cards.UrdugsCommand
+      LordOfTheRings.Treachery.Cards.UrdugsCunning
       LordOfTheRings.Treachery.Cards.VastAndIntricate
       LordOfTheRings.Treachery.Cards.VastnessOfMirkwood
       LordOfTheRings.Treachery.Cards.VileAffliction
@@ -3920,6 +3931,7 @@ test-suite LordOfTheRings-test
       LordOfTheRings.EncounterPhaseSpec
       LordOfTheRings.EndGameSpec
       LordOfTheRings.EredMithrin.CampaignBoonsSpec
+      LordOfTheRings.EredMithrin.CampaignBurdensSpec
       LordOfTheRings.EredMithrin.CampaignTreasuresSpec
       LordOfTheRings.EredMithrin.FireInTheNightPlayerCardsSpec
       LordOfTheRings.EredMithrin.FireInTheNightSpec
