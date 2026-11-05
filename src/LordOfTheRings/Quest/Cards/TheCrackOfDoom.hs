@@ -5,7 +5,6 @@ import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Outcome (Outcome (Lost))
 import LordOfTheRings.Quest.CardDefs qualified as Cards
 import LordOfTheRings.Quest.Import.Lifted
-import LordOfTheRings.Scenario.Scenarios.MountDoom.Helpers (ringBearerCompletesQuest)
 
 newtype TheCrackOfDoom = TheCrackOfDoom QuestAttrs
   deriving anyclass (IsQuest, HasAbilities)
@@ -50,6 +49,6 @@ instance RunMessage TheCrackOfDoom where
       unless (null explored) do
         lead <- getLead
         players <- length <$> getRemainingPlayers
-        fortitudeTestWith lead attrs (\t -> t {fortitudeExtraCards = players}) (gameOver Lost) ringBearerCompletesQuest
+        fortitudeTestWith lead attrs (\t -> t {fortitudeExtraCards = players}) (gameOver Lost) winGame
       TheCrackOfDoom <$> runMessage msg attrs
     _ -> TheCrackOfDoom <$> runMessage msg attrs

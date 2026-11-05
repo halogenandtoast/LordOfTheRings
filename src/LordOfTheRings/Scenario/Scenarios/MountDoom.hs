@@ -1,6 +1,6 @@
 module LordOfTheRings.Scenario.Scenarios.MountDoom (mountDoom) where
 
-import LordOfTheRings.Campaign (CampaignLog (..), CampaignLogKey (BlackGateResources), recordedCount)
+import LordOfTheRings.Campaign (CampaignLog (..), CampaignLogKey (BlackGateResources, CampaignLost), CampaignLogUpdate (Record), recordedCount)
 import LordOfTheRings.EncounterSet qualified as EncounterSet
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Location.CardDefs qualified as Locations
@@ -37,9 +37,8 @@ deck: HD, TRtI, TPotGC (see 'LordOfTheRings.Saga.removedBurdenSets'). Forced: At
 of the round, remove 1 resource token from this card. Then, if there are no resource
 tokens here, the players lose the game.
 
-Its resolution, the first player choosing to keep or destroy The One Ring, is made as the
-Ring-bearer completes his quest (see
-'LordOfTheRings.Scenario.Scenarios.MountDoom.Helpers.ringBearerCompletesQuest').
+Resolution: the first player must choose: keep The One Ring and succumb to the power of
+Sauron, the players losing the campaign, or destroy it, the players winning the campaign.
 
 Gollum: "Forced: After Gollum is discarded during a Fortitude test, put him into play
 engaged with the first player. Then, choose an encounter card discarded for this test and
@@ -80,7 +79,13 @@ instance RunMessage MountDoom where
           pure $ withCardResources left attrs
         _ -> pure attrs
       MountDoom <$> runMessage msg attrs'
-    ResolveCampaign | isJust attrs.campaign -> MountDoom <$> runMessage msg (withCardResources 0 attrs)
+    ResolveCampaign | isJust attrs.campaign -> do
+      lead <- getLead
+      chooseOneM lead do
+        questionLabeled "mountDoom.resolution"
+        labeled "mountDoom.keep" $ updateCampaignLog (Record CampaignLost [])
+        labeled "mountDoom.destroy" $ pure ()
+      MountDoom <$> runMessage msg (withCardResources 0 attrs)
     _ -> MountDoom <$> runMessage msg attrs
    where
     isGollum c = toCardCode c == toCardCode Enemies.gollumMountDoom
