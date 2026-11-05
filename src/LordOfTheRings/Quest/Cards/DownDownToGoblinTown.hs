@@ -1,7 +1,6 @@
 module LordOfTheRings.Quest.Cards.DownDownToGoblinTown (downDownToGoblinTown) where
 
 import LordOfTheRings.Classes.HasGame (getsGame)
-import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Quest.CardDefs qualified as Cards
 import LordOfTheRings.Quest.Import.Lifted
 import LordOfTheRings.Scenario.Scenarios.OverTheMistyMountainsGrim.Helpers (greatGoblinDefeated, switchEncounterDeck)
@@ -45,12 +44,16 @@ instance RunMessage DownDownToGoblinTown where
       for_ (map toTarget enemies <> map toTarget locations <> treacheries <> objectives) shuffleIntoEncounterDeck
       switchEncounterDeck
       lead <- getLead
-      searchEncounterDeckToStaging lead (cardIs Enemies.theGreatGoblin)
-      total <- (* 3) . length <$> getRemainingPlayers
+      searchEncounterDeckToStaging lead (CardWithTitle "The Great Goblin")
+      players <- length <$> getRemainingPlayers
+      let total = 3 * players
       resources <- getBagginsResources
+      scenario <- getsGame (toAttrs . (.scenario))
+      -- Nightmare setup caps the resources spent on this revelation at the player count.
+      let available = if scenario.nightmare then min players resources else resources
       getBilbo >>= \case
         Just bilbo | resources > 0 && total > 1 ->
-          chooseAmountM lead "downDownToGoblinTown.spend" attrs 0 (min resources (total - 1)) \x -> do
+          chooseAmountM lead "downDownToGoblinTown.spend" attrs 0 (min available (total - 1)) \x -> do
             when (x > 0) $ spendResourcesFrom lead bilbo x
             replicateM_ (total - x) revealEncounterCard
         _ -> replicateM_ total revealEncounterCard

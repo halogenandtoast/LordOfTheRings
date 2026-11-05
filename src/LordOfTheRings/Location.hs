@@ -6,6 +6,9 @@ import Data.Map.Strict qualified as Map
 import LordOfTheRings.Card
 import LordOfTheRings.Classes.Entity
 import LordOfTheRings.Classes.RunMessage
+import LordOfTheRings.Location.Cards.DarkPassages
+import LordOfTheRings.Location.Cards.DimValley
+import LordOfTheRings.Location.Cards.NarrowLedge
 import LordOfTheRings.Location.Cards.ComfortableLight
 import LordOfTheRings.Location.Cards.WickedHilltops
 import LordOfTheRings.Location.Cards.RedRiverBank
@@ -707,6 +710,9 @@ allLocations =
     [ (toCardCode builder, card)
     | card@(SomeLocationCard builder) <-
         [ SomeLocationCard greatForestWeb
+        , SomeLocationCard darkPassages
+        , SomeLocationCard dimValley
+        , SomeLocationCard narrowLedge
         , SomeLocationCard comfortableLight
         , SomeLocationCard wickedHilltops
         , SomeLocationCard redRiverBank

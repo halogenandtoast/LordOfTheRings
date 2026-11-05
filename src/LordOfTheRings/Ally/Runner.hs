@@ -8,7 +8,7 @@ import LordOfTheRings.Card (cdHitPoints, toCardDef)
 import LordOfTheRings.Classes.RunMessage
 import LordOfTheRings.Helpers.Modifiers (doesNotExhaustToCommit, getModifiers)
 import LordOfTheRings.Message
-import LordOfTheRings.Modifier (ModifierType (CannotExhaust, CannotReady, CannotReadyFromCardEffects, ControlledCardsCannotReady, DoesNotExhaustToAttack, ReadiedByRefresh))
+import LordOfTheRings.Modifier (ModifierType (CannotCommitToQuest, CannotExhaust, CannotReady, CannotReadyFromCardEffects, ControlledCardsCannotReady, DoesNotExhaustToAttack, ReadiedByRefresh))
 import LordOfTheRings.Phase
 import LordOfTheRings.Placement (Placement (AttachedTo, InPlayArea), placementController)
 import LordOfTheRings.Prelude
@@ -27,10 +27,14 @@ instance RunMessage AllyAttrs where
       (attackingL .~ True) <$> exhausting (not spared) attrs
     StopAttacking (isTarget attrs -> True) -> pure $ attrs & attackingL .~ False
     CommitToQuest (isTarget attrs -> True) -> do
-      free <- doesNotExhaustToCommit (toTarget attrs)
-      (committedL .~ True) <$> exhausting (not free) attrs
+      blocked <- elem CannotCommitToQuest <$> getModifiers attrs
+      if blocked then pure attrs else do
+        free <- doesNotExhaustToCommit (toTarget attrs)
+        (committedL .~ True) <$> exhausting (not free) attrs
     -- an ally put into play committed is aimed at by its card
-    CommitToQuest (CardIdTarget cid) | cid == attrs.allyCardId -> pure $ attrs & exhaustedL .~ True & committedL .~ True
+    CommitToQuest (CardIdTarget cid) | cid == attrs.allyCardId -> do
+      blocked <- elem CannotCommitToQuest <$> getModifiers attrs
+      pure $ if blocked then attrs else attrs & exhaustedL .~ True & committedL .~ True
     EndPhase QuestPhase -> pure $ attrs & committedL .~ False
     RemoveFromQuest (isTarget attrs -> True) -> do
       pushWhen attrs.allyCommitted $ CheckWindows [mkAfter $ RemovedFromQuest (toTarget attrs)]

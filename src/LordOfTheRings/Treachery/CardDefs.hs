@@ -14,7 +14,9 @@ allTreacheryCards =
   Map.fromList $
     map
       (\def -> (cdCardCode def, def))
-      [ minceThemFine
+      [ lightningSplinters
+      , swishSmackWhipCrack
+      , minceThemFine
       , nightWanesSlow
       , oneByOne
       , eyesOfTheForest
@@ -3539,3 +3541,13 @@ nightWanesSlow = treachery "over-hill-and-under-hill-nightmare-we-must-away-ere-
 
 oneByOne :: CardDef
 oneByOne = treachery "over-hill-and-under-hill-nightmare-we-must-away-ere-break-of-day-008" "One by One" WeMustAwayEreBreakOfDayNightmare 2
+
+-- * Over the Misty Mountains Grim Nightmare
+
+lightningSplinters :: CardDef
+lightningSplinters = treachery "over-hill-and-under-hill-nightmare-over-the-misty-mountains-grim-004" "Lightning Splinters" OverTheMistyMountainsGrimNightmare 2
+
+swishSmackWhipCrack :: CardDef
+swishSmackWhipCrack =
+  (treachery "over-hill-and-under-hill-nightmare-over-the-misty-mountains-grim-008" "Swish, smack! Whip crack!" TheGreatGoblinNightmare 2)
+    {cdShadowEffect = True}

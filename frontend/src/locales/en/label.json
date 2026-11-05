@@ -4045,5 +4045,8 @@
     "locationToPool": "Campaign: choose a location in the staging area to add a copy of to the campaign pool"
   },
   "wickedHilltops": {"discard": "Choose an ally without a Sack to discard"},
-  "oneByOne": {"destroy": "Choose a character with a Sack to destroy"}
+  "oneByOne": {"destroy": "Choose a character with a Sack to destroy"},
+  "darkPassages": {"makeActive": "Choose a location to make active"},
+  "goblinProwler": {"discard": "Choose a character to discard"},
+  "lightningSplinters": {"discard": "Choose a card to discard"}
 }

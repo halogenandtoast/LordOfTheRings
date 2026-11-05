@@ -14,7 +14,9 @@ allEnemyCards =
   Map.fromList $
     map
       (\def -> (cdCardCode def, def))
-      [ aMurderOfCrows
+      [ theGreatGoblinNightmare
+      , goblinProwler
+      , aMurderOfCrows
       , kingSpider
       , dagnirsSpawn
       , gundabadHunter
@@ -5253,3 +5255,15 @@ aMurderOfCrows =
     { cdCardTraits = setFromList [Creature]
     , cdWhenRevealed = True
     }
+
+-- * Over the Misty Mountains Grim Nightmare
+
+theGreatGoblinNightmare :: CardDef
+theGreatGoblinNightmare =
+  (unique $ enemy "over-hill-and-under-hill-nightmare-over-the-misty-mountains-grim-005" "The Great Goblin" TheGreatGoblinNightmare 1 15 3 5 2 8)
+    {cdCardTraits = setFromList [Goblin, Orc], cdVictoryPoints = Just 3}
+
+goblinProwler :: CardDef
+goblinProwler =
+  (enemy "over-hill-and-under-hill-nightmare-over-the-misty-mountains-grim-006" "Goblin Prowler" TheGreatGoblinNightmare 4 45 4 4 3 3)
+    {cdCardTraits = setFromList [Goblin, Orc]}

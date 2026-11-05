@@ -9,7 +9,7 @@ import LordOfTheRings.Helpers.Modifiers (doesNotExhaustToCommit, getModifiers, r
 import LordOfTheRings.Hero.Types as X
 import LordOfTheRings.Message
 import LordOfTheRings.Effect (Effect (..), EffectDuration (UntilEndOfRound))
-import LordOfTheRings.Modifier (ModifierType (CannotCollectResources, CannotExhaust, CannotReady, CannotReadyFromCardEffects, CollectsAdditionalResources, ControlledCardsCannotReady, DoesNotExhaustToAttack, ReadiedByRefresh, SpentResourcesThisRound))
+import LordOfTheRings.Modifier (ModifierType (CannotCommitToQuest, CannotCollectResources, CannotExhaust, CannotReady, CannotReadyFromCardEffects, CollectsAdditionalResources, ControlledCardsCannotReady, DoesNotExhaustToAttack, ReadiedByRefresh, SpentResourcesThisRound))
 import LordOfTheRings.Phase
 import LordOfTheRings.Prelude
 import LordOfTheRings.Source
@@ -77,8 +77,10 @@ instance RunMessage HeroAttrs where
       (attackingL .~ True) <$> exhausting (not spared) attrs
     StopAttacking (isTarget attrs -> True) -> pure $ attrs & attackingL .~ False
     CommitToQuest (isTarget attrs -> True) -> do
-      free <- doesNotExhaustToCommit (toTarget attrs)
-      (committedL .~ True) <$> exhausting (not free) attrs
+      blocked <- elem CannotCommitToQuest <$> getModifiers attrs
+      if blocked then pure attrs else do
+        free <- doesNotExhaustToCommit (toTarget attrs)
+        (committedL .~ True) <$> exhausting (not free) attrs
     EndPhase QuestPhase -> pure $ attrs & committedL .~ False
     RemoveFromQuest (isTarget attrs -> True) -> do
       pushWhen attrs.heroCommitted $ CheckWindows [mkAfter $ RemovedFromQuest (toTarget attrs)]

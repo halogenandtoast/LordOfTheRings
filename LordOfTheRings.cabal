@@ -855,6 +855,7 @@ library
       LordOfTheRings.Enemy.Cards.GoblinFollower
       LordOfTheRings.Enemy.Cards.GoblinLurker
       LordOfTheRings.Enemy.Cards.GoblinMiners
+      LordOfTheRings.Enemy.Cards.GoblinProwler
       LordOfTheRings.Enemy.Cards.GoblinPursuer
       LordOfTheRings.Enemy.Cards.GoblinRunners
       LordOfTheRings.Enemy.Cards.GoblinScout
@@ -1171,6 +1172,7 @@ library
       LordOfTheRings.Enemy.Cards.TheDragonsThrall
       LordOfTheRings.Enemy.Cards.TheGovernor
       LordOfTheRings.Enemy.Cards.TheGreatGoblin
+      LordOfTheRings.Enemy.Cards.TheGreatGoblinNightmare
       LordOfTheRings.Enemy.Cards.TheHandOfCastamir
       LordOfTheRings.Enemy.Cards.TheKingsElite
       LordOfTheRings.Enemy.Cards.TheMouthOfSauron
@@ -1817,6 +1819,7 @@ library
       LordOfTheRings.Location.Cards.DarkDoor
       LordOfTheRings.Location.Cards.DarkenedStairway
       LordOfTheRings.Location.Cards.DarkHalls
+      LordOfTheRings.Location.Cards.DarkPassages
       LordOfTheRings.Location.Cards.DarkPathway
       LordOfTheRings.Location.Cards.DarkPit
       LordOfTheRings.Location.Cards.DarkPools
@@ -1847,6 +1850,7 @@ library
       LordOfTheRings.Location.Cards.DesolateMeadow
       LordOfTheRings.Location.Cards.DesolationOfSmaug
       LordOfTheRings.Location.Cards.DevilsMirk
+      LordOfTheRings.Location.Cards.DimValley
       LordOfTheRings.Location.Cards.DocksideStreet
       LordOfTheRings.Location.Cards.DoorsOfDurin
       LordOfTheRings.Location.Cards.DoorsOfDurinTheRingGoesSouth
@@ -2044,6 +2048,7 @@ library
       LordOfTheRings.Location.Cards.NarelenyaLocation
       LordOfTheRings.Location.Cards.NarrowAlleyway
       LordOfTheRings.Location.Cards.NarrowFissure
+      LordOfTheRings.Location.Cards.NarrowLedge
       LordOfTheRings.Location.Cards.NarrowOpening
       LordOfTheRings.Location.Cards.NarrowPass
       LordOfTheRings.Location.Cards.NarrowStair
@@ -3432,6 +3437,7 @@ library
       LordOfTheRings.Treachery.Cards.LeapingFlame
       LordOfTheRings.Treachery.Cards.LeavesOnTree
       LordOfTheRings.Treachery.Cards.LifeDrain
+      LordOfTheRings.Treachery.Cards.LightningSplinters
       LordOfTheRings.Treachery.Cards.LingeringMalevolence
       LordOfTheRings.Treachery.Cards.LingeringVenom
       LordOfTheRings.Treachery.Cards.LocalTrouble
@@ -3625,6 +3631,7 @@ library
       LordOfTheRings.Treachery.Cards.SwarmingInsect
       LordOfTheRings.Treachery.Cards.SwarmingMosquitoes
       LordOfTheRings.Treachery.Cards.SwarmOfBats
+      LordOfTheRings.Treachery.Cards.SwishSmackWhipCrack
       LordOfTheRings.Treachery.Cards.SwordOfRhun
       LordOfTheRings.Treachery.Cards.TakeCover
       LordOfTheRings.Treachery.Cards.TakenPrisoner
@@ -4064,6 +4071,7 @@ test-suite LordOfTheRings-test
       LordOfTheRings.Hobbit.DungeonsDeepAndCavernsDimSpec
       LordOfTheRings.Hobbit.EasyModeSpec
       LordOfTheRings.Hobbit.NightmareSpec
+      LordOfTheRings.Hobbit.OverTheMistyMountainsGrimNightmareSpec
       LordOfTheRings.Hobbit.OverTheMistyMountainsGrimSpec
       LordOfTheRings.Hobbit.PlayerCardsSpec
       LordOfTheRings.Hobbit.WeMustAwayEreBreakOfDaySpec

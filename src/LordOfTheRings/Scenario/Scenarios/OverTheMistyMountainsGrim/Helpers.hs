@@ -13,7 +13,7 @@ import LordOfTheRings.Classes.HasGame
 import LordOfTheRings.Classes.HasQueue (push)
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Game.Base (gameScenario)
-import LordOfTheRings.Matcher.Types (EnemyMatcher (EnemyWithCardCode), cardIs, cardMatches)
+import LordOfTheRings.Matcher.Types (EnemyMatcher (EnemyWithCardCode), CardMatcher (CardWithTitle), cardMatches)
 import LordOfTheRings.Message
 import LordOfTheRings.Message.Lifted (ReverseQueue)
 import LordOfTheRings.Prelude
@@ -21,7 +21,7 @@ import LordOfTheRings.Scenario.Types (ScenarioAttrs (..))
 
 -- | Whether The Great Goblin is in the victory display.
 greatGoblinDefeated :: HasGame m => m Bool
-greatGoblinDefeated = getsGame (any (cardMatches $ cardIs Enemies.theGreatGoblin) . scenarioVictoryDisplay . toAttrs . gameScenario)
+greatGoblinDefeated = getsGame (any (cardMatches $ CardWithTitle "The Great Goblin") . scenarioVictoryDisplay . toAttrs . gameScenario)
 
 stoneGiant :: EnemyMatcher
 stoneGiant = EnemyWithCardCode $ toCardCode Enemies.stoneGiant

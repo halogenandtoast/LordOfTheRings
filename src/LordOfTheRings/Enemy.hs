@@ -6,6 +6,7 @@ import Data.Map.Strict qualified as Map
 import LordOfTheRings.Card
 import LordOfTheRings.Classes.Entity
 import LordOfTheRings.Classes.RunMessage
+import LordOfTheRings.Enemy.Cards.GoblinProwler
 import LordOfTheRings.Enemy.Cards.AMurderOfCrows
 import LordOfTheRings.Enemy.Cards.BlackForestBats
 import LordOfTheRings.Enemy.Cards.GoblinScout
@@ -553,6 +554,7 @@ import LordOfTheRings.Enemy.Cards.GoblinDriver
 import LordOfTheRings.Enemy.Cards.StoneGiant
 import LordOfTheRings.Enemy.Cards.GoblinBentSwords
 import LordOfTheRings.Enemy.Cards.TheGreatGoblin
+import LordOfTheRings.Enemy.Cards.TheGreatGoblinNightmare
 import LordOfTheRings.Enemy.Cards.GollumDungeonsDeep
 import LordOfTheRings.Enemy.Cards.GreatGrayWolf
 import LordOfTheRings.Enemy.Cards.WildWargs
@@ -650,6 +652,7 @@ allEnemys =
     [ (toCardCode builder, card)
     | card@(SomeEnemyCard builder) <-
         [ SomeEnemyCard kingSpider
+        , SomeEnemyCard goblinProwler
         , SomeEnemyCard goblinScout
         , SomeEnemyCard goblinSwordsman
         , SomeEnemyCard patrolLeader
@@ -1199,6 +1202,7 @@ allEnemys =
         , SomeEnemyCard stoneGiant
         , SomeEnemyCard goblinBentSwords
         , SomeEnemyCard theGreatGoblin
+        , SomeEnemyCard theGreatGoblinNightmare
         , SomeEnemyCard gollumDungeonsDeep
         , SomeEnemyCard greatGrayWolf
         , SomeEnemyCard wildWargs

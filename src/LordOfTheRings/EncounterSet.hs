@@ -225,6 +225,7 @@ data EncounterSet
   | OverTheMistyMountainsGrimNightmare
   | MistyMountainGoblins
   | TheGreatGoblin
+  | TheGreatGoblinNightmare
   | DungeonsDeepAndCavernsDim
   | DungeonsDeepAndCavernsDimNightmare
   | FliesAndSpiders

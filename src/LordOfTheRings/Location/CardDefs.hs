@@ -15,7 +15,10 @@ allLocationCards =
   Map.fromList $
     map
       (\def -> (cdCardCode def, def))
-      [ redRiverBank
+      [ narrowLedge
+      , dimValley
+      , darkPassages
+      , redRiverBank
       , wickedHilltops
       , comfortableLight
       , greatForestWeb
@@ -4858,3 +4861,20 @@ comfortableLight :: CardDef
 comfortableLight =
   (location "over-hill-and-under-hill-nightmare-we-must-away-ere-break-of-day-005" "Comfortable Light" WeMustAwayEreBreakOfDayNightmare 3 5 0)
     {cdCardTraits = setFromList [Trollshaws], cdQuestPoints = Nothing}
+
+-- * Over the Misty Mountains Grim Nightmare
+
+narrowLedge :: CardDef
+narrowLedge =
+  (location "over-hill-and-under-hill-nightmare-over-the-misty-mountains-grim-002" "Narrow Ledge" OverTheMistyMountainsGrimNightmare 3 4 3)
+    {cdCardTraits = setFromList [Mountain], cdShadowEffect = True}
+
+dimValley :: CardDef
+dimValley =
+  (location "over-hill-and-under-hill-nightmare-over-the-misty-mountains-grim-003" "Dim Valley" OverTheMistyMountainsGrimNightmare 4 3 10)
+    {cdCardTraits = setFromList [Mountain]}
+
+darkPassages :: CardDef
+darkPassages =
+  (location "over-hill-and-under-hill-nightmare-over-the-misty-mountains-grim-007" "Dark Passages" TheGreatGoblinNightmare 3 4 3)
+    {cdCardTraits = setFromList [Cave], cdWhenRevealed = True}
