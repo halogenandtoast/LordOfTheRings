@@ -27,7 +27,9 @@ instance HasModifiersFor TheGatesOfMoria where
 
 -- | Forced: After an enemy engages a player, place 1 damage on each active location.
 instance HasAbilities TheGatesOfMoria where
-  getAbilities (TheGatesOfMoria a) = [mkAbility a 1 $ forced $ AnyEnemyEngagedWindow After | a.flipped]
+  getAbilities (TheGatesOfMoria a) =
+    [mkAbility a 1 $ forced $ AnyEnemyEngagedWindow After | a.flipped]
+      <> [restricted a 2 InNightmareMode $ forced $ AdvancedToStageWindow After | a.flipped]
 
 {- | When Revealed: Make Doors of Durin the active location. Add Watcher in the Water to the
 staging area. Discard all tokens from the Ring-bearer and place it (and each card attached
@@ -44,7 +46,8 @@ instance RunMessage TheGatesOfMoria where
       TheGatesOfMoria <$> runMessage msg attrs
     WhenRevealed (isTarget attrs -> True) -> do
       select IsActiveLocation >>= traverse_ \l -> placeLocation l StagingArea
-      traverse_ putIntoPlayAsActiveLocation =<< getSetAside (cardIs Locations.doorsOfDurinTheRingGoesSouth)
+      traverse_ putIntoPlayAsActiveLocation
+        =<< getSetAside (cardIs Locations.doorsOfDurinTheRingGoesSouth)
       watchers <- getSetAside (cardIs Enemies.watcherInTheWater)
       addSetAsideToStaging (cardIs Enemies.watcherInTheWater)
       ringBearers <- select (HeroWithTrait RingBearer)
@@ -57,7 +60,20 @@ instance RunMessage TheGatesOfMoria where
     UseCardAbility _ (isSource attrs -> True) 1 ws -> do
       for_ [() | Window _ (EnemyEngaged _ _) <- ws] \_ -> damageEachActiveLocation attrs 1
       pure q
-    CheckWindows ws | attrs.flipped, any (cardMatches (cardIs Locations.doorsOfDurinTheRingGoesSouth)) [c | Window After (ExploredCard c) <- ws] -> do
-      winGame
-      TheGatesOfMoria <$> runMessage msg attrs
+    UseCardAbility _ (isSource attrs -> True) 2 _ -> do
+      -- Stage 4A's when-revealed effect resolves before the advancement window.
+      -- Doors of Durin is active when each Tentacle's engagement damages it.
+      tentacles <- getSetAside (cardIs Enemies.paleGreenTentacle)
+      players <- getRemainingPlayers
+      for_ (zip players tentacles) $ \(pid, card) -> putEnemyIntoPlayEngaged pid card
+      shuffleSetAsideIntoEncounterDeck (drop (length players) tentacles)
+      shuffleEncounterDiscardIntoDeck AnyCard
+      pure q
+    CheckWindows ws
+      | attrs.flipped
+      , any
+          (cardMatches (cardIs Locations.doorsOfDurinTheRingGoesSouth))
+          [c | Window After (ExploredCard c) <- ws] -> do
+          winGame
+          TheGatesOfMoria <$> runMessage msg attrs
     _ -> TheGatesOfMoria <$> runMessage msg attrs

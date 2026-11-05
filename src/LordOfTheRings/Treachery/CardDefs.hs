@@ -14,7 +14,9 @@ allTreacheryCards =
   Map.fromList $
     map
       (\def -> (cdCardCode def, def))
-      [ comeBack
+      [ huntedInHollin
+      , shelterlessLand
+      , comeBack
       , theTwilightWorld
       , theRingsWill
       , bladeTip
@@ -3667,3 +3669,13 @@ comeBack = (treachery "the-black-riders-nightmare-flight-to-the-ford-008" "Come 
 theTwilightWorld :: CardDef
 theTwilightWorld = (treachery "the-black-riders-nightmare-flight-to-the-ford-009" "The Twilight World" FlightToTheFordNightmare 2)
   {cdCardTraits = setFromList [Morgul], cdKeywords = setFromList [Doomed 2]}
+
+-- * The Ring Goes South Nightmare
+
+huntedInHollin :: CardDef
+huntedInHollin = (treachery "the-road-darkens-nightmare-the-ring-goes-south-007" "Hunted in Hollin" TheRingGoesSouthNightmare 2)
+  {cdKeywords = setFromList [Peril]}
+
+shelterlessLand :: CardDef
+shelterlessLand = (treachery "the-road-darkens-nightmare-the-ring-goes-south-008" "Shelterless Land" TheRingGoesSouthNightmare 2)
+  {cdKeywords = setFromList [Surge, Doomed 1], cdShadowEffect = True}

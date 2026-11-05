@@ -11,7 +11,7 @@ import LordOfTheRings.Message
 import LordOfTheRings.I18n (ikey)
 import LordOfTheRings.Effect (Effect (..), EffectDuration (UntilEndOfRound))
 import LordOfTheRings.GameT (GameT)
-import LordOfTheRings.Modifier (ModifierType (DamageLimit, DamageLimitEachRound, DamageTakenThisRound, KeepUnresolvedShadowCards, MaxDamage))
+import LordOfTheRings.Modifier (ModifierType (CannotTakeDamage, DamageLimit, DamageLimitEachRound, DamageTakenThisRound, KeepUnresolvedShadowCards, MaxDamage))
 import LordOfTheRings.Phase
 import LordOfTheRings.Placement (placementController)
 import LordOfTheRings.Queue (QueueT)
@@ -82,7 +82,7 @@ instance RunMessage EnemyAttrs where
           room = foldr min maxBound [max 0 (k - attrs.damage) | MaxDamage k <- mods]
           taken = sum [k | DamageTakenThisRound k <- mods]
           eachRound = foldr min maxBound [max 0 (k - taken) | DamageLimitEachRound k <- mods]
-          placed = min room (min n (min left eachRound))
+          placed = if CannotTakeDamage `elem` mods then 0 else min room (min n (min left eachRound))
       when (left < maxBound)
         $ push
         $ CreateEffect

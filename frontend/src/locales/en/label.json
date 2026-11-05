@@ -4069,5 +4069,7 @@
   "southernSpy": {"choose": "Southern Spy: shuffle a Ringwraith or take an immediate attack", "attack": "Southern Spy makes an immediate attack"},
   "bladeTip": {"attach": "Attach Blade Tip to a defending character damaged by this attack"},
   "comeBack": {"choose": "Come Back!: reduce the Ring-bearer's life or take this attack undefended", "life": "Reduce the Ring-bearer's life by 1", "undefended": "Treat this attack as undefended"},
-  "theTwilightWorld": {"choose": "The Twilight World: exhaust The One Ring or reduce the Ring-bearer's life", "exhaust": "Exhaust The One Ring", "life": "Reduce the Ring-bearer's life by 1"}
+  "theTwilightWorld": {"choose": "The Twilight World: exhaust The One Ring or reduce the Ring-bearer's life", "exhaust": "Exhaust The One Ring", "life": "Reduce the Ring-bearer's life by 1"},
+  "huntingHawk": {"choose": "Hunting Hawk: exhaust the ally or damage an active location", "exhaust": "Exhaust the ally just played", "damage": "Place 1 damage on an active location"},
+  "huntedInHollin": {"choose": "Hunted in Hollin: raise your threat or engage an enemy and reveal a card", "threat": "Raise your threat by 6", "engage": "Engage the lowest engagement cost enemy and reveal a card", "enemy": "Choose an enemy with the lowest engagement cost"}
 }

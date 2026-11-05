@@ -14,7 +14,10 @@ allEnemyCards =
   Map.fromList $
     map
       (\def -> (cdCardCode def, def))
-      [ fellRiderNightmare
+      [ paleGreenTentacle
+      , huntingHawk
+      , mistyMountainWarg
+      , fellRiderNightmare
       , menacingWraith
       , southernSpy
       , khamulTheEasterlingNightmare
@@ -5425,3 +5428,17 @@ southernSpy = (enemy "the-black-riders-nightmare-a-knife-in-the-dark-003" "South
 fellRiderNightmare :: CardDef
 fellRiderNightmare = (enemy "the-black-riders-nightmare-flight-to-the-ford-002" "Fell Rider" FlightToTheFordNightmare 4 30 3 5 4 6)
   {cdCardTraits = setFromList [Nazgul], cdShadowEffect = True}
+
+-- * The Ring Goes South Nightmare
+
+paleGreenTentacle :: CardDef
+paleGreenTentacle = (enemy "the-road-darkens-nightmare-the-ring-goes-south-002" "Pale-green Tentacle" TheRingGoesSouthNightmare 4 22 3 5 1 5)
+  {cdCardTraits = setFromList [Tentacle], cdVictoryPoints = Just 3}
+
+huntingHawk :: CardDef
+huntingHawk = (enemy "the-road-darkens-nightmare-the-ring-goes-south-003" "Hunting Hawk" TheRingGoesSouthNightmare 2 44 4 4 3 5)
+  {cdCardTraits = setFromList [Creature]}
+
+mistyMountainWarg :: CardDef
+mistyMountainWarg = (enemy "the-road-darkens-nightmare-the-ring-goes-south-004" "Misty Mountain Warg" TheRingGoesSouthNightmare 3 33 2 4 3 4)
+  {cdCardTraits = setFromList [Creature, Warg], cdWhenRevealed = True, cdShadowEffect = True}

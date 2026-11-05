@@ -6,6 +6,8 @@ import Data.Map.Strict qualified as Map
 import LordOfTheRings.Card
 import LordOfTheRings.Classes.Entity
 import LordOfTheRings.Classes.RunMessage
+import LordOfTheRings.Location.Cards.ExpanseOfHollin
+import LordOfTheRings.Location.Cards.SlopesOfHithaeglir
 import LordOfTheRings.Location.Cards.FordOfBruinenNightmare
 import LordOfTheRings.Location.Cards.TrollshawForest
 import LordOfTheRings.Location.Cards.GreatEastRoad
@@ -733,6 +735,8 @@ allLocations =
     [ (toCardCode builder, card)
     | card@(SomeLocationCard builder) <-
         [ SomeLocationCard greatForestWeb
+        , SomeLocationCard expanseOfHollin
+        , SomeLocationCard slopesOfHithaeglir
         , SomeLocationCard fordOfBruinenNightmare
         , SomeLocationCard trollshawForest
         , SomeLocationCard greatEastRoad

@@ -145,7 +145,10 @@ preloadModifiers g = do
         Modifier source (ThreatPerToken token) -> [Modifier source (ThreatModifier $ tokensOn t token)]
         Modifier source (ThreatWithToken token n) -> [Modifier source (ThreatModifier n) | tokensOn t token > 0]
         Modifier source (StagingThreatPerToken on token) -> [Modifier source (StagingThreatBonus $ tokensOn on token)]
+        Modifier source StagingThreatPerActiveLocationDamage -> [Modifier source (StagingThreatBonus activeDamage)]
+        Modifier source AttackPerActiveLocationDamage -> [Modifier source (AttackModifier activeDamage)]
         _ -> []
+      activeDamage = sum [countTokens Damage (locationTokens $ toAttrs l) | l <- toList es.locations, l.placement == ActiveLocation]
       all' = Map.mapWithKey (\t ms -> ms <> concatMap (counted t) ms) all0
       tokensOn t token = maybe 0 (countTokens token) case t of
         EnemyTarget i -> enemyTokens . toAttrs <$> Map.lookup i es.enemies

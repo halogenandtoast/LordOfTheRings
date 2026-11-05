@@ -130,7 +130,7 @@ const implemented: Record<string, Gateable & { nightmare?: boolean }> = {
   'the-fortress-of-nurn': { beta: true },
   'the-land-of-sorrow': { beta: true },
   'the-passing-of-the-grey-company': { beta: true },
-  'the-ring-goes-south': { beta: true },
+  'the-ring-goes-south': { beta: true, nightmare: true },
   'the-passage-of-the-marshes': { beta: true },
   'journey-to-the-cross-roads': { beta: true },
   'shelobs-lair': { beta: true },

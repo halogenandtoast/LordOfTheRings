@@ -271,3 +271,17 @@ test('all three Black Riders scenarios offer Nightmare mode', async ({ page, gam
     await page.getByRole('button', { name: 'Back', exact: true }).click()
   }
 })
+
+
+test('implemented Road Darkens scenarios offer Nightmare mode', async ({ page, game: _session }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' })
+  await page.goto('/#/new-game')
+  await page.getByRole('button', { name: 'The Lord of the Rings', exact: false }).click()
+  for (const name of ['The Ring Goes South']) {
+    await page.getByRole('button').filter({ hasText: name }).click()
+    const nightmare = page.getByRole('radio', { name: 'Nightmare', exact: true })
+    await nightmare.click()
+    await expect(nightmare).toHaveAttribute('aria-checked', 'true')
+    await page.getByRole('button', { name: 'Back', exact: true }).click()
+  }
+})

@@ -925,6 +925,7 @@ library
       LordOfTheRings.Enemy.Cards.Hummerhorns
       LordOfTheRings.Enemy.Cards.HuntersFromMordor
       LordOfTheRings.Enemy.Cards.HuntingEagle
+      LordOfTheRings.Enemy.Cards.HuntingHawk
       LordOfTheRings.Enemy.Cards.HuntingPack
       LordOfTheRings.Enemy.Cards.HuntingWarg
       LordOfTheRings.Enemy.Cards.HuornOfFangorn
@@ -966,6 +967,7 @@ library
       LordOfTheRings.Enemy.Cards.MirkwoodFlock
       LordOfTheRings.Enemy.Cards.MirkwoodPatrol
       LordOfTheRings.Enemy.Cards.MistyMountainGoblins
+      LordOfTheRings.Enemy.Cards.MistyMountainWarg
       LordOfTheRings.Enemy.Cards.MithrilSeeker
       LordOfTheRings.Enemy.Cards.MordorCaveTroll
       LordOfTheRings.Enemy.Cards.MordorOlogHai
@@ -1043,6 +1045,7 @@ library
       LordOfTheRings.Enemy.Cards.PackHunters
       LordOfTheRings.Enemy.Cards.PackLeader
       LordOfTheRings.Enemy.Cards.PackOfWargs
+      LordOfTheRings.Enemy.Cards.PaleGreenTentacle
       LordOfTheRings.Enemy.Cards.PatrolLeader
       LordOfTheRings.Enemy.Cards.PatrolSentry
       LordOfTheRings.Enemy.Cards.PatrolShip
@@ -1910,6 +1913,7 @@ library
       LordOfTheRings.Location.Cards.Ettenmoors
       LordOfTheRings.Location.Cards.EvilSmellingFens
       LordOfTheRings.Location.Cards.ExpanseOfHarad
+      LordOfTheRings.Location.Cards.ExpanseOfHollin
       LordOfTheRings.Location.Cards.ExposedRidge
       LordOfTheRings.Location.Cards.ExposedRiverbank
       LordOfTheRings.Location.Cards.FallenStones
@@ -2215,6 +2219,7 @@ library
       LordOfTheRings.Location.Cards.SlopesOfCirithGorgor
       LordOfTheRings.Location.Cards.SlopesOfEredMithrin
       LordOfTheRings.Location.Cards.SlopesOfGundabad
+      LordOfTheRings.Location.Cards.SlopesOfHithaeglir
       LordOfTheRings.Location.Cards.SmeagolsSecretWay
       LordOfTheRings.Location.Cards.SnowyBadlands
       LordOfTheRings.Location.Cards.SoftMires
@@ -3453,6 +3458,7 @@ library
       LordOfTheRings.Treachery.Cards.HowlingAtTheirHeels
       LordOfTheRings.Treachery.Cards.HowlingOfWargs
       LordOfTheRings.Treachery.Cards.HungryTroll
+      LordOfTheRings.Treachery.Cards.HuntedInHollin
       LordOfTheRings.Treachery.Cards.HuntingForTheRing
       LordOfTheRings.Treachery.Cards.IceStorm
       LordOfTheRings.Treachery.Cards.IllFate
@@ -3633,6 +3639,7 @@ library
       LordOfTheRings.Treachery.Cards.ShadowOfFearJourneyInTheDark
       LordOfTheRings.Treachery.Cards.ShadowOfMordor
       LordOfTheRings.Treachery.Cards.ShelobsPoison
+      LordOfTheRings.Treachery.Cards.ShelterlessLand
       LordOfTheRings.Treachery.Cards.ShiftingMarshland
       LordOfTheRings.Treachery.Cards.ShotFromTheSky
       LordOfTheRings.Treachery.Cards.SignsOfConflict
@@ -4197,6 +4204,7 @@ test-suite LordOfTheRings-test
       LordOfTheRings.TheLordOfTheRings.FlightToTheFordSpec
       LordOfTheRings.TheRoadDarkens.BreakingOfTheFellowshipSpec
       LordOfTheRings.TheRoadDarkens.JourneyInTheDarkSpec
+      LordOfTheRings.TheRoadDarkens.TheRingGoesSouthNightmareSpec
       LordOfTheRings.TheRoadDarkens.TheRingGoesSouthSpec
       LordOfTheRings.TravelPhaseSpec
       LordOfTheRings.TreasonOfSaruman.HelmsDeepSpec

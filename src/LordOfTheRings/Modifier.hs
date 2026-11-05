@@ -206,6 +206,10 @@ data ModifierType
   | -- | on the game: the total threat in the staging area is raised by 1 for each token of
     -- the kind on the card, counted as they change, as The Tower Beckons reads
     StagingThreatPerToken Target Token
+  | -- | on the game: staging threat tracks the damage on currently active locations
+    StagingThreatPerActiveLocationDamage
+  | -- | on an attacking enemy: its attack tracks damage on currently active locations
+    AttackPerActiveLocationDamage
   | -- | on the game: each ally in play takes the modifier, one that enters play later too,
     -- for as long as the effect lasts, as Pit into the Depths reads
     EachAlly ModifierType
