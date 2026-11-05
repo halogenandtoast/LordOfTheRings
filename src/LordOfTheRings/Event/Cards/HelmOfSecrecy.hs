@@ -1,10 +1,11 @@
 module LordOfTheRings.Event.Cards.HelmOfSecrecy (helmOfSecrecy) where
 
 import Data.Map.Strict qualified as Map
-import LordOfTheRings.Card (Card (PlayerCard), cdThreatCost, genPlayerCard, toCardDef)
+import LordOfTheRings.Card (Card (PlayerCard), cdSphere, cdThreatCost, genPlayerCard, toCardDef)
 import LordOfTheRings.Event.CardDefs qualified as Cards
 import LordOfTheRings.Event.Import.Lifted
 import LordOfTheRings.Hero (allHeroes)
+import LordOfTheRings.Sphere (Sphere (..))
 
 newtype HelmOfSecrecy = HelmOfSecrecy EventAttrs
   deriving anyclass (IsEvent, HasModifiersFor)
@@ -16,15 +17,17 @@ newtype HelmOfSecrecy = HelmOfSecrecy EventAttrs
 -- tokens to the hero from your collection. (Errata; its damage was discarded with its tokens,
 -- so the hero swapped in comes in fully healed, ready or exhausted as the one it replaces.)
 --
--- Your collection is every hero the game has, those the unique rule lets into play; it has
--- no fellowship or baggins heroes to leave out.
+-- Your collection is every hero the game has, those the unique rule lets into play, but
+-- for its Fellowship and Baggins heroes.
 helmOfSecrecy :: EventCard HelmOfSecrecy
 helmOfSecrecy = event HelmOfSecrecy Cards.helmOfSecrecy
 
 instance RunMessage HelmOfSecrecy where
   runMessage msg e@(HelmOfSecrecy attrs) = case msg of
     PlayEvent pid card _ | card.id == toId attrs -> do
-      collection <- flip filterM (Map.keys allHeroes) \code -> passesUnique . PlayerCard =<< genPlayerCard (toCardDef code) (Just pid)
+      let sagaHero code = cdSphere (toCardDef code) `elem` [Just Fellowship, Just Baggins]
+      collection <- flip filterM (filter (not . sagaHero) $ Map.keys allHeroes) \code ->
+        passesUnique . PlayerCard =<< genPlayerCard (toCardDef code) (Just pid)
       let threatOf = fromMaybe 0 . cdThreatCost . toCardDef
       heroes <- traverse getHero =<< select (HeroControlledBy $ PlayerWithId pid)
       chooseOneM pid do
