@@ -13,9 +13,12 @@ import LordOfTheRings.Helpers.Staging (getEngagementCost)
 import LordOfTheRings.Matcher (getArcheryTotal, getEnemy, getMainQuestProgress)
 import LordOfTheRings.Scenario (breakingOfTheFellowship)
 import LordOfTheRings.Helpers.Window (travelableLocations)
-import LordOfTheRings.Modifier (ModifierType (Blank, GainKeyword, CannotEngagePlayer, CannotLeaveStagingArea, CannotBeOptionallyEngagedBy, CannotDiscardFromHand))
+import LordOfTheRings.Modifier (ModifierType (Blank, GainTrait, GainKeyword, CannotEngagePlayer, CannotLeaveStagingArea, CannotBeOptionallyEngagedBy, CannotDiscardFromHand))
 import LordOfTheRings.Keyword (Keyword (Toughness))
 import LordOfTheRings.Matcher (PlayerMatcher (AnyPlayer))
+import LordOfTheRings.Helpers.Modifiers (getModifiers)
+import LordOfTheRings.Trait (Trait (Condition))
+import LordOfTheRings.Window (WindowType (RoundEnds), mkWhen)
 import TestImport
 
 botf :: (PlayerId -> GameT ()) -> IO ()
@@ -65,6 +68,22 @@ revealTreachery def = do
   _ <- setEncounterDeck [def]
   run RevealEncounterCard
   resolveRevealed
+
+revealHunting :: GameT ()
+revealHunting = do
+  _ <- setEncounterDeck [Treacheries.huntingTheRing, Locations.theOldFord]
+  run RevealEncounterCard
+  resolveRevealed
+
+huntingCards :: GameT [(TreacheryId, Placement)]
+huntingCards = getsGame (map (\t -> (toId t, t.placement)) . filter ((== toCardCode Treacheries.huntingTheRing) . toCardCode) . toList . (.entities.treacheries))
+
+resolveForcedChoices :: PlayerId -> GameT ()
+resolveForcedChoices pid = getQuestion pid >>= \case
+  Just q | any (\case AbilityLabel {} -> True; _ -> False) (questionChoices q) -> do
+    chooseOptionMatching "resolve a forced effect" pid (\case AbilityLabel {} -> True; _ -> False)
+    resolveForcedChoices pid
+  _ -> pure ()
 
 spec :: Spec
 spec = describe "Breaking of the Fellowship Nightmare" do
@@ -558,3 +577,116 @@ spec = describe "Breaking of the Fellowship Nightmare" do
     chooseAbilityOf pid harp
     length . (.hand) <$> getPlayer pid `shouldReturn` 1
     getArcheryTotal `shouldReturn` 4
+
+  it "Hunting the Ring attaches as a Condition to the current quest and surges" . botf $ \_ -> do
+    q <- putQuestStage Quests.theLongDarkOfMoria
+    revealHunting
+    cards <- huntingCards
+    map snd cards `shouldBe` [AttachedTo q]
+    for_ cards (\(tid, _) -> getModifiers (TreacheryTarget tid) >>= (`shouldSatisfy` elem (GainTrait Condition)))
+    getsGame (map toCardCode . toList . (.entities.locations)) `shouldReturn` [toCardCode Locations.theOldFord]
+
+  it "Hunting the Ring raises threat for staged enemies, excludes engaged enemies, and discards itself" . botf $ \pid -> do
+    _ <- putQuestStage Quests.theLongDarkOfMoria
+    _ <- stage Enemies.forestSpider
+    engaged <- stage Enemies.isengardTracker
+    run $ EngageEnemy pid engaged
+    revealHunting
+    beforeThreat <- (.threat) <$> getPlayer pid
+    run $ CheckWindows [mkWhen RoundEnds]
+    (.threat) <$> getPlayer pid `shouldReturn` (beforeThreat + 1)
+    huntingCards `shouldReturn` []
+    (.placement) <$> getEnemy engaged `shouldReturn` EngagedWith pid
+
+  it "Hunting the Ring raises each player's threat at a shared stage" . botfTwo $ \one two -> do
+    _ <- putQuestStage Quests.theLongDarkOfMoria
+    _ <- stage Enemies.forestSpider
+    _ <- stage Enemies.goblinSniper
+    revealHunting
+    beforeOne <- (.threat) <$> getPlayer one
+    beforeTwo <- (.threat) <$> getPlayer two
+    run $ CheckWindows [mkWhen RoundEnds]
+    (.threat) <$> getPlayer one `shouldReturn` (beforeOne + 2)
+    (.threat) <$> getPlayer two `shouldReturn` (beforeTwo + 2)
+    huntingCards `shouldReturn` []
+
+  it "Hunting the Ring discards itself at round end even if no enemies are staged" . botf $ \pid -> do
+    _ <- putQuestStage Quests.theLongDarkOfMoria
+    revealHunting
+    beforeThreat <- (.threat) <$> getPlayer pid
+    run $ CheckWindows [mkWhen RoundEnds]
+    (.threat) <$> getPlayer pid `shouldReturn` beforeThreat
+    huntingCards `shouldReturn` []
+
+  it "Hunting the Ring affects only its own stage and moves those staged enemies to the first player's area" . botfTwo $ \one two -> do
+    run $ SeparateStagingAreas [[one], [two]]
+    run $ FocusArea two
+    _ <- putQuestStage Quests.theLongDarkOfMoria
+    a <- stage Enemies.forestSpider
+    b <- stage Enemies.goblinSniper
+    revealHunting
+    beforeOne <- (.threat) <$> getPlayer one
+    beforeTwo <- (.threat) <$> getPlayer two
+    run $ CheckWindows [mkWhen RoundEnds]
+    (.threat) <$> getPlayer one `shouldReturn` beforeOne
+    (.threat) <$> getPlayer two `shouldReturn` (beforeTwo + 2)
+    getsGame (length . (.entities.enemies)) `shouldReturn` 0
+    huntingCards `shouldReturn` []
+    run $ FocusArea one
+    for_ [a, b] (\eid -> (.placement) <$> getEnemy eid `shouldReturn` StagingArea)
+
+  it "Hunting the Ring triggers Isengard Archer's entry damage at the destination after the threat increase" . botfTwo $ \one two -> do
+    heroOne <- beravorOf one
+    heroTwo <- beravorOf two
+    run $ SeparateStagingAreas [[one], [two]]
+    run $ FocusArea two
+    _ <- putQuestStage Quests.theLongDarkOfMoria
+    eid <- stage Enemies.isengardArcher
+    chooseTarget two heroTwo
+    revealHunting
+    beforeOne <- (.threat) <$> getPlayer one
+    beforeTwo <- (.threat) <$> getPlayer two
+    run $ CheckWindows [mkWhen RoundEnds]
+    (.threat) <$> getPlayer two `shouldReturn` (beforeTwo + 1)
+    chooseTarget one heroOne
+    getDamage heroOne `shouldReturn` 2
+    getDamage heroTwo `shouldReturn` 2
+    (.threat) <$> getPlayer one `shouldReturn` beforeOne
+    run $ FocusArea one
+    (.placement) <$> getEnemy eid `shouldReturn` StagingArea
+    huntingCards `shouldReturn` []
+
+  it "multiple copies of Hunting the Ring resolve once each and are then discarded" . botf $ \pid -> do
+    _ <- putQuestStage Quests.theLongDarkOfMoria
+    _ <- stage Enemies.forestSpider
+    revealHunting
+    revealHunting
+    beforeThreat <- (.threat) <$> getPlayer pid
+    run $ CheckWindows [mkWhen RoundEnds]
+    resolveForcedChoices pid
+    (.threat) <$> getPlayer pid `shouldReturn` (beforeThreat + 2)
+    huntingCards `shouldReturn` []
+
+  it "Hunting the Ring is discarded with its quest and no longer triggers" . botf $ \pid -> do
+    q <- putQuestStage Quests.theLongDarkOfMoria
+    _ <- stage Enemies.forestSpider
+    revealHunting
+    case q of
+      QuestTarget qid -> run $ LeaveQuestStage qid
+      _ -> error "quest target expected"
+    beforeThreat <- (.threat) <$> getPlayer pid
+    run $ CheckWindows [mkWhen RoundEnds]
+    (.threat) <$> getPlayer pid `shouldReturn` beforeThreat
+    huntingCards `shouldReturn` []
+
+  it "Hunting the Ring uses the current first-player token holder when moving enemies" . botfTwo $ \one two -> do
+    run $ SeparateStagingAreas [[one], [two]]
+    run $ FocusArea one
+    _ <- putQuestStage Quests.theLongDarkOfMoria
+    eid <- stage Enemies.forestSpider
+    revealHunting
+    run $ SetFirstPlayer two
+    run $ CheckWindows [mkWhen RoundEnds]
+    getsGame (length . (.entities.enemies)) `shouldReturn` 0
+    run $ FocusArea two
+    (.placement) <$> getEnemy eid `shouldReturn` StagingArea
