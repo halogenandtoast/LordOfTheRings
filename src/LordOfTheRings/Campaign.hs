@@ -15,14 +15,14 @@ import Data.List (elemIndex)
 import Data.Map.Strict qualified as Map
 import LordOfTheRings.Campaign.CardDefs qualified as Cards
 import LordOfTheRings.Card (allPlayerCards)
-import LordOfTheRings.Card.CardDef (CardDef, cdCardCode, cdName, cdSetIcon, cdTreasure)
+import LordOfTheRings.Card.CardDef (CardDef, cdCardCode, cdName, cdTreasure)
 import LordOfTheRings.Card.Code
 import LordOfTheRings.Hero.CardDefs qualified as Heroes
 import LordOfTheRings.Id (ScenarioId (..))
 import LordOfTheRings.Json
 import LordOfTheRings.Name (Name (..))
 import LordOfTheRings.Prelude
-import LordOfTheRings.Saga (FellowshipSetup (..), fellowshipSetup, hobbitScenarios, treasureSetsFor)
+import LordOfTheRings.Saga (FellowshipSetup (..), fellowshipSetup, hobbitScenarios)
 
 newtype CampaignId = CampaignId {unCampaignId :: Text}
   deriving stock (Show, Eq, Ord, Generic)
@@ -467,12 +467,10 @@ seatDeck seat l cards = filter (keeps . fst) cards <> [(c, 1) | c <- seatPoolCar
   keeps code = code `notElem` recorded LostInMountGram l && maybe True (`notElem` fallenTitles) (titleOf code)
 
 -- | Each seat's boons and burdens that are player cards, to shuffle into its deck: those
--- not attached to a hero. (An encounter card for its deck the scenario shuffles in.)
+-- not attached to a hero. (An encounter card for its deck the scenario shuffles in, and a
+-- treasure its player chooses to add as the scenario is set up.)
 seatPoolCards :: Int -> CampaignLog -> [CardCode]
-seatPoolCards seat l = [p.code | p <- l.pool, p.seat == Just seat, isNothing p.attachedTo, Just def <- [Map.lookup p.code allPlayerCards], allowed def]
- where
-  -- a treasure only in a scenario whose setup lists its set
-  allowed def = not (cdTreasure def) || maybe False (\sid -> maybe False (`elem` treasureSetsFor sid) (cdSetIcon def)) (nextScenario l)
+seatPoolCards seat l = [p.code | p <- l.pool, p.seat == Just seat, isNothing p.attachedTo, Just def <- [Map.lookup p.code allPlayerCards], not (cdTreasure def)]
 
 instance HasField "code" PoolCard CardCode where
   getField = poolCardCode

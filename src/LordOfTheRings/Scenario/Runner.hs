@@ -12,8 +12,9 @@ import LordOfTheRings.I18n
 import LordOfTheRings.Keyword (Keyword (Encounter, Guarded, GuardedBy, LastPlayerGainsControl, Permanent))
 import LordOfTheRings.Trait (Trait (RingBearer))
 import LordOfTheRings.Matcher
+import LordOfTheRings.Name (Name (..))
 import LordOfTheRings.Message
-import LordOfTheRings.Message.Lifted (chooseOneM, placeResources, questionLabeled, removeFromDeck, showing, shuffleIntoDeck, targets)
+import LordOfTheRings.Message.Lifted (chooseOneM, labeled, placeResources, questionLabeled, removeFromDeck, showing, shuffleIntoDeck, targets)
 import LordOfTheRings.Campaign
 import LordOfTheRings.Game.Base (allPlayers, gameEntities, gamePhase, gamePlayerOrder, gamePlayers, gameRound)
 import LordOfTheRings.Entities (entitiesHeroes, entitiesObjectives)
@@ -25,7 +26,7 @@ import LordOfTheRings.Placement (GuardRelease (..), Placement (AttachedTo))
 import LordOfTheRings.Prelude
 import LordOfTheRings.Question
 import LordOfTheRings.Scenario.Sailing (discardEncounterCard, runSailing)
-import LordOfTheRings.Saga (removedBurdenSets)
+import LordOfTheRings.Saga (removedBurdenSets, treasureSetsFor)
 import LordOfTheRings.Scenario.Types as X
 import LordOfTheRings.Source (Source (ObjectiveSource), sourceTarget)
 import LordOfTheRings.Target
@@ -81,6 +82,20 @@ instance RunMessage ScenarioAttrs where
       -- (an objective, as Arnor Ravaged, comes into play as its own Setup text says)
       earned <- traverse genEncounterCard [def | p <- foldMap (.pool) attrs.campaign, isNothing p.attachedTo, isNothing p.seat, let def = toCardDef p.code, not (isPlayerCardDef def), not (entersPlayAtSetup def), keptBurden attrs def]
       encounterDeck <- shuffleM (earned <> attrs.encounterDeck)
+      -- each player may add to his deck a treasure he has discovered whose set the
+      -- scenario's setup lists, no more than 1 copy by title (The Hobbit: Over Hill and
+      -- Under Hill rules insert, "Treasure": "A player is permitted to add..."), so each is
+      -- his choice, made before the setup hand is drawn
+      order <- getsGame gamePlayerOrder
+      for_ (zip [0 ..] order) \(seat, pid) -> do
+        let treasures = ordNubBy (\d -> let Name t _ = cdName d in t) (==) [def | p <- foldMap (.pool) attrs.campaign, p.seat == Just seat, isNothing p.attachedTo, let def = toCardDef p.code, cdTreasure def, maybe False (`elem` treasureSetsFor attrs.scenarioId) (cdSetIcon def)]
+        for_ treasures \def -> do
+          card <- genPlayerCard def (Just pid)
+          chooseOneM pid do
+            questionLabeled "saga.addTreasure"
+            showing [PlayerCard card]
+            labeled "saga.addTreasureToDeck" $ shuffleIntoDeck pid (PlayerCard card)
+            labeled "saga.leaveTreasureOut" (pure ())
       pure $ attrs & encounterDeckL .~ encounterDeck
     -- once the starting hands are drawn, an encounter card of the pool with a seat goes
     -- into that seat's deck, as Temple of the Deceived's resolution has a Recurring

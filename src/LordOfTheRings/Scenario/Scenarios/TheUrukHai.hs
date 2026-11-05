@@ -85,10 +85,13 @@ to the Campaign Pool.
 What is earned is written to the log; a Permanent boon is attached as its hero comes into
 play.
 
-A player's heroes are the non-Fellowship heroes he owns still in play, his Captive among
-them: the heroes the log records for him (the Fellowship hero is not recorded). Each Skill
-boon goes to a hero its own Setup allows ("Attach to a Warrior hero" and so on), one copy
-of each, so each player earns a different one.
+A player's heroes for Beyond All Hope are the non-Fellowship heroes he owns still in play,
+his Captive among them: the heroes the log records for him (the Fellowship hero is not
+recorded). A Skill boon goes to any hero he controls, the Fellowship Aragorn the first
+player controls among them (a Noble and a Ranger, so Leader of Men or Forewarned may go on
+him), as its own Setup allows ("Attach to a Warrior hero" and so on), one copy of each, so
+each player earns a different one. One on the Fellowship Aragorn is recorded on him, and
+follows the Aragorn of a later scenario (see 'LordOfTheRings.Campaign.seatHeroes').
 -}
 resolution :: ReverseQueue m => CampaignLog -> m ()
 resolution l = do
@@ -119,7 +122,7 @@ skillBoons =
 eachEarnsASkill :: ReverseQueue m => [(Text, CardCode, Trait)] -> [PlayerId] -> m ()
 eachEarnsASkill _ [] = pure ()
 eachEarnsASkill remaining (p : rest) = do
-  heroes <- heroesOf p
+  heroes <- getsGame (filter ((== p) . (.owner)) . toList . (.entities.heroes))
   let eligible = [(key, code, hs) | (key, code, trait) <- remaining, let hs = [h | h <- heroes, trait `member` cdCardTraits (toCardDef h)], notNull hs]
   if null eligible
     then eachEarnsASkill remaining rest

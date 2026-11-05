@@ -13,7 +13,8 @@ import LordOfTheRings.Outcome (Outcome (Lost, Won))
 import LordOfTheRings.Phase (Phase (..))
 import LordOfTheRings.Quest.Runner (getQuestPoints)
 import LordOfTheRings.Quest.CardDefs qualified as Quests
-import LordOfTheRings.Scenario (lookupScenario, theUrukHai)
+import LordOfTheRings.Attachment.Types (AttachmentAttrs (attachmentPlacement))
+import LordOfTheRings.Scenario (helmsDeep, lookupScenario, theUrukHai)
 import LordOfTheRings.Scenario.Scenarios.TheUrukHai.Helpers (getPursuit)
 import LordOfTheRings.Scenario.Types (GameMode (EasyMode), ScenarioAttrs (..), modeL)
 import LordOfTheRings.Treachery.CardDefs qualified as Treacheries
@@ -414,6 +415,26 @@ spec = describe "The Uruk-hai" do
       chooseLabel "$label.theUrukHai.intimidation" pid
       outcome `shouldReturn` Just Won
       (.pool) <$> getCampaignLog `shouldReturn` [PoolCard "143015" Nothing (Just "01002")]
+
+    -- "attaches it to a hero he controls": the first player controls the Fellowship
+    -- Aragorn, a Noble and a Ranger
+    it "lets a player attach Leader of Men to the Fellowship Aragorn he controls, recorded on him" . campaignTestIn theUrukHai lotr testDeck $ \pid -> do
+      setUp pid
+      toStageTwo pid
+      setPursuitTo 12
+      stage2 <- toTarget <$> getActiveQuest
+      run $ PlaceTokens GameSource stage2 Progress 12
+      chooseLabel "$label.theUrukHai.skillBoons" pid
+      chooseLabel "$label.theUrukHai.leaderOfMen" pid
+      chooseTarget pid =<< hero "143001"
+      outcome `shouldReturn` Just Won
+      (.pool) <$> getCampaignLog `shouldReturn` [PoolCard "143018" Nothing (Just "143001")]
+
+    it "keeps a Skill boon on the Fellowship Aragorn in the next scenario" . campaignTestIn helmsDeep lotr {campaignLogPool = [PoolCard "143018" Nothing (Just "143001")]} testDeck $ \_ -> do
+      run $ DoStep 3 Setup
+      run $ DoStep 4 Setup
+      aragorn <- hero "143001"
+      getsGame (\g -> [t | a <- toList g.entities.attachments, toCardCode a == "143018", AttachedTo t <- [attachmentPlacement (toAttrs a)]]) `shouldReturn` [aragorn]
 
     it "brings a fallen hero back with Beyond All Hope, the player giving up a hero for him at no penalty" . campaignTestIn theUrukHai lotr {campaignLogFallenHeroes = ["01003"]} testDeck $ \pid -> do
       setUp pid
