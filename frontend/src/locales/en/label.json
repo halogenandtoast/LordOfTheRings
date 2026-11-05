@@ -1,4 +1,9 @@
 {
+  "halfOrcOfIsengard": {
+    "choose": "Choose Half-orc of Isengard’s effect",
+    "discard": "Discard 1 random card from your hand",
+    "attack": "Half-orc of Isengard gets +3 attack for this attack"
+  },
   "rainOfArrows": {
     "choose": "Choose Rain of Arrows’ effect",
     "resource": "Remove 1 resource from The Defense of Helm’s Deep",

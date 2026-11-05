@@ -14,7 +14,9 @@ allEnemyCards =
   Map.fromList $
     map
       (\def -> (cdCardCode def, def))
-      [ bloodiedBerserker
+      [ orthancArcher
+      , halfOrcOfIsengard
+      , bloodiedBerserker
       , hostOfIsengard
       , mauhur
       , lugdush
@@ -5495,3 +5497,14 @@ hostOfIsengard = (enemy "the-treason-of-saruman-nightmare-helms-deep-002" "Host 
 bloodiedBerserker :: CardDef
 bloodiedBerserker = (enemy "the-treason-of-saruman-nightmare-helms-deep-003" "Bloodied Berserker" HelmsDeepNightmare 4 28 3 4 2 4)
   {cdCardTraits = setFromList [Dunland], cdShadowEffect = True}
+
+
+-- * The Road to Isengard Nightmare
+
+orthancArcher :: CardDef
+orthancArcher = (enemy "the-treason-of-saruman-nightmare-the-road-to-isengard-002" "Orthanc Archer" TheRoadToIsengardNightmare 3 38 2 3 2 3)
+  {cdCardTraits = setFromList [Orc], cdKeywords = setFromList [Peril, Archery 2], cdWhenRevealed = True}
+
+halfOrcOfIsengard :: CardDef
+halfOrcOfIsengard = (enemy "the-treason-of-saruman-nightmare-the-road-to-isengard-003" "Half-orc of Isengard" TheRoadToIsengardNightmare 3 33 3 3 2 4)
+  {cdCardTraits = setFromList [Orc, Isengard], cdShadowEffect = True}

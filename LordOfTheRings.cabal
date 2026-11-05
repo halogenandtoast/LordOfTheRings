@@ -906,6 +906,7 @@ library
       LordOfTheRings.Enemy.Cards.GundabadHunter
       LordOfTheRings.Enemy.Cards.GundabadStalker
       LordOfTheRings.Enemy.Cards.GundabadWolfRider
+      LordOfTheRings.Enemy.Cards.HalfOrcOfIsengard
       LordOfTheRings.Enemy.Cards.HaradrimArcher
       LordOfTheRings.Enemy.Cards.HaradrimCaptain
       LordOfTheRings.Enemy.Cards.HaradrimElite
@@ -1048,6 +1049,7 @@ library
       LordOfTheRings.Enemy.Cards.OrcVanguard
       LordOfTheRings.Enemy.Cards.OrcWarParty
       LordOfTheRings.Enemy.Cards.OrcWight
+      LordOfTheRings.Enemy.Cards.OrthancArcher
       LordOfTheRings.Enemy.Cards.OverseerMaurul
       LordOfTheRings.Enemy.Cards.PackHunters
       LordOfTheRings.Enemy.Cards.PackLeader
@@ -4244,6 +4246,7 @@ test-suite LordOfTheRings-test
       LordOfTheRings.TravelPhaseSpec
       LordOfTheRings.TreasonOfSaruman.HelmsDeepNightmareSpec
       LordOfTheRings.TreasonOfSaruman.HelmsDeepSpec
+      LordOfTheRings.TreasonOfSaruman.TheRoadToIsengardNightmareSpec
       LordOfTheRings.TreasonOfSaruman.TheRoadToIsengardSpec
       LordOfTheRings.TreasonOfSaruman.TheUrukHaiNightmareSpec
       LordOfTheRings.TreasonOfSaruman.TheUrukHaiSpec
