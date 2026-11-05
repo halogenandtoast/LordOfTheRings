@@ -956,11 +956,13 @@ library
       LordOfTheRings.Enemy.Cards.Louis
       LordOfTheRings.Enemy.Cards.LouisNightmare
       LordOfTheRings.Enemy.Cards.LowerGateSentries
+      LordOfTheRings.Enemy.Cards.Lugdush
       LordOfTheRings.Enemy.Cards.ManOfHarad
       LordOfTheRings.Enemy.Cards.MaraudingOrc
       LordOfTheRings.Enemy.Cards.MarshAdder
       LordOfTheRings.Enemy.Cards.MarshlandOutlaws
       LordOfTheRings.Enemy.Cards.MarshWight
+      LordOfTheRings.Enemy.Cards.Mauhur
       LordOfTheRings.Enemy.Cards.MenacingWraith
       LordOfTheRings.Enemy.Cards.MessengerFromMordor
       LordOfTheRings.Enemy.Cards.MethedrasLookout
@@ -1029,6 +1031,7 @@ library
       LordOfTheRings.Enemy.Cards.OrcOfThaurdir
       LordOfTheRings.Enemy.Cards.OrcOfTheEye
       LordOfTheRings.Enemy.Cards.OrcOfTheFlame
+      LordOfTheRings.Enemy.Cards.OrcOfTheWhiteHand
       LordOfTheRings.Enemy.Cards.OrcRabble
       LordOfTheRings.Enemy.Cards.OrcRaiders
       LordOfTheRings.Enemy.Cards.OrcRaidersNightmare
@@ -4229,6 +4232,7 @@ test-suite LordOfTheRings-test
       LordOfTheRings.TravelPhaseSpec
       LordOfTheRings.TreasonOfSaruman.HelmsDeepSpec
       LordOfTheRings.TreasonOfSaruman.TheRoadToIsengardSpec
+      LordOfTheRings.TreasonOfSaruman.TheUrukHaiNightmareSpec
       LordOfTheRings.TreasonOfSaruman.TheUrukHaiSpec
       LordOfTheRings.VengeanceOfMordor.AShadowInTheEastPlayerCardsSpec
       LordOfTheRings.VengeanceOfMordor.ChallengeOfTheWainridersPlayerCardsSpec

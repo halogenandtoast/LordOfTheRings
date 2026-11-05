@@ -14,7 +14,10 @@ allEnemyCards =
   Map.fromList $
     map
       (\def -> (cdCardCode def, def))
-      [ isengardArcher
+      [ mauhur
+      , lugdush
+      , orcOfTheWhiteHand
+      , isengardArcher
       , isengardTracker
       , zirakzigilArcher
       , slabBearer
@@ -5466,3 +5469,17 @@ isengardArcher = (enemy "the-road-darkens-nightmare-breaking-of-the-fellowship-0
 isengardTracker :: CardDef
 isengardTracker = (enemy "the-road-darkens-nightmare-breaking-of-the-fellowship-003" "Isengard Tracker" BreakingOfTheFellowshipNightmare 4 35 3 5 1 3)
   {cdCardTraits = setFromList [Orc, UrukHai], cdKeywords = setFromList [Toughness 2, Archery 1], cdShadowEffect = True}
+
+-- * The Uruk-hai Nightmare
+
+mauhur :: CardDef
+mauhur = (unique $ enemy "the-treason-of-saruman-nightmare-the-uruk-hai-002" "Mauhúr" TheUrukHaiNightmare 1 24 4 5 2 4)
+  {cdCardTraits = setFromList [Orc, UrukHai], cdKeywords = setFromList [Toughness 1, Archery 2], cdVictoryPoints = Just 4}
+
+lugdush :: CardDef
+lugdush = (unique $ enemy "the-treason-of-saruman-nightmare-the-uruk-hai-003" "Lugdush" TheUrukHaiNightmare 1 32 3 4 2 5)
+  {cdCardTraits = setFromList [Orc, UrukHai], cdKeywords = setFromList [Toughness 2], cdVictoryPoints = Just 3, cdShadowEffect = True}
+
+orcOfTheWhiteHand :: CardDef
+orcOfTheWhiteHand = (enemy "the-treason-of-saruman-nightmare-the-uruk-hai-004" "Orc of the White Hand" TheUrukHaiNightmare 4 28 3 3 1 3)
+  {cdCardTraits = setFromList [Orc, UrukHai], cdKeywords = setFromList [Toughness 2], cdShadowEffect = True}
