@@ -666,6 +666,7 @@ library
       LordOfTheRings.Enemy.CardDefs
       LordOfTheRings.Enemy.Cards.AggressiveRacer
       LordOfTheRings.Enemy.Cards.AmbushingOrcs
+      LordOfTheRings.Enemy.Cards.AMurderOfCrows
       LordOfTheRings.Enemy.Cards.AncientMarshDweller
       LordOfTheRings.Enemy.Cards.AnduinTrollSpawn
       LordOfTheRings.Enemy.Cards.AngmarCaptain
@@ -1782,6 +1783,7 @@ library
       LordOfTheRings.Location.Cards.CobasHaven
       LordOfTheRings.Location.Cards.CobwebbedCavern
       LordOfTheRings.Location.Cards.CollapsedTower
+      LordOfTheRings.Location.Cards.ComfortableLight
       LordOfTheRings.Location.Cards.ConcealedOrcCamp
       LordOfTheRings.Location.Cards.ConcealedWoods
       LordOfTheRings.Location.Cards.ContestedDepths
@@ -2109,6 +2111,7 @@ library
       LordOfTheRings.Location.Cards.RavineLedge
       LordOfTheRings.Location.Cards.RedhornFoothills
       LordOfTheRings.Location.Cards.RedhornPass
+      LordOfTheRings.Location.Cards.RedRiverBank
       LordOfTheRings.Location.Cards.ReekingMoat
       LordOfTheRings.Location.Cards.Rhosgobel
       LordOfTheRings.Location.Cards.RingWallOfIsengard
@@ -2340,6 +2343,7 @@ library
       LordOfTheRings.Location.Cards.WestQuarter
       LordOfTheRings.Location.Cards.WhiteFloweredFields
       LordOfTheRings.Location.Cards.WhiteShip
+      LordOfTheRings.Location.Cards.WickedHilltops
       LordOfTheRings.Location.Cards.WindingCaverns
       LordOfTheRings.Location.Cards.WindingStairs
       LordOfTheRings.Location.Cards.WoodedRiverbank
@@ -3449,6 +3453,7 @@ library
       LordOfTheRings.Treachery.Cards.MassingAtNight
       LordOfTheRings.Treachery.Cards.MassingInTheDeep
       LordOfTheRings.Treachery.Cards.MenInTheDark
+      LordOfTheRings.Treachery.Cards.MinceThemFine
       LordOfTheRings.Treachery.Cards.Mirage
       LordOfTheRings.Treachery.Cards.MisplacedTrust
       LordOfTheRings.Treachery.Cards.MordorLooms
@@ -3460,6 +3465,7 @@ library
       LordOfTheRings.Treachery.Cards.MysteriousFog
       LordOfTheRings.Treachery.Cards.NewDevilry
       LordOfTheRings.Treachery.Cards.Nightfall
+      LordOfTheRings.Treachery.Cards.NightWanesSlow
       LordOfTheRings.Treachery.Cards.NightWithoutEnd
       LordOfTheRings.Treachery.Cards.NoCampfire
       LordOfTheRings.Treachery.Cards.NoQuarter
@@ -3474,6 +3480,7 @@ library
       LordOfTheRings.Treachery.Cards.OldHatreds
       LordOfTheRings.Treachery.Cards.OldWivesTales
       LordOfTheRings.Treachery.Cards.OminousFate
+      LordOfTheRings.Treachery.Cards.OneByOne
       LordOfTheRings.Treachery.Cards.OnslaughtOfMordor
       LordOfTheRings.Treachery.Cards.OrcAmbush
       LordOfTheRings.Treachery.Cards.OrcAssault
@@ -3982,6 +3989,7 @@ test-suite LordOfTheRings-test
       LordOfTheRings.Hero.HeroAbilitiesSpec
       LordOfTheRings.Hobbit.DungeonsDeepAndCavernsDimSpec
       LordOfTheRings.Hobbit.EasyModeSpec
+      LordOfTheRings.Hobbit.NightmareSpec
       LordOfTheRings.Hobbit.OverTheMistyMountainsGrimSpec
       LordOfTheRings.Hobbit.PlayerCardsSpec
       LordOfTheRings.Hobbit.WeMustAwayEreBreakOfDaySpec

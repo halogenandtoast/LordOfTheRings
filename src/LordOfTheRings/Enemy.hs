@@ -6,6 +6,7 @@ import Data.Map.Strict qualified as Map
 import LordOfTheRings.Card
 import LordOfTheRings.Classes.Entity
 import LordOfTheRings.Classes.RunMessage
+import LordOfTheRings.Enemy.Cards.AMurderOfCrows
 import LordOfTheRings.Enemy.Cards.BlackForestBats
 import LordOfTheRings.Enemy.Cards.GoblinScout
 import LordOfTheRings.Enemy.Cards.GoblinSwordsman
@@ -883,6 +884,7 @@ allEnemys =
         , SomeEnemyCard umbarSlaver
         , SomeEnemyCard captainSahirTheCityOfCorsairs
         , SomeEnemyCard ungoliantsSpawnNightmare
+        , SomeEnemyCard aMurderOfCrows
         , SomeEnemyCard ungoliantsBrood
         , SomeEnemyCard forestFlies
         , SomeEnemyCard spidersOfMirkwood

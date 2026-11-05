@@ -14,7 +14,10 @@ allTreacheryCards =
   Map.fromList $
     map
       (\def -> (cdCardCode def, def))
-      [ eyesOfTheForest
+      [ minceThemFine
+      , nightWanesSlow
+      , oneByOne
+      , eyesOfTheForest
       , aGrowingThreat
       , urdugsCunning
       , misplacedTrust
@@ -3523,3 +3526,16 @@ dragonSickness =
     , cdCardTraits = setFromList [Burden, Condition]
     , cdKeywords = setFromList [Surge]
     }
+
+-- * The Hobbit Nightmare Decks
+
+minceThemFine :: CardDef
+minceThemFine =
+  (treachery "over-hill-and-under-hill-nightmare-we-must-away-ere-break-of-day-006" "Mince Them Fine" WeMustAwayEreBreakOfDayNightmare 3)
+    {cdShadowEffect = True}
+
+nightWanesSlow :: CardDef
+nightWanesSlow = treachery "over-hill-and-under-hill-nightmare-we-must-away-ere-break-of-day-007" "Night Wanes Slow" WeMustAwayEreBreakOfDayNightmare 2
+
+oneByOne :: CardDef
+oneByOne = treachery "over-hill-and-under-hill-nightmare-we-must-away-ere-break-of-day-008" "One by One" WeMustAwayEreBreakOfDayNightmare 2

@@ -219,35 +219,53 @@ data EncounterSet
   | WrathAndRuin
   -- The Hobbit saga's
   | WeMustAwayEreBreakOfDay
+  | WeMustAwayEreBreakOfDayNightmare
   | WesternLands
   | OverTheMistyMountainsGrim
+  | OverTheMistyMountainsGrimNightmare
   | MistyMountainGoblins
   | TheGreatGoblin
   | DungeonsDeepAndCavernsDim
+  | DungeonsDeepAndCavernsDimNightmare
   | FliesAndSpiders
+  | FliesAndSpidersNightmare
   | Wilderland
   | TheLonelyMountain
+  | TheLonelyMountainNightmare
   | TheBattleOfFiveArmies
+  | TheBattleOfFiveArmiesNightmare
   -- The Lord of the Rings saga's; a scenario's set names its burden set too, though no
   -- burden is gathered with it (see 'cdSetIcon')
   | AShadowOfThePast
+  | AShadowOfThePastNightmare
   | AKnifeInTheDark
+  | AKnifeInTheDarkNightmare
   | FlightToTheFord
+  | FlightToTheFordNightmare
   | Hunted
   | TheBlackRiders
   | TheNazgul
   | TheRing
   | TheRingGoesSouth
+  | TheRingGoesSouthNightmare
   | JourneyInTheDark
+  | JourneyInTheDarkNightmare
   | BreakingOfTheFellowship
+  | BreakingOfTheFellowshipNightmare
   | TheUrukHai
+  | TheUrukHaiNightmare
   | HelmsDeep
+  | HelmsDeepNightmare
   | TheRoadToIsengard
+  | TheRoadToIsengardNightmare
   | OrcsOfTheWhiteHand
   | SnagaOrcs
   | ThePassageOfTheMarshes
+  | ThePassageOfTheMarshesNightmare
   | JourneyToTheCrossRoads
+  | JourneyToTheCrossRoadsNightmare
   | ShelobsLair
+  | ShelobsLairNightmare
   | TheGreatSpider
   | GollumSaga
   | HaradSaga

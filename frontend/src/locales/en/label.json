@@ -4043,5 +4043,7 @@
     "allyJoins": "Campaign: accept this ally's aid? Choose the player whose deck it joins",
     "allyDeclined": "Decline the aid",
     "locationToPool": "Campaign: choose a location in the staging area to add a copy of to the campaign pool"
-  }
+  },
+  "wickedHilltops": {"discard": "Choose an ally without a Sack to discard"},
+  "oneByOne": {"destroy": "Choose a character with a Sack to destroy"}
 }

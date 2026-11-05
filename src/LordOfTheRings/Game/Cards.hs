@@ -174,6 +174,7 @@ import LordOfTheRings.Modifier (
     LeavesPlayToAnyPlayersDeck,
     LeavesPlayToEncounterDiscard,
     LeavesPlayToSackDeck,
+    LeavesPlayToTopOfSackDeck,
     LeavesPlayToTopOfEncounterDeck,
     LoseKeyword,
     MayPlayTopOfDeck,
@@ -203,6 +204,7 @@ import LordOfTheRings.Question (UI, targetLabel)
 import LordOfTheRings.Scenario (
   ScenarioAttrs (scenarioGuardedPlayerCards, scenarioOrcGuards),
   encounterDeckL,
+  sackDeckL,
   orcGuardsL,
  )
 import LordOfTheRings.Scenario.Sailing (discardEncounterCard)
@@ -376,6 +378,9 @@ discardFromPlay target g = case target of
       Just o | LeavesPlayToEncounterDiscard `elem` mods -> do
         push $ AddToEncounterDiscard [MkEncounterCard (objectiveCardId $ toAttrs o) (toCardCode o)]
         pure $ g & entitiesL . objectivesL %~ Map.delete oid
+      Just o | LeavesPlayToTopOfSackDeck `elem` mods -> do
+        let card = MkEncounterCard (objectiveCardId $ toAttrs o) (toCardCode o)
+        pure $ g & entitiesL . objectivesL %~ Map.delete oid & scenarioL %~ overAttrs (sackDeckL %~ (card :))
       Just _ | LeavesPlayToSackDeck `elem` mods -> g <$ push (ReturnToSackDeck oid)
       _ ->
         g <$ push (if LeavesPlayToTopOfEncounterDeck `elem` mods then ReturnToTopOfEncounterDeck target else PlaceObjective oid StagingArea)

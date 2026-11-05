@@ -67,6 +67,24 @@ allNightmareCards =
       , theTreacheryOfRhudaurNightmare
       , theBattleOfCarnDumNightmare
       , theDreadRealmNightmare
+      , dungeonsDeepAndCavernsDimNightmare
+      , overTheMistyMountainsGrimNightmare
+      , weMustAwayEreBreakOfDayNightmare
+      , fliesAndSpidersNightmare
+      , theBattleOfFiveArmiesNightmare
+      , theLonelyMountainNightmare
+      , aKnifeInTheDarkNightmare
+      , aShadowOfThePastNightmare
+      , flightToTheFordNightmare
+      , breakingOfTheFellowshipNightmare
+      , journeyInTheDarkNightmare
+      , theRingGoesSouthNightmare
+      , helmsDeepNightmare
+      , theRoadToIsengardNightmare
+      , theUrukHaiNightmare
+      , journeyToTheCrossRoadsNightmare
+      , shelobsLairNightmare
+      , thePassageOfTheMarshesNightmare
       ]
 
 passageThroughMirkwoodNightmare :: CardDef
@@ -236,3 +254,59 @@ theBattleOfCarnDumNightmare = nightmareSetup "the-battle-of-carn-dum-nightmare-t
 
 theDreadRealmNightmare :: CardDef
 theDreadRealmNightmare = nightmareSetup "the-dread-realm-nightmare-the-dread-realm-001" "The Dread Realm" TheDreadRealmNightmare
+
+-- * The Hobbit and The Lord of the Rings saga Nightmare setup cards
+
+dungeonsDeepAndCavernsDimNightmare :: CardDef
+dungeonsDeepAndCavernsDimNightmare = nightmareSetup "over-hill-and-under-hill-nightmare-dungeons-deep-and-caverns-dim-001" "Dungeons Deep and Caverns Dim" DungeonsDeepAndCavernsDimNightmare
+
+overTheMistyMountainsGrimNightmare :: CardDef
+overTheMistyMountainsGrimNightmare = nightmareSetup "over-hill-and-under-hill-nightmare-over-the-misty-mountains-grim-001" "Over the Misty Mountains Grim" OverTheMistyMountainsGrimNightmare
+
+weMustAwayEreBreakOfDayNightmare :: CardDef
+weMustAwayEreBreakOfDayNightmare = nightmareSetup "over-hill-and-under-hill-nightmare-we-must-away-ere-break-of-day-001" "We Must Away, Ere Break of Day" WeMustAwayEreBreakOfDayNightmare
+
+fliesAndSpidersNightmare :: CardDef
+fliesAndSpidersNightmare = nightmareSetup "on-the-doorstep-nightmare-flies-and-spiders-001" "Flies and Spiders" FliesAndSpidersNightmare
+
+theBattleOfFiveArmiesNightmare :: CardDef
+theBattleOfFiveArmiesNightmare = nightmareSetup "on-the-doorstep-nightmare-the-battle-of-five-armies-001" "The Battle of Five Armies" TheBattleOfFiveArmiesNightmare
+
+theLonelyMountainNightmare :: CardDef
+theLonelyMountainNightmare = nightmareSetup "on-the-doorstep-nightmare-the-lonely-mountain-001" "The Lonely Mountain" TheLonelyMountainNightmare
+
+aKnifeInTheDarkNightmare :: CardDef
+aKnifeInTheDarkNightmare = nightmareSetup "the-black-riders-nightmare-a-knife-in-the-dark-001" "A Knife in the Dark" AKnifeInTheDarkNightmare
+
+aShadowOfThePastNightmare :: CardDef
+aShadowOfThePastNightmare = nightmareSetup "the-black-riders-nightmare-a-shadow-of-the-past-001" "A Shadow of the Past" AShadowOfThePastNightmare
+
+flightToTheFordNightmare :: CardDef
+flightToTheFordNightmare = nightmareSetup "the-black-riders-nightmare-flight-to-the-ford-001" "Flight to the Ford" FlightToTheFordNightmare
+
+breakingOfTheFellowshipNightmare :: CardDef
+breakingOfTheFellowshipNightmare = nightmareSetup "the-road-darkens-nightmare-breaking-of-the-fellowship-001" "Breaking of the Fellowship" BreakingOfTheFellowshipNightmare
+
+journeyInTheDarkNightmare :: CardDef
+journeyInTheDarkNightmare = nightmareSetup "the-road-darkens-nightmare-journey-in-the-dark-001" "Journey in the Dark" JourneyInTheDarkNightmare
+
+theRingGoesSouthNightmare :: CardDef
+theRingGoesSouthNightmare = nightmareSetup "the-road-darkens-nightmare-the-ring-goes-south-001" "The Ring Goes South" TheRingGoesSouthNightmare
+
+helmsDeepNightmare :: CardDef
+helmsDeepNightmare = nightmareSetup "the-treason-of-saruman-nightmare-helms-deep-001" "Helm's Deep" HelmsDeepNightmare
+
+theRoadToIsengardNightmare :: CardDef
+theRoadToIsengardNightmare = nightmareSetup "the-treason-of-saruman-nightmare-the-road-to-isengard-001" "The Road to Isengard" TheRoadToIsengardNightmare
+
+theUrukHaiNightmare :: CardDef
+theUrukHaiNightmare = nightmareSetup "the-treason-of-saruman-nightmare-the-uruk-hai-001" "The Uruk-hai" TheUrukHaiNightmare
+
+journeyToTheCrossRoadsNightmare :: CardDef
+journeyToTheCrossRoadsNightmare = nightmareSetup "the-land-of-shadow-nightmare-journey-to-the-cross-roads-001" "Journey to the Cross-roads" JourneyToTheCrossRoadsNightmare
+
+shelobsLairNightmare :: CardDef
+shelobsLairNightmare = nightmareSetup "the-land-of-shadow-nightmare-shelobs-lair-001" "Shelob's Lair" ShelobsLairNightmare
+
+thePassageOfTheMarshesNightmare :: CardDef
+thePassageOfTheMarshesNightmare = nightmareSetup "the-land-of-shadow-nightmare-the-passage-of-the-marshes-001" "The Passage of the Marshes" ThePassageOfTheMarshesNightmare

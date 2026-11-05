@@ -14,7 +14,8 @@ allEnemyCards =
   Map.fromList $
     map
       (\def -> (cdCardCode def, def))
-      [ kingSpider
+      [ aMurderOfCrows
+      , kingSpider
       , dagnirsSpawn
       , gundabadHunter
       , gundabadStalker
@@ -5242,4 +5243,13 @@ gundabadStalker =
     , cdSetIcon = Just TheGhostOfFramsburg
     , cdCardTraits = setFromList [Orc, Goblin, Hazard, Burden]
     , cdShadowEffect = True
+    }
+
+-- * The Hobbit Nightmare Decks
+
+aMurderOfCrows :: CardDef
+aMurderOfCrows =
+  (enemy "over-hill-and-under-hill-nightmare-we-must-away-ere-break-of-day-002" "A Murder of Crows" WeMustAwayEreBreakOfDayNightmare 3 50 4 4 1 3)
+    { cdCardTraits = setFromList [Creature]
+    , cdWhenRevealed = True
     }

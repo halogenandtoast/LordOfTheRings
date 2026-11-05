@@ -15,7 +15,10 @@ allLocationCards =
   Map.fromList $
     map
       (\def -> (cdCardCode def, def))
-      [ greatForestWeb
+      [ redRiverBank
+      , wickedHilltops
+      , comfortableLight
+      , greatForestWeb
       , abandonedRuin
       , docksideStreet
       , pelargirAlley
@@ -4838,3 +4841,20 @@ abandonedRuin =
     , cdCardTraits = setFromList [Underground, Dark, Burden]
     , cdVictoryPoints = Just 1
     }
+
+-- * The Hobbit Nightmare Decks
+
+redRiverBank :: CardDef
+redRiverBank =
+  (location "over-hill-and-under-hill-nightmare-we-must-away-ere-break-of-day-003" "Red River-bank" WeMustAwayEreBreakOfDayNightmare 3 2 5)
+    {cdCardTraits = setFromList [WesternLandsTrait, Riverland]}
+
+wickedHilltops :: CardDef
+wickedHilltops =
+  (location "over-hill-and-under-hill-nightmare-we-must-away-ere-break-of-day-004" "Wicked Hilltops" WeMustAwayEreBreakOfDayNightmare 3 3 5)
+    {cdCardTraits = setFromList [WesternLandsTrait, Hills], cdShadowEffect = True}
+
+comfortableLight :: CardDef
+comfortableLight =
+  (location "over-hill-and-under-hill-nightmare-we-must-away-ere-break-of-day-005" "Comfortable Light" WeMustAwayEreBreakOfDayNightmare 3 5 0)
+    {cdCardTraits = setFromList [Trollshaws], cdQuestPoints = Nothing}

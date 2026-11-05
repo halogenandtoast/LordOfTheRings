@@ -47,7 +47,9 @@ instance RunMessage RoastMutton where
       addSetAsideToStaging (CardMatchAny [CardWithTrait Troll, cardIs Locations.trollCave])
       pure q
     PlaceTokens _ (isTarget attrs -> True) Progress n | attrs.flipped -> do
-      discardTopOfEncounterDeck attrs n
+      -- Resolve each discard before the next: Night Wanes Slow may immediately end
+      -- the phase and cancel the progress still to be converted (Nightmare setup card).
+      for_ [1 .. n] \_ -> discardTopOfEncounterDeck attrs 1
       pure q
     CheckWindows _ | attrs.flipped -> do
       checkStage attrs.id

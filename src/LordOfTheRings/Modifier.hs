@@ -1063,6 +1063,9 @@ data ModifierType
   | -- | on the game: at the end of the combat phase the matching enemies return to the
     -- staging area, as Great Gray Wolf's Forced effect reads
     ReturnToStagingAtEndOfCombat EnemyMatcher
+  | -- | One by One returns the destroyed character's Sack to the top, rather than
+    -- shuffling it into the sack deck as it normally would when leaving play.
+    LeavesPlayToTopOfSackDeck
   deriving stock (Show, Eq, Generic)
 
 data Modifier = Modifier
