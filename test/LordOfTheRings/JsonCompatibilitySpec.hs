@@ -8,6 +8,7 @@ import Data.Aeson.KeyMap qualified as KeyMap
 import Data.Aeson.Types (Parser, parseEither)
 import Data.UUID qualified as UUID
 import LordOfTheRings.Card.CardType (CardType (..))
+import LordOfTheRings.Card.PlayerCard (PlayerCard (..))
 import LordOfTheRings.Effect (Effect (..), EffectDuration (..))
 import LordOfTheRings.Json (aesonOptions)
 import LordOfTheRings.Modifier qualified as M
@@ -44,6 +45,15 @@ spec = describe "Generic codec compatibility" do
     (fromJSON (object ["tag" .= ("Run" :: Text), "contents" .= [old]]) :: Result Message) `shouldBe` Success (Run [Discard GameSource target])
     let new = Discard (EnemySource eid) target
     (fromJSON (toJSON new) :: Result Message) `shouldBe` Success new :: Expectation
+
+  it "loads a saved played-card window from before it carried the card" do
+    let cid = CardId (fromJustNote "uuid" $ UUID.fromString "1beaebcd-468f-424e-af4b-9ad118eefdcd")
+        afterWindow t c = object ["windowTiming" .= ("After" :: Text), "windowType" .= object ["tag" .= (t :: Text), "contents" .= c]]
+        oldPlayed = afterWindow "PlayedCard" (pid, "01026" :: Text)
+        paid = afterWindow "PaidFrom" (CardIdTarget cid, [target])
+        windows = fromJSON (object ["tag" .= ("CheckWindows" :: Text), "contents" .= [oldPlayed, paid]]) :: Result Message
+    windows `shouldBe` Success (CheckWindows [W.mkAfter $ W.PlayedCard pid (MkPlayerCard cid "01026" (Just pid)), W.mkAfter $ W.PaidFrom (CardIdTarget cid) [target]])
+    (fromJSON oldPlayed :: Result W.Window) `shouldBe` Success (W.mkAfter $ W.PlayedCard pid (MkPlayerCard (CardId UUID.nil) "01026" (Just pid))) :: Expectation
 
   it "loads a saved effect duration from before one took a phase" do
     (fromJSON (String "UntilEndOfRound") :: Result EffectDuration) `shouldBe` Success UntilEndOfRound

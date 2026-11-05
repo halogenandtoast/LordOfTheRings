@@ -1072,12 +1072,12 @@ parseLegacyDiscard generated v = case v of
         Discard GameSource <$> parseJSON contents
   _ -> generated v
 
--- Generate the mutually recursive codecs together; keep the legacy escape parser, and
--- the legacy one-field Discard.
+-- Generate the mutually recursive codecs together; keep the legacy escape parser, the
+-- legacy one-field Discard, and the card ids of legacy PlayedCard windows.
 $(do
   message <- deriveToJSON defaultOptions ''Message
   parser <- mkParseJSON defaultOptions ''Message
-  fromMessage <- [d|instance FromJSON Message where parseJSON = parseLegacyDiscard $(pure parser)|]
+  fromMessage <- [d|instance FromJSON Message where parseJSON = parseLegacyDiscard $(pure parser) . withPlayedCardIds|]
   fortitude <- deriveJSON defaultOptions ''FortitudeTest
   escape <- deriveToJSON defaultOptions ''EscapeTest
   pure $ message <> fromMessage <> fortitude <> escape)

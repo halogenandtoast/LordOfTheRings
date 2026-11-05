@@ -2,8 +2,11 @@
 
 module LordOfTheRings.Window (module LordOfTheRings.Window, module X) where
 
-import Data.Aeson.TH (deriveJSON)
-import LordOfTheRings.Card (Card, EncounterCard, PlayerCard)
+import Data.Aeson.KeyMap qualified as KeyMap
+import Data.Aeson.TH (deriveJSON, deriveToJSON, mkParseJSON)
+import Data.Aeson.Types (Parser, Result (..))
+import Data.UUID qualified as UUID
+import LordOfTheRings.Card (Card, EncounterCard, PlayerCard (..))
 import LordOfTheRings.Card.Code (CardCode)
 import LordOfTheRings.Id
 import LordOfTheRings.Phase
@@ -250,5 +253,57 @@ mkWhen = Window When
 mkAfter :: WindowType -> Window
 mkAfter = Window After
 
--- Direct codecs avoid specializing Generic traversal for this large sum.
-$(concat <$> traverse (deriveJSON defaultOptions) [''Window, ''WindowType, ''TimeOfDay])
+{- | A saved game from before 'PlayedCard' carried the card holds @PlayedCard PlayerId
+CardCode@. The window a paid cost opens is saved beside 'PaidFrom' the card, and
+'withPlayedCardIds' takes the card's id from it. One saved alone, from a card played at
+no cost, names no card id: it loads as the player's card of that code, its id nil.
+Anything else is read by the generated parser.
+-}
+parseLegacyPlayedCard :: (Value -> Parser WindowType) -> Value -> Parser WindowType
+parseLegacyPlayedCard generated v = case v of
+  Object o
+    | Just (String "PlayedCard") <- KeyMap.lookup "tag" o
+    , Just (Array (toList -> [player, code@(String _)])) <- KeyMap.lookup "contents" o -> do
+        pid <- parseJSON player
+        PlayedCard pid . (\cc -> MkPlayerCard (CardId UUID.nil) cc (Just pid)) <$> parseJSON code
+  _ -> generated v
+
+{- | Gives each saved 'PlayedCard' of a message's window list the id of the card a
+'PaidFrom' beside it names: see 'parseLegacyPlayedCard'. The list is the message's
+contents or one of its fields.
+-}
+withPlayedCardIds :: Value -> Value
+withPlayedCardIds = \case
+  Object o | Just contents <- KeyMap.lookup "contents" o -> Object $ KeyMap.insert "contents" (fill contents) o
+  v -> v
+ where
+  fill c = windowList $ case c of
+    Array fields -> Array (fmap windowList fields)
+    _ -> c
+  windowList = \case
+    Array ws | Just cid <- headMay (mapMaybe paidFor (toList ws)) -> Array (fmap (played cid) ws)
+    v -> v
+  windowTypeOf = \case
+    Object w | Just (Object t) <- KeyMap.lookup "windowType" w, Just (String tag) <- KeyMap.lookup "tag" t -> Just (tag, w, t)
+    _ -> Nothing
+  paidFor v = do
+    ("PaidFrom", _, t) <- windowTypeOf v
+    Array (toList -> (target : _)) <- KeyMap.lookup "contents" t
+    Success (CardIdTarget cid) <- pure $ fromJSON target
+    pure cid
+  played cid v = fromMaybe v do
+    ("PlayedCard", w, t) <- windowTypeOf v
+    Array (toList -> [player, code@(String _)]) <- KeyMap.lookup "contents" t
+    Success pid <- pure $ fromJSON player
+    Success cc <- pure $ fromJSON code
+    let card = MkPlayerCard cid cc (Just pid) :: PlayerCard
+    pure $ Object $ KeyMap.insert "windowType" (Object $ KeyMap.insert "contents" (toJSON (player, card)) t) w
+
+-- Direct codecs avoid specializing Generic traversal for this large sum; keep the legacy
+-- PlayedCard parser.
+$(do
+  codecs <- concat <$> traverse (deriveJSON defaultOptions) [''Window, ''TimeOfDay]
+  windowType <- deriveToJSON defaultOptions ''WindowType
+  parser <- mkParseJSON defaultOptions ''WindowType
+  fromWindowType <- [d|instance FromJSON WindowType where parseJSON = parseLegacyPlayedCard $(pure parser)|]
+  pure $ codecs <> windowType <> fromWindowType)
