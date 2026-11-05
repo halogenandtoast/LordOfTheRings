@@ -2,7 +2,8 @@ module LordOfTheRings.VengeanceOfMordor.UnderTheAshMountainsPlayerCardsSpec (spe
 
 import LordOfTheRings.Ally.CardDefs qualified as Allies
 import LordOfTheRings.Attachment.CardDefs qualified as Attachments
-import LordOfTheRings.Card (CardDef (cdKeywords))
+import LordOfTheRings.Card (CardDef (cdKeywords), cdSphere, toCardDef)
+import LordOfTheRings.Sphere (Sphere (Baggins, Fellowship))
 import LordOfTheRings.Card.CardType (CardType (LocationType))
 import LordOfTheRings.Enemy (EnemyAttrs (enemyCardId, enemyTokens))
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
@@ -159,3 +160,11 @@ spec = describe "Under the Ash Mountains player cards" do
         _ -> False
       getsGame (elem "01006" . map toCardCode . toList . (.entities.heroes)) `shouldReturn` True
       passResponses pid
+
+    it "never offers a Fellowship or Baggins hero from the collection" . gameTest $ \pid -> do
+      beravor <- hero beravorCode
+      _ <- playWith pid beravorCode 4 Events.helmOfSecrecy
+      chooseTarget pid beravor
+      swaps <- maybe [] (\q -> [toCardCode c | TargetLabel _ [SwapHero _ c] <- questionChoices q]) <$> getQuestion pid
+      swaps `shouldSatisfy` notNull
+      swaps `shouldSatisfy` all (\c -> cdSphere (toCardDef c) `notElem` [Just Fellowship, Just Baggins])

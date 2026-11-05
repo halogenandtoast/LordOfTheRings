@@ -11,7 +11,8 @@ import LordOfTheRings.I18n (ikey, ikeyWith, intVar, textVar)
 import LordOfTheRings.Name (Name (..))
 import LordOfTheRings.Id (ScenarioId (..))
 import LordOfTheRings.Prelude
-import LordOfTheRings.Saga (sagaBarredTitles)
+import LordOfTheRings.Saga (sagaBarredTitles, sagaOf)
+import LordOfTheRings.Trait (Trait (Master))
 
 data DeckList = DeckList
   { heroes :: [CardCode]
@@ -91,8 +92,14 @@ sharedHeroes deckLists = [title | (title, n) <- mapToList counts, n > (1 :: Int)
 -- Isen's Gríma objective-ally is unique, so no player can use the Gríma hero there.
 barredHeroes :: Text -> Bool -> [DeckList] -> [Text]
 barredHeroes scenarioId inCampaign deckLists =
-  ordNub $ [t | t <- barred, t `elem` titles] <> [t | t <- sagaBarredTitles (ScenarioId scenarioId) inCampaign, t `elem` (titles <> cardTitles)] <> sagaHeroes
+  ordNub $ [t | t <- barred, t `elem` titles] <> [t | t <- sagaBarredTitles (ScenarioId scenarioId) inCampaign, t `elem` (titles <> cardTitles)] <> sagaHeroes <> masterCards
  where
+  -- "Cards with the Master trait cannot be used when playing saga expansions" (A Shadow
+  -- in the East rules insert, "The One Ring"): The One Ring itself is one
+  masterCards =
+    if isJust (sagaOf $ ScenarioId scenarioId)
+      then ordNub [title | dl <- deckLists, (code, _) <- dl.cards, Just d <- [Map.lookup code allPlayerCards], Master `member` cdCardTraits d, let Name title _ = d.cdName]
+      else []
   -- a Baggins or Fellowship sphere hero comes from the scenario, never from a deck
   sagaHeroes = [title | dl <- deckLists, Just d <- map (`Map.lookup` allPlayerCards) dl.heroes, cdSphere d `elem` [Just Fellowship, Just Baggins], let Name title _ = d.cdName]
   cardTitles = [title | dl <- deckLists, (code, _) <- dl.cards, Just d <- [Map.lookup code allPlayerCards], let Name title _ = d.cdName]
