@@ -1,5 +1,8 @@
+{-# LANGUAGE TemplateHaskell #-}
+
 module LordOfTheRings.Modifier (module LordOfTheRings.Modifier) where
 
+import Data.Aeson.TH (deriveJSON)
 import LordOfTheRings.Campaign (CampaignLogKey)
 import LordOfTheRings.Card.CardType (CardType)
 import LordOfTheRings.Card.Code (CardCode)
@@ -1037,16 +1040,17 @@ data ModifierType
     -- staging area, as Great Gray Wolf's Forced effect reads
     ReturnToStagingAtEndOfCombat EnemyMatcher
   deriving stock (Show, Eq, Generic)
-  deriving anyclass (ToJSON, FromJSON)
 
 data Modifier = Modifier
   { modifierSource :: Source
   , modifierType :: ModifierType
   }
   deriving stock (Show, Eq, Generic)
-  deriving anyclass (ToJSON, FromJSON)
 
 -- | How many characters a character committed to a Sailing test counts as, by its
 -- modifiers: 1, or as many as it counts as, plus any additional.
 sailingCharacters :: [ModifierType] -> Int
 sailingCharacters ms = fromMaybe 1 (headMay [n | CountsAsSailingCharacters n <- ms]) + sum [n | AdditionalSailingCharacters n <- ms]
+
+-- Direct codecs avoid specializing Generic traversal for this large sum.
+$(concat <$> traverse (deriveJSON defaultOptions) [''ModifierType, ''Modifier])

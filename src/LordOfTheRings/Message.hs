@@ -1,5 +1,8 @@
+{-# LANGUAGE TemplateHaskell #-}
+
 module LordOfTheRings.Message (module LordOfTheRings.Message) where
 
+import Data.Aeson.TH (deriveJSON, deriveToJSON)
 import LordOfTheRings.Ability.Types
 import LordOfTheRings.Campaign (CampaignLogUpdate)
 import LordOfTheRings.Card
@@ -78,10 +81,6 @@ data EscapeTest = EscapeTest
   -- ^ for a test the party makes: the players still to commit after this one
   }
   deriving stock (Show, Eq, Generic)
-  deriving anyclass ToJSON
-
-instance FromJSON EscapeTest where
-  parseJSON = genericParseJSON defaultOptions . withDefaults [("escapeParty", toJSON ([] :: [PlayerId]))]
 
 {- | A Hide test (The Black Riders rules insert, "Hide X"): the player commits characters
 by exhausting them, then discards the top X cards of the encounter deck, and fails the
@@ -119,7 +118,6 @@ data FortitudeTest = FortitudeTest
   , fortitudeOnPass :: [Message]
   }
   deriving stock (Show, Eq, Generic)
-  deriving anyclass (ToJSON, FromJSON)
 
 data Message
   = Setup
@@ -979,7 +977,6 @@ data Message
     -- active location with one next to it
     SwapIslandMapPositions LocationId LocationId
   deriving stock (Show, Eq, Generic)
-  deriving anyclass (ToJSON, FromJSON)
 
 uiToRun :: UI Message -> Message
 uiToRun = \case
@@ -1051,3 +1048,12 @@ removedEnemy = \case
   RemoveFromGame (EnemyTarget eid) -> Just eid
   AddToVictoryDisplay (EnemyTarget eid) -> Just eid
   _ -> Nothing
+
+-- Generate the mutually recursive codecs together; keep the legacy escape parser.
+$(do
+  codecs <- concat <$> traverse (deriveJSON defaultOptions) [''Message, ''FortitudeTest]
+  escape <- deriveToJSON defaultOptions ''EscapeTest
+  pure $ codecs <> escape)
+
+instance FromJSON EscapeTest where
+  parseJSON = genericParseJSON defaultOptions . withDefaults [("escapeParty", toJSON ([] :: [PlayerId]))]

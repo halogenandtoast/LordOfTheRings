@@ -1,5 +1,8 @@
+{-# LANGUAGE TemplateHaskell #-}
+
 module LordOfTheRings.Window (module LordOfTheRings.Window, module X) where
 
+import Data.Aeson.TH (deriveJSON)
 import LordOfTheRings.Card (Card, EncounterCard, PlayerCard)
 import LordOfTheRings.Card.Code (CardCode)
 import LordOfTheRings.Id
@@ -12,7 +15,6 @@ import LordOfTheRings.Timing as X
 
 data Window = Window {windowTiming :: Timing, windowType :: WindowType}
   deriving stock (Show, Eq, Generic)
-  deriving anyclass (ToJSON, FromJSON)
 
 data WindowType
   = EntersPlay Target
@@ -227,15 +229,16 @@ data WindowType
   | -- | the card of the enemy an attack destroyed, alongside 'EnemyDestroyedByAttack'
     EnemyCardDestroyedByAttack EnemyId CardId
   deriving stock (Show, Eq, Generic)
-  deriving anyclass (ToJSON, FromJSON)
 
 -- | Whether it is Day or Night, as The Wastes of Eriador's Time objective shows.
 data TimeOfDay = Daytime | Nighttime
   deriving stock (Show, Eq, Generic)
-  deriving anyclass (ToJSON, FromJSON)
 
 mkWhen :: WindowType -> Window
 mkWhen = Window When
 
 mkAfter :: WindowType -> Window
 mkAfter = Window After
+
+-- Direct codecs avoid specializing Generic traversal for this large sum.
+$(concat <$> traverse (deriveJSON defaultOptions) [''Window, ''WindowType, ''TimeOfDay])
