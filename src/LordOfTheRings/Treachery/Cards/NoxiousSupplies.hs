@@ -39,6 +39,6 @@ instance RunMessage NoxiousSupplies where
       damage <- getDamage host
       barred <- elem CannotBeHealed <$> getModifiers host
       let athelas = sourceCardTitle g source == Just (cardTitle Objectives.athelas)
-      when (damage > 0 && not barred && not athelas) $ discard attrs
+      when (damage > 0 && not barred && not athelas) $ discard attrs attrs
       NoxiousSupplies <$> runMessage msg attrs
     _ -> NoxiousSupplies <$> runMessage msg attrs

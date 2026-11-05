@@ -274,7 +274,7 @@ returnToEncounterDeck place target g = do
   let toDeck card = scenarioL %~ overAttrs (encounterDeckL %~ place card)
       withAttached =
         pushAll
-          $ [Discard (toTarget a) | a <- toList g.entities.attachments, a.placement == AttachedTo target]
+          $ [Discard GameSource (toTarget a) | a <- toList g.entities.attachments, a.placement == AttachedTo target]
           <> freeGuarded g target
   case target of
     EnemyTarget eid | Just e <- Map.lookup eid g.entities.enemies -> do
@@ -473,7 +473,7 @@ discardAttached g target =
  where
   -- a Permanent boon or burden is removed from the game as its hero leaves play
   leaves :: (HasCardDef c, Targetable c) => c -> Message
-  leaves c = if Permanent `member` cdKeywords (toCardDef c) then RemoveFromGame (toTarget c) else Discard (toTarget c)
+  leaves c = if Permanent `member` cdKeywords (toCardDef c) then RemoveFromGame (toTarget c) else Discard GameSource (toTarget c)
 
 -- | Whether the card is a Permanent boon or burden on a hero in play, which cannot be
 -- discarded from it.
@@ -497,7 +497,7 @@ attachedEnemies :: Game -> Target -> [Message]
 attachedEnemies g target =
   [ case target of
       EnemyTarget _ -> PlaceEnemy (toId e) StagingArea
-      _ -> Discard (toTarget e)
+      _ -> Discard GameSource (toTarget e)
   | e <- toList g.entities.enemies
   , e.placement == AttachedTo target
   ]
@@ -636,7 +636,7 @@ checkRestricted g host = do
         (Just host)
         []
         pid
-        [targetLabel x [Discard x, CheckRestricted host] | (x, _) <- restrictedOn]
+        [targetLabel x [Discard GameSource x, CheckRestricted host] | (x, _) <- restrictedOn]
 
 -- | The ally as it enters play: exhausted while allies enter play so, as Flight to Gondor
 -- has them.

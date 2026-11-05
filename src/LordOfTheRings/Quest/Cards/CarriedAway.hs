@@ -65,7 +65,7 @@ instance RunMessage CarriedAway where
           targets heroes \h -> do
             hero <- getHero h
             for_ (Map.toList $ heroTokens $ toAttrs hero) \(token, k) -> removeTokens attrs h token k
-            traverse_ discard =<< getAttachmentsOn (toTarget h)
+            traverse_ (discard attrs) =<< getAttachmentsOn (toTarget h)
             moveHeroToStagingArea h
             discardEncounterCardsUntilFor attrs h (CardWithType EnemyType)
         doStep (n + 1) (WhenRevealed $ toTarget attrs)
@@ -83,7 +83,7 @@ instance RunMessage CarriedAway where
       pure q
     _ | advancingFromStage msg -> do
       guarded <- getsGame (filter (isJust . heroGuardedBy . toAttrs) . toList . (.entities.heroes))
-      for_ guarded discard
+      for_ guarded (discard attrs)
       CarriedAway <$> runMessage msg attrs
     _ -> CarriedAway <$> runMessage msg attrs
    where

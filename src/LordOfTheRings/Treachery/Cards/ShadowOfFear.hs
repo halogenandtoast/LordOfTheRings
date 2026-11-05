@@ -37,6 +37,6 @@ instance RunMessage ShadowOfFear where
         targets (filter (\h -> not $ any (isTarget h) taken) heroes) \h -> attachTreachery attrs.id h
       pure t
     UseCardAbility _ (isSource attrs -> True) 1 _ -> do
-      discard attrs
+      discard attrs attrs
       pure t
     _ -> ShadowOfFear <$> runMessage msg attrs

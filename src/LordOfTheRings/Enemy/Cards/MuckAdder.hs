@@ -15,7 +15,7 @@ muckAdder = enemy MuckAdder Cards.muckAdder
 instance RunMessage MuckAdder where
   runMessage msg e@(MuckAdder attrs) = case msg of
     DoStep 1 (DealDamage (sourceEnemy -> Just eid) target n) | eid == attrs.id, n > 0, isCharacter target -> do
-      discard target
+      discard attrs target
       pure e
     ResolveShadowEffect cid _ _ defenders | cid == attrs.cardId -> do
       for_ defenders \d -> attackModifier attrs d (DefenseModifier (-1))

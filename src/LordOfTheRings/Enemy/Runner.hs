@@ -66,7 +66,7 @@ instance RunMessage EnemyAttrs where
     AttachFacedown (isTarget attrs -> True) card -> pure $ attrs & facedownL %~ (<> [card])
     -- the cards facedown under it go to their owners' discard piles as it leaves play
     Destroy _ (isTarget attrs -> True) -> leaving
-    Discard (isTarget attrs -> True) -> leaving
+    Discard _ (isTarget attrs -> True) -> leaving
     ReturnToTopOfEncounterDeck (isTarget attrs -> True) -> leaving
     ReturnToBottomOfEncounterDeck (isTarget attrs -> True) -> leaving
     ShuffleIntoEncounterDeck (isTarget attrs -> True) -> leaving

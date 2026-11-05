@@ -36,7 +36,7 @@ instance RunMessage StoneGiant where
         chooseOrRunOneM pid do
           questionLabeled "stoneGiant.discardAlly"
           causedBy attrs
-          targets allies discard
+          targets allies (discard attrs)
       pure e
     UseCardAbility _ (isSource attrs -> True) 2 _ -> do
       withHighestThreatPlayer attrs \pid -> engageEnemy pid attrs.id

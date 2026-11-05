@@ -78,7 +78,7 @@ spec = describe "The Wastes of Eriador player cards" do
       card <- putCardIntoHand pid Events.rallyingCry
       ally <- putAllyIntoPlay pid Allies.gondorianSpearman
       Just allyCard <- getsGame (fmap (allyCardId . toAttrs) . headMay . toList . (.entities.allies))
-      run $ Discard ally
+      run $ Discard GameSource ally
       chooseTarget pid (CardIdTarget card.id)
       inHand pid allyCard `shouldReturn` True
 
@@ -92,7 +92,7 @@ spec = describe "The Wastes of Eriador player cards" do
       run $ ActionWindow pid
       chooseTarget pid (CardIdTarget card.id)
       passActions pid
-      run $ Discard ally
+      run $ Discard GameSource ally
       inHand pid allyCard `shouldReturn` True
 
     it "is no action below 40 threat" . gameTest $ \pid -> do

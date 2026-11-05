@@ -23,7 +23,7 @@ instance RunMessage DreadAndDespair where
       chooseOrRunOneM you do
         questionLabeled "dreadAndDespair.discardAlly"
         causedBy attrs
-        targets allies discard
+        targets allies (discard attrs)
       phaseModifier attrs GameTarget (StagingThreatPerAllyInDiscardOf you)
       pure t
     ResolveShadowEffect cid _ pid _ | cid == attrs.cardId -> do

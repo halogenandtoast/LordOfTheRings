@@ -31,7 +31,7 @@ instance RunMessage Wilyador where
     UseCardAbility _ (isSource a -> True) 1 _ -> do
       dealDamage a a 2
       pure s
-    Discard (isTarget a -> True) -> do
+    Discard _ (isTarget a -> True) -> do
       gameOver Lost
       pure s
     _ -> Wilyador <$> runMessage msg a

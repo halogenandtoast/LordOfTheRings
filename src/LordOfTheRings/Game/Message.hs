@@ -1205,7 +1205,7 @@ runGameMessage msg g = case msg of
       eliminated <- filterM (fmap (elem EliminatedAtEndOfRound) . getModifiers . PlayerTarget) (Map.keys g.players)
       pushAll $ map EliminatePlayer eliminated
       leaving <- filterM (fmap (elem DiscardAtEndOfRound) . getModifiers) (toList g.entities.allies)
-      pushAll [Discard (toTarget a) | a <- leaving]
+      pushAll [Discard GameSource (toTarget a) | a <- leaving]
       removed <- filterM (fmap (elem RemoveFromGameAtEndOfRound) . getModifiers) (toList g.entities.heroes)
       pushAll [RemoveFromGame (toTarget h) | h <- removed]
       returning <- filterM (fmap (elem ReturnToHandAtEndOfRound) . getModifiers) (toList g.entities.allies)
@@ -1342,7 +1342,7 @@ runGameMessage msg g = case msg of
         entitiesOf a = if isFocusedArea g a then g.entities else areaHeldEntities a
         joinTo j t =
           FocusArea (lead j)
-            : [Discard (toTarget l) | l <- toList (entitiesOf j).locations, l.placement == ActiveLocation]
+            : [Discard GameSource (toTarget l) | l <- toList (entitiesOf j).locations, l.placement == ActiveLocation]
             <> [JoinArea (lead j) (lead t)]
     case break areaJoining ordered of
       (_, []) -> pure ()
@@ -1415,15 +1415,15 @@ runGameMessage msg g = case msg of
         controlled = [l | l <- toList g.entities.locations, l.placement == InPlayArea pid]
     pushAll
       $ concat [[RemoveTokens GameSource (toTarget l) Progress l.progress | l.progress > 0] <> [PlaceLocation (toId l) StagingArea] | l <- controlled]
-      <> map (Discard . toTarget) heroes
-      <> map (Discard . toTarget) allies
-      <> map (Discard . toTarget) owned
+      <> map ((Discard GameSource) . toTarget) heroes
+      <> map ((Discard GameSource) . toTarget) allies
+      <> map ((Discard GameSource) . toTarget) owned
       <> ( if alone
              then
-               map (Discard . toTarget) engaged
+               map ((Discard GameSource) . toTarget) engaged
                  <> if isJust (stageGroups g)
                    then [FocusArea pid, DoStep 1 (EliminatePlayer pid)]
-                   else map Discard encounter <> [JoinArea pid other | other <- take 1 others]
+                   else map (Discard GameSource) encounter <> [JoinArea pid other | other <- take 1 others]
              else [PlaceEnemy eid StagingArea | eid <- engaged]
          )
       <> [GameOver Lost | null remaining]
@@ -1437,7 +1437,7 @@ runGameMessage msg g = case msg of
             <> [toTarget l | l <- toList g.entities.locations, l.placement `elem` [StagingArea, ActiveLocation]]
             <> [toTarget t | t <- toList g.entities.treacheries, t.placement == StagingArea]
         others = [areaLead g s a | a <- areasInTurnOrder g s, not (isFocusedArea g a)]
-    pushAll $ map Discard encounter <> [JoinArea pid other | other <- take 1 others]
+    pushAll $ map (Discard GameSource) encounter <> [JoinArea pid other | other <- take 1 others]
     pure g
   GameOver outcome -> do
     cannotEnd <- gameCannotEndWith outcome
@@ -1467,10 +1467,10 @@ runGameMessage msg g = case msg of
     clearQueue
     pure $ g & questionL .~ mempty & outcomeL ?~ Lost
   -- an ally put into play by its card, as Emery is, discarded by its card
-  Discard (CardIdTarget cid)
+  Discard source (CardIdTarget cid)
     | Just a <- find ((== cid) . allyCardId . toAttrs) (toList g.entities.allies) ->
-        g <$ push (Discard $ toTarget a)
-  Discard target -> discardTarget target g
+        g <$ push (Discard source $ toTarget a)
+  Discard _ target -> discardTarget target g
   -- damage that would be placed on the card goes first to another, as much as it still
   -- takes, the rest to this one, as City Wall takes Minas Tirith's
   DealDamage source target n
@@ -1699,7 +1699,7 @@ runGameMessage msg g = case msg of
         under = [CharacterDestroyedUnder pid target | Just pid <- [controller]]
     pushAll
       $ [CheckWindows $ map mkWhen (CharacterDestroyed target c : under) | Just c <- [card]]
-      <> [Discard target, CheckEliminations]
+      <> [Discard GameSource target, CheckEliminations]
       <> [ CheckWindows
              $ mkAfter (CharacterDestroyed target c)
              : map mkAfter under
@@ -1836,7 +1836,7 @@ runGameMessage msg g = case msg of
   -- objective, goes to the staging area and resolves its guarded keyword (MEC66 rules)
   ReplaceWithTopOfCavesDeck lid -> case (toAttrs g.scenario).cavesDeck of
     card : rest -> do
-      push $ Discard (LocationTarget lid)
+      push $ Discard GameSource (LocationTarget lid)
       let g' = g & scenarioL %~ overAttrs (cavesDeckL .~ rest)
       case cdCardType (toCardDef card) of
         LocationType -> do
@@ -2657,7 +2657,7 @@ runGameMessage msg g = case msg of
         (sourceTarget source)
         []
         pid
-        [targetLabel t [Discard t] | t <- targets]
+        [targetLabel t [Discard GameSource t] | t <- targets]
     pure g
   CommitCharacters pid -> do
     -- one that can commit while exhausted, as Lindon Navigator, need not be ready
@@ -2846,7 +2846,7 @@ runGameMessage msg g = case msg of
   PlaceEnemy eid StagingArea
     | Just e <- Map.lookup eid g.entities.enemies
     , toCardCode e == toCardCode orcGuard -> do
-        push $ Discard (toTarget eid)
+        push $ Discard GameSource (toTarget eid)
         pure g
   PlaceEnemy eid StagingArea -> do
     push $ CheckWindows [mkAfter $ EntersStagingArea (toTarget eid)]
@@ -3016,7 +3016,7 @@ runGameMessage msg g = case msg of
     -- an ally put into play until the end of the phase, as Command's, is discarded
     discarding <- flip filterM (toList g.entities.allies) \a ->
       elem DiscardAtEndOfPhase <$> getModifiers (CardIdTarget $ allyCardId $ toAttrs a)
-    pushAll [Discard (toTarget a) | a <- discarding]
+    pushAll [Discard GameSource (toTarget a) | a <- discarding]
     -- one put into play until then, as To me! O my kinsfolk!'s, goes to the bottom of its
     -- owner's deck
     bottomed <- flip filterM (toList g.entities.allies) \a ->
@@ -3218,18 +3218,18 @@ runGameMessage msg g = case msg of
   ReturnToHand target@(AllyTarget aid) | Just a <- Map.lookup aid g.entities.allies -> do
     g' <- leftPlay g target
     pushAll
-      [Discard (toTarget att) | att <- toList g.entities.attachments, att.placement == AttachedTo target]
+      [Discard GameSource (toTarget att) | att <- toList g.entities.attachments, att.placement == AttachedTo target]
     pure $ g' & entitiesL . alliesL %~ Map.delete aid & playersL . ix a.owner . handL %~ (<> [toCard a])
   ShuffleIntoOwnersDeck target@(AllyTarget aid) | Just a <- Map.lookup aid g.entities.allies -> do
     g' <- leftPlay g target
     pushAll
-      [Discard (toTarget att) | att <- toList g.entities.attachments, att.placement == AttachedTo target]
+      [Discard GameSource (toTarget att) | att <- toList g.entities.attachments, att.placement == AttachedTo target]
     deck <- shuffleM . (toCard a :) . (.deck) =<< getPlayer a.owner
     pure $ g' & entitiesL . alliesL %~ Map.delete aid & playersL . ix a.owner . deckL .~ deck
   PutOnBottomOfOwnersDeck target@(AllyTarget aid) | Just a <- Map.lookup aid g.entities.allies -> do
     g' <- leftPlay g target
     pushAll
-      [Discard (toTarget att) | att <- toList g.entities.attachments, att.placement == AttachedTo target]
+      [Discard GameSource (toTarget att) | att <- toList g.entities.attachments, att.placement == AttachedTo target]
     pure $ g' & entitiesL . alliesL %~ Map.delete aid & playersL . ix a.owner . deckL %~ (<> [toCard a])
   -- an attachment returned to its owner's hand, as Bard son of Brand and Bartering return them
   ReturnToHand (AttachmentTarget aid) | Just a <- Map.lookup aid g.entities.attachments -> do
@@ -3271,9 +3271,9 @@ runGameMessage msg g = case msg of
   ShuffleIntoOwnersDeck target@(HeroTarget hid) | Just h <- Map.lookup hid g.entities.heroes -> do
     g' <- leftPlay g target
     pushAll
-      $ [Discard (toTarget att) | att <- toList g.entities.attachments, att.placement == AttachedTo target]
-      <> [Discard (toTarget t) | t <- toList g.entities.treacheries, t.placement == AttachedTo target]
-      <> [Discard (toTarget o) | o <- toList g.entities.objectives, o.placement == AttachedTo target]
+      $ [Discard GameSource (toTarget att) | att <- toList g.entities.attachments, att.placement == AttachedTo target]
+      <> [Discard GameSource (toTarget t) | t <- toList g.entities.treacheries, t.placement == AttachedTo target]
+      <> [Discard GameSource (toTarget o) | o <- toList g.entities.objectives, o.placement == AttachedTo target]
     deck <- shuffleM . (toCard h :) . (.deck) =<< getPlayer h.owner
     pure $ g' & entitiesL . heroesL %~ Map.delete hid & playersL . ix h.owner . deckL .~ deck
   ReturnToTopOfEncounterDeck target -> returnToEncounterDeck (:) target g
@@ -3454,9 +3454,9 @@ runGameMessage msg g = case msg of
         on' a = a.placement `elem` map (AttachedTo . toTarget) gone
     g' <- foldM leftPlay g characters
     pushAll
-      $ [Discard (toTarget a) | a <- toList g.entities.attachments, on' a]
-      <> [Discard (toTarget t) | t <- toList g.entities.treacheries, on' t]
-      <> [Discard (toTarget o) | o <- toList g.entities.objectives, on' o]
+      $ [Discard GameSource (toTarget a) | a <- toList g.entities.attachments, on' a]
+      <> [Discard GameSource (toTarget t) | t <- toList g.entities.treacheries, on' t]
+      <> [Discard GameSource (toTarget o) | o <- toList g.entities.objectives, on' o]
       <> concatMap (discardAttached g) characters
       <> [CheckEliminations | notNull heroes]
       -- an enemy placed underneath a location leaves play, as Murderous Turncoat
@@ -3529,10 +3529,10 @@ runGameMessage msg g = case msg of
   PutOnBottomOfQuestDeck card -> pure $ g & entitiesL . questsL %~ Map.filter ((/= card.id) . (.cardId) . toAttrs)
   AddToVictoryDisplay target@(LocationTarget lid) | Just l <- Map.lookup lid g.entities.locations -> do
     pushAll
-      $ [Discard (toTarget a) | a <- toList g.entities.attachments, a.placement == AttachedTo target]
-      <> [Discard (toTarget t) | t <- toList g.entities.treacheries, t.placement == AttachedTo target]
+      $ [Discard GameSource (toTarget a) | a <- toList g.entities.attachments, a.placement == AttachedTo target]
+      <> [Discard GameSource (toTarget t) | t <- toList g.entities.treacheries, t.placement == AttachedTo target]
       -- an objective it guarded, as Mugash on Edge of Fangorn, goes free to the staging area
-      <> [Discard (toTarget o) | o <- toList g.entities.objectives, o.placement == AttachedTo target]
+      <> [Discard GameSource (toTarget o) | o <- toList g.entities.objectives, o.placement == AttachedTo target]
       <> freeGuarded g target
     pure
       $ g
@@ -3564,8 +3564,8 @@ runGameMessage msg g = case msg of
   -- shadow cards discarded
   AddToVictoryDisplay target@(EnemyTarget eid) | Just e <- Map.lookup eid g.entities.enemies -> do
     pushAll
-      $ [Discard (toTarget a) | a <- toList g.entities.attachments, a.placement == AttachedTo target]
-      <> [Discard (toTarget t) | t <- toList g.entities.treacheries, t.placement == AttachedTo target]
+      $ [Discard GameSource (toTarget a) | a <- toList g.entities.attachments, a.placement == AttachedTo target]
+      <> [Discard GameSource (toTarget t) | t <- toList g.entities.treacheries, t.placement == AttachedTo target]
       <> attachedEnemies g target
       <> [AddToEncounterDiscard e.shadowCards | notNull e.shadowCards]
       <> freeGuarded g target
@@ -3796,7 +3796,7 @@ runGameMessage msg g = case msg of
     moves <- for (filter on' $ toList g.entities.attachments) \a -> do
       hosts <- attachmentHosts (toAttrs a).attachTo
       pure
-        $ if toTarget new `elem` hosts then AttachCard (toId a) (toTarget new) else Discard (toTarget a)
+        $ if toTarget new `elem` hosts then AttachCard (toId a) (toTarget new) else Discard GameSource (toTarget a)
     pushAll $ moves <> [CheckWindows [mkAfter $ EntersPlay $ toTarget new]]
     getGame
   -- the card keeps its id under the other card type, as its own text finds it by
@@ -4073,7 +4073,7 @@ runGameMessage msg g = case msg of
   FinishRevelation tid -> do
     -- a treachery that did not attach itself to something is discarded once it resolves
     for_ (Map.lookup tid g.entities.treacheries) \treachery ->
-      when (treachery.placement == Unplaced) $ push (Discard $ toTarget treachery)
+      when (treachery.placement == Unplaced) $ push (Discard GameSource $ toTarget treachery)
     pushAll $ freeGuarded g (TreacheryTarget tid)
     -- its effects have resolved or been canceled, so it guards nothing any more
     let cid = (.cardId) . toAttrs <$> Map.lookup tid g.entities.treacheries
@@ -4255,7 +4255,7 @@ runGameMessage msg g = case msg of
     push $ CheckWindows [mkAfter $ EntersPlay $ toTarget thisAlly]
     pure $ g & entitiesL . objectivesL %~ Map.delete oid & entitiesL . alliesL %~ insertEntity thisAlly
   ShuffleIntoEncounterDeck target@(LocationTarget lid) | Just l <- Map.lookup lid g.entities.locations -> do
-    pushAll $ [Discard (toTarget a) | a <- toList g.entities.attachments, a.placement == AttachedTo target] <> freeGuarded g target
+    pushAll $ [Discard GameSource (toTarget a) | a <- toList g.entities.attachments, a.placement == AttachedTo target] <> freeGuarded g target
     deck <-
       shuffleM
         (MkEncounterCard (locationCardId $ toAttrs l) (toCardCode l) : (toAttrs g.scenario).encounterDeck)
@@ -4283,8 +4283,8 @@ runGameMessage msg g = case msg of
   -- an enemy leaves play for the encounter deck, its attachments and shadow cards discarded
   ShuffleIntoEncounterDeck target@(EnemyTarget eid) | Just e <- Map.lookup eid g.entities.enemies -> do
     pushAll
-      $ [Discard (toTarget a) | a <- toList g.entities.attachments, a.placement == AttachedTo target]
-      <> [Discard (toTarget t) | t <- toList g.entities.treacheries, t.placement == AttachedTo target]
+      $ [Discard GameSource (toTarget a) | a <- toList g.entities.attachments, a.placement == AttachedTo target]
+      <> [Discard GameSource (toTarget t) | t <- toList g.entities.treacheries, t.placement == AttachedTo target]
       <> attachedEnemies g target
       <> [AddToEncounterDiscard e.shadowCards | notNull e.shadowCards]
       <> freeGuarded g target

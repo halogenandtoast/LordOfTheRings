@@ -132,7 +132,7 @@ spec = describe "The Grey Havens Nightmare Decks" do
       _ <- revealedStage pid Quests.corsairConfrontation
       chooseOptionMatching "take the warship" pid (const True)
       warship <- getsGame (fromJustNote "no warship" . fmap toId . headMay . toList . (.entities.enemies))
-      run $ Discard (EnemyTarget warship)
+      run $ Discard GameSource (EnemyTarget warship)
       setHeading Cloudy
       run $ CheckWindows [mkWhen $ PhaseEnds QuestPhase]
       questsInPlay `shouldReturn` [toCardCode Quests.intoTheStorm]

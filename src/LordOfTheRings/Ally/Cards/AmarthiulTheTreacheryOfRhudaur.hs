@@ -24,7 +24,7 @@ instance RunMessage AmarthiulTheTreacheryOfRhudaur where
     UseCardAbility _ (isSource a -> True) 1 windows -> do
       for_ (take 1 [pid | Window _ (EnemyEngaged _ pid) <- windows]) $ takeControl a.id
       pure s
-    Discard (isTarget a -> True) -> do
+    Discard _ (isTarget a -> True) -> do
       gameOver Lost
       pure s
     _ -> AmarthiulTheTreacheryOfRhudaur <$> runMessage msg a

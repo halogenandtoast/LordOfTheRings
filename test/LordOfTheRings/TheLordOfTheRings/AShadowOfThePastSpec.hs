@@ -289,7 +289,7 @@ spec = describe "A Shadow of the Past" do
       ferry <- stageLocation Locations.buckleburyFerry
       road <- stageLocation Locations.stockRoad
       getModifiers (LocationTarget ferry) >>= (`shouldSatisfy` elem CannotBeTraveledTo)
-      run $ Discard (LocationTarget road)
+      run $ Discard GameSource (LocationTarget road)
       getModifiers (LocationTarget ferry) >>= (`shouldSatisfy` notElem CannotBeTraveledTo)
       _ <- setEncounterDeck [Treacheries.lureOfTheRing, Treacheries.lureOfTheRing, Treacheries.lureOfTheRing]
       run $ TravelTo ferry

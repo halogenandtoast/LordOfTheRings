@@ -34,6 +34,6 @@ instance RunMessage NoRest where
         targets heroes $ attachTreachery attrs.treacheryId
       pure t
     TravelTo lid -> do
-      withHost attrs \_ -> whenM (isSafe lid) $ discard attrs
+      withHost attrs \_ -> whenM (isSafe lid) $ discard attrs attrs
       NoRest <$> runMessage msg attrs
     _ -> NoRest <$> runMessage msg attrs

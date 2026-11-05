@@ -32,7 +32,7 @@ instance HasAbilities OrcDisguise where
 instance RunMessage OrcDisguise where
   runMessage msg s@(OrcDisguise a) = case msg of
     UseCardAbility pid (isSource a -> True) 1 windows -> do
-      discard a
+      discard a a
       orcs <- filterM (\eid -> selectAny (EnemyWithId eid <> EnemyWithTrait Orc)) [eid | Window _ (EnemyEngaged eid p) <- windows, p == pid]
       for_ (take 1 orcs) \eid -> roundModifier a eid (CannotAttackPlayer pid)
       pure s

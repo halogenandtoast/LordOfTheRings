@@ -17,7 +17,7 @@ instance RunMessage TrapdoorSpider where
   runMessage msg e@(TrapdoorSpider attrs) = case msg of
     -- the damage as it is dealt, past any cancel; the character goes once it is placed
     DoStep 1 (DealDamage (EnemyAttackSource eid) target n) | eid == attrs.id && n > 0 -> do
-      discard target
+      discard attrs target
       pure e
     _ | lostTriggered attrs msg -> do
       lastPlayer <- getLastPlayer

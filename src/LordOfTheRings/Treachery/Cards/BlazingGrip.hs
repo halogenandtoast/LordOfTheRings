@@ -18,7 +18,7 @@ instance RunMessage BlazingGrip where
   runMessage msg t@(BlazingGrip attrs) = case msg of
     ResolveShadowEffect cid _ _ defenders | cid == attrs.cardId -> do
       for_ defenders \d -> do
-        traverse_ discard =<< getAllAttachmentsOn d
+        traverse_ (discard attrs) =<< getAllAttachmentsOn d
         dealDamage attrs d 1
       pure t
     _ -> BlazingGrip <$> runMessage msg attrs

@@ -37,10 +37,10 @@ instance RunMessage BeorningSkinChanger where
         questionLabeled "beorningSkinChanger.ally"
         causedBy a
         targets fromHand \c -> do
-          discard a
+          discard a a
           putAllyIntoPlayFromHand pid c.id
         targets [pc | PlayerCard pc <- fromDiscard] \pc -> do
-          discard a
+          discard a a
           removeFromDiscard pid pc.id
           putAllyIntoPlayUnder pid pc
       pure s

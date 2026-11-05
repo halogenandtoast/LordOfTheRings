@@ -29,7 +29,7 @@ instance RunMessage HonourGuard where
       for_ (take 1 [t | Window _ (DealtDamage t _) <- windows]) \t -> removeTokens a t Damage 1
       pure s
     UseCardAbility _ (isSource a -> True) 2 windows -> do
-      discard a
+      discard a a
       for_ (take 1 [(t, n) | Window _ (DealtDamage t n) <- windows]) \(t, n) -> removeTokens a t Damage (min 5 n)
       pure s
     _ -> HonourGuard <$> runMessage msg a

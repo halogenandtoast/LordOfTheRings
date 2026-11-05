@@ -47,7 +47,7 @@ instance RunMessage HeavyAndTired where
       AttachedTo host -> do
         exhaust host
         attachments <- getAttachmentsOn host
-        for_ [a | a <- attachments, not (isObjective a)] discard
+        for_ [a | a <- attachments, not (isObjective a)] (discard attrs)
         pure t
       _ -> pure t
     _ -> HeavyAndTired <$> runMessage msg attrs

@@ -28,7 +28,7 @@ check :: ReverseQueue m => EnemyAttrs -> [EnemyId] -> m ()
 check attrs leaving = do
   stage <- getMainStage
   enemies <- traverse getEnemy . filter (`notElem` leaving) =<< select AnyEnemy
-  when (stage == 3 && all ((Rat `member`) . cdCardTraits . toCardDef) enemies) $ discard attrs
+  when (stage == 3 && all ((Rat `member`) . cdCardTraits . toCardDef) enemies) $ discard attrs attrs
 
 -- | Shadow: Attacking enemy cannot be damaged this round.
 instance RunMessage BrownWaterRats where

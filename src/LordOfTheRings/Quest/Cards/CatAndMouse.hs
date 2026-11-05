@@ -27,7 +27,7 @@ instance RunMessage CatAndMouse where
         unless (null enemies) $ chooseOneM p do
           questionLabeled "catAndMouse.discard"
           causedBy attrs
-          targets enemies discard
+          targets enemies (discard attrs)
           labeled "pass" (pure ())
       CatAndMouse <$> runMessage msg attrs
     _ -> CatAndMouse <$> runMessage msg attrs

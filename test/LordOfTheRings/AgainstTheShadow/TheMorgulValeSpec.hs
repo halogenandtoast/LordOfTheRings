@@ -95,7 +95,7 @@ spec = describe "The Morgul Vale" do
   it "keeps Murzag in play unless destroyed, and advances to The Betrayal as he is" . valeTest $ \pid -> do
     flipFirstQuest pid
     murzag <- enemyOf Enemies.murzag
-    run $ Discard (toTarget murzag)
+    run $ Discard GameSource (toTarget murzag)
     run $ ShuffleIntoEncounterDeck (toTarget murzag)
     placementOf Enemies.murzag `shouldReturn` Just StagingArea
     run $ DealDamage GameSource (toTarget murzag) 7
@@ -257,7 +257,7 @@ spec = describe "The Morgul Vale" do
     passActions pid
     chooseTarget pid scout
     -- the defender leaves play before the damage, which goes to a hero
-    runOnly $ Discard scout
+    runOnly $ Discard GameSource scout
     passActions pid
     chooseTarget pid . toTarget =<< getHeroWithCode "01002"
     passActions pid

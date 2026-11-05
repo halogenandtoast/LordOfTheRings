@@ -31,6 +31,6 @@ instance RunMessage HeirsOfEarendil where
         targets locations \lid -> do
           x <- fromMaybe 0 . cdQuestPoints . toCardDef <$> getLocation lid
           raiseThreat pid x
-          discard lid
+          discard attrs lid
       pure e
     _ -> HeirsOfEarendil <$> runMessage msg attrs

@@ -33,7 +33,7 @@ instance RunMessage Caldara where
     UseCardAbility pid (isSource a -> True) 1 _ -> do
       n <- length <$> select (HeroControlledBy (PlayerWithId pid) <> HeroWithPrintedSphere Spirit <> NotHero (HeroWithId a.id))
       allies <- filterM passesUnique . filter (cardMatches spiritAlly) . (.discard) =<< getPlayer pid
-      discard a
+      discard a a
       -- each chosen at a time, the next from those the unique rule still lets in
       let pick :: ReverseQueue m => Int -> [PlayerCard] -> m ()
           pick k available = when (k > 0) $ chooseOneM pid do

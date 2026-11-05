@@ -23,6 +23,6 @@ instance RunMessage HoldSteady where
     ResolveShadowEffect cid _ _ defenders | cid == attrs.cardId -> do
       for_ defenders \d -> do
         defense <- getDefense d
-        if defense == 0 then discard d else attackModifier attrs d (DefenseModifier (-2))
+        if defense == 0 then discard attrs d else attackModifier attrs d (DefenseModifier (-2))
       pure t
     _ -> HoldSteady <$> runMessage msg attrs

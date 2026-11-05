@@ -26,4 +26,4 @@ instance RunMessage CandlesOfCorpses where
       questionLabeled "candlesOfCorpses.choose"
       causedBy attrs
       labeled "candlesOfCorpses.threat" $ encounterRaisesThreat pid 5
-      targets heroes discard
+      targets heroes (discard attrs)

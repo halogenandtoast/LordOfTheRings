@@ -36,7 +36,7 @@ instance RunMessage EasterlingCaptain where
       chooseOrRunOneM lead do
         questionLabeled "easterlingCaptain.discard"
         causedBy attrs
-        targets attached discard
+        targets attached (discard attrs)
       cancelDamage attrs
       pure e
     _ -> EasterlingCaptain <$> runMessage msg attrs

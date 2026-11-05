@@ -33,7 +33,7 @@ instance RunMessage LordAlcaron where
             placeTokens a l Villager 1
           labeled "lordAlcaron.decline" $ doStep 2 (RemoveTokens source target Villager n)
       pure s
-    Discard (isTarget a -> True) -> do
+    Discard _ (isTarget a -> True) -> do
       gameOver Lost
       pure s
     _ -> LordAlcaron <$> runMessage msg a

@@ -30,6 +30,6 @@ instance RunMessage SouthronArcher where
             chooseOrRunOneM pid do
               questionLabeled "southronArcher.ally"
               causedBy attrs
-              targets allies discard
+              targets allies (discard attrs)
       pure e
     _ -> SouthronArcher <$> runMessage msg attrs

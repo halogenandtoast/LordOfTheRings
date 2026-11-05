@@ -166,7 +166,7 @@ spec = describe "Desert Crossing" do
     worm <- stage Enemies.wereWorm
     run $ PlaceTokens GameSource q Progress 16
     getsGame (.outcome) `shouldReturn` Nothing
-    run $ Discard (toTarget worm)
+    run $ Discard GameSource (toTarget worm)
     getsGame (.outcome) `shouldReturn` Just Won
 
   it "adds X threat to the staging area during the quest phase" . desertTest $ \pid -> do

@@ -19,6 +19,6 @@ instance HasModifiersFor EscortFromEdoras where
 instance RunMessage EscortFromEdoras where
   runMessage msg s@(EscortFromEdoras a) = case msg of
     QuestResolution | allyCommitted a -> do
-      discard a
+      discard a a
       pure s
     _ -> EscortFromEdoras <$> runMessage msg a

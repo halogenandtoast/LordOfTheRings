@@ -27,7 +27,7 @@ instance HasAbilities Athelas where
 instance RunMessage Athelas where
   runMessage msg s@(Athelas a) = case msg of
     UseCardAbility pid (isSource a -> True) 1 _ -> do
-      discard a
+      discard a a
       characters <- selectCharacters AnyHero (AllyControlledBy AnyPlayer)
       chooseOneM pid do
         questionLabeled "athelas.heal"
@@ -38,7 +38,7 @@ instance RunMessage Athelas where
           unless (null conditions) $ chooseOneM pid do
             questionLabeled "athelas.discardCondition"
             causedBy a
-            targets conditions discard
+            targets conditions (discard a)
             labeled "athelas.keep" (pure ())
       pure s
     _ -> Athelas <$> runMessage msg a

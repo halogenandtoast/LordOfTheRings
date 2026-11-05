@@ -39,15 +39,15 @@ instance RunMessage WashedAway where
       when nightmare do
         es <- getsGame (.entities)
         let mounted c = any (`member` cdCardTraits (toCardDef c)) [Mount, Artifact]
-        for_ (filter mounted $ toList es.attachments) discard
-        for_ (filter mounted $ toList es.objectives) discard
+        for_ (filter mounted $ toList es.attachments) (discard attrs)
+        for_ (filter mounted $ toList es.objectives) (discard attrs)
         doStep 2 msg
       entities <- getsGame (.entities)
       let washed c = any (`member` cdCardTraits (toCardDef c)) [Item, Armor, Weapon, Light]
-      for_ (filter washed $ toList entities.attachments) discard
-      for_ entities.enemies discard
-      for_ entities.treacheries discard
-      for_ entities.locations discard
+      for_ (filter washed $ toList entities.attachments) (discard attrs)
+      for_ entities.enemies (discard attrs)
+      for_ entities.treacheries (discard attrs)
+      for_ entities.locations (discard attrs)
       for_ entities.objectives removeFromGame
       doStep 1 msg
       pure q
@@ -62,7 +62,7 @@ instance RunMessage WashedAway where
         chooseOneM p do
           questionLabeled "washedAway.discardAlly"
           causedBy attrs
-          targets allies \a -> discard a >> doStep 2 msg
+          targets allies \a -> discard attrs a >> doStep 2 msg
       pure q
     DoStep 1 (WhenRevealed (isTarget attrs -> True)) -> do
       scenario <- getsGame (toAttrs . (.scenario))

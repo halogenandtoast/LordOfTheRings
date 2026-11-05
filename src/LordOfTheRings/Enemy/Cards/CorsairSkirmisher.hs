@@ -42,8 +42,8 @@ instance RunMessage CorsairSkirmisher where
           questionLabeled "corsairSkirmisher.take"
           causedBy attrs
           labeled "corsairSkirmisher.discard" $ doStep 3 msg
-          labeled "corsairSkirmisher.decline" $ discard attrs
-        _ -> discard attrs
+          labeled "corsairSkirmisher.decline" $ discard attrs attrs
+        _ -> discard attrs attrs
       pure e
     -- the allies are discarded one at a time until their willpower reaches 3
     DoStep x inner@(UseCardAbility _ (isSource attrs -> True) 1 _) | EngagedWith pid <- attrs.placement -> do
@@ -58,7 +58,7 @@ instance RunMessage CorsairSkirmisher where
             causedBy attrs
             targets allies \aid -> do
               willpower <- getWillpower (toTarget aid)
-              discard aid
+              discard attrs aid
               doStep (x - willpower) inner
       pure e
     _ -> CorsairSkirmisher <$> runMessage msg attrs

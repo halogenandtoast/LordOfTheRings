@@ -59,7 +59,7 @@ spec = describe "Damage" do
     eid <- getsGame (fromJustNote "no enemy" . headMay . map toId . toList . (.entities.enemies))
     run $ EngageEnemy pid eid
     chooseOptionMatching "take the Hummerhorns damage" pid (const True)
-    run $ Discard eowyn
+    run $ Discard GameSource eowyn
     run $ AttackDamage eid eowyn
     Just (QuestionLabel prompt _ _ _) <- getQuestion pid
     prompt `shouldBe` "$label.undefendedDamage"

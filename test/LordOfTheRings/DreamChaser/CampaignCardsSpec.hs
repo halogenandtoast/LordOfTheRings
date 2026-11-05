@@ -123,7 +123,7 @@ spec = describe "Dream-chaser campaign cards" do
         TargetLabel (CardIdTarget _) _ -> True
         _ -> False
       hero <- getsGame (fromJustNote "no hero from the collection" . find ((`notElem` ["01001", "01002", "01003"]) . toCardCode) . toList . (.entities.heroes))
-      run $ Discard (toTarget hero)
+      run $ Discard GameSource (toTarget hero)
       getsGame (Map.member (toId hero) . (.entities.heroes)) `shouldReturn` False
       ((.discard) <$> getPlayer pid) >>= (`shouldSatisfy` notElem (toCardCode hero) . map toCardCode)
 

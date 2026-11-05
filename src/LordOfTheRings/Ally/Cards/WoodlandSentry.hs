@@ -33,7 +33,7 @@ instance RunMessage WoodlandSentry where
       chooseOneM pid do
         questionLabeled "woodlandSentry.discard"
         causedBy a
-        targets enemies discard
-        targets locations discard
+        targets enemies (discard a)
+        targets locations (discard a)
       pure s
     _ -> WoodlandSentry <$> runMessage msg a

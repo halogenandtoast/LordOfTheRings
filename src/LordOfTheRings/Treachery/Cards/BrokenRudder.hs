@@ -40,6 +40,6 @@ instance RunMessage BrokenRudder where
       pure t
     -- the characters are exhausted as the cost is paid
     UseCardAbility _ (isSource attrs -> True) 1 _ -> do
-      discard attrs
+      discard attrs attrs
       pure t
     _ -> BrokenRudder <$> runMessage msg attrs

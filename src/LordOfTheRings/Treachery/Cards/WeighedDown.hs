@@ -50,7 +50,7 @@ instance RunMessage WeighedDown where
           chooseOrRunOneM p do
             questionLabeled "weighedDown.discard"
             causedBy attrs
-            targets choices discard
+            targets choices (discard attrs)
       pure t
     _ -> WeighedDown <$> runMessage msg attrs
    where

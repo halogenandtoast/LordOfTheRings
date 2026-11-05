@@ -154,7 +154,7 @@ runPlayer msg player = case msg of
               . entitiesTreacheries
               . gameEntities
           )
-      pushAll [Discard (toTarget t) | t <- take 1 shackles]
+      pushAll [Discard (toSource t) (toTarget t) | t <- take 1 shackles]
       unless (blocked || notNull shackles) $ push $ DoDrawCards drawing
       pure player
     DoDrawCards drawing | drawing.player == player.id -> do
@@ -208,7 +208,7 @@ runPlayer msg player = case msg of
       played <- inLogBlock (PlayBlock pid card) (additional <> [PayForCard pid card fromHand windows])
       push $ case records of
         [] -> Run played
-        _ -> chooseOrRunOne pid [targetLabel r (Discard r : played <> [PutDiscardOnBottomOfDeck pid cid]) | r <- records]
+        _ -> chooseOrRunOne pid [targetLabel r (Discard GameSource r : played <> [PutDiscardOnBottomOfDeck pid cid]) | r <- records]
       pure $ player & handL %~ filter ((/= cid) . (.id)) & discardL %~ filter ((/= cid) . (.id)) & deckL %~ filter ((/= cid) . (.id))
     PutAllyIntoPlay pid cid | pid == player.id -> do
       takeFromHand cid >>= \case

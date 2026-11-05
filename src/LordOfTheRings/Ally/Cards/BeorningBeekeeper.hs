@@ -18,7 +18,7 @@ instance HasAbilities BeorningBeekeeper where
 instance RunMessage BeorningBeekeeper where
   runMessage msg s@(BeorningBeekeeper a) = case msg of
     UseCardAbility _ (isSource a -> True) 1 _ -> do
-      discard a
+      discard a a
       enemies <- select EnemyInStagingArea
       for_ enemies \e -> dealDamage a e 1
       pure s

@@ -28,6 +28,6 @@ instance RunMessage SouthernBelfalas where
       chooseOrRunOneM pid do
         questionLabeled "southernBelfalas.discard"
         causedBy a
-        targets allies discard
+        targets allies (discard a)
       pure l
     _ -> SouthernBelfalas <$> runMessage msg a

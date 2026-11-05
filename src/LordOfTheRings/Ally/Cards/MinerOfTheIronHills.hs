@@ -22,6 +22,6 @@ instance RunMessage MinerOfTheIronHills where
       chooseOneM pid do
         questionLabeled "minerOfTheIronHills.discardCondition"
         causedBy a
-        targets conditions discard
+        targets conditions (discard a)
       pure s
     _ -> MinerOfTheIronHills <$> runMessage msg a

@@ -28,7 +28,7 @@ instance RunMessage InspiringFury where
         questionLabeled "inspiringFury.enemy"
         causedBy attrs
         targets [e | (e, x) <- enemies, x == highest] \e -> do
-          discard attrs
+          discard attrs attrs
           removeFromEncounterDiscard card
           whileInPlay (EnemyTarget e) $ push $ AttachShadowCard e card
       pure t

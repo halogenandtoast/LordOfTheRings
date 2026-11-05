@@ -22,7 +22,7 @@ instance RunMessage Eleanor where
       for_ [(t, tid) | Window _ (Revealed t@(TreacheryTarget tid)) <- windows] \(t, tid) -> do
         cancelWhenRevealed pid t
         cancelMatching (== FinishRevelation tid)
-        discard t
+        discard attrs t
         -- its surge and doomed resolve before the replacement is revealed (FAQ)
         revealEncounterCardAfter t
       pure h

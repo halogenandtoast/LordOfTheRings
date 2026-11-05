@@ -23,7 +23,7 @@ instance HasAbilities RohirrimScout where
 instance RunMessage RohirrimScout where
   runMessage msg s@(RohirrimScout a) = case msg of
     UseCardAbility pid (isSource a -> True) 1 _ -> do
-      discard a
+      discard a a
       enemies <- select nonUniqueStaged
       chooseOrRunOneM pid do
         questionLabeled "rohirrimScout.chooseEnemy"

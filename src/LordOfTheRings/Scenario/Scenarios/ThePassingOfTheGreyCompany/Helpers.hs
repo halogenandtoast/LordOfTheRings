@@ -25,6 +25,7 @@ import LordOfTheRings.Quest.CardDefs qualified as Quests
 import LordOfTheRings.Queue (QueueT)
 import LordOfTheRings.Message (Message)
 import LordOfTheRings.Trait (Trait (Oathbreaker))
+import LordOfTheRings.Source (Sourceable)
 import LordOfTheRings.Target
 
 -- | The copy of Overcome by Fear on the player's threat dial, if he has one (Limit 1 per
@@ -67,14 +68,14 @@ attachOvercomeByFearOr source pid key otherwise' other = do
 
 -- | "Either attach a set aside Overcome by Fear to your threat dial, or discard an ally you
 -- control."
-attachOvercomeByFearOrDiscardAlly :: (ReverseQueue m, Targetable source) => source -> PlayerId -> Text -> m ()
+attachOvercomeByFearOrDiscardAlly :: (ReverseQueue m, Targetable source, Sourceable source) => source -> PlayerId -> Text -> m ()
 attachOvercomeByFearOrDiscardAlly source pid key = do
   allies <- select (AllyControlledBy $ PlayerWithId pid)
   attachOvercomeByFearOr source pid key (notNull allies) do
     chooseOrRunOneM pid do
       questionLabeled "overcomeByFear.discardAlly"
       causedBy source
-      targets allies discard
+      targets allies (discard source)
 
 -- | "A player with threat 35 or higher", as Haunted Path and Blood Runs Chill read.
 hasThreatAtLeast35 :: HasGame m => PlayerId -> m Bool

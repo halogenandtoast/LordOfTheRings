@@ -42,7 +42,7 @@ import LordOfTheRings.Game.Base (
   scenarioL,
  )
 import LordOfTheRings.GameT (GameT)
-import LordOfTheRings.Helpers.Modifiers (getModifiers)
+import LordOfTheRings.Helpers.Modifiers (getModifiers, isEncounterCardSource)
 import LordOfTheRings.Helpers.Staging (getLocationQuestPoints)
 import LordOfTheRings.Id (EnemyId, LocationId)
 import LordOfTheRings.Location (
@@ -107,6 +107,7 @@ import LordOfTheRings.Modifier (
   Modifier (modifierType),
   ModifierType (
     CannotBeDefeated,
+    CannotBeDiscardedByEncounterCards,
     CannotEnterStagingArea,
     CannotLeavePlay,
     CannotLeaveStagingArea,
@@ -322,13 +323,20 @@ runGame msg g = case msg of
     pushAll $ concatMap (letGoOf g) explored
     runGame'' msg g
   -- a Permanent boon or burden cannot be discarded from its hero while the hero is in play
-  Discard t | permanentOnHero g t -> pure g
+  Discard _ t | permanentOnHero g t -> pure g
+  -- a location encounter card effects cannot discard stays, as Mount Gundabad's campaign
+  -- card keeps its unique locations: "Unique locations cannot be discarded from play by
+  -- encounter card effects." Player cards and the game's rules still discard it.
+  Discard source (LocationTarget lid)
+    | isEncounterCardSource g source
+    , CannotBeDiscardedByEncounterCards `elem` map modifierType (Map.findWithDefault [] (LocationTarget lid) (gameModifiers g)) ->
+        pure g
   -- an Uncharted location's card cannot enter the discard pile or the encounter deck: it
   -- returns to the Uncharted deck (The Grey Havens rules insert)
-  Discard (LocationTarget lid) | unchartedCard lid -> g <$ push (ShuffleIntoUnchartedDeck lid)
+  Discard _ (LocationTarget lid) | unchartedCard lid -> g <$ push (ShuffleIntoUnchartedDeck lid)
   ShuffleIntoEncounterDeck (LocationTarget lid) | unchartedCard lid -> g <$ push (ShuffleIntoUnchartedDeck lid)
   -- nor can a Grotto deck card: it returns to the Grotto deck (The Drowned Ruins)
-  Discard (LocationTarget lid) | grottoCard lid -> g <$ push (ShuffleIntoGrottoDeck lid)
+  Discard _ (LocationTarget lid) | grottoCard lid -> g <$ push (ShuffleIntoGrottoDeck lid)
   ShuffleIntoEncounterDeck (LocationTarget lid) | grottoCard lid -> g <$ push (ShuffleIntoGrottoDeck lid)
   -- a quest card that cannot be defeated now keeps its progress, to be checked again once
   -- it can be (see 'checkUnblockedQuests')
@@ -397,7 +405,7 @@ runGame' msg g = case leavingCharacter g msg of
 -- | The character a message takes out of play, while it is still in play.
 leavingCharacter :: Game -> Message -> Maybe Target
 leavingCharacter g = \case
-  Discard t | character t -> Just t
+  Discard _ t | character t -> Just t
   ReturnToHand t | character t -> Just t
   ShuffleIntoOwnersDeck t | character t -> Just t
   PutOnBottomOfOwnersDeck t | character t -> Just t

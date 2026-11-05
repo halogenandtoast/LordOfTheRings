@@ -41,7 +41,7 @@ instance RunMessage TheHandOfCastamir where
       pure e
     -- the card revealed, its effects resolved, is discarded from wherever it is
     DoStep 2 (RevealCard card) -> do
-      discardRevealed card
+      discardRevealed attrs card
       pure e
     UseCardAbility _ (isSource attrs -> True) 2 _ -> do
       lead <- getLead
@@ -49,11 +49,11 @@ instance RunMessage TheHandOfCastamir where
       pure e
     _ -> TheHandOfCastamir <$> runMessage msg attrs
 
-discardRevealed :: ReverseQueue m => EncounterCard -> m ()
-discardRevealed card = do
+discardRevealed :: (ReverseQueue m, Sourceable source) => source -> EncounterCard -> m ()
+discardRevealed source card = do
   es <- getsGame gameEntities
   let it = EncounterCard card
-  traverse_ discard
+  traverse_ (discard source)
     $ [toTarget x | x <- toList (entitiesEnemies es), toCard x == it]
     <> [toTarget x | x <- toList (entitiesLocations es), toCard x == it]
     <> [toTarget x | x <- toList (entitiesTreacheries es), toCard x == it]

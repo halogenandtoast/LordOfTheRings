@@ -54,7 +54,7 @@ instance RunMessage SlaveTrade where
         questionLabeled "slaveTrade.discard"
         causedBy (CardIdTarget cid)
         targets [x | x <- attachments, (toAttrs x).controller == pid, AttachedTo _ <- [x.placement]] \x -> do
-          discard x
+          discard attrs x
           when raider $ placeResources (CardIdSource cid) eid $ maybe 0 costAsResources (cdCost $ toCardDef x)
       pure t
     _ -> SlaveTrade <$> runMessage msg attrs

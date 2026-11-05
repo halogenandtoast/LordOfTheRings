@@ -221,7 +221,7 @@ spec = describe "The Dread Realm" do
     [dead] <- reanimated
     [(possession, AttachedTo host)] <- treacheriesOf Treacheries.possession
     host `shouldBe` EnemyTarget dead
-    run $ Discard (TreacheryTarget possession)
+    run $ Discard GameSource (TreacheryTarget possession)
     reanimated `shouldReturn` []
     map toCardCode <$> discardOf pid >>= (`shouldSatisfy` elem (toCardCode Allies.faramir))
 
@@ -248,7 +248,7 @@ spec = describe "The Dread Realm" do
     getAttack eowyn `shouldReturn` attack - 1
     -- as a Sorcery attachment it powers Daechanar
     getEnemyAttack daechanar `shouldReturn` 5
-    run $ Discard eowyn
+    run $ Discard GameSource eowyn
     [back] <- filter (/= wraith) <$> enemiesOf Enemies.wraithOfCarnDum
     (.placement) <$> getsGame (fromJustNote "wraith" . find ((== back) . toId) . toList . (.entities.enemies))
       >>= (`shouldBe` StagingArea)

@@ -26,7 +26,7 @@ instance RunMessage LindonNavigator where
         chooseOrRunOneM pid do
           questionLabeled "lindonNavigator.choose"
           causedBy a
-          labeled "lindonNavigator.discardSelf" $ discard a
+          labeled "lindonNavigator.discardSelf" $ discard a a
           unless (null hand) $ labeled "lindonNavigator.discardCard" $ chooseAndDiscardFromHand pid a 1
       pure s
     _ -> LindonNavigator <$> runMessage msg a

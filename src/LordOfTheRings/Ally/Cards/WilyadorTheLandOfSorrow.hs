@@ -23,6 +23,6 @@ instance HasAbilities WilyadorTheLandOfSorrow where
 instance RunMessage WilyadorTheLandOfSorrow where
   runMessage msg s@(WilyadorTheLandOfSorrow a) = case msg of
     UseCardAbility pid (isSource a -> True) 1 _ -> do
-      groupMaySpendOr pid a Neutral 1 (pure ()) (discard a)
+      groupMaySpendOr pid a Neutral 1 (pure ()) (discard a a)
       pure s
     _ -> WilyadorTheLandOfSorrow <$> runMessage msg a

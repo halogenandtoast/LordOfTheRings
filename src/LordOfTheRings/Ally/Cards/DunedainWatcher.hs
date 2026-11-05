@@ -18,7 +18,7 @@ instance HasAbilities DunedainWatcher where
 instance RunMessage DunedainWatcher where
   runMessage msg s@(DunedainWatcher a) = case msg of
     UseCardAbility _ (isSource a -> True) 1 windows -> do
-      discard a
+      discard a a
       cancelShadowEffects windows
       pure s
     _ -> DunedainWatcher <$> runMessage msg a

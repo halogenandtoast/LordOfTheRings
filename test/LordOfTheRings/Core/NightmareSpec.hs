@@ -154,7 +154,7 @@ spec = describe "Nightmare mode" do
       run . AddToStaging =<< genEncounterCard Enemies.hillTroll
       troll <- getsGame (fromJustNote "no troll" . fmap toId . find ((== toCardCode Enemies.hillTroll) . toCardCode) . toList . (.entities.enemies))
       getsGame (length . (.entities.enemies)) `shouldReturn` 2
-      run $ Discard (toTarget troll)
+      run $ Discard GameSource (toTarget troll)
       getsGame (length . (.entities.enemies)) `shouldReturn` 0
 
     it "Marshland Outlaws keeps its player's card effects from damaging other enemies" . nightmare journeyAlongTheAnduin $ \pid -> do

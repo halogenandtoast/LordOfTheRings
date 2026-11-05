@@ -56,7 +56,7 @@ instance RunMessage TheStairsOfCirithUngol where
       TheStairsOfCirithUngol <$> runMessage msg attrs
     UseCardAbility _ (isSource attrs -> True) 1 _ -> do
       discardRandomFromEachHand 3
-      traverse_ discard =<< select (EnemyWithTrait Nazgul <> EnemyInStagingArea)
+      traverse_ (discard attrs) =<< select (EnemyWithTrait Nazgul <> EnemyInStagingArea)
       pure q
     UseCardAbility _ (isSource attrs -> True) 2 _ -> do
       whenM (cardInVictoryDisplay Locations.smeagolsSecretWay) advanceQuest

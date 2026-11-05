@@ -126,13 +126,13 @@ atStage pid def = do
 leaveChamber :: GameT ()
 leaveChamber = do
   chamber <- locationOf Locations.chamberOfMazarbul
-  run $ Discard (LocationTarget chamber.id)
+  run $ Discard GameSource (LocationTarget chamber.id)
   q <- getActiveQuest
   run $ PlaceTokens GameSource (toTarget q) Resource 3
 
 -- | The locations setup put in the staging area leave play.
 clearLocations :: GameT ()
-clearLocations = getsGame (map toId . toList . (.entities.locations)) >>= traverse_ (run . Discard . LocationTarget)
+clearLocations = getsGame (map toId . toList . (.entities.locations)) >>= traverse_ (run . Discard GameSource . LocationTarget)
 
 spec :: Spec
 spec = describe "Journey in the Dark" do
@@ -206,7 +206,7 @@ spec = describe "Journey in the Dark" do
       chamber <- locationOf Locations.chamberOfMazarbul
       -- Chamber of Mazarbul still bars the next stage
       getModifiers (toTarget q) >>= (`shouldSatisfy` elem CannotBeDefeated)
-      run $ Discard (LocationTarget chamber.id)
+      run $ Discard GameSource (LocationTarget chamber.id)
       getModifiers (toTarget q) >>= (`shouldSatisfy` notElem CannotBeDefeated)
 
     it "has the first player reveal an extra card with no enemy in the staging area as the quest phase begins" . darkTest $ \pid -> do
@@ -235,7 +235,7 @@ spec = describe "Journey in the Dark" do
       _ <- setEncounterDeck [Locations.manyPillaredHall, Locations.minesOfMoria]
       atStage pid Quests.theBridgeOfKhazadDum
       bridge <- locationOf Locations.theGreatBridge
-      run $ Discard (LocationTarget bridge.id)
+      run $ Discard GameSource (LocationTarget bridge.id)
       q <- getActiveQuest
       run $ CompleteQuest (toId q)
       chooseLabel "$label.journeyInTheDark.shadowOfFear" pid
@@ -252,7 +252,7 @@ spec = describe "Journey in the Dark" do
       _ <- setEncounterDeck [Locations.manyPillaredHall, Locations.minesOfMoria]
       atStage pid Quests.theBridgeOfKhazadDum
       bridge <- locationOf Locations.theGreatBridge
-      run $ Discard (LocationTarget bridge.id)
+      run $ Discard GameSource (LocationTarget bridge.id)
       q <- getActiveQuest
       run $ CompleteQuest (toId q)
       getsGame (.outcome) `shouldReturn` Just Won

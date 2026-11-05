@@ -24,7 +24,7 @@ instance RunMessage PelargirQuays where
       pure l
     DoStep 2 (UseCardAbility _ (isSource a -> True) 1 _) -> do
       when (countTokens Damage a.locationTokens >= 4) do
-        discard a
+        discard a a
         lead <- getLead
         characters <- selectCharacters AnyHero (AllyControlledBy AnyPlayer)
         dealDamageDividedAmong a lead characters 4

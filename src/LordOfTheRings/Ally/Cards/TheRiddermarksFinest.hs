@@ -24,6 +24,6 @@ instance RunMessage TheRiddermarksFinest where
         causedBy a
         targets locations \l -> placeProgress a l 2
       -- the discard is the cost, but what it leads to waits for the effect
-      discard a
+      discard a a
       pure s
     _ -> TheRiddermarksFinest <$> runMessage msg a

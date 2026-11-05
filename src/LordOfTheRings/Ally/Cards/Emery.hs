@@ -25,6 +25,6 @@ instance RunMessage Emery where
       discardTopOfDeck pid 3
       for_ [pc | PlayerCard pc <- player.hand, pc.id == cid] \pc ->
         choosePlayerM pid (CardIdTarget cid) \p -> putAllyIntoPlayUnder p pc
-      when offSphere $ discard (CardIdTarget cid)
+      when offSphere $ discard a (CardIdTarget cid)
       pure s
     _ -> Emery <$> runMessage msg a

@@ -3,7 +3,7 @@ module LordOfTheRings.Helpers.Modifiers (module LordOfTheRings.Helpers.Modifiers
 import Control.Monad.Writer.Strict (execWriterT)
 import Data.Map.Monoidal.Strict (MonoidalMap (..))
 import Data.Map.Strict qualified as Map
-import LordOfTheRings.Card (Card, CardCode, CardType (AllyType, ObjectiveAllyType), cdCardTraits, cdCardType, cdSphere, isTreasure, toCardCode, toCardDef)
+import LordOfTheRings.Card (Card (EncounterCard), CardCode, CardType (AllyType, ObjectiveAllyType), IsCard (toCard), cdCardTraits, cdCardType, cdSphere, isTreasure, toCardCode, toCardDef)
 import LordOfTheRings.Sphere (Sphere (Fellowship))
 import LordOfTheRings.Classes.HasGame
 import LordOfTheRings.Classes.HasModifiersFor
@@ -326,6 +326,25 @@ immuneToEncounterSource :: Game -> [ModifierType] -> Source -> Bool
 immuneToEncounterSource g mods = \case
   EnemyAttackSource _ -> False
   source -> maybe False (immuneToEncounterCard g mods) (sourceTarget source)
+
+{- | Whether the source is an encounter card's effect: an enemy (its attack too), location,
+treachery, objective or quest card, as Mount Gundabad's campaign card reads "encounter card
+effects". One in play is, if its card is an encounter card and not a player card turned
+enemy; one out of play, as a shadow card resolving, is. The game's rules, the scenario's
+and a player card's effects are not.
+-}
+isEncounterCardSource :: Game -> Source -> Bool
+isEncounterCardSource g source = case sourceTarget source of
+  Just (EnemyTarget i) -> encounter $ Map.lookup i es.enemies
+  Just (LocationTarget i) -> encounter $ Map.lookup i es.locations
+  Just (TreacheryTarget i) -> encounter $ Map.lookup i es.treacheries
+  Just (ObjectiveTarget i) -> encounter $ Map.lookup i es.objectives
+  Just (QuestTarget i) -> encounter $ Map.lookup i es.quests
+  _ -> False
+ where
+  es = g.entities
+  encounter :: IsCard a => Maybe a -> Bool
+  encounter = maybe True (\c -> case toCard c of EncounterCard _ -> True; _ -> False)
 
 {- | Whether a card is immune to the encounter card, the target the source is, as
 'immuneToEncounterSource'. One that has left play, as a shadow card whose effect lasts, is

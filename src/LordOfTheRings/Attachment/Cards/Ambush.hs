@@ -28,7 +28,7 @@ instance RunMessage Ambush where
     UseCardAbility pid (isSource a -> True) 1 _ -> do
       withHost a \case
         EnemyTarget eid -> do
-          discard a
+          discard a a
           push $ DeclareAttackers pid eid
         _ -> pure ()
       pure s

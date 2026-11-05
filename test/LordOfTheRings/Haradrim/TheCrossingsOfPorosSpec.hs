@@ -263,7 +263,7 @@ spec = describe "The Crossings of Poros" do
     eid <- stage Enemies.southronSoldier
     beravor <- hero "01012"
     runOnly $ Destroy (EnemyAttackSource eid) beravor
-    run $ Discard (EnemyTarget eid)
+    run $ Discard GameSource (EnemyTarget eid)
     enemyCodes `shouldReturn` []
     (.progress) . toAttrs <$> getActiveQuest `shouldReturn` 2
 
@@ -271,7 +271,7 @@ spec = describe "The Crossings of Poros" do
     card <- genEncounterCard Objectives.porosGarrison
     run $ PutObjectiveAllyIntoPlayUnder pid card
     al <- fromJustNote "no garrison" <$> allyOf Objectives.porosGarrison
-    run $ Discard (toTarget $ allyId al)
+    run $ Discard GameSource (toTarget $ allyId al)
     getsGame (.outcome) `shouldReturn` Just Lost
 
   -- \* The Black Serpent

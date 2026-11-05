@@ -48,7 +48,7 @@ spec = describe "A Journey to Rhosgobel" do
 
   it "loses the game when Wilyador leaves play" . rhosgobelTest $ \_ -> do
     w <- putWilyador
-    run $ Discard w
+    run $ Discard GameSource w
     getsGame (.outcome) `shouldReturn` Just Lost
 
   it "wins at Return to Rhosgobel when the Athelas heal Wilyador fully" . rhosgobelTest $ \pid -> do

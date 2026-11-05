@@ -169,7 +169,7 @@ spec = describe "Shadow and Flame" do
     _ <- setEncounterDeck []
     _ <- putAllyIntoPlay pid Allies.guardOfTheCitadel
     guard' <- getsGame (toTarget . fromJustNote "no ally" . headMay . toList . (.entities.allies))
-    run $ Discard guard'
+    run $ Discard GameSource guard'
     getsGame (any ((== toCardCode Enemies.rangingGoblin) . toCardCode) . toList . (.entities.enemies)) `shouldReturn` False
     map toCardCode <$> getEncounterDeck >>= (`shouldSatisfy` \cs -> sort cs == sort [toCardCode Enemies.rangingGoblin, toCardCode Locations.oldForestRoad])
 

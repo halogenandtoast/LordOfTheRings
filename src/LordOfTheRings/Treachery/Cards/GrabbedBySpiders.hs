@@ -34,6 +34,6 @@ instance RunMessage GrabbedBySpiders where
       eachPlayer \p -> do
         allies <- map toTarget <$> select (AllyControlledBy $ PlayerWithId p)
         unless (null allies) $ chooseAndDiscard attrs p allies
-      discard attrs
+      discard attrs attrs
       pure t
     _ -> GrabbedBySpiders <$> runMessage msg attrs

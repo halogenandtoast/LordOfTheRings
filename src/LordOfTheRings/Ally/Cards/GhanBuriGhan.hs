@@ -32,7 +32,7 @@ instance HasAbilities GhanBuriGhan where
 instance RunMessage GhanBuriGhan where
   runMessage msg s@(GhanBuriGhan a) = case msg of
     UseCardAbility pid (isSource a -> True) 1 _ -> do
-      discard a
+      discard a a
       locations <- travelableLocations
       chooseOrRunOneM pid do
         questionLabeled "ghanBuriGhan.chooseLocation"

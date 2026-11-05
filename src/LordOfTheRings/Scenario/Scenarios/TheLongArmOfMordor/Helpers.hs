@@ -20,7 +20,7 @@ already is, as when his elimination discards it.
 -}
 eliminatedIfLeavesPlay :: ReverseQueue m => HeroAttrs -> Message -> m ()
 eliminatedIfLeavesPlay attrs = \case
-  Discard t | isTarget attrs t -> leaves
+  Discard _ t | isTarget attrs t -> leaves
   RemoveFromGame t | isTarget attrs t -> leaves
   _ -> pure ()
  where

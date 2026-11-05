@@ -66,7 +66,7 @@ instance RunMessage PassTheTwoWatchers where
             for_ company (`putObjectiveIntoPlayAttached` HeroTarget hid)
             placeObjective (toId r) (AttachedTo $ HeroTarget hid)
             attachments <- getAttachmentsOn (HeroTarget ringBearer)
-            for_ [t | t <- attachments, t /= toTarget r, not (isObjective t)] discard
+            for_ [t | t <- attachments, t /= toTarget r, not (isObjective t)] (discard attrs)
             hero <- getHero ringBearer
             when (hero.damage > 0) $ removeTokens attrs (HeroTarget ringBearer) Damage hero.damage
             when (hero.resources > 0) $ removeTokens attrs (HeroTarget ringBearer) Resource hero.resources

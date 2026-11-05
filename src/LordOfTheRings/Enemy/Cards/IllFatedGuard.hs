@@ -26,6 +26,6 @@ instance RunMessage IllFatedGuard where
     ResolveShadowEffect cid _ pid _ | cid == attrs.cardId -> do
       characters <- charactersControlledBy pid
       strong <- filterM (fmap (>= 3) . getWillpower) characters
-      for_ strong \c -> traverse_ discard =<< getAttachmentsOn c
+      for_ strong \c -> traverse_ (discard attrs) =<< getAttachmentsOn c
       pure e
     _ -> IllFatedGuard <$> runMessage msg attrs

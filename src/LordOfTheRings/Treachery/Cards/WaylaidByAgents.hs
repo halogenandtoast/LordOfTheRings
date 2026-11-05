@@ -25,7 +25,7 @@ instance RunMessage WaylaidByAgents where
           questionLabeled "waylaidByAgents.choose"
           causedBy attrs
           when removable $ labeled "waylaidByAgents.removeTimeCounter" $ removeTimeCountersFromCurrentQuest attrs 1
-          targets allies discard
+          targets allies (discard attrs)
       doStep 1 msg
       pure t
     DoStep 1 (WhenRevealed (isTarget attrs -> True)) -> do

@@ -166,7 +166,7 @@ spec = describe "We Must Away, Ere Break of Day" do
       setSackDeck [Objectives.aDeepSack]
       run $ DrawFromSackDeck 1
       o <- objectiveOf Objectives.aDeepSack
-      run $ Discard (ObjectiveTarget o.objectiveId)
+      run $ Discard GameSource (ObjectiveTarget o.objectiveId)
       sacksInPlay `shouldReturn` []
       sackDeckCodes `shouldReturn` [toCardCode Objectives.aDeepSack]
 

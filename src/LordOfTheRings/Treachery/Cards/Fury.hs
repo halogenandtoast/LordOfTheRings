@@ -41,6 +41,6 @@ instance RunMessage Fury where
       hp <- getEnemyHitPoints eid
       when (enemy.damage >= hp) do
         healAllDamage attrs eid
-        discard attrs
+        discard attrs attrs
       pure t
     _ -> Fury <$> runMessage msg attrs

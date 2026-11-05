@@ -276,5 +276,5 @@ spec = describe "The Wastes of Eriador" do
 
   it "loses the game as Amarthiúl leaves play" . wastesTest $ \pid -> do
     setUp pid [Locations.northDowns]
-    run . Discard . toTarget =<< getsGame (fromJustNote "no Amarthiúl" . headMay . toList . (.entities.allies))
+    run . Discard GameSource . toTarget =<< getsGame (fromJustNote "no Amarthiúl" . headMay . toList . (.entities.allies))
     outcome `shouldReturn` Just Lost

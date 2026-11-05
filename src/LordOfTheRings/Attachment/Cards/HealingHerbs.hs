@@ -22,7 +22,7 @@ instance HasAbilities HealingHerbs where
 instance RunMessage HealingHerbs where
   runMessage msg s@(HealingHerbs a) = case msg of
     UseCardAbility pid (isSource a -> True) 1 _ -> do
-      discard a
+      discard a a
       damaged <- damagedCharacters AnyHero AnyAlly
       chooseOneM pid do
         questionLabeled "healingHerbs.heal"

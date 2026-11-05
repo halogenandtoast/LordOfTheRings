@@ -35,7 +35,7 @@ instance RunMessage OnTheTrail where
     ReturnToTopOfEncounterDeck _ -> recheck
     ShuffleIntoEncounterDeck _ -> recheck
     PlaceObjective {} -> recheck
-    Discard _ -> recheck
+    Discard _ _ -> recheck
     _ -> OnTheTrail <$> runMessage msg attrs
    where
     recheck = do

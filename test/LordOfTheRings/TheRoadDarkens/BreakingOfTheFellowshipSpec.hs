@@ -357,7 +357,7 @@ spec = describe "Breaking of the Fellowship" do
       getEnemyThreat eid `shouldReturn` 2
       getEngagementCost eid `shouldReturn` 10
       fallen <- getsGame (fromJustNote "fallen" . find ((== toCardCode Treacheries.fallenIntoEvil) . toCardCode) . toList . (.entities.treacheries))
-      run $ Discard (toTarget fallen)
+      run $ Discard GameSource (toTarget fallen)
       h <- getHeroWithCode "01012"
       h.owner `shouldBe` pid
 

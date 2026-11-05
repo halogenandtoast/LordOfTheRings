@@ -30,9 +30,9 @@ instance RunMessage BanksOfMorgulduin where
         targets captains \eid -> do
           let card = MkEncounterCard a.cardId (toCardCode a)
           cancelMatching \case
-            Discard (LocationTarget lid) -> lid == a.id
+            Discard _ (LocationTarget lid) -> lid == a.id
             _ -> False
-          discard a
+          discard a a
           removeFromEncounterDiscard card
           whileInPlay (EnemyTarget eid) $ push $ AttachShadowCard eid card
       pure l

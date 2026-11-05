@@ -22,7 +22,7 @@ spec = do
     it "deals 2 damage to an enemy in the staging area after it leaves play" . gameTest $ \pid -> do
       descendant <- putAllyIntoPlay pid Allies.descendantOfThorondor
       eid <- stageEnemy Enemies.forestSpider
-      run $ Discard descendant
+      run $ Discard GameSource descendant
       chooseAbilityOf pid descendant
       chooseTarget pid eid
       getsGame (fmap (.damage) . find ((== eid) . toId) . toList . (.entities.enemies)) `shouldReturn` Just 2

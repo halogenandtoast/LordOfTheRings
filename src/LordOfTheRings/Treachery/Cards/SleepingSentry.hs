@@ -22,6 +22,6 @@ instance RunMessage SleepingSentry where
       pure t
     ResolveShadowEffect cid _ pid _ | cid == attrs.cardId -> do
       let yours = PlayerWithId pid
-      traverse_ discard =<< selectCharacters (HeroControlledBy yours <> ExhaustedHero) (AllyControlledBy yours <> ExhaustedAlly)
+      traverse_ (discard attrs) =<< selectCharacters (HeroControlledBy yours <> ExhaustedHero) (AllyControlledBy yours <> ExhaustedAlly)
       pure t
     _ -> SleepingSentry <$> runMessage msg attrs

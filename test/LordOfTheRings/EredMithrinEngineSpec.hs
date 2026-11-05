@@ -58,7 +58,7 @@ spec = describe "The Ered Mithrin engine" do
     spider <- getsGame (fromJustNote "no spider" . fmap toAttrs . find ((== eid) . toId) . toList . (.entities.enemies))
     playerCardsGuardedBy (enemyCardId spider) `shouldReturn` [steward]
     map toCardCode <$> getEncounterDiscard `shouldReturn` ["01099"]
-    run $ Discard (EnemyTarget eid)
+    run $ Discard GameSource (EnemyTarget eid)
     hero <- heroOf pid "01012"
     chooseTarget pid hero
     getsGame (map (attachmentPlacement . toAttrs) . filter ((== steward.id) . attachmentCardId . toAttrs) . toList . (.entities.attachments))
@@ -78,7 +78,7 @@ spec = describe "The Ered Mithrin engine" do
     held <- genPlayerCard Attachments.stewardOfGondor (Just pid)
     run $ GuardPlayerCard card.id ReturnToHandWhenFree held
     select EnemyGuardingACard `shouldReturn` [eid]
-    run $ Discard (EnemyTarget eid)
+    run $ Discard GameSource (EnemyTarget eid)
     map (.id) . (.hand) <$> getPlayer pid `shouldReturn` [held.id]
 
   it "replaces a Deep location traveled to with the top card of the Caves deck" . gameTest $ \_ -> do

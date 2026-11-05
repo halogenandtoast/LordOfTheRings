@@ -25,6 +25,6 @@ instance HasAbilities FellowshipOfTheRing where
 instance RunMessage FellowshipOfTheRing where
   runMessage msg s@(FellowshipOfTheRing a) = case msg of
     UseCardAbility _ (isSource a -> True) 1 _ -> do
-      discard a
+      discard a a
       pure s
     _ -> FellowshipOfTheRing <$> runMessage msg a

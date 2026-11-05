@@ -38,7 +38,7 @@ instance RunMessage LostSoulOfLorien where
           willing <- filterM (fmap (>= 1) . getWillpower . toTarget) heroes
           lead <- getLead
           if null willing
-            then discard attrs
+            then discard attrs attrs
             else chooseOrRunOneM lead do
               questionLabeled "lostSoulOfLorien.attach"
               causedBy attrs

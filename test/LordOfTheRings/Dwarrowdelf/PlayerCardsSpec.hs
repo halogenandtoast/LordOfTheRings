@@ -355,7 +355,7 @@ spec = describe "Dwarrowdelf player cards" do
     run $ AddToEncounterDiscard [discarded]
     card <- putCardIntoHand pid Events.theEndComes
     bofur <- putAllyIntoPlay pid Allies.bofur
-    run $ Discard bofur
+    run $ Discard GameSource bofur
     chooseTarget pid (CardIdTarget card.id)
     getEncounterDiscard `shouldReturn` []
     map (.id) <$> getEncounterDeck `shouldReturn` [discarded.id]
@@ -375,7 +375,7 @@ spec = describe "Dwarrowdelf player cards" do
     wanderer <- putAllyIntoPlay pid Allies.dunedainWanderer
     b <- hero beravor
     base <- stat getAttack b
-    run $ Discard wanderer
+    run $ Discard GameSource wanderer
     chooseTarget pid (CardIdTarget card.id)
     chooseTarget pid b
     getAttack b `shouldReturn` base + 2

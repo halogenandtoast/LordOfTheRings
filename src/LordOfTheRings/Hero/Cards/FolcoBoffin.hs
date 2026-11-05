@@ -24,7 +24,7 @@ instance HasAbilities FolcoBoffin where
 instance RunMessage FolcoBoffin where
   runMessage msg h@(FolcoBoffin attrs) = case msg of
     UseCardAbility pid (isSource attrs -> True) 1 _ -> do
-      discard attrs
+      discard attrs attrs
       lowerThreatBy attrs pid 7
       pure h
     _ -> FolcoBoffin <$> runMessage msg attrs

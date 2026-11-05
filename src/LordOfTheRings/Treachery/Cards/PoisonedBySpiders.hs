@@ -30,6 +30,6 @@ instance RunMessage PoisonedBySpiders where
       chooseOrRunOneM pid do
         questionLabeled "poisonedBySpiders.discard"
         causedBy attrs
-        targets unconscious discard
+        targets unconscious (discard attrs)
       pure t
     _ -> PoisonedBySpiders <$> runMessage msg attrs

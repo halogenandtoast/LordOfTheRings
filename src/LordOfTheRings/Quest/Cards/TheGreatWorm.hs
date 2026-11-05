@@ -57,7 +57,7 @@ players win the game"; FAQ 1.15, "then" needs what precedes it to resolve).
 instance RunMessage TheGreatWorm where
   runMessage msg q@(TheGreatWorm attrs) = case msg of
     UseCardAbility _ (isSource attrs -> True) 1 _ -> do
-      getWormsbane >>= traverse_ (discard . ObjectiveTarget)
+      getWormsbane >>= traverse_ (discard attrs . ObjectiveTarget)
       getDagnir >>= traverse_ (addToVictoryDisplayOverriding . EnemyTarget)
       winGame
       pure q

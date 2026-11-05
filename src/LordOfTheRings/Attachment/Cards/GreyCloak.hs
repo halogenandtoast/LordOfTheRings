@@ -35,7 +35,7 @@ instance HasAbilities GreyCloak where
 instance RunMessage GreyCloak where
   runMessage msg s@(GreyCloak a) = case msg of
     UseCardAbility pid (isSource a -> True) 1 _ -> do
-      discard a
+      discard a a
       enemies <- select nonUniqueStaged
       chooseOrRunOneM pid do
         questionLabeled "greyCloak.enemy"

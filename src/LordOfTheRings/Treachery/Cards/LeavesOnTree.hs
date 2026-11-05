@@ -27,8 +27,8 @@ instance RunMessage LeavesOnTree where
             questionLabeled "leavesOnTree.payOrDiscard"
             causedBy attrs
             labeledWith "leavesOnTree.pay" [intVar "n" n] $ spendResources p Neutral n
-            labeled "leavesOnTree.discardAll" $ for_ attachments discard
-          else for_ attachments discard
+            labeled "leavesOnTree.discardAll" $ for_ attachments (discard attrs)
+          else for_ attachments (discard attrs)
       pure t
     ResolveShadowEffect cid _ pid defenders | cid == attrs.cardId -> do
       for_ defenders \d -> chooseAndDiscard attrs pid =<< getAttachmentsOn d

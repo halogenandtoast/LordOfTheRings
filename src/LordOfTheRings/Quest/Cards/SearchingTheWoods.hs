@@ -46,6 +46,6 @@ instance RunMessage SearchingTheWoods where
         causedBy attrs
         targets locations \l -> do
           placeInStagingAreaOf here l
-          discard l
+          discard attrs l
       pure q
     _ -> SearchingTheWoods <$> runMessage msg attrs

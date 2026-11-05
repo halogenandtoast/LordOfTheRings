@@ -46,7 +46,7 @@ instance RunMessage TheDefense where
       pure q
     RemoveFromGame (LocationTarget _) -> recheck
     AddToVictoryDisplay (LocationTarget _) -> recheck
-    Discard (LocationTarget _) -> recheck
+    Discard _ (LocationTarget _) -> recheck
     _ -> TheDefense <$> runMessage msg attrs
    where
     recheck = do

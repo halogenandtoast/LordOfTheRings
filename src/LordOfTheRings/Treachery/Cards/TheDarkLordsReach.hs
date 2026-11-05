@@ -29,7 +29,7 @@ instance RunMessage TheDarkLordsReach where
         chooseOrRunOneM pid do
           questionLabeled "theDarkLordsReach.discard"
           causedBy attrs
-          targets attached discard
+          targets attached (discard attrs)
       pure t
     ResolveShadowEffect cid _ pid _ | cid == attrs.cardId -> do
       discardNonObjectiveAttachment attrs pid

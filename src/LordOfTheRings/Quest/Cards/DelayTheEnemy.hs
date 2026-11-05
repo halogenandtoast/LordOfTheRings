@@ -21,7 +21,7 @@ instance RunMessage DelayTheEnemy where
         unless (null enemies) $ chooseOneM pid do
           questionLabeled "delayTheEnemy.discard"
           causedBy attrs
-          targets enemies discard
+          targets enemies (discard attrs)
           labeled "pass" (pure ())
       DelayTheEnemy <$> runMessage msg attrs
     _ -> DelayTheEnemy <$> runMessage msg attrs

@@ -41,14 +41,14 @@ instance RunMessage GoblinPatrol where
       checkStage attrs.id
       pure q
     UseCardAbility _ (isSource attrs -> True) 1 ws -> do
-      for_ [eid | Window _ (Revealed (EnemyTarget eid)) <- ws] (discard . EnemyTarget)
+      for_ [eid | Window _ (Revealed (EnemyTarget eid)) <- ws] (discard attrs . EnemyTarget)
       checkStage attrs.id
       pure q
     CheckStage qid | qid == attrs.id -> do
       whenM (selectNone AnyEnemy) $ push (CompleteQuest attrs.id)
       pure q
     Destroy _ (EnemyTarget _) -> recheck
-    Discard (EnemyTarget _) -> recheck
+    Discard _ (EnemyTarget _) -> recheck
     ReturnToTopOfEncounterDeck (EnemyTarget _) -> recheck
     ShuffleIntoEncounterDeck (EnemyTarget _) -> recheck
     _ -> GoblinPatrol <$> runMessage msg attrs

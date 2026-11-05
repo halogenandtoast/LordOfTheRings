@@ -371,7 +371,7 @@ spec = describe "Shelob's Lair" do
 
     it "reveals another card with fewer locations in the staging area than players" . lairTest $ \pid -> do
       setUp pid
-      run . Discard . LocationTarget =<< locationOf Locations.smeagolsSecretWay
+      run . Discard GameSource . LocationTarget =<< locationOf Locations.smeagolsSecretWay
       reveal [Treacheries.manyOpenings, Locations.denOfNight]
       getEncounterDeck `shouldReturn` []
       (placementOfLocation =<< locationOf Locations.denOfNight) `shouldReturn` StagingArea

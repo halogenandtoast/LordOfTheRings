@@ -19,6 +19,6 @@ instance HasModifiersFor StagnantQuagmire where
 instance RunMessage StagnantQuagmire where
   runMessage msg l@(StagnantQuagmire a) = case msg of
     ResolveShadowEffect cid _ pid defenders | cid == a.cardId -> do
-      escapeTest pid a 1 EscapeWillpower (traverse_ discard defenders) (pure ())
+      escapeTest pid a 1 EscapeWillpower (traverse_ (discard a) defenders) (pure ())
       pure l
     _ -> StagnantQuagmire <$> runMessage msg a

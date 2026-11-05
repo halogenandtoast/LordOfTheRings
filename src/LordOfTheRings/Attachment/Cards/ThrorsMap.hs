@@ -29,7 +29,7 @@ instance HasAbilities ThrorsMap where
 instance RunMessage ThrorsMap where
   runMessage msg s@(ThrorsMap a) = case msg of
     UseCardAbility pid (isSource a -> True) 1 _ -> do
-      whenM (playsWithErrata a.owner) $ discard a
+      whenM (playsWithErrata a.owner) $ discard a a
       staged <- select LocationInStagingArea
       active <- select IsActiveLocation
       chooseOneM pid do

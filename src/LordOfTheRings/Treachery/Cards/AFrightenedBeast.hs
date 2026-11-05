@@ -33,5 +33,5 @@ offer attrs threat = \case
   (p, allies) : rest -> chooseOneM p do
     questionLabeled "aFrightenedBeast.cancel"
     causedBy attrs
-    targets allies discard
+    targets allies (discard attrs)
     labeled "aFrightenedBeast.allow" $ offer attrs threat rest

@@ -40,7 +40,7 @@ instance RunMessage AFatefulDiscovery where
       locations <- getsGame (entitiesLocations . gameEntities)
       for_ [l | Window When (Explored lid) <- ws, Just l <- [Map.lookup lid locations], isUnchartedCard (toAttrs l)] \l -> do
         cancelMatching \case
-          Discard (LocationTarget lid) -> lid == l.id
+          Discard _ (LocationTarget lid) -> lid == l.id
           ShuffleIntoUnchartedDeck lid -> lid == l.id
           _ -> False
         -- one with victory points already goes there

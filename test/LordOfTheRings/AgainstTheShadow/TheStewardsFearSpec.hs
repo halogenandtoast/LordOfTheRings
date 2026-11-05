@@ -117,7 +117,7 @@ spec = describe "The Steward's Fear" do
     staged Locations.sewers
     sewers <- locationOf Locations.sewers
     map toCardCode . (.underworldDeck) <$> meta `shouldReturn` [toCardCode Objectives.aPrisoner]
-    run $ Discard (toTarget sewers)
+    run $ Discard GameSource (toTarget sewers)
     placementOf Enemies.zealousTraitor `shouldReturn` Just StagingArea
     Map.null . (.underneath) <$> meta `shouldReturn` True
 

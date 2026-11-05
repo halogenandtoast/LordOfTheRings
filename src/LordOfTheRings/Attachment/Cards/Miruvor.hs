@@ -22,7 +22,7 @@ instance RunMessage Miruvor where
   runMessage msg s@(Miruvor a) = case msg of
     UseCardAbility pid (isSource a -> True) 1 _ -> do
       withHost a \host -> do
-        discard a
+        discard a a
         let effect :: ReverseQueue n => Int -> n ()
             effect = \case
               1 -> ready host

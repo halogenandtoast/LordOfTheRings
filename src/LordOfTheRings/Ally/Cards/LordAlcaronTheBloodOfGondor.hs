@@ -28,7 +28,7 @@ instance RunMessage LordAlcaronTheBloodOfGondor where
         causedBy a
         targets enemies \e -> placeEnemy e StagingArea
       pure s
-    Discard (isTarget a -> True) -> do
+    Discard _ (isTarget a -> True) -> do
       gameOver Lost
       pure s
     _ -> LordAlcaronTheBloodOfGondor <$> runMessage msg a

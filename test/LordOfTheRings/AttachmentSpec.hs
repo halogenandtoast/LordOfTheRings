@@ -41,7 +41,7 @@ spec = describe "Attachments" do
     playOnTheodred pid Attachments.celebriansStone
     theodred <- getHeroWithCode "01002"
     passActions pid
-    run $ Discard (toTarget theodred)
+    run $ Discard GameSource (toTarget theodred)
     getsGame (length . (.entities.attachments)) `shouldReturn` 0
     sort . map toCardCode . (.discard) <$> getPlayer pid `shouldReturn` ["01002", "01027"]
 

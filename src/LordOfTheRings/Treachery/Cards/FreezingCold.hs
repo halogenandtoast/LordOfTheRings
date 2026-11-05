@@ -30,6 +30,6 @@ instance RunMessage FreezingCold where
     -- the copies already there, with this one, are more than 1
     AttachTreachery tid host | tid == attrs.treacheryId -> do
       others <- treacheriesOn attrs.treacheryCardCode host
-      unless (null others) $ discard host
+      unless (null others) $ discard attrs host
       FreezingCold <$> runMessage msg attrs
     _ -> FreezingCold <$> runMessage msg attrs

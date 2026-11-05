@@ -23,7 +23,7 @@ its "after it becomes the active location" effects answer.
 instance RunMessage Mirage where
   runMessage msg t@(Mirage attrs) = case msg of
     WhenRevealed (isTarget attrs -> True) -> do
-      traverse_ discard =<< select IsActiveLocation
+      traverse_ (discard attrs) =<< select IsActiveLocation
       shuffleEncounterDiscardIntoDeck AnyCard
       doStep 1 msg
       pure t

@@ -24,7 +24,7 @@ instance RunMessage FavorOfTheValar where
       withHost a \case
         PlayerTarget pid -> do
           cancelMatching (== EliminatePlayer pid)
-          discard a
+          discard a a
           level <- getEliminationLevel pid
           threat <- (.threat) <$> getPlayer pid
           lowerThreatBy a pid (threat - (level - 5))

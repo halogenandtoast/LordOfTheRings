@@ -50,7 +50,7 @@ instance RunMessage HowlingAtNight where
       chooseOrRunOneM lead do
         questionLabeled "howlingAtNight.discardAlly"
         causedBy attrs
-        targets allies discard
+        targets allies (discard attrs)
       doStep (n - 1) inner
       pure q
     _ -> HowlingAtNight <$> runMessage msg attrs

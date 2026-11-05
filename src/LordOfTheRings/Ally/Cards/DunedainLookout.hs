@@ -18,7 +18,7 @@ instance HasAbilities DunedainLookout where
 instance RunMessage DunedainLookout where
   runMessage msg s@(DunedainLookout a) = case msg of
     UseCardAbility pid (isSource a -> True) 1 windows -> do
-      discard a
+      discard a a
       for_ [t | Window _ (Revealed t@(EnemyTarget _)) <- windows] (cancelWhenRevealed pid)
       pure s
     _ -> DunedainLookout <$> runMessage msg a

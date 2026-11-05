@@ -35,7 +35,7 @@ instance RunMessage FaramirObjective where
           hidden <- take 1 <$> getHiddenCards p
           for_ hidden $ turnFaceupDamaging a 3 p
       pure s
-    Discard (isTarget a -> True) -> do
+    Discard _ (isTarget a -> True) -> do
       gameOver Lost
       pure s
     _ -> FaramirObjective <$> runMessage msg a

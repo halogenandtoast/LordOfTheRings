@@ -41,9 +41,9 @@ instance RunMessage SecretCultist where
           allyBecomesEnemy a
           attachTreachery attrs.treacheryId (EnemyId $ unAllyId a)
       pure t
-    Discard (isTarget attrs -> True) -> do
+    Discard _ (isTarget attrs -> True) -> do
       case attrs.placement of
-        AttachedTo host@(EnemyTarget eid) -> whenM (selectAny $ EnemyWithId eid) $ discard host
+        AttachedTo host@(EnemyTarget eid) -> whenM (selectAny $ EnemyWithId eid) $ discard attrs host
         _ -> pure ()
       SecretCultist <$> runMessage msg attrs
     _ -> SecretCultist <$> runMessage msg attrs

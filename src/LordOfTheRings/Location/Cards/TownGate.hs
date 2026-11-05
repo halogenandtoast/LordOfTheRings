@@ -25,7 +25,7 @@ instance RunMessage TownGate where
     UseCardAbility _ (isSource a -> True) 1 _ -> do
       placeResources a a 1
       when (countTokens Resource a.locationTokens + 1 >= 3) do
-        discard a
+        discard a a
         damageHrogarsHill a 4
       pure l
     TravelTo lid | lid == a.id -> do

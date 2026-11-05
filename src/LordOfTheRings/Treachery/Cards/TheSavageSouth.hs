@@ -33,7 +33,7 @@ instance RunMessage TheSavageSouth where
         attachments <- getsGame (filter ((== p) . (.controller) . toAttrs) . toList . (.entities.attachments))
         let sharing :: (HasCardDef a, Targetable a) => [a] -> [Target]
             sharing = map toTarget . filter ((`elem` discarded) . title)
-        traverse_ discard $ sharing heroes <> sharing allies <> sharing attachments
+        traverse_ (discard attrs) $ sharing heroes <> sharing allies <> sharing attachments
       pure t
     ResolveShadowEffect cid eid _ _ | cid == attrs.cardId -> do
       enemyGetsAttack attrs eid 1

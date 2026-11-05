@@ -28,6 +28,6 @@ instance RunMessage CreepingMarshes where
     UseCardAbility _ (isSource attrs -> True) 1 _ -> do
       staged <- select LocationInStagingArea
       for_ staged \l -> placeResources attrs l 1
-      discard attrs
+      discard attrs attrs
       pure t
     _ -> CreepingMarshes <$> runMessage msg attrs

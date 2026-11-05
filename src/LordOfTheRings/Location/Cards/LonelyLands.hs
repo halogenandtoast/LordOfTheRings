@@ -34,7 +34,7 @@ instance RunMessage LonelyLands where
     UseCardAbility _ (isSource a -> True) 1 ws -> do
       placeUnderneath a [PlayerCard card | Window After (PlayedCard _ card) <- ws]
       pure l
-    Discard (isTarget a -> True) -> release
+    Discard _ (isTarget a -> True) -> release
     RemoveFromGame (isTarget a -> True) -> release
     ShuffleIntoEncounterDeck (isTarget a -> True) -> release
     ReturnToTopOfEncounterDeck (isTarget a -> True) -> release

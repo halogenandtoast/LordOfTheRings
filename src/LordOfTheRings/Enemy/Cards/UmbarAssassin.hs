@@ -26,6 +26,6 @@ instance RunMessage UmbarAssassin where
         chooseOrRunOneM pid do
           questionLabeled $ if opted then "umbarAssassin.damage" else "umbarAssassin.discard"
           causedBy attrs
-          targets heroes \h -> if opted then dealDamage attrs h 3 else discard h
+          targets heroes \h -> if opted then dealDamage attrs h 3 else discard attrs h
       pure e
     _ -> UmbarAssassin <$> runMessage msg attrs

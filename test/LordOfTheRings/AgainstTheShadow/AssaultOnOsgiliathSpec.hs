@@ -177,7 +177,7 @@ spec = describe "Assault on Osgiliath" do
   it "returns Ruined Tower once a location its controller controls is discarded" . osgiliathTest $ \pid -> do
     _ <- controlled pid Locations.ruinedTower
     quarter <- controlled pid Locations.westQuarter
-    run $ Discard (toTarget quarter)
+    run $ Discard GameSource (toTarget quarter)
     placementOf Locations.ruinedTower `shouldReturn` Just StagingArea
 
   it "gives the current quest battle or siege while East or West Quarter is active" . osgiliathTest $ \_ -> do
@@ -199,7 +199,7 @@ spec = describe "Assault on Osgiliath" do
     (.progress) <$> getLocation square `shouldReturn` 1
     run $ PlaceLocation square (InPlayArea pid)
     scout <- putAllyIntoPlay pid Allies.guardOfTheCitadel
-    run $ Discard scout
+    run $ Discard GameSource scout
     placementOf Locations.ruinedSquare `shouldReturn` Just StagingArea
 
   it "places progress on Ruined Square under a player's control too (ruling)" . osgiliathTest $ \pid -> do

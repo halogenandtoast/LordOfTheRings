@@ -96,7 +96,7 @@ instance RunMessage RetreatFromOsgiliath where
     PlaceTokens _ (isTarget attrs -> True) Progress _ -> checkX =<< runMessage msg attrs
     CheckStage qid | qid == attrs.id -> checkX attrs
     -- an ally leaving the staging area lowers X
-    Discard (AllyTarget _) -> do
+    Discard _ (AllyTarget _) -> do
       push $ CheckStage attrs.id
       pure q
     _ -> RetreatFromOsgiliath <$> runMessage msg attrs

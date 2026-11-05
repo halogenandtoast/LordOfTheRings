@@ -21,7 +21,7 @@ theCaptivesOfCirithGurat = objective TheCaptivesOfCirithGurat Cards.theCaptivesO
 instance RunMessage TheCaptivesOfCirithGurat where
   runMessage msg o@(TheCaptivesOfCirithGurat attrs) = case msg of
     GuardCharacter c _ -> do
-      traverse_ discard =<< getAttachmentsOn c
+      traverse_ (discard attrs) =<< getAttachmentsOn c
       damage <- getDamage c
       when (damage > 0) $ removeTokens attrs c Damage damage
       -- only a hero has a resource pool

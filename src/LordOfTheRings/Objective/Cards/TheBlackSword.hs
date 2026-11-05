@@ -62,7 +62,7 @@ instance RunMessage TheBlackSword where
         others <- filter (/= p) <$> getPlayerOrder
         for_ others \o -> immediateAttack o sahir
       TheBlackSword <$> runMessage msg a
-    Discard (isTarget a -> True) -> do
+    Discard _ (isTarget a -> True) -> do
       s' <- TheBlackSword <$> runMessage msg a
       removeFromEncounterDiscard (MkEncounterCard a.cardId (toCardCode a))
       pure s'

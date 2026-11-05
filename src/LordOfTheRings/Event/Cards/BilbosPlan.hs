@@ -41,7 +41,7 @@ instance RunMessage BilbosPlan where
           causedBy attrs
           targets locations \lid -> do
             addToStagingFromDiscard enemy
-            discard lid
+            discard attrs lid
           unless (null locations) $ labeled "bilbosPlan.skip" (pure ())
       pure e
     _ -> BilbosPlan <$> runMessage msg attrs

@@ -144,7 +144,7 @@ toStageTwo pid = do
   resolveWhenRevealed pid
   chooseOptionMatching "found nothing" pid (const True)
   ugluk <- enemyOf Enemies.ugluk
-  run $ Discard (EnemyTarget ugluk)
+  run $ Discard GameSource (EnemyTarget ugluk)
 
 spec :: Spec
 spec = describe "The Uruk-hai" do
@@ -252,7 +252,7 @@ spec = describe "The Uruk-hai" do
       run $ PlaceTokens GameSource stage2 Progress 9
       outcome `shouldReturn` Nothing
       ugluk <- enemyOf Enemies.ugluk
-      run $ Discard (EnemyTarget ugluk)
+      run $ Discard GameSource (EnemyTarget ugluk)
       outcome `shouldReturn` Just Won
 
   describe "Grishnákh" do

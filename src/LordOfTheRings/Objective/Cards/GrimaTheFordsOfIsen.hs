@@ -23,7 +23,7 @@ instance RunMessage GrimaTheFordsOfIsen where
       lead <- getLead
       putObjectiveAllyIntoPlay attrs.id lead
       GrimaTheFordsOfIsen <$> runMessage msg attrs
-    Discard (isTarget attrs -> True) -> do
+    Discard _ (isTarget attrs -> True) -> do
       hostInPlay <- case attrs.placement of
         AttachedTo (LocationTarget lid) -> selectAny (LocationWithId lid)
         _ -> pure True

@@ -152,7 +152,7 @@ spec = describe "Challenge of the Wainriders player cards" do
         putAttachmentOn pid def eowyn
       run $ CheckRestricted eowyn
       getQuestion pid >>= (`shouldSatisfy` isNothing)
-      run $ Discard belt
+      run $ Discard GameSource belt
       getQuestion pid >>= \case
         Just (QuestionLabel l _ _ _) -> l `shouldBe` "$label.discardRestricted"
         q -> error $ "expected the restricted discard, got " <> show q

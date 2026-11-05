@@ -21,13 +21,13 @@ instance RunMessage BefouledEquipment where
       players <- tantrumTargets
       discarded <- for players \p -> do
         attachments <- getAttachmentsControlledBy p
-        traverse_ discard attachments
+        traverse_ (discard attrs) attachments
         cards <- (.discard) <$> getPlayer p
         for_ cards \c -> removeFromDiscard p c.id
         pure attachments
       when (all null discarded) revealEncounterCard
       pure t
     ResolveShadowEffect cid eid _ _ | cid == attrs.cardId -> do
-      shadowGuardTargets eid >>= traverse_ (traverse_ discard <=< getAttachmentsControlledBy)
+      shadowGuardTargets eid >>= traverse_ (traverse_ (discard attrs) <=< getAttachmentsControlledBy)
       pure t
     _ -> BefouledEquipment <$> runMessage msg attrs

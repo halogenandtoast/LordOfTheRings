@@ -238,7 +238,7 @@ spec = describe "The Dunland Trap" do
     getTimeCounters q `shouldReturn` 3
     -- he cannot leave play, not even destroyed
     eid <- enemyOf Enemies.chiefTurchTheDunlandTrap
-    run $ Discard (toTarget eid)
+    run $ Discard GameSource (toTarget eid)
     run $ DealDamage GameSource (toTarget eid) 10
     placementOf Enemies.chiefTurchTheDunlandTrap `shouldReturn` Just (EngagedWith pid)
 

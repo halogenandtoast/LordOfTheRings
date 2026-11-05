@@ -174,5 +174,5 @@ spec = describe "The Dream-chaser engine" do
       aid <- fromJustNote "no ally Sahír" <$> allyWithCode Objectives.captainSahirObjective
       run $ PlaceTokens GameSource (toTarget aid) Resource 8
       getWillpower (toTarget aid) `shouldReturn` 6
-      run $ Discard (toTarget aid)
+      run $ Discard GameSource (toTarget aid)
       getsGame (.outcome) `shouldReturn` Just Lost

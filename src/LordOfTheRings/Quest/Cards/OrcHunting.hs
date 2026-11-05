@@ -39,6 +39,6 @@ instance RunMessage OrcHunting where
       chooseOneM pid do
         questionLabeled "orcHunting.discardEnemy"
         causedBy attrs
-        targets enemies discard
+        targets enemies (discard attrs)
       pure q
     _ -> OrcHunting <$> runMessage msg attrs

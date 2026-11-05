@@ -46,7 +46,7 @@ instance RunMessage FallenIntoEvil where
           attachTreachery attrs.treacheryId eid
           toFirstPlayersStagingArea eid
       pure t
-    Discard (isTarget attrs -> True) -> do
+    Discard _ (isTarget attrs -> True) -> do
       case attrs.placement of
         AttachedTo (EnemyTarget eid) -> whenM (selectAny $ EnemyWithId eid) $ enemyBecomesHero eid
         _ -> pure ()

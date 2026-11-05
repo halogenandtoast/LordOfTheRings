@@ -28,7 +28,7 @@ instance HasAbilities GrapplingHook where
 instance RunMessage GrapplingHook where
   runMessage msg s@(GrapplingHook a) = case msg of
     UseCardAbility _ (isSource a -> True) 1 _ -> do
-      discard a
+      discard a a
       withHost a \host -> do
         commitToQuest host
         phaseModifier a host QuestsWithAttack

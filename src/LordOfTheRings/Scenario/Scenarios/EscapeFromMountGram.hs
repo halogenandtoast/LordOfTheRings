@@ -228,7 +228,7 @@ instance RunMessage EscapeFromMountGram where
       deck <- shuffleM (cards <> Map.findWithDefault [] pid meta.capturedDecks)
       pure $ withMeta meta {capturedDecks = Map.insert pid deck meta.capturedDecks}
     -- the card leaving play, its captured cards are rescued
-    Discard t -> leaving t
+    Discard _ t -> leaving t
     Destroy _ t -> leaving t
     AddToVictoryDisplay t -> leaving t
     ShuffleIntoEncounterDeck t -> leaving t

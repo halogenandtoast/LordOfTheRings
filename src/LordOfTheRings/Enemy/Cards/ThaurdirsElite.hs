@@ -24,7 +24,7 @@ instance RunMessage ThaurdirsElite where
           chooseOrRunOneM p do
             questionLabeled "thaurdirsElite.discardAlly"
             causedBy attrs
-            targets allies discard
+            targets allies (discard attrs)
       pure $ ThaurdirsElite attrs'
     ResolveShadowEffect cid _ pid _ | cid == attrs.cardId -> do
       allies <- select (AllyControlledBy $ PlayerWithId pid)
@@ -36,6 +36,6 @@ instance RunMessage ThaurdirsElite where
           chooseOrRunOneM pid do
             questionLabeled "thaurdirsElite.discardAlly"
             causedBy attrs
-            targets allies discard
+            targets allies (discard attrs)
       pure e
     _ -> ThaurdirsElite <$> runMessage msg attrs

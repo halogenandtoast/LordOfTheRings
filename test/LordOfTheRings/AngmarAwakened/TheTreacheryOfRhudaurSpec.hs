@@ -166,7 +166,7 @@ spec = describe "The Treachery of Rhudaur" do
     staged Locations.forbiddenDescent
     descent <- locationOf Locations.forbiddenDescent
     threat <- threatOf pid
-    run $ Discard (toTarget descent)
+    run $ Discard GameSource (toTarget descent)
     threatOf pid `shouldReturn` threat + 2
 
   it "has Traitorous Wight remove 2 progress from each quest card as it engages" . rhudaurTest $ \pid -> do
@@ -202,7 +202,7 @@ spec = describe "The Treachery of Rhudaur" do
   it "loses the game if Amarthiúl leaves play" . rhudaurTest $ \pid -> do
     flipFirstQuest pid
     a <- amarthiul
-    run $ Discard (toTarget a)
+    run $ Discard GameSource (toTarget a)
     getsGame (.outcome) `shouldReturn` Just Lost
  where
   -- the stage, not a side quest, is the one waiting for its When Revealed

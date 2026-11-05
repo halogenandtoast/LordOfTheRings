@@ -28,7 +28,7 @@ instance RunMessage TortureRoom where
       found <- discardUntilAlly lead (const $ pure True)
       for_ found \card -> do
         guardCardWith card a
-        traverse_ discard =<< select (AllyWithTitle $ cdName $ toCardDef card)
+        traverse_ (discard a) =<< select (AllyWithTitle $ cdName $ toCardDef card)
       pure l
     UseCardAbility _ (isSource a -> True) 1 _ -> do
       whenM (guardingAnObjective a) $ eachPlayer \p -> encounterRaisesThreat p 1

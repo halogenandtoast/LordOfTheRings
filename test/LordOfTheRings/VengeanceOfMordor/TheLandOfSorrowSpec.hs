@@ -336,7 +336,7 @@ spec = describe "The Land of Sorrow" do
       run $ CheckWindows [mkAfter QuestedSuccessfully]
       chooseAbilityOf pid edrahil
       handSize pid `shouldReturn` (hand + 1)
-      run $ Discard edrahil
+      run $ Discard GameSource edrahil
       getsGame (.outcome) `shouldReturn` Just Lost
 
     it "has Arador ready after he is declared as a defender, once a round" . sorrowTest $ \pid -> do

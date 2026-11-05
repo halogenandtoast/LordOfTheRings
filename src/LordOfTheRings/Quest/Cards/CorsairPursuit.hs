@@ -60,7 +60,7 @@ instance RunMessage CorsairPursuit where
     -- a Ship enemy leaving play may leave none behind
     shipLeaves = case msg of
       Destroy _ (EnemyTarget _) -> True
-      Discard (EnemyTarget _) -> True
+      Discard _ (EnemyTarget _) -> True
       AddToVictoryDisplay (EnemyTarget _) -> True
       ShuffleIntoEncounterDeck (EnemyTarget _) -> True
       ReturnToTopOfEncounterDeck (EnemyTarget _) -> True

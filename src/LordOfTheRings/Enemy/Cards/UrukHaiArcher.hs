@@ -27,6 +27,6 @@ instance RunMessage UrukHaiArcher where
       chooseOneM you do
         questionLabeled "urukHaiArcher.discardAlly"
         causedBy attrs
-        targets allies discard
+        targets allies (discard attrs)
       pure e
     _ -> UrukHaiArcher <$> runMessage msg attrs

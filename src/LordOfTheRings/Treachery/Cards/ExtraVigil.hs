@@ -42,6 +42,6 @@ instance RunMessage ExtraVigil where
       pure t
     UseCardAbility pid (isSource attrs -> True) 1 _ -> do
       encounterRaisesThreat pid 1
-      discard attrs
+      discard attrs attrs
       pure t
     _ -> ExtraVigil <$> runMessage msg attrs

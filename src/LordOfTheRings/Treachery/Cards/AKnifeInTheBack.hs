@@ -41,6 +41,6 @@ instance RunMessage AKnifeInTheBack where
             causedBy attrs
             aimedAt [ally]
             targets heroes \h -> dealDamage attrs h x
-          discard ally
+          discard attrs ally
       pure t
     _ -> AKnifeInTheBack <$> runMessage msg attrs

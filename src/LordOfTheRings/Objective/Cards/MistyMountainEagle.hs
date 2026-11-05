@@ -34,8 +34,8 @@ instance RunMessage MistyMountainEagle where
         causedBy attrs
         labeled "mistyMountainEagle.takeControl" $ putObjectiveAllyIntoPlay attrs.id pid
         targets enemies \e -> do
-          discard attrs
-          discard e
+          discard attrs attrs
+          discard attrs e
       pure o
     ResolveShadowEffect cid eid _ _ | cid == attrs.cardId -> do
       dealDamage (CardIdSource cid) eid 3

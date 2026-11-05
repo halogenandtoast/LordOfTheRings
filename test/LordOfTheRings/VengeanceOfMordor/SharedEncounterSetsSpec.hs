@@ -486,7 +486,7 @@ spec = describe "A Shadow in the East's shared encounter sets" do
       reveal [Treacheries.underGuard]
       threatOf pid `shouldReturn` 2
       (.placement) <$> getLocation plains `shouldReturn` ActiveLocation
-      run $ Discard (toTarget plains)
+      run $ Discard GameSource (toTarget plains)
       reveal [Treacheries.underGuard, Enemies.forestSpider, Locations.oldForestRoad]
       (.placement) <$> (getLocation =<< locationOf Locations.oldForestRoad) `shouldReturn` StagingArea
       discardCodes >>= (`shouldSatisfy` elem (toCardCode Enemies.forestSpider))
@@ -553,8 +553,8 @@ spec = describe "A Shadow in the East's shared encounter sets" do
       getModifiers raider >>= (`shouldSatisfy` elem ImmuneToPlayerCardEffects)
       fanatic <- treacheryOf Treacheries.fanaticism
       getModifiers fanatic >>= (`shouldSatisfy` elem (GainTrait Condition))
-      run $ Discard (EnemyTarget raider)
-      run $ Discard (EnemyTarget warrior)
+      run $ Discard GameSource (EnemyTarget raider)
+      run $ Discard GameSource (EnemyTarget warrior)
       reveal [Treacheries.fanaticism, Locations.oldForestRoad]
       locationCodes `shouldReturn` [toCardCode Locations.oldForestRoad]
 
@@ -580,7 +580,7 @@ spec = describe "A Shadow in the East's shared encounter sets" do
       getModifiers (PlayerTarget pid) >>= (`shouldSatisfy` elem (CannotPlay AnyCard))
       _ <- putCardIntoHand pid Allies.guardOfTheCitadel
       was <- handSize pid
-      run $ Discard (toTarget opening)
+      run $ Discard GameSource (toTarget opening)
       handSize pid `shouldReturn` (was - 1)
 
     it "makes Crumbling Passage the active location as it is revealed, and damages each exhausted character as it leaves play" . gameTest $ \_ -> do
@@ -591,7 +591,7 @@ spec = describe "A Shadow in the East's shared encounter sets" do
       (.placement) <$> getLocation road `shouldReturn` StagingArea
       eowyn <- hero "01007"
       run $ Exhaust eowyn
-      run $ Discard (toTarget passage)
+      run $ Discard GameSource (toTarget passage)
       getDamage eowyn `shouldReturn` 1
       (getDamage =<< hero "01012") `shouldReturn` 0
 

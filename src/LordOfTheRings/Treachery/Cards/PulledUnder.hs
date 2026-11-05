@@ -24,6 +24,6 @@ instance RunMessage PulledUnder where
       pure t
     ResolveShadowEffect cid _ _ defenders | cid == attrs.cardId -> do
       entangled <- filterM (fmap notNull . attachedWithTrait Tentacle) defenders
-      traverse_ discard entangled
+      traverse_ (discard attrs) entangled
       pure t
     _ -> PulledUnder <$> runMessage msg attrs

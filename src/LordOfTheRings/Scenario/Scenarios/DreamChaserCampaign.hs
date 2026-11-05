@@ -406,7 +406,7 @@ windows l ws attrs = case sid attrs of
       for_ calphons \c -> do
         calphon <- getAlly c
         phaseModifier ScenarioSource c Blank
-        discard c
+        discard attrs c
         removeFromEncounterDiscard (MkEncounterCard (allyCardId $ toAttrs calphon) (toCardCode calphon))
     pure attrs
   -- The Thing in the Depths: Forced: After Captain Sahír (enemy) enters play, attach Black

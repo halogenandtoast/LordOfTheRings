@@ -26,9 +26,9 @@ instance RunMessage SuddenPitfall where
       chooseOrRunOneM lead do
         questionLabeled "suddenPitfall.discard"
         causedBy attrs
-        targets questing discard
+        targets questing (discard attrs)
       pure t
     ResolveShadowEffect cid _ _ defenders | cid == attrs.cardId -> do
-      for_ defenders discard
+      for_ defenders (discard attrs)
       pure t
     _ -> SuddenPitfall <$> runMessage msg attrs

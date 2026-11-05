@@ -28,6 +28,6 @@ instance RunMessage CarrionBird where
         chooseOrRunOneM pid do
           questionLabeled "carrionBird.discard"
           causedBy attrs
-          targets damaged discard
+          targets damaged (discard attrs)
       pure e
     _ -> CarrionBird <$> runMessage msg attrs

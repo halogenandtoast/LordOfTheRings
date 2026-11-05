@@ -41,7 +41,7 @@ spec = do
     it "are claimed for 2 threat once free of encounters, onto a hero you control" . gameTest $ \pid -> do
       objective <- objectiveGuardedBy Objectives.gandalfsMap [Enemies.forestSpider]
       spider <- getsGame (fromJustNote "no spider" . headMay . map toId . toList . (.entities.enemies))
-      run $ Discard (toTarget spider)
+      run $ Discard GameSource (toTarget spider)
       threat <- (.threat) <$> getPlayer pid
       eowyn <- hero "01007"
       claim pid objective "01007"
@@ -57,7 +57,7 @@ spec = do
       objective <- objectiveGuardedBy Objectives.shadowKey [Treacheries.theNecromancersReach]
       claim pid objective "01007"
       passActions pid
-      run . Discard =<< hero "01007"
+      run . Discard GameSource =<< hero "01007"
       placement objective `shouldReturn` StagingArea
 
   describe "Gandalf's Map" do

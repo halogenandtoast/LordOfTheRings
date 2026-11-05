@@ -27,10 +27,10 @@ instance RunMessage LostAndHelpless where
         targets heroes \h -> attachTreachery attrs.id h
       pure t
     _ | lostTriggered attrs msg -> do
-      withHost attrs discard
+      withHost attrs (discard attrs)
       pure t
     ResolveShadowEffect cid _ pid defenders | cid == attrs.cardId -> do
       hand <- discardableHand <$> getPlayer pid
-      when (null hand) $ traverse_ discard defenders
+      when (null hand) $ traverse_ (discard attrs) defenders
       pure t
     _ -> LostAndHelpless <$> runMessage msg attrs

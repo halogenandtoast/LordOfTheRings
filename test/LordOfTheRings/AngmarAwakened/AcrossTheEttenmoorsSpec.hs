@@ -108,7 +108,7 @@ spec = describe "Across the Ettenmoors" do
     it "go free as the enemy guarding them is discarded" . ettenTest $ \_ -> do
       reveal [Locations.theHoarwell, Enemies.goblinPursuer]
       Locations.theHoarwell `guardedBy` Enemies.goblinPursuer
-      run . Discard . toTarget =<< enemyOf Enemies.goblinPursuer
+      run . Discard GameSource . toTarget =<< enemyOf Enemies.goblinPursuer
       placementOf Locations.theHoarwell `shouldReturn` Just StagingArea
 
     it "can be shuffled into the encounter deck by Ruthless Hill-troll's shadow, the guard staying" . ettenTest $ \pid -> do
@@ -282,5 +282,5 @@ spec = describe "Across the Ettenmoors" do
       run . AddToStaging =<< genEncounterCard Objectives.amarthiulAcrossTheEttenmoors
       placementOf Objectives.amarthiulAcrossTheEttenmoors `shouldReturn` Just (InPlayArea pid)
       amarthiul <- getsGame (fromJustNote "no Amarthiúl" . fmap toTarget . headMay . toList . (.entities.allies))
-      run $ Discard amarthiul
+      run $ Discard GameSource amarthiul
       getsGame (.outcome) `shouldReturn` Just Lost

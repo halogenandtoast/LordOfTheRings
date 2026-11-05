@@ -34,7 +34,7 @@ instance RunMessage LifeDrain where
       enemies <- select thaurdir
       for_ (take 1 enemies) \eid -> do
         let card = MkEncounterCard attrs.cardId (toCardCode attrs)
-        discard attrs
+        discard attrs attrs
         removeFromEncounterDiscard card
         whileInPlay (EnemyTarget eid) $ push $ AttachShadowCard eid card
       pure t

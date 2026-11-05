@@ -31,7 +31,7 @@ instance RunMessage SavageAttack where
             chooseOrRunOneM p do
               questionLabeled "savageAttack.chooseAlly"
               causedBy attrs
-              targets [aid | (aid, c) <- costs, Just c == highest] discard
+              targets [aid | (aid, c) <- costs, Just c == highest] (discard attrs)
           labeled "savageAttack.reveal" revealEncounterCard
       pure t
     ResolveShadowEffect cid eid _ _ | cid == attrs.cardId -> do

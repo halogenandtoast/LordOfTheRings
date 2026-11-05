@@ -137,7 +137,7 @@ spec = describe "The Long Arm of Mordor" do
     it "eliminate their controller as they leave play" . longArmTest $ \pid -> do
       setUp pid
       kahliel <- hero (toCardCode Objectives.kahliel)
-      run $ Discard kahliel
+      run $ Discard GameSource kahliel
       (.eliminated) <$> getPlayer pid `shouldReturn` True
       getsGame (.outcome) `shouldReturn` Just Lost
       map toCardCode <$> getEncounterDiscard >>= (`shouldSatisfy` elem (toCardCode Objectives.kahliel))

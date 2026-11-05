@@ -42,9 +42,9 @@ instance RunMessage Wrapped where
         targets heroes \h -> attachTreachery attrs.treacheryId h
       pure t
     UseCardAbility _ (isSource attrs -> True) 1 _ -> do
-      withHost attrs discard
+      withHost attrs (discard attrs)
       pure t
     UseCardAbility _ (isSource attrs -> True) 2 _ -> do
-      discard attrs
+      discard attrs attrs
       pure t
     _ -> Wrapped <$> runMessage msg attrs

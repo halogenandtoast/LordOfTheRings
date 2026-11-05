@@ -27,7 +27,7 @@ instance RunMessage CelebrimborsMould where
         causedBy attrs
         targets heroes $ attachObjective attrs.id
       CelebrimborsMould <$> runMessage msg attrs
-    Discard (isTarget attrs -> True) | onHero -> do
+    Discard _ (isTarget attrs -> True) | onHero -> do
       gameOver Lost
       CelebrimborsMould <$> runMessage msg attrs
     _ -> CelebrimborsMould <$> runMessage msg attrs

@@ -9,6 +9,7 @@ import LordOfTheRings.Modifier (ModifierType (CannotHaveTreacheryAttachments))
 import LordOfTheRings.Message
 import LordOfTheRings.Placement (Placement (AttachedTo))
 import LordOfTheRings.Prelude
+import LordOfTheRings.Source (Source (GameSource))
 import LordOfTheRings.Target
 import LordOfTheRings.Token
 import LordOfTheRings.Treachery.Types as X
@@ -20,7 +21,7 @@ instance RunMessage TreacheryAttrs where
       -- take it: it is discarded instead
       barred <- elem CannotHaveTreacheryAttachments <$> getModifiers host
       if barred
-        then attrs <$ push (Discard $ toTarget attrs)
+        then attrs <$ push (Discard GameSource $ toTarget attrs)
         else pure $ attrs & placementL .~ AttachedTo host
     PlaceTokens _ (isTarget attrs -> True) token n -> do
       pure $ attrs & tokensL %~ addTokens token n

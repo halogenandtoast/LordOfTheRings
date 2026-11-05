@@ -33,7 +33,7 @@ instance RunMessage DeepFissure where
     DiscardedTopOfEncounterDeck (isSource attrs -> True) (PlayerTarget _) _ -> pure t
     DiscardedTopOfEncounterDeck (isSource attrs -> True) c cards -> do
       printed <- printedWillpower c
-      when (any ((> printed) . fromMaybe 0 . cdThreat . toCardDef) cards) $ discard c
+      when (any ((> printed) . fromMaybe 0 . cdThreat . toCardDef) cards) $ discard attrs c
       pure t
     _ -> DeepFissure <$> runMessage msg attrs
    where

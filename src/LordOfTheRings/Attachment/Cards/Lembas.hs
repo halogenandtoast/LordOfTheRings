@@ -21,7 +21,7 @@ instance HasAbilities Lembas where
 instance RunMessage Lembas where
   runMessage msg s@(Lembas a) = case msg of
     UseCardAbility _ (isSource a -> True) 1 _ -> do
-      discard a
+      discard a a
       withHost a \host -> do
         ready host
         healDamage a host 3

@@ -22,9 +22,9 @@ instance RunMessage DarkSorcery where
     WhenRevealed (isTarget attrs -> True) -> do
       allies <- select AnyAlly
       copied <- filterM (copyInOwnersDiscard . toTarget) allies
-      traverse_ discard copied
+      traverse_ (discard attrs) copied
       pure t
     ResolveShadowEffect cid _ _ defenders | cid == attrs.cardId -> do
-      traverse_ discard =<< filterM copyInOwnersDiscard defenders
+      traverse_ (discard attrs) =<< filterM copyInOwnersDiscard defenders
       pure t
     _ -> DarkSorcery <$> runMessage msg attrs

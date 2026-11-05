@@ -93,7 +93,7 @@ spec = describe "The Land of Sorrow player cards" do
       emissary <- putAllyIntoPlay pid Allies.eagleEmissary
       passResponses pid
       run $ Exhaust gwaihir
-      run $ Discard emissary
+      run $ Discard GameSource emissary
       chooseAbilityOf pid gwaihir
       isExhausted gwaihir `shouldReturn` False
 

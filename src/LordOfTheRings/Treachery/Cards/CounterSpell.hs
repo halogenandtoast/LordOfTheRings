@@ -32,6 +32,6 @@ instance RunMessage CounterSpell where
         for_ [(p, c) | Window _ (PlayingEvent p c) <- ws] \(p, c) -> do
           cancelEvent c
           discardHand p
-        discard attrs
+        discard attrs attrs
       pure t
     _ -> CounterSpell <$> runMessage msg attrs

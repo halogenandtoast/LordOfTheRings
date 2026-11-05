@@ -50,7 +50,7 @@ instance RunMessage MugashEnemy where
     PlaceEnemy eid (AttachedTo _) | eid == attrs.id -> do
       MugashEnemy <$> runMessage msg (attrs & tokensL .~ mempty)
     -- his hero left play, and he leaves with it
-    Discard (EnemyTarget eid) | eid == attrs.id, AttachedTo _ <- attrs.placement -> do
+    Discard _ (EnemyTarget eid) | eid == attrs.id, AttachedTo _ <- attrs.placement -> do
       gameOver Lost
       pure e
     _ -> MugashEnemy <$> runMessage msg attrs

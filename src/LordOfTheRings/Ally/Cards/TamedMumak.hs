@@ -23,7 +23,7 @@ instance HasModifiersFor TamedMumak where
 -- Dream-chaser's Fleet, a discarded objective leaves the game.
 instance RunMessage TamedMumak where
   runMessage msg (TamedMumak a) = case msg of
-    Discard (isTarget a -> True) -> do
+    Discard _ (isTarget a -> True) -> do
       eliminated
       TamedMumak <$> runShip (pure ()) msg a
     _ -> TamedMumak <$> runShip eliminated msg a

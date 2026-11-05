@@ -42,7 +42,7 @@ instance RunMessage DismayAndFear where
       attachments <- getsGame (toList . (.entities.attachments))
       for_ attachments \a -> do
         let cost = maybe 0 costAsResources (cdCost $ toCardDef a)
-        when ((toAttrs a).controller == pid && isAttached a.placement && cost < x) $ discard a
+        when ((toAttrs a).controller == pid && isAttached a.placement && cost < x) $ discard attrs a
       pure t
     _ -> DismayAndFear <$> runMessage msg attrs
    where

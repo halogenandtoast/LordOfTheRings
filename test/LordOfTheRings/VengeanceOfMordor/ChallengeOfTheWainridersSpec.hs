@@ -305,7 +305,7 @@ spec = describe "Challenge of the Wainriders" do
     run $ TravelTo ledge
     chooseTarget pid =<< beravor
     handSize pid `shouldReturn` cards + 1
-    run $ Discard (toTarget ledge)
+    run $ Discard GameSource (toTarget ledge)
     ledge2 <- stageLocation Locations.ravineLedge
     _ <- setEncounterDeck [Enemies.aggressiveRacer, Locations.narrowPass, Locations.narrowPass]
     run $ TravelTo ledge2

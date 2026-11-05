@@ -102,7 +102,7 @@ spec = describe "Riders of Rohan" do
     it "readies all Rohan characters as he leaves play" . rohanTest $ \pid -> do
       eomund <- putAllyIntoPlay pid Allies.eomund
       run . Exhaust =<< hero eomerCode
-      run $ Discard eomund
+      run $ Discard GameSource eomund
       chooseAbilityOf pid eomund
       exhausted eomerCode `shouldReturn` False
 
@@ -237,7 +237,7 @@ spec = describe "Riders of Rohan" do
   describe "Éomer" do
     it "gets +2 attack after a character leaves play" . rohanTest $ \pid -> do
       ally' <- putAllyIntoPlay pid Allies.westfoldOutrider
-      run $ Discard ally'
+      run $ Discard GameSource ally'
       eomer <- hero eomerCode
       chooseAbilityOf pid eomer
       getAttack eomer `shouldReturn` 5
@@ -423,7 +423,7 @@ spec = describe "Riders of Rohan" do
       horn <- putAttachmentOn pid Attachments.hornOfTheMark eomer
       ally' <- putAllyIntoPlay pid Allies.westfoldOutrider
       handBefore <- handSize pid
-      run $ Discard ally'
+      run $ Discard GameSource ally'
       chooseAbilityOf pid horn
       handSize pid `shouldReturn` (handBefore + 1)
 
@@ -431,14 +431,14 @@ spec = describe "Riders of Rohan" do
       eomer <- hero eomerCode
       horn <- putAttachmentOn pid Attachments.hornOfTheMark eomer
       ally' <- putAllyIntoPlay pid Allies.wanderingTook
-      run $ Discard ally'
+      run $ Discard GameSource ally'
       offersAbilityOf pid horn `shouldReturn` False
 
     it "answers its own hero leaving play, as it does so" . rohanTest $ \pid -> do
       eomer <- hero eomerCode
       horn <- putAttachmentOn pid Attachments.hornOfTheMark eomer
       handBefore <- handSize pid
-      run $ Discard eomer
+      run $ Discard GameSource eomer
       chooseAbilityOf pid horn
       handSize pid `shouldReturn` (handBefore + 1)
 

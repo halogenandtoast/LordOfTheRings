@@ -320,7 +320,7 @@ spec = describe "The One Deck and Seastan's Boromir" do
     run $ PlayCard pid fromHand.id
     (offersAbilityOf pid =<< minstrelIn fromHand) `shouldReturn` True
     chooseLabel "$label.pass" pid
-    run . Discard =<< minstrelIn fromHand
+    run . Discard GameSource =<< minstrelIn fromHand
     giveResources beravor 3
     run $ PlayCard pid fromHand.id
     (offersAbilityOf pid =<< minstrelIn fromHand) `shouldReturn` False

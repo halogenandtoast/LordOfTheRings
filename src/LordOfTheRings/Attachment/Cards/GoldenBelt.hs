@@ -26,7 +26,7 @@ instance RunMessage GoldenBelt where
     _ -> GoldenBelt <$> runMessage msg a
    where
     leaves host = case msg of
-      Discard t -> isTarget a t
+      Discard _ t -> isTarget a t
       ReturnToHand t -> isTarget a t
       ShuffleIntoOwnersDeck t -> isTarget a t
       AttachCard aid new -> aid == a.id && new /= host

@@ -104,7 +104,7 @@ spec = describe "Escape from Umbar" do
     run $ PlaceTokens GameSource q Progress 15
     toCardCode <$> getActiveQuest `shouldReturn` toCardCode Quests.strandedInUmbar
     sentry <- enemyOf Enemies.umbarSentry
-    run $ Discard (toTarget sentry)
+    run $ Discard GameSource (toTarget sentry)
     toCardCode <$> getActiveQuest `shouldReturn` toCardCode Quests.fleeTheCity
     resolveWhenRevealed pid
     getsGame (any ((== EngagedWith pid) . (.placement)) . toList . (.entities.enemies)) `shouldReturn` True
@@ -115,7 +115,7 @@ spec = describe "Escape from Umbar" do
     run $ PlaceTokens GameSource q Progress 20
     mainProgress `shouldReturn` 15
     questsInPlay `shouldReturn` [toCardCode Quests.strandedInUmbar]
-    run $ Discard (toTarget sentry)
+    run $ Discard GameSource (toTarget sentry)
     questsInPlay `shouldReturn` []
 
   it "has Flee the City end the phase and engage each player with the first enemy he discards" . gameTest $ \pid -> do
@@ -189,7 +189,7 @@ spec = describe "Escape from Umbar" do
     chooseAbilityOf pid lid
     placementOfEnemy sentry `shouldReturn` Nothing
     fmap (length . locationUnderneath) <$> locationAt lid `shouldReturn` Just 1
-    run $ Discard (toTarget lid)
+    run $ Discard GameSource (toTarget lid)
     enemiesOf Enemies.umbarSentry `shouldReturn` [EngagedWith pid]
 
   it "has Umbar Street lower each enemy's engagement cost by the main quest's progress" . gameTest $ \_ -> do

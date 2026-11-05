@@ -33,7 +33,7 @@ instance RunMessage DeathAndDecay where
             , (toAttrs x).controller == p.id
             , cdName (toCardDef x) `elem` map (cdName . toCardDef) p.discard
             ]
-      for_ doomed discard
+      for_ doomed (discard attrs)
       when (null doomed) revealEncounterCard
       pure t
     _ -> DeathAndDecay <$> runMessage msg attrs

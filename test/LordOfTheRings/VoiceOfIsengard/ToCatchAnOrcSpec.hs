@@ -141,7 +141,7 @@ spec = describe "To Catch an Orc" do
 
   it "loses the game if the hero holding Mugash leaves play" . orcTest $ \pid -> do
     (_, hero) <- capture pid
-    run $ Discard hero
+    run $ Discard GameSource hero
     getsGame (.outcome) `shouldReturn` Just Lost
 
   it "has Mugash's Guard engage the player holding Mugash" . orcTest $ \pid -> do

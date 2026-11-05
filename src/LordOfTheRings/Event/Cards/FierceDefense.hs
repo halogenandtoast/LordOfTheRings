@@ -32,6 +32,6 @@ instance RunMessage FierceDefense where
             targets enemies f
       chooseOrRunOneM pid do
         when combat $ labeled "fierceDefense.damage" $ chooseEnemy \eid -> dealDamage attrs eid 3
-        valourLabeled pid $ chooseEnemy discard
+        valourLabeled pid $ chooseEnemy (discard attrs)
       pure e
     _ -> FierceDefense <$> runMessage msg attrs

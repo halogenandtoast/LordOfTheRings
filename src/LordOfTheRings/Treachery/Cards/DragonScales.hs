@@ -35,6 +35,6 @@ instance RunMessage DragonScales where
       pure t
     UseCardAbility _ (isSource attrs -> True) 1 _ -> do
       withHost attrs cancelDamage
-      discard attrs
+      discard attrs attrs
       pure t
     _ -> DragonScales <$> runMessage msg attrs

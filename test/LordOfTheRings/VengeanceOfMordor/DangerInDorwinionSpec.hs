@@ -387,7 +387,7 @@ spec = describe "Danger in Dorwinion" do
     getEnemyAttack turned `shouldReturn` 2
     getsGame (map (.placement) . toList . (.entities.treacheries)) `shouldReturn` [AttachedTo (EnemyTarget turned)]
     -- his threat elimination stays, as an ally turned is no hero side
-    run . Discard . toTarget . fromJustNote "no Secret Cultist" . headMay . toList =<< getsGame (.entities.treacheries)
+    run . Discard GameSource . toTarget . fromJustNote "no Secret Cultist" . headMay . toList =<< getsGame (.entities.treacheries)
     enemyCodes `shouldReturn` []
     discardCodes pid >>= (`shouldSatisfy` elem (toCardCode Allies.sonOfArnor))
 

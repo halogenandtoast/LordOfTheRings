@@ -39,7 +39,7 @@ sendsForHelp = map toCardCode [Treacheries.sendForHelpLeadership, Treacheries.se
 instance RunMessage Gavin where
   runMessage msg s@(Gavin a) = case msg of
     UseCardAbility _ (isSource a -> True) 1 _ -> do
-      discard a
+      discard a a
       putOnTopOfEncounterDeck =<< genEncounterCard Cards.gavin
       helps <- getsGame (filter ((`elem` sendsForHelp) . toCardCode) . scenarioSetAside . toAttrs . gameScenario)
       unless (null helps) do

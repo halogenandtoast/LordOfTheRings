@@ -92,7 +92,7 @@ spec = describe "The Fords of Isen" do
     q <- toTarget <$> getActiveQuest
     run $ PlaceTokens GameSource q Progress 6
     toCardCode <$> getActiveQuest `shouldReturn` toCardCode Quests.fightAtTheFords
-    run . Discard . toTarget =<< locationOf Locations.theIslet
+    run . Discard GameSource . toTarget =<< locationOf Locations.theIslet
     fmap (.placement) <$> grimaAlly `shouldReturn` Just (InPlayArea pid)
     toCardCode <$> getActiveQuest `shouldReturn` toCardCode Quests.dunlendingAttack
 
@@ -104,7 +104,7 @@ spec = describe "The Fords of Isen" do
 
   it "is lost if Gríma the ally leaves play, and he exhausts to draw a card" . fordsTest $ \pid -> do
     setup pid
-    run . Discard . toTarget =<< locationOf Locations.theIslet
+    run . Discard GameSource . toTarget =<< locationOf Locations.theIslet
     grima <- fromJustNote "no Gríma" <$> grimaAlly
     _ <- setEncounterDeck []
     drawn <- length <$> handOf pid
@@ -112,12 +112,12 @@ spec = describe "The Fords of Isen" do
     chooseAbilityOf pid (toTarget grima)
     length <$> handOf pid `shouldReturn` drawn + 1
     passActions pid
-    run $ Discard (toTarget grima)
+    run $ Discard GameSource (toTarget grima)
     outcome `shouldReturn` Just Lost
 
   it "is lost if Gríma the ally leaves play other than by discard" . fordsTest $ \pid -> do
     setup pid
-    run . Discard . toTarget =<< locationOf Locations.theIslet
+    run . Discard GameSource . toTarget =<< locationOf Locations.theIslet
     grima <- fromJustNote "no Gríma" <$> grimaAlly
     run $ ShuffleIntoOwnersDeck (toTarget grima)
     outcome `shouldReturn` Just Lost
@@ -185,5 +185,5 @@ spec = describe "The Fords of Isen" do
     getTimeCounters q `shouldReturn` 3
     run $ PlaceTokens GameSource q Progress 16
     outcome `shouldReturn` Nothing
-    for_ enemies \e -> run $ Discard (toTarget e)
+    for_ enemies \e -> run $ Discard GameSource (toTarget e)
     outcome `shouldReturn` Just Won

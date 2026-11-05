@@ -26,7 +26,7 @@ instance RunMessage BoromirTactics where
       ready attrs
       pure h
     UseCardAbility pid (isSource attrs -> True) 2 _ -> do
-      discard attrs
+      discard attrs attrs
       players <- filterM (selectAny . EnemyEngagedWith . PlayerWithId) =<< getRemainingPlayers
       chooseOrRunOneM pid do
         questionLabeled "boromir.choosePlayer"

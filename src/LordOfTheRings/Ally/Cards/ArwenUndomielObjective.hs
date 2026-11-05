@@ -34,7 +34,7 @@ instance RunMessage ArwenUndomiel where
         causedBy a
         targets heroes \h -> placeResources a h 1
       pure s
-    Discard (isTarget a -> True) -> do
+    Discard _ (isTarget a -> True) -> do
       gameOver Lost
       pure s
     _ -> ArwenUndomiel <$> runMessage msg a

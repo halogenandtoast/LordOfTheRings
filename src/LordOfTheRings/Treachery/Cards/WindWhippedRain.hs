@@ -22,7 +22,7 @@ instance RunMessage WindWhippedRain where
       es <- getsGame (.entities)
       let attachments = [toTarget a | a <- toList es.attachments, not (cdTreasure $ toCardDef a)]
           conditions = [toTarget c | c <- toList es.treacheries, isAttached c.placement]
-      traverse_ discard (attachments <> conditions)
+      traverse_ (discard attrs) (attachments <> conditions)
       pure t
     ResolveShadowEffect cid _ _ defenders | cid == attrs.cardId -> do
       for_ defenders \d -> attackModifier attrs d (DefenseModifier (-1))

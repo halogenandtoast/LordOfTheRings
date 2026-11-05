@@ -50,7 +50,7 @@ exhaustCharactersAsGroup source n = when (n > 0) do
 
 -- | The players, as a group, discard this many allies from play, one at a time: the first
 -- player, who has the final say, picks them.
-discardAlliesAsGroup :: (ReverseQueue m, Targetable source) => source -> Int -> m ()
+discardAlliesAsGroup :: (ReverseQueue m, Targetable source, Sourceable source) => source -> Int -> m ()
 discardAlliesAsGroup source n = when (n > 0) do
   lead <- getLead
   allies <- select (AllyControlledBy AnyPlayer)
@@ -58,7 +58,7 @@ discardAlliesAsGroup source n = when (n > 0) do
     questionLabeled "theRingGoesSouth.discardAlly"
     causedBy source
     targets allies \(a :: AllyId) -> do
-      discard a
+      discard source a
       discardAlliesAsGroup source (n - 1)
 
 -- | Whether the first player controls the Ring-bearer: not while he is facedown under

@@ -19,6 +19,6 @@ instance HasAbilities VassalOfTheWindlord where
 instance RunMessage VassalOfTheWindlord where
   runMessage msg s@(VassalOfTheWindlord a) = case msg of
     UseCardAbility _ (isSource a -> True) 1 _ -> do
-      discard a
+      discard a a
       pure s
     _ -> VassalOfTheWindlord <$> runMessage msg a

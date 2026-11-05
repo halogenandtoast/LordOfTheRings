@@ -231,7 +231,7 @@ spec = describe "The Nîn-in-Eilph" do
     threatOf pid `shouldReturn` threat + 2
     passActions pid
     nalir <- getsGame (fromJustNote "no Nalir" . fmap toTarget . headMay . toList . (.entities.allies))
-    run $ Discard nalir
+    run $ Discard GameSource nalir
     outcome `shouldReturn` Just Lost
 
   it "has each player exhaust a character as the players advance while Fen of Reeds is in the staging area" . ninTest $ \pid -> do

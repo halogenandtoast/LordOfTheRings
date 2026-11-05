@@ -28,7 +28,7 @@ instance RunMessage InjuredCompanion where
             chooseOrRunOneM p do
               questionLabeled "injuredCompanion.character"
               causedBy attrs
-              targets characters discard
+              targets characters (discard attrs)
       pure t
     ResolveShadowEffect cid eid _ _ | cid == attrs.cardId -> do
       enemyGetsAttack attrs eid 1

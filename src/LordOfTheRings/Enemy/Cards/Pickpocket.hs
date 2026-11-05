@@ -26,6 +26,6 @@ instance RunMessage Pickpocket where
       pure e
     ResolveShadowEffect cid eid pid defenders | cid == attrs.cardId -> do
       attachments <- getAttachmentsControlledBy pid
-      ifUndefended defenders (for_ attachments discard) (chooseAndDiscard (EnemySource eid) pid attachments)
+      ifUndefended defenders (for_ attachments (discard attrs)) (chooseAndDiscard (EnemySource eid) pid attachments)
       pure e
     _ -> Pickpocket <$> runMessage msg attrs

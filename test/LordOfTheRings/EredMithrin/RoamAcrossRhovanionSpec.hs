@@ -174,7 +174,7 @@ spec = describe "Roam Across Rhovanion" do
     getModifiers (LocationTarget moor) >>= (`shouldSatisfy` notElem CannotBeTraveledTo)
     -- not defeated while Tiny is guarded
     activeQuestCode `shouldReturn` toCardCode Quests.rescueTiny
-    run $ Discard (LocationTarget moor)
+    run $ Discard GameSource (LocationTarget moor)
     controls pid Objectives.tiny `shouldReturn` True
     activeQuestCode `shouldReturn` toCardCode Quests.urdugsGambit
 
@@ -229,7 +229,7 @@ spec = describe "Roam Across Rhovanion" do
     mods `shouldSatisfy` elem ImmuneToPlayerCardEffects
     mods `shouldSatisfy` elem CannotBeTraveledTo
     run $ PlaceTokens GameSource q Progress 5
-    run $ Discard (LocationTarget ravine)
+    run $ Discard GameSource (LocationTarget ravine)
     beravor <- hero "01012"
     chooseTarget pid beravor
     fmap (.placement) <$> objectiveOf Objectives.durinsKey `shouldReturn` Just (AttachedTo beravor)
@@ -361,7 +361,7 @@ spec = describe "Roam Across Rhovanion" do
     lc <- (.cardId) . toAttrs <$> getLocation l
     fmap (.placement) <$> allyOf Objectives.urdug `shouldReturn` Just (AttachedTo (CardIdTarget lc))
     map toCardCode . (.encounterDiscard) <$> scenarioAttrs `shouldReturn` []
-    run $ Discard (LocationTarget l)
+    run $ Discard GameSource (LocationTarget l)
     controls pid Objectives.urdug `shouldReturn` True
     void $ pure urdug
 

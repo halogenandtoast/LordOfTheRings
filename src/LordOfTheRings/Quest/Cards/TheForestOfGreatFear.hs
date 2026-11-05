@@ -63,7 +63,7 @@ instance RunMessage TheForestOfGreatFear where
       TheForestOfGreatFear <$> runMessage msg attrs
     _ -> do
       leaving <- case msg of
-        Discard (EnemyTarget eid) -> pure (Just eid)
+        Discard _ (EnemyTarget eid) -> pure (Just eid)
         RemoveFromGame (EnemyTarget eid) -> pure (Just eid)
         ShuffleIntoEncounterDeck (EnemyTarget eid) -> pure (Just eid)
         ReturnToTopOfEncounterDeck (EnemyTarget eid) -> pure (Just eid)

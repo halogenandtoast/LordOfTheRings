@@ -76,7 +76,9 @@ instance RunMessage TheVoiceOfSaruman where
         placed <- questProgressThisPhase
         when (placed > 0) $ removeTokens attrs attrs Progress (min placed attrs.progress)
         cancelQuestProgress
-        cancelMatching (== Discard (LocationTarget lid))
+        cancelMatching \case
+          Discard _ (LocationTarget lid') -> lid' == lid
+          _ -> False
         orthanc <- getLocation lid
         removeTokens attrs lid Progress orthanc.progress
         placeLocation lid StagingArea

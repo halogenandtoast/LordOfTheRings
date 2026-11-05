@@ -23,6 +23,6 @@ instance RunMessage WestfoldHorseBreaker where
         causedBy a
         targets heroes ready
       -- the discard is the cost, but what it leads to waits for the effect
-      discard a
+      discard a a
       pure s
     _ -> WestfoldHorseBreaker <$> runMessage msg a

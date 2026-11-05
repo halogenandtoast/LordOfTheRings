@@ -152,7 +152,7 @@ spec = describe "Encounter at Amon Dîn" do
   it "loses the game when Lord Alcaron leaves play" . amonDinTest $ \pid -> do
     setUp pid
     a <- fromJustNote "no Alcaron" <$> alcaron
-    run $ Discard (toTarget a)
+    run $ Discard GameSource (toTarget a)
     getsGame (.outcome) `shouldReturn` Just Lost
 
   it "places a dead villager as Ghulat attacks, and attacks for the dead villagers" . amonDinTest $ \pid -> do

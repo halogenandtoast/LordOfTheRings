@@ -77,7 +77,7 @@ runNightmareBattleground effect msg attrs = case msg of
   PlaceTokens _ (isTarget attrs -> True) Damage _ -> do
     attrs' <- runMessage msg attrs
     when (attrs'.damage >= fromMaybe 0 (cdQuestPoints $ toCardDef attrs)) do
-      discard attrs
+      discard attrs attrs
       effect
     pure attrs'
   _ -> runMessage msg attrs

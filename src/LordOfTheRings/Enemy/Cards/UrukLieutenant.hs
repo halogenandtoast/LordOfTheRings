@@ -25,6 +25,6 @@ instance RunMessage UrukLieutenant where
       pure e
     ResolveShadowEffect cid _ pid defenders | cid == attrs.cardId -> do
       attachments <- getAttachmentsControlledBy pid
-      ifUndefended defenders (traverse_ discard attachments) (chooseAndDiscard attrs pid attachments)
+      ifUndefended defenders (traverse_ (discard attrs) attachments) (chooseAndDiscard attrs pid attachments)
       pure e
     _ -> UrukLieutenant <$> runMessage msg attrs

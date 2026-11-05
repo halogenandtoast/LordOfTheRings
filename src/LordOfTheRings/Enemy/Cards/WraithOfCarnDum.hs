@@ -36,7 +36,7 @@ instance RunMessage WraithOfCarnDum where
           characters <- selectCharacters AnyHero AnyAlly
           lead <- getLead
           if null characters
-            then discard attrs
+            then discard attrs attrs
             else chooseOrRunOneM lead do
               questionLabeled "wraithOfCarnDum.attach"
               causedBy attrs
@@ -46,7 +46,7 @@ instance RunMessage WraithOfCarnDum where
           WraithOfCarnDum <$> runMessage msg attrs
     PlaceEnemy eid (AttachedTo _) | eid == attrs.id -> WraithOfCarnDum <$> runMessage msg (attrs & tokensL .~ mempty)
     -- its character left play, and it leaves the discard pile for the staging area
-    Discard (EnemyTarget eid) | eid == attrs.id, attached -> do
+    Discard _ (EnemyTarget eid) | eid == attrs.id, attached -> do
       addToStagingFromDiscard $ MkEncounterCard attrs.cardId (toCardCode attrs)
       WraithOfCarnDum <$> runMessage msg attrs
     _ -> WraithOfCarnDum <$> runMessage msg attrs

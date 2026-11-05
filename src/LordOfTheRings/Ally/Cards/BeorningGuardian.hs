@@ -31,7 +31,7 @@ instance RunMessage BeorningGuardian where
             | Window _ (EnemyDestroyedByAttack eid _ _) <- windows
             , d <- take 1 [d | d <- destroyed, d.target == EnemyTarget eid]
             ]
-      discard a
+      discard a a
       locations <- select AnyLocation
       chooseOrRunOneM pid do
         questionLabeled "beorningGuardian.location"

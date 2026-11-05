@@ -27,6 +27,6 @@ instance RunMessage FordOfBruinen where
       FordOfBruinen <$> runMessage msg a
     UseCardAbility _ (isSource a -> True) 1 _ -> do
       engaged <- select (EnemyEngagedWith AnyPlayer)
-      for_ engaged discard
+      for_ engaged (discard a)
       pure l
     _ -> FordOfBruinen <$> runMessage msg a

@@ -322,7 +322,7 @@ spec = describe "The Temple of Doom" do
   it "places a damage token on Tribute to Mordor as Temple of Sauron leaves play, and gives +1 attack for each quest stage in the victory display with its shadow" . templeTest $ \pid -> do
     t <- stageTribute
     temple <- stageLocation Locations.templeOfSauron
-    run $ Discard (LocationTarget temple)
+    run $ Discard GameSource (LocationTarget temple)
     getDamage t `shouldReturn` 1
     stagesInVictory 2
     spider <- stage Enemies.forestSpider
@@ -336,7 +336,7 @@ spec = describe "The Temple of Doom" do
     stagesInVictory 1
     hall <- stageLocation Locations.hallOfHorrors
     getLocationThreat hall `shouldReturn` 2
-    run $ Discard (LocationTarget hall)
+    run $ Discard GameSource (LocationTarget hall)
     beravor <- hero "01012"
     chooseTarget pid beravor
     getDamage beravor `shouldReturn` 2

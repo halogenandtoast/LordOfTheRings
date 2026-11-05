@@ -92,7 +92,7 @@ spec = describe "The Wilds of Rhovanion player cards" do
     it "returns each attachment of a character leaving play to its owner's hand" . gameTestWith deck $ \pid -> do
       sentry <- putAllyIntoPlay pid Allies.redwaterSentry
       _ <- putAttachmentOn pid Attachments.hauberkOfMail sentry
-      run $ Discard sentry
+      run $ Discard GameSource sentry
       chooseAbilityOf pid =<< hero bardCode
       handCodes pid >>= (`shouldSatisfy` elem (toCardCode Attachments.hauberkOfMail))
       attachmentPlacement Attachments.hauberkOfMail `shouldReturn` Nothing
@@ -102,7 +102,7 @@ spec = describe "The Wilds of Rhovanion player cards" do
       eagles <- putAllyIntoPlay pid Allies.eaglesOfTheMistyMountains
       vassal <- genPlayerCard Allies.vassalOfTheWindlord (Just pid)
       run $ AttachFacedown eagles vassal
-      run $ Discard eagles
+      run $ Discard GameSource eagles
       chooseAbilityOf pid =<< hero bardCode
       map (.id) . (.hand) <$> getPlayer pid >>= (`shouldSatisfy` elem vassal.id)
       map toCardCode . (.discard) <$> getPlayer pid `shouldReturn` [toCardCode Allies.eaglesOfTheMistyMountains]
@@ -111,7 +111,7 @@ spec = describe "The Wilds of Rhovanion player cards" do
       sentry <- putAllyIntoPlay pid Allies.redwaterSentry
       AllyTarget stallion <- putAllyIntoPlay pid Allies.wildStallion
       run $ AllyBecomesAttachment stallion sentry
-      run $ Discard sentry
+      run $ Discard GameSource sentry
       chooseAbilityOf pid =<< hero bardCode
       handCodes pid >>= (`shouldSatisfy` elem (toCardCode Allies.wildStallion))
       map toCardCode . (.discard) <$> getPlayer pid `shouldReturn` [toCardCode Allies.redwaterSentry]

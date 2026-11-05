@@ -29,6 +29,6 @@ instance RunMessage PoisonedVapour where
       createEffect attrs GameTarget [EachDamagedCharacter Blank] (UntilEndOfPhaseOf CombatPhase)
       pure t
     ResolveShadowEffect cid _ pid _ | cid == attrs.cardId -> do
-      discardNonObjectiveAttachment (CardIdTarget cid) pid
+      discardNonObjectiveAttachment attrs pid
       pure t
     _ -> PoisonedVapour <$> runMessage msg attrs

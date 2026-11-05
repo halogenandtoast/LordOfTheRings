@@ -35,6 +35,6 @@ instance RunMessage CrumblingRuin where
               remaining <- (-) <$> getHitPoints c <*> getDamage c
               exhaust c
               discardTopOfDeck p 1
-              for_ cost \n -> when (n >= remaining) $ discard c
+              for_ cost \n -> when (n >= remaining) $ discard attrs c
       pure t
     _ -> CrumblingRuin <$> runMessage msg attrs

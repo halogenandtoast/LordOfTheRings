@@ -191,7 +191,7 @@ spec = describe "The Wilds of Rhovanion's shared encounter sets" do
       (.underneath) . toAttrs <$> getLocation lands `shouldReturn` [PlayerCard card]
       getLocationThreat lands `shouldReturn` 4
       map (.id) . (.discard) <$> getPlayer pid `shouldReturn` []
-      run $ Discard (LocationTarget lands)
+      run $ Discard GameSource (LocationTarget lands)
       map (.id) . (.discard) <$> getPlayer pid `shouldReturn` [card.id]
 
   describe "Lost in Wilderland" do
@@ -351,7 +351,7 @@ spec = describe "The Wilds of Rhovanion's shared encounter sets" do
       (playerCardsGuardedBy . (.cardId) . toAttrs =<< getEnemy hob) `shouldReturn` [plate]
       getEnemyThreat hob `shouldReturn` 5
       getEnemyAttack hob `shouldReturn` 5
-      run $ Discard (EnemyTarget hob)
+      run $ Discard GameSource (EnemyTarget hob)
       handIds pid >>= (`shouldSatisfy` elem plate.id)
 
   describe "Wild Creatures" do
@@ -493,10 +493,10 @@ spec = describe "The Wilds of Rhovanion's shared encounter sets" do
       card <- genEncounterCard Objectives.haldan
       run $ GuardCard (EncounterCard card) (toAttrs captor).cardId
       select (AllyControlledBy $ PlayerWithId pid) `shouldReturn` []
-      run $ Discard (EnemyTarget spider)
+      run $ Discard GameSource (EnemyTarget spider)
       [haldan] <- select (AllyControlledBy $ PlayerWithId pid)
       select (AllyWithId haldan <> ExhaustedAlly) `shouldReturn` []
       _ <- activeLocation Locations.oldForestRoad
       getModifiers (AllyTarget haldan) >>= (`shouldSatisfy` elem DoesNotExhaustToCommit)
-      run $ Discard (AllyTarget haldan)
+      run $ Discard GameSource (AllyTarget haldan)
       getsGame (.outcome) `shouldReturn` Just Lost

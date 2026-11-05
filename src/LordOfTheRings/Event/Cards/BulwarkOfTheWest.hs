@@ -22,10 +22,10 @@ instance RunMessage BulwarkOfTheWest where
         questionLabeled "bulwarkOfTheWest.ally"
         causedBy attrs
         targets allies \al -> do
-          discard al
+          discard attrs al
           chooseOrRunOneM pid do
             questionLabeled "bulwarkOfTheWest.condition"
             causedBy attrs
-            targets conditions discard
+            targets conditions (discard attrs)
       pure e
     _ -> BulwarkOfTheWest <$> runMessage msg attrs

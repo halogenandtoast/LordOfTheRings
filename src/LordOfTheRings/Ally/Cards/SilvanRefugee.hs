@@ -17,6 +17,6 @@ instance HasAbilities SilvanRefugee where
 instance RunMessage SilvanRefugee where
   runMessage msg s@(SilvanRefugee a) = case msg of
     UseCardAbility _ (isSource a -> True) 1 _ -> do
-      discard a
+      discard a a
       pure s
     _ -> SilvanRefugee <$> runMessage msg a

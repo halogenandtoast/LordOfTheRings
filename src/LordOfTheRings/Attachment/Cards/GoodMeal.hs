@@ -26,7 +26,7 @@ instance RunMessage GoodMeal where
         -- a sphere icon the hero gains is a sphere it belongs to (ruling 3.065)
         printed <- (.sphere) <$> getHero hid
         gained <- (\ms -> [s' | GainResourceIcon s' <- ms]) <$> getModifiers (HeroTarget hid)
-        discard a
+        discard a a
         roundModifier a (PlayerTarget pid)
           $ LowerNextCostOf (CardWithType EventType <> CardMatchAny (map CardWithSphere $ printed : gained)) 2
       pure s

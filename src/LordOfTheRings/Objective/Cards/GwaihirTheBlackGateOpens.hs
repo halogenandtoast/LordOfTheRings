@@ -30,11 +30,11 @@ instance RunMessage GwaihirTheBlackGateOpens where
         labeled "gwaihirTheBlackGateOpens.control" $ putObjectiveAllyIntoPlay attrs.id lead
         when (fellowship >= 1 && notNull enemies) $ labeled "gwaihirTheBlackGateOpens.discard" do
           spendResources lead Fellowship 1
-          discard attrs
+          discard attrs attrs
           chooseOrRunOneM lead do
             questionLabeled "gwaihirTheBlackGateOpens.discardEnemy"
             causedBy attrs
-            targets enemies discard
+            targets enemies (discard attrs)
       pure o
     ResolveShadowEffect cid eid _ _ | cid == attrs.cardId -> do
       cancelMatching \case

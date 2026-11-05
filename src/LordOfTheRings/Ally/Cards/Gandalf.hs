@@ -45,6 +45,6 @@ instance RunMessage Gandalf where
       pure g
     -- At the end of the round, discard Gandalf from play.
     EndRound -> do
-      discard attrs
+      discard attrs attrs
       pure g
     _ -> Gandalf <$> runMessage msg attrs

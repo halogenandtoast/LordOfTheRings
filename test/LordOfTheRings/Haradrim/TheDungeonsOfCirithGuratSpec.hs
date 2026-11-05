@@ -168,17 +168,17 @@ spec = describe "The Dungeons of Cirith Gurat" do
       cellCard <- getsGame (fromJustNote "no cell" . fmap toCard . lookup cell . (.entities.locations))
       abaan <- genEncounterCard Objectives.abaan
       run $ GuardCard (EncounterCard abaan) cellCard.id
-      run $ Discard (toTarget cell)
+      run $ Discard GameSource (toTarget cell)
       fmap allyPlacement <$> allyOf Objectives.abaan `shouldReturn` Just (InPlayArea pid)
       a <- fromJustNote "no Abaan" <$> allyOf Objectives.abaan
-      run $ Discard (AllyTarget a.allyId)
+      run $ Discard GameSource (AllyTarget a.allyId)
       getsGame (.outcome) `shouldReturn` Just Lost
 
     it "lets Abaan, exhausted, give a Harad character +1 willpower, attack and defense this round" . dungeonTest $ \pid -> do
       cell <- stageLocation Locations.dungeonCell
       cellId <- cardIdOfLocation cell
       run . (`GuardCard` cellId) . EncounterCard =<< genEncounterCard Objectives.abaan
-      run $ Discard (toTarget cell)
+      run $ Discard GameSource (toTarget cell)
       a <- fromJustNote "no Abaan" <$> allyOf Objectives.abaan
       run $ Ready (AllyTarget a.allyId)
       run $ Exhaust (AllyTarget a.allyId)

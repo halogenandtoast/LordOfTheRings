@@ -146,7 +146,7 @@ instance RunMessage TheStewardsFear where
       let meta = getMeta attrs
       deck <- shuffleM (meta.underworldDeck <> attrs.encounterDeck)
       pure $ TheStewardsFear $ withMeta meta {underworldDeck = []} & encounterDeckL .~ deck
-    Discard (LocationTarget lid) -> leaving lid
+    Discard _ (LocationTarget lid) -> leaving lid
     AddToVictoryDisplay (LocationTarget lid) -> leaving lid
     ShuffleIntoEncounterDeck (LocationTarget lid) -> leaving lid
     ReturnToTopOfEncounterDeck (LocationTarget lid) -> leaving lid

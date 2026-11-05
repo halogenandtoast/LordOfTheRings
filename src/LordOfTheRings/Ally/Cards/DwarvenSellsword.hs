@@ -19,6 +19,6 @@ instance HasAbilities DwarvenSellsword where
 instance RunMessage DwarvenSellsword where
   runMessage msg s@(DwarvenSellsword a) = case msg of
     UseCardAbility pid (isSource a -> True) 1 _ -> do
-      groupMaySpendOr pid a Leadership 1 (pure ()) (discard a)
+      groupMaySpendOr pid a Leadership 1 (pure ()) (discard a a)
       pure s
     _ -> DwarvenSellsword <$> runMessage msg a

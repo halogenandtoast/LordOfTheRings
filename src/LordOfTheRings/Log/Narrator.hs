@@ -212,7 +212,7 @@ narrationFor = \case
     one
       $ toned (case target of EnemyTarget _ -> Good; _ -> Bad)
       $ mechanic [ikeyPart "log.destroyed" ["target" ~> t]]
-  Discard target -> Just $ whenRef target \t -> do
+  Discard _ target -> Just $ whenRef target \t -> do
     -- a destroyed character is discarded as it goes, and was already said
     destroyed <- case target of
       HeroTarget _ -> (>=) <$> getDamage target <*> getHitPoints target

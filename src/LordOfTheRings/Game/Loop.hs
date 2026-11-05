@@ -226,6 +226,10 @@ discardAtNoWillpower = do
     characters <- selectCharacters AnyHero AnyAlly
     doomed <- flip filterM characters \c -> andM [elem DiscardedAtNoWillpower <$> getModifiers c, (<= 0) <$> getWillpower c]
     queued <- peekQueue
-    pushAll [Discard c | c <- doomed, Discard c `notElem` queued, LeavePlay (Discard c) `notElem` queued]
+    let discarding c = \case
+          Discard _ t -> t == c
+          LeavePlay (Discard _ t) -> t == c
+          _ -> False
+    pushAll [Discard GameSource c | c <- doomed, not (any (discarding c) queued)]
 
 -- | Each hero's gained abilities, kept in step with its 'GainGameTextOf' modifiers.

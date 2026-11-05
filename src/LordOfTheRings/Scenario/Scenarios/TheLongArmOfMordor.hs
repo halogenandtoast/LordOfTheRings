@@ -45,6 +45,6 @@ instance RunMessage TheLongArmOfMordor where
     -- an eliminated player's heroes in the staging area leave the game with him
     EliminatePlayer pid -> do
       heroes <- filterM (fmap ((== pid) . (.owner)) . getHero) =<< select HeroInStagingArea
-      for_ heroes discard
+      for_ heroes (discard attrs)
       TheLongArmOfMordor <$> runMessage msg attrs
     _ -> TheLongArmOfMordor <$> runMessage msg attrs

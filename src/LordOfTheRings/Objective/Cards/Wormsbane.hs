@@ -47,7 +47,7 @@ instance HasModifiersFor Wormsbane where
 -- Worm or the restricted limit discards it, loses nothing.
 instance RunMessage Wormsbane where
   runMessage msg (Wormsbane attrs) = case msg of
-    Discard (isTarget attrs -> True) | AttachedTo (HeroTarget hid) <- attrs.placement -> do
+    Discard _ (isTarget attrs -> True) | AttachedTo (HeroTarget hid) <- attrs.placement -> do
       inPlay <- getsGame (Map.member hid . (.heroes) . gameEntities)
       unless inPlay $ gameOver Lost
       Wormsbane <$> runMessage msg attrs

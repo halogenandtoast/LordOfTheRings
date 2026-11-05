@@ -217,7 +217,7 @@ spec = describe "The Antlered Crown" do
     staged Locations.ravenChiefsCamp
     run $ DealDamage GameSource (toTarget chief) 3
     getDamage (toTarget chief) `shouldReturn` 0
-    run . Discard . toTarget =<< locationOf Locations.ravenChiefsCamp
+    run . Discard GameSource . toTarget =<< locationOf Locations.ravenChiefsCamp
     run $ DealDamage GameSource (toTarget chief) 3
     getDamage (toTarget chief) `shouldReturn` 3
     battlefield <- activeAt Locations.dunlandBattlefield
@@ -282,7 +282,7 @@ spec = describe "The Antlered Crown" do
     run $ CheckWindows []
     mods <- getModifiers turch
     mods `shouldSatisfy` \ms -> ImmuneToPlayerCardEffects `elem` ms && DoesNotExhaustToDefend `elem` ms
-    run $ Discard turch
+    run $ Discard GameSource turch
     outcome `shouldReturn` Just Lost
 
   it "adds Raven Chief, his camp and the Raven cards at The Last Stage, and wins at the end of the round once he is in the victory display" . crownTest $ \pid -> do

@@ -32,7 +32,7 @@ instance RunMessage RescueIarion where
       pure q
     UseCardAbility _ (isSource attrs -> True) 1 _ -> do
       iarions <- select (AllyWithCardCode $ toCardCode Objectives.iarion)
-      traverse_ discard iarions
+      traverse_ (discard attrs) iarions
       -- under no one's control his own Forced does not answer: his leaving loses it here
       unless (null iarions) $ gameOver Lost
       pure q

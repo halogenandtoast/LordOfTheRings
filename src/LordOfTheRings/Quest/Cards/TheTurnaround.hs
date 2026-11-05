@@ -29,4 +29,4 @@ instance RunMessage TheTurnaround where
         chooseOrRunOneM p do
           questionLabeled "theTurnaround.discardAlly"
           causedBy attrs
-          targets allies discard
+          targets allies (discard attrs)

@@ -187,7 +187,7 @@ spec = describe "The Lost Realm Nightmare" do
       resolveRevealed
       captain <- enemyOf Enemies.angmarCaptain
       captiveVillagerHeld `shouldReturn` True
-      run $ Discard (EnemyTarget captain)
+      run $ Discard GameSource (EnemyTarget captain)
       run $ CheckWindows []
       captiveVillagerHeld `shouldReturn` False
       villagers <- getsGame (filter ((== toCardCode Objectives.captiveVillager) . toCardCode) . toList . (.entities.allies))
@@ -198,7 +198,7 @@ spec = describe "The Lost Realm Nightmare" do
       run . RevealCard =<< genEncounterCard Objectives.captiveVillager
       villager <- getsGame (fromJustNote "no villager" . fmap toId . headMay . toList . (.entities.allies))
       placementOfAlly villager `shouldReturn` Just (InPlayArea pid)
-      run $ Discard (AllyTarget villager)
+      run $ Discard GameSource (AllyTarget villager)
       getsGame (.outcome) `shouldReturn` Just Lost
 
     it "Rearguard Ambusher exhausts each damaged character as it engages" . nightmare theWeatherHills $ \pid -> do

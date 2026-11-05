@@ -29,7 +29,7 @@ instance RunMessage HuntingParty where
       chooseOrRunOneM pid do
         questionLabeled "huntingParty.discard"
         causedBy attrs
-        targets enemies discard
+        targets enemies (discard attrs)
       revealEncounterCard
       pure e
     _ -> HuntingParty <$> runMessage msg attrs

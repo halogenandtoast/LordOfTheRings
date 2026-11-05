@@ -37,7 +37,7 @@ instance RunMessage NarrowAlleyway where
           card <- toCard <$> getEnemy e
           placeUnderneath a [card]
       pure l
-    Discard (isTarget a -> True) -> release
+    Discard _ (isTarget a -> True) -> release
     RemoveFromGame (isTarget a -> True) -> release
     _ -> NarrowAlleyway <$> runMessage msg a
    where

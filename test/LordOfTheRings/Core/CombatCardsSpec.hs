@@ -171,7 +171,7 @@ spec = do
       eid <- getsGame (fromJustNote "no spider" . headMay . map toId . toList . (.entities.enemies))
       run $ EngageEnemy pid eid
       legolas <- hero "01005"
-      run $ Discard (toTarget eid)
+      run $ Discard GameSource (toTarget eid)
       run $ AttackResolved eid (Just pid) [legolas] mempty
       offersAbilityOf pid legolas `shouldReturn` False
 

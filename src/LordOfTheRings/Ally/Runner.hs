@@ -55,7 +55,7 @@ instance RunMessage AllyAttrs where
       pushAll $ map PutInDiscard gone
       pure $ attrs & poisonL .~ kept
     -- a poison card discarded as a Condition attachment, as Miner of the Iron Hills does
-    Discard (CardIdTarget cid) | Just pc <- find ((== cid) . (.id)) attrs.allyPoison -> do
+    Discard _ (CardIdTarget cid) | Just pc <- find ((== cid) . (.id)) attrs.allyPoison -> do
       push $ PutInDiscard pc
       pure $ attrs & poisonL %~ filter ((/= cid) . (.id))
     MakeUnconscious (isTarget attrs -> True) -> do
@@ -80,7 +80,7 @@ instance RunMessage AllyAttrs where
       push $ PutAllyIntoPlayUnder pid card
       pure attrs
     -- the cards facedown under it go to their owners' discard piles as it leaves play
-    Discard (isTarget attrs -> True) -> leaving
+    Discard _ (isTarget attrs -> True) -> leaving
     ReturnToHand (isTarget attrs -> True) -> leaving
     ShuffleIntoOwnersDeck (isTarget attrs -> True) -> leaving
     PutOnBottomOfOwnersDeck (isTarget attrs -> True) -> leaving

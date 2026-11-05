@@ -21,7 +21,7 @@ runShip destroyed msg a = case msg of
   Destroy _ (isTarget a -> True) -> do
     destroyed
     runMessage msg a
-  Discard (isTarget a -> True) -> do
+  Discard _ (isTarget a -> True) -> do
     removeFromEncounterDiscard $ MkEncounterCard a.allyCardId (toCardCode a)
     runMessage msg a
   _ -> runMessage msg a

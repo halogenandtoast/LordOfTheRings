@@ -24,7 +24,7 @@ instance RunMessage RideToRuin where
         questionLabeled "rideToRuin.discard"
         causedBy attrs
         targets allies \x -> do
-          discard x
+          discard attrs x
           chooseOneM pid do
             questionLabeled "rideToRuin.location"
             causedBy attrs

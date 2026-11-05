@@ -148,7 +148,7 @@ spec = describe "Contracts" do
       card <- putCardIntoHand pid Allies.wanderingTook
       publicHandBlockers card `shouldReturn` Just [RefContract]
       -- Forced: After a character you control leaves play, flip this card over.
-      run $ Discard haldir
+      run $ Discard GameSource haldir
       flipped `shouldReturn` False
       (`shouldBe` 2) =<< getWillpower =<< heroTarget beravor
 
@@ -368,7 +368,7 @@ spec = describe "Contracts" do
       run $ Exhaust faramir
       run $ Ready faramir
       exhausted `shouldReturn` True
-      run $ Discard faramir
+      run $ Discard GameSource faramir
       getsGame (Map.size . (.entities.contracts)) `shouldReturn` 0
 
   describe "Bond of Friendship" do

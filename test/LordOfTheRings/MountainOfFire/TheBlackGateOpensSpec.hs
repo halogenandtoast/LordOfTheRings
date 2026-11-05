@@ -227,7 +227,7 @@ spec = describe "The Black Gate Opens" do
       _ <- stage Enemies.easterlingBowman
       run $ TravelTo moat
       getsGame (length . filter ((== toCardCode Enemies.easterlingBowman) . toCardCode) . toList . (.entities.enemies)) `shouldReturn` 0
-      run $ Discard (LocationTarget moat)
+      run $ Discard GameSource (LocationTarget moat)
       bowman <- enemyOf Enemies.easterlingBowman
       placementOfEnemy bowman `shouldReturn` EngagedWith pid
 
@@ -235,7 +235,7 @@ spec = describe "The Black Gate Opens" do
       setUp pid
       slopes <- stageLocation Locations.slopesOfCirithGorgor
       _ <- setEncounterDeck [Treacheries.jawsOfSteel, Enemies.gorgorothHillTroll]
-      run $ Discard (LocationTarget slopes)
+      run $ Discard GameSource (LocationTarget slopes)
       troll <- enemyOf Enemies.gorgorothHillTroll
       placementOfEnemy troll `shouldReturn` EngagedWith pid
 
@@ -365,7 +365,7 @@ spec = describe "The Black Gate Opens" do
       resolveRevealed
       defeated <- genEncounterCard Enemies.wraithOnWings
       putGame . (scenarioL %~ overAttrs (victoryDisplayL .~ [EncounterCard defeated])) =<< getGame
-      run . Discard =<< hero beravor
+      run . Discard GameSource =<< hero beravor
       run $ GameOver Lost
       l <- getCampaignLog
       map (.completedScenario) l.completed `shouldBe` ["the-black-gate-opens"]

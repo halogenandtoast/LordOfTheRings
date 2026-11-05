@@ -141,7 +141,7 @@ spec = describe "The Dream-chaser engine" do
       run $ RevealFromCorsairDeck GameSource pid
       enemiesEngagedWith pid `shouldReturn` [toCardCode Enemies.southronSailor]
       sailor <- getsGame (fromJustNote "no sailor" . fmap toTarget . headMay . toList . (.entities.enemies))
-      run $ Discard sailor
+      run $ Discard GameSource sailor
       corsairDiscard `shouldReturn` [toCardCode Enemies.southronSailor]
       getEncounterDiscard `shouldReturn` []
       run $ RevealFromCorsairDeck GameSource pid

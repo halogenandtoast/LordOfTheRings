@@ -20,6 +20,6 @@ instance RunMessage WhipLash where
       eachPlayer \p -> chooseAndDiscard attrs p =<< getAttachmentsControlledBy p
       pure t
     ResolveShadowEffect cid eid pid _ | cid == attrs.cardId -> do
-      whenM (isDurinsBane eid) $ traverse_ discard =<< getAttachmentsControlledBy pid
+      whenM (isDurinsBane eid) $ traverse_ (discard attrs) =<< getAttachmentsControlledBy pid
       pure t
     _ -> WhipLash <$> runMessage msg attrs

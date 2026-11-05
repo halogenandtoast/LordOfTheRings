@@ -44,7 +44,7 @@ instance RunMessage GrimbeornsQuest where
       carrock <- select (LocationWithCardCode $ toCardCode Locations.theCarrock)
       active <- select (IsActiveLocation <> not_ (LocationWithCardCode $ toCardCode Locations.theCarrock))
       for_ carrock \l -> do
-        for_ active discard
+        for_ active (discard attrs)
         makeActive l
       GrimbeornsQuest <$> runMessage msg attrs
     _ -> GrimbeornsQuest <$> runMessage msg attrs

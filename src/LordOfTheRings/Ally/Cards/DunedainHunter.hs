@@ -24,7 +24,7 @@ instance RunMessage DunedainHunter where
       top <- take 5 . (.encounterDeck) . toAttrs <$> getsGame (.scenario)
       let enemies = filter (\c -> cardMatches (CardWithType EnemyType) c && not (cdUnique $ toCardDef c)) top
       if null enemies
-        then discard a
+        then discard a a
         else chooseOneM pid do
           questionLabeled "dunedainHunter.search"
           causedBy a

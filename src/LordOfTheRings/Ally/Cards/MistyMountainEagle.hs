@@ -36,7 +36,7 @@ instance RunMessage MistyMountainEagle where
         causedBy a
         when (a.placement /= InPlayArea pid) $ labeled "mistyMountainEagle.takeControl" $ takeControl a.id pid
         targets enemies \e -> do
-          discard a
-          discard e
+          discard a a
+          discard a e
       pure s
     _ -> MistyMountainEagle <$> runMessage msg a

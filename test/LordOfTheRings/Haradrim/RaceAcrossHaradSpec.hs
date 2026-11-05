@@ -268,7 +268,7 @@ spec = describe "Race Across Harad" do
       run $ EngageEnemy pid orc
       run $ UndefendedDamage pid orc
       getDamage (AllyTarget mumak) `shouldReturn` 4
-      run $ Discard (AllyTarget mumak)
+      run $ Discard GameSource (AllyTarget mumak)
       (.eliminated) <$> getPlayer pid `shouldReturn` True
 
     it "Harad Road and Uruk Pursuer go to the Orcs' area as they are revealed, the Pursuer surging" . raceTest $ \_ -> do

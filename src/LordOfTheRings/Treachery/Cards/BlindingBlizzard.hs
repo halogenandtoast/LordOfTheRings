@@ -31,6 +31,6 @@ instance RunMessage BlindingBlizzard where
     WhenRevealed (isTarget attrs -> True) -> pure $ BlindingBlizzard $ attrs & placementL .~ StagingArea
     PlaceTokens _ (isTarget attrs -> True) Progress _ -> do
       attrs' <- runMessage msg attrs
-      when (countTokens Progress (treacheryTokens attrs') >= 5) $ discard attrs
+      when (countTokens Progress (treacheryTokens attrs') >= 5) $ discard attrs attrs
       pure $ BlindingBlizzard attrs'
     _ -> BlindingBlizzard <$> runMessage msg attrs

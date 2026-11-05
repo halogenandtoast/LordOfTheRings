@@ -25,7 +25,7 @@ instance RunMessage AngmarOrc where
         unless (null allies) $ labeled "angmarOrc.discardAlly" $ chooseOneM lead do
           questionLabeled "angmarOrc.chooseAlly"
           causedBy attrs
-          targets allies discard
+          targets allies (discard attrs)
         labeled "angmarOrc.reveal" revealEncounterCard
       pure e
     ResolveShadowEffect cid eid _ _ | cid == attrs.cardId -> do

@@ -71,7 +71,7 @@ instance RunMessage StopTheWarParty where
       winGame
       pure q
     -- what may let the players win now: an Orc War Party gone, or Iârion back
-    Discard (EnemyTarget _) -> recheck
+    Discard _ (EnemyTarget _) -> recheck
     TakeControl {} -> recheck
     _ -> StopTheWarParty <$> runConditionalStage canWin msg attrs
    where

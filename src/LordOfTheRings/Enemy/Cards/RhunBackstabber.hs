@@ -29,7 +29,7 @@ instance RunMessage RhunBackstabber where
             chooseOrRunOneM pid do
               questionLabeled "rhunBackstabber.ally"
               causedBy attrs
-              targets allies discard
+              targets allies (discard attrs)
       pure e
     ResolveShadowEffect cid _ pid _ | cid == attrs.cardId -> do
       n <- length <$> select (EnemyEngagedWith $ PlayerWithId pid)

@@ -310,7 +310,7 @@ spec = describe "The Battle of Carn Dûm and The Dread Realm player cards" do
       passActions pid
       getHeroResources asHero.id `shouldReturn` 1
       sword <- getsGame (toTarget . fromJustNote "sword" . find ((== toCardCode Attachments.swordThain) . toCardCode) . toList . (.entities.attachments))
-      run $ Discard sword
+      run $ Discard GameSource sword
       allies <- getsGame (toList . (.entities.allies))
       map toCardCode allies `shouldBe` [toCardCode Allies.lindir]
 
@@ -352,7 +352,7 @@ spec = describe "The Battle of Carn Dûm and The Dread Realm player cards" do
 
     it "goes to its owner's discard pile as it leaves play" . gameTest $ \pid -> do
       faramir <- swordThained pid Allies.faramir
-      run $ Discard faramir
+      run $ Discard GameSource faramir
       getsGame (length . (.entities.heroes)) `shouldReturn` 3
       map toCardCode . (.discard) <$> getPlayer pid >>= (`shouldSatisfy` elem (toCardCode Allies.faramir))
 
@@ -395,21 +395,21 @@ spec = describe "The Battle of Carn Dûm and The Dread Realm player cards" do
       was <- stat getAttack eagles
       guardian <- putAllyIntoPlay pid Allies.wingedGuardian
       passActions pid
-      run $ Discard guardian
+      run $ Discard GameSource guardian
       chooseAbilityOf pid eagles
       getsGame (fmap (length . heroFacedown . toAttrs) . find ((== eagles) . toTarget) . toList . (.entities.heroes)) `shouldReturn` Just 1
       stat getAttack eagles `shouldReturn` (was + 1)
       sword <- getsGame (toTarget . fromJustNote "sword" . find ((== toCardCode Attachments.swordThain) . toCardCode) . toList . (.entities.attachments))
-      run $ Discard sword
+      run $ Discard GameSource sword
       getsGame (map (length . allyFacedown . toAttrs) . toList . (.entities.allies)) `shouldReturn` [1]
 
     it "discards the facedown Eagles under the hero as it leaves play" . gameTest $ \pid -> do
       eagles <- swordThained pid Allies.eaglesOfTheMistyMountains
       guardian <- putAllyIntoPlay pid Allies.wingedGuardian
       passActions pid
-      run $ Discard guardian
+      run $ Discard GameSource guardian
       chooseAbilityOf pid eagles
-      run $ Discard eagles
+      run $ Discard GameSource eagles
       map toCardCode . (.discard) <$> getPlayer pid >>= (`shouldSatisfy` elem (toCardCode Allies.wingedGuardian))
  where
   -- the unique ally put into play, then made a hero by Sword-thain

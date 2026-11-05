@@ -94,7 +94,7 @@ spec = describe "A Storm on Cobas Haven" do
       siege <- staged Enemies.siegeShip
       run . SetObjectiveGuard tower =<< cardIdOf siege
       getModifiers GameTarget >>= (`shouldSatisfy` notElem (SailingTestAdditionalCards 2))
-      run $ Discard (EnemyTarget siege)
+      run $ Discard GameSource (EnemyTarget siege)
       getModifiers GameTarget >>= (`shouldSatisfy` elem (SailingTestAdditionalCards 2))
 
     it "keep Battle in the Bay from advancing while one is guarded" . cobasTest $ \_ -> do
@@ -104,7 +104,7 @@ spec = describe "A Storm on Cobas Haven" do
       run . SetObjectiveGuard tower =<< cardIdOf siege
       run $ PlaceTokens GameSource (QuestTarget stage) Progress 16
       questsInPlay `shouldReturn` [toCardCode Quests.battleInTheBay]
-      run $ Discard (EnemyTarget siege)
+      run $ Discard GameSource (EnemyTarget siege)
       questsInPlay `shouldReturn` [toCardCode Quests.breakThroughTheFleet]
 
     it "Heavy Cruiser fetches a Dol Amroth objective and guards it; destroyed, it frees Tower of the Heron to cut the archery total" . cobasTest $ \_ -> do
@@ -116,7 +116,7 @@ spec = describe "A Storm on Cobas Haven" do
       cid <- cardIdOf cruiser
       guardOf tower `shouldReturn` Just cid
       getModifiers GameTarget >>= (`shouldSatisfy` notElem (ArcheryBonus (-4)))
-      run $ Discard (EnemyTarget cruiser)
+      run $ Discard GameSource (EnemyTarget cruiser)
       getModifiers GameTarget >>= (`shouldSatisfy` elem (ArcheryBonus (-4)))
 
     it "Siege Ship guards an unguarded objective at the end of the quest phase" . cobasTest $ \_ -> do

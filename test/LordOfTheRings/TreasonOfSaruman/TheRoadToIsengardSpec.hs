@@ -319,7 +319,7 @@ spec = describe "The Road to Isengard" do
       q <- toTarget <$> getActiveQuest
       run $ PlaceTokens GameSource q Progress 3
       (.progress) . toAttrs <$> getActiveQuest `shouldReturn` 3
-      run . Discard . LocationTarget =<< locationOf Locations.gatesOfIsengard
+      run . Discard GameSource . LocationTarget =<< locationOf Locations.gatesOfIsengard
       orthanc <- locationOf Locations.orthanc
       run $ PlaceLocation orthanc ActiveLocation
       run $ PlaceProgressOnQuest 3

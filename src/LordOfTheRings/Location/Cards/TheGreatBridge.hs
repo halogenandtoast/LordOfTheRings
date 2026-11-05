@@ -40,7 +40,7 @@ instance RunMessage TheGreatBridge where
         causedBy a
         targets heroes \h -> do
           hero <- getHero h
-          discard h
+          discard a h
           for_ balrog \b -> do
             dealDamage a b (fromMaybe 0 $ cdThreatCost $ toCardDef hero)
             createEffect a b [LoseKeyword Indestructible] UntilSpent

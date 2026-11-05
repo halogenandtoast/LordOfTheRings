@@ -29,6 +29,6 @@ instance RunMessage AbandonedCampNightmare where
     ResolveShadowEffect cid _ _ defender | cid == a.cardId -> do
       when (null defender) do
         players <- getRemainingPlayers
-        traverse_ discard . concat =<< traverse getAttachmentsControlledBy players
+        traverse_ (discard a) . concat =<< traverse getAttachmentsControlledBy players
       pure l
     _ -> AbandonedCampNightmare <$> runMessage msg a

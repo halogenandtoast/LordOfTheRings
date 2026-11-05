@@ -24,7 +24,7 @@ instance RunMessage RearGuard where
         questionLabeled "rearGuard.discard"
         causedBy attrs
         targets allies \x -> do
-          discard x
+          discard attrs x
           heroes <- select CommittedHero
           for_ heroes \h -> phaseModifier attrs h (WillpowerModifier 1)
       pure e

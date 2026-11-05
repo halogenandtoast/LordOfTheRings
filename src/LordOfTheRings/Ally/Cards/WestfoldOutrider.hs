@@ -28,6 +28,6 @@ instance RunMessage WestfoldOutrider where
         causedBy a
         targets enemies $ engageEnemy pid
       -- the discard is the cost, but what it leads to waits for the effect
-      discard a
+      discard a a
       pure s
     _ -> WestfoldOutrider <$> runMessage msg a

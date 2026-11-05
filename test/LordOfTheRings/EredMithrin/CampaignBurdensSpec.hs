@@ -123,7 +123,7 @@ spec = describe "Ered Mithrin campaign burdens" do
       run $ DrawCards (DrawingFrom pid 1 GameSource)
       chooseTarget pid beravor
       tid <- getsGame (toId . fromJustNote "not attached" . headMay . toList . (.entities.treacheries))
-      run $ Discard (toTarget tid)
+      run $ Discard GameSource (toTarget tid)
       map (.id) . (.discard) <$> getPlayer pid `shouldReturn` [trust.id]
       map toCardCode <$> getEncounterDiscard >>= (`shouldSatisfy` notElem (toCardCode Treacheries.misplacedTrust))
 

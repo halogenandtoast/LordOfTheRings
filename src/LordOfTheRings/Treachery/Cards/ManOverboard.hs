@@ -29,7 +29,7 @@ instance RunMessage ManOverboard where
           chooseOrRunOneM p do
             questionLabeled "manOverboard.discard"
             causedBy attrs
-            targets questing discard
+            targets questing (discard attrs)
       pure t
     ResolveShadowEffect cid eid _ _ | cid == attrs.cardId -> do
       stage <- getStormcallerStage

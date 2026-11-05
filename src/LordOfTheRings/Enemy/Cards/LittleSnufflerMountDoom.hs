@@ -29,7 +29,7 @@ instance RunMessage LittleSnufflerMountDoom where
           chooseOneM pid do
             questionLabeled "littleSnufflerMountDoom.discardAlly"
             causedBy attrs
-            targets allies discard
+            targets allies (discard attrs)
       pure e
     ResolveShadowEffect cid _ pid _ | cid == attrs.cardId -> do
       chooseAndExhaust attrs pid 1

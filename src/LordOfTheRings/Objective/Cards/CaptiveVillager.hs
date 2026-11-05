@@ -38,7 +38,7 @@ instance RunMessage CaptiveVillager where
         else do
           putObjectiveAllyIntoPlay attrs.id =<< getLead
           CaptiveVillager <$> runMessage msg (attrs & guardL .~ Nothing)
-    Discard (isTarget attrs -> True) -> do
+    Discard _ (isTarget attrs -> True) -> do
       gameOver Lost
       pure o
     _ -> CaptiveVillager <$> runMessage msg attrs

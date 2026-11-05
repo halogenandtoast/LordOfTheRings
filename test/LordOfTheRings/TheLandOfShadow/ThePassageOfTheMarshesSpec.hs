@@ -200,7 +200,7 @@ spec = describe "The Passage of the Marshes" do
       setUp pid
       pools <- stageLocation Locations.stagnantPools
       threat <- threatOf pid
-      run $ Discard (LocationTarget pools)
+      run $ Discard GameSource (LocationTarget pools)
       threatOf pid `shouldReturn` threat
 
   -- \* Gollum and Sméagol
@@ -284,7 +284,7 @@ spec = describe "The Passage of the Marshes" do
 
     it "adds a location discarded from the encounter deck as it is revealed with fewer locations staged than players" . marshesTest $ \pid -> do
       setUp pid
-      run . Discard . LocationTarget =<< getsGame (fromJustNote "no location" . fmap toId . headMay . toList . (.entities.locations))
+      run . Discard GameSource . LocationTarget =<< getsGame (fromJustNote "no location" . fmap toId . headMay . toList . (.entities.locations))
       _ <- setEncounterDeck [Enemies.deadThings, Locations.hauntedMere, Enemies.candleBearer]
       toStage2 pid
       locationCodes `shouldReturn` [toCardCode Locations.hauntedMere]

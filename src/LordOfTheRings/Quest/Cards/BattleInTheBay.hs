@@ -60,7 +60,7 @@ instance RunMessage BattleInTheBay where
       pure q
     -- an encounter guarding an objective leaves play, or stops guarding it
     DoStep 1 (Destroy _ (EnemyTarget _)) -> recheck
-    Discard (EnemyTarget _) -> recheck
+    Discard _ (EnemyTarget _) -> recheck
     Flip (EnemyTarget _) -> recheck
     FinishRevelation _ -> recheck
     _ -> BattleInTheBay <$> runConditionalStage noneGuarded msg attrs

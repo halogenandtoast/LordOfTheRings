@@ -34,6 +34,6 @@ instance RunMessage HaveYouSeenBaggins where
         targets heroes $ attachTreachery attrs.treacheryId
       pure t
     UseCardAbility _ (isSource attrs -> True) 1 _ -> do
-      withHost attrs discard
+      withHost attrs (discard attrs)
       pure t
     _ -> HaveYouSeenBaggins <$> runMessage msg attrs

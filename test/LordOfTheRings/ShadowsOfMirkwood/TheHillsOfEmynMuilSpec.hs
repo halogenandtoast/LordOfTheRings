@@ -125,7 +125,7 @@ spec = describe "The Hills of Emyn Muil" do
     _ <- setEncounterDeck [Treacheries.treacherousFog, Treacheries.treacherousFog, Treacheries.treacherousFog]
     run RevealEncounterCard
     resolveRevealed
-    run $ Discard (toTarget lid)
+    run $ Discard GameSource (toTarget lid)
     run RevealEncounterCard
     resolveRevealed
     length <$> getEncounterDeck `shouldReturn` 1

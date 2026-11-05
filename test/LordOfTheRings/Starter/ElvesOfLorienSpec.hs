@@ -303,7 +303,7 @@ spec = describe "Elves of Lórien" do
     it "is discarded after a character leaves play" . elvesTest $ \pid -> do
       _ <- allyInPlay pid Allies.silvanRefugee
       archer <- allyInPlay pid Allies.greenwoodArcher
-      run $ Discard archer
+      run $ Discard GameSource archer
       passResponses pid
       alliesInPlay `shouldReturn` []
 
@@ -312,7 +312,7 @@ spec = describe "Elves of Lórien" do
       defender <- allyInPlay pid Allies.defenderOfTheNaith
       archer <- allyInPlay pid Allies.greenwoodArcher
       run $ Exhaust defender
-      run $ Discard archer
+      run $ Discard GameSource archer
       chooseAbilityOf pid defender
       isExhausted defender `shouldReturn` False
 

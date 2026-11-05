@@ -266,7 +266,7 @@ spec = describe "Helm's Deep" do
 
     it "places no progress when the players quest successfully" . helmsTest $ \pid -> do
       toStageTwo pid
-      for_ [Enemies.soldierOfIsengard, Enemies.wildHillman] \def -> enemyOf def >>= run . Discard . EnemyTarget
+      for_ [Enemies.soldierOfIsengard, Enemies.wildHillman] \def -> enemyOf def >>= run . Discard GameSource . EnemyTarget
       eowyn <- toTarget <$> getHeroWithCode "01007"
       run $ CommitToQuest eowyn
       run QuestResolution
@@ -275,7 +275,7 @@ spec = describe "Helm's Deep" do
 
     it "reveals a card at the end of the combat phase with fewer enemies in the staging area than players, and places progress for each enemy there at the end of the round" . helmsTest $ \pid -> do
       toStageTwo pid
-      for_ [Enemies.soldierOfIsengard, Enemies.wildHillman] \def -> enemyOf def >>= run . Discard . EnemyTarget
+      for_ [Enemies.soldierOfIsengard, Enemies.wildHillman] \def -> enemyOf def >>= run . Discard GameSource . EnemyTarget
       _ <- setEncounterDeck [Enemies.wildHillman]
       run $ CheckWindows [mkWhen $ PhaseEnds CombatPhase]
       useForcedAbilities pid
@@ -317,8 +317,8 @@ spec = describe "Helm's Deep" do
 
     it "has the first player reveal a card after the quest resolves with no progress placed on it by questing" . helmsTest $ \pid -> do
       toStageThree pid
-      for_ [Enemies.soldierOfIsengard, Enemies.wildHillman] \def -> enemyOf def >>= run . Discard . EnemyTarget
-      run . Discard . LocationTarget =<< locationOf Locations.deepingWall
+      for_ [Enemies.soldierOfIsengard, Enemies.wildHillman] \def -> enemyOf def >>= run . Discard GameSource . EnemyTarget
+      run . Discard GameSource . LocationTarget =<< locationOf Locations.deepingWall
       _ <- setEncounterDeck [Enemies.wildHillman]
       inPhase QuestPhase
       run QuestResolution
@@ -328,9 +328,9 @@ spec = describe "Helm's Deep" do
 
     it "reveals nothing once questing placed progress on it" . helmsTest $ \pid -> do
       toStageThree pid
-      for_ [Enemies.soldierOfIsengard, Enemies.wildHillman] \def -> enemyOf def >>= run . Discard . EnemyTarget
+      for_ [Enemies.soldierOfIsengard, Enemies.wildHillman] \def -> enemyOf def >>= run . Discard GameSource . EnemyTarget
       gate <- locationOf Locations.helmsGate
-      run $ Discard (LocationTarget gate)
+      run $ Discard GameSource (LocationTarget gate)
       _ <- setEncounterDeck [Enemies.wildHillman]
       inPhase QuestPhase
       run QuestResolution
@@ -368,7 +368,7 @@ spec = describe "Helm's Deep" do
       getModifiers (PlayerTarget pid) >>= (`shouldSatisfy` elem CannotReduceThreat)
       outcome `shouldReturn` Nothing
       enemies <- getsGame (map toId . toList . (.entities.enemies))
-      for_ enemies (run . Discard . EnemyTarget)
+      for_ enemies (run . Discard GameSource . EnemyTarget)
       outcome `shouldReturn` Just Won
 
     it "earns Poisoned Counsels for each player holding a copy as the campaign is resolved" . campaignTestIn helmsDeep lotr testDeck $ \pid -> do
@@ -386,14 +386,14 @@ spec = describe "Helm's Deep" do
       run $ PlaceTokens GameSource (ObjectiveTarget o) Resource 8
       resolveWhenRevealed pid
       enemies <- getsGame (map toId . toList . (.entities.enemies))
-      for_ enemies (run . Discard . EnemyTarget)
+      for_ enemies (run . Discard GameSource . EnemyTarget)
       outcome `shouldReturn` Just Won
       (.pool) <$> getCampaignLog `shouldReturn` [PoolCard (toCardCode Treacheries.poisonedCounselsTheTreasonOfSaruman) (Just 0) Nothing]
 
     it "earns nothing for a player with no copy" . campaignTestIn helmsDeep lotr testDeck $ \pid -> do
       toStageFive pid [Enemies.wildHillman]
       enemies <- getsGame (map toId . toList . (.entities.enemies))
-      for_ enemies (run . Discard . EnemyTarget)
+      for_ enemies (run . Discard GameSource . EnemyTarget)
       outcome `shouldReturn` Just Won
       (.pool) <$> getCampaignLog `shouldReturn` []
 
@@ -457,7 +457,7 @@ spec = describe "Helm's Deep" do
 
     it "Reckless Hate gains surge with no enemy in the staging area" . helmsTest $ \pid -> do
       toStageTwo pid
-      for_ [Enemies.soldierOfIsengard, Enemies.wildHillman] \def -> enemyOf def >>= run . Discard . EnemyTarget
+      for_ [Enemies.soldierOfIsengard, Enemies.wildHillman] \def -> enemyOf def >>= run . Discard GameSource . EnemyTarget
       _ <- setEncounterDeck [Treacheries.recklessHate, Enemies.wildHillman]
       run RevealEncounterCard
       resolveRevealed
@@ -478,7 +478,7 @@ spec = describe "Helm's Deep" do
     it "The Hornburg reduces the archery total by 1 for each player while active" . helmsTest $ \pid -> do
       toStageTwo pid
       wall <- locationOf Locations.deepingWall
-      run $ Discard (LocationTarget wall)
+      run $ Discard GameSource (LocationTarget wall)
       earlier <- getArcheryTotal
       _ <- activeAt Locations.theHornburg
       getArcheryTotal `shouldReturn` max 0 (earlier - 1)
@@ -493,7 +493,7 @@ spec = describe "Helm's Deep" do
     it "Postern Door, explored, keeps the players from declaring attacks this round" . helmsTest $ \pid -> do
       toStageTwo pid
       wall <- locationOf Locations.deepingWall
-      run $ Discard (LocationTarget wall)
+      run $ Discard GameSource (LocationTarget wall)
       door <- activeAt Locations.posternDoor
       (getModifiers . toTarget =<< getHeroWithCode "01007") >>= (`shouldSatisfy` elem (AttackModifier 1))
       run $ PlaceTokens GameSource (LocationTarget door) Progress 2

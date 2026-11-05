@@ -29,6 +29,6 @@ instance RunMessage GandalfHobbit where
         questionLabeled "gandalfHobbit.discardOrStay"
         causedBy a
         labeled "gandalfHobbit.raiseThreat" $ raiseThreat pid 2
-        labeled "gandalfHobbit.discard" $ discard a
+        labeled "gandalfHobbit.discard" $ discard a a
       pure s
     _ -> GandalfHobbit <$> runMessage msg a

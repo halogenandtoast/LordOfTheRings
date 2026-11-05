@@ -38,9 +38,9 @@ instance RunMessage StormTheCastleNoQuarter where
         heroes <- filter shares <$> (traverse getHero =<< select (HeroControlledBy $ PlayerWithId p))
         allies <- filter shares <$> (traverse getAlly =<< select (AllyControlledBy $ PlayerWithId p))
         attachments <- getsGame (filter (\a -> (toAttrs a).controller == p && shares a) . toList . entitiesAttachments . gameEntities)
-        for_ heroes (discard . toTarget)
-        for_ allies (discard . toTarget)
-        for_ attachments (discard . toTarget)
+        for_ heroes (discard attrs . toTarget)
+        for_ allies (discard attrs . toTarget)
+        for_ attachments (discard attrs . toTarget)
       pure q
     _ -> StormTheCastleNoQuarter <$> runStormTheCastle msg attrs
    where

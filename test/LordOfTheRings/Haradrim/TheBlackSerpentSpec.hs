@@ -111,7 +111,7 @@ spec = describe "The Black Serpent" do
     flipFirstQuest pid
     [o] <- objectives
     Just guardT <- encounterCardOf o
-    run $ Discard guardT
+    run $ Discard GameSource guardT
     chooseTarget pid =<< hero
     q <- toTarget <$> getActiveQuest
     run $ PlaceTokens GameSource q Progress 6
@@ -145,7 +145,7 @@ spec = describe "The Black Serpent" do
     getModifiers q >>= (`shouldSatisfy` elem CannotBeDefeated)
     run $ PlaceTokens GameSource q Progress 6
     progressOn q `shouldReturn` 6
-    run . Discard . EnemyTarget =<< enemyOf Enemies.southronArcher
+    run . Discard GameSource . EnemyTarget =<< enemyOf Enemies.southronArcher
     h <- hero
     chooseTarget pid h
     (.placement) <$> objectiveOf Objectives.theSerpentsGarb `shouldReturn` AttachedTo h
@@ -172,7 +172,7 @@ spec = describe "The Black Serpent" do
     banner <- objectiveOf Objectives.bannerOfTheSerpent
     isJust <$> encounterCardOf banner `shouldReturn` True
     getModifiers serpent >>= (`shouldSatisfy` notElem (EngagedWithEachPlayer (PlayerWithId pid)))
-    run . Discard . LocationTarget =<< locationOf Locations.southronCamp
+    run . Discard GameSource . LocationTarget =<< locationOf Locations.southronCamp
     chooseTarget pid =<< hero
     getModifiers serpent >>= (`shouldSatisfy` elem (EngagedWithEachPlayer (PlayerWithId pid)))
 
@@ -245,7 +245,7 @@ spec = describe "The Black Serpent" do
     _ <- setEncounterDeck [Locations.desertBastion]
     _ <- reveal Objectives.summonsFromMordor
     getModifiers (PlayerTarget pid) >>= (`shouldSatisfy` elem CannotReduceThreat)
-    run . Discard . LocationTarget =<< locationOf Locations.desertBastion
+    run . Discard GameSource . LocationTarget =<< locationOf Locations.desertBastion
     getModifiers (PlayerTarget pid) >>= (`shouldSatisfy` notElem CannotReduceThreat)
     h <- hero
     summons <- objectiveOf Objectives.summonsFromMordor

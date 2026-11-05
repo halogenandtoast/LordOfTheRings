@@ -107,7 +107,7 @@ runBlockedStage blocker msg attrs = case msg of
  where
   leaving = case msg of
     Destroy _ (EnemyTarget eid) -> Just eid
-    Discard (EnemyTarget eid) -> Just eid
+    Discard _ (EnemyTarget eid) -> Just eid
     ReturnToTopOfEncounterDeck (EnemyTarget eid) -> Just eid
     _ -> Nothing
 
@@ -131,7 +131,7 @@ runConditionalStage condition msg attrs = case msg of
   RescuePrisoner {} -> recheck
   RescueCharacter {} -> recheck
   AddToVictoryDisplay {} -> recheck
-  Discard (LocationTarget _) -> recheck
+  Discard _ (LocationTarget _) -> recheck
   _ -> runMessage msg attrs
  where
   recheck = do

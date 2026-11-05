@@ -22,7 +22,7 @@ instance RunMessage BitterCold where
         unless (null allies) $ chooseOneM pid do
           questionLabeled "bitterCold.choose"
           causedBy attrs
-          labeled "bitterCold.discard" $ traverse_ discard allies
+          labeled "bitterCold.discard" $ traverse_ (discard attrs) allies
           labeled "bitterCold.raise" $ encounterRaisesThreat pid (length allies)
       pure t
     ResolveShadowEffect cid eid pid _ | cid == attrs.cardId -> do

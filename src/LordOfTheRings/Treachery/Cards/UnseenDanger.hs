@@ -36,7 +36,7 @@ instance RunMessage UnseenDanger where
     DiscardedTopOfEncounterDeck (isSource attrs -> True) (PlayerTarget _) _ -> pure t
     DiscardedTopOfEncounterDeck (isSource attrs -> True) c cards -> do
       willpower <- getWillpower c
-      when (any ((> willpower) . fromMaybe 0 . cdThreat . toCardDef) cards) $ discard c
+      when (any ((> willpower) . fromMaybe 0 . cdThreat . toCardDef) cards) $ discard attrs c
       pure t
     ResolveShadowEffect cid eid _ _ | cid == attrs.cardId -> do
       e <- getEnemy eid

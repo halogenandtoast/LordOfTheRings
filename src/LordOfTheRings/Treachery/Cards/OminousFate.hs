@@ -37,7 +37,7 @@ instance RunMessage OminousFate where
         labeledWith "ominousFate.damage" [intVar "x" x] $ dealDamageDivided attrs pid x
       pure t
     -- once resolved and discarded, it may go to the victory display
-    Discard (isTarget attrs -> True) -> do
+    Discard _ (isTarget attrs -> True) -> do
       t' <- OminousFate <$> runMessage msg attrs
       lead <- getLead
       chooseOneM lead do

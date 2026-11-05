@@ -18,7 +18,7 @@ instance HasAbilities BornAloft where
 instance RunMessage BornAloft where
   runMessage msg s@(BornAloft a) = case msg of
     UseCardAbility _ (isSource a -> True) 1 _ -> do
-      discard a
+      discard a a
       withHost a returnToHand
       pure s
     _ -> BornAloft <$> runMessage msg a

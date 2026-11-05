@@ -50,7 +50,7 @@ instance RunMessage FightAtTheFords where
           putObjectiveIntoPlayAttached grima (LocationTarget lid)
       pure q
     UseCardAbility _ (isSource attrs -> True) 1 _ -> do
-      traverse_ discard =<< getGrima
+      traverse_ (discard attrs) =<< getGrima
       pure q
     PutObjectiveAllyIntoPlay {} -> recheck
     TakeControl {} -> recheck

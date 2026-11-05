@@ -90,7 +90,7 @@ spec = describe "Defenders of Gondor" do
     i <- hero imrahil
     run $ Exhaust i
     ally' <- putAllyIntoPlay pid Allies.defenderOfRammas
-    run $ Discard ally'
+    run $ Discard GameSource ally'
     chooseAbilityOf pid i
     exhausted i `shouldReturn` False
 
@@ -140,7 +140,7 @@ spec = describe "Defenders of Gondor" do
 
   it "Squire of the Citadel adds a resource to a Gondor hero as it leaves play" . dogTest $ \pid -> do
     squire <- putAllyIntoPlay pid Allies.squireOfTheCitadel
-    run $ Discard squire
+    run $ Discard GameSource squire
     chooseAbilityOf pid squire
     chooseTarget pid =<< hero boromir
     resources boromir `shouldReturn` 1

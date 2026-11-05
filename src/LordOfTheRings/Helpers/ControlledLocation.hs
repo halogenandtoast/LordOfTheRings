@@ -50,7 +50,7 @@ firstPlayerTakesControl
   :: (HasGame m, MonadRandom m, Frontend m, HasQueue Message m) => LocationId -> QueueT Message m ()
 firstPlayerTakesControl lid = do
   cancelMatching \case
-    Discard (LocationTarget l) -> l == lid
+    Discard _ (LocationTarget l) -> l == lid
     AddToVictoryDisplay (LocationTarget l) -> l == lid
     _ -> False
   lead <- getLead
@@ -95,7 +95,7 @@ location reads the message itself.
 losesControlOfAnother :: HasGame m => LocationAttrs -> Message -> m Bool
 losesControlOfAnother a = \case
   PlaceLocation lid placement | lid /= a.id, controlled -> (\l -> l.placement == a.placement && placement /= a.placement) <$> getLocation lid
-  Discard (LocationTarget lid) | lid /= a.id, controlled -> (== a.placement) . (.placement) <$> getLocation lid
+  Discard _ (LocationTarget lid) | lid /= a.id, controlled -> (== a.placement) . (.placement) <$> getLocation lid
   _ -> pure False
  where
   controlled = case a.placement of

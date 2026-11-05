@@ -38,7 +38,7 @@ instance RunMessage Possession where
           eid <- reanimate card
           whileInPlay (EnemyTarget eid) $ attachTreachery attrs.treacheryId (EnemyTarget eid)
       pure t
-    Discard (TreacheryTarget tid) | tid == attrs.id, AttachedTo host <- attrs.placement -> do
-      whileInPlay host $ discard host
+    Discard _ (TreacheryTarget tid) | tid == attrs.id, AttachedTo host <- attrs.placement -> do
+      whileInPlay host $ discard attrs host
       Possession <$> runMessage msg attrs
     _ -> Possession <$> runMessage msg attrs

@@ -94,7 +94,7 @@ spec = describe "Campaign mode" do
     it "is lost if Mendor leaves play" . campaignTestIn passageThroughMirkwood seated starterDeck $ \_ -> do
       run $ DoStep 4 Setup
       mendor <- fromJustNote "no Mendor" . headMay <$> mendors
-      run $ Discard (toTarget mendor.id)
+      run $ Discard GameSource (toTarget mendor.id)
       getsGame (.outcome) `shouldReturn` Just Lost
 
     it "earns Mendor's Support and the burden of the path taken" . campaignTestIn passageThroughMirkwood seated starterDeck $ \_ -> do
@@ -115,7 +115,7 @@ spec = describe "Campaign mode" do
 
     it "records a hero in its owner's discard pile as fallen, and scores the game" . campaignTestIn passageThroughMirkwood seated starterDeck $ \pid -> do
       gloin <- getHeroWithCode "01003"
-      run $ Discard (toTarget gloin.id)
+      run $ Discard GameSource (toTarget gloin.id)
       threat <- (.threat) <$> getPlayer pid
       run $ GameOver Won
       l <- getCampaignLog

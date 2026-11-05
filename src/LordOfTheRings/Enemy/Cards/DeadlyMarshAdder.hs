@@ -27,7 +27,7 @@ instance RunMessage DeadlyMarshAdder where
         chooseOrRunOneM pid do
           questionLabeled "deadlyMarshAdder.discard"
           causedBy attrs
-          targets damaged discard
+          targets damaged (discard attrs)
       pure e
     UseCardAbility _ (isSource attrs -> True) 2 _ -> do
       placeEnemy attrs.id StagingArea

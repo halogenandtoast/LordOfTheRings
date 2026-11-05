@@ -213,8 +213,8 @@ spec = describe "Flight to the Ford" do
       _ <- locationOf Locations.fordOfBruinen
       wk <- enemyOf Enemies.theWitchKing
       getModifiers (toTarget q) >>= (`shouldSatisfy` elem (QuestPointModifier 15))
-      run $ Discard (EnemyTarget wk)
-      for_ [Enemies.fellRider] \_ -> enemyOf Enemies.fellRider >>= run . Discard . EnemyTarget
+      run $ Discard GameSource (EnemyTarget wk)
+      for_ [Enemies.fellRider] \_ -> enemyOf Enemies.fellRider >>= run . Discard GameSource . EnemyTarget
       getModifiers (toTarget q) >>= (`shouldSatisfy` notElem (QuestPointModifier 15))
       run $ PlaceTokens GameSource (toTarget q) Progress 15
       getsGame (.outcome) `shouldReturn` Just Won
@@ -258,7 +258,7 @@ spec = describe "Flight to the Ford" do
       _ <- putQuestStage Quests.raceToRivendell
       q <- getActiveQuest
       run $ Flip (toTarget q)
-      for_ [Enemies.theWitchKing, Enemies.fellRider] \d -> enemyOf d >>= run . Discard . EnemyTarget
+      for_ [Enemies.theWitchKing, Enemies.fellRider] \d -> enemyOf d >>= run . Discard GameSource . EnemyTarget
       run $ PlaceTokens GameSource (toTarget q) Progress 15
       getsGame (.outcome) `shouldReturn` Just Won
       l <- getCampaignLog

@@ -110,7 +110,7 @@ instance RunMessage ConflictAtTheCarrock where
       lead <- getLead
       when (troll && notNull sacked) $ chooseOneM lead do
         questionLabeled "conflictAtTheCarrock.discardSacked"
-        targets sacked discard
+        targets sacked (discard attrs)
         labeled "pass" $ pure ()
       ConflictAtTheCarrock <$> runMessage msg attrs
     _ -> ConflictAtTheCarrock <$> runMessage msg attrs

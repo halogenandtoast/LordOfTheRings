@@ -31,7 +31,7 @@ instance RunMessage DefenderOfTheWest where
     SetFirstPlayer pid | AttachedTo (AllyTarget ally) <- a.placement -> do
       takeControl ally pid
       DefenderOfTheWest <$> runMessage msg a
-    Discard (isTarget a -> True) | AttachedTo (AllyTarget ally) <- a.placement -> do
+    Discard _ (isTarget a -> True) | AttachedTo (AllyTarget ally) <- a.placement -> do
       owner <- allyOwner . toAttrs <$> getAlly ally
       takeControl ally owner
       DefenderOfTheWest <$> runMessage msg a

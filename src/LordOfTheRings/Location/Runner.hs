@@ -73,7 +73,7 @@ instance RunMessage LocationAttrs where
           mireTokens = countTokens Resource . locationTokens
       for_ (take 1 mire) \x ->
         when (token == Resource && mireTokens attrs < x && mireTokens attrs' >= x)
-          $ pushAll [CheckWindows [mkWhen $ DiscardedByMire attrs.id], Discard (toTarget attrs)]
+          $ pushAll [CheckWindows [mkWhen $ DiscardedByMire attrs.id], Discard (toSource attrs) (toTarget attrs)]
       -- who placed it, as Haunted Hall reads "a player places any amount of progress"
       when (token == Progress && n > 0) $ push $ CheckWindows [mkAfter $ ProgressPlacedOnLocationBy source attrs.id]
       -- a location with as much progress as its quest points is explored, but one on the
@@ -84,7 +84,7 @@ instance RunMessage LocationAttrs where
           , -- a location with victory points goes to the victory display
             if isJust (cdVictoryPoints $ toCardDef attrs)
               then AddToVictoryDisplay (toTarget attrs)
-              else Discard (toTarget attrs)
+              else Discard (toSource attrs) (toTarget attrs)
           , -- after it is explored, as Idraen answers; whether it was the active location,
             -- and its card, are told now, as it is gone by then
             CheckWindows $ map mkAfter (explored <> [ExploredCard (toCard attrs)])

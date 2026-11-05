@@ -61,7 +61,7 @@ spec = describe "The Hobbit player cards" do
   describe "Bilbo Baggins (Over Hill and Under Hill)" do
     let bilbo = code Heroes.bilboBagginsOverHillAndUnderHill
     it "loses the game as he leaves play" . gameTestWith (with [Heroes.bilboBagginsOverHillAndUnderHill]) $ \_ -> do
-      run . Discard =<< hero bilbo
+      run . Discard GameSource =<< hero bilbo
       getsGame (.outcome) `shouldReturn` Just Lost
 
     it "gains no resources from player card effects" . gameTestWith (with [Heroes.bilboBagginsOverHillAndUnderHill, Heroes.thorinOakenshield]) $ \pid -> do
@@ -135,7 +135,7 @@ spec = describe "The Hobbit player cards" do
       chooseTarget one (CardIdTarget card.id)
       chooseTarget one (toTarget lent)
       getHeroWithCode (toCardCode lent) >>= \h -> (h.owner, h.resources) `shouldBe` (two, 2)
-      for_ [h | h <- heroes, h.id /= lent.id] (run . Discard . toTarget)
+      for_ [h | h <- heroes, h.id /= lent.id] (run . Discard GameSource . toTarget)
       run CheckEliminations
       (.eliminated) <$> getPlayer one `shouldReturn` False
       passActions one

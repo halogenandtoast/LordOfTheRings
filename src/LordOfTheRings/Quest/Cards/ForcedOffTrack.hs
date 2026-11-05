@@ -32,6 +32,6 @@ instance RunMessage ForcedOffTrack where
       chooseOrRunOneM lead do
         questionLabeled "forcedOffTrack.discard"
         causedBy attrs
-        targets wargs discard
+        targets wargs (discard attrs)
       ForcedOffTrack <$> runMessage msg attrs
     _ -> ForcedOffTrack <$> runMessage msg attrs

@@ -26,7 +26,7 @@ instance RunMessage CurseOfTheYears where
       eachPlayer \p -> do
         threat <- (.threat) <$> getPlayer p
         when (threat >= 35)
-          $ for_ [a | a <- attachments, (toAttrs a).controller == p, attachmentExhausted (toAttrs a)] discard
+          $ for_ [a | a <- attachments, (toAttrs a).controller == p, attachmentExhausted (toAttrs a)] (discard attrs)
       pure t
     ResolveShadowEffect cid eid pid _ | cid == attrs.cardId -> do
       clue <- controlsClue pid

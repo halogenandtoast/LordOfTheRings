@@ -32,7 +32,7 @@ spec = describe "Journey Along the Anduin" do
     run $ PlaceTokens GameSource quest Progress 20
     toCardCode <$> getActiveQuest `shouldReturn` toCardCode Quests.toTheRiver
     [troll] <- enemiesWith Enemies.hillTroll
-    run $ Discard (toTarget troll)
+    run $ Discard GameSource (toTarget troll)
     toCardCode <$> getActiveQuest `shouldReturn` toCardCode Quests.anduinPassage
 
   it "reveals an extra card in staging and makes no engagement checks at Anduin Passage" . journeyTest $ \pid -> do

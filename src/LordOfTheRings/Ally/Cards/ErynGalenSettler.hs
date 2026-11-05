@@ -26,10 +26,10 @@ instance RunMessage ErynGalenSettler where
   runMessage msg s@(ErynGalenSettler a) = case msg of
     UseCardAbility pid (isSource a -> True) 1 _ -> do
       locations <- select sameTitle
-      discard a
+      discard a a
       chooseOrRunOneM pid do
         questionLabeled "chooseLocation"
         causedBy a
-        targets locations discard
+        targets locations (discard a)
       pure s
     _ -> ErynGalenSettler <$> runMessage msg a

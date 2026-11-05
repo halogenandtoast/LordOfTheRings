@@ -32,9 +32,9 @@ instance RunMessage FateOfTheDreamChaser where
         damage <- sum <$> traverse (getDamage . toTarget) ships
         others <- selectCharacters (HeroControlledBy $ PlayerWithId p) (AllyControlledBy (PlayerWithId p) <> not_ (AllyWithTrait Ship))
         when (damage > 0 && notNull others) $ dealDamageDividedAmong attrs p others damage
-      traverse_ discard =<< select shipEnemy
-      traverse_ discard =<< select shipObjective
-      traverse_ discard =<< select (LocationWithTrait Ocean)
+      traverse_ (discard attrs) =<< select shipEnemy
+      traverse_ (discard attrs) =<< select shipObjective
+      traverse_ (discard attrs) =<< select (LocationWithTrait Ocean)
       switchEncounterDeck
       completeQuest attrs.id
       pure q

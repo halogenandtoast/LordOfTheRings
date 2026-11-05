@@ -188,7 +188,7 @@ spec = describe "Combat phase" do
       $ Run
         [ ResolveShadow eid pid [eowyn]
         , AttackDamage eid eowyn
-        , Discard (EnemyTarget eid)
+        , Discard GameSource (EnemyTarget eid)
         , CheckWindows [mkAfter $ EnemyAttacking eid pid]
         ]
     getsGame (length . (.entities.heroes)) `shouldReturn` 2

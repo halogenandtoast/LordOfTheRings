@@ -23,6 +23,6 @@ instance RunMessage RiddermarkKnight where
       pure $ RiddermarkKnight a
     StopAttacking (isTarget a -> True) -> do
       leaves <- elem DiscardAfterAttack <$> getModifiers a
-      when leaves $ discard a
+      when leaves $ discard a a
       RiddermarkKnight <$> runMessage msg a
     _ -> RiddermarkKnight <$> runMessage msg a

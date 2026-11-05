@@ -184,7 +184,7 @@ spec = describe "The Battle of Five Armies" do
       progressStage pid Quests.theEasternSpur 1
       progressStage pid Quests.theDefenseOfRavenhill 1
       eid <- stage Enemies.gundabadClimber
-      run $ Discard (EnemyTarget eid)
+      run $ Discard GameSource (EnemyTarget eid)
       run $ CheckWindows [mkAfter RoundEnds]
       enemyCodes `shouldReturn` [toCardCode Enemies.gundabadClimber]
 

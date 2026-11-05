@@ -25,7 +25,7 @@ instance RunMessage PowerOfOrthanc where
         chooseOneM p do
           questionLabeled "powerOfOrthanc.discard"
           causedBy attrs
-          targets conditions discard
+          targets conditions (discard attrs)
           labeled "pass" (pure ())
         doStep (n + 1) inner
       pure e

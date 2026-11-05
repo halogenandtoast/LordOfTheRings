@@ -90,7 +90,7 @@ spec = describe "Intruders in Chetwood" do
   it "loses the game as Iârion leaves play" . chetwoodTest $ \pid -> do
     setup pid
     i <- iarion
-    run $ Discard (AllyTarget i)
+    run $ Discard GameSource (AllyTarget i)
     outcome `shouldReturn` Just Lost
 
   it "keeps the enemies from engagement checks, and raises threat for each staged enemy at the end of the refresh phase" . chetwoodTest $ \pid -> do
@@ -108,12 +108,12 @@ spec = describe "Intruders in Chetwood" do
     outcome `shouldReturn` Nothing
     party <- enemyOf Enemies.orcWarParty
     getModifiers (EnemyTarget party) >>= (`shouldSatisfy` elem CannotTakeDamage)
-    run $ Discard (EnemyTarget party)
+    run $ Discard GameSource (EnemyTarget party)
     outcome `shouldReturn` Just Won
 
   it "is not won while Iârion is underneath Rescue Iârion, and is once he is rescued" . chetwoodTest $ \pid -> do
     setup pid
-    run . Discard . EnemyTarget =<< enemyOf Enemies.orcWarParty
+    run . Discard GameSource . EnemyTarget =<< enemyOf Enemies.orcWarParty
     reveal [Quests.rescueIarion]
     i <- iarion
     rescue <- questOf Quests.rescueIarion

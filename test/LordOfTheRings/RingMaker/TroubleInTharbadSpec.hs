@@ -140,7 +140,7 @@ spec = describe "Trouble in Tharbad" do
   it "keeps time counters on the quest while Tharbad Hideout is active" . tharbadTest $ \pid -> do
     flipFirstQuest pid
     mug <- locationOf Locations.theEmptyMug
-    run $ Discard (toTarget mug)
+    run $ Discard GameSource (toTarget mug)
     hideout <- stagedLocation Locations.tharbadHideout
     run $ TravelTo hideout
     q <- toTarget <$> getActiveQuest
@@ -156,7 +156,7 @@ spec = describe "Trouble in Tharbad" do
   it "raises threat by the enemies in play to travel to Hidden Alleyway, then adds a time counter" . tharbadTest $ \pid -> do
     flipFirstQuest pid
     mug <- locationOf Locations.theEmptyMug
-    run $ Discard (toTarget mug)
+    run $ Discard GameSource (toTarget mug)
     alley <- stagedLocation Locations.hiddenAlleyway
     threat <- threatOf pid
     run $ TravelTo alley
@@ -243,11 +243,11 @@ spec = describe "Trouble in Tharbad" do
     toEscape pid
     threat <- threatOf pid
     eowyn <- getHeroWithCode "01007"
-    run $ Discard (toTarget eowyn)
+    run $ Discard GameSource (toTarget eowyn)
     threatOf pid `shouldReturn` threat + 2
 
   it "loses the game as Nalir leaves play" . tharbadTest $ \pid -> do
     flipFirstQuest pid
     n <- nalir
-    run $ Discard (toTarget n)
+    run $ Discard GameSource (toTarget n)
     outcome `shouldReturn` Just Lost

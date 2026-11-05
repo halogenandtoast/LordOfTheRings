@@ -10,7 +10,7 @@ import LordOfTheRings.Matcher
 import LordOfTheRings.Message.Lifted
 import LordOfTheRings.Name (Name (..))
 import LordOfTheRings.Prelude
-import LordOfTheRings.Source (Sourceable)
+import LordOfTheRings.Source (Source (ScenarioSource), Sourceable)
 import LordOfTheRings.Target (Targetable)
 
 {- | "Discard cards from the top of the encounter deck until an enemy is discarded": what
@@ -34,5 +34,5 @@ resolveOrcsFight cards = for_ (find (cardMatches $ CardWithType EnemyType) cards
       lead <- getLead
       chooseOrRunOneM lead do
         questionLabeled "orcsFight.discardCopy"
-        targets copies discard
+        targets copies (discard ScenarioSource)
 

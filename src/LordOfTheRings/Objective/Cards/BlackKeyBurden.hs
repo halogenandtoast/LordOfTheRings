@@ -45,7 +45,7 @@ instance RunMessage BlackKeyBurden where
       for_ sahirs \e -> placeResources a e players
       for_ allies \al -> placeResources a al players
       pure s
-    Discard (isTarget a -> True) -> do
+    Discard _ (isTarget a -> True) -> do
       s' <- BlackKeyBurden <$> runMessage msg a
       removeFromEncounterDiscard (MkEncounterCard a.cardId (toCardCode a))
       pure s'

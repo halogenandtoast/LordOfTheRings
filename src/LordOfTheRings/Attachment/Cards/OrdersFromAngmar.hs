@@ -34,6 +34,6 @@ instance RunMessage OrdersFromAngmar where
       chooseOrRunOneM pid do
         questionLabeled "ordersFromAngmar.discard"
         causedBy a
-        targets weak discard
+        targets weak (discard a)
       pure s
     _ -> OrdersFromAngmar <$> runMessage msg a

@@ -33,7 +33,7 @@ instance RunMessage CapturedCirithGurat where
     DoStep 1 (WhenRevealed (isTarget attrs -> True)) -> do
       captives <- charactersGuardedBy attrs.cardId
       when (null captives) do
-        discard attrs
+        discard attrs attrs
         revealEncounterCard
       pure q
     CompleteQuest qid | qid == attrs.id -> do

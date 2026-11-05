@@ -23,7 +23,7 @@ instance RunMessage DunedainPathfinder where
       top <- getTopOfEncounterDeckN 5
       let locations = filter (cardMatches $ CardWithType LocationType <> NotCard UniqueCard) top
       if null locations
-        then discard a
+        then discard a a
         else chooseOrRunOneM pid do
           questionLabeled "chooseLocation"
           causedBy a

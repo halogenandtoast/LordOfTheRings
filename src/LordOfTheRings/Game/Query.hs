@@ -71,7 +71,7 @@ import LordOfTheRings.Placement (Placement (AttachedTo))
 import LordOfTheRings.Player.Runner (Player)
 import LordOfTheRings.Prelude hiding (first, many)
 import LordOfTheRings.Question (targetLabel)
-import LordOfTheRings.Source (Source (PlayerAttackSource))
+import LordOfTheRings.Source (Source (GameSource, PlayerAttackSource))
 import LordOfTheRings.Target (
   Target (
     AllyTarget,
@@ -91,8 +91,8 @@ import LordOfTheRings.Game.Cards (freeGuarded)
 
 discardAttachedToQuest :: Game -> QuestId -> [Message]
 discardAttachedToQuest g qid =
-  [Discard (toTarget t) | t <- toList g.entities.treacheries, t.placement == AttachedTo (QuestTarget qid)]
-    <> [Discard (toTarget a) | a <- toList g.entities.attachments, a.placement == AttachedTo (QuestTarget qid)]
+  [Discard GameSource (toTarget t) | t <- toList g.entities.treacheries, t.placement == AttachedTo (QuestTarget qid)]
+    <> [Discard GameSource (toTarget a) | a <- toList g.entities.attachments, a.placement == AttachedTo (QuestTarget qid)]
     <> freeGuarded g (QuestTarget qid)
 
 -- | What was attached to, or lasting on, a character is on the one it became.

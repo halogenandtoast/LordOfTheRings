@@ -36,13 +36,13 @@ instance RunMessage TorrentOfHail where
       attachments <- getAttachmentsControlledBy pid
       let source = CardIdSource cid
       if
-        | length attachments <= n -> for_ attachments discard
+        | length attachments <= n -> for_ attachments (discard attrs)
         | n == 1 -> chooseAndDiscard source pid attachments
         | otherwise -> chooseOneM pid do
           questionLabeled "torrentOfHail.discard"
           causedBy attrs
           targets attachments \x -> do
-            discard x
+            discard attrs x
             chooseAndDiscard source pid (filter (/= x) attachments)
       pure t
     _ -> TorrentOfHail <$> runMessage msg attrs

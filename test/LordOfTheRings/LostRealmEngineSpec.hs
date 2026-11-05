@@ -116,7 +116,7 @@ spec = describe "The Lost Realm engine" do
 
     it "can be discarded or removed from the game" . gameTest $ \_ -> do
       (_, side) <- withSideQuest
-      run $ Discard side
+      run $ Discard GameSource side
       getSideQuests `shouldReturn` []
       map toCardCode <$> getEncounterDiscard `shouldReturn` [toCardCode Quests.searchTheRuins]
 

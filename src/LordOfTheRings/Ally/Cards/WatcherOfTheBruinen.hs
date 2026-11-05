@@ -27,7 +27,7 @@ instance RunMessage WatcherOfTheBruinen where
       chooseOrRunOneM pid do
         questionLabeled "discardItOrFromHand"
         causedBy a
-        labeled "discardItFromPlay" $ discard a
+        labeled "discardItFromPlay" $ discard a a
         unless (null hand) $ labeled "discardOneFromHand" $ chooseAndDiscardFromHand pid a 1
       pure s
     _ -> WatcherOfTheBruinen <$> runMessage msg a

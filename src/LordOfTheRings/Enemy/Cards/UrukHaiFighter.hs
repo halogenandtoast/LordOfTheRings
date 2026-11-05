@@ -23,6 +23,6 @@ instance RunMessage UrukHaiFighter where
       returnToStagingAfterAttack attrs.id
       pure e
     ResolveShadowEffect cid _ pid _ | cid == attrs.cardId -> do
-      discardNonObjectiveAttachment (CardIdTarget cid) pid
+      discardNonObjectiveAttachment attrs pid
       pure e
     _ -> UrukHaiFighter <$> runMessage msg attrs

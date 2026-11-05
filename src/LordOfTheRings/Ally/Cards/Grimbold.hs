@@ -26,7 +26,7 @@ instance HasAbilities Grimbold where
 instance RunMessage Grimbold where
   runMessage msg s@(Grimbold a) = case msg of
     UseCardAbility pid (isSource a -> True) 1 _ -> do
-      discard a
+      discard a a
       enemies <- select engaged
       chooseOrRunOneM pid do
         questionLabeled "grimbold.chooseEnemy"

@@ -24,7 +24,7 @@ instance RunMessage Mendor where
       ready a
       eachPlayer \pid -> drawCards a pid 1
       pure s
-    Discard (isTarget a -> True) -> do
+    Discard _ (isTarget a -> True) -> do
       gameOver Lost
       pure s
     _ -> Mendor <$> runMessage msg a

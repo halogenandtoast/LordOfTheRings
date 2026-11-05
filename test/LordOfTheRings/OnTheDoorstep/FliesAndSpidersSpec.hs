@@ -492,7 +492,7 @@ spec = describe "Flies and Spiders" do
       locationCodes `shouldReturn` [toCardCode Locations.theSpidersGlade]
       getModifiers q >>= (`shouldSatisfy` elem (ProgressLimit 0))
       glade <- locationOf Locations.theSpidersGlade
-      run $ Discard (LocationTarget glade)
+      run $ Discard GameSource (LocationTarget glade)
       run $ PlaceTokens GameSource q Progress 3
       getsGame (.outcome) `shouldReturn` Just Won
 

@@ -20,7 +20,7 @@ instance HasAbilities MinasTirithLampwright where
 instance RunMessage MinasTirithLampwright where
   runMessage msg s@(MinasTirithLampwright a) = case msg of
     UseCardAbility pid (isSource a -> True) 1 _ -> do
-      discard a
+      discard a a
       -- the effect waits for the next card however long it takes, spent as it is
       -- revealed; the surge that triggered it reveals that card at once
       let name t = createEffect a GameTarget [DiscardNextRevealed t] UntilSpent

@@ -26,7 +26,7 @@ instance RunMessage ForbiddenDescent where
     _ -> ForbiddenDescent <$> runMessage msg a
    where
     leaves = \case
-      Discard t -> isTarget a t
+      Discard _ t -> isTarget a t
       AddToVictoryDisplay t -> isTarget a t
       RemoveFromGame t -> isTarget a t
       ShuffleIntoEncounterDeck t -> isTarget a t

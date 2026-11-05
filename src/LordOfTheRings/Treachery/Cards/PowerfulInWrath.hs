@@ -23,7 +23,7 @@ instance RunMessage PowerfulInWrath where
     WhenRevealed (isTarget attrs -> True) -> do
       active <- select IsActiveLocation
       x <- sum <$> traverse getLocationThreat active
-      for_ active discard
+      for_ active (discard attrs)
       damageHrogarsHill attrs x
       when (x <= 0) revealEncounterCard
       pure t

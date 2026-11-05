@@ -78,7 +78,7 @@ spec = describe "Peril in Pelargir" do
     run $ EngageEnemy pid thug
     run $ DealDamage (EnemyAttackSource thug) beravor 1
     placementOf Objectives.alcaronsScroll `shouldReturn` Just (AttachedTo $ toTarget thug)
-    run $ Discard (toTarget thug)
+    run $ Discard GameSource (toTarget thug)
     placementOf Objectives.alcaronsScroll `shouldReturn` Just StagingArea
 
   it "is attached to a hero from the staging area by exhausting it" . pelargirTest $ \pid -> do
@@ -147,7 +147,7 @@ spec = describe "Peril in Pelargir" do
     getModifiers GameTarget >>= (`shouldSatisfy` elem (CannotBeOptionallyEngagedBy AnyPlayer))
     run $ PlaceTokens GameSource quest Progress 15
     getsGame (.outcome) `shouldReturn` Nothing
-    run $ Discard (toTarget thug)
+    run $ Discard GameSource (toTarget thug)
     oid <- getsGame (fromJustNote "no scroll" . fmap toId . headMay . toList . (.entities.objectives))
     run . ClaimObjective oid . toTarget =<< getHeroWithCode "01012"
     getsGame (.outcome) `shouldReturn` Just Won

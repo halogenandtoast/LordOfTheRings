@@ -31,6 +31,6 @@ instance RunMessage WestfoldLancer where
         causedBy a
         targets enemies \e -> dealDamage a e 2
       -- the discard is the cost, but what it leads to waits for the effect
-      discard a
+      discard a a
       pure s
     _ -> WestfoldLancer <$> runMessage msg a

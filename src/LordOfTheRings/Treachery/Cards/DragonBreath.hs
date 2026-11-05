@@ -37,6 +37,6 @@ instance RunMessage DragonBreath where
       for_ [p | Window _ (EnemyAttacking _ p) <- ws] \p -> do
         characters <- charactersControlledBy p
         for_ characters \c -> dealDamage attrs c 1
-      discard attrs
+      discard attrs attrs
       pure t
     _ -> DragonBreath <$> runMessage msg attrs

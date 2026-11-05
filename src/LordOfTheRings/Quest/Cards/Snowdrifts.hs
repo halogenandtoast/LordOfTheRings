@@ -38,7 +38,7 @@ instance RunMessage Snowdrifts where
       | attrs.questPoints > 0 && attrs.progress < attrs.questPoints && attrs.progress + n >= attrs.questPoints -> do
           caradhras <- select (LocationWithCardCode $ toCardCode Locations.caradhras)
           active <- select IsActiveLocation
-          for_ (filter (`notElem` caradhras) active) discard
+          for_ (filter (`notElem` caradhras) active) (discard attrs)
           for_ caradhras makeActive
           -- explored already, it comes back from the victory display (FAQ 2.31)
           when (null caradhras) do

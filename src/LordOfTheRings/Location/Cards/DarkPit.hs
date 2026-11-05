@@ -48,6 +48,7 @@ instance RunMessage DarkPit where
       pure l
     _ -> DarkPit <$> runMessage msg attrs
    where
+    discardFor :: ReverseQueue n => PlayerId -> Int -> n ()
     discardFor pid x = do
       deck <- (.deck) <$> getPlayer pid
       -- a card with no printed number (X) costs 0
@@ -60,5 +61,5 @@ instance RunMessage DarkPit where
       for_ bane \eid -> do
         left <- durinsBaneHitPointsLeft eid
         when (total > left) do
-          discard eid
+          discard attrs eid
           winGame

@@ -13,7 +13,7 @@ import LordOfTheRings.Trait (Trait (Upgraded))
 -- owner's discard pile.
 removedAsItLeaves :: Message -> AttachmentAttrs -> QueueT Message GameT AttachmentAttrs
 removedAsItLeaves msg a = case msg of
-  Discard (isTarget a -> True) -> do
+  Discard _ (isTarget a -> True) -> do
     a' <- runMessage msg a
     removeFromDiscard a.owner a.cardId
     pure a'

@@ -297,13 +297,15 @@ shuffle the deck.
 searchEncounterDeckToStaging :: ReverseQueue m => PlayerId -> CardMatcher -> m ()
 searchEncounterDeckToStaging pid matcher = push $ Search pid EncounterDeck matcher ToStaging Shuffle
 
-{- | A card effect discards the card from play. An ally so discarded opens a window once it
-is gone, with its traits as it left, as Éothain answers; one destroyed by damage is
-discarded by the game, not this.
+{- | The source's effect discards the card from play. An ally so discarded opens a window
+once it is gone, with its traits as it left, as Éothain answers; one destroyed by damage
+is discarded by the game, not this. The source is the card whose effect it is, as Arkham's
+'toDiscard' carries it: what an encounter card's effect cannot discard, as Mount
+Gundabad's unique locations, it does not.
 -}
-discard :: (ReverseQueue m, Targetable target) => target -> m ()
-discard (toTarget -> t) = unlessM (onlyMasterCardsAffect t) do
-  push $ Discard t
+discard :: (ReverseQueue m, Sourceable source, Targetable target) => source -> target -> m ()
+discard (toSource -> source) (toTarget -> t) = unlessM (onlyMasterCardsAffect t) do
+  push $ Discard source t
   case t of
     AllyTarget aid -> do
       present <- selectAny (AllyWithId aid)
@@ -374,7 +376,7 @@ Battle of the Pelennor Fields", fantasyflightgames.com news, 29 June 2016).
 leavesPlay :: Targetable target => target -> Message -> Bool
 leavesPlay (toTarget -> t) = \case
   Destroy _ t'@(EnemyTarget _) -> t' == t
-  Discard t' -> t' == t
+  Discard _ t' -> t' == t
   AddToVictoryDisplay t' -> t' == t
   ShuffleIntoEncounterDeck t' -> t' == t
   ReturnToTopOfEncounterDeck t' -> t' == t
@@ -853,7 +855,7 @@ putEnemyIntoPlayEngagedFromDiscard pid card = do
 {- | The player pays 1 resource of the sphere or discards the card; with nothing to pay,
 the card is discarded.
 -}
-payOrDiscard :: (ReverseQueue m, Targetable target) => PlayerId -> target -> Sphere -> m ()
+payOrDiscard :: (ReverseQueue m, Targetable target, Sourceable target) => PlayerId -> target -> Sphere -> m ()
 payOrDiscard pid card sphere = do
   able <- (> 0) <$> getResourcesOfSphere pid sphere
   if able
@@ -861,8 +863,8 @@ payOrDiscard pid card sphere = do
       questionLabeled "payOrDiscard"
       causedBy card
       labeled "payResource" $ spendResources pid sphere 1
-      labeled "discardIt" $ discard card
-    else discard card
+      labeled "discardIt" $ discard card card
+    else discard card card
 
 -- | Reveal the next encounter card once the card's revelation, its keywords too, has resolved.
 revealEncounterCardAfter :: (MonadTrans t, HasQueue Message m) => Target -> t m ()
@@ -913,17 +915,17 @@ ifThisAttackDestroys eid shadow = afterAttack eid [IfAttackDestroyed eid [DoStep
 
 -- | The player discards a non-objective attachment he controls, as Spies from Mordor's
 -- shadow reads.
-discardNonObjectiveAttachment :: (ReverseQueue m, Targetable source) => source -> PlayerId -> m ()
+discardNonObjectiveAttachment :: (ReverseQueue m, Targetable source, Sourceable source) => source -> PlayerId -> m ()
 discardNonObjectiveAttachment source pid = do
   attachments <- filter (\case ObjectiveTarget _ -> False; _ -> True) <$> getAttachmentsControlledBy pid
   chooseOrRunOneM pid do
     questionLabeled "discardNonObjectiveAttachment"
     causedBy source
-    targets attachments discard
+    targets attachments (discard source)
 
 -- | The player discards the highest cost attachment he controls, picking among those tied,
 -- as Western Quarter and Raiding the Coasts read.
-discardHighestCostAttachment :: (ReverseQueue m, Targetable source) => source -> PlayerId -> m ()
+discardHighestCostAttachment :: (ReverseQueue m, Targetable source, Sourceable source) => source -> PlayerId -> m ()
 discardHighestCostAttachment source pid = do
   attachments <- getsGame (filter ((== pid) . (.controller) . toAttrs) . toList . (.attachments) . gameEntities)
   let cost x = case cdCost (toCardDef x) of
@@ -933,7 +935,7 @@ discardHighestCostAttachment source pid = do
   chooseOrRunOneM pid do
     questionLabeled "discardHighestCostAttachment"
     causedBy source
-    targets [toId x | x <- attachments, cost x == highest] discard
+    targets [toId x | x <- attachments, cost x == highest] (discard source)
 
 {- | "If this attack destroys a character", of an attack the card has the enemy make now, as
 Vigilant Orc's immediate attack reads: 'DoStep' 1 of the message, once that attack is over,
@@ -2138,19 +2140,19 @@ makeEngagementChecksWith effects = do
 as "remove that card from the game" reads of the card behind an effect.
 -}
 removeSourceCardFromGame :: ReverseQueue m => Source -> m ()
-removeSourceCardFromGame = \case
+removeSourceCardFromGame source = case source of
   AbilitySource s _ -> removeSourceCardFromGame s
   AllySource aid -> do
     a <- getAlly aid
-    discard aid
+    discard source aid
     removeFromDiscard a.owner (allyCardId $ toAttrs a)
   HeroSource hid -> do
     h <- getHero hid
-    discard hid
+    discard source hid
     removeFromDiscard h.owner (heroCardId $ toAttrs h)
   AttachmentSource aid ->
     getsGame (lookup aid . (.entities.attachments)) >>= traverse_ \a -> do
-      discard aid
+      discard source aid
       removeFromDiscard (toAttrs a).owner (toAttrs a).cardId
   -- an event, in its owner's discard pile once played
   CardIdSource cid -> eachPlayer \p -> removeFromDiscard p cid

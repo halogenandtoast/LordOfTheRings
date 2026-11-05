@@ -20,7 +20,7 @@ instance HasAbilities Cram where
 instance RunMessage Cram where
   runMessage msg s@(Cram a) = case msg of
     UseCardAbility _ (isSource a -> True) 1 _ -> do
-      discard a
+      discard a a
       withHost a ready
       pure s
     _ -> Cram <$> runMessage msg a

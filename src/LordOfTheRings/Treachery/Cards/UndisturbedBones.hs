@@ -25,7 +25,7 @@ instance RunMessage UndisturbedBones where
       pure t
     ResolveShadowEffect cid _ _ defenders | cid == attrs.cardId -> do
       for_ defenders \case
-        d@(AllyTarget _) -> discard d
+        d@(AllyTarget _) -> discard attrs d
         _ -> pure ()
       pure t
     _ -> UndisturbedBones <$> runMessage msg attrs

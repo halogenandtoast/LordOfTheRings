@@ -45,5 +45,5 @@ instance RunMessage CaveBarrow where
           questionLabeled "caveBarrow.discard"
           causedBy a
           targets allies \ally -> do
-            discard ally
+            discard a ally
             doStep 1 again

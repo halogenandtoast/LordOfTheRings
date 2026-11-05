@@ -22,7 +22,7 @@ instance RunMessage SwordThain where
       a' <- runMessage msg a
       push $ AllyBecomesHero ally
       pure $ SwordThain a'
-    Discard (isTarget a -> True) -> do
+    Discard _ (isTarget a -> True) -> do
       withHost a \case
         HeroTarget hid -> push $ HeroBecomesAlly hid
         _ -> pure ()

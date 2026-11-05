@@ -30,9 +30,9 @@ instance RunMessage GatesOfCarnDum where
       lead <- getLead
       unless (null staged) do
         cancelMatching \case
-          Discard (LocationTarget lid) -> lid == a.id
+          Discard _ (LocationTarget lid) -> lid == a.id
           _ -> False
-        discard a
+        discard a a
         removeFromEncounterDiscard card
         chooseOrRunOneM lead do
           questionLabeled "gatesOfCarnDum.enemy"

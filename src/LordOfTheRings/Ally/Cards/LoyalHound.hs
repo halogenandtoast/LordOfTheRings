@@ -28,7 +28,7 @@ instance HasAbilities LoyalHound where
 instance RunMessage LoyalHound where
   runMessage msg s@(LoyalHound a) = case msg of
     UseCardAbility pid (isSource a -> True) 1 windows -> do
-      discard a
+      discard a a
       mine <- select (HeroControlledBy $ PlayerWithId pid)
       for_ (take 1 [(t, n) | Window _ (DealtDamage t@(HeroTarget hid) n) <- windows, hid `elem` mine]) \(t, n) ->
         removeTokens a t Damage (min 2 n)

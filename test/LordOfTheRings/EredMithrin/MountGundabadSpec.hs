@@ -432,7 +432,7 @@ spec = describe "Mount Gundabad" do
   it "puts Wormsbane discarded from a hero still in play in the encounter discard pile, the game not lost" . gundabadTest $ \pid -> do
     setUp pid
     w <- getsGame (fromJustNote "no Wormsbane" . fmap toId . headMay . toList . (.entities.objectives))
-    run $ Discard (ObjectiveTarget w)
+    run $ Discard GameSource (ObjectiveTarget w)
     getsGame (.outcome) `shouldReturn` Nothing
     wormsbaneOn `shouldReturn` []
     map toCardCode . scenarioEncounterDiscard <$> scenarioAttrs `shouldReturn` [toCardCode Objectives.wormsbane]
@@ -440,7 +440,7 @@ spec = describe "Mount Gundabad" do
   it "loses the game as the hero with Wormsbane leaves play" . gundabadTest $ \pid -> do
     setUp pid
     beravor <- hero "01012"
-    run $ Discard beravor
+    run $ Discard GameSource beravor
     getsGame (.outcome) `shouldReturn` Just Lost
  where
   questIdOf = \case

@@ -216,9 +216,9 @@ spec = describe "A Knife in the Dark" do
       traverse placementOfEnemy nazgul `shouldReturn` replicate 3 StagingArea
       map toCardCode <$> getEncounterDeck `shouldReturn` [toCardCode Treacheries.lureOfTheRing]
       -- not while one Nazgûl is still in play
-      for_ (take 2 nazgul) \e -> run $ Discard (EnemyTarget e)
+      for_ (take 2 nazgul) \e -> run $ Discard GameSource (EnemyTarget e)
       getsGame (.outcome) `shouldReturn` Nothing
-      for_ (drop 2 nazgul) \e -> run $ Discard (EnemyTarget e)
+      for_ (drop 2 nazgul) \e -> run $ Discard GameSource (EnemyTarget e)
       getsGame (.outcome) `shouldReturn` Just Won
       void $ pure pid
 
@@ -229,7 +229,7 @@ spec = describe "A Knife in the Dark" do
       q <- getsGame (fromJustNote "no stage 3" . fmap toTarget . find ((== toCardCode Quests.theRingwraithsAttack) . toCardCode) . toList . (.entities.quests))
       run $ Flip q
       nazgul <- concat <$> traverse enemiesOf [Enemies.theWitchKing, Enemies.riderOfMordor, Enemies.ringwraith]
-      for_ nazgul \e -> run $ Discard (EnemyTarget e)
+      for_ nazgul \e -> run $ Discard GameSource (EnemyTarget e)
       -- pass, then Tireless Ranger, Skilled Healer...
       void $ answerQuestion pid 3
       eowyn <- getHeroWithCode "01007"
@@ -250,7 +250,7 @@ spec = describe "A Knife in the Dark" do
     it "discards until X enemies are discarded as it leaves play, each engaging the first player" . knifeTest $ \pid -> do
       pony <- stageLocation Locations.thePrancingPony
       _ <- setEncounterDeck [Treacheries.lureOfTheRing, Enemies.shadyBreeLander, Enemies.shadyBreeLander]
-      run $ Discard (LocationTarget pony)
+      run $ Discard GameSource (LocationTarget pony)
       useForcedAbilities pid
       enemiesEngagedWith pid `shouldReturn` 1
       map toCardCode <$> getEncounterDeck `shouldReturn` [toCardCode Enemies.shadyBreeLander]
@@ -291,7 +291,7 @@ spec = describe "A Knife in the Dark" do
       chooseAbilityOf pid (LocationTarget hills)
       getsGame (null . (.entities.enemies)) `shouldReturn` True
       length . (.underneath) <$> locationAttrs hills `shouldReturn` 1
-      run $ Discard (LocationTarget hills)
+      run $ Discard GameSource (LocationTarget hills)
       useForcedAbilities pid
       (placementOfEnemy =<< enemyOf Enemies.shadyBreeLander) `shouldReturn` StagingArea
       void $ pure bree

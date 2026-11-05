@@ -29,6 +29,6 @@ instance RunMessage DarkPools where
         chooseOrRunOneM pid do
           questionLabeled "darkPools.discard"
           causedBy a
-          targets [toId x | x <- allies, printedCostOf x == highest] discard
+          targets [toId x | x <- allies, printedCostOf x == highest] (discard a)
       pure l
     _ -> DarkPools <$> runMessage msg a

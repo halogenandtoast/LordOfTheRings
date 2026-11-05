@@ -46,7 +46,7 @@ instance RunMessage DistantStars where
         causedBy attrs
         targets exhaustable \c -> do
           exhaust c
-          for_ (take 1 active) discard
+          for_ (take 1 active) (discard attrs)
           chooseOneM pid do
             questionLabeled "distantStars.choose"
             causedBy attrs

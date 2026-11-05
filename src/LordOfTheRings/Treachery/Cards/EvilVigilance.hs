@@ -24,7 +24,7 @@ instance RunMessage EvilVigilance where
         unless (null questing) $ chooseOneM pid do
           questionLabeled "evilVigilance.choose"
           causedBy attrs
-          targets questing discard
+          targets questing (discard attrs)
           labeledWith "evilVigilance.threat" [intVar "n" (length questing)] $ encounterRaisesThreat pid (length questing)
       pure t
     ResolveShadowEffect cid eid _ _ | cid == attrs.cardId -> do

@@ -31,7 +31,7 @@ instance RunMessage Derufin where
             | Window _ (EnemyDestroyedByAttack eid _ _) <- windows
             , d <- take 1 [d | d <- destroyed, d.target == EnemyTarget eid]
             ]
-      discard a
+      discard a a
       for_ (take 1 [p | Window _ (EngagedEnemyDestroyedByAttack p _) <- windows]) \engaged ->
         lowerThreatBy a engaged (sum $ take 1 xs)
       pure s

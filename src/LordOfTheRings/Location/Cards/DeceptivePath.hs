@@ -38,7 +38,7 @@ instance RunMessage DeceptivePath where
       pure l
     DiscardedTopOfEncounterDeck (isSource a -> True) _ cards -> do
       for_ (find isLocation cards) \found -> do
-        discard a
+        discard a a
         removeFromEncounterDiscard found
         putIntoPlayAsActiveLocation found
       pure l

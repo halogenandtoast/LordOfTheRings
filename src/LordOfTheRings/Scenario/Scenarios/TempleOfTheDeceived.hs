@@ -99,7 +99,7 @@ instance RunMessage TempleOfTheDeceived where
       for_ [lid | Window When (Explored lid) <- ws] \lid ->
         whenM (selectAny $ LocationWithId lid <> IsActiveLocation) do
           attached <- getsGame (filter ((== AttachedTo (LocationTarget lid)) . (.placement)) . toList . (.entities.attachments))
-          for_ attached (discard . toTarget)
+          for_ attached (discard attrs . toTarget)
       TempleOfTheDeceived <$> runDreamChaserCampaign msg attrs
     -- Campaign: the Dream-chaser campaign card's setup, Forced effects and resolution
     _ | isJust attrs.campaign -> TempleOfTheDeceived <$> runDreamChaserCampaign msg attrs

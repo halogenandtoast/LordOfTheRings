@@ -90,7 +90,7 @@ instance RunMessage TheLongDark where
       allies <- select (AllyControlledBy AnyPlayer)
       chooseOrRunOneM lead do
         questionLabeled "theLongDark.discardAlly"
-        targets allies discard
+        targets allies (discard attrs)
       pure $ TheLongDark attrs
     -- each player in turn triggers a "Lost:" effect in play not already chosen
     ChooseLostEffects source (pid : rest) chosen -> do

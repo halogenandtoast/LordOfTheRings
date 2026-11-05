@@ -37,9 +37,9 @@ instance RunMessage LostInTheDarkFliesAndSpiders where
           enemies <- select EnemyInStagingArea
           locations <- select LocationInStagingArea
           objectives <- getsGame (filter ((== StagingArea) . (.placement)) . toList . (.objectives) . (.entities))
-          traverse_ discard enemies
-          traverse_ discard locations
-          traverse_ discard objectives
+          traverse_ (discard attrs) enemies
+          traverse_ (discard attrs) locations
+          traverse_ (discard attrs) objectives
           advanceQuest
         (stage3 : _, other : _) -> do
           separatePlayers [others, [lead]]

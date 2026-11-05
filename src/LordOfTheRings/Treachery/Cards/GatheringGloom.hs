@@ -35,6 +35,6 @@ instance RunMessage GatheringGloom where
       chooseOrRunOneM pid do
         questionLabeled "gatheringGloom.discardAlly"
         causedBy attrs
-        targets allies discard
+        targets allies (discard attrs)
       pure t
     _ -> GatheringGloom <$> runMessage msg attrs

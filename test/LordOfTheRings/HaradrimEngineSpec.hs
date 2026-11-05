@@ -100,7 +100,7 @@ spec = describe "The Haradrim engine" do
     (eid, _) <- stagedEnemy Enemies.forestSpider
     lasting (EnemyTarget eid) CannotLeaveStagingArea
     run $ EngageEnemy pid eid
-    run $ Discard (EnemyTarget eid)
+    run $ Discard GameSource (EnemyTarget eid)
     getsGame (fmap (.placement) . lookup eid . (.entities.enemies)) `shouldReturn` Just StagingArea
 
   it "holds a captive ally and hero under its guard, rescuing them as it leaves play, the ally exhausted" . gameTest $ \pid -> do
@@ -112,7 +112,7 @@ spec = describe "The Haradrim engine" do
     select AnyAlly `shouldReturn` []
     select (HeroControlledBy (PlayerWithId pid) <> HeroWithId eowyn.id) `shouldReturn` []
     charactersGuardedBy card.id >>= (`shouldSatisfy` ((== 2) . length))
-    run $ Discard (EnemyTarget eid)
+    run $ Discard GameSource (EnemyTarget eid)
     charactersGuardedBy card.id `shouldReturn` []
     a <- getsGame (fromJustNote "no ally" . headMay . toList . (.entities.allies))
     (toAttrs a).allyPlacement `shouldBe` InPlayArea pid

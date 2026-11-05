@@ -31,7 +31,7 @@ instance RunMessage FireFilledTrench where
       let cancels = [card.id | PlayEvent pid card pws <- queued, any (\case Window _ (Revealed (TreacheryTarget _)) -> True; _ -> False) pws, cancelsEncounterEffects (lookupEvent (toCardCode card) card.id pid)]
       for_ [c | Window _ (PlayingEvent _ c) <- ws, c `elem` cancels] \c -> do
         cancelEvent c
-        discard a
+        discard a a
       pure l
     _ -> FireFilledTrench <$> runMessage msg a
 

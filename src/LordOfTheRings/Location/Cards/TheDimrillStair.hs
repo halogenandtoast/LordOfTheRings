@@ -30,6 +30,6 @@ instance RunMessage TheDimrillStair where
       when (reshuffled >= 2) do
         eachPlayer (`lowerThreat` 11)
         colds <- getsGame (filter ((== toCardCode Treacheries.freezingCold) . toCardCode) . toList . (.entities.treacheries))
-        for_ colds discard
+        for_ colds (discard a)
       pure l
     _ -> TheDimrillStair <$> runMessage msg a

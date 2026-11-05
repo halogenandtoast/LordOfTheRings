@@ -39,13 +39,13 @@ instance RunMessage AWellLaidTrap where
       aside <- getsGame (scenarioSetAside . toAttrs . (.scenario))
       traverse_ putIntoPlayAsActiveLocation $ filter (cardMatches $ cardIs Locations.munuvDuvRavine) aside
       attachments <- getsGame (toList . (.entities.attachments))
-      for_ (filter (\x -> any (`member` cdCardTraits (toCardDef x)) [Item, Mount]) attachments) discard
+      for_ (filter (\x -> any (`member` cdCardTraits (toCardDef x)) [Item, Mount]) attachments) (discard attrs)
       eachPlayer \p -> do
         allies <- select (AllyControlledBy $ PlayerWithId p)
         chooseOrRunOneM p do
           questionLabeled "aWellLaidTrap.keepAlly"
           causedBy attrs
-          targets allies \kept -> for_ (filter (/= kept) allies) discard
+          targets allies \kept -> for_ (filter (/= kept) allies) (discard attrs)
       eachPlayerSearchesToEngage attrs BoarClan
       eachPlayer \p -> do
         shuffleDiscardIntoDeck p

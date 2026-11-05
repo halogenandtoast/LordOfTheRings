@@ -122,6 +122,6 @@ spec = describe "Return to Mirkwood" do
     passActions pid
     guardian <- putAllyIntoPlay pid Allies.wingedGuardian
     passActions pid
-    run $ Discard guardian
+    run $ Discard GameSource guardian
     chooseAbilityOf pid eagles
     getsGame (fmap (length . allyFacedown . toAttrs) . find ((== eagles) . toTarget) . toList . (.entities.allies)) `shouldReturn` Just 1

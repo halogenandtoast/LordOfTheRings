@@ -36,7 +36,7 @@ instance RunMessage HeroAttrs where
       pushAll $ map PutInDiscard gone
       pure $ attrs & poisonL .~ kept
     -- a poison card discarded as a Condition attachment, as Miner of the Iron Hills does
-    Discard (CardIdTarget cid) | Just pc <- find ((== cid) . (.id)) attrs.heroPoison -> do
+    Discard _ (CardIdTarget cid) | Just pc <- find ((== cid) . (.id)) attrs.heroPoison -> do
       push $ PutInDiscard pc
       pure $ attrs & poisonL %~ filter ((/= cid) . (.id))
     MakeUnconscious (isTarget attrs -> True) -> do
@@ -49,7 +49,7 @@ instance RunMessage HeroAttrs where
       pushAll [PutInHand c | c <- attrs.heroFacedown, c.id == cid]
       pure $ attrs & facedownL %~ filter ((/= cid) . (.id))
     -- the cards facedown under it go to their owners' discard piles as it leaves play
-    Discard (isTarget attrs -> True) -> leaving
+    Discard _ (isTarget attrs -> True) -> leaving
     ReturnToHand (isTarget attrs -> True) -> leaving
     ShuffleIntoOwnersDeck (isTarget attrs -> True) -> leaving
     PutOnBottomOfOwnersDeck (isTarget attrs -> True) -> leaving

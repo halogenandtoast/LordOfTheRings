@@ -97,7 +97,7 @@ spec = describe "Location card text" do
     camp <- stagedLocation Locations.abandonedCampNightmare
     b <- beravor
     run $ Exhaust b
-    run $ Discard (LocationTarget camp)
+    run $ Discard GameSource (LocationTarget camp)
     getDamage b `shouldReturn` 2
 
   it "Steep Plateau answers its being explored once it has left play" . gameTestIn theFateOfNumenor testDeck $ \pid -> do

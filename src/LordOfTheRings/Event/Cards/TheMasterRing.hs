@@ -29,7 +29,7 @@ instance RunMessage TheMasterRing where
           FinishRevelation tid -> TreacheryTarget tid == t
           ResolveSurge t' _ -> t' == t
           _ -> False
-        discard t
+        discard attrs t
         revealEncounterCardAfter t
       pure e
     _ -> TheMasterRing <$> runMessage msg attrs

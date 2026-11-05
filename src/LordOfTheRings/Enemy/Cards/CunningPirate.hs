@@ -33,7 +33,7 @@ instance RunMessage CunningPirate where
           questionLabeled "cunningPirate.discard"
           causedBy attrs
           targets [x | x <- attachments, (toAttrs x).controller == pid, AttachedTo _ <- [x.placement]] \x -> do
-            discard x
+            discard attrs x
             placeResources attrs attrs $ maybe 0 costAsResources (cdCost $ toCardDef x)
       pure e
     _ -> CunningPirate <$> runMessage msg attrs

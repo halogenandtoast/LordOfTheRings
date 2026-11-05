@@ -151,7 +151,9 @@ data Message
     EndGame Outcome
   | -- | in campaign mode, a card writes to the campaign log the scenario holds
     UpdateCampaignLog CampaignLogUpdate
-  | Discard Target
+  | -- | the card leaves play for its discard pile, by the source's effect: the game's own
+    -- rules are 'GameSource' (Arkham's Discard carries its source the same way)
+    Discard Source Target
   | {- | a character leaves play now, the When window for its leaving having closed: the
     Discard, ReturnToHand or ShuffleIntoOwnersDeck that takes it. Or a card leaves play
     past what would keep it there, the card that moves it naming the move, as The Great
@@ -1048,7 +1050,7 @@ that discards it, returns it to the encounter deck or adds it to the victory dis
 -}
 removedEnemy :: Message -> Maybe EnemyId
 removedEnemy = \case
-  Discard (EnemyTarget eid) -> Just eid
+  Discard _ (EnemyTarget eid) -> Just eid
   ReturnToTopOfEncounterDeck (EnemyTarget eid) -> Just eid
   ReturnToBottomOfEncounterDeck (EnemyTarget eid) -> Just eid
   ShuffleIntoEncounterDeck (EnemyTarget eid) -> Just eid

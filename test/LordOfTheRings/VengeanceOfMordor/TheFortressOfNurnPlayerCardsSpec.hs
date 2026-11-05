@@ -253,7 +253,7 @@ spec = describe "The Fortress of Nurn player cards" do
       card <- genPlayerCard (toCardDef ("01001" :: CardCode)) (Just pid)
       run $ PlaceUnderneath thorongil [PlayerCard card]
       getModifiers aragorn >>= (`shouldSatisfy` elem (GainGameTextOf "01001"))
-      run $ Discard thorongil
+      run $ Discard GameSource thorongil
       getModifiers aragorn >>= (`shouldSatisfy` notElem (GainGameTextOf "01001"))
       discard <- map (.id) . (.discard) <$> getPlayer pid
       discard `shouldSatisfy` notElem card.id

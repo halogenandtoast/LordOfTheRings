@@ -31,6 +31,6 @@ instance RunMessage SnowGiant where
         chooseOrRunOneM pid do
           questionLabeled "snowGiant.discard"
           causedBy attrs
-          targets [x | (x, w) <- allies, Just w == most] discard
+          targets [x | (x, w) <- allies, Just w == most] (discard attrs)
       pure e
     _ -> SnowGiant <$> runMessage msg attrs

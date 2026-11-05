@@ -34,7 +34,7 @@ instance RunMessage CravenEagle where
               causedBy attrs
               aimedAt [c]
               labeled "cravenEagle.discardCards" $ discardRandomFromHand pid 3
-              labeled "cravenEagle.discardCharacter" $ discard c
-            _ -> discard c
+              labeled "cravenEagle.discardCharacter" $ discard attrs c
+            _ -> discard attrs c
       pure e
     _ -> CravenEagle <$> runMessage msg attrs

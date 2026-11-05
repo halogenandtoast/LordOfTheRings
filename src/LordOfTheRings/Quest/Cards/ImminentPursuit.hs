@@ -37,4 +37,4 @@ instance RunMessage ImminentPursuit where
       chooseOrRunOneM lead do
         questionLabeled "imminentPursuit.discard"
         causedBy attrs
-        targets enemies discard
+        targets enemies (discard attrs)

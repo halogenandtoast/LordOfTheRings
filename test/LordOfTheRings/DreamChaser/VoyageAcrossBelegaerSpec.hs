@@ -162,7 +162,7 @@ spec = describe "Voyage Across Belegaer" do
     it "Corsair Pursuit is won once no Ship enemy is left in play" . voyageTest $ \_ -> do
       _ <- flippedStage Quests.corsairPursuit
       scout <- staged Enemies.scoutingShip
-      run $ Discard (EnemyTarget scout)
+      run $ Discard GameSource (EnemyTarget scout)
       getsGame (.outcome) `shouldReturn` Just Won
 
   describe "Encounter cards" do

@@ -32,7 +32,7 @@ instance RunMessage PredatoryWolves where
             chooseOrRunOneM p do
               questionLabeled "predatoryWolves.chooseAlly"
               causedBy attrs
-              targets [aid | (aid, c) <- costs, Just c == highest] discard
+              targets [aid | (aid, c) <- costs, Just c == highest] (discard attrs)
           labeled "predatoryWolves.search" $ searchToRevealWarg p attrs False
       pure t
     ResolveShadowEffect cid _ pid _ | cid == attrs.cardId -> do

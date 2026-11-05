@@ -107,7 +107,7 @@ spec = describe "Player choices" do
       run $ CommitToQuest guard'
       isExhausted guard' `shouldReturn` False
       run $ Ready guard'
-      run . Discard . toTarget =<< hero "08112"
+      run . Discard GameSource . toTarget =<< hero "08112"
       run $ CommitToQuest guard'
       isExhausted guard' `shouldReturn` True
 
@@ -136,7 +136,7 @@ spec = describe "Player choices" do
         both = DistinctCharacters [pair Rohan, pair Warrior]
     -- Éowyn is Rohan and Théodred a Rohan Warrior
     passesCriteria both `shouldReturn` True
-    run . Discard . toTarget =<< hero "01007"
+    run . Discard GameSource . toTarget =<< hero "01007"
     passesCriteria both `shouldReturn` False
 
   it "puts The Red Arrow in the victory display" . gameTest $ \pid -> do

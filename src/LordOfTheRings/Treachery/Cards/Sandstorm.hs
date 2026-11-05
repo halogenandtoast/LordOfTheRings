@@ -41,7 +41,7 @@ instance RunMessage Sandstorm where
           chooseOrRunOneM pid do
             questionLabeled "sandstorm.attachment"
             causedBy attrs
-            targets [a | (a, c) <- costs, c == highest] discard
+            targets [a | (a, c) <- costs, c == highest] (discard attrs)
         labeledWith "sandstorm.damage" [intVar "n" x] $ dealDamageDivided attrs pid x
       pure t
     _ -> Sandstorm <$> runMessage msg attrs

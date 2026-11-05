@@ -28,7 +28,7 @@ instance RunMessage CityWall where
     CheckWindows ws | any (\case Window After (DealtDamage t _) -> t == toTarget a; _ -> False) ws -> do
       qp <- getLocationQuestPoints a.id
       when (a.damage >= qp) do
-        discard a
+        discard a a
         eachPlayer \p -> encounterRaisesThreat p 3
       CityWall <$> runMessage msg a
     _ -> CityWall <$> runMessage msg a

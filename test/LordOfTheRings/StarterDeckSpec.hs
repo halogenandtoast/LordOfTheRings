@@ -123,7 +123,7 @@ spec = describe "Starter deck" do
     it "enters play from hand after a Dwarf hero you control leaves play" . starterTest $ \pid -> do
       brok <- putCardIntoHand pid Allies.brokIronfist
       gloin <- getHeroWithCode gloinCode
-      run $ Discard (toTarget gloin)
+      run $ Discard GameSource (toTarget gloin)
       chooseTarget pid brok
       map toCardCode <$> allies `shouldReturn` ["01019"]
 
@@ -204,7 +204,7 @@ spec = describe "Starter deck" do
       aragorn <- getHeroWithCode aragornCode
       run $ PlaceTokens GameSource (toTarget aragorn) Resource 1
       initial <- length <$> handCodes pid
-      run $ Discard (toTarget guard')
+      run $ Discard GameSource (toTarget guard')
       chooseTarget pid sacrifice
       length <$> handCodes pid `shouldReturn` (initial - 1 + 2)
 

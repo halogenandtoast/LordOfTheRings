@@ -28,7 +28,7 @@ instance RunMessage BoarsGuardian where
         chooseOrRunOneM pid do
           questionLabeled "boarsGuardian.discard"
           causedBy attrs
-          targets allies discard
+          targets allies (discard attrs)
       placeTimeCounters attrs attrs 2
       pure e
     _ -> BoarsGuardian <$> runMessage msg attrs

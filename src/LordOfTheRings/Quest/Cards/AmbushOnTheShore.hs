@@ -39,6 +39,6 @@ instance RunMessage AmbushOnTheShore where
    where
     leaving = \case
       Destroy _ (EnemyTarget eid) -> Just eid
-      Discard (EnemyTarget eid) -> Just eid
+      Discard _ (EnemyTarget eid) -> Just eid
       ReturnToTopOfEncounterDeck (EnemyTarget eid) -> Just eid
       _ -> Nothing

@@ -42,9 +42,9 @@ instance RunMessage ShrineToSauron where
         heroes <- filterM (fmap copy . getHero) =<< select (HeroControlledBy $ PlayerWithId p)
         allies <- filterM (fmap copy . getAlly) =<< select (AllyControlledBy $ PlayerWithId p)
         attachments <- getsGame (filter (\a -> (toAttrs a).controller == p && copy a) . toList . entitiesAttachments . gameEntities)
-        for_ heroes (discard . HeroTarget)
-        for_ allies (discard . AllyTarget)
-        for_ attachments (discard . toTarget)
+        for_ heroes (discard attrs . HeroTarget)
+        for_ allies (discard attrs . AllyTarget)
+        for_ attachments (discard attrs . toTarget)
         for_ (filter copy player.hand) (discardFromHand p)
       pure q
     _ -> ShrineToSauron <$> runStage2 msg attrs

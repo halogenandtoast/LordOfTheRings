@@ -37,7 +37,7 @@ instance RunMessage DarkInterrogation where
         es <- getsGame gameEntities
         let copied :: HasCardDef a => a -> Bool
             copied c = cdName (toCardDef c) `elem` discarded
-        traverse_ discard
+        traverse_ (discard attrs)
           $ [toTarget a | a <- toList (entitiesAllies es), toId a `elem` allies, copied a]
           <> [toTarget a | a <- toList (entitiesAttachments es), attachmentController (toAttrs a) == Just p, copied a]
       pure t

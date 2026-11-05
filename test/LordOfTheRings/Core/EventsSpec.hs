@@ -145,7 +145,7 @@ spec = do
   describe "Fortune or Fate" do
     it "puts a hero from a discard pile back into play" . gameTestWith (coreDeck "spirit") $ \pid -> do
       dunhere <- getHeroWithCode "01009"
-      run $ Discard (toTarget dunhere)
+      run $ Discard GameSource (toTarget dunhere)
       _ <- playWith pid "01007" 5 Events.fortuneOrFate
       chooseTarget pid (CardIdTarget $ heroCardId $ toAttrs dunhere)
       getsGame (length . (.entities.heroes)) `shouldReturn` 3

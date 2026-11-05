@@ -79,7 +79,7 @@ instance RunMessage SahirsAdvance where
     mayWin = case msg of
       Destroy _ (EnemyTarget _) -> True
       AddToVictoryDisplay _ -> True
-      Discard (LocationTarget _) -> True
+      Discard _ (LocationTarget _) -> True
       PlaceUnderneath _ _ -> True
       RemoveTokens _ (LocationTarget _) Damage _ -> True
       _ -> False

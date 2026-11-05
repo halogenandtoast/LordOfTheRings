@@ -102,7 +102,7 @@ spec = describe "The One Ring" do
 
   it "loses the game when it leaves play with its hero" . gameTest $ \pid -> do
     (beravor, _) <- withRing pid
-    run $ Discard beravor
+    run $ Discard GameSource beravor
     getsGame (.outcome) `shouldReturn` Just Lost
 
   it "is not offered to an encounter card's discard" . gameTest $ \pid -> do
@@ -114,7 +114,7 @@ spec = describe "The One Ring" do
 
   it "is left in play by a card effect's discard" . gameTest $ \pid -> do
     (_, ring) <- withRing pid
-    runQueueT (discard ring)
+    runQueueT (discard GameSource ring)
     void mainLoop
     attachmentInPlay ring `shouldReturn` True
     getsGame (.outcome) `shouldReturn` Nothing

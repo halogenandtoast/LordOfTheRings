@@ -151,7 +151,7 @@ spec = describe "The Fate of Númenor" do
   it "loses the game as Calphon leaves play" . fateTest $ \pid -> do
     flipFirstQuest pid
     calphon <- getsGame (fromJustNote "no Calphon" . find ((== toCardCode Objectives.calphon) . toCardCode) . toList . (.entities.allies))
-    run $ Discard (toTarget calphon)
+    run $ Discard GameSource (toTarget calphon)
     getsGame (.outcome) `shouldReturn` Just Lost
 
   it "keeps the players from drawing or searching their decks while Shrine to Morgoth is active, and engages each with an Undead enemy as it flips" . fateTest $ \pid -> do

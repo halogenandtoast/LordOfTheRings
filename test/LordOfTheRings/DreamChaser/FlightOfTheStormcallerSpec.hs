@@ -210,7 +210,7 @@ spec = describe "Flight of the Stormcaller" do
 
     it "the players win as the Stormcaller leaves play" . stormTest $ \_ -> do
       stormcaller <- prepareArea Quests.fullSailAheadStormcaller [] 0
-      run $ Discard (EnemyTarget stormcaller)
+      run $ Discard GameSource (EnemyTarget stormcaller)
       getsGame (.outcome) `shouldReturn` Just Won
 
     it "the players lose as the Stormcaller defeats stage 4C" . stormTest $ \_ -> do

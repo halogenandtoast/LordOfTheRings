@@ -87,7 +87,7 @@ instance RunMessage SendForHelp where
               putHeroIntoPlay pid card
       doStep (n - 1) inner
       pure t
-    Discard (isTarget attrs -> True) -> do
+    Discard _ (isTarget attrs -> True) -> do
       t' <- SendForHelp <$> runMessage msg attrs
       removeFromEncounterDiscard (MkEncounterCard attrs.cardId (toCardCode attrs))
       pure t'

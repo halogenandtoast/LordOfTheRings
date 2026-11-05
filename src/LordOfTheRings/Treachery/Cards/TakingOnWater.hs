@@ -49,6 +49,6 @@ instance RunMessage TakingOnWater where
       pure t
     -- the characters are exhausted as the cost is paid
     UseCardAbility _ (isSource attrs -> True) 2 _ -> do
-      discard attrs
+      discard attrs attrs
       pure t
     _ -> TakingOnWater <$> runMessage msg attrs

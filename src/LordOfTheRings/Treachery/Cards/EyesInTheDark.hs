@@ -28,13 +28,13 @@ instance RunMessage EyesInTheDark where
             chooseOrRunOneM p do
               questionLabeled "eyesInTheDark.character"
               causedBy attrs
-              targets questing discard
+              targets questing (discard attrs)
       pure t
     ResolveShadowEffect cid _ pid [] | cid == attrs.cardId -> do
       allies <- select (AllyControlledBy $ PlayerWithId pid)
       chooseOrRunOneM pid do
         questionLabeled "eyesInTheDark.discardAlly"
         causedBy attrs
-        targets allies discard
+        targets allies (discard attrs)
       pure t
     _ -> EyesInTheDark <$> runMessage msg attrs

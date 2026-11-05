@@ -130,7 +130,7 @@ spec = describe "The Voice of Isengard player cards" do
       chooseTarget pid eid
       getStagingThreat `shouldReturn` 0
       select EnemyInStagingArea `shouldReturn` []
-      run $ Discard saruman
+      run $ Discard GameSource saruman
       getStagingThreat `shouldReturn` threat0
       select EnemyInStagingArea `shouldReturn` [eid]
 
@@ -154,7 +154,7 @@ spec = describe "The Voice of Isengard player cards" do
       chooseAbilityOf pid saruman
       chooseTarget pid eid
       getModifiers (ObjectiveTarget oid) `shouldReturn` [ConsideredOutOfPlay, Blank]
-      run $ Discard saruman
+      run $ Discard GameSource saruman
       getModifiers (ObjectiveTarget oid) `shouldReturn` []
 
     it "keeps the time counters of a location he holds out of play" . voiTest $ \pid -> do

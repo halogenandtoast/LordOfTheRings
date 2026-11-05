@@ -36,7 +36,7 @@ instance RunMessage ElrondTheRoadDarkens where
           chooseOrRunOneM pid do
             questionLabeled "elrondTheRoadDarkens.condition"
             causedBy a
-            targets conditions discard
+            targets conditions (discard a)
         labeled "elrondTheRoadDarkens.draw" $ eachPlayer \p -> drawCards a p 1
       pure s
     _ -> ElrondTheRoadDarkens <$> runMessage msg a

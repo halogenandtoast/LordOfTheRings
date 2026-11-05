@@ -75,7 +75,7 @@ spec = describe "Land of Shadow, Flame of the West and Mountain of Fire player c
       frodo <- fellowship pid Heroes.frodoBagginsTheLandOfShadow (Just Objectives.theOneRingTheLandOfShadow)
       modifiersOf frodo >>= (`shouldSatisfy` elem (GainKeyword FirstPlayerGainsControl))
       ring <- ringOf Objectives.theOneRingTheLandOfShadow
-      run $ Discard (toTarget ring)
+      run $ Discard GameSource (toTarget ring)
       getsGame (.outcome) `shouldReturn` Just Lost
 
   describe "Frodo Baggins (The Land of Shadow)" do
@@ -109,7 +109,7 @@ spec = describe "Land of Shadow, Flame of the West and Mountain of Fire player c
   describe "Aragorn (The Flame of the West)" do
     it "loses the game as he leaves play" . gameTest $ \pid -> do
       aragorn <- fellowship pid Heroes.aragornTheFlameOfTheWest Nothing
-      run $ Discard aragorn
+      run $ Discard GameSource aragorn
       getsGame (.outcome) `shouldReturn` Just Lost
 
     it "with Banner of Elendil gains sentinel, and the Banner raises the others questing with him" . gameTest $ \pid -> do
@@ -135,7 +135,7 @@ spec = describe "Land of Shadow, Flame of the West and Mountain of Fire player c
   describe "Prince Imrahil (ally)" do
     it "becomes a hero while a hero is in your discard pile, and an ally again once none is" . gameTest $ \pid -> do
       _ <- putAllyIntoPlay pid Allies.princeImrahilSpirit
-      run . Discard =<< hero theodred
+      run . Discard GameSource =<< hero theodred
       heroCodes >>= (`shouldSatisfy` elem (toCardCode Allies.princeImrahilSpirit))
       putGame . (playersL . ix pid . discardL .~ []) =<< getGame
       run (Run [])
@@ -177,7 +177,7 @@ spec = describe "Land of Shadow, Flame of the West and Mountain of Fire player c
     it "exhausts to return a Rohan ally you control discarded from play to your hand" . gameTest $ \pid -> do
       gamling <- putAllyIntoPlay pid Allies.gamling
       scout <- putAllyIntoPlay pid Allies.snowbournScout
-      run $ Discard scout
+      run $ Discard GameSource scout
       chooseAbilityOf pid gamling
       map toCardCode . (.hand) <$> getPlayer pid >>= (`shouldSatisfy` elem (toCardCode Allies.snowbournScout))
       map toCardCode . (.discard) <$> getPlayer pid >>= (`shouldSatisfy` notElem (toCardCode Allies.snowbournScout))

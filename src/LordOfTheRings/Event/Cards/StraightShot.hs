@@ -35,6 +35,6 @@ instance RunMessage StraightShot where
           chooseOrRunOneM pid do
             questionLabeled "chooseEnemy"
             causedBy attrs
-            targets enemies discard
+            targets enemies (discard attrs)
       pure e
     _ -> StraightShot <$> runMessage msg attrs

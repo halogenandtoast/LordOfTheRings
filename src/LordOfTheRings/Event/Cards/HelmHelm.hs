@@ -33,10 +33,10 @@ instance RunMessage HelmHelm where
         causedBy attrs
         targets allies \al -> do
           exhaust al
-          discard al
+          discard attrs al
           chooseOrRunOneM pid do
             questionLabeled "helmHelm.enemy"
             causedBy attrs
-            targets enemies discard
+            targets enemies (discard attrs)
       pure e
     _ -> HelmHelm <$> runMessage msg attrs

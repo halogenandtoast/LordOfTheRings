@@ -89,7 +89,7 @@ spec = describe "End of the game" do
   it "eliminates a player who has no heroes left" . gameTest $ \pid -> do
     flipFirstQuest pid
     heroes <- getsGame (toList . (.entities.heroes))
-    for_ heroes $ run . Discard . toTarget
+    for_ heroes $ run . Discard GameSource . toTarget
     run CheckEliminations
     (.eliminated) <$> getPlayer pid `shouldReturn` True
 
@@ -98,7 +98,7 @@ spec = describe "End of the game" do
     heroes <- getsGame (toList . (.entities.heroes))
     for_ heroes $ \h ->
       if toCardCode h == "01002"
-        then run $ Discard (toTarget h)
+        then run $ Discard GameSource (toTarget h)
         else run $ PlaceTokens GameSource (toTarget h) Damage 3
     run $ RaiseThreat pid 13
     victory <- EncounterCard <$> genEncounterCard Enemies.hummerhorns

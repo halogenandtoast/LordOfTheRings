@@ -34,6 +34,6 @@ instance RunMessage HaradrimSpear where
       pure s
     StopAttacking host | AttachedTo host == a.placement -> do
       leaves <- elem DiscardAfterAttack <$> getModifiers a
-      when leaves $ discard a
+      when leaves $ discard a a
       HaradrimSpear <$> runMessage msg a
     _ -> HaradrimSpear <$> runMessage msg a

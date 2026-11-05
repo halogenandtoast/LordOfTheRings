@@ -55,7 +55,7 @@ spec = describe "Conflict at the Carrock" do
     run $ PlaceTokens GameSource stage Progress 1
     getsGame (.outcome) `shouldReturn` Nothing
     for_ trolls \t -> do
-      run $ Discard (toTarget t)
+      run $ Discard GameSource (toTarget t)
       getQuestion pid >>= \case
         Just _ -> chooseLabel "$label.pass" pid
         Nothing -> pure ()

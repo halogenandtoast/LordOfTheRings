@@ -55,7 +55,7 @@ spec = describe "Dwarrowdelf engine" do
   it "defeats the players as Arwen leaves play" . gameTest $ \_ -> do
     run . AddToStaging =<< genEncounterCard Objectives.arwenUndomielRoadToRivendell
     a <- getsGame (toTarget . fromJustNote "no Arwen" . headMay . toList . (.entities.allies))
-    run $ Discard a
+    run $ Discard GameSource a
     getsGame (.outcome) `shouldReturn` Just Lost
 
   it "makes an immediate attack outside combat, its shadow discarded after" . gameTest $ \pid -> do

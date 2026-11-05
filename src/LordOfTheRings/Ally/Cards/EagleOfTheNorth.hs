@@ -29,7 +29,7 @@ instance RunMessage EagleOfTheNorth where
         chooseOneM pid do
           questionLabeled "eagleOfTheNorth.discard"
           causedBy a
-          targets enemies discard
+          targets enemies (discard a)
           labeled "eagleOfTheNorth.none" $ pure ()
       pure s
     _ -> EagleOfTheNorth <$> runMessage msg a

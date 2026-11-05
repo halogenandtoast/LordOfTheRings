@@ -23,12 +23,12 @@ instance RunMessage OrcRaiders where
         attachments <- getAttachmentsControlledBy pid
         -- "if able": with fewer than 2 the effect is ignored (ruling 3.101)
         if length attachments == 2
-          then for_ attachments discard
+          then for_ attachments (discard attrs)
           else when (length attachments > 2) $ chooseOneM pid do
             questionLabeled "chooseCardToDiscard"
             causedBy attrs
             targets attachments \chosen -> do
-              discard chosen
+              discard attrs chosen
               chooseAndDiscard attrs pid (filter (/= chosen) attachments)
       pure e
     _ -> OrcRaiders <$> runMessage msg attrs

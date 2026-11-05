@@ -161,7 +161,7 @@ spec = describe "The Roam Across Rhovanion player cards" do
       chooseAbilityOf pid meneldor
       chooseTarget pid (LocationTarget gate)
       (.progress) <$> getLocation gate `shouldReturn` 2
-      run $ Discard meneldor
+      run $ Discard GameSource meneldor
       chooseAbilityOf pid meneldor
       chooseTarget pid (LocationTarget road)
       (.progress) <$> getLocation road `shouldReturn` 2
@@ -201,7 +201,7 @@ spec = describe "The Roam Across Rhovanion player cards" do
       getsGame (fmap (\a -> allyPlacement (toAttrs a)) . find ((== e) . toTarget) . toList . (.entities.allies))
         `shouldReturn` Just (InPlayArea pid)
       getsGame (length . (.entities.locations)) `shouldReturn` 1
-      run $ Discard e
+      run $ Discard GameSource e
       allyWithCard eagle.id `shouldReturn` Nothing
       elem eagle.id . map (.id) . (.discard) <$> getPlayer pid `shouldReturn` False
 

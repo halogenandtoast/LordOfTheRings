@@ -41,7 +41,7 @@ instance RunMessage SeedyTavern where
     UseCardAbility _ (isSource a -> True) 1 _ -> do
       for_ [c | EncounterCard c <- a.underneath] (push . RevealCard)
       pure $ SeedyTavern (a {locationUnderneath = []})
-    Discard (isTarget a -> True) -> release
+    Discard _ (isTarget a -> True) -> release
     AddToVictoryDisplay (isTarget a -> True) -> release
     RemoveFromGame (isTarget a -> True) -> release
     ShuffleIntoEncounterDeck (isTarget a -> True) -> release

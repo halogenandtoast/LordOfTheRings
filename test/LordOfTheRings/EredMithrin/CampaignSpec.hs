@@ -346,6 +346,25 @@ spec = describe "Ered Mithrin campaign" do
       take 1 (poolCodes l) `shouldBe` [toCardCode Enemies.gundabadHunter]
       map (\c -> Hazard `member` cdCardTraits (toCardDef c)) (drop 1 (poolCodes l)) `shouldBe` [True]
 
+    -- "Unique locations cannot be discarded from play by encounter card effects."
+    it "keeps a unique location from an encounter card's discard, not a player card's" . campaignTestIn mountGundabad emLog testDeck $ \_ -> do
+      let staged def = do
+            run . AddToStaging =<< genEncounterCard def
+            getsGame (fromJustNote "not staged" . find ((== toCardCode def) . toCardCode) . toList . (.entities.locations))
+          stillInPlay l = getsGame (Map.member (toId l) . (.entities.locations))
+      road <- staged Locations.oldSouthRoad
+      forest <- staged Locations.oldForestRoad
+      run . AddToStaging =<< genEncounterCard Enemies.forestSpider
+      spider <- getsGame (fromJustNote "no spider" . headMay . map toId . toList . (.entities.enemies))
+      run $ Discard (EnemySource spider) (toTarget road)
+      stillInPlay road `shouldReturn` True
+      -- a non-unique one goes, by the same effect
+      run $ Discard (EnemySource spider) (toTarget forest)
+      stillInPlay forest `shouldReturn` False
+      beravor <- getHeroWithCode "01012"
+      run $ Discard (HeroSource beravor.id) (toTarget road)
+      stillInPlay road `shouldReturn` False
+
   describe "The Fate of Wilderland" do
     it "ignores the deep and discover keywords, and ends the campaign once won" . campaignTestIn theFateOfWilderland (wonFirst ["journey-up-the-anduin", "lost-in-mirkwood", "the-kings-quest", "the-withered-heath", "roam-across-rhovanion", "fire-in-the-night", "the-ghost-of-framsburg", "mount-gundabad"] emLog) testDeck $ \_ -> do
       run $ CheckWindows []

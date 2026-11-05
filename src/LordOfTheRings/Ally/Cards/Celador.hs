@@ -26,7 +26,7 @@ instance RunMessage Celador where
     UseCardAbility _ (isSource a -> True) _ _ -> do
       dealDamage a a 1
       pure s
-    Discard (isTarget a -> True) -> do
+    Discard _ (isTarget a -> True) -> do
       removeFromEncounterDiscard $ MkEncounterCard (allyCardId a) (toCardCode a)
       Celador <$> runMessage msg a
     _ -> Celador <$> runMessage msg a

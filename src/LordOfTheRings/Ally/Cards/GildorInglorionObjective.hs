@@ -27,6 +27,6 @@ instance RunMessage GildorInglorionObjective where
         questionLabeled "gildorInglorionObjective.choose"
         causedBy a
         when (fellowship > 0) $ labeled "gildorInglorionObjective.cancel" $ spendResources lead Fellowship 1
-        labeled "gildorInglorionObjective.discard" $ discard a
+        labeled "gildorInglorionObjective.discard" $ discard a a
       pure s
     _ -> GildorInglorionObjective <$> runMessage msg a

@@ -26,6 +26,6 @@ instance RunMessage PillagingAndBurning where
       pure t
     ResolveShadowEffect cid _ pid defenders | cid == attrs.cardId -> do
       attachments <- getAttachmentsControlledBy pid
-      ifUndefended defenders (traverse_ discard attachments) (chooseAndDiscard attrs pid attachments)
+      ifUndefended defenders (traverse_ (discard attrs) attachments) (chooseAndDiscard attrs pid attachments)
       pure t
     _ -> PillagingAndBurning <$> runMessage msg attrs

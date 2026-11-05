@@ -31,7 +31,7 @@ instance RunMessage TheHourOfDoom where
             chooseOrRunOneM pid do
               questionLabeled "theHourOfDoom.discardAlly"
               causedBy attrs
-              targets costliest discard
+              targets costliest (discard attrs)
       pure t
     ResolveShadowEffect cid _ pid _ | cid == attrs.cardId -> do
       discardNonObjectiveAttachment attrs pid

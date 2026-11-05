@@ -39,6 +39,6 @@ instance RunMessage BlueMountainTrader where
               targets yours \h' -> do
                 removeTokens a h Resource 1
                 placeResources a h' 1
-            labeled "blueMountainTrader.discard" $ discard a
+            labeled "blueMountainTrader.discard" $ discard a a
       pure s
     _ -> BlueMountainTrader <$> runMessage msg a

@@ -48,7 +48,7 @@ instance RunMessage TheBattleOfTheMorannon where
       pure q
     UseCardAbility _ (isSource attrs -> True) 1 _ -> do
       active <- select IsActiveLocation
-      for_ active discard
+      for_ active (discard attrs)
       pure q
     _ -> TheBattleOfTheMorannon <$> runMessage msg attrs
    where

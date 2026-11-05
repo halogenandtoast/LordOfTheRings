@@ -128,7 +128,7 @@ spec = describe "The Three Trials" do
     guardian.placement `shouldBe` EngagedWith pid
     run $ DealDamage GameSource (toTarget guardian) 3
     getDamage (toTarget guardian) `shouldReturn` 0
-    run $ Discard (toTarget guardian)
+    run $ Discard GameSource (toTarget guardian)
     placementOf (toCardDef guardian) `shouldReturn` Just (EngagedWith pid)
     -- exploring the Barrow frees its Key, which the first player claims
     run $ PlaceTokens GameSource (toTarget barrow) Progress 10
