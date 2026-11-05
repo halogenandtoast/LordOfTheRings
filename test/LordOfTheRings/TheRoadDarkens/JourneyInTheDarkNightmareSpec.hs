@@ -4,6 +4,8 @@ import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Event.CardDefs qualified as Events
 import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Helpers.Character (getWillpower)
+import LordOfTheRings.Helpers.Modifiers (getModifiers)
+import LordOfTheRings.Modifier (ModifierType (CannotHaveAttachments))
 import LordOfTheRings.Phase (Phase (PlanningPhase))
 import LordOfTheRings.Treachery.CardDefs qualified as Treacheries
 import TestImport
@@ -17,6 +19,14 @@ stageLocation def = do
         . find ((== toCardCode def) . toCardCode)
         . toList
         . (.entities.locations)
+    )
+
+stageSlabBearer :: GameT EnemyId
+stageSlabBearer = do
+  run . AddToStaging =<< genEncounterCard Enemies.slabBearer
+  getsGame
+    ( toId . fromJustNote "Slab-bearer" . find ((== toCardCode Enemies.slabBearer) . toCardCode)
+        . toList . (.entities.enemies)
     )
 
 spec :: Spec
@@ -94,3 +104,29 @@ spec = describe "Journey in the Dark Nightmare" do
     run $ ResolveShadow eid pid [hero]
     getDamage hero `shouldReturn` 1
     getWillpower hero `shouldReturn` base
+
+  it "Slab-bearer cannot have attachments and stages an enemy when destroyed without revealing it" . gameTest $ \_ -> do
+    eid <- stageSlabBearer
+    getModifiers (EnemyTarget eid) >>= (`shouldSatisfy` elem CannotHaveAttachments)
+    hero <- toTarget <$> getHeroWithCode "01012"
+    run $ CommitToQuest hero
+    _ <- setEncounterDeck [Enemies.dolGuldurOrcs]
+    run $ Destroy GameSource (EnemyTarget eid)
+    getsGame (map toCardCode . toList . (.entities.enemies)) `shouldReturn` [toCardCode Enemies.dolGuldurOrcs]
+    getDamage hero `shouldReturn` 0
+    map toCardCode <$> getEncounterDiscard `shouldReturn` [toCardCode Enemies.slabBearer]
+
+  it "Slab-bearer leaves a discarded location in the discard pile" . gameTest $ \_ -> do
+    eid <- stageSlabBearer
+    _ <- setEncounterDeck [Locations.darkenedMine]
+    run $ Destroy GameSource (EnemyTarget eid)
+    getsGame (length . (.entities.locations)) `shouldReturn` 0
+    sort . map toCardCode <$> getEncounterDiscard
+      `shouldReturn` sort [toCardCode Enemies.slabBearer, toCardCode Locations.darkenedMine]
+
+  it "discarding Slab-bearer does not trigger its destruction effect" . gameTest $ \_ -> do
+    eid <- stageSlabBearer
+    _ <- setEncounterDeck [Enemies.dolGuldurOrcs]
+    run $ Discard GameSource (EnemyTarget eid)
+    getsGame (length . (.entities.enemies)) `shouldReturn` 0
+    map toCardCode <$> getEncounterDiscard `shouldReturn` [toCardCode Enemies.slabBearer]

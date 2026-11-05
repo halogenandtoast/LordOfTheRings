@@ -14,7 +14,8 @@ allEnemyCards =
   Map.fromList $
     map
       (\def -> (cdCardCode def, def))
-      [ paleGreenTentacle
+      [ slabBearer
+      , paleGreenTentacle
       , huntingHawk
       , mistyMountainWarg
       , fellRiderNightmare
@@ -5442,3 +5443,9 @@ huntingHawk = (enemy "the-road-darkens-nightmare-the-ring-goes-south-003" "Hunti
 mistyMountainWarg :: CardDef
 mistyMountainWarg = (enemy "the-road-darkens-nightmare-the-ring-goes-south-004" "Misty Mountain Warg" TheRingGoesSouthNightmare 3 33 2 4 3 4)
   {cdCardTraits = setFromList [Creature, Warg], cdWhenRevealed = True, cdShadowEffect = True}
+
+-- * Journey in the Dark Nightmare
+
+slabBearer :: CardDef
+slabBearer = (enemy "the-road-darkens-nightmare-journey-in-the-dark-002" "Slab-bearer" JourneyInTheDarkNightmare 2 32 4 5 3 4)
+  {cdCardTraits = setFromList [Troll]}
