@@ -188,6 +188,8 @@ allObjectiveCards =
       , overcomeByGrief
       , grievousWound
       , frodosChoice
+      , entOfFangorn
+      , sarumansStaffTheRoadToIsengard
       , toIsengard
       ]
 
@@ -1348,6 +1350,22 @@ frodosChoice =
 
 theBlackGate :: CardDef
 theBlackGate = unique (objective "144027" "The Black Gate" JourneyToTheCrossRoads 1)
+
+-- * The Road to Isengard
+
+-- | The objective ally in the staging area; once a player takes control of it, it is an
+-- ally (see 'LordOfTheRings.Ally.Cards.EntOfFangorn').
+entOfFangorn :: CardDef
+entOfFangorn =
+  ( (objective "143046" "Ent of Fangorn" TheRoadToIsengard 4)
+      { cdCardType = ObjectiveAllyType, cdWillpower = Just 2, cdAttack = Just 4, cdDefense = Just 3, cdHitPoints = Just 4 }
+  )
+    { cdCardTraits = setFromList [Ent]
+    }
+
+-- | Set aside by stage 1A and attached to Saruman by stage 3A.
+sarumansStaffTheRoadToIsengard :: CardDef
+sarumansStaffTheRoadToIsengard = unique (objective "143048" "Saruman's Staff" TheRoadToIsengard 1) {cdCardTraits = setFromList [Artifact, Item, Staff]}
 
 -- * The Uruk-hai
 

@@ -661,6 +661,13 @@ allLocationCards =
       , riverAnduin
       , woodedShoreline
       , slopesOfAmonHen
+      , orthanc
+      , gatesOfIsengard
+      , ringWallOfIsengard
+      , undergroundArmoury
+      , steamingVent
+      , plainOfIsengard
+      , openPit
       , theWold
       , eastemnet
       , plainsOfRohan
@@ -4728,6 +4735,49 @@ blockedTunnel =
     , cdWhenRevealed = True
     , cdEasyModeQuantity = Just 1
     }
+
+-- * The Road to Isengard
+
+-- | Immune to player card effects, from its own modifiers.
+orthanc :: CardDef
+orthanc = unique (location "143053" "Orthanc" TheRoadToIsengard 1 2 1) {cdCardTraits = setFromList [Isengard]}
+
+-- | Immune to player card effects, from its own modifiers.
+gatesOfIsengard :: CardDef
+gatesOfIsengard =
+  unique
+    (location "143054" "Gates of Isengard" TheRoadToIsengard 1 3 1)
+      { cdCardTraits = setFromList [Isengard]
+      , cdVictoryPoints = Just 1
+      }
+
+ringWallOfIsengard :: CardDef
+ringWallOfIsengard = (location "143055" "Ring-wall of Isengard" TheRoadToIsengard 3 2 2) {cdCardTraits = setFromList [Isengard]}
+
+undergroundArmoury :: CardDef
+undergroundArmoury =
+  (location "143056" "Underground Armoury" TheRoadToIsengard 2 4 3)
+    { cdCardTraits = setFromList [Isengard]
+    , cdEasyModeQuantity = Just 1
+    }
+
+steamingVent :: CardDef
+steamingVent =
+  (location "143057" "Steaming Vent" TheRoadToIsengard 3 3 4)
+    { cdCardTraits = setFromList [Isengard]
+    , cdEasyModeQuantity = Just 1
+    }
+
+-- | X threat, the number of players in the game: given by its own modifiers.
+plainOfIsengard :: CardDef
+plainOfIsengard =
+  (location "143058" "Plain of Isengard" TheRoadToIsengard 2 0 3)
+    { cdCardTraits = setFromList [Isengard]
+    , cdEasyModeQuantity = Just 1
+    }
+
+openPit :: CardDef
+openPit = (location "143059" "Open Pit" TheRoadToIsengard 2 2 3) {cdCardTraits = setFromList [Isengard]}
 
 -- * The Uruk-hai
 
