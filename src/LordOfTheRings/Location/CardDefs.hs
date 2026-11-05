@@ -15,7 +15,8 @@ allLocationCards =
   Map.fromList $
     map
       (\def -> (cdCardCode def, def))
-      [ glowingFissure
+      [ langfloodRiver
+      , glowingFissure
       , darkenedMine
       , expanseOfHollin
       , slopesOfHithaeglir
@@ -5110,3 +5111,9 @@ darkenedMine = (location "the-road-darkens-nightmare-journey-in-the-dark-005" "D
 glowingFissure :: CardDef
 glowingFissure = (location "the-road-darkens-nightmare-journey-in-the-dark-004" "Glowing Fissure" JourneyInTheDarkNightmare 3 0 4)
   {cdCardTraits = setFromList [Underground]}
+
+-- * Breaking of the Fellowship Nightmare
+
+langfloodRiver :: CardDef
+langfloodRiver = (location "the-road-darkens-nightmare-breaking-of-the-fellowship-004" "Langflood River" BreakingOfTheFellowshipNightmare 3 4 4)
+  {cdCardTraits = setFromList [River, Forest]}
