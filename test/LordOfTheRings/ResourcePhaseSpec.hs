@@ -1,7 +1,7 @@
 module LordOfTheRings.ResourcePhaseSpec (spec) where
 
 import LordOfTheRings.Phase
-import LordOfTheRings.Window (WindowType (CardsDrawn), mkAfter)
+import LordOfTheRings.Window (WindowType (CardsDrawn, CardsDrawnBy), mkAfter)
 import TestImport
 
 spec :: Spec
@@ -21,4 +21,4 @@ spec = describe "Resource phase" do
     runOnly $ DrawCards $ Drawing pid 2
     peekQueue `shouldReturn` [DoDrawCards $ Drawing pid 2]
     void runNext
-    peekQueue `shouldReturn` [CheckWindows [mkAfter $ CardsDrawn pid 2]]
+    peekQueue `shouldReturn` [CheckWindows [mkAfter $ CardsDrawn pid 2, mkAfter $ CardsDrawnBy pid GameSource]]

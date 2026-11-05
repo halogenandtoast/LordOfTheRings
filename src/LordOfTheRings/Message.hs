@@ -41,7 +41,11 @@ data Drawing = DrawingFrom
   -- ^ what draws them, as Open Pit reads "from a player card effect"
   }
   deriving stock (Show, Eq, Generic)
-  deriving anyclass (FromJSON, ToJSON)
+  deriving anyclass ToJSON
+
+-- | A draw kept before its source was, the game's.
+instance FromJSON Drawing where
+  parseJSON = genericParseJSON defaultOptions . withDefaults [("source", toJSON GameSource)]
 
 -- | A draw by the game's rules, as the resource phase's.
 pattern Drawing :: PlayerId -> Int -> Drawing
