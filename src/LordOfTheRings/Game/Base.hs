@@ -77,6 +77,9 @@ data Game = Game
   -- other player may respond until it has resolved.
   , gameFortitudeTests :: [FortitudeTest]
   -- ^ The Fortitude tests under way, their cards discarded, the latest first.
+  , gameSurgeChain :: [CardId]
+  -- ^ The cards whose surge revealed another card, one after another, since the last card
+  -- revealed without surge: see 'SurgeReveal'.
   }
   deriving stock (Show, Generic)
 

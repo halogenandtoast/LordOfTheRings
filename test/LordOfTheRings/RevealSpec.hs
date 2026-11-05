@@ -71,6 +71,25 @@ spec = describe "Revealing encounter cards" do
     getsGame (length . (.entities.enemies)) `shouldReturn` 1
     getsGame (length . (.entities.locations)) `shouldReturn` 1
 
+  it "ends a surge chain in the quest phase once every card of the encounter deck has surged in it" . gameTest $ \_ -> do
+    putGame . (phaseL .~ QuestPhase) =<< getGame
+    -- the first is shuffled back in as the second empties the deck; the second's surge
+    -- would only reveal the first again
+    [first, second] <- setEncounterDeck [Treacheries.offTrack, Treacheries.offTrack]
+    run RevealEncounterCard
+    resolveRevealed
+    getsGame (length . (.entities.treacheries)) `shouldReturn` 0
+    getEncounterDeck `shouldReturn` [first]
+    getEncounterDiscard `shouldReturn` [second]
+
+  it "lets a surge chain go on while the encounter deck holds a card that has not surged in it" . gameTest $ \_ -> do
+    putGame . (phaseL .~ QuestPhase) =<< getGame
+    _ <- setEncounterDeck [Treacheries.offTrack]
+    _ <- setEncounterDiscard [Locations.oldForestRoad]
+    run RevealEncounterCard
+    resolveRevealed
+    getsGame (length . (.entities.locations)) `shouldReturn` 1
+
   it "shuffles the discard pile back in when the deck runs out" . gameTest $ \_ -> do
     treachery <- setEncounterDeck [Treacheries.drivenByShadow]
     run RevealEncounterCard
