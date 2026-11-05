@@ -93,6 +93,7 @@ import LordOfTheRings.Message (
     RemoveProgressFromQuest,
     ResolveDiscover,
     ResolveTravelEffect,
+    PlaceUnderneath,
     ReturnToBottomOfEncounterDeck,
     ReturnToHand,
     ReturnToTopOfEncounterDeck,
@@ -110,6 +111,7 @@ import LordOfTheRings.Modifier (
   Modifier (modifierType),
   ModifierType (
     CannotBeDefeated,
+    CannotBePlacedUnder,
     TravelRequiresEngagingHighestToughness,
     CannotBeTraveledTo,
     CannotBeDiscardedByEncounterCards,
@@ -144,6 +146,7 @@ import LordOfTheRings.Source (Source (GameSource))
 import LordOfTheRings.Target (
   Target (
     AllyTarget,
+    CardIdTarget,
     EnemyTarget,
     GameTarget,
     HeroTarget,
@@ -193,6 +196,10 @@ runGame msg g = protectDiscardedHeroes g msg >>= maybe (pure g) (\allowed -> run
 
 runGameAllowed :: Message -> Game -> GameT Game
 runGameAllowed msg g = case msg of
+  -- Filter before the host receives the cards or the original entities leave play.
+  PlaceUnderneath host cards -> do
+    allowed <- filterM (fmap (notElem $ CannotBePlacedUnder host) . getModifiers . CardIdTarget . (.id)) cards
+    if null allowed then pure g else runGame'' (PlaceUnderneath host allowed) g
   -- progress for a card that another takes instead, as Blinding Blizzard the quest's
   PlaceTokens source target Progress n
     | n > 0

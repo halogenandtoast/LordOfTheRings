@@ -1,7 +1,7 @@
 module LordOfTheRings.Treachery.Cards.ArrowsThickInTheAir (arrowsThickInTheAir) where
 
 import LordOfTheRings.Keyword (Keyword (Archery))
-import LordOfTheRings.Scenario.Scenarios.JourneyToTheCrossRoads.Helpers (getTheBlackGate, haradEnemy, placeUnderTheBlackGate)
+import LordOfTheRings.Scenario.Scenarios.JourneyToTheCrossRoads.Helpers (canPlaceUnderTheBlackGate, haradEnemy, placeUnderTheBlackGate)
 import LordOfTheRings.Treachery.CardDefs qualified as Cards
 import LordOfTheRings.Treachery.Import.Lifted
 
@@ -23,11 +23,11 @@ instance RunMessage ArrowsThickInTheAir where
       for_ harad \e -> roundModifier attrs e (GainKeyword $ Archery 2)
       pure t
     ResolveShadowEffect cid eid pid _ | cid == attrs.cardId -> do
-      gate <- getTheBlackGate
+      allowed <- canPlaceUnderTheBlackGate eid
       chooseOrRunOneM pid do
         questionLabeled "arrowsThickInTheAir.choose"
         causedBy attrs
-        when (isJust gate) $ labeled "arrowsThickInTheAir.blackGate" $ doStep 2 msg
+        when allowed $ labeled "arrowsThickInTheAir.blackGate" $ doStep 2 msg
         labeled "arrowsThickInTheAir.attack" $ additionalAttack pid eid
       pure t
     DoStep 2 shadow@(ResolveShadowEffect cid eid _ _) | cid == attrs.cardId -> do

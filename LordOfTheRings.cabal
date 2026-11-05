@@ -1156,8 +1156,10 @@ library
       LordOfTheRings.Enemy.Cards.SouthronMountedArcher
       LordOfTheRings.Enemy.Cards.SouthronOutrider
       LordOfTheRings.Enemy.Cards.SouthronPhalanx
+      LordOfTheRings.Enemy.Cards.SouthronRearguard
       LordOfTheRings.Enemy.Cards.SouthronSailor
       LordOfTheRings.Enemy.Cards.SouthronSoldier
+      LordOfTheRings.Enemy.Cards.SouthronWarrior
       LordOfTheRings.Enemy.Cards.SpawnOfShelob
       LordOfTheRings.Enemy.Cards.SpiderBroodling
       LordOfTheRings.Enemy.Cards.SpiderOfDolGuldur
@@ -4240,6 +4242,7 @@ test-suite LordOfTheRings-test
       LordOfTheRings.Starter.ElvesOfLorienSpec
       LordOfTheRings.Starter.RidersOfRohanSpec
       LordOfTheRings.StarterDeckSpec
+      LordOfTheRings.TheLandOfShadow.JourneyToTheCrossRoadsNightmareSpec
       LordOfTheRings.TheLandOfShadow.JourneyToTheCrossRoadsSpec
       LordOfTheRings.TheLandOfShadow.ShelobsLairSpec
       LordOfTheRings.TheLandOfShadow.ThePassageOfTheMarshesNightmareSpec

@@ -7,6 +7,7 @@ module LordOfTheRings.Scenario.Scenarios.JourneyToTheCrossRoads.Helpers (
   cardsUnderTheCrossRoads,
   revealFromUnderTheCrossRoads,
   placeUnderTheBlackGate,
+  canPlaceUnderTheBlackGate,
   lowestBy,
 ) where
 
@@ -16,6 +17,8 @@ import LordOfTheRings.Classes.HasGame
 import LordOfTheRings.Classes.HasQueue (push)
 import LordOfTheRings.Entities (entitiesObjectives)
 import LordOfTheRings.Game.Base (gameEntities)
+import LordOfTheRings.Helpers.Modifiers (getModifiers)
+import LordOfTheRings.Modifier (ModifierType (CannotBePlacedUnder))
 import LordOfTheRings.Id
 import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Location.Types (LocationAttrs (locationUnderneath))
@@ -25,6 +28,7 @@ import LordOfTheRings.Message.Lifted
 import LordOfTheRings.Objective.CardDefs qualified as Objectives
 import LordOfTheRings.Objective.Types (Objective)
 import LordOfTheRings.Prelude
+import LordOfTheRings.Target (Target (CardIdTarget), toTarget)
 import LordOfTheRings.Trait (Trait (Harad))
 
 haradEnemy :: EnemyMatcher
@@ -50,12 +54,23 @@ the message resolves, so each reveal takes the card on top then.
 revealFromUnderTheCrossRoads :: ReverseQueue m => Maybe PlayerId -> m ()
 revealFromUnderTheCrossRoads = push . ScenarioSpecific "theCrossRoads.reveal" . toJSON
 
+-- | An option that places the enemy under the Gate must be able to do so in full.
+canPlaceUnderTheBlackGate :: HasGame m => EnemyId -> m Bool
+canPlaceUnderTheBlackGate eid = do
+  gate <- getTheBlackGate
+  present <- selectAny (EnemyWithId eid)
+  case gate of
+    Just g | present -> do
+      enemy <- getEnemy eid
+      notElem (CannotBePlacedUnder $ toTarget g) <$> getModifiers (CardIdTarget $ (toCard enemy).id)
+    _ -> pure False
+
 -- | The enemy is placed facedown under The Black Gate.
 placeUnderTheBlackGate :: ReverseQueue m => EnemyId -> m ()
 placeUnderTheBlackGate eid = do
   gate <- getTheBlackGate
-  present <- selectAny (EnemyWithId eid)
-  for_ gate \g -> when present do
+  allowed <- canPlaceUnderTheBlackGate eid
+  for_ gate \g -> when allowed do
     enemy <- getEnemy eid
     placeUnderneath (toId g) [toCard enemy]
 

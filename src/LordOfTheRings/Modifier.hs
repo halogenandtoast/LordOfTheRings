@@ -285,6 +285,8 @@ data ModifierType
     DiscardAtEndOfRound
   | -- | on a hero, or its card: it is removed from the game at the end of the round
     RemoveFromGameAtEndOfRound
+  | -- | on a card id: this card cannot be placed underneath this target
+    CannotBePlacedUnder Target
   | -- | on a character, or its card: leaving play by any means, it is removed from the
     -- game instead, as Arkham's RemoveFromGameInsteadOfDiscard
     RemoveFromGameIfLeavesPlay

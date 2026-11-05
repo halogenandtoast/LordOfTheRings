@@ -1,7 +1,7 @@
 module LordOfTheRings.Treachery.Cards.FierceSouthrons (fierceSouthrons) where
 
 import LordOfTheRings.Helpers.Staging (getEnemyThreat)
-import LordOfTheRings.Scenario.Scenarios.JourneyToTheCrossRoads.Helpers (getTheBlackGate, haradEnemy, lowestBy, placeUnderTheBlackGate)
+import LordOfTheRings.Scenario.Scenarios.JourneyToTheCrossRoads.Helpers (canPlaceUnderTheBlackGate, getTheBlackGate, haradEnemy, lowestBy, placeUnderTheBlackGate)
 import LordOfTheRings.Treachery.CardDefs qualified as Cards
 import LordOfTheRings.Treachery.Import.Lifted
 
@@ -23,7 +23,7 @@ instance RunMessage FierceSouthrons where
     WhenRevealed (isTarget attrs -> True) -> do
       you <- getRevealer
       gate <- getTheBlackGate
-      lowest <- lowestBy getEnemyThreat =<< select (haradEnemy <> EnemyInStagingArea)
+      lowest <- filterM canPlaceUnderTheBlackGate =<< lowestBy getEnemyThreat =<< select (haradEnemy <> EnemyInStagingArea)
       staged <- select EnemyInStagingArea
       chooseOrRunOneM you do
         questionLabeled "fierceSouthrons.choose"

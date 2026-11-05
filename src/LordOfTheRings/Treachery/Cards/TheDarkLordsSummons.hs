@@ -1,7 +1,7 @@
 module LordOfTheRings.Treachery.Cards.TheDarkLordsSummons (theDarkLordsSummons) where
 
 import LordOfTheRings.Helpers.Staging (getEnemyAttack)
-import LordOfTheRings.Scenario.Scenarios.JourneyToTheCrossRoads.Helpers (cardsUnderTheCrossRoads, getTheBlackGate, haradEnemy, lowestBy, placeUnderTheBlackGate, revealFromUnderTheCrossRoads)
+import LordOfTheRings.Scenario.Scenarios.JourneyToTheCrossRoads.Helpers (cardsUnderTheCrossRoads, canPlaceUnderTheBlackGate, getTheBlackGate, haradEnemy, lowestBy, placeUnderTheBlackGate, revealFromUnderTheCrossRoads)
 import LordOfTheRings.Treachery.CardDefs qualified as Cards
 import LordOfTheRings.Treachery.Import.Lifted
 
@@ -23,7 +23,7 @@ instance RunMessage TheDarkLordsSummons where
     WhenRevealed (isTarget attrs -> True) -> do
       you <- getRevealer
       gate <- getTheBlackGate
-      lowest <- lowestBy getEnemyAttack =<< select (haradEnemy <> EnemyEngagedWith (PlayerWithId you))
+      lowest <- filterM canPlaceUnderTheBlackGate =<< lowestBy getEnemyAttack =<< select (haradEnemy <> EnemyEngagedWith (PlayerWithId you))
       under <- cardsUnderTheCrossRoads
       chooseOrRunOneM you do
         questionLabeled "theDarkLordsSummons.choose"
