@@ -6,7 +6,6 @@ import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Quest.CardDefs qualified as Cards
 import LordOfTheRings.Quest.Import.Lifted
-import LordOfTheRings.Scenario.Scenarios.AKnifeInTheDark.Helpers (winAKnifeInTheDark)
 import LordOfTheRings.Trait (Trait (Nazgul))
 
 newtype TheRingwraithsAttack = TheRingwraithsAttack QuestAttrs
@@ -35,6 +34,6 @@ instance RunMessage TheRingwraithsAttack where
       shuffleEncounterDeck
       TheRingwraithsAttack <$> runMessage msg attrs
     CheckWindows ws | attrs.flipped, notNull [() | Window After (EnemyLeftPlay _) <- ws] -> do
-      whenM (selectNone $ EnemyWithTrait Nazgul) winAKnifeInTheDark
+      whenM (selectNone $ EnemyWithTrait Nazgul) winGame
       TheRingwraithsAttack <$> runMessage msg attrs
     _ -> TheRingwraithsAttack <$> runMessage msg attrs

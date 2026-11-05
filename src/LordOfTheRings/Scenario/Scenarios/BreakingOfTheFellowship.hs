@@ -174,12 +174,13 @@ instance RunMessage BreakingOfTheFellowship where
       | choices@(_ : _) <- [c | Window After (DiscardedFromEncounterDeck cid) <- ws, c <- attrs.encounterDiscard, c.id == cid, isFrodosChoice c] -> do
           traverse_ revealInstead choices
           BreakingOfTheFellowship <$> runMessage msg (attrs & encounterDiscardL %~ filter (`notElem` choices))
-    -- Resolution, asked as the last stage is defeated, as the game would end: the first
-    -- player chooses either Followed by Night or Ill Fate to be added to the Campaign Pool
-    -- (the chosen burden card has been earned by the players), and each player chooses 1
-    -- hero he controls (other than the Ring-bearer or Aragorn) to be taken captive, whose
-    -- name is recorded in the Campaign Log. The game over, no question could be asked.
-    AdvanceQuest | null attrs.questDeck, isJust attrs.campaign -> do
+    -- Resolution: the first player chooses either Followed by Night or Ill Fate to be added
+    -- to the Campaign Pool (the chosen burden card has been earned by the players), and
+    -- each player chooses 1 hero he controls (other than the Ring-bearer or Aragorn) to be
+    -- taken captive, whose name is recorded in the Campaign Log. If Fallen into Evil is
+    -- attached to a hero, add that hero to the list of Fallen Heroes in the Campaign Log:
+    -- the hero it turned into an enemy.
+    ResolveCampaign | Just l <- attrs.campaign -> do
       lead <- getLead
       burdens <- traverse genEncounterCard [Treacheries.followedByNightTheRoadDarkens, Treacheries.illFate]
       chooseOneM lead do
@@ -189,7 +190,17 @@ instance RunMessage BreakingOfTheFellowship where
           updateCampaignLog $ AddToPool $ PoolCard (toCardCode c) Nothing Nothing
       players <- getRemainingPlayers
       push $ ScenarioSpecific "breakingOfTheFellowship.captive" (toJSON (players, [] :: [CardCode]))
-      BreakingOfTheFellowship <$> runMessage msg attrs
+      es <- getsGame gameEntities
+      let fallen =
+            [ toCardCode e
+            | t <- toList es.treacheries
+            , toCardCode t == toCardCode Treacheries.fallenIntoEvil
+            , AttachedTo (EnemyTarget eid) <- [t.placement]
+            , Just e <- [lookup eid es.enemies]
+            , isJust (enemyOwner $ toAttrs e)
+            , cdCardType (toCardDef e) == HeroType
+            ]
+      BreakingOfTheFellowship <$> runMessage msg (attrs {scenarioCampaign = Just $ foldl' (flip $ updateLog . AddFallenHero) l fallen})
     ScenarioSpecific "breakingOfTheFellowship.captive" (parseMaybe parseJSON -> Just (players :: [PlayerId], captives :: [CardCode])) -> do
       case players of
         p : ps -> do
@@ -207,20 +218,6 @@ instance RunMessage BreakingOfTheFellowship where
                 push $ ScenarioSpecific "breakingOfTheFellowship.captive" (toJSON (ps, captives <> [toCardCode captive]))
         [] -> updateCampaignLog $ Record Captives captives
       pure $ BreakingOfTheFellowship attrs
-    -- Resolution: If Fallen into Evil is attached to a hero, add that hero to the list of
-    -- Fallen Heroes in the Campaign Log: the hero it turned into an enemy.
-    ResolveCampaign | Just l <- attrs.campaign -> do
-      es <- getsGame gameEntities
-      let fallen =
-            [ toCardCode e
-            | t <- toList es.treacheries
-            , toCardCode t == toCardCode Treacheries.fallenIntoEvil
-            , AttachedTo (EnemyTarget eid) <- [t.placement]
-            , Just e <- [lookup eid es.enemies]
-            , isJust (enemyOwner $ toAttrs e)
-            , cdCardType (toCardDef e) == HeroType
-            ]
-      BreakingOfTheFellowship <$> runMessage msg (attrs {scenarioCampaign = Just $ foldl' (flip $ updateLog . AddFallenHero) l fallen})
     _ -> BreakingOfTheFellowship <$> runMessage msg attrs
    where
     gifts = [Attachments.phialOfGaladriel, Attachments.threeGoldenHairs, Attachments.lorienRope, Attachments.leafWrappedLembas]

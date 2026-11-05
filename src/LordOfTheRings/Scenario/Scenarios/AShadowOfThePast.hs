@@ -1,9 +1,10 @@
 module LordOfTheRings.Scenario.Scenarios.AShadowOfThePast (aShadowOfThePast) where
 
 import LordOfTheRings.Attachment.CardDefs qualified as Attachments
+import LordOfTheRings.Campaign (CampaignLogUpdate (AddToPool), PoolCard (..))
 import LordOfTheRings.EncounterSet qualified as EncounterSet
 import LordOfTheRings.Location.CardDefs qualified as Locations
-import LordOfTheRings.Matcher (HeroMatcher (HeroWithTrait), cardIs, cardMatches, getHero, select)
+import LordOfTheRings.Matcher (HeroMatcher (HeroWithTrait), cardIs, cardMatches, getHero, getLead, select)
 import LordOfTheRings.Objective.CardDefs qualified as Objectives
 import LordOfTheRings.Quest.CardDefs qualified as Quests
 import LordOfTheRings.Scenario.Import.Lifted
@@ -25,8 +26,13 @@ Campaign: Setup: Attach Mr. Underhill to the Ring-bearer. Add Gandalf's Delay to
 staging area. Shuffle Gildor Inglorion and The Ring Draws Them into the encounter deck.
 Gildor Inglorion and The Ring Draws Them go in as the deck is gathered, to be shuffled at
 step 2; Mr. Underhill and Gandalf's Delay at step 4, once the Ring-bearer is in play and
-before the starting hands Gandalf's Delay shortens are drawn. Its resolution is chosen as
-the players win (see 'winAShadowOfThePast').
+before the starting hands Gandalf's Delay shortens are drawn.
+
+Resolution: Choose Gandalf's Delay or The Ring Draws Them and add it to the Campaign Pool.
+Then, choose Gildor Inglorion or Mr. Underhill and add it to the Campaign Pool. The chosen
+cards have been earned by the players. The first player chooses for the group. Mr.
+Underhill, Permanent, is recorded on the Ring-bearer (The Black Riders rules insert,
+"Permanent").
 -}
 instance RunMessage AShadowOfThePast where
   runMessage msg (AShadowOfThePast attrs) = case msg of
@@ -54,5 +60,18 @@ instance RunMessage AShadowOfThePast where
         card <- genPlayerCard Attachments.mrUnderhill (Just h.owner)
         attachOutOfPlay h.owner card h.id
       addToStaging =<< genEncounterCard Objectives.gandalfsDelay
+      AShadowOfThePast <$> runMessage msg attrs
+    ResolveCampaign | isJust attrs.campaign -> do
+      lead <- getLead
+      ringBearer <- traverse getHero . headMay =<< select (HeroWithTrait RingBearer)
+      let earn def on = updateCampaignLog $ AddToPool $ PoolCard (toCardCode def) Nothing on
+      chooseOneM lead do
+        questionLabeled "aShadowOfThePast.chooseBurden"
+        labeled "aShadowOfThePast.gandalfsDelay" $ earn Objectives.gandalfsDelay Nothing
+        labeled "aShadowOfThePast.theRingDrawsThem" $ earn Treacheries.theRingDrawsThem Nothing
+      chooseOneM lead do
+        questionLabeled "aShadowOfThePast.chooseBoon"
+        labeled "aShadowOfThePast.gildorInglorion" $ earn Objectives.gildorInglorionObjective Nothing
+        labeled "aShadowOfThePast.mrUnderhill" $ earn Attachments.mrUnderhill (toCardCode <$> ringBearer)
       AShadowOfThePast <$> runMessage msg attrs
     _ -> AShadowOfThePast <$> runMessage msg attrs

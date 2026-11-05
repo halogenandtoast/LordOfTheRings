@@ -70,18 +70,22 @@ instance RunMessage TheRoadToIsengard where
     players have earned the Palantír of Orthanc boon card. Add the earned cards to the
     Campaign Pool. The hands are read as the game is won, the players still in it.
 
-    The Palantír goes to the first player's deck: it attaches to Aragorn, whom the first
-    player controls, and a choice for the group is the first player's to make.
+    The Palantír, a player card, goes to the deck of the player the first player chooses,
+    a choice for the group being his to make. It attaches to the Fellowship's Aragorn,
+    whoever controls him.
     -}
     ResolveCampaign | Just l <- attrs.campaign -> do
       players <- getRemainingPlayers
       hands <- traverse (fmap (length . (.hand)) . getPlayer) players
       lead <- getLead
       order <- getsGame (.playerOrder)
+      when (any (>= 3) hands) do
+        chooseOrRunOneM lead do
+          questionLabeled "theRoadToIsengard.palantirSeat"
+          targets players \p ->
+            updateCampaignLog $ AddToPool $ PoolCard (toCardCode Attachments.palantirOfOrthanc) (elemIndex p order) Nothing
       let voice = [PoolCard (toCardCode Treacheries.sarumansVoice) Nothing Nothing | any (<= 3) hands]
-          palantir = [PoolCard (toCardCode Attachments.palantirOfOrthanc) (elemIndex lead order) Nothing | any (>= 3) hands]
-          l' = foldl' (flip $ updateLog . AddToPool) l (voice <> palantir)
-      TheRoadToIsengard <$> runMessage msg (attrs {scenarioCampaign = Just l'})
+      TheRoadToIsengard <$> runMessage msg (attrs {scenarioCampaign = Just $ foldl' (flip $ updateLog . AddToPool) l voice})
     _ -> TheRoadToIsengard <$> runMessage msg attrs
    where
     meta :: Int -> Bool -> Value

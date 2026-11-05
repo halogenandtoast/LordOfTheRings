@@ -48,10 +48,8 @@ instance RunMessage JourneyInTheDark where
       traverse_ (addToStaging <=< genEncounterCard) (fresh burdenObjectives)
       deck <- shuffleM (treacheries <> attrs.encounterDeck)
       JourneyInTheDark <$> runMessage msg (attrs & encounterDeckL .~ deck)
-    -- Resolution: the burdens are earned as the last stage is defeated, before the game is
-    -- won, as the game over asks nothing (see 'earnBurdens').
-    AdvanceQuest | null attrs.questDeck, isJust attrs.campaign -> do
+    -- Resolution: see 'earnBurdens'.
+    ResolveCampaign | isJust attrs.campaign -> do
       earnBurdens
-      winGame
-      pure $ JourneyInTheDark attrs
+      JourneyInTheDark <$> runMessage msg attrs
     _ -> JourneyInTheDark <$> runMessage msg attrs

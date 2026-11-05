@@ -25,8 +25,7 @@ instance HasModifiersFor TheBridgeOfKhazadDum where
 encounter card and removes 1 damage token from Doom, Doom, Doom, in turn from the first
 player: the "you" of the card he reveals.
 
-If the players defeat this stage, they win the game: it is the last, and the scenario
-asks the campaign card's resolution of the first player first.
+If the players defeat this stage, they win the game: it is the last.
 -}
 instance RunMessage TheBridgeOfKhazadDum where
   runMessage msg q@(TheBridgeOfKhazadDum attrs) = case msg of

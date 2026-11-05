@@ -94,9 +94,7 @@ locationsInVictoryDisplay =
 
 {- | The campaign card's resolution: "Each player must choose: either take a permanent +2
 starting threat penalty, or earn 1 copy of The Searching Eye. Record each player's
-choice in the campaign log." Asked as the last stage is defeated, before the game is won:
-once it is over no question can be asked, and what it writes to the log is kept as the
-scenario is won.
+choice in the campaign log."
 -}
 passageOfTheMarshesResolution :: ReverseQueue m => m ()
 passageOfTheMarshesResolution = do

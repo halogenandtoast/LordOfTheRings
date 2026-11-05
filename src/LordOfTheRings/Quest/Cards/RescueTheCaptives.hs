@@ -29,8 +29,7 @@ enemy, reveals it, and adds it to the staging area. Shuffle the encounter deck. 
 reveals his as its revealer, "you" on it reading him.
 
 The players cannot defeat this stage while Uglúk is in play. If the players defeat this
-stage, they have rescued each Captive hero and won the game. The campaign card's
-resolution is the scenario's, asked as the won game would end (see 'TheUrukHai').
+stage, they have rescued each Captive hero and won the game.
 -}
 instance RunMessage RescueTheCaptives where
   runMessage msg q@(RescueTheCaptives attrs) = case msg of

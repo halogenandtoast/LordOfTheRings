@@ -6,17 +6,8 @@ module LordOfTheRings.Scenario.Scenarios.AShadowOfThePast.Helpers (
   failedHideTestThisRound,
   nazgulEngage,
   revealBlackRider,
-  winAShadowOfThePast,
 ) where
 
-import LordOfTheRings.Attachment.CardDefs qualified as Attachments
-import LordOfTheRings.Campaign (CampaignLogUpdate (AddToPool), PoolCard (..))
-import LordOfTheRings.Card (CardDef, toCardCode)
-import LordOfTheRings.Card.Code (CardCode)
-import LordOfTheRings.Helpers.Campaign (getCampaignLog)
-import LordOfTheRings.Objective.CardDefs qualified as Objectives
-import LordOfTheRings.Treachery.CardDefs qualified as Treacheries
-import LordOfTheRings.Trait (Trait (RingBearer))
 import LordOfTheRings.Classes.HasGame (HasGame)
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Helpers.Modifiers (getModifiers)
@@ -49,29 +40,3 @@ revealBlackRider :: ReverseQueue m => QuestAttrs -> m ()
 revealBlackRider attrs = do
   lead <- getLead
   cannotBeCanceled attrs $ searchEncounterDeckAndDiscardToReveal lead attrs (cardIs Enemies.blackRider)
-
-{- | After Bucklebury Ferry leaves play as an explored location, the players win the game. In
-campaign mode the campaign card's resolution is chosen as they do, the game asking nothing
-once it is over: "Choose Gandalf's Delay or The Ring Draws Them and add it to the Campaign
-Pool. Then, choose Gildor Inglorion or Mr. Underhill and add it to the Campaign Pool. The
-chosen cards have been earned by the players." Mr. Underhill, Permanent, is recorded on
-the Ring-bearer (The Black Riders rules insert, "Permanent").
--}
-winAShadowOfThePast :: ReverseQueue m => m ()
-winAShadowOfThePast = do
-  campaign <- getCampaignLog
-  for_ campaign \_ -> do
-    lead <- getLead
-    ringBearer <- traverse getHero . headMay =<< select (HeroWithTrait RingBearer)
-    chooseOneM lead do
-      questionLabeled "aShadowOfThePast.chooseBurden"
-      labeled "aShadowOfThePast.gandalfsDelay" $ earn Objectives.gandalfsDelay Nothing
-      labeled "aShadowOfThePast.theRingDrawsThem" $ earn Treacheries.theRingDrawsThem Nothing
-    chooseOneM lead do
-      questionLabeled "aShadowOfThePast.chooseBoon"
-      labeled "aShadowOfThePast.gildorInglorion" $ earn Objectives.gildorInglorionObjective Nothing
-      labeled "aShadowOfThePast.mrUnderhill" $ earn Attachments.mrUnderhill (toCardCode <$> ringBearer)
-  winGame
- where
-  earn :: ReverseQueue n => CardDef -> Maybe CardCode -> n ()
-  earn def hero = updateCampaignLog $ AddToPool $ PoolCard (toCardCode def) Nothing hero

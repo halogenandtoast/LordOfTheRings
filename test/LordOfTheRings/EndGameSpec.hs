@@ -1,16 +1,51 @@
 module LordOfTheRings.EndGameSpec (spec) where
 
 import Data.Aeson.KeyMap qualified as KeyMap
+import LordOfTheRings.Campaign (CampaignLog (..), CompletedScenario (..), PoolCard (..), newCampaignLog)
+import LordOfTheRings.Decklist (loadPlayer)
+import LordOfTheRings.Frontend (FrontendMessage (..))
+import LordOfTheRings.Log.Entry
+import LordOfTheRings.Objective.CardDefs qualified as Objectives
+import LordOfTheRings.Scenario (aShadowOfThePast)
+import LordOfTheRings.Treachery.CardDefs qualified as Treacheries
 import LordOfTheRings.Game.Public (GroupScore (..), groupScore, publicGame)
 import LordOfTheRings.Effect (Effect (..), EffectDuration (UntilSpent))
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Modifier (ModifierType (GameCannotEnd))
-import LordOfTheRings.Scenario.Types (victoryDisplayL)
+import LordOfTheRings.Scenario.Types (scenarioCampaign, victoryDisplayL)
 import LordOfTheRings.Outcome
 import TestImport
 
+-- | A one player game of A Shadow of the Past in campaign mode, its log kept, newest first.
+campaignLoggedTest :: (IORef [LogEntry] -> PlayerId -> GameT ()) -> IO ()
+campaignLoggedTest body = do
+  (player, heroes) <- either (error . show) pure =<< loadPlayer "tester" testDeck
+  logged <- newIORef []
+  let l = (newCampaignLog "the-lord-of-the-rings") {campaignLogHeroes = [["01012", "01007", "01002"]]}
+      scenario = overAttrs (\a -> a {scenarioCampaign = Just l}) aShadowOfThePast
+  env <- newGameEnv (newGameIn scenario player heroes) (\case Logged e -> modifyIORef' logged (e :); _ -> pure ()) 1
+  runGameT env (body logged player.id)
+
 spec :: Spec
 spec = describe "End of the game" do
+  it "in campaign mode resolves the campaign card, asking the players, before the game ends" . campaignLoggedTest $ \logged pid -> do
+    -- what was queued as the game was won does not run
+    threat <- (.threat) <$> getPlayer pid
+    pushAll [GameOver Won, RaiseThreat pid 5]
+    void mainLoop
+    getsGame (.outcome) `shouldReturn` Nothing
+    chooseLabel "$label.aShadowOfThePast.theRingDrawsThem" pid
+    getsGame (.outcome) `shouldReturn` Nothing
+    chooseLabel "$label.aShadowOfThePast.gildorInglorion" pid
+    getsGame (.outcome) `shouldReturn` Just Won
+    peekQueue `shouldReturn` []
+    (.threat) <$> getPlayer pid `shouldReturn` threat
+    l <- getCampaignLog
+    l.pool `shouldBe` [PoolCard (toCardCode Treacheries.theRingDrawsThem) Nothing Nothing, PoolCard (toCardCode Objectives.gildorInglorionObjective) Nothing Nothing]
+    map completedScenario l.completed `shouldBe` ["a-shadow-of-the-past"]
+    said <- mapMaybe (\e -> case e.logEntryBody of LogI18n k _ : _ -> Just k; _ -> Nothing) . reverse <$> readIORef logged
+    said `shouldBe` ["log.gameOver.won", "log.resolution"]
+
   it "eliminates a player whose threat reaches 50" . gameTest $ \pid -> do
     flipFirstQuest pid
     run $ RaiseThreat pid 23
