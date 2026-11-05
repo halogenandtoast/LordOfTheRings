@@ -11,7 +11,7 @@ import LordOfTheRings.Json
 import LordOfTheRings.Message
 import LordOfTheRings.Prelude
 import LordOfTheRings.Effect (Effect (..), EffectDuration (UntilEndOfPhase, UntilEndOfRound))
-import LordOfTheRings.Modifier (ModifierType (PlayedACardThisPhase, PlayedCardThisRound))
+import LordOfTheRings.Modifier (ModifierType (PlayedACardThisPhase, PlayedCardThisPhase, PlayedCardThisRound))
 import LordOfTheRings.Source (Source (GameSource, PlayerSource))
 import LordOfTheRings.Target (Target (PlayerTarget), toTarget)
 import LordOfTheRings.Token (Token (Resource))
@@ -116,7 +116,7 @@ instance RunMessage ActiveCost where
 markPlayed :: PlayerId -> PlayerCard -> [Message]
 markPlayed pid card =
   [ CreateEffect $ Effect GameSource (PlayerTarget pid) [PlayedCardThisRound (toCardCode card) (cdCardType $ toCardDef card)] UntilEndOfRound
-  , CreateEffect $ Effect GameSource (PlayerTarget pid) [PlayedACardThisPhase] UntilEndOfPhase
+  , CreateEffect $ Effect GameSource (PlayerTarget pid) [PlayedACardThisPhase, PlayedCardThisPhase (toCardCode card) (cdCardType $ toCardDef card)] UntilEndOfPhase
   ]
 
 -- | A card, its cost paid, played into play or resolved.

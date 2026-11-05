@@ -3517,6 +3517,7 @@
   },
   "theLonelyMountain": {
     "burgle": {
+      "sphereTypeAndCost": "Burgle: discard {count} card(s) from your hand that match the revealed card's sphere, type, and cost",
       "sphereAndType": "Burgle: discard {count} card(s) from your hand that match the revealed card's sphere and type",
       "sphereAndCost": "Burgle: discard {count} card(s) from your hand that match the revealed card's sphere and cost",
       "typeAndCost": "Burgle: discard {count} card(s) from your hand that match the revealed card's type and cost",

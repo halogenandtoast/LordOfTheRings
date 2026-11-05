@@ -18,6 +18,7 @@ module LordOfTheRings.Scenario.Scenarios.TheLonelyMountain.Helpers (
   getSmaugTheGolden,
   getSmaugTheMagnificent,
   getTheLonelyMountain,
+  treasuresRemain,
   enemyProgress,
   placeProgressOnSmaugTheGolden,
   advanceToStageFour,
@@ -25,7 +26,15 @@ module LordOfTheRings.Scenario.Scenarios.TheLonelyMountain.Helpers (
 
 import Data.Aeson.Types (parseMaybe)
 import LordOfTheRings.Attachment.CardDefs qualified as Attachments
-import LordOfTheRings.Card (Card, CardCode, CardCost (StaticCost), CardDef (..), HasCardCode, toCardCode, toCardDef)
+import LordOfTheRings.Card (
+  Card,
+  CardCode,
+  CardCost (StaticCost),
+  CardDef (..),
+  HasCardCode,
+  toCardCode,
+  toCardDef,
+ )
 import LordOfTheRings.Classes.Entity (toAttrs)
 import LordOfTheRings.Classes.HasGame
 import LordOfTheRings.Classes.HasQueue (push, pushAll)
@@ -33,6 +42,7 @@ import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Enemy.Types (EnemyAttrs (enemyTokens))
 import LordOfTheRings.Id
 import LordOfTheRings.Location.CardDefs qualified as Locations
+import LordOfTheRings.Location.Types (LocationAttrs (locationUnderneath))
 import LordOfTheRings.Log.Block (LogBlockKind (BurgleBlock))
 import LordOfTheRings.Matcher
 import LordOfTheRings.Message
@@ -69,6 +79,9 @@ burgleEffects =
   , (toCardCode Treacheries.pretendingToSleep, Burgle 2 [ByType])
   , (toCardCode Treacheries.knownToAnOunce, Burgle 1 [BySphere, ByCost])
   , (toCardCode Treacheries.belchingFire, Burgle 1 [ByType, ByCost])
+  , (toCardCode Enemies.ereborBats, Burgle 2 [ByCost, ByType])
+  , (toCardCode Locations.theFrontGateNightmare, Burgle 3 [ByCost])
+  , (toCardCode Treacheries.lustForTreasure, Burgle 1 [BySphere, ByType, ByCost])
   ]
 
 -- | The burgle effect printed on the card, if it has one.
@@ -82,8 +95,9 @@ withBurgle = CardMatchAny $ map (CardWithCode . fst) burgleEffects
 hasBurgle :: HasCardCode a => a -> Bool
 hasBurgle = isJust . burgleOf
 
--- | Whether the card in hand matches the revealed card as the burgle effect asks: a
--- card's cost is its printed cost, an X counting 0.
+{- | Whether the card in hand matches the revealed card as the burgle effect asks: a
+card's cost is its printed cost, an X counting 0.
+-}
 burgleMatches :: Burgle -> Card -> Card -> Bool
 burgleMatches b revealed card = all matching b.burgleMatching
  where
@@ -101,6 +115,7 @@ burgleMatches b revealed card = all matching b.burgleMatching
 burgleQuestionKey :: Burgle -> Text
 burgleQuestionKey b =
   "theLonelyMountain.burgle." <> case sort (map rank b.burgleMatching) of
+    [0, 1, 2] -> "sphereTypeAndCost"
     [0, 1] -> "sphereAndType"
     [0, 2] -> "sphereAndCost"
     [1, 2] -> "typeAndCost"
@@ -124,7 +139,10 @@ makeBurgleAttempt a onSuccess onFail = do
   succeeded <- capture onSuccess
   failed <- capture onFail
   lead <- getLead
-  pushAll =<< inLogBlock (BurgleBlock lead) [ScenarioSpecific "burgle.attempt" (toJSON (toTarget a, succeeded, failed))]
+  pushAll
+    =<< inLogBlock
+      (BurgleBlock lead)
+      [ScenarioSpecific "burgle.attempt" (toJSON (toTarget a, succeeded, failed))]
 
 -- | The outcome of a burgle attempt: the card it was made for, and whether it succeeded.
 burgled :: Message -> Maybe (Target, Bool)
@@ -170,3 +188,9 @@ advanceToStageFour = do
     mains <- getMainQuests
     for_ [qid | QuestTarget qid <- mains] (push . LeaveQuestStage)
     advanceToQuest stage
+
+-- | The Nightmare setup prevents stage 3 until every card under the mountain is taken.
+treasuresRemain :: HasGame m => m Bool
+treasuresRemain = do
+  mountains <- select (LocationWithCardCode $ toCardCode Locations.theLonelyMountain)
+  any (notNull . locationUnderneath . toAttrs) <$> traverse getLocation mountains

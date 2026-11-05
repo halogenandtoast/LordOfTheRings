@@ -7,28 +7,75 @@ Doorstep rules insert, "Burgle" and "Treasure").
 module LordOfTheRings.Scenario.Scenarios.TheLonelyMountain (theLonelyMountain) where
 
 import Data.Aeson.Types (parseMaybe)
+import LordOfTheRings.Classes.HasGame (getsGame)
 import LordOfTheRings.EncounterSet qualified as EncounterSet
-import LordOfTheRings.Id (PlayerId)
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
+import LordOfTheRings.Id (PlayerId)
 import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Matcher
+import LordOfTheRings.Modifier (ModifierType (CannotBeDefeated, CannotTakeDamage))
 import LordOfTheRings.Objective.CardDefs qualified as Objectives
+import LordOfTheRings.Placement (Placement (AttachedTo))
 import LordOfTheRings.Quest.CardDefs qualified as Quests
+import LordOfTheRings.Scenario.CardDefs qualified as Nightmare
 import LordOfTheRings.Scenario.Import.Lifted
 import LordOfTheRings.Scenario.Scenarios.TheLonelyMountain.Helpers
 import LordOfTheRings.Source (Source (ScenarioSource))
+import LordOfTheRings.Treachery.CardDefs qualified as Treacheries
 
 newtype TheLonelyMountain = TheLonelyMountain ScenarioAttrs
-  deriving anyclass (IsScenario, HasAbilities, HasModifiersFor)
+  deriving anyclass (IsScenario, HasAbilities)
   deriving newtype (Show, Eq, ToJSON, Entity)
 
 theLonelyMountain :: Scenario
-theLonelyMountain = Scenario $ scenario TheLonelyMountain "the-lonely-mountain" "The Lonely Mountain"
+theLonelyMountain =
+  Scenario
+    $ scenario
+      (TheLonelyMountain . (nightmareDeckL ?~ nightmare))
+      "the-lonely-mountain"
+      "The Lonely Mountain"
+ where
+  -- https://hallofbeorn.com/LotR/Details/The-Lonely-Mountain-Nightmare-TLMN
+  nightmare =
+    nightmareDeck
+      Nightmare.theLonelyMountainNightmare
+      EncounterSet.TheLonelyMountainNightmare
+      [ (Enemies.darkBats, 3)
+      , (Treacheries.fightingAmongFriends, 2)
+      , (Locations.westernSlopes, 3)
+      , (Locations.secretEntrance, 2)
+      , (Treacheries.belchingFire, 4)
+      ]
 
--- | A burgle attempt under way: the card it is made for and what follows its success and
--- its failure, the burgle effect discarded for it, the card revealed from the first
--- player's deck, and whether the encounter discard pile was already shuffled back in
--- looking for a burgle effect.
+instance HasModifiersFor TheLonelyMountain where
+  getModifiersFor (TheLonelyMountain a) = when a.nightmare do
+    remaining <- treasuresRemain
+    when remaining do
+      stages <-
+        getsGame
+          ( map toId
+              . filter ((== toCardCode Quests.theBurglarsTurnTheLonelyMountain) . toCardCode)
+              . toList
+              . (.entities.quests)
+          )
+      for_ stages \q -> modified a q [CannotBeDefeated]
+    smaug <- getSmaugTheMagnificent
+    for_ smaug \eid -> do
+      patched <-
+        getsGame
+          ( any
+              ( \o -> toCardCode o == toCardCode Objectives.aBarePatch && o.placement == AttachedTo (EnemyTarget eid)
+              )
+              . toList
+              . (.entities.objectives)
+          )
+      unless patched $ modified a eid [CannotTakeDamage]
+
+{- | A burgle attempt under way: the card it is made for and what follows its success and
+its failure, the burgle effect discarded for it, the card revealed from the first
+player's deck, and whether the encounter discard pile was already shuffled back in
+looking for a burgle effect.
+-}
 data Burgling = Burgling
   { burglingFor :: Target
   , burglingOnSuccess :: [Message]
@@ -40,8 +87,9 @@ data Burgling = Burgling
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
--- | The attempt under way, and each treasure taken from under The Lonely Mountain with the
--- player who took it.
+{- | The attempt under way, and each treasure taken from under The Lonely Mountain with the
+player who took it.
+-}
 data Meta = Meta
   { metaBurgling :: Maybe Burgling
   , metaTaken :: [(CardCode, PlayerId)]
@@ -60,17 +108,38 @@ instance RunMessage TheLonelyMountain where
   runMessage msg (TheLonelyMountain attrs) = case msg of
     DoStep 1 Setup -> do
       cards <- gatherEncounterSets attrs [EncounterSet.TheLonelyMountain, EncounterSet.Wilderland]
-      let searched = CardMatchAny [cardIs Enemies.smaugTheGolden, cardIs Enemies.smaugTheMagnificent, cardIs Locations.theLonelyMountain, cardIs Objectives.aBarePatch]
+      let searched =
+            CardMatchAny
+              [ cardIs Enemies.smaugTheGolden
+              , cardIs Enemies.smaugTheMagnificent
+              , cardIs Locations.theLonelyMountain
+              , cardIs Objectives.aBarePatch
+              ]
           (aside, deck) = partition (cardMatches searched) cards
       firstStage <- genEncounterCard Quests.aWarmWelcome
-      laterStages <- traverse genEncounterCard [Quests.theBurglarsTurnTheLonelyMountain, Quests.insideInformation, Quests.thievesFireMurder]
+      laterStages <-
+        traverse
+          genEncounterCard
+          [Quests.theBurglarsTurnTheLonelyMountain, Quests.insideInformation, Quests.thievesFireMurder]
       putQuestIntoPlay firstStage
       pure
         $ TheLonelyMountain
         $ attrs
-        & encounterDeckL .~ deck
-        & setAsideL .~ aside
-        & questDeckL .~ laterStages
+        & encounterDeckL
+        .~ deck
+        & setAsideL
+        .~ aside
+        & questDeckL
+        .~ laterStages
+    AdvanceQuest | attrs.nightmare -> do
+      remaining <- treasuresRemain
+      if remaining
+        && maybe False ((== toCardCode Quests.insideInformation) . toCardCode) (headMay attrs.questDeck)
+        then pure $ TheLonelyMountain attrs
+        else TheLonelyMountain <$> runMessage msg attrs
+    AdvanceToQuest card | attrs.nightmare && toCardCode card == toCardCode Quests.insideInformation -> do
+      remaining <- treasuresRemain
+      if remaining then pure $ TheLonelyMountain attrs else TheLonelyMountain <$> runMessage msg attrs
     -- Step 1: the first player discards cards from the top of the encounter deck until one
     -- with a burgle effect is discarded.
     ScenarioSpecific "burgle.attempt" (parseMaybe parseJSON -> Just (madeFor, onSuccess, onFail)) -> do
@@ -152,11 +221,13 @@ instance RunMessage TheLonelyMountain where
     ScenarioSpecific "burgle.fail" _ | Just b <- st.metaBurgling -> burgleResult b False
     -- a treasure taken from under The Lonely Mountain into a player's hand: successfully
     -- burgled, the players have discovered it if they win (stage 3B)
-    PutInHand pc | toCardCode pc `elem` map toCardCode lonelyMountainTreasures, Just owner <- pc.owner -> do
-      let new = toCardCode pc `notElem` map fst st.metaTaken
-          taken = st.metaTaken <> [(toCardCode pc, owner) | new]
-      when new $ discoverTreasure pc
-      TheLonelyMountain <$> runMessage msg (attrs & metaL .~ toJSON st {metaTaken = taken})
+    PutInHand pc
+      | toCardCode pc `elem` map toCardCode lonelyMountainTreasures
+      , Just owner <- pc.owner -> do
+          let new = toCardCode pc `notElem` map fst st.metaTaken
+              taken = st.metaTaken <> [(toCardCode pc, owner) | new]
+          when new $ discoverTreasure pc
+          TheLonelyMountain <$> runMessage msg (attrs & metaL .~ toJSON st {metaTaken = taken})
     _ -> TheLonelyMountain <$> runMessage msg attrs
    where
     st = metaOf attrs

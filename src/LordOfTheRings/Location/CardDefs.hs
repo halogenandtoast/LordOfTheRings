@@ -15,7 +15,10 @@ allLocationCards =
   Map.fromList $
     map
       (\def -> (cdCardCode def, def))
-      [ darkColony
+      [ secretTunnel
+      , southernSpur
+      , theFrontGateNightmare
+      , darkColony
       , mirkwoodPath
       , patchOfMidnight
       , theLowerGate
@@ -4943,4 +4946,46 @@ patchOfMidnight =
   )
     { cdCardTraits = setFromList [Forest]
     , cdShadowEffect = True
+    }
+
+-- * The Lonely Mountain Nightmare
+
+secretTunnel :: CardDef
+secretTunnel =
+  ( location
+      "on-the-doorstep-nightmare-the-lonely-mountain-003"
+      "Secret Tunnel"
+      TheLonelyMountainNightmare
+      3
+      2
+      6
+  )
+    { cdCardTraits = setFromList [Underground]
+    }
+
+southernSpur :: CardDef
+southernSpur =
+  ( location
+      "on-the-doorstep-nightmare-the-lonely-mountain-004"
+      "Southern Spur"
+      TheLonelyMountainNightmare
+      3
+      3
+      5
+  )
+    { cdCardTraits = setFromList [Mountain]
+    , cdShadowEffect = True
+    }
+
+theFrontGateNightmare :: CardDef
+theFrontGateNightmare =
+  ( location
+      "on-the-doorstep-nightmare-the-lonely-mountain-005"
+      "The Front Gate"
+      TheLonelyMountainNightmare
+      2
+      5
+      2
+  )
+    { cdCardTraits = setFromList [Mountain]
     }

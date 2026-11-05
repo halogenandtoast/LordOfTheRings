@@ -1,6 +1,7 @@
 module LordOfTheRings.Quest.Cards.TheBurglarsTurnTheLonelyMountain (theBurglarsTurnTheLonelyMountain) where
 
 import LordOfTheRings.Card (Card (PlayerCard), PlayerCard (..))
+import LordOfTheRings.Helpers.Modifiers (getModifiers)
 import LordOfTheRings.Location.Types (LocationAttrs (locationUnderneath))
 import LordOfTheRings.Quest.CardDefs qualified as Cards
 import LordOfTheRings.Quest.Import.Lifted
@@ -37,10 +38,11 @@ instance RunMessage TheBurglarsTurnTheLonelyMountain where
       pure q
     DoStep 1 (UseCardAbility _ (isSource attrs -> True) 1 _) -> do
       lead <- getLead
-      chooseOneM lead do
+      allowed <- notElem CannotBeDefeated <$> getModifiers attrs
+      chooseOrRunOneM lead do
         questionLabeled "theBurglarsTurnTheLonelyMountain.advance"
         causedBy attrs
-        labeled "theBurglarsTurnTheLonelyMountain.advanceToStage3" advanceQuest
+        when allowed $ labeled "theBurglarsTurnTheLonelyMountain.advanceToStage3" advanceQuest
         labeled "theBurglarsTurnTheLonelyMountain.stay" $ pure ()
       pure q
     (burgled -> Just (_, False)) | attrs.flipped -> do

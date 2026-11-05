@@ -14,7 +14,8 @@ allEnemyCards =
   Map.fromList $
     map
       (\def -> (cdCardCode def, def))
-      [ attercop
+      [ ereborBats
+      , attercop
       , venomousSpider
       , wickedWolf
       , lowerGateSentries
@@ -5319,4 +5320,22 @@ venomousSpider =
     { cdCardTraits = setFromList [Creature, Spider]
     , cdKeywords = setFromList [Venom]
     , cdShadowEffect = True
+    }
+
+-- * The Lonely Mountain Nightmare
+
+ereborBats :: CardDef
+ereborBats =
+  ( enemy
+      "on-the-doorstep-nightmare-the-lonely-mountain-002"
+      "Erebor Bats"
+      TheLonelyMountainNightmare
+      4
+      15
+      3
+      3
+      2
+      5
+  )
+    { cdCardTraits = setFromList [Creature]
     }

@@ -482,6 +482,8 @@ data ModifierType
     EngagedThisRound
   | -- | on a player: they played a copy of the card this phase
     PlayedThisPhase CardCode
+  | -- | on a player: the printed card and type played this phase
+    PlayedCardThisPhase CardCode CardType
   | -- | on a card: the card type its controller named
     NamedCardType CardType
   | -- | on a card: an effect chose it, its source reading it back later, as the enemy Bilbo

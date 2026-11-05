@@ -822,6 +822,7 @@ library
       LordOfTheRings.Enemy.Cards.EasternCrows
       LordOfTheRings.Enemy.Cards.ElderNamelessThing
       LordOfTheRings.Enemy.Cards.EliteMarauder
+      LordOfTheRings.Enemy.Cards.EreborBats
       LordOfTheRings.Enemy.Cards.EvilCrow
       LordOfTheRings.Enemy.Cards.EvilCrowAShadowOfThePast
       LordOfTheRings.Enemy.Cards.EvilSpectre
@@ -2169,6 +2170,7 @@ library
       LordOfTheRings.Location.Cards.SecondHall
       LordOfTheRings.Location.Cards.SecretAntechamber
       LordOfTheRings.Location.Cards.SecretEntrance
+      LordOfTheRings.Location.Cards.SecretTunnel
       LordOfTheRings.Location.Cards.SeedyInn
       LordOfTheRings.Location.Cards.SeedyTavern
       LordOfTheRings.Location.Cards.Sewers
@@ -2201,6 +2203,7 @@ library
       LordOfTheRings.Location.Cards.SoftMires
       LordOfTheRings.Location.Cards.SouthernBelfalas
       LordOfTheRings.Location.Cards.SouthernGate
+      LordOfTheRings.Location.Cards.SouthernSpur
       LordOfTheRings.Location.Cards.SouthronBoma
       LordOfTheRings.Location.Cards.SouthronCamp
       LordOfTheRings.Location.Cards.SouthwardRoad
@@ -2253,6 +2256,7 @@ library
       LordOfTheRings.Location.Cards.TheFirstForge
       LordOfTheRings.Location.Cards.TheFourthStar
       LordOfTheRings.Location.Cards.TheFrontGate
+      LordOfTheRings.Location.Cards.TheFrontGateNightmare
       LordOfTheRings.Location.Cards.TheGoblinsCaves
       LordOfTheRings.Location.Cards.TheGreatBridge
       LordOfTheRings.Location.Cards.TheGreatHall
@@ -3464,6 +3468,7 @@ library
       LordOfTheRings.Treachery.Cards.LurkingInShadows
       LordOfTheRings.Treachery.Cards.LurkingMalice
       LordOfTheRings.Treachery.Cards.LustForTheRing
+      LordOfTheRings.Treachery.Cards.LustForTreasure
       LordOfTheRings.Treachery.Cards.LyingInWait
       LordOfTheRings.Treachery.Cards.MachinesOfIsengard
       LordOfTheRings.Treachery.Cards.MalevolentForces
@@ -3661,6 +3666,7 @@ library
       LordOfTheRings.Treachery.Cards.TheDarkLordsSummons
       LordOfTheRings.Treachery.Cards.TheDeadCityLooms
       LordOfTheRings.Treachery.Cards.TheDragonsFury
+      LordOfTheRings.Treachery.Cards.TheDragonsIre
       LordOfTheRings.Treachery.Cards.TheEnemyIsUponUs
       LordOfTheRings.Treachery.Cards.TheEnemysTrail
       LordOfTheRings.Treachery.Cards.TheFiresSpread
@@ -4115,6 +4121,7 @@ test-suite LordOfTheRings-test
       LordOfTheRings.OnTheDoorstep.FliesAndSpidersNightmareSpec
       LordOfTheRings.OnTheDoorstep.FliesAndSpidersSpec
       LordOfTheRings.OnTheDoorstep.TheBattleOfFiveArmiesSpec
+      LordOfTheRings.OnTheDoorstep.TheLonelyMountainNightmareSpec
       LordOfTheRings.OnTheDoorstep.TheLonelyMountainSpec
       LordOfTheRings.PlanningPhaseSpec
       LordOfTheRings.PlayerCardTextSpec

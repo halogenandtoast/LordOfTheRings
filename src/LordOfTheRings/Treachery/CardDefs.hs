@@ -14,7 +14,9 @@ allTreacheryCards =
   Map.fromList $
     map
       (\def -> (cdCardCode def, def))
-      [ aHorribleBattle
+      [ lustForTreasure
+      , theDragonsIre
+      , aHorribleBattle
       , spiderBite
       , whereIsssIt
       , weHatesIt
@@ -3585,4 +3587,28 @@ spiderBite :: CardDef
 spiderBite =
   (treachery "on-the-doorstep-nightmare-flies-and-spiders-008" "Spider Bite" FliesAndSpidersNightmare 2)
     { cdKeywords = setFromList [Surge]
+    }
+
+-- * The Lonely Mountain Nightmare
+
+theDragonsIre :: CardDef
+theDragonsIre =
+  ( treachery
+      "on-the-doorstep-nightmare-the-lonely-mountain-006"
+      "The Dragon's Ire"
+      TheLonelyMountainNightmare
+      4
+  )
+    { cdKeywords = setFromList [Doomed 1]
+    }
+
+lustForTreasure :: CardDef
+lustForTreasure =
+  ( treachery
+      "on-the-doorstep-nightmare-the-lonely-mountain-007"
+      "Lust for Treasure"
+      TheLonelyMountainNightmare
+      3
+  )
+    { cdKeywords = setFromList [Doomed 1]
     }
