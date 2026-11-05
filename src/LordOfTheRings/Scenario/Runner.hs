@@ -26,7 +26,7 @@ import LordOfTheRings.Placement (GuardRelease (..), Placement (AttachedTo))
 import LordOfTheRings.Prelude
 import LordOfTheRings.Question
 import LordOfTheRings.Scenario.Sailing (discardEncounterCard, runSailing)
-import LordOfTheRings.Saga (removedBurdenSets, treasureSetsFor)
+import LordOfTheRings.Saga (Saga (..), removedBurdenSets, sagaOf, treasureSetsFor)
 import LordOfTheRings.Scenario.Types as X
 import LordOfTheRings.Source (Source (ObjectiveSource), sourceTarget)
 import LordOfTheRings.Target
@@ -85,10 +85,13 @@ instance RunMessage ScenarioAttrs where
       -- each player may add to his deck a treasure he has discovered whose set the
       -- scenario's setup lists, no more than 1 copy by title (The Hobbit: Over Hill and
       -- Under Hill rules insert, "Treasure": "A player is permitted to add..."), so each is
-      -- his choice, made before the setup hand is drawn
+      -- his choice, made before the setup hand is drawn. In The Hobbit's scenarios he must
+      -- also have discovered it with the heroes he plays now; the rule is The Hobbit's own,
+      -- so other campaigns' treasures, as Ered Mithrin's, are left to their own rules.
       order <- getsGame gamePlayerOrder
       for_ (zip [0 ..] order) \(seat, pid) -> do
-        let treasures = ordNubBy (\d -> let Name t _ = cdName d in t) (==) [def | p <- foldMap (.pool) attrs.campaign, p.seat == Just seat, isNothing p.attachedTo, let def = toCardDef p.code, cdTreasure def, maybe False (`elem` treasureSetsFor attrs.scenarioId) (cdSetIcon def)]
+        let sameHeroes code = sagaOf attrs.scenarioId /= Just TheHobbit || maybe True (discoveredWith seat code) attrs.campaign
+            treasures = ordNubBy (\d -> let Name t _ = cdName d in t) (==) [def | p <- foldMap (.pool) attrs.campaign, p.seat == Just seat, isNothing p.attachedTo, let def = toCardDef p.code, cdTreasure def, maybe False (`elem` treasureSetsFor attrs.scenarioId) (cdSetIcon def), sameHeroes p.code]
         for_ treasures \def -> do
           card <- genPlayerCard def (Just pid)
           chooseOneM pid do

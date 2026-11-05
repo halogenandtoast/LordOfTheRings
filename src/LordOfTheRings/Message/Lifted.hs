@@ -9,7 +9,7 @@ module LordOfTheRings.Message.Lifted (
 ) where
 
 import LordOfTheRings.Attachment.CardDefs qualified as Attachments
-import LordOfTheRings.Campaign (CampaignLogUpdate (AddToPool), PoolCard (..))
+import LordOfTheRings.Campaign (CampaignLogUpdate (DiscoverTreasure))
 import LordOfTheRings.Card (Card (..), CardCode, CardCost (StaticCost), CardDef, CardType, EncounterCard, HasCardCode (..), IsCard (..), PlayerCard, cdCardTraits, cdCardType, cdCost, genEncounterCard, genPlayerCard, lookupCardDef, toCardDef)
 import LordOfTheRings.Trait (Trait (Boon, Master))
 import LordOfTheRings.Classes.Entity (Entity (toAttrs, toId))
@@ -2547,7 +2547,7 @@ the condition.
 discoverTreasure :: (ReverseQueue m, HasCardCode card) => card -> m ()
 discoverTreasure card = do
   seats <- getsGame (length . gamePlayerOrder)
-  for_ [0 .. seats - 1] \seat -> updateCampaignLog $ AddToPool $ PoolCard (toCardCode card) (Just seat) Nothing
+  for_ [0 .. seats - 1] \seat -> updateCampaignLog $ DiscoverTreasure seat (toCardCode card)
 
 -- | The card, from out of play, is shuffled into the player's deck, as Iârion's Pendant
 -- once the players choose it, or Recurring Nightmare.
