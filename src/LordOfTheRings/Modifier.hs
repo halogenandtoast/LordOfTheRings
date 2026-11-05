@@ -216,6 +216,8 @@ data ModifierType
   | -- | on the game: each ally in play takes the modifier, one that enters play later too,
     -- for as long as the effect lasts, as Pit into the Depths reads
     EachAlly ModifierType
+  | -- | on the game: each character in play, including one that enters later
+    EachCharacter ModifierType
   | -- | on the game: each character takes the modifier while it is exhausted, as Weighed
     -- Down's "until the end of the round, exhausted characters get -1 willpower" reads
     EachExhaustedCharacter ModifierType

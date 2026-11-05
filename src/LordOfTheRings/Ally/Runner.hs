@@ -8,7 +8,7 @@ import LordOfTheRings.Card (cdHitPoints, toCardDef)
 import LordOfTheRings.Classes.RunMessage
 import LordOfTheRings.Helpers.Modifiers (doesNotExhaustToCommit, getModifiers)
 import LordOfTheRings.Message
-import LordOfTheRings.Modifier (ModifierType (CannotCommitToQuest, CannotExhaust, CannotReady, CannotReadyFromCardEffects, ControlledCardsCannotReady, DoesNotExhaustToAttack, ReadiedByRefresh))
+import LordOfTheRings.Modifier (ModifierType (CannotAttack, CannotAttackOrDefend, CannotCommitToQuest, CannotExhaust, CannotReady, CannotReadyFromCardEffects, ControlledCardsCannotReady, DoesNotExhaustToAttack, ReadiedByRefresh))
 import LordOfTheRings.Phase
 import LordOfTheRings.Placement (Placement (AttachedTo, InPlayArea), placementController)
 import LordOfTheRings.Prelude
@@ -23,8 +23,10 @@ instance RunMessage AllyAttrs where
       exhausting (not blocked) attrs
     Do (Exhaust (isTarget attrs -> True)) -> pure $ attrs & exhaustedL .~ True
     AttackWith (isTarget attrs -> True) -> do
-      spared <- elem DoesNotExhaustToAttack <$> getModifiers attrs
-      (attackingL .~ True) <$> exhausting (not spared) attrs
+      mods <- getModifiers attrs
+      if any (`elem` mods) [CannotAttack, CannotAttackOrDefend]
+        then pure attrs
+        else (attackingL .~ True) <$> exhausting (DoesNotExhaustToAttack `notElem` mods) attrs
     StopAttacking (isTarget attrs -> True) -> pure $ attrs & attackingL .~ False
     CommitToQuest (isTarget attrs -> True) -> do
       blocked <- elem CannotCommitToQuest <$> getModifiers attrs

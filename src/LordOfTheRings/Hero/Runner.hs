@@ -9,7 +9,7 @@ import LordOfTheRings.Helpers.Modifiers (doesNotExhaustToCommit, getModifiers, r
 import LordOfTheRings.Hero.Types as X
 import LordOfTheRings.Message
 import LordOfTheRings.Effect (Effect (..), EffectDuration (UntilEndOfRound))
-import LordOfTheRings.Modifier (ModifierType (GainResourceIcon, CannotCommitToQuest, CannotCollectResources, CannotExhaust, CannotReady, CannotReadyFromCardEffects, CollectsAdditionalResources, ControlledCardsCannotReady, DoesNotExhaustToAttack, ReadiedByRefresh, SpentResourcesThisRound))
+import LordOfTheRings.Modifier (ModifierType (CannotAttack, CannotAttackOrDefend, GainResourceIcon, CannotCommitToQuest, CannotCollectResources, CannotExhaust, CannotReady, CannotReadyFromCardEffects, CollectsAdditionalResources, ControlledCardsCannotReady, DoesNotExhaustToAttack, ReadiedByRefresh, SpentResourcesThisRound))
 import LordOfTheRings.Phase
 import LordOfTheRings.Sphere (Sphere (Baggins))
 import LordOfTheRings.Prelude
@@ -75,8 +75,10 @@ instance RunMessage HeroAttrs where
       exhausting (not blocked) attrs
     Do (Exhaust (isTarget attrs -> True)) -> pure $ attrs & exhaustedL .~ True
     AttackWith (isTarget attrs -> True) -> do
-      spared <- elem DoesNotExhaustToAttack <$> getModifiers attrs
-      (attackingL .~ True) <$> exhausting (not spared) attrs
+      mods <- getModifiers attrs
+      if any (`elem` mods) [CannotAttack, CannotAttackOrDefend]
+        then pure attrs
+        else (attackingL .~ True) <$> exhausting (DoesNotExhaustToAttack `notElem` mods) attrs
     StopAttacking (isTarget attrs -> True) -> pure $ attrs & attackingL .~ False
     CommitToQuest (isTarget attrs -> True) -> do
       blocked <- elem CannotCommitToQuest <$> getModifiers attrs

@@ -3367,6 +3367,7 @@ library
       LordOfTheRings.Treachery.Cards.DarknessInTheEast
       LordOfTheRings.Treachery.Cards.DarkPlaces
       LordOfTheRings.Treachery.Cards.DarkSorcery
+      LordOfTheRings.Treachery.Cards.DauntingPower
       LordOfTheRings.Treachery.Cards.DeadlyCold
       LordOfTheRings.Treachery.Cards.DeathAndCalamity
       LordOfTheRings.Treachery.Cards.DeathAndDecay
@@ -3438,6 +3439,7 @@ library
       LordOfTheRings.Treachery.Cards.FieryWhip
       LordOfTheRings.Treachery.Cards.FightingAmongFriends
       LordOfTheRings.Treachery.Cards.FightingUrukHai
+      LordOfTheRings.Treachery.Cards.FireAndFoulFumes
       LordOfTheRings.Treachery.Cards.FiresInTheDeep
       LordOfTheRings.Treachery.Cards.FlameOfUdun
       LordOfTheRings.Treachery.Cards.FlamingSword
@@ -3771,6 +3773,7 @@ library
       LordOfTheRings.Treachery.Cards.TormentedByOrcs
       LordOfTheRings.Treachery.Cards.TorrentOfHail
       LordOfTheRings.Treachery.Cards.TragicDiscovery
+      LordOfTheRings.Treachery.Cards.TraitorOfManyColors
       LordOfTheRings.Treachery.Cards.TrappedInside
       LordOfTheRings.Treachery.Cards.TrappedVillagers
       LordOfTheRings.Treachery.Cards.TreacherousFog

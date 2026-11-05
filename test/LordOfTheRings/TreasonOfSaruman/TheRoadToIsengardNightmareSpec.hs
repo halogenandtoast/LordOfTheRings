@@ -9,15 +9,35 @@ import LordOfTheRings.Helpers.Modifiers (getModifiers)
 import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Location.Types (LocationAttrs (locationCardId))
 import LordOfTheRings.Message.Lifted qualified as Lifted
+import LordOfTheRings.Game.Combat qualified as Combat
+import LordOfTheRings.Objective.CardDefs qualified as Objectives
+import LordOfTheRings.Scenario.Types (modeL, GameMode (NightmareMode), scenarioSetAside)
 import LordOfTheRings.Effect (Effect (..), EffectDuration (UntilEndOfRound, UntilEndOfAttack))
 import LordOfTheRings.Matcher
-import LordOfTheRings.Modifier (ModifierType (Blank, CannotDiscardFromHand, CannotBeReadiedByPlayerCards, ImmuneToCardEffects))
+import LordOfTheRings.Modifier (ModifierType (Blank, CannotDiscardFromHand, CannotBeReadiedByPlayerCards, ImmuneToCardEffects, CannotAttack, CannotReady, ThreatModifier))
 import LordOfTheRings.Scenario (theRoadToIsengard)
 import LordOfTheRings.Window (WindowType (EnemyAttacking), mkWhen)
 import TestImport
 
 isengard :: (PlayerId -> GameT ()) -> IO ()
 isengard = gameTestIn theRoadToIsengard testDeck
+
+nightmare :: (PlayerId -> GameT ()) -> IO ()
+nightmare = gameTestIn (overAttrs (modeL .~ NightmareMode) theRoadToIsengard) testDeck
+
+reveal :: [CardDef] -> GameT ()
+reveal defs = do
+  _ <- setEncounterDeck defs
+  run RevealEncounterCard
+  resolveRevealed
+
+controlledEnt :: PlayerId -> GameT Target
+controlledEnt pid = do
+  card <- genEncounterCard Objectives.entOfFangorn
+  run $ AddToStaging card
+  oid <- getsGame (toId . fromJustNote "Ent objective" . find ((== card.id) . (.cardId) . toAttrs) . toList . (.entities.objectives))
+  run $ PutObjectiveAllyIntoPlay oid pid
+  getsGame (toTarget . fromJustNote "Ent ally" . find ((== card.id) . allyCardId . toAttrs) . toList . (.entities.allies))
 
 stage :: CardDef -> GameT EnemyId
 stage def = do
@@ -53,6 +73,211 @@ resolveForcedChoices pid = getQuestion pid >>= \case
 
 spec :: Spec
 spec = describe "The Road to Isengard Nightmare" do
+  it "choosing Traitor's discard option does not schedule the unchosen extra attack" . isengard $ \pid -> do
+    emptyHand pid
+    card <- putCardIntoHand pid Events.fortuneOrFate
+    eid <- stage Enemies.forestSpider
+    run $ EngageEnemy pid eid
+    hero <- toTarget <$> getHeroWithCode "01012"
+    _ <- setEncounterDeck [Enemies.hostOfIsengard]
+    run . AttachShadowCard eid =<< genEncounterCard Treacheries.traitorOfManyColors
+    run $ EnemyAttack pid eid
+    passActions pid
+    chooseTarget pid hero
+    passActions pid
+    chooseLabel "$label.traitorOfManyColors.discard" pid
+    passActions pid
+    map (.id) . (.discard) <$> getPlayer pid >>= (`shouldSatisfy` elem card.id)
+    map toCardCode <$> getEncounterDeck `shouldReturn` [toCardCode Enemies.hostOfIsengard]
+    getQuestion pid `shouldReturn` Nothing
+
+  it "Traitor's shadow must discard when the enemy cannot make another attack" . isengard $ \pid -> do
+    emptyHand pid
+    card <- putCardIntoHand pid Events.fortuneOrFate
+    eid <- stage Enemies.forestSpider
+    run $ CreateEffect $ Effect GameSource (EnemyTarget eid) [CannotAttack] UntilEndOfRound
+    run . AttachShadowCard eid =<< genEncounterCard Treacheries.traitorOfManyColors
+    run $ ResolveShadow eid pid []
+    map (.id) . (.discard) <$> getPlayer pid >>= (`shouldSatisfy` elem card.id)
+    getQuestion pid `shouldReturn` Nothing
+
+  it "Daunting Power prevents Quick Strike from declaring an attacker" . isengard $ \pid -> do
+    eid <- stage Enemies.forestSpider
+    run $ EngageEnemy pid eid
+    reveal [Treacheries.dauntingPower]
+    card <- genPlayerCard Events.quickStrike (Just pid)
+    run $ PlayEvent pid card []
+    getQuestion pid `shouldReturn` Nothing
+    selectCharacters AttackingHero AttackingAlly `shouldReturn` []
+    getDamage (EnemyTarget eid) `shouldReturn` 0
+
+  it "Fire and Foul Fumes assigns damage separately to each player's questing characters" . twoPlayerTestIn theRoadToIsengard testDeck $ \one two -> do
+    lid <- stageLocation Locations.poisonousShaft
+    run $ PlaceLocation lid ActiveLocation
+    firstHero <- toTarget . fromJustNote "first hero" . headMay <$> select (HeroControlledBy $ PlayerWithId one)
+    otherHero <- toTarget . fromJustNote "other hero" . headMay <$> select (HeroControlledBy $ PlayerWithId two)
+    run $ CommitToQuest firstHero
+    run $ CommitToQuest otherHero
+    reveal [Treacheries.fireAndFoulFumes]
+    replicateM_ 2 $ chooseTarget one firstHero
+    replicateM_ 2 $ chooseTarget two otherHero
+    getDamage firstHero `shouldReturn` 2
+    getDamage otherHero `shouldReturn` 2
+
+  it "Traitor of Many Colors makes Saruman attack and then surges" . isengard $ \pid -> do
+    _ <- stage Enemies.sarumanTheRoadToIsengard
+    ally <- putAllyIntoPlay pid Allies.snowbournScout
+    reveal [Treacheries.traitorOfManyColors, Enemies.hostOfIsengard, Locations.poisonousShaft]
+    passActions pid
+    chooseTarget pid ally
+    passActions pid
+    resolveShadowsInOrder pid
+    passActions pid
+    select (LocationWithCardCode $ toCardCode Locations.poisonousShaft) >>= (`shouldSatisfy` (not . null))
+    getsGame (any ((== ally) . toTarget) . toList . (.entities.allies)) `shouldReturn` False
+
+  for_ [True, False] \hasCard ->
+    it ("Traitor's shadow makes an additional attack " <> if hasCard then "when chosen" else "automatically with no discardable card") . isengard $ \pid -> do
+      emptyHand pid
+      when hasCard $ void $ putCardIntoHand pid Events.fortuneOrFate
+      eid <- stage Enemies.forestSpider
+      run $ EngageEnemy pid eid
+      firstHero <- toTarget <$> getHeroWithCode "01012"
+      otherHero <- toTarget <$> getHeroWithCode "01007"
+      _ <- setEncounterDeck [Enemies.hostOfIsengard]
+      run . AttachShadowCard eid =<< genEncounterCard Treacheries.traitorOfManyColors
+      run $ EnemyAttack pid eid
+      passActions pid
+      chooseTarget pid firstHero
+      passActions pid
+      when hasCard $ chooseLabel "$label.traitorOfManyColors.attack" pid
+      passActions pid
+      chooseTarget pid otherHero
+      passActions pid
+      resolveShadowsInOrder pid
+      passActions pid
+      getDamage otherHero `shouldReturn` 2
+
+  it "a defeated Nightmare Ent is removed instead of entering the encounter discard" . nightmare $ \pid -> do
+    ent <- controlledEnt pid
+    run $ DealDamage GameSource ent 100
+    getsGame (any ((== ent) . toTarget) . toList . (.entities.allies)) `shouldReturn` False
+    getEncounterDiscard `shouldReturn` []
+
+  it "builds the Nightmare deck with exact removals and preserves standard set-aside cards" . nightmare $ \_ -> do
+    run $ DoStep 1 Setup
+    deck <- getEncounterDeck
+    let copies def = length $ filter ((== toCardCode def) . toCardCode) deck
+    length deck `shouldBe` 41
+    map copies [Enemies.snaga, Locations.ringWallOfIsengard, Locations.openPit, Treacheries.machinesOfIsengard, Treacheries.blastOfSorcery] `shouldBe` [0, 2, 0, 2, 0]
+    map copies [Enemies.orthancArcher, Enemies.halfOrcOfIsengard, Locations.poisonousShaft, Locations.fortressOfIsengard, Treacheries.traitorOfManyColors, Treacheries.fireAndFoulFumes, Treacheries.dauntingPower] `shouldBe` [3, 3, 3, 3, 2, 3, 2]
+    aside <- getsGame (map toCardCode . scenarioSetAside . toAttrs . (.scenario))
+    sort aside `shouldBe` sort (map toCardCode $ replicate 4 Objectives.entOfFangorn <> [Enemies.sarumanTheRoadToIsengard, Objectives.sarumansStaffTheRoadToIsengard, Locations.orthanc, Locations.gatesOfIsengard])
+
+  for_ [("discarded", Discard GameSource), ("returned to hand", ReturnToHand), ("shuffled into a deck", ShuffleIntoOwnersDeck)] \(description, action) ->
+    it ("removes a controlled Ent from the game when " <> description) . nightmare $ \pid -> do
+      ent <- controlledEnt pid
+      run $ action ent
+      getsGame (any ((== ent) . toTarget) . toList . (.entities.allies)) `shouldReturn` False
+      map toCardCode <$> getEncounterDiscard `shouldReturn` []
+      player <- getPlayer pid
+      any ((== toCardCode Objectives.entOfFangorn) . toCardCode) (player.hand <> player.deck <> player.discard) `shouldBe` False
+
+  it "removes a staged Ent when discarded in Nightmare mode" . nightmare $ \_ -> do
+    run . AddToStaging =<< genEncounterCard Objectives.entOfFangorn
+    oid <- getsGame (toId . fromJustNote "Ent" . headMay . toList . (.entities.objectives))
+    run $ Discard GameSource (ObjectiveTarget oid)
+    getsGame (null . (.entities.objectives)) `shouldReturn` True
+    getEncounterDiscard `shouldReturn` []
+
+  it "removes a staged Ent when destroyed in Nightmare mode" . nightmare $ \_ -> do
+    run . AddToStaging =<< genEncounterCard Objectives.entOfFangorn
+    oid <- getsGame (toId . fromJustNote "Ent" . headMay . toList . (.entities.objectives))
+    run $ Destroy GameSource (ObjectiveTarget oid)
+    getsGame (null . (.entities.objectives)) `shouldReturn` True
+    getEncounterDiscard `shouldReturn` []
+
+  it "keeps the normal controlled Ent discard behavior" . isengard $ \pid -> do
+    ent <- controlledEnt pid
+    run $ Discard GameSource ent
+    map toCardCode <$> getEncounterDiscard `shouldReturn` [toCardCode Objectives.entOfFangorn]
+
+  it "Daunting Power blocks attackers including characters entering later and expires at round end" . isengard $ \pid -> do
+    threatBefore <- (.threat) <$> getPlayer pid
+    reveal [Treacheries.dauntingPower]
+    (.threat) <$> getPlayer pid `shouldReturn` (threatBefore + 4)
+    Combat.readyAttackers pid `shouldReturn` []
+    ally <- putAllyIntoPlay pid Allies.guardOfTheCitadel
+    getModifiers ally >>= (`shouldSatisfy` elem CannotAttack)
+    hero <- toTarget <$> getHeroWithCode "01012"
+    run $ AttackWith hero
+    run $ AttackWith ally
+    selectCharacters AttackingHero AttackingAlly `shouldReturn` []
+    heroExhausted . toAttrs <$> getHeroWithCode "01012" `shouldReturn` False
+    Combat.readyAttackers pid `shouldReturn` []
+    run $ EndEffects UntilEndOfRound
+    Combat.readyAttackers pid >>= (`shouldSatisfy` elem ally)
+
+  it "Daunting Power does not raise threat when any player has an engaged enemy" . twoPlayerTestIn theRoadToIsengard testDeck $ \one two -> do
+    eid <- stage Enemies.forestSpider
+    run $ EngageEnemy two eid
+    threatsBefore <- traverse (fmap (.threat) . getPlayer) [one, two]
+    reveal [Treacheries.dauntingPower]
+    traverse (fmap (.threat) . getPlayer) [one, two] `shouldReturn` threatsBefore
+    Combat.readyAttackers one `shouldReturn` []
+    Combat.readyAttackers two `shouldReturn` []
+
+  it "Daunting Power's shadow prevents its defender from readying until round end" . isengard $ \pid -> do
+    eid <- stage Enemies.forestSpider
+    hero <- toTarget <$> getHeroWithCode "01012"
+    run . AttachShadowCard eid =<< genEncounterCard Treacheries.dauntingPower
+    run $ ResolveShadow eid pid [hero]
+    getModifiers hero >>= (`shouldSatisfy` elem CannotReady)
+    run $ EndEffects UntilEndOfRound
+    getModifiers hero >>= (`shouldSatisfy` notElem CannotReady)
+
+  it "Fire and Foul Fumes damages only controlled questing characters using modified location threat" . isengard $ \pid -> do
+    lid <- stageLocation Locations.poisonousShaft
+    run $ PlaceLocation lid ActiveLocation
+    run $ CreateEffect $ Effect GameSource (LocationTarget lid) [ThreatModifier 1] UntilEndOfRound
+    hero <- toTarget <$> getHeroWithCode "01012"
+    otherHero <- toTarget <$> getHeroWithCode "01007"
+    run $ CommitToQuest hero
+    reveal [Treacheries.fireAndFoulFumes]
+    replicateM_ 3 $ chooseTarget pid hero
+    getDamage hero `shouldReturn` 3
+    getDamage otherHero `shouldReturn` 0
+
+  it "Fire and Foul Fumes surges without an active location" . isengard $ \pid -> do
+    reveal [Treacheries.fireAndFoulFumes, Locations.poisonousShaft]
+    select (LocationWithCardCode $ toCardCode Locations.poisonousShaft) >>= (`shouldSatisfy` (not . null))
+    getQuestion pid `shouldReturn` Nothing
+
+  it "Fire and Foul Fumes' shadow damages non-questing characters too" . isengard $ \pid -> do
+    lid <- stageLocation Locations.poisonousShaft
+    run $ PlaceLocation lid ActiveLocation
+    eid <- stage Enemies.forestSpider
+    hero <- toTarget <$> getHeroWithCode "01012"
+    run . AttachShadowCard eid =<< genEncounterCard Treacheries.fireAndFoulFumes
+    run $ ResolveShadow eid pid []
+    replicateM_ 2 $ chooseTarget pid hero
+    getDamage hero `shouldReturn` 2
+
+  it "Traitor of Many Colors surges even when Saruman is absent" . isengard $ \pid -> do
+    reveal [Treacheries.traitorOfManyColors, Locations.poisonousShaft]
+    select (LocationWithCardCode $ toCardCode Locations.poisonousShaft) >>= (`shouldSatisfy` (not . null))
+    getQuestion pid `shouldReturn` Nothing
+
+  it "Traitor of Many Colors' shadow offers discarding instead of another attack" . isengard $ \pid -> do
+    emptyHand pid
+    card <- putCardIntoHand pid Events.fortuneOrFate
+    eid <- stage Enemies.forestSpider
+    run . AttachShadowCard eid =<< genEncounterCard Treacheries.traitorOfManyColors
+    run $ ResolveShadow eid pid []
+    chooseLabel "$label.traitorOfManyColors.discard" pid
+    map (.id) . (.discard) <$> getPlayer pid >>= (`shouldSatisfy` elem card.id)
+    getQuestion pid `shouldReturn` Nothing
+
   it "Saruman's Poisonous Shaft shadow makes only the defending player discard" . twoPlayerTestIn theRoadToIsengard testDeck $ \one two -> do
     saruman <- stage Enemies.sarumanTheRoadToIsengard
     firstAlly <- putAllyIntoPlay one Allies.guardOfTheCitadel

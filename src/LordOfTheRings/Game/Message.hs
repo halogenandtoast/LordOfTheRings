@@ -92,6 +92,7 @@ import LordOfTheRings.Classes.HasGame (
 import LordOfTheRings.Classes.HasQueue (
   HasQueue (pushAll),
   clearQueue,
+  insertAfterMatching,
   push,
   pushEnd,
   pushWhen,
@@ -848,6 +849,7 @@ import LordOfTheRings.Modifier (
     RefreshAtMost,
     RefreshThreatRaise,
     RemoveFromGameAtEndOfRound,
+    RemoveFromGameIfLeavesPlay,
     ResolvingEnemyAttacks,
     ReturnToHandAtEndOfPhase,
     ReturnToHandAtEndOfRound,
@@ -1718,9 +1720,11 @@ runGameMessage msg g = case msg of
           & scenarioL
           %~ overAttrs (gainedL . (victoryDisplayL %~ (card :)))
       Nothing -> discardTarget target g
-  -- an objective ally destroyed in the staging area goes to the encounter discard pile
+  -- an objective ally destroyed in the staging area goes to the encounter discard pile,
+  -- unless it leaves play for good, as a Nightmare Ent of Fangorn does
   Destroy _ (ObjectiveTarget oid) | Just o <- Map.lookup oid g.entities.objectives -> do
-    push $ AddToEncounterDiscard [MkEncounterCard (objectiveCardId $ toAttrs o) (toCardCode o)]
+    removed <- elem RemoveFromGameIfLeavesPlay <$> getModifiers (ObjectiveTarget oid)
+    unless removed $ push $ AddToEncounterDiscard [MkEncounterCard (objectiveCardId $ toAttrs o) (toCardCode o)]
     pure $ g & entitiesL . objectivesL %~ Map.delete oid
   Destroy source target -> do
     let (card, controller) = case target of
@@ -2069,6 +2073,11 @@ runGameMessage msg g = case msg of
     pure g
   -- Additional attacks start after the completed attack's Forced effects and
   -- responses, which may have removed the enemy or barred it from attacking.
+  DoStep 2 (EnemyAttack pid eid) -> do
+    insertAfterMatching [DoStep 1 (EnemyAttack pid eid)] \case
+      CheckWindows windows -> any (\case Window After (EnemyAttacking attacking _) -> attacking == eid; _ -> False) windows
+      _ -> False
+    pure g
   DoStep 1 (EnemyAttack pid eid) -> do
     remaining <- getRemainingPlayers
     mods <- getModifiers (EnemyTarget eid)

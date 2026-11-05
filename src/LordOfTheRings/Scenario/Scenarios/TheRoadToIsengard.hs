@@ -11,16 +11,29 @@ import LordOfTheRings.Classes.HasGame (getsGame)
 import LordOfTheRings.Matcher (cardIs, cardMatches, getLead, getPlayer, getRemainingPlayers)
 import LordOfTheRings.Objective.CardDefs qualified as Objectives
 import LordOfTheRings.Quest.CardDefs qualified as Quests
+import LordOfTheRings.Modifier (ModifierType (RemoveFromGameIfLeavesPlay))
+import LordOfTheRings.Scenario.CardDefs qualified as Nightmare
 import LordOfTheRings.Scenario.Import.Lifted
 import LordOfTheRings.Scenario.Scenarios.TheRoadToIsengard.Helpers (canceledOf, progressOf)
 import LordOfTheRings.Treachery.CardDefs qualified as Treacheries
 
 newtype TheRoadToIsengard = TheRoadToIsengard ScenarioAttrs
-  deriving anyclass (IsScenario, HasAbilities, HasModifiersFor)
+  deriving anyclass (IsScenario, HasAbilities)
   deriving newtype (Show, Eq, ToJSON, Entity)
 
 theRoadToIsengard :: Scenario
-theRoadToIsengard = Scenario $ scenario TheRoadToIsengard "the-road-to-isengard" "The Road to Isengard"
+theRoadToIsengard = Scenario $ scenario (TheRoadToIsengard . (nightmareDeckL ?~ nightmare)) "the-road-to-isengard" "The Road to Isengard"
+ where
+  -- https://hallofbeorn.com/LotR/Details/The-Road-to-Isengard-Nightmare-TRtIN
+  nightmare = nightmareDeck Nightmare.theRoadToIsengardNightmare EncounterSet.TheRoadToIsengardNightmare
+    [(Enemies.snaga, 3), (Locations.ringWallOfIsengard, 1), (Locations.openPit, 2), (Treacheries.machinesOfIsengard, 1), (Treacheries.blastOfSorcery, 3)]
+
+instance HasModifiersFor TheRoadToIsengard where
+  getModifiersFor (TheRoadToIsengard a) = when a.nightmare do
+    entTargets <- getsGame \g ->
+      [toTarget entAlly | entAlly <- toList g.entities.allies, toCardCode entAlly == toCardCode Objectives.entOfFangorn]
+        <> [toTarget entObjective | entObjective <- toList g.entities.objectives, toCardCode entObjective == toCardCode Objectives.entOfFangorn]
+    for_ entTargets (\target -> modified a target [RemoveFromGameIfLeavesPlay])
 
 {- | The Road to Isengard and Snaga Orcs make up the encounter deck (MEC45 rules). Stage 1A
 sets Gates of Isengard, Orthanc, Saruman and Saruman's Staff aside and adds each Ent of

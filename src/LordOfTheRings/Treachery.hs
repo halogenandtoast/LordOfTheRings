@@ -8,6 +8,9 @@ import LordOfTheRings.Classes.Entity
 import LordOfTheRings.Classes.RunMessage
 import LordOfTheRings.Treachery.Cards.RainOfArrows
 import LordOfTheRings.Treachery.Cards.CripplingWeariness
+import LordOfTheRings.Treachery.Cards.TraitorOfManyColors
+import LordOfTheRings.Treachery.Cards.FireAndFoulFumes
+import LordOfTheRings.Treachery.Cards.DauntingPower
 import LordOfTheRings.Treachery.Cards.UgluksCommand
 import LordOfTheRings.Treachery.Cards.OrcDraught
 import LordOfTheRings.Treachery.Cards.HuntedInHollin
@@ -1167,6 +1170,9 @@ allTreacherys =
         , SomeTreacheryCard strangeWeariness
         , SomeTreacheryCard rainOfArrows
         , SomeTreacheryCard cripplingWeariness
+        , SomeTreacheryCard traitorOfManyColors
+        , SomeTreacheryCard fireAndFoulFumes
+        , SomeTreacheryCard dauntingPower
         , SomeTreacheryCard ugluksCommand
         , SomeTreacheryCard orcDraught
         , SomeTreacheryCard unseenBarrier

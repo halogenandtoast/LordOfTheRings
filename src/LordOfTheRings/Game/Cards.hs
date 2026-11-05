@@ -174,6 +174,7 @@ import LordOfTheRings.Modifier (
     GainTrait,
     LeavesPlayToAnyPlayersDeck,
     LeavesPlayToEncounterDiscard,
+    RemoveFromGameIfLeavesPlay,
     LeavesPlayToSackDeck,
     LeavesPlayToTopOfSackDeck,
     LeavesPlayToTopOfEncounterDeck,
@@ -376,6 +377,8 @@ discardFromPlay target g = case target of
   ObjectiveTarget oid -> do
     mods <- getModifiers target
     case Map.lookup oid g.entities.objectives of
+      Just _ | RemoveFromGameIfLeavesPlay `elem` mods ->
+        pure $ g & entitiesL . objectivesL %~ Map.delete oid
       Just o | LeavesPlayToEncounterDiscard `elem` mods -> do
         push $ AddToEncounterDiscard [MkEncounterCard (objectiveCardId $ toAttrs o) (toCardCode o)]
         pure $ g & entitiesL . objectivesL %~ Map.delete oid

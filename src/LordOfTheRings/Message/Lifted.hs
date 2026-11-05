@@ -15,7 +15,6 @@ import LordOfTheRings.Trait (Trait (Boon, Master))
 import LordOfTheRings.Classes.Entity (Entity (toAttrs, toId))
 import LordOfTheRings.Scenario.Types (ScenarioAttrs (scenarioSetAside))
 import LordOfTheRings.Classes.HasGame (HasGame, getsGame)
-import LordOfTheRings.Frontend (Frontend)
 import LordOfTheRings.Log.Block (LogBlockKind (PlayBlock))
 import LordOfTheRings.Log.Refs (sourceCardCode)
 import LordOfTheRings.Classes.HasQueue
@@ -1803,10 +1802,11 @@ dealDamageDivided source pid n = push $ DealDamageDivided (toSource source) pid 
 -- | The enemy makes an additional attack against the player once this attack resolves, as
 -- "attacking enemy makes an additional attack after this one" reads.
 additionalAttack
-  :: (HasGame m, MonadRandom m, Frontend m, HasQueue Message m) => PlayerId -> EnemyId -> QueueT Message m ()
+  :: (HasQueue Message m) => PlayerId -> EnemyId -> m ()
 additionalAttack pid eid = do
-  again <- capture $ immediateAttack pid eid
-  afterAttack eid again
+  -- Scheduling must itself be queued: a choice captures this message without
+  -- changing the parent queue before the player chooses its option.
+  push $ DoStep 2 (EnemyAttack pid eid)
 
 -- | The player divides the damage among the characters given, as "assign X damage among
 -- characters committed to the quest" reads; it is dealt once all is assigned.

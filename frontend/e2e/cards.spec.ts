@@ -306,3 +306,14 @@ test('Helm’s Deep offers Nightmare mode', async ({ page, game: _session }) => 
   await nightmare.click()
   await expect(nightmare).toHaveAttribute('aria-checked', 'true')
 })
+
+
+test('The Road to Isengard offers Nightmare mode', async ({ page, game: _session }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' })
+  await page.goto('/#/new-game')
+  await page.getByRole('button', { name: 'The Lord of the Rings', exact: false }).click()
+  await page.getByRole('button').filter({ hasText: 'The Road to Isengard' }).click()
+  const nightmare = page.getByRole('radio', { name: 'Nightmare', exact: true })
+  await nightmare.click()
+  await expect(nightmare).toHaveAttribute('aria-checked', 'true')
+})

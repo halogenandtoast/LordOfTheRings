@@ -1,5 +1,6 @@
 module LordOfTheRings.Event.Cards.QuickStrike (quickStrike) where
 
+import LordOfTheRings.Helpers.Modifiers (getModifiers)
 import LordOfTheRings.Event.CardDefs qualified as Cards
 import LordOfTheRings.Event.Import.Lifted
 
@@ -21,7 +22,7 @@ quickStrike =
 instance RunMessage QuickStrike where
   runMessage msg e@(QuickStrike attrs) = case msg of
     PlayEvent pid card _ | card.id == toId attrs -> do
-      attackers <- selectCharacters (HeroControlledBy (PlayerWithId pid) <> ReadyHero) (AllyControlledBy (PlayerWithId pid) <> ReadyAlly)
+      attackers <- filterM (fmap (\mods -> all (`notElem` mods) [CannotAttack, CannotAttackOrDefend]) . getModifiers) =<< selectCharacters (HeroControlledBy (PlayerWithId pid) <> ReadyHero) (AllyControlledBy (PlayerWithId pid) <> ReadyAlly)
       enemies <- select (EnemyEngagedWith $ PlayerWithId pid)
       chooseOneM pid do
         questionLabeled "quickStrike.exhaust"

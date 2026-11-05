@@ -115,15 +115,13 @@ preloadModifiers g = do
           (<>)
           $ [ (toTarget (toId h), [Modifier (effectSource e) m])
             | e <- gameEffects g
-            , EachExhaustedCharacter m <- effectModifiers e
             , h <- toList es.heroes
-            , heroExhausted (toAttrs h)
+            , m <- [m | EachCharacter m <- effectModifiers e] <> [m | EachExhaustedCharacter m <- effectModifiers e, heroExhausted (toAttrs h)]
             ]
           <> [ (toTarget (toId a), [Modifier (effectSource e) m])
              | e <- gameEffects g
-             , EachExhaustedCharacter m <- effectModifiers e
              , a <- toList es.allies
-             , allyExhausted (toAttrs a)
+             , m <- [m | EachCharacter m <- effectModifiers e] <> [m | EachExhaustedCharacter m <- effectModifiers e, allyExhausted (toAttrs a)]
              ]
           -- or damaged
           <> [ (toTarget (toId h), [Modifier (effectSource e) m])

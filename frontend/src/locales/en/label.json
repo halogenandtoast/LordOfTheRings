@@ -1,4 +1,9 @@
 {
+  "traitorOfManyColors": {
+    "choose": "Choose Traitor of Many Colors’ shadow effect",
+    "discard": "Discard 1 random card from your hand",
+    "attack": "Attacking enemy makes an additional attack against you"
+  },
   "halfOrcOfIsengard": {
     "choose": "Choose Half-orc of Isengard’s effect",
     "discard": "Discard 1 random card from your hand",
