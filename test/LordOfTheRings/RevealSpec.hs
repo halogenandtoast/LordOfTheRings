@@ -3,7 +3,7 @@ module LordOfTheRings.RevealSpec (spec) where
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Phase (Phase (PlanningPhase, QuestPhase))
-import LordOfTheRings.Scenario.Types (encounterDiscardL)
+import LordOfTheRings.Scenario.Types (encounterDeckL, encounterDiscardL)
 import LordOfTheRings.Treachery.CardDefs qualified as Treacheries
 import TestImport
 
@@ -16,13 +16,37 @@ setEncounterDiscard defs = do
 
 spec :: Spec
 spec = describe "Revealing encounter cards" do
-  it "resets an encounter deck emptied in the quest phase at once, before the card resolves" . gameTest $ \_ -> do
+  it "resets an encounter deck emptied in the quest phase once the revealed card's staging resolves" . gameTest $ \_ -> do
     _ <- setEncounterDeck [Enemies.forestSpider]
     [road] <- setEncounterDiscard [Locations.oldForestRoad]
     putGame . (phaseL .~ QuestPhase) =<< getGame
     run RevealEncounterCard
     getEncounterDeck `shouldReturn` [road]
     getEncounterDiscard `shouldReturn` []
+
+  -- FAQ v1.9, "When I reveal the last card of the encounter deck...": the staging of the
+  -- revealed card, When Revealed effects included, resolves before the reset
+  it "shuffles a treachery revealed as the encounter deck's last card in with the reset, once it resolves (FAQ)" . gameTest $ \_ -> do
+    [reach] <- setEncounterDeck [Treacheries.theNecromancersReach]
+    [road] <- setEncounterDiscard [Locations.oldForestRoad]
+    putGame . (phaseL .~ QuestPhase) =<< getGame
+    run RevealEncounterCard
+    -- an effect of the card that uses the encounter deck finds it reset
+    getEncounterDeck `shouldReturn` [road]
+    resolveRevealed
+    sortOn (.id) <$> getEncounterDeck `shouldReturn` sortOn (.id) [road, reach]
+    getEncounterDiscard `shouldReturn` []
+
+  it "does not reset an encounter deck the last card's staging put a card into (Caleb Grace, ALeP FAQ 3.110)" . gameTest $ \_ -> do
+    [reach] <- setEncounterDeck [Treacheries.theNecromancersReach]
+    [road] <- setEncounterDiscard [Locations.oldForestRoad]
+    putGame . (phaseL .~ QuestPhase) =<< getGame
+    run RevealEncounterCard
+    spider <- genEncounterCard Enemies.forestSpider
+    putGame . (scenarioL %~ overAttrs (encounterDeckL %~ (spider :))) =<< getGame
+    resolveRevealed
+    getEncounterDeck `shouldReturn` [spider]
+    getEncounterDiscard `shouldReturn` [reach, road]
 
   it "reveals nothing from an empty encounter deck outside the quest phase" . gameTest $ \_ -> do
     _ <- setEncounterDeck []
@@ -73,14 +97,14 @@ spec = describe "Revealing encounter cards" do
 
   it "ends a surge chain in the quest phase once every card of the encounter deck has surged in it" . gameTest $ \_ -> do
     putGame . (phaseL .~ QuestPhase) =<< getGame
-    -- the first is shuffled back in as the second empties the deck; the second's surge
-    -- would only reveal the first again
-    [firstOff, secondOff] <- setEncounterDeck [Treacheries.offTrack, Treacheries.offTrack]
+    -- the second empties the deck; once it has resolved, both are shuffled back in, and its
+    -- surge would only reveal one of them again
+    offs <- setEncounterDeck [Treacheries.offTrack, Treacheries.offTrack]
     run RevealEncounterCard
     resolveRevealed
     getsGame (length . (.entities.treacheries)) `shouldReturn` 0
-    getEncounterDeck `shouldReturn` [firstOff]
-    getEncounterDiscard `shouldReturn` [secondOff]
+    sortOn (.id) <$> getEncounterDeck `shouldReturn` sortOn (.id) offs
+    getEncounterDiscard `shouldReturn` []
 
   it "lets a surge chain go on while the encounter deck holds a card that has not surged in it" . gameTest $ \_ -> do
     putGame . (phaseL .~ QuestPhase) =<< getGame

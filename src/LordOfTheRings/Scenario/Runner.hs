@@ -178,11 +178,26 @@ instance RunMessage ScenarioAttrs where
                 $ ChooseOne
                   [targetLabel y [RemoveFromEncounterDeck y, AddToStaging y, ShuffleDeck EncounterDeck] | y <- matches]
               pure attrs
+    -- the staging of the deck's last card reveals another card, as its surge does: the
+    -- held reset settles first (see 'HeldReset')
+    RevealEncounterCard | isJust attrs.heldReset -> do
+      push msg
+      settleHeldReset attrs
     RevealEncounterCard -> case attrs.encounterDeck of
+      [card] -> do
+        push $ RevealCard card
+        resets <- resetsWhenEmpty
+        if resets
+          then do
+            deck <- shuffleM attrs.encounterDiscard
+            push FinishEncounterDeckReset
+            pure $ attrs & encounterDeckL .~ deck & encounterDiscardL .~ [] & heldResetL ?~ attrs.encounterDiscard
+          else pure $ attrs & encounterDeckL .~ []
       (card : rest) -> do
         push $ RevealCard card
         pure $ attrs & encounterDeckL .~ rest
       [] -> pure attrs
+    FinishEncounterDeckReset -> settleHeldReset attrs
     -- an enemy dealt more than one whenever it is dealt one, as Fram's Shade
     DealShadowCard eid -> do
       n <- fromMaybe 1 . maximumMay . (\ms -> [k | ShadowCardsDealt k <- ms]) <$> getModifiers (EnemyTarget eid)
@@ -521,20 +536,45 @@ instance RunMessage ScenarioAttrs where
         else pure (a'', acc <> top)
     -- "If the encounter deck is ever empty during the quest phase, the encounter discard
     -- pile is shuffled and reset back into the encounter deck."
-    resetEmptyEncounterDeck a = do
+    resetsWhenEmpty = do
       phase <- getsGame gamePhase
       gameMods <- getModifiers GameTarget
       let anyPhase = EncounterDeckResetsWheneverEmpty `elem` gameMods
           kept = EncounterDeckDoesNotReset `elem` gameMods
-      if (phase == QuestPhase || anyPhase) && not kept && null a.encounterDeck && notNull a.encounterDiscard
+      pure $ (phase == QuestPhase || anyPhase) && not kept
+    resetEmptyEncounterDeck a = do
+      resets <- resetsWhenEmpty
+      let held = maybe False (\case ResetUsed -> False; _ -> True) (heldResetState a)
+      if resets && not held && null a.encounterDeck && notNull a.encounterDiscard
         then do
-          -- the topmost matching card goes to the staging area first, as Ghostly Ruins reads
-          let matchers = [m | ReturnBeforeEncounterDeckResets m <- gameMods]
-          let returned = take 1 [c | c <- a.encounterDiscard, any (`cardMatches` c) matchers]
-          traverse_ (push . AddToStaging) returned
+          returned <- returnBeforeReset a.encounterDiscard
           deck <- shuffleM $ filter (`notElem` returned) a.encounterDiscard
           pure $ a & encounterDeckL .~ deck & encounterDiscardL .~ []
         else pure a
+    -- the topmost matching card of the pile goes to the staging area first, as Ghostly
+    -- Ruins reads
+    returnBeforeReset pile = do
+      gameMods <- getModifiers GameTarget
+      let matchers = [m | ReturnBeforeEncounterDeckResets m <- gameMods]
+          returned = take 1 [c | c <- pile, any (`cardMatches` c) matchers]
+      traverse_ (push . AddToStaging) returned
+      pure returned
+    settleHeldReset a = case (heldResetState a, a.heldReset) of
+      (Just ResetUsed, Just pile) -> do
+        returned <- returnBeforeReset [c | c <- pile, c `elem` a.encounterDeck]
+        pure $ a & encounterDeckL %~ filter (`notElem` returned) & heldResetL .~ Nothing
+      (Just (ResetUndone added), Just pile) ->
+        pure $ a & encounterDeckL .~ added & encounterDiscardL %~ (<> pile) & heldResetL .~ Nothing
+      (Just ResetPending, Just pile) -> do
+        resets <- resetsWhenEmpty
+        if resets
+          then do
+            let full = a.encounterDiscard <> pile
+            returned <- returnBeforeReset full
+            deck <- shuffleM $ filter (`notElem` returned) full
+            pure $ a & encounterDeckL .~ deck & encounterDiscardL .~ [] & heldResetL .~ Nothing
+          else pure $ a & encounterDeckL .~ [] & encounterDiscardL %~ (<> pile) & heldResetL .~ Nothing
+      _ -> pure $ a & heldResetL .~ Nothing
     hiddenOf pid = Map.findWithDefault [] pid attrs.hiddenCards
     -- the player searches the encounter deck and discard pile, the card found going where
     -- the message puts it, then the deck is shuffled
