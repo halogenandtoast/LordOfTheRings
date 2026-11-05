@@ -4318,6 +4318,20 @@
       }
     ]
   },
+  "the-road-to-isengard": {
+    "intro": [
+      "With Saruman's army broken at Helm's Deep, Gandalf, Aragorn and Théoden ride for Isengard to confront the traitor. The Ents of Fangorn, roused at last, march on the fortress to tear down its walls, but the Wizard still commands sorcery and a voice few can resist."
+    ],
+    "setup": [
+      "“The Road to Isengard” is played with an encounter deck built with all the cards from the following encounter sets: The Road to Isengard and Snaga Orcs."
+    ],
+    "rules": [
+      {
+        "title": "Wizardry",
+        "text": "Some locations carry a Wizardry effect. When such a location leaves play as an explored location, its Wizardry effect triggers, whether or not it was the active location."
+      }
+    ]
+  },
   "the-uruk-hai": {
     "intro": [
       "With the Fellowship scattered at Amon Hen and some of its members carried off by the Orcs of Saruman, Aragorn and the remaining companions set out across the plains of Rohan to overtake the Uruk-hai before they reach Isengard."
