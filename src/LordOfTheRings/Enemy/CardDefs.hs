@@ -14,7 +14,9 @@ allEnemyCards =
   Map.fromList $
     map
       (\def -> (cdCardCode def, def))
-      [ greatWarg
+      [ khamulTheEasterlingNightmare
+      , darkHorseman
+      , greatWarg
       , frenziedWargRider
       , gundabadElite
       , ereborBats
@@ -5394,3 +5396,13 @@ gundabadElite =
   )
     { cdCardTraits = setFromList [Goblin, Orc]
     }
+
+-- * A Shadow of the Past Nightmare
+
+khamulTheEasterlingNightmare :: CardDef
+khamulTheEasterlingNightmare = (unique $ enemy "the-black-riders-nightmare-a-shadow-of-the-past-002" "Khamûl the Easterling" AShadowOfThePastNightmare 1 40 5 6 4 8)
+  {cdCardTraits = setFromList [Nazgul]}
+
+darkHorseman :: CardDef
+darkHorseman = (enemy "the-black-riders-nightmare-a-shadow-of-the-past-003" "Dark Horseman" AShadowOfThePastNightmare 2 25 3 4 4 6)
+  {cdCardTraits = setFromList [Nazgul], cdKeywords = setFromList [Peril, Hide 2]}

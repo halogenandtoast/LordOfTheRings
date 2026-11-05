@@ -938,10 +938,12 @@ data ModifierType
   | -- | on the game, or a player for his own tests: each Hide X value is this much more, as
     -- Woody End lowers it and Evil Crow raises it
     HideValue Int
+  | -- | on the game or player: at most this many characters may commit to a Hide test
+    HideCommitLimit Int
   | -- | on the game, or a player for his own tests: the discarded cards of each Hide test come
     -- to this much more threat, as Stock Road adds 2
     HideTestThreat Int
-  | -- | on the game: each character committed to a Hide test gets this much more
+  | -- | on the game or player: each character committed to a Hide test gets this much more
     -- willpower for it, as Green Hill Country gives
     HideTestWillpower Int
   | -- | on a player: he has failed a Hide test this phase, as Crawling Towards Him reads

@@ -778,6 +778,7 @@ library
       LordOfTheRings.Enemy.Cards.DagnirsSpawn
       LordOfTheRings.Enemy.Cards.DarkBats
       LordOfTheRings.Enemy.Cards.DarkHeartedHuorn
+      LordOfTheRings.Enemy.Cards.DarkHorseman
       LordOfTheRings.Enemy.Cards.DaughterOfBeruthiel
       LordOfTheRings.Enemy.Cards.DeadLord
       LordOfTheRings.Enemy.Cards.DeadlyHuorn
@@ -935,6 +936,7 @@ library
       LordOfTheRings.Enemy.Cards.JailorGornakh
       LordOfTheRings.Enemy.Cards.JailorGornakhNightmare
       LordOfTheRings.Enemy.Cards.KhamulTheEasterling
+      LordOfTheRings.Enemy.Cards.KhamulTheEasterlingNightmare
       LordOfTheRings.Enemy.Cards.KingsKnight
       LordOfTheRings.Enemy.Cards.KingSpider
       LordOfTheRings.Enemy.Cards.LazyLob
@@ -1883,6 +1885,7 @@ library
       LordOfTheRings.Location.Cards.EasternQuarter
       LordOfTheRings.Location.Cards.EasternRidge
       LordOfTheRings.Location.Cards.EasternShore
+      LordOfTheRings.Location.Cards.Eastfarthing
       LordOfTheRings.Location.Cards.EastGate
       LordOfTheRings.Location.Cards.EastQuarter
       LordOfTheRings.Location.Cards.EchoingPassage
@@ -1963,6 +1966,7 @@ library
       LordOfTheRings.Location.Cards.GreatForestWeb
       LordOfTheRings.Location.Cards.GreatHall
       LordOfTheRings.Location.Cards.GreenHillCountry
+      LordOfTheRings.Location.Cards.GreenHillCountryNightmare
       LordOfTheRings.Location.Cards.GreenwayPath
       LordOfTheRings.Location.Cards.GreyMoorland
       LordOfTheRings.Location.Cards.GrimFoothills
@@ -2223,6 +2227,7 @@ library
       LordOfTheRings.Location.Cards.SteepPlateau
       LordOfTheRings.Location.Cards.StockBrook
       LordOfTheRings.Location.Cards.StockRoad
+      LordOfTheRings.Location.Cards.StockWoods
       LordOfTheRings.Location.Cards.StoneBarrow
       LordOfTheRings.Location.Cards.StonewainValley
       LordOfTheRings.Location.Cards.Storehouse
@@ -3389,6 +3394,7 @@ library
       LordOfTheRings.Treachery.Cards.FoesOfEcthelion
       LordOfTheRings.Treachery.Cards.FollowedByNight
       LordOfTheRings.Treachery.Cards.FollowedByNightTheRoadDarkens
+      LordOfTheRings.Treachery.Cards.FollowedByShadows
       LordOfTheRings.Treachery.Cards.FoolOfATook
       LordOfTheRings.Treachery.Cards.ForcedOffTrackBeneathTheSands
       LordOfTheRings.Treachery.Cards.FoulAir
@@ -3447,6 +3453,7 @@ library
       LordOfTheRings.Treachery.Cards.InnerShadow
       LordOfTheRings.Treachery.Cards.InspiringFury
       LordOfTheRings.Treachery.Cards.Interrogation
+      LordOfTheRings.Treachery.Cards.InTheNameOfMordor
       LordOfTheRings.Treachery.Cards.IntoTheAbyss
       LordOfTheRings.Treachery.Cards.IronShackles
       LordOfTheRings.Treachery.Cards.Isolation
@@ -3622,6 +3629,7 @@ library
       LordOfTheRings.Treachery.Cards.SlickFooting
       LordOfTheRings.Treachery.Cards.SmokingBlood
       LordOfTheRings.Treachery.Cards.SneakingOff
+      LordOfTheRings.Treachery.Cards.SniffingAndHissing
       LordOfTheRings.Treachery.Cards.Snowdrifts
       LordOfTheRings.Treachery.Cards.Snowstorm
       LordOfTheRings.Treachery.Cards.SoundTheAlarm
@@ -4166,6 +4174,7 @@ test-suite LordOfTheRings-test
       LordOfTheRings.TheLandOfShadow.ShelobsLairSpec
       LordOfTheRings.TheLandOfShadow.ThePassageOfTheMarshesSpec
       LordOfTheRings.TheLordOfTheRings.AKnifeInTheDarkSpec
+      LordOfTheRings.TheLordOfTheRings.AShadowOfThePastNightmareSpec
       LordOfTheRings.TheLordOfTheRings.AShadowOfThePastSpec
       LordOfTheRings.TheLordOfTheRings.FlightToTheFordSpec
       LordOfTheRings.TheRoadDarkens.BreakingOfTheFellowshipSpec

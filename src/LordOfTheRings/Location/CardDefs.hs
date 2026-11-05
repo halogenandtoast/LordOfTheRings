@@ -15,7 +15,10 @@ allLocationCards =
   Map.fromList $
     map
       (\def -> (cdCardCode def, def))
-      [ embattledValley
+      [ eastfarthing
+      , greenHillCountryNightmare
+      , stockWoods
+      , embattledValley
       , easternRidge
       , secretTunnel
       , southernSpur
@@ -5020,3 +5023,17 @@ easternRidge =
     { cdCardTraits = setFromList [Mountain]
     , cdShadowEffect = True
     }
+
+-- * A Shadow of the Past Nightmare
+
+eastfarthing :: CardDef
+eastfarthing = (location "the-black-riders-nightmare-a-shadow-of-the-past-004" "Eastfarthing" AShadowOfThePastNightmare 3 2 9)
+  {cdCardTraits = setFromList [Shire]}
+
+greenHillCountryNightmare :: CardDef
+greenHillCountryNightmare = (location "the-black-riders-nightmare-a-shadow-of-the-past-005" "Green-Hill Country" AShadowOfThePastNightmare 3 3 4)
+  {cdCardTraits = setFromList [Forest], cdShadowEffect = True}
+
+stockWoods :: CardDef
+stockWoods = (location "the-black-riders-nightmare-a-shadow-of-the-past-006" "Stock Woods" AShadowOfThePastNightmare 3 4 5)
+  {cdCardTraits = setFromList [Forest], cdShadowEffect = True}

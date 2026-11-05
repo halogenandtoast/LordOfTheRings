@@ -612,6 +612,8 @@ data Message
     -- may act before it resolves
     DiscardForHideTest HideTest
   | ResolveHideTest HideTest
+  | -- | The result of this specific Hide test, after its success or failure windows
+    HideTestResult HideTest Bool
   | -- | the player has failed a Hide test: what happens as he does, before the Forced
     -- effects after it, as each Nazgûl in the staging area engaging him at stage 1B
     FailHideTest PlayerId

@@ -30,12 +30,20 @@ characterStat printed mods target = do
   modifiedValue mods target (fromMaybe 0 $ printed def)
 
 getWillpower, getAttack, getDefense, getHitPoints :: (HasGame m) => Target -> m Int
-getWillpower target = do
-  -- one that cannot have its willpower reduced, as Star Brooch's hero, ignores what would
+getWillpower target = getWillpowerWith target []
+
+-- | Combine temporary test bonuses with all other modifiers before flooring at zero.
+-- A character that cannot have its willpower reduced ignores each negative modifier.
+getWillpowerWith :: HasGame m => Target -> [Int] -> m Int
+getWillpowerWith target bonuses = do
   mods <- getModifiers target
+  def <- characterCardDef target
   let floored = CannotHaveWillpowerReduced `elem` mods
-  -- reduced to 0, as A Fell Dread reads, unless it cannot be reduced
-  if WillpowerReducedToZero `elem` mods && not floored then pure 0 else characterStat cdWillpower (if floored then (\m -> willpowerOf m >>= \n -> n <$ guard (n > 0)) else willpowerOf) target
+      changes = bonuses <> mapMaybe willpowerOf mods
+      counted = if floored then filter (> 0) changes else changes
+  pure $ if WillpowerReducedToZero `elem` mods && not floored then 0
+    else max 0 $ fromMaybe 0 (cdWillpower def) + sum counted
+
 getAttack target = do
   blank <- elem DoesNotCountAttack <$> getModifiers target
   if blank then pure 0 else characterStat cdAttack attackOf target
@@ -151,10 +159,10 @@ hideTestTotals :: (HasGame m) => HideTest -> m (Int, Int)
 hideTestTotals t = do
   gameMods <- getModifiers GameTarget
   playerMods <- getModifiers t.hidePlayer
-  willpower <- sum <$> traverse getWillpower t.hideCommitted
-  let perCharacter = sum [n | HideTestWillpower n <- gameMods]
-      bonus = sum [n | HideTestThreat n <- gameMods <> playerMods]
+  let bonuses = [n | HideTestWillpower n <- gameMods <> playerMods]
+  willpower <- sum <$> traverse (`getWillpowerWith` bonuses) t.hideCommitted
+  let bonus = sum [n | HideTestThreat n <- gameMods <> playerMods]
   pure
-    ( willpower + perCharacter * length t.hideCommitted
+    ( willpower
     , bonus + sum [fromMaybe 0 (cdThreat $ toCardDef c) | c <- t.hideDiscarded]
     )

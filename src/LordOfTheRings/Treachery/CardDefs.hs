@@ -14,7 +14,10 @@ allTreacheryCards =
   Map.fromList $
     map
       (\def -> (cdCardCode def, def))
-      [ dreadHasCome
+      [ inTheNameOfMordor
+      , followedByShadows
+      , sniffingAndHissing
+      , dreadHasCome
       , lustForTreasure
       , theDragonsIre
       , aHorribleBattle
@@ -3626,3 +3629,17 @@ dreadHasCome =
   )
     { cdShadowEffect = True
     }
+
+-- * A Shadow of the Past Nightmare
+
+inTheNameOfMordor :: CardDef
+inTheNameOfMordor = (treachery "the-black-riders-nightmare-a-shadow-of-the-past-007" "In the Name of Mordor!" AShadowOfThePastNightmare 2)
+  {cdCardTraits = setFromList [Mordor], cdKeywords = setFromList [Surge]}
+
+followedByShadows :: CardDef
+followedByShadows = (treachery "the-black-riders-nightmare-a-shadow-of-the-past-008" "Followed by Shadows" AShadowOfThePastNightmare 3)
+  {cdShadowEffect = True}
+
+sniffingAndHissing :: CardDef
+sniffingAndHissing = (treachery "the-black-riders-nightmare-a-shadow-of-the-past-009" "Sniffing and Hissing" AShadowOfThePastNightmare 2)
+  {cdKeywords = setFromList [Doomed 2], cdShadowEffect = True}

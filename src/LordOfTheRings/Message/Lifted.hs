@@ -55,7 +55,7 @@ import LordOfTheRings.Token
 import LordOfTheRings.Window (
   Timing (After, When),
   Window (..),
-  WindowType (AllyDiscardedByCardEffect, AttackersDeclared, CharacterRescued, DeclaredAsAttacker, DeclaredAsDefender, DefendedAttack, DiscardedFromEncounterDeck, EnemyAttacking, ShadowCardRevealed, ShadowEffectTriggered, StagingStepEnds, ThreatRaisedByDoomed, ThreatRaisedByEncounter, ThreatReduced, Traveled, WhenRevealedCanceled),
+  WindowType (AttackUndefended, ShadowEffectAgainst, AllyDiscardedByCardEffect, AttackersDeclared, CharacterRescued, DeclaredAsAttacker, DeclaredAsDefender, DefendedAttack, DiscardedFromEncounterDeck, EnemyAttacking, ShadowCardRevealed, ShadowEffectTriggered, StagingStepEnds, ThreatRaisedByDoomed, ThreatRaisedByEncounter, ThreatReduced, Traveled, WhenRevealedCanceled),
   mkAfter,
   mkWhen,
  )
@@ -1317,11 +1317,31 @@ returnToStagingAfterAttack eid = afterAttack eid [PlaceEnemy eid StagingArea]
 makeUndefended
   :: (MonadTrans t, HasQueue Message m, ReverseQueue (t m)) => PlayerId -> EnemyId -> t m ()
 makeUndefended pid eid = do
-  cancelMatching \case
-    AttackDamage eid' _ -> eid == eid'
-    DefendedByMany _ eid' _ -> eid == eid'
-    _ -> False
-  push $ UndefendedDamage pid eid
+  shadowIds <- getsGame \g -> [c.id | e <- toList g.entities.enemies, toId e == eid, c <- e.shadowCards]
+  let window = \case
+        Window _ (DefendedAttack _ e) | e == eid -> Nothing
+        Window _ (ShadowEffectAgainst cid _) | cid `elem` shadowIds -> Nothing
+        Window timing (ShadowCardRevealed e cid p _) | e == eid -> Just $ Window timing (ShadowCardRevealed e cid p [])
+        w -> Just w
+      pending = \case
+        AttackDamage e _ | e == eid -> Just $ UndefendedDamage pid eid
+        DefendedByMany _ e _ | e == eid -> Just $ UndefendedDamage pid eid
+        AttackDefended _ e _ | e == eid -> Nothing
+        ResolveShadow e p _ | e == eid -> Just $ ResolveShadow e p []
+        ResolveShadowCard cid e p _ | e == eid -> Just $ ResolveShadowCard cid e p []
+        CheckWindows ws -> Just $ CheckWindows (mapMaybe window ws)
+        m -> Just m
+  (already, scheduled) <- lift $ withQueue \q ->
+    ( mapMaybe pending q
+    , ( any (\case UndefendedDamage _ e -> e == eid; _ -> False) q
+      , any (\case AttackDamage e _ -> e == eid; DefendedByMany _ e _ -> e == eid; _ -> False) q
+      )
+    )
+  defenses <- getsGame (filter (\e -> effectSource e == EnemyAttackSource eid && Defending `elem` effectModifiers e) . gameEffects)
+  traverse_ (push . EndEffect) defenses
+  unless already $ push $ CheckWindows [mkAfter $ AttackUndefended pid eid]
+  -- Keep the damage at its original step, after the remaining shadows and actions.
+  unless (already || scheduled) $ push $ UndefendedDamage pid eid
 
 discardFromHand :: ReverseQueue m => PlayerId -> Card -> m ()
 discardFromHand pid card = push $ DiscardFromHand pid card.id

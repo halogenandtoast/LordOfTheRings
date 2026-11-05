@@ -4062,5 +4062,6 @@
   "spiderBite": {"attach": "Attach Spider Bite to a conscious hero"},
   "greatWarg": {"discard": "Choose an attachment you control to discard"},
   "gundabadElite": {"choose": "Remove progress or face Gundabad Elite's attack", "remove": "Remove 2 progress from the current quest", "attack": "Gundabad Elite attacks the first player"},
-  "embattledValley": {"exhaust": "Exhaust a character to travel to Embattled Valley"}
+  "embattledValley": {"exhaust": "Exhaust a character to travel to Embattled Valley"},
+  "sniffingAndHissing": {"choose": "Exhaust The One Ring and reveal a card, or make a Hide test", "exhaust": "Exhaust The One Ring and reveal an encounter card", "hide": "Make a Hide 3 test"}
 }

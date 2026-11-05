@@ -634,6 +634,7 @@ import LordOfTheRings.Message (
     ResolveGrapple,
     ResolveGuardedPlayerCard,
     ResolveHideTest,
+    HideTestResult,
     ResolveHinder,
     ResolveSailingDiscard,
     ResolveShadow,
@@ -792,6 +793,7 @@ import LordOfTheRings.Modifier (
     EscapeTestCommitLimit,
     ExhaustsCharactersDamagedByExcess,
     FailedFortitudeTestThisRound,
+    HideCommitLimit,
     FailedHideTestThisPhase,
     FailedHideTestThisRound,
     FewerStagingReveals,
@@ -3673,11 +3675,14 @@ runGameMessage msg g = case msg of
   -- a Hide test: the player may exhaust any number of characters he controls to commit
   -- them, then the cards are discarded (The Black Riders rules insert, "Hide Tests")
   MakeHideTest t -> do
-    ready <-
+    mods <- (<>) <$> getModifiers GameTarget <*> getModifiers t.hidePlayer
+    let full = any (\n -> length t.hideCommitted >= n) [n | HideCommitLimit n <- mods]
+    available <-
       filter (`notElem` t.hideCommitted)
         <$> selectCharacters
           (HeroControlledBy (PlayerWithId t.hidePlayer) <> ReadyHero)
           (AllyControlledBy (PlayerWithId t.hidePlayer) <> ReadyAlly)
+    ready <- if full then pure [] else filterM (fmap (notElem CannotExhaust) . getModifiers) available
     push
       $ questionLabelWith (ikey "label.hideTest") (sourceTarget t.hideSource) t.hideCommitted t.hidePlayer
       $ [targetLabel c [Exhaust c, MakeHideTest t {hideCommitted = t.hideCommitted <> [c]}] | c <- ready]
@@ -3687,10 +3692,12 @@ runGameMessage msg g = case msg of
   -- the characters are no longer committed to it
   ResolveHideTest t -> do
     (willpower, threat) <- hideTestTotals t
+    let passed = willpower >= threat
     pushAll
-      $ if threat > willpower
-        then [FailHideTest t.hidePlayer, CheckWindows [mkAfter $ FailedHideTest t.hidePlayer]]
-        else [CheckWindows [mkAfter $ PassedHideTest t.hidePlayer]]
+      $ (if passed
+          then [CheckWindows [mkAfter $ PassedHideTest t.hidePlayer]]
+          else [FailHideTest t.hidePlayer, CheckWindows [mkAfter $ FailedHideTest t.hidePlayer]])
+      <> [HideTestResult t passed]
     pure g
   FailHideTest pid -> do
     pushAll
