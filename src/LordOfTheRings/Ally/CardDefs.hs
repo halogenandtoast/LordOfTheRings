@@ -14,6 +14,10 @@ allAllyCards =
     map
       (\def -> (cdCardCode def, def))
       [ guardOfTheCitadel
+      , turayn
+      , melanwar
+      , isolde
+      , beldis
       , berelind
       , coruhaer
       , laermuin
@@ -2024,3 +2028,17 @@ dwalin =
     , cdCardTraits = setFromList [Dwarf]
     , cdKeywords = setFromList [Sentinel]
     }
+
+-- * The Ered Mithrin campaign's boon allies
+
+turayn :: CardDef
+turayn = (unique $ ally "EMC166" "Turayn" Neutral (StaticCost 2) 1 2 3 3) {cdCardTraits = setFromList [Harad, Warrior, Boon], cdKeywords = setFromList [Sentinel]}
+
+melanwar :: CardDef
+melanwar = (unique $ ally "EMC169" "Melanwar" Neutral (StaticCost 1) 2 2 0 3) {cdCardTraits = setFromList [Silvan, Ranger, Boon], cdKeywords = setFromList [Ranged]}
+
+isolde :: CardDef
+isolde = (unique $ ally "EMC171" "Isolde" Neutral (StaticCost 2) 1 3 1 3) {cdCardTraits = setFromList [Dale, Warrior, Boon]}
+
+beldis :: CardDef
+beldis = (unique $ ally "EMC188" "Beldis" Neutral (StaticCost 1) 2 1 1 3) {cdCardTraits = setFromList [Woodman, Healer, Boon]}

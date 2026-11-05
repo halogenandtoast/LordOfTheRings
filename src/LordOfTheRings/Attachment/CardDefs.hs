@@ -286,6 +286,15 @@ allAttachmentCards =
       , palantirOfOrthanc
       , bilbosMagicRing
       , stingTreasure
+      , anvilOfGundabad
+      , axeOfTheEdain
+      , durinsDagger
+      , dwarfLordsCrown
+      , glitteringLute
+      , gondolinShield
+      , helmOfHeroes
+      , jewelsOfWilderland
+      , masterworkBow
       , spareHoodAndCloak
       , greatYewBow
       , blackArrow
@@ -2165,3 +2174,47 @@ throrsGoldenCup =
   (treasure "132024" "Thrór's Golden Cup" TheLonelyMountain [Artifact, Erebor, Item])
     { cdVictoryPoints = Just 3
     }
+
+-- * The Ered Mithrin campaign's treasures
+
+{- | A treasure of the Ered Mithrin campaign: a player card no deck is built with, added to a
+player's deck before the game once the log marks it (MEC115 rules, "Treasure"). Each reads
+"Attach to".
+-}
+eredMithrinTreasure :: CardCode -> Name -> Int -> [Trait] -> CardDef
+eredMithrinTreasure code name cost traits =
+  (attachment code name Neutral (StaticCost cost))
+    { cdUnique = True
+    , cdCardTraits = setFromList traits
+    , cdDeckLimit = 1
+    }
+
+restrictedTreasure :: CardDef -> CardDef
+restrictedTreasure def = def {cdKeywords = setFromList [Restricted]}
+
+anvilOfGundabad :: CardDef
+anvilOfGundabad = eredMithrinTreasure "EMC196" "Anvil of Gundabad" 0 [Artifact, Item]
+
+axeOfTheEdain :: CardDef
+axeOfTheEdain = restrictedTreasure $ eredMithrinTreasure "EMC197" "Axe of the Edain" 0 [Artifact, Item, Weapon]
+
+durinsDagger :: CardDef
+durinsDagger = eredMithrinTreasure "EMC198" "Durin's Dagger" 1 [Artifact, Item, Weapon]
+
+dwarfLordsCrown :: CardDef
+dwarfLordsCrown = eredMithrinTreasure "EMC199" "Dwarf-Lord's Crown" 2 [Artifact, Item]
+
+glitteringLute :: CardDef
+glitteringLute = restrictedTreasure $ eredMithrinTreasure "EMC200" "Glittering Lute" 0 [Artifact, Item]
+
+gondolinShield :: CardDef
+gondolinShield = restrictedTreasure $ eredMithrinTreasure "EMC201" "Gondolin Shield" 0 [Artifact, Item, Armor]
+
+helmOfHeroes :: CardDef
+helmOfHeroes = restrictedTreasure $ eredMithrinTreasure "EMC202" "Helm of Heroes" 0 [Artifact, Item, Armor]
+
+jewelsOfWilderland :: CardDef
+jewelsOfWilderland = eredMithrinTreasure "EMC203" "Jewels of Wilderland" 0 [Artifact, Item]
+
+masterworkBow :: CardDef
+masterworkBow = restrictedTreasure $ eredMithrinTreasure "EMC204" "Masterwork Bow" 0 [Artifact, Item, Weapon]

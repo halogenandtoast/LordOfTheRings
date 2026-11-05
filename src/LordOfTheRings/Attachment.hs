@@ -267,6 +267,7 @@ import LordOfTheRings.Attachment.Cards.BeyondAllHope
 import LordOfTheRings.Attachment.Cards.PalantirOfOrthanc
 import LordOfTheRings.Attachment.Cards.BilbosMagicRing
 import LordOfTheRings.Attachment.Cards.StingTreasure
+import LordOfTheRings.Attachment.Cards.JewelsOfWilderland
 import LordOfTheRings.Attachment.Cards.SpareHoodAndCloak
 import LordOfTheRings.Attachment.Cards.GreatYewBow
 import LordOfTheRings.Attachment.Cards.BlackArrow
@@ -583,6 +584,7 @@ allAttachments =
         , SomeAttachmentCard palantirOfOrthanc
         , SomeAttachmentCard bilbosMagicRing
         , SomeAttachmentCard stingTreasure
+        , SomeAttachmentCard jewelsOfWilderland
         , SomeAttachmentCard spareHoodAndCloak
         , SomeAttachmentCard greatYewBow
         , SomeAttachmentCard blackArrow
