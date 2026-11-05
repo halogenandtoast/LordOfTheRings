@@ -14,7 +14,9 @@ allTreacheryCards =
   Map.fromList $
     map
       (\def -> (cdCardCode def, def))
-      [ traitorOfManyColors
+      [ rotAndVapors
+      , gollumsRage
+      , traitorOfManyColors
       , fireAndFoulFumes
       , dauntingPower
       , rainOfArrows
@@ -3758,3 +3760,14 @@ fireAndFoulFumes = (treachery "the-treason-of-saruman-nightmare-the-road-to-isen
 dauntingPower :: CardDef
 dauntingPower = (treachery "the-treason-of-saruman-nightmare-the-road-to-isengard-008" "Daunting Power" TheRoadToIsengardNightmare 2)
   {cdShadowEffect = True}
+
+
+-- * The Passage of the Marshes Nightmare
+
+rotAndVapors :: CardDef
+rotAndVapors = (treachery "the-land-of-shadow-nightmare-the-passage-of-the-marshes-007" "Rot and Vapors" ThePassageOfTheMarshesNightmare 3)
+  {cdShadowEffect = True}
+
+gollumsRage :: CardDef
+gollumsRage = (treachery "the-land-of-shadow-nightmare-the-passage-of-the-marshes-008" "Gollum's Rage" ThePassageOfTheMarshesNightmare 2)
+  {cdKeywords = setFromList [Peril, Surge], cdShadowEffect = True}

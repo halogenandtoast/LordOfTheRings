@@ -67,6 +67,8 @@ data WindowMatcher
     ShadowCardWithoutEffectWindow Timing EnemyId
   | ShadowEffectWindow Timing
   | ExploredWindow Timing LocationId
+  | -- | a location still in play as it is explored, matched before it leaves
+    ExploredLocationWindow Timing LocationMatcher
   | -- | the location left play, however it did, for its own abilities to answer
     LocationLeftPlayWindow Timing LocationId
   | -- | a matching enemy entered play, however it did, as "after a Spider enemy enters

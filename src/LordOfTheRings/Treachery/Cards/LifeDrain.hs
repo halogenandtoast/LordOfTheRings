@@ -34,9 +34,7 @@ instance RunMessage LifeDrain where
       enemies <- select thaurdir
       for_ (take 1 enemies) \eid -> do
         let card = MkEncounterCard attrs.cardId (toCardCode attrs)
-        discard attrs attrs
-        removeFromEncounterDiscard card
-        whileInPlay (EnemyTarget eid) $ push $ AttachShadowCard eid card
+        dealRevealedCardAsShadow attrs eid card
       pure t
     ResolveShadowEffect cid eid _ _ | cid == attrs.cardId -> do
       isThaurdir <- selectAny (EnemyWithId eid <> thaurdir)

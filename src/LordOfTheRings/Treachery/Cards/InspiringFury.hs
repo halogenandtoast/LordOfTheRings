@@ -28,9 +28,7 @@ instance RunMessage InspiringFury where
         questionLabeled "inspiringFury.enemy"
         causedBy attrs
         targets [e | (e, x) <- enemies, x == highest] \e -> do
-          discard attrs attrs
-          removeFromEncounterDiscard card
-          whileInPlay (EnemyTarget e) $ push $ AttachShadowCard e card
+          dealRevealedCardAsShadow attrs e card
       pure t
     ResolveShadowEffect cid eid pid defenders | cid == attrs.cardId -> do
       shuffleEncounterDiscardIntoDeck AnyCard

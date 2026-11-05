@@ -11,6 +11,8 @@ import LordOfTheRings.Treachery.Cards.CripplingWeariness
 import LordOfTheRings.Treachery.Cards.TraitorOfManyColors
 import LordOfTheRings.Treachery.Cards.FireAndFoulFumes
 import LordOfTheRings.Treachery.Cards.DauntingPower
+import LordOfTheRings.Treachery.Cards.RotAndVapors
+import LordOfTheRings.Treachery.Cards.GollumsRage
 import LordOfTheRings.Treachery.Cards.UgluksCommand
 import LordOfTheRings.Treachery.Cards.OrcDraught
 import LordOfTheRings.Treachery.Cards.HuntedInHollin
@@ -1173,6 +1175,8 @@ allTreacherys =
         , SomeTreacheryCard traitorOfManyColors
         , SomeTreacheryCard fireAndFoulFumes
         , SomeTreacheryCard dauntingPower
+        , SomeTreacheryCard rotAndVapors
+        , SomeTreacheryCard gollumsRage
         , SomeTreacheryCard ugluksCommand
         , SomeTreacheryCard orcDraught
         , SomeTreacheryCard unseenBarrier

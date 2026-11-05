@@ -1,4 +1,9 @@
 {
+  "rotAndVapors": {
+    "choose": "Choose Rot and Vapors’ effect",
+    "threat": "Raise your threat by 1 for each questing character you control",
+    "damage": "Deal 1 damage to each character you control"
+  },
   "candleLitPool": {
     "search": "Choose an Undead enemy to put into play engaged with you"
   },

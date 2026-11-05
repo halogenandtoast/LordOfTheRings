@@ -3474,6 +3474,7 @@ library
       LordOfTheRings.Treachery.Cards.GoblinsAreUponYou
       LordOfTheRings.Treachery.Cards.GollumsAnguish
       LordOfTheRings.Treachery.Cards.GollumsBite
+      LordOfTheRings.Treachery.Cards.GollumsRage
       LordOfTheRings.Treachery.Cards.GrabbedBySpiders
       LordOfTheRings.Treachery.Cards.Grappled
       LordOfTheRings.Treachery.Cards.GripGrabPinchNab
@@ -3655,6 +3656,7 @@ library
       LordOfTheRings.Treachery.Cards.Rockslide
       LordOfTheRings.Treachery.Cards.RodeLikeAGale
       LordOfTheRings.Treachery.Cards.RogueWave
+      LordOfTheRings.Treachery.Cards.RotAndVapors
       LordOfTheRings.Treachery.Cards.RottenStench
       LordOfTheRings.Treachery.Cards.RuinAndWroth
       LordOfTheRings.Treachery.Cards.RuinedSupplies

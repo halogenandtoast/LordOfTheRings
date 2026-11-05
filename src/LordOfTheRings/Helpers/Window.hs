@@ -175,6 +175,7 @@ windowMatchesM matcher w@(Window timing wType) = case (matcher, wType) of
       Just a | (toAttrs a).owner /= pid, AttachedTo (HeroTarget hid) <- a.placement ->
         selectAny (HeroWithId hid <> HeroControlledBy (PlayerWithId pid))
       _ -> pure False
+  (ExploredLocationWindow t locationMatcher, Explored lid) | t == timing -> selectAny (LocationWithId lid <> locationMatcher)
   (ExploredWithoutVictoryWindow t, Explored lid) | t == timing -> isNothing . cdVictoryPoints . toCardDef <$> getLocation lid
   (CharacterWithTraitDealtDamageWindow t trait, DealtDamage target _) | t == timing -> case target of
     HeroTarget hid -> selectAny (HeroWithId hid <> HeroWithTrait trait)

@@ -14,14 +14,24 @@ import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Location.Types (LocationAttrs (locationCardId, locationTokens))
 import LordOfTheRings.Matcher
 import LordOfTheRings.Message.Lifted qualified as Lifted
-import LordOfTheRings.Modifier (ModifierType (Blank, CannotReduceThreat, CannotHaveAttachments, CannotTakeDamage, HitPointModifier, CancelNextDamage, DamageReducedTo, DamageRedirectedTo, CannotBeTraveledTo, CannotDiscardFromHand, CannotSpendResources))
+import LordOfTheRings.Modifier (ModifierType (Blank, CannotReduceThreat, CannotHaveAttachments, CannotTakeDamage, HitPointModifier, CancelNextDamage, DamageReducedTo, DamageRedirectedTo, CannotBeTraveledTo, CannotDiscardFromHand, CannotSpendResources, ImmuneToCardEffects))
 import LordOfTheRings.Scenario (thePassageOfTheMarshes)
-import LordOfTheRings.Phase (Phase (PlanningPhase))
+import LordOfTheRings.Scenario.Types (modeL, GameMode (NightmareMode))
+import LordOfTheRings.Phase (Phase (PlanningPhase, QuestPhase))
 import LordOfTheRings.Window (WindowType (EnemyAttacking), mkWhen)
 import TestImport
 
 marshes :: (PlayerId -> GameT ()) -> IO ()
 marshes = gameTestIn thePassageOfTheMarshes testDeck
+
+nightmare :: (PlayerId -> GameT ()) -> IO ()
+nightmare = gameTestIn (overAttrs (modeL .~ NightmareMode) thePassageOfTheMarshes) testDeck
+
+reveal :: [CardDef] -> GameT ()
+reveal defs = do
+  _ <- setEncounterDeck defs
+  run RevealEncounterCard
+  resolveRevealed
 
 stage :: CardDef -> GameT EnemyId
 stage def = do
@@ -76,6 +86,208 @@ attack pid eid defender = do
 
 spec :: Spec
 spec = describe "The Passage of the Marshes Nightmare" do
+  it "Gollum's Rage stays a shadow when it is the last encounter card and surge resets the deck" . marshes $ \pid -> do
+    eid <- stage Enemies.gollumTheLandOfShadow
+    locationCard <- genEncounterCard Locations.festeringMire
+    run $ AddToEncounterDiscard [locationCard]
+    putGame . (phaseL .~ QuestPhase) =<< getGame
+    _ <- setEncounterDeck [Treacheries.gollumsRage]
+    run RevealEncounterCard
+    resolveRevealed
+    map toCardCode . (.shadowCards) <$> getEnemy eid `shouldReturn` [toCardCode Treacheries.gollumsRage]
+    length <$> select (LocationWithCardCode $ toCardCode Locations.festeringMire) `shouldReturn` 1
+    map toCardCode <$> getEncounterDeck >>= (`shouldSatisfy` notElem (toCardCode Treacheries.gollumsRage))
+    map toCardCode <$> getEncounterDiscard >>= (`shouldSatisfy` notElem (toCardCode Treacheries.gollumsRage))
+    getQuestion pid `shouldReturn` Nothing
+
+  it "canceling Gollum's Rage's When Revealed effect prevents the shadow deal but preserves surge" . marshes $ \pid -> do
+    eid <- stage Enemies.gollumTheLandOfShadow
+    emptyHand pid
+    card <- putCardIntoHand pid Events.aTestOfWill
+    hero <- toTarget <$> getHeroWithCode "01007"
+    run $ PlaceTokens GameSource hero Resource 1
+    _ <- setEncounterDeck [Treacheries.gollumsRage, Locations.festeringMire]
+    run RevealEncounterCard
+    chooseTarget pid (CardIdTarget card.id)
+    resolveRevealed
+    (.shadowCards) <$> getEnemy eid `shouldReturn` []
+    length <$> select (LocationWithCardCode $ toCardCode Locations.festeringMire) `shouldReturn` 1
+
+  it "two Gollum's Rage shadows each schedule one additional attack without reusing old shadows" . marshes $ \pid -> do
+    eid <- stage Enemies.gollumTheLandOfShadow
+    defender <- putAllyIntoPlay pid Allies.guardOfTheCitadel
+    firstHero <- toTarget <$> getHeroWithCode "01012"
+    otherHero <- toTarget <$> getHeroWithCode "01007"
+    replicateM_ 2 $ run . AttachShadowCard eid =<< genEncounterCard Treacheries.gollumsRage
+    _ <- setEncounterDeck [Enemies.hostOfIsengard, Enemies.hostOfIsengard]
+    run $ EnemyAttack pid eid
+    passActions pid
+    chooseTarget pid defender
+    passActions pid
+    resolveShadowsInOrder pid
+    passActions pid
+    resolveShadowsInOrder pid
+    passActions pid
+    chooseTarget pid firstHero
+    passActions pid
+    resolveShadowsInOrder pid
+    passActions pid
+    chooseTarget pid otherHero
+    passActions pid
+    resolveShadowsInOrder pid
+    passActions pid
+    getDamage firstHero `shouldReturn` 0
+    getDamage otherHero `shouldReturn` 1
+    getEncounterDeck `shouldReturn` []
+    getQuestion pid `shouldReturn` Nothing
+
+  it "builds the Nightmare deck with exact replacements" . nightmare $ \_ -> do
+    run $ DoStep 1 Setup
+    deck <- getEncounterDeck
+    length deck `shouldBe` 40
+    let copies def = length $ filter ((== toCardCode def) . toCardCode) deck
+    map copies [Enemies.gropingDead, Enemies.deadThings, Locations.softMires, Locations.hauntedMere, Treacheries.bitterReek] `shouldBe` [0, 0, 1, 0, 0]
+    map copies [Locations.festeringMire, Locations.candleLitPool, Locations.greatReedThicket, Enemies.paleFaces, Enemies.rottingThing, Treacheries.rotAndVapors, Treacheries.gollumsRage] `shouldBe` [3, 3, 2, 3, 3, 3, 2]
+    map copies [Enemies.morgulWraith, Treacheries.weHatesThem, Treacheries.callOfTheRing] `shouldBe` [2, 2, 2]
+
+  it "Nightmare exploration of a staged location raises every player's threat by its Mire value" . twoPlayerTestIn (overAttrs (modeL .~ NightmareMode) thePassageOfTheMarshes) testDeck $ \one two -> do
+    lid <- stageLocation Locations.candleLitPool
+    run $ PlaceTokens GameSource (LocationTarget lid) Resource 1
+    threatsBefore <- traverse (fmap (.threat) . getPlayer) [one, two]
+    run $ PlaceTokens GameSource (LocationTarget lid) Progress 5
+    resolveForcedChoices one
+    traverse (fmap (.threat) . getPlayer) [one, two] `shouldReturn` map (+ 3) threatsBefore
+
+  it "Nightmare does not raise threat for exploring the active location" . nightmare $ \pid -> do
+    lid <- activeLocationWith Locations.festeringMire
+    threatBefore <- (.threat) <$> getPlayer pid
+    run $ PlaceTokens GameSource (LocationTarget lid) Progress 6
+    resolveForcedChoices pid
+    (.threat) <$> getPlayer pid `shouldReturn` threatBefore
+
+  it "Nightmare does not count a Mire discard as exploration" . nightmare $ \pid -> do
+    _ <- setEncounterDeck []
+    lid <- stageLocation Locations.candleLitPool
+    threatBefore <- (.threat) <$> getPlayer pid
+    run $ PlaceTokens GameSource (LocationTarget lid) Resource 3
+    resolveForcedChoices pid
+    (.threat) <$> getPlayer pid `shouldReturn` threatBefore
+
+  it "normal mode keeps staged exploration free of the Nightmare threat penalty" . marshes $ \pid -> do
+    lid <- stageLocation Locations.candleLitPool
+    threatBefore <- (.threat) <$> getPlayer pid
+    run $ PlaceTokens GameSource (LocationTarget lid) Progress 5
+    resolveForcedChoices pid
+    (.threat) <$> getPlayer pid `shouldReturn` threatBefore
+
+  it "Rot and Vapors raises threat only for questing characters you control" . marshes $ \pid -> do
+    hero <- toTarget <$> getHeroWithCode "01012"
+    ally <- putAllyIntoPlay pid Allies.guardOfTheCitadel
+    run $ CommitToQuest hero
+    run $ CommitToQuest ally
+    threatBefore <- (.threat) <$> getPlayer pid
+    reveal [Treacheries.rotAndVapors]
+    chooseLabel "$label.rotAndVapors.threat" pid
+    (.threat) <$> getPlayer pid `shouldReturn` (threatBefore + 2)
+    getDamage hero `shouldReturn` 0
+    getDamage ally `shouldReturn` 0
+
+  it "Rot and Vapors allows the threat option with no questing characters" . marshes $ \pid -> do
+    threatBefore <- (.threat) <$> getPlayer pid
+    reveal [Treacheries.rotAndVapors]
+    chooseLabel "$label.rotAndVapors.threat" pid
+    (.threat) <$> getPlayer pid `shouldReturn` threatBefore
+    characters <- selectCharacters AnyHero AnyAlly
+    for_ characters $ \character -> getDamage character `shouldReturn` 0
+
+  it "Rot and Vapors damages ready characters and Sméagol, while respecting immunity" . marshes $ \pid -> do
+    aid <- putSmeagol pid
+    hero <- toTarget <$> getHeroWithCode "01012"
+    protected <- toTarget <$> getHeroWithCode "01007"
+    run $ CreateEffect $ Effect GameSource protected [ImmuneToCardEffects] UntilEndOfRound
+    reveal [Treacheries.rotAndVapors]
+    chooseLabel "$label.rotAndVapors.damage" pid
+    getDamage hero `shouldReturn` 1
+    getDamage protected `shouldReturn` 0
+    getDamage (AllyTarget aid) `shouldReturn` 1
+
+  it "each player chooses Rot and Vapors' effect independently" . twoPlayerTestIn thePassageOfTheMarshes testDeck $ \one two -> do
+    firstHero <- toTarget . fromJustNote "first hero" . headMay <$> select (HeroControlledBy $ PlayerWithId one)
+    run $ CommitToQuest firstHero
+    threatsBefore <- traverse (fmap (.threat) . getPlayer) [one, two]
+    reveal [Treacheries.rotAndVapors]
+    chooseLabel "$label.rotAndVapors.threat" one
+    chooseLabel "$label.rotAndVapors.damage" two
+    traverse (fmap (.threat) . getPlayer) [one, two] `shouldReturn` zipWith (+) threatsBefore [1, 0]
+    firstHeroes <- select (HeroControlledBy $ PlayerWithId one)
+    otherHeroes <- select (HeroControlledBy $ PlayerWithId two)
+    for_ firstHeroes $ \hid -> getDamage (HeroTarget hid) `shouldReturn` 0
+    for_ otherHeroes $ \hid -> getDamage (HeroTarget hid) `shouldReturn` 1
+
+  it "Rot and Vapors' shadow adds attack and mire only if the attack destroys a character" . marshes $ \pid -> do
+    lid <- activeLocationWith Locations.theOldFord
+    eid <- stage Enemies.forestSpider
+    ally <- putAllyIntoPlay pid Allies.guardOfTheCitadel
+    run . AttachShadowCard eid =<< genEncounterCard Treacheries.rotAndVapors
+    attack pid eid ally
+    mireTokens lid `shouldReturn` 1
+    getsGame (any ((== ally) . toTarget) . toList . (.entities.allies)) `shouldReturn` False
+
+  it "Rot and Vapors' shadow leaves mire unchanged when its defender survives" . marshes $ \pid -> do
+    lid <- activeLocationWith Locations.theOldFord
+    eid <- stage Enemies.forestSpider
+    hero <- toTarget <$> getHeroWithCode "01012"
+    run . AttachShadowCard eid =<< genEncounterCard Treacheries.rotAndVapors
+    attack pid eid hero
+    mireTokens lid `shouldReturn` 0
+    getDamage hero `shouldReturn` 1
+
+  it "Gollum's Rage becomes a facedown shadow card and still surges" . marshes $ \pid -> do
+    eid <- stage Enemies.gollumTheLandOfShadow
+    cards <- setEncounterDeck [Treacheries.gollumsRage, Locations.festeringMire]
+    run RevealEncounterCard
+    resolveRevealed
+    map (.id) . (.shadowCards) <$> getEnemy eid `shouldReturn` [(.id) $ fromJustNote "Rage" $ headMay cards]
+    getEnemyAttack eid `shouldReturn` 2
+    map toCardCode <$> getEncounterDiscard >>= (`shouldSatisfy` notElem (toCardCode Treacheries.gollumsRage))
+    length <$> select (LocationWithCardCode $ toCardCode Locations.festeringMire) `shouldReturn` 1
+    getEncounterDeck `shouldReturn` []
+    getQuestion pid `shouldReturn` Nothing
+
+  it "Gollum's Rage surges and is discarded while Sméagol is faceup" . marshes $ \pid -> do
+    aid <- putSmeagol pid
+    reveal [Treacheries.gollumsRage, Locations.festeringMire]
+    select (AllyWithId aid) `shouldReturn` [aid]
+    map toCardCode <$> getEncounterDiscard >>= (`shouldSatisfy` elem (toCardCode Treacheries.gollumsRage))
+    length <$> select (LocationWithCardCode $ toCardCode Locations.festeringMire) `shouldReturn` 1
+
+  it "Gollum's Rage grants Gollum one extra attack with a fresh shadow after the boosted attack" . marshes $ \pid -> do
+    eid <- stage Enemies.gollumTheLandOfShadow
+    firstHero <- toTarget <$> getHeroWithCode "01012"
+    otherHero <- toTarget <$> getHeroWithCode "01007"
+    reveal [Treacheries.gollumsRage, Locations.festeringMire, Enemies.hostOfIsengard]
+    run $ EnemyAttack pid eid
+    passActions pid
+    chooseTarget pid firstHero
+    passActions pid
+    chooseTarget pid otherHero
+    passActions pid
+    resolveShadowsInOrder pid
+    passActions pid
+    getDamage firstHero `shouldReturn` 1
+    getDamage otherHero `shouldReturn` 1
+    getEncounterDeck `shouldReturn` []
+    map toCardCode <$> getEncounterDiscard >>= (`shouldSatisfy` elem (toCardCode Treacheries.gollumsRage))
+
+  it "Gollum's Rage has no shadow effect for another enemy" . marshes $ \pid -> do
+    eid <- stage Enemies.forestSpider
+    hero <- toTarget <$> getHeroWithCode "01012"
+    _ <- setEncounterDeck [Enemies.hostOfIsengard]
+    run . AttachShadowCard eid =<< genEncounterCard Treacheries.gollumsRage
+    attack pid eid hero
+    getDamage hero `shouldReturn` 0
+    map toCardCode <$> getEncounterDeck `shouldReturn` [toCardCode Enemies.hostOfIsengard]
+
   it "Festering Mire makes each player discard one random card to travel" . twoPlayerTestIn thePassageOfTheMarshes testDeck $ \one two -> do
     for_ [one, two] emptyHand
     _ <- putCardIntoHand one Events.fortuneOrFate

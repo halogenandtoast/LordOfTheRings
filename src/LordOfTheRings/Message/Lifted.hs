@@ -626,6 +626,15 @@ chooseAndDiscard source pid cards = push $ ChooseAndDiscard (toSource source) pi
 dealShadowCard :: ReverseQueue m => EnemyId -> m ()
 dealShadowCard = push . DealShadowCard
 
+-- | A resolving encounter card becomes a shadow card instead of being left in
+-- the discard pile. Printed keywords still resolve in its revelation queue.
+dealRevealedCardAsShadow
+  :: (ReverseQueue m, Sourceable source, Targetable source) => source -> EnemyId -> EncounterCard -> m ()
+dealRevealedCardAsShadow source eid card = do
+  discard source source
+  removeFromEncounterDiscard card
+  whileInPlay (EnemyTarget eid) $ push $ AttachShadowCard eid card
+
 -- | Move resources from a hero's pool. Transferring them is neither spending nor
 -- discarding them, as Pine Slopes distinguishes.
 moveResourcesFromHero :: (ReverseQueue m, Sourceable source, Targetable target) => source -> HeroId -> target -> Int -> m ()
