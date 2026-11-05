@@ -662,6 +662,7 @@ openBlock block = do
     BurgleBlock pid -> do
       who <- playerRefFor pid
       header $ action [ikeyPart "log.burgleAttempt" ["player" ~> who]]
+    ResolutionBlock -> header $ mechanic [ikeyPart "log.resolution" []]
     EnemyAttackBlock pid eid -> whenRef (toTarget eid) \e -> do
       who <- playerRefFor pid
       attack <- getEnemyAttack eid

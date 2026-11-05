@@ -9,6 +9,7 @@ import LordOfTheRings.Effect (Effect (..), EffectDuration (UntilEndOfRound))
 import LordOfTheRings.Enemy (EnemyAttrs (enemyTokens))
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Event.CardDefs qualified as Events
+import LordOfTheRings.Helpers.Attachment (cardHosts)
 import LordOfTheRings.Helpers.Character (getDefense, getWillpower)
 import LordOfTheRings.Helpers.Modifiers (getModifiers)
 import LordOfTheRings.Helpers.Staging (getLocationThreat)
@@ -22,7 +23,8 @@ import LordOfTheRings.Treachery.CardDefs qualified as Treacheries
 import LordOfTheRings.Window (WindowType (Attached, CommittedToQuest, QuestedSuccessfully, StagingStepEnds), mkAfter)
 import TestImport
 
-aragornCode, haldanCode, eowynCode, theodredCode :: CardCode
+aragornCode, haldanCode, eowynCode, theodredCode, sagaFrodoCode :: CardCode
+sagaFrodoCode = "141001"
 aragornCode = "22137"
 haldanCode = "19026"
 eowynCode = "01007"
@@ -31,7 +33,9 @@ theodredCode = "01002"
 hero :: CardCode -> GameT Target
 hero code = toTarget <$> getHeroWithCode code
 
-aragornDeck, haldanDeck :: DeckList
+aragornDeck, haldanDeck, frodoDeck, frodoLeadershipDeck :: DeckList
+frodoDeck = deckList [sagaFrodoCode, aragornCode, eowynCode] testDeck.cards
+frodoLeadershipDeck = deckList ["21002", eowynCode, theodredCode] testDeck.cards
 aragornDeck = deckList [aragornCode, eowynCode, theodredCode] testDeck.cards
 haldanDeck = deckList [haldanCode, eowynCode, theodredCode] testDeck.cards
 
@@ -211,6 +215,20 @@ spec = describe "The Fortress of Nurn player cards" do
       chooseAbilityOf pid aragorn
       isExhausted aragorn `shouldReturn` False
       (getHeroResources . toId =<< getHeroWithCode aragornCode) `shouldReturn` 0
+
+    it "cannot be attached to a Fellowship hero" . gameTestWith frodoDeck $ \pid -> do
+      frodo <- hero sagaFrodoCode
+      hosts <- cardHosts pid (toCardCode Attachments.thorongil)
+      hosts `shouldSatisfy` notElem frodo
+      hosts `shouldSatisfy` notNull
+
+    it "offers only the non-Fellowship versions of its hero" . gameTestWith frodoLeadershipDeck $ \pid -> do
+      frodo <- hero "21002"
+      thorongil <- putAttachmentOn pid Attachments.thorongil frodo
+      run $ CheckWindows [mkAfter $ Attached thorongil frodo mempty]
+      chooseAbilityOf pid thorongil
+      -- one version is left, the Spirit Frodo Baggins, so it is attached without asking
+      getModifiers frodo >>= (`shouldSatisfy` elem (GainGameTextOf "02025"))
 
     it "takes the hero card with it as it leaves play" . gameTestWith aragornDeck $ \pid -> do
       aragorn <- hero aragornCode

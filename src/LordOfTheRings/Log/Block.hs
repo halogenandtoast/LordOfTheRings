@@ -29,6 +29,8 @@ data LogBlockKind
     PlayBlock PlayerId Card
   | -- | the first player makes a burgle attempt (The Hobbit: On the Doorstep)
     BurgleBlock PlayerId
+  | -- | the campaign card's resolution, as the game ends in campaign mode
+    ResolutionBlock
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
@@ -59,6 +61,7 @@ logBlockKey b = kind <> ":" <> UUID.toText b.id
     AbilityBlock {} -> "ability"
     PlayBlock {} -> "play"
     BurgleBlock {} -> "burgle"
+    ResolutionBlock -> "resolution"
 
 -- | The group id of the innermost of these open blocks, outermost first.
 logBlockPath :: [LogBlock] -> Maybe Text

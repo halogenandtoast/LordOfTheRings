@@ -143,11 +143,14 @@ data Message
   | GameOver Outcome
   | -- | the players concede: the game ends lost, whatever would stop it ending
     Surrender
-  | {- | the scenario has been won in campaign mode: its campaign card's resolution, then
-    what every campaign records, the score and the fallen heroes, written to the log the
-    scenario holds. The game is over, so nothing pushed here runs.
+  | {- | the scenario has been won in campaign mode (or, for The Black Gate Opens, lost):
+    its campaign card's resolution, then what every campaign records, the score and the
+    fallen heroes, written to the log the scenario holds. It runs before the game ends, as
+    Arkham's scenario resolutions do, so what it pushes runs and may ask the players.
     -}
     ResolveCampaign
+  | -- | the game ends with the outcome, once the campaign card's resolution has resolved
+    EndGame Outcome
   | -- | in campaign mode, a card writes to the campaign log the scenario holds
     UpdateCampaignLog CampaignLogUpdate
   | Discard Target

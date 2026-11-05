@@ -19,7 +19,8 @@ import LordOfTheRings.Matcher (CardMatcher (..), playerCardsGuardedBy)
 import LordOfTheRings.Modifier (ModifierType (..))
 import LordOfTheRings.Name (Name (..))
 import LordOfTheRings.Phase (Phase (PlanningPhase, RefreshPhase))
-import LordOfTheRings.Trait (Trait (Artifact, Item))
+import LordOfTheRings.Sphere (Sphere (Baggins, Fellowship))
+import LordOfTheRings.Trait (Trait (Artifact, Boon, Item))
 import LordOfTheRings.Window (WindowType (Explored, PlayedCardFromHand), mkAfter, mkWhen)
 import TestImport
 
@@ -168,6 +169,13 @@ spec = describe "Contracts" do
       for_ loot \c -> do
         (toCardDef c).cdCardType `shouldBe` AttachmentType
         any (`member` (toCardDef c).cdCardTraits) [Item, Artifact] `shouldBe` True
+
+    -- Caleb, unofficially: boons and saga attachments are not meant for the loot deck
+    it "leaves boons, the sagas' Fellowship and Baggins attachments and treasures out of the collection" . gameTestWith deck $ \pid -> do
+      run Setup
+      offered <- maybe [] (\q -> [toCardDef c | TargetLabel _ msgs <- questionChoices q, PlaceUnderneath _ cs <- msgs, c <- cs]) <$> getQuestion pid
+      offered `shouldSatisfy` notNull
+      offered `shouldSatisfy` all (\d -> d.cdSphere `notElem` [Just Fellowship, Just Baggins] && isNothing d.cdSetIcon && Boon `notMember` d.cdCardTraits)
 
     it "attaches loot to each location traveled to, adds a quest point for it, and lets it be taken as the location is explored" . gameTestWith deck $ \pid -> do
       run Setup

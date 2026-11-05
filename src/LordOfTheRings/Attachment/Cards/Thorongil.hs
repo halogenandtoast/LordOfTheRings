@@ -7,22 +7,38 @@ import LordOfTheRings.Card (Card (PlayerCard), CardType (HeroType), cdCardType, 
 import LordOfTheRings.Card.Code (CardCode)
 import LordOfTheRings.Hero.CardDefs (allHeroCards)
 import LordOfTheRings.Name (Name (..))
+import LordOfTheRings.Sphere (Sphere (..))
 
 newtype Thorongil = Thorongil AttachmentAttrs
   deriving anyclass IsAttachment
   deriving newtype (Show, Eq, ToJSON, Entity)
 
--- | Attach to a non-Fellowship, non-Baggins hero you control. The game has no Fellowship
--- or Baggins heroes to leave out.
+-- | Attach to a non-Fellowship, non-Baggins hero you control.
 thorongil :: AttachmentCard Thorongil
 thorongil =
   attachment Thorongil Cards.thorongil
-    & fmap (overAttrs \a -> a {attachmentAttachTo = AttachToHero (HeroControlledBy $ PlayerWithId a.owner)})
+    & fmap
+      ( overAttrs \a ->
+          a
+            { attachmentAttachTo =
+                AttachToHero
+                  $ HeroControlledBy (PlayerWithId a.owner)
+                  <> not_ (HeroWithSphere Fellowship)
+                  <> not_ (HeroWithSphere Baggins)
+            }
+      )
 
--- | The other versions of the hero: your collection is every hero the game has, as Helm of
--- Secrecy reads it.
+-- | The other non-Fellowship, non-Baggins versions of the hero: your collection is every
+-- hero the game has, as Helm of Secrecy reads it.
 versionsOf :: CardCode -> [CardCode]
-versionsOf code = [c | c <- Map.keys allHeroCards, c /= code, cdCardType (toCardDef c) == HeroType, title c == title code]
+versionsOf code =
+  [ c
+  | c <- Map.keys allHeroCards
+  , c /= code
+  , cdCardType (toCardDef c) == HeroType
+  , cdSphere (toCardDef c) `notElem` [Just Fellowship, Just Baggins]
+  , title c == title code
+  ]
  where
   title c = let Name t _ = cdName (toCardDef c) in t
 

@@ -562,6 +562,16 @@ spec = describe "The Road to Isengard" do
       [p | p <- l.pool, p.code `elem` [toCardCode Treacheries.sarumansVoice, toCardCode Attachments.palantirOfOrthanc]]
         `shouldBe` [PoolCard (toCardCode Attachments.palantirOfOrthanc) (Just 0) Nothing]
 
+    it "has the first player choose the player who earns the Palantír of Orthanc" . twoPlayerCampaignTestIn theRoadToIsengard lotr {campaignLogHeroes = [["01012", "01007", "01002"], ["01012", "01007", "01002"]]} testDeck $ \one two -> do
+      run $ DrawCards $ DrawingFrom one 4 GameSource
+      run $ GameOver Won
+      getsGame (.outcome) `shouldReturn` Nothing
+      chooseTarget one (PlayerTarget two)
+      getsGame (.outcome) `shouldReturn` Just Won
+      l <- getCampaignLog
+      [p | p <- l.pool, p.code == toCardCode Attachments.palantirOfOrthanc]
+        `shouldBe` [PoolCard (toCardCode Attachments.palantirOfOrthanc) (Just 1) Nothing]
+
     it "earns both with exactly 3 cards in hand" . campaignTest $ \pid -> do
       setUp pid
       toStage3 pid

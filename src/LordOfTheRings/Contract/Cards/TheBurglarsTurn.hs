@@ -2,14 +2,15 @@ module LordOfTheRings.Contract.Cards.TheBurglarsTurn (theBurglarsTurn) where
 
 import Data.Map.Strict qualified as Map
 import LordOfTheRings.Attachment (allAttachments)
-import LordOfTheRings.Card (Card (PlayerCard), CardCode, CardType (AttachmentType), cdName, genPlayerCard, toCardCode, toCardDef)
+import LordOfTheRings.Card (Card (PlayerCard), CardCode, CardType (AttachmentType), cdCardTraits, cdName, cdSetIcon, cdSphere, genPlayerCard, toCardCode, toCardDef)
 import LordOfTheRings.Contract.CardDefs qualified as Cards
 import LordOfTheRings.Contract.Import.Lifted
 import LordOfTheRings.Helpers.Attachment (cardHosts)
 import LordOfTheRings.Name (Name (..))
 import LordOfTheRings.Location.Types (LocationAttrs (locationCardId))
 import LordOfTheRings.Placement (GuardRelease (AttachWhenFree), Placement (ActiveLocation))
-import LordOfTheRings.Trait (Trait (Artifact, Item))
+import LordOfTheRings.Sphere (Sphere (..))
+import LordOfTheRings.Trait (Trait (Artifact, Boon, Item))
 
 newtype TheBurglarsTurn = TheBurglarsTurn ContractAttrs
   deriving anyclass IsContract
@@ -28,7 +29,10 @@ title :: CardCode -> Text
 title code = let Name t _ = cdName (toCardDef code) in t
 
 {- | Your collection's Item and Artifact attachments, one of each title: every one the game
-has, as Helm of Secrecy reads the collection's heroes.
+has, as Helm of Secrecy reads the collection's heroes. Boons, the sagas' Fellowship and
+Baggins attachments and Hobbit treasures are left out: Caleb unofficially confirmed that boons and
+Fellowship/saga attachments are not meant to be played through this contract (as Alonewolf87
+reported in the RingsDB comments on The Burglar's Turn).
 -}
 collection :: [CardCode]
 collection =
@@ -39,6 +43,9 @@ collection =
       | code <- Map.keys allAttachments
       , let def = toCardDef code
       , cardMatches (CardWithType AttachmentType <> CardMatchAny [CardWithTrait Item, CardWithTrait Artifact]) def
+      , cdSphere def `notElem` [Just Fellowship, Just Baggins]
+      , isNothing (cdSetIcon def)
+      , Boon `notMember` cdCardTraits def
       ]
 
 {- | Side B: The active location gets +1 quest point for each attachment attached to it:

@@ -189,6 +189,11 @@ endWaitingGame = do
       putGame $ g & effectsL %~ filter (not . isWaiting)
       push $ GameOver outcome
 
+-- | The game is over, or ending as the campaign card's resolution resolves: what the
+-- game does by itself between messages, as discarding down to a hand limit, stops.
+gameEnding :: Game -> Bool
+gameEnding g = isJust g.outcome || (toAttrs g.scenario).inResolution
+
 -- | The game cannot end now with this outcome: it cannot end, or the players cannot win.
 gameCannotEndWith :: Outcome -> GameT Bool
 gameCannotEndWith outcome = do
@@ -211,7 +216,7 @@ checkUnblockedQuests before = do
 -}
 discardDownToHandLimit :: GameT ()
 discardDownToHandLimit = do
-  over <- getsGame (isJust . (.outcome))
+  over <- getsGame gameEnding
   unless over do
     queued <- peekQueue
     players <- getPlayers
@@ -235,7 +240,7 @@ still being guarded, or claimed, by what is queued.
 claimFreeObjectives :: GameT ()
 claimFreeObjectives = do
   g <- getGame
-  unless (isJust g.outcome) do
+  unless (gameEnding g) do
     queued <- peekQueue
     let guards = map ((.id) . toCard) (toList g.entities.enemies) <> map ((.id) . toCard) (toList g.entities.locations)
         free o = o.placement == StagingArea && maybe True (`notElem` guards) (objectiveGuard $ toAttrs o)
@@ -264,7 +269,7 @@ reads, are discarded as soon as it is, unless their discard is already on its wa
 -}
 discardAtNoWillpower :: GameT ()
 discardAtNoWillpower = do
-  over <- getsGame (isJust . (.outcome))
+  over <- getsGame gameEnding
   unless over do
     characters <- selectCharacters AnyHero AnyAlly
     doomed <- flip filterM characters \c -> andM [elem DiscardedAtNoWillpower <$> getModifiers c, (<= 0) <$> getWillpower c]
@@ -1067,18 +1072,27 @@ runGameMessage msg g = case msg of
     pure g
   GameOver outcome -> do
     cannotEnd <- gameCannotEndWith outcome
-    -- the outcome waits while the game cannot end, unless no player is left to play on;
-    -- see 'endWaitingGame'
-    if cannotEnd && any (not . (.eliminated)) g.players
-      then g <$ push (CreateEffect $ Effect GameSource GameTarget [GameEndsWith outcome] UntilSpent)
-      else do
-        -- won in campaign mode, the campaign card's resolution is recorded in the log
-        g' <-
-          if campaignResolvesOn (scenarioId $ toAttrs g.scenario) outcome && isJust (toAttrs g.scenario).campaign
-            then traverseOf scenarioL (runEach ResolveCampaign) g
-            else pure g
-        clearQueue
-        pure $ g' & outcomeL ?~ outcome
+    let s = toAttrs g.scenario
+    if
+      -- the campaign card's resolution under way ends the game once it has resolved
+      | s.inResolution -> pure g
+      -- the outcome waits while the game cannot end, unless no player is left to play on;
+      -- see 'endWaitingGame'
+      | cannotEnd && any (not . (.eliminated)) g.players ->
+          g <$ push (CreateEffect $ Effect GameSource GameTarget [GameEndsWith outcome] UntilSpent)
+      -- in campaign mode the campaign card's resolution runs first, as Arkham's scenario
+      -- resolutions do: what it pushes runs, and may ask the players, then the game ends
+      | campaignResolvesOn s.scenarioId outcome && isJust s.campaign -> do
+          clearQueue
+          resolution <- inLogBlock ResolutionBlock [ResolveCampaign]
+          pushAll $ resolution <> [EndGame outcome]
+          pure $ g & scenarioL %~ overAttrs (inResolutionL .~ True)
+      | otherwise -> do
+          clearQueue
+          pure $ g & outcomeL ?~ outcome
+  EndGame outcome -> do
+    clearQueue
+    pure $ g & outcomeL ?~ outcome
   -- conceding is not a loss by the rules, so nothing that stops the game ending stops it
   Surrender -> do
     clearQueue

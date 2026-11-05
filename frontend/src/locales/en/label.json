@@ -3798,6 +3798,9 @@
   "theRoadToIsenmouthe": {
     "travel": "The Road to Isenmouthe: choose the Mordor Road to travel to"
   },
+  "theRoadToIsengard": {
+    "palantirSeat": "The Road to Isengard: choose the player who earns Palantír of Orthanc"
+  },
   "mountDoom": {
     "resolution": "Mount Doom: the Ring-bearer stands at the Crack of Doom. Keep The One Ring, or destroy it?",
     "keep": "Keep The One Ring and succumb to the power of Sauron: the players lose the campaign",
