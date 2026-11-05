@@ -13,7 +13,7 @@ newtype TheHousesOfHealing = TheHousesOfHealing EventAttrs
 -- | Playable in the refresh phase while a hero is in a player's discard pile to choose.
 theHousesOfHealing :: EventCard TheHousesOfHealing
 theHousesOfHealing =
-  eventWith TheHousesOfHealing Cards.theHousesOfHealing (criteriaL .~ DuringPhase RefreshPhase <> CardInAnyDiscard (CardWithType HeroType))
+  eventWith TheHousesOfHealing Cards.theHousesOfHealing (criteriaL .~ DuringPhase RefreshPhase <> CardInAnyDiscard (CardWithType HeroType) <> TargetLacksModifier GameTarget HeroesCannotLeaveDiscard)
 
 -- | You may exhaust any number of Healer characters you control as part of this card's
 -- cost. Reduce the cost to play this card by 1 for each Healer character you exhaust in

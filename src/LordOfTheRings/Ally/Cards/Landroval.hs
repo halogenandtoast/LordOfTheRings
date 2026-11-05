@@ -16,7 +16,7 @@ landroval = ally Landroval Cards.landroval
 -- Response: After a hero card is destroyed, return Landroval to his owner's hand to put
 -- that hero back into play, with 1 damage token on it. (Limit once per game.)
 instance HasAbilities Landroval where
-  getAbilities (Landroval a) = [limited (PlayerLimit PerGame 1) $ mkAbility a 1 $ response $ HeroDestroyedWindow After]
+  getAbilities (Landroval a) = [limited (PlayerLimit PerGame 1) $ restricted a 1 (TargetLacksModifier GameTarget HeroesCannotLeaveDiscard) $ response $ HeroDestroyedWindow After]
 
 instance RunMessage Landroval where
   runMessage msg s@(Landroval a) = case msg of

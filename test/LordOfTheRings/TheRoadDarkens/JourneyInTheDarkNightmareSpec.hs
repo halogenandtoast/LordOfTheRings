@@ -1,9 +1,11 @@
 module LordOfTheRings.TheRoadDarkens.JourneyInTheDarkNightmareSpec (spec) where
 
+import LordOfTheRings.Card (PlayerCard, toCard)
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Ally.CardDefs qualified as Allies
 import LordOfTheRings.Effect (Effect (..), EffectDuration (UntilEndOfRound, UntilEndOfPhase))
 import LordOfTheRings.Quest.CardDefs qualified as Quests
+import LordOfTheRings.Objective.CardDefs qualified as Objectives
 import LordOfTheRings.Event.CardDefs qualified as Events
 import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Helpers.Character (getWillpower)
@@ -12,12 +14,13 @@ import LordOfTheRings.Matcher (CardMatcher (CardWithCode), select, HeroMatcher (
 import LordOfTheRings.Scenario (journeyInTheDark)
 import LordOfTheRings.Window (WindowType (CommittedToQuest), mkAfter)
 import LordOfTheRings.Helpers.Modifiers (getModifiers)
-import LordOfTheRings.Modifier (ModifierType (CannotHaveAttachments, CannotDiscardFromHand, ConsideredOutOfPlay, GainTrait, GainKeyword))
+import LordOfTheRings.Modifier (ModifierType (CannotHaveAttachments, CannotDiscardFromHand, ConsideredOutOfPlay, GainTrait, GainKeyword, CannotBeDefeated))
 import LordOfTheRings.Phase (Phase (PlanningPhase, RefreshPhase))
 import LordOfTheRings.Treachery.CardDefs qualified as Treacheries
-import LordOfTheRings.Scenario.Types (scenarioSetAside, setAsideL, victoryDisplayL)
+import LordOfTheRings.Scenario.Types (GameMode (NightmareMode), modeL, scenarioSetAside, setAsideL, victoryDisplayL)
 import LordOfTheRings.Trait (Trait (Weapon))
 import LordOfTheRings.Keyword (Keyword (Regenerate))
+import LordOfTheRings.Outcome (Outcome (Won))
 import TestImport
 
 stageLocation :: CardDef -> GameT LocationId
@@ -55,6 +58,21 @@ revealWeapon def = do
   _ <- setEncounterDeck [def]
   run RevealEncounterCard
   resolveRevealed
+
+nightmareScenario :: Scenario
+nightmareScenario = overAttrs (modeL .~ NightmareMode) journeyInTheDark
+
+nightmare :: (PlayerId -> GameT ()) -> IO ()
+nightmare = gameTestIn nightmareScenario testDeck
+
+discardTestHero :: PlayerId -> GameT (HeroId, PlayerCard)
+discardTestHero _ = do
+  hero <- getHeroWithCode "01002"
+  let hid = toId hero
+  run $ Destroy GameSource (HeroTarget hid)
+  case toCard hero of
+    PlayerCard pc -> pure (hid, pc)
+    _ -> error "test hero must be a player card"
 
 spec :: Spec
 spec = describe "Journey in the Dark Nightmare" do
@@ -468,3 +486,139 @@ spec = describe "Journey in the Dark Nightmare" do
     run $ AddToVictoryDisplay (EnemyTarget eid)
     getsGame (length . (.entities.treacheries)) `shouldReturn` 0
     getArcheryTotal `shouldReturn` 0
+
+  it "builds the Nightmare encounter deck with the exact removals and all nineteen new cards" . nightmare $ \_ -> do
+    run $ DoStep 1 Setup
+    deck <- getEncounterDeck
+    let copies def = length $ filter ((== toCardCode def) . toCardCode) deck
+    map copies [Enemies.moriaArcher, Locations.minesOfMoria, Treacheries.deepFissure, Treacheries.weCannotGetOut]
+      `shouldBe` [0, 0, 0, 2]
+    map copies [Enemies.slabBearer, Enemies.zirakzigilArcher, Locations.glowingFissure, Locations.darkenedMine, Treacheries.fieryWhip, Treacheries.flamingSword, Treacheries.veryWeary, Treacheries.cutOff]
+      `shouldBe` [2, 4, 3, 3, 1, 1, 3, 2]
+    aside <- getsGame (map toCardCode . scenarioSetAside . toAttrs . (.scenario))
+    sort aside `shouldBe` sort (map toCardCode [Enemies.theBalrog, Locations.theGreatBridge, Locations.chamberOfMazarbul, Objectives.doomDoomDoom])
+
+  it "keeps defeated heroes in discard through removal, recovery, resurrection, and direct deck insertion" . nightmare $ \pid -> do
+    (hid, hero) <- discardTestHero pid
+    let moves =
+          [ RemoveFromDiscard pid hero.id
+          , ReturnFromDiscardToHand pid hero.id
+          , PutDiscardOnBottomOfDeck pid hero.id
+          , PutDiscardOnTopOfDeck pid hero.id
+          , ShuffleFromDiscardIntoDeck pid hero.id
+          , PutHeroIntoPlay pid hero
+          , PutHeroIntoPlayAs hid pid hero
+          , PutInHand hero
+          , PutOnTopOfDeck pid (PlayerCard hero)
+          , ShuffleCardIntoDeck pid (PlayerCard hero)
+          , RemoveFromGame (CardIdTarget hero.id)
+          , AddToVictoryDisplay (CardIdTarget hero.id)
+          , PlayCard pid hero.id
+          , PlayCardInWindow pid hero.id []
+          ]
+    for_ moves \move -> do
+      run move
+      player <- getPlayer pid
+      map (.id) player.discard `shouldSatisfy` elem hero.id
+      map (.id) (player.hand <> player.deck) `shouldSatisfy` notElem hero.id
+      getsGame (any ((== hero.id) . heroCardId . toAttrs) . toList . (.entities.heroes)) `shouldReturn` False
+
+  it "shuffles non-hero discards normally while retaining the hero" . nightmare $ \pid -> do
+    (_, hero) <- discardTestHero pid
+    ordinary <- putCardIntoHand pid Events.aTestOfWill
+    run $ DiscardFromHand pid ordinary.id
+    run $ ShuffleDiscardIntoDeck pid
+    player <- getPlayer pid
+    map (.id) player.discard `shouldBe` [hero.id]
+    map (.id) player.deck `shouldSatisfy` elem ordinary.id
+    map (.id) player.deck `shouldSatisfy` notElem hero.id
+
+  it "shuffles eligible cards from the top of a mixed discard pile without skipping past its requested cards" . nightmare $ \pid -> do
+    ordinary <- putCardIntoHand pid Events.aTestOfWill
+    run $ DiscardFromHand pid ordinary.id
+    (_, hero) <- discardTestHero pid
+    run $ ShuffleTopOfDiscardIntoDeck pid 1
+    map (.id) . (.discard) <$> getPlayer pid `shouldReturn` [hero.id, ordinary.id]
+    run $ ShuffleTopOfDiscardIntoDeck pid 2
+    map (.id) . (.discard) <$> getPlayer pid `shouldReturn` [hero.id]
+    map (.id) . (.deck) <$> getPlayer pid >>= (`shouldSatisfy` elem ordinary.id)
+
+  it "filters a locked hero from cards placed underneath a quest while moving the other card" . nightmare $ \pid -> do
+    q <- putQuestStage Quests.theLongDarkOfMoria
+    (_, hero) <- discardTestHero pid
+    ordinary <- putCardIntoHand pid Events.aTestOfWill
+    run $ DiscardFromHand pid ordinary.id
+    run $ PlaceUnderneath q [PlayerCard hero, ordinary]
+    map (.id) . (.discard) <$> getPlayer pid `shouldReturn` [hero.id]
+    quest <- getActiveQuest
+    map (.id) (questUnderneath $ toAttrs quest) `shouldBe` [ordinary.id]
+
+  it "does not offer Fortune or Fate or The Houses of Healing for locked heroes" . nightmare $ \pid -> do
+    _ <- discardTestHero pid
+    eowyn <- toTarget <$> getHeroWithCode "01007"
+    run $ PlaceTokens GameSource eowyn Resource 20
+    beravor <- toTarget <$> getHeroWithCode "01012"
+    run $ PlaceTokens GameSource beravor Resource 20
+    fortune <- putCardIntoHand pid Events.fortuneOrFate
+    healing <- putCardIntoHand pid Events.theHousesOfHealing
+    putGame . (phaseL .~ PlanningPhase) =<< getGame
+    player <- getPlayer pid
+    canPlay player fortune `shouldReturn` False
+    putGame . (phaseL .~ RefreshPhase) =<< getGame
+    canPlay player healing `shouldReturn` False
+
+  it "does not offer Landroval's response or return Landroval to hand for a locked hero" . nightmare $ \pid -> do
+    landroval <- putAllyIntoPlay pid Allies.landroval
+    (_, hero) <- discardTestHero pid
+    offersAbilityOf pid landroval `shouldReturn` False
+    getsGame (any ((== toCardCode Allies.landroval) . toCardCode) . toList . (.entities.allies)) `shouldReturn` True
+    map (.id) . (.discard) <$> getPlayer pid >>= (`shouldSatisfy` elem hero.id)
+
+  it "allows hero recovery and resurrection in standard Journey in the Dark" . gameTestIn journeyInTheDark testDeck $ \pid -> do
+    (_, hero) <- discardTestHero pid
+    run $ ReturnFromDiscardToHand pid hero.id
+    map (.id) . (.hand) <$> getPlayer pid >>= (`shouldSatisfy` elem hero.id)
+    run $ DiscardFromHand pid hero.id
+    run $ RemoveFromDiscard pid hero.id
+    run $ PutHeroIntoPlay pid hero
+    getsGame (any ((== hero.id) . heroCardId . toAttrs) . toList . (.entities.heroes)) `shouldReturn` True
+
+  it "blocks stage three until the Balrog is in the victory display, even if it is absent from play" . nightmare $ \_ -> do
+    q <- putQuestStage Quests.theBridgeOfKhazadDum
+    getModifiers q >>= (`shouldSatisfy` elem CannotBeDefeated)
+    run $ PlaceTokens GameSource q Progress 15
+    getsGame (.outcome) `shouldReturn` Nothing
+    eid <- stageBalrog
+    run $ AddToVictoryDisplay (EnemyTarget eid)
+    getsGame (.outcome) `shouldReturn` Just Won
+
+  it "keeps the revival events playable in standard mode when a hero can return" . gameTestIn journeyInTheDark testDeck $ \pid -> do
+    _ <- discardTestHero pid
+    eowyn <- toTarget <$> getHeroWithCode "01007"
+    run $ PlaceTokens GameSource eowyn Resource 20
+    beravor <- toTarget <$> getHeroWithCode "01012"
+    run $ PlaceTokens GameSource beravor Resource 20
+    fortune <- putCardIntoHand pid Events.fortuneOrFate
+    healing <- putCardIntoHand pid Events.theHousesOfHealing
+    putGame . (phaseL .~ PlanningPhase) =<< getGame
+    player <- getPlayer pid
+    canPlay player fortune `shouldReturn` True
+    putGame . (phaseL .~ RefreshPhase) =<< getGame
+    canPlay player healing `shouldReturn` True
+
+  it "keeps a second player's defeated hero in his discard pile too" . twoPlayerTestIn nightmareScenario testDeck $ \one two -> do
+    hid <- fromJustNote "second player's hero" . headMay <$> select (HeroControlledBy $ PlayerWithId two)
+    run $ Destroy GameSource (HeroTarget hid)
+    card <- fromJustNote "discarded hero" . headMay . (.discard) <$> getPlayer two
+    run $ ReturnFromDiscardToHand two card.id
+    run $ ShuffleDiscardIntoDeck two
+    map (.id) . (.discard) <$> getPlayer two `shouldReturn` [card.id]
+    length <$> select (HeroControlledBy $ PlayerWithId one) `shouldReturn` 3
+    length <$> select (HeroControlledBy $ PlayerWithId two) `shouldReturn` 2
+
+  it "does not reanimate a locked hero as an enemy" . nightmare $ \pid -> do
+    (_, hero) <- discardTestHero pid
+    eid <- getRandom
+    run $ Reanimate hero.id eid
+    map (.id) . (.discard) <$> getPlayer pid `shouldReturn` [hero.id]
+    getsGame (length . (.entities.enemies)) `shouldReturn` 0

@@ -785,6 +785,9 @@ data ModifierType
   | -- | on the game: player card effects cannot take a card out of a player's discard
     -- pile, as The Power of Angmar reads
     DiscardPilesLocked
+  | -- | on the game: hero cards in player discard piles cannot leave them, as
+    -- Journey in the Dark's Nightmare setup card reads
+    HeroesCannotLeaveDiscard
   | -- | on the game: event cards cannot shuffle cards from a player's discard pile into his
     -- deck, as Passage into Mordor reads
     EventsCannotShuffleDiscardIntoDeck

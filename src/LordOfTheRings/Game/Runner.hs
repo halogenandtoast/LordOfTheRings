@@ -42,6 +42,7 @@ import LordOfTheRings.Game.Base (
   scenarioL,
  )
 import LordOfTheRings.GameT (GameT)
+import LordOfTheRings.Helpers.Discard (protectDiscardedHeroes)
 import LordOfTheRings.Helpers.Modifiers (getModifiers, isEncounterCardSource)
 import LordOfTheRings.Helpers.Staging (getLocationQuestPoints)
 import LordOfTheRings.Id (EnemyId, LocationId)
@@ -185,7 +186,10 @@ import LordOfTheRings.Game.Query (
  )
 
 runGame :: Message -> Game -> GameT Game
-runGame msg g = case msg of
+runGame msg g = protectDiscardedHeroes g msg >>= maybe (pure g) (\allowed -> runGameAllowed allowed g)
+
+runGameAllowed :: Message -> Game -> GameT Game
+runGameAllowed msg g = case msg of
   -- progress for a card that another takes instead, as Blinding Blizzard the quest's
   PlaceTokens source target Progress n
     | n > 0

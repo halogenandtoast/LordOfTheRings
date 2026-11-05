@@ -4,17 +4,33 @@ import LordOfTheRings.EncounterSet qualified as EncounterSet
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Matcher (cardIs, cardMatches)
+import LordOfTheRings.Classes.HasGame (getsGame)
+import LordOfTheRings.Modifier (ModifierType (HeroesCannotLeaveDiscard, CannotBeDefeated))
 import LordOfTheRings.Objective.CardDefs qualified as Objectives
 import LordOfTheRings.Quest.CardDefs qualified as Quests
+import LordOfTheRings.Treachery.CardDefs qualified as Treacheries
+import LordOfTheRings.Scenario.CardDefs qualified as Nightmare
 import LordOfTheRings.Scenario.Import.Lifted
 import LordOfTheRings.Scenario.Scenarios.JourneyInTheDark.Helpers (burdenObjectives, burdenTreacheries, earnBurdens)
 
 newtype JourneyInTheDark = JourneyInTheDark ScenarioAttrs
-  deriving anyclass (IsScenario, HasAbilities, HasModifiersFor)
+  deriving anyclass (IsScenario, HasAbilities)
   deriving newtype (Show, Eq, ToJSON, Entity)
 
 journeyInTheDark :: Scenario
-journeyInTheDark = Scenario $ scenario JourneyInTheDark "journey-in-the-dark" "Journey in the Dark"
+journeyInTheDark = Scenario $ scenario (JourneyInTheDark . (nightmareDeckL ?~ nightmare)) "journey-in-the-dark" "Journey in the Dark"
+ where
+  -- https://hallofbeorn.com/LotR/Details/Journey-in-the-Dark-Nightmare-JitDN
+  nightmare = nightmareDeck Nightmare.journeyInTheDarkNightmare EncounterSet.JourneyInTheDarkNightmare
+    [(Enemies.moriaArcher, 3), (Locations.minesOfMoria, 4), (Treacheries.weCannotGetOut, 1), (Treacheries.deepFissure, 3)]
+
+instance HasModifiersFor JourneyInTheDark where
+  getModifiersFor (JourneyInTheDark a) = when a.nightmare do
+    modified a GameTarget [HeroesCannotLeaveDiscard]
+    wonBalrog <- getsGame (any (cardMatches $ cardIs Enemies.theBalrog) . (.victoryDisplay) . toAttrs . (.scenario))
+    unless wonBalrog do
+      stages <- getsGame (map toTarget . filter ((== toCardCode Quests.theBridgeOfKhazadDum) . toCardCode) . toList . (.entities.quests))
+      for_ stages (\q -> modified a q [CannotBeDefeated])
 
 {- | The Journey in the Dark encounter set makes up the encounter deck (The Road Darkens
 rules insert). Stage 1A sets The Balrog, The Great Bridge and Chamber of Mazarbul aside,

@@ -22,6 +22,7 @@ import LordOfTheRings.Frontend (FrontendMessage (..), send)
 import LordOfTheRings.Game.Base
 import LordOfTheRings.GameT (GameT)
 import LordOfTheRings.Helpers.Attachment
+import LordOfTheRings.Helpers.Discard (movableDiscardCards)
 import LordOfTheRings.Helpers.Modifiers (getModifiers, modifiedValue, playProhibitions, threatOf)
 import LordOfTheRings.Helpers.Window (exhaustableCharacters, getActionAbilities, limitSource, passesCriteria, passesCriteriaFor, travelableLocations)
 import LordOfTheRings.Hero.Types
@@ -320,8 +321,9 @@ runPlayer msg player = case msg of
       let gone c = c.id `elem` map (.id) cards
       pure $ player & handL %~ filter (not . gone) & deckL %~ filter (not . gone) & discardL %~ filter (not . gone)
     ShuffleDiscardIntoDeck pid | pid == player.id -> do
-      deck <- shuffleM (player.deck <> player.discard)
-      pure $ player & deckL .~ deck & discardL .~ []
+      moved <- movableDiscardCards player.discard
+      deck <- shuffleM (player.deck <> moved)
+      pure $ player & deckL .~ deck & discardL %~ filter (`notElem` moved)
     PlaceUnderThreatDial pid n | pid == player.id -> do
       let (placed, rest) = splitAt n player.deck
       pure $ player & deckL .~ rest & underThreatDialL <>~ placed
@@ -425,9 +427,9 @@ runPlayer msg player = case msg of
       deck <- shuffleM player.deck
       pure $ player & deckL .~ deck
     ShuffleTopOfDiscardIntoDeck pid n | pid == player.id -> do
-      let (moved, kept) = splitAt n player.discard
+      moved <- movableDiscardCards (take n player.discard)
       deck <- shuffleM (moved <> player.deck)
-      pure $ player & discardL .~ kept & deckL .~ deck
+      pure $ player & discardL %~ filter (`notElem` moved) & deckL .~ deck
     request | Just (pid, n, resultSource) <- randomDiscardRequest request, pid == player.id -> do
       barred <- elem CannotDiscardFromHand <$> getModifiers (PlayerTarget pid)
       discarded <- if barred then pure [] else take n <$> shuffleM (discardableHand player)

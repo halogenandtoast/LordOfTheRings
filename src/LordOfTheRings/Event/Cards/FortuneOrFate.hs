@@ -11,7 +11,7 @@ newtype FortuneOrFate = FortuneOrFate EventAttrs
 -- | Action: Choose a hero in any player's discard pile. Put that card into play, under its
 -- owner's control.
 fortuneOrFate :: EventCard FortuneOrFate
-fortuneOrFate = event FortuneOrFate Cards.fortuneOrFate
+fortuneOrFate = eventWith FortuneOrFate Cards.fortuneOrFate (criteriaL .~ CardInAnyDiscard (CardWithType HeroType) <> TargetLacksModifier GameTarget HeroesCannotLeaveDiscard)
 
 instance RunMessage FortuneOrFate where
   runMessage msg e@(FortuneOrFate attrs) = case msg of
