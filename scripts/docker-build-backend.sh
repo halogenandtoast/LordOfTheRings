@@ -15,7 +15,7 @@ if [ -f "$dirty" ]; then
   find "$work_dir" -type f -newer "$dirty" \
     \( -name '*.a' -o -name '*.so' -o -name '*.tmp' \) -exec rm -f {} +
   for executable in "$work_dir"/dist/*/ghc-*/build/LordOfTheRings-exe; do
-    [ ! -d "$executable" ] || rm -rf "$executable"
+    [ ! -d "$executable" ] || rm -f "$executable/LordOfTheRings-exe"
   done
   set -- --force-dirty
 fi

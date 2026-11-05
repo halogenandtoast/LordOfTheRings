@@ -46,6 +46,7 @@ class RecoveryTest(unittest.TestCase):
         paths = []
         for extension, contents in [('hi', interface), ('o', obj), ('dyn_hi', interface), ('dyn_o', obj)]:
             p = self.dist / f'{name}.{extension}{suffix}'
+            p.parent.mkdir(parents=True, exist_ok=True)
             p.write_bytes(contents if isinstance(contents, bytes) else contents.encode())
             os.utime(p, (timestamp, timestamp))
             paths.append(p)
@@ -70,11 +71,36 @@ class RecoveryTest(unittest.TestCase):
         self.assertIn('--force-dirty', self.log.read_text())
         self.assertFalse(self.dirty.exists())
 
+    def test_preserves_completed_api_modules_and_relinks_executable(self):
+        paths = self.pair('LordOfTheRings-exe/LordOfTheRings-exe-tmp/Main')
+        executable = self.dist / 'LordOfTheRings-exe/LordOfTheRings-exe'
+        executable.write_text('possibly incomplete executable')
+        self.interrupted()
+        self.assertEqual(self.run_build().returncode, 0)
+        self.assertTrue(all(p.exists() for p in paths))
+        self.assertFalse(executable.exists())
+
     def test_rejects_nonempty_truncated_object_and_all_its_ways(self):
         broken = self.pair('Truncated', obj='NONEMPTY BUT TRUNCATED')
         self.interrupted()
         self.assertEqual(self.run_build().returncode, 0)
         self.assertTrue(all(not p.exists() for p in broken))
+
+    def test_rejects_truncated_elf_with_intact_magic_and_header(self):
+        paths = self.pair('TruncatedSectionTable')
+        paths[1].write_bytes(paths[1].read_bytes()[:-1])
+        os.utime(paths[1], (200, 200))
+        self.interrupted()
+        self.assertEqual(self.run_build().returncode, 0)
+        self.assertTrue(all(not p.exists() for p in paths))
+
+    def test_rejects_truncated_interface_with_intact_magic(self):
+        paths = self.pair('TruncatedInterface')
+        paths[0].write_bytes(paths[0].read_bytes()[:-1])
+        os.utime(paths[0], (200, 200))
+        self.interrupted()
+        self.assertEqual(self.run_build().returncode, 0)
+        self.assertTrue(all(not p.exists() for p in paths))
 
     def test_rejects_incomplete_interface_and_missing_object(self):
         broken = self.pair('BadInterface', interface='BAD')
