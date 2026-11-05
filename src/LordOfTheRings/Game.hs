@@ -2432,7 +2432,8 @@ runGameMessage msg g = case msg of
     pushWhen (x > 0) $ PlaceTokens GameSource target TimeCounter x
     pure g
   PlaceTokens _ target Progress n | n > 0, isQuestOrLocation target -> do
-    push $ CheckWindows [mkAfter $ ProgressPlaced target n]
+    current <- (== Just target) <$> getCurrentQuest
+    push $ CheckWindows $ mkAfter (ProgressPlaced target n) : [mkAfter $ ProgressPlacedOnCurrentQuest n | current]
     pure g
   -- tokens for a character by its card, as one put into play is known before it has an id
   PlaceTokens source (CardIdTarget cid) token n
