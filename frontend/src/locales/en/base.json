@@ -150,12 +150,18 @@
     "started": "Started",
     "won": "Won",
     "lost": "Lost",
-    "score": "Score",
+    "score": "Victory score",
     "rounds": "Rounds",
     "lowest": "low",
     "highest": "high",
     "average": "avg",
-    "scoreNote": "Score counts victories only (lower is better). Rounds count every game that ended, won or lost."
+    "scoreNote": "Scores include victories only; lower is better. Rounds include wins and losses. Win rate is wins divided by completed games; started games also include unfinished games.",
+    "intro": "Explore results by scenario and difficulty, then expand a scenario to compare hero lineups.",
+    "scope": "Statistics scope",
+    "winRate": "Win rate",
+    "averageRange": "Average / range",
+    "loading": "Loading statistics…",
+    "tableHint": "Expand a scenario to see results by hero lineup."
   },
   "watch": {
     "title": "Watch",

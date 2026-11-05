@@ -962,7 +962,7 @@ getStatsR = do
       { started = length ps
       , won = outcomes "Won"
       , lost = outcomes "Lost"
-      , score = spread $ mapMaybe (.lotrPlayScore) ps
+      , score = spread $ mapMaybe (.lotrPlayScore) $ filter ((== Just "Won") . (.lotrPlayOutcome)) ps
       , rounds = spread $ mapMaybe (.lotrPlayRounds) ps
       }
    where
