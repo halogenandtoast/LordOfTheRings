@@ -1,5 +1,9 @@
 {
   "erech": {
+    "gropingHorror": "Skip the next travel phase, or pass every hand to the player on the left?",
+    "skipTravel": "Skip the next travel phase",
+    "passHands": "Pass hands (discard your hand when playing alone)",
+    "drivenByFear": "Attach Driven by Fear to a hero you control",
     "neck": "End the encounter phase, or have the first player engage all enemies in staging?",
     "endEncounter": "End the encounter phase",
     "engageAll": "The first player engages all enemies in staging",

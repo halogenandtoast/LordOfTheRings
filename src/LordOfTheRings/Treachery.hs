@@ -2,6 +2,11 @@
 
 module LordOfTheRings.Treachery (module LordOfTheRings.Treachery, module X) where
 
+import LordOfTheRings.Treachery.Cards.MidnightThrong (midnightThrong)
+import LordOfTheRings.Treachery.Cards.MurmursOfDread (murmursOfDread)
+import LordOfTheRings.Treachery.Cards.GropingHorror (gropingHorror)
+import LordOfTheRings.Treachery.Cards.DrivenByFear (drivenByFear)
+import LordOfTheRings.Treachery.Cards.TheDeadRideBehind (theDeadRideBehind)
 import LordOfTheRings.Treachery.Cards.TheGloaming (theGloaming)
 import LordOfTheRings.Treachery.Cards.TownBaiting (townBaiting)
 import LordOfTheRings.Treachery.Cards.DireMagnificence (direMagnificence)
@@ -633,7 +638,12 @@ allTreacherys =
   Map.fromList
     [ (toCardCode builder, card)
     | card@(SomeTreacheryCard builder) <-
-        [ SomeTreacheryCard theGloaming
+        [ SomeTreacheryCard midnightThrong
+        , SomeTreacheryCard murmursOfDread
+        , SomeTreacheryCard gropingHorror
+        , SomeTreacheryCard drivenByFear
+        , SomeTreacheryCard theDeadRideBehind
+        , SomeTreacheryCard theGloaming
         , SomeTreacheryCard townBaiting
         , SomeTreacheryCard direMagnificence
         , SomeTreacheryCard catchingFire

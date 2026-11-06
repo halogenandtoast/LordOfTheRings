@@ -1,11 +1,12 @@
 module LordOfTheRings.Standalone.StoneOfErechSpec (spec) where
 
+import LordOfTheRings.Decklist (loadPlayer)
 import LordOfTheRings.Ally.CardDefs qualified as Allies
 import LordOfTheRings.Attachment.CardDefs qualified as Attachments
 import LordOfTheRings.Event.CardDefs qualified as Events
 import LordOfTheRings.Location.CardDefs qualified as Locations
-import LordOfTheRings.Helpers.Window (travelableLocations, getActionAbilities)
-import LordOfTheRings.Phase (Phase (PlanningPhase, EncounterPhase, RefreshPhase))
+import LordOfTheRings.Helpers.Window (travelableLocations, getActionAbilities, shadowCardCancelable)
+import LordOfTheRings.Phase (Phase (PlanningPhase, EncounterPhase, RefreshPhase, CombatPhase, QuestPhase, TravelPhase))
 import LordOfTheRings.Sphere (Sphere (Lore, Spirit, Fellowship, Baggins))
 import LordOfTheRings.Helpers.Attachment (cardHosts)
 import LordOfTheRings.Helpers.Modifiers (getModifiers)
@@ -14,11 +15,11 @@ import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Objective.CardDefs qualified as Objectives
 import LordOfTheRings.Treachery.CardDefs qualified as Treacheries
 import LordOfTheRings.Effect (Effect (..), EffectDuration (UntilEndOfRound))
-import LordOfTheRings.Helpers.Character (getAttackStrength)
+import LordOfTheRings.Helpers.Character (getAttackStrength, getWillpower)
 import LordOfTheRings.Helpers.Staging (getEnemyAttack, getEnemyDefense, getEnemyThreat, getLocationThreat, getLocationQuestPoints)
 import LordOfTheRings.Keyword (Keyword (Spectral))
 import LordOfTheRings.Matcher (getObjective, getThreat, getEnemy, getAlly, getHero, heroHasResourceIcon, HeroMatcher (HeroWithSphere), Query (select), CardMatcher (CardWithType))
-import LordOfTheRings.Modifier (ModifierType (AttackModifier, WillpowerModifier, AttackBonusAgainst, LoseKeyword, Blank, CannotPlay, RevealedEncounterCardsGainDoomed, GainResourceIcon, CannotExhaust, GainResourceIconFor, PrintedResourceIconForCard))
+import LordOfTheRings.Modifier (ModifierType (AttackModifier, WillpowerModifier, AttackBonusAgainst, LoseKeyword, Blank, CannotPlay, RevealedEncounterCardsGainDoomed, GainResourceIcon, CannotExhaust, GainResourceIconFor, PrintedResourceIconForCard, SkipPhase))
 import LordOfTheRings.Scenario.Scenarios.TheStoneOfErech.Helpers (NightTime (..), currentNight, currentNightObjective)
 import LordOfTheRings.Trait (Trait (Oathbreaker))
 import LordOfTheRings.Window (WindowType (RoundEnds), mkWhen)
@@ -49,6 +50,182 @@ endRoundWindow = run $ CheckWindows [mkWhen RoundEnds]
 
 spec :: Spec
 spec = describe "Stone of Erech" do
+  describe "Erech treacheries" do
+    it "lets every player search for and reveal an Undead enemy in first-player order" . twoPlayerTest testDeck $ \one two -> do
+      _ <- stageNight Objectives.midnight
+      cards <- setEncounterDeck [Treacheries.midnightThrong, Enemies.shadowMan, Enemies.whisperer]
+      run RevealEncounterCard
+      resolveRevealed
+      chooseTarget one (CardIdTarget $ (fromJustNote "missing search card" $ atMay cards 1).id)
+      resolveRevealed
+      chooseTarget two (CardIdTarget $ (fromJustNote "missing search card" $ atMay cards 2).id)
+      resolveRevealed
+      foes <- getsGame (map toCardCode . toList . (.entities.enemies))
+      sort foes `shouldBe` sort (map toCardCode [Enemies.shadowMan, Enemies.whisperer])
+      getModifiers GameTarget >>= (`shouldSatisfy` elem (CannotPlay $ CardWithType EventType))
+
+    it "allows canceling Midnight Throng before Midnight" . gameTest $ \pid -> do
+      _ <- stageNight Objectives.dusk
+      event <- putCardIntoHand pid Events.aTestOfWill
+      run . (\hero -> PlaceTokens GameSource hero Resource 1) =<< heroOf pid "01007"
+      _ <- setEncounterDeck [Treacheries.midnightThrong, Enemies.whisperer]
+      run RevealEncounterCard
+      chooseTarget pid (CardIdTarget event.id)
+      length <$> getsGame (.entities.enemies) `shouldReturn` 0
+
+    it "does not offer When Revealed cancellation for Midnight Throng at Midnight" . gameTest $ \pid -> do
+      _ <- stageNight Objectives.midnight
+      event <- putCardIntoHand pid Events.aTestOfWill
+      run . (\hero -> PlaceTokens GameSource hero Resource 1) =<< heroOf pid "01007"
+      cards <- setEncounterDeck [Treacheries.midnightThrong, Enemies.whisperer]
+      run RevealEncounterCard
+      resolveRevealed
+      chooseTarget pid (CardIdTarget $ (fromJustNote "missing search card" $ atMay cards 1).id)
+      resolveRevealed
+      map (.id) . (.hand) <$> getPlayer pid `shouldReturn` [event.id]
+      length <$> getsGame (.entities.enemies) `shouldReturn` 1
+
+    for_ [(Objectives.eventide, 1), (Objectives.dusk, 2), (Objectives.midnight, 3)] \(night, bonus) ->
+      it ("scales Midnight Throng's shadow at " <> show (toCardCode night)) . gameTest $ \pid -> do
+        _ <- stageNight night
+        eid <- stageErechEnemy Enemies.forestSpider
+        card <- genEncounterCard Treacheries.midnightThrong
+        run $ AttachShadowCard eid card
+        run $ ResolveShadowCard card.id eid pid []
+        getEnemyAttack eid `shouldReturn` 2 + bonus
+
+    it "gives current characters minus one willpower for the round with Murmurs of Dread" . gameTest $ \pid -> do
+      hero <- heroOf pid "01012"
+      ally <- putAllyIntoPlay pid Allies.guardOfTheCitadel
+      _ <- setEncounterDeck [Treacheries.murmursOfDread]
+      run RevealEncounterCard
+      resolveRevealed
+      getWillpower hero `shouldReturn` 1
+      getWillpower ally `shouldReturn` 0
+      newcomer <- putAllyIntoPlay pid Allies.northernTracker
+      getWillpower newcomer `shouldReturn` 1
+      run $ EndEffects UntilEndOfRound
+      getWillpower hero `shouldReturn` 2
+
+    for_ [(Objectives.eventide, True), (Objectives.dusk, True), (Objectives.midnight, False)] \(night, cancelable) ->
+      it ("restricts cancellation of Murmurs' own shadow at " <> show (toCardCode night)) . gameTest $ \_ -> do
+        _ <- stageNight night
+        eid <- stageErechEnemy Enemies.forestSpider
+        card <- genEncounterCard Treacheries.murmursOfDread
+        other <- genEncounterCard Enemies.shadowMan
+        run $ AttachShadowCard eid card
+        run $ AttachShadowCard eid other
+        run $ RevealShadowCard eid card.id
+        shadowCardCancelable card.id `shouldReturn` cancelable
+        shadowCardCancelable other.id `shouldReturn` True
+
+    it "still allows canceling Murmurs' When Revealed at Midnight" . gameTest $ \pid -> do
+      _ <- stageNight Objectives.midnight
+      event <- putCardIntoHand pid Events.aTestOfWill
+      hero <- heroOf pid "01007"
+      run $ PlaceTokens GameSource hero Resource 1
+      _ <- setEncounterDeck [Treacheries.murmursOfDread]
+      run RevealEncounterCard
+      chooseTarget pid (CardIdTarget event.id)
+      getWillpower hero `shouldReturn` 4
+
+    for_ [(Objectives.eventide, False), (Objectives.dusk, True), (Objectives.midnight, True)] \(night, again) ->
+      it ("makes Murmurs' additional attack only after Dusk at " <> show (toCardCode night)) . gameTest $ \pid -> do
+        _ <- stageNight night
+        eid <- stageErechEnemy Enemies.forestSpider
+        run $ EngageEnemy pid eid
+        card <- genEncounterCard Treacheries.murmursOfDread
+        run $ AttachShadowCard eid card
+        run $ EnemyAttack pid eid
+        passActions pid
+        chooseTarget pid =<< heroOf pid "01012"
+        passActions pid
+        passActions pid
+        if again then do
+          chooseTarget pid =<< heroOf pid "01007"
+          passActions pid
+          passActions pid
+        else pure ()
+        getQuestion pid `shouldReturn` Nothing
+
+    it "discards the solo player's hand when that Groping Horror option is chosen" . gameTest $ \pid -> do
+      card <- putCardIntoHand pid Allies.guardOfTheCitadel
+      _ <- setEncounterDeck [Treacheries.gropingHorror]
+      run RevealEncounterCard
+      resolveRevealed
+      chooseLabel "$label.erech.passHands" pid
+      (.hand) <$> getPlayer pid `shouldReturn` []
+      (.discard) <$> getPlayer pid `shouldReturn` [card]
+
+    it "passes original hands left simultaneously and preserves card ownership" . threePlayerErechTest $ \one two three -> do
+      a <- putCardIntoHand one Allies.guardOfTheCitadel
+      b <- putCardIntoHand two Allies.snowbournScout
+      c <- putCardIntoHand three Allies.faramir
+      _ <- setEncounterDeck [Treacheries.gropingHorror]
+      run RevealEncounterCard
+      resolveRevealed
+      chooseLabel "$label.erech.passHands" one
+      (.hand) <$> getPlayer one `shouldReturn` [c]
+      (.hand) <$> getPlayer two `shouldReturn` [a]
+      (.hand) <$> getPlayer three `shouldReturn` [b]
+
+    it "skips the next travel phase even when it is in a later round, then consumes the skip" . gameTest $ \pid -> do
+      putGame . (phaseL .~ CombatPhase) =<< getGame
+      _ <- setEncounterDeck [Treacheries.gropingHorror]
+      run RevealEncounterCard
+      resolveRevealed
+      chooseLabel "$label.erech.skipTravel" pid
+      run $ EndEffects UntilEndOfRound
+      getModifiers GameTarget >>= (`shouldSatisfy` elem (SkipPhase TravelPhase))
+      run $ NextPhase QuestPhase
+      getsGame (.phase) `shouldReturn` EncounterPhase
+      getModifiers GameTarget >>= (`shouldSatisfy` notElem (SkipPhase TravelPhase))
+
+    it "consumes the skip on the first additional travel phase, allowing the second" . gameTest $ \pid -> do
+      _ <- setEncounterDeck [Treacheries.gropingHorror]
+      run RevealEncounterCard
+      resolveRevealed
+      chooseLabel "$label.erech.skipTravel" pid
+      run $ AdditionalPhases [TravelPhase, TravelPhase]
+      run $ NextPhase QuestPhase
+      getsGame (.phase) `shouldReturn` TravelPhase
+      getModifiers GameTarget >>= (`shouldSatisfy` notElem (SkipPhase TravelPhase))
+
+    it "retains Groping Horror's Midnight surge when its When Revealed is canceled" . gameTest $ \pid -> do
+      _ <- stageNight Objectives.midnight
+      event <- putCardIntoHand pid Events.aTestOfWill
+      run . (\hero -> PlaceTokens GameSource hero Resource 1) =<< heroOf pid "01007"
+      _ <- setEncounterDeck [Treacheries.gropingHorror, Enemies.shadowHostCaptain]
+      run RevealEncounterCard
+      chooseTarget pid (CardIdTarget event.id)
+      resolveRevealed
+      length <$> getsGame (.entities.enemies) `shouldReturn` 1
+      getQuestion pid `shouldReturn` Nothing
+
+    it "attaches Driven by Fear to a first-player hero and restores that hero when removed" . twoPlayerTest testDeck $ \one two -> do
+      _ <- setEncounterDeck [Treacheries.drivenByFear]
+      run RevealEncounterCard
+      resolveRevealed
+      hero <- heroOf one "01012"
+      other <- heroOf two "01012"
+      chooseTarget one hero
+      getWillpower hero `shouldReturn` 0
+      getModifiers hero >>= (`shouldSatisfy` elem Blank)
+      getWillpower other `shouldReturn` 2
+      fear <- getsGame $ toTarget . fromJustNote "fear missing" . headMay . toList . (.entities.treacheries)
+      run $ Discard GameSource fear
+      getWillpower hero `shouldReturn` 2
+      getModifiers hero >>= (`shouldSatisfy` notElem Blank)
+
+    for_ [(Objectives.eventide, [1, 0, 0]), (Objectives.dusk, [1, 1, 0]), (Objectives.midnight, [1, 1, 0])] \(night, damage) ->
+      it ("applies The Dead Ride Behind's willpower threshold at " <> show (toCardCode night)) . gameTest $ \pid -> do
+        _ <- stageNight night
+        heroes <- traverse (heroOf pid) ["01002", "01012", "01007"]
+        _ <- setEncounterDeck [Treacheries.theDeadRideBehind]
+        run RevealEncounterCard
+        resolveRevealed
+        traverse getDamage heroes `shouldReturn` damage
+
   describe "Erech locations" do
     it "gives The Stone of Erech two threat per player" . twoPlayerTest testDeck $ \_ _ -> do
       stone <- stageErechLocation Locations.theStoneOfErechStandalone
@@ -526,3 +703,13 @@ stageErechLocation def = do
 heroExhaustedTarget :: Target -> GameT Bool
 heroExhaustedTarget (HeroTarget hid) = heroExhausted . toAttrs <$> getHero hid
 heroExhaustedTarget _ = error "expected a hero"
+
+threePlayerErechTest :: (PlayerId -> PlayerId -> PlayerId -> GameT ()) -> IO ()
+threePlayerErechTest body = do
+  seats <- for [1 .. 3 :: Int] \n -> either (error . show) id <$> loadPlayer ("Player " <> tshow n) testDeck
+  env <- newGameEnv (newTableIn passageThroughMirkwood $ fromJustNote "empty table" $ nonEmpty seats) (const $ pure ()) 1
+  runGameT env do
+    ids <- getsGame (.playerOrder)
+    case ids of
+      [one, two, three] -> body one two three
+      _ -> error "expected three players"

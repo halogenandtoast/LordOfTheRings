@@ -3528,6 +3528,7 @@ library
       LordOfTheRings.Treachery.Cards.DreadnaughtWeather
       LordOfTheRings.Treachery.Cards.DreamsOfNumenor
       LordOfTheRings.Treachery.Cards.DrivenBack
+      LordOfTheRings.Treachery.Cards.DrivenByFear
       LordOfTheRings.Treachery.Cards.DrivenByShadow
       LordOfTheRings.Treachery.Cards.DrivenToTheBrink
       LordOfTheRings.Treachery.Cards.DrumsOfTheWildMen
@@ -3602,6 +3603,7 @@ library
       LordOfTheRings.Treachery.Cards.GrabbedBySpiders
       LordOfTheRings.Treachery.Cards.Grappled
       LordOfTheRings.Treachery.Cards.GripGrabPinchNab
+      LordOfTheRings.Treachery.Cards.GropingHorror
       LordOfTheRings.Treachery.Cards.GrowingStench
       LordOfTheRings.Treachery.Cards.GrowingThreat
       LordOfTheRings.Treachery.Cards.GuffawingOfGiants
@@ -3683,6 +3685,7 @@ library
       LordOfTheRings.Treachery.Cards.MassingAtOsgiliath
       LordOfTheRings.Treachery.Cards.MassingInTheDeep
       LordOfTheRings.Treachery.Cards.MenInTheDark
+      LordOfTheRings.Treachery.Cards.MidnightThrong
       LordOfTheRings.Treachery.Cards.MinceThemFine
       LordOfTheRings.Treachery.Cards.Mirage
       LordOfTheRings.Treachery.Cards.MisplacedTrust
@@ -3692,6 +3695,7 @@ library
       LordOfTheRings.Treachery.Cards.MountainsOfShadow
       LordOfTheRings.Treachery.Cards.MugashsCunning
       LordOfTheRings.Treachery.Cards.MugashsRage
+      LordOfTheRings.Treachery.Cards.MurmursOfDread
       LordOfTheRings.Treachery.Cards.MysteriousFog
       LordOfTheRings.Treachery.Cards.NewDevilry
       LordOfTheRings.Treachery.Cards.Nightfall
@@ -3878,6 +3882,7 @@ library
       LordOfTheRings.Treachery.Cards.TheDarkLordsReach
       LordOfTheRings.Treachery.Cards.TheDarkLordsSummons
       LordOfTheRings.Treachery.Cards.TheDeadCityLooms
+      LordOfTheRings.Treachery.Cards.TheDeadRideBehind
       LordOfTheRings.Treachery.Cards.TheDragonsFury
       LordOfTheRings.Treachery.Cards.TheDragonsIre
       LordOfTheRings.Treachery.Cards.TheEnemyIsUponUs

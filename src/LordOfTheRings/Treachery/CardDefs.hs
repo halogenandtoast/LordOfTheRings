@@ -14,7 +14,7 @@ allTreacheryCards =
   Map.fromList $
     map
       (\def -> (cdCardCode def, def))
-      [theGloaming, townBaiting, direMagnificence, catchingFire, recklessInHisRage, closeToTheFlame, scorchingBlast, cutOffOsgiliath, darkPursuit, massingAtOsgiliath, ballistaBarrage, boardingPartyDreadnaught, grappledDreadnaught, outOfTheMist, overworked, takingOnWaterDreadnaught, violentTempest,  shinyDistraction
+      [midnightThrong, murmursOfDread, gropingHorror, drivenByFear, theDeadRideBehind, theGloaming, townBaiting, direMagnificence, catchingFire, recklessInHisRage, closeToTheFlame, scorchingBlast, cutOffOsgiliath, darkPursuit, massingAtOsgiliath, ballistaBarrage, boardingPartyDreadnaught, grappledDreadnaught, outOfTheMist, overworked, takingOnWaterDreadnaught, violentTempest,  shinyDistraction
       , guiltyConscience
       , drivenByShadowDarkOfMirkwood
       , surprisingSpeedDarkOfMirkwood
@@ -3949,3 +3949,18 @@ townBaiting = (treachery "the-battle-of-lake-town-011" "Town-Baiting" TheBattleO
 
 theGloaming :: CardDef
 theGloaming = (treachery "the-stone-of-erech-027" "The Gloaming" TheStoneOfErech 2) {cdKeywords = setFromList [Surge]}
+
+midnightThrong :: CardDef
+midnightThrong = (treachery "the-stone-of-erech-022" "Midnight Throng" TheStoneOfErech 2) {cdShadowEffect = True}
+
+murmursOfDread :: CardDef
+murmursOfDread = (treachery "the-stone-of-erech-023" "Murmurs of Dread" TheStoneOfErech 2) {cdShadowEffect = True}
+
+gropingHorror :: CardDef
+gropingHorror = (treachery "the-stone-of-erech-024" "Groping Horror" TheStoneOfErech 2)
+
+drivenByFear :: CardDef
+drivenByFear = (treachery "the-stone-of-erech-025" "Driven by Fear" TheStoneOfErech 2) {cdCardTraits = setFromList [Condition]}
+
+theDeadRideBehind :: CardDef
+theDeadRideBehind = (treachery "the-stone-of-erech-026" "The Dead Ride Behind" TheStoneOfErech 2)

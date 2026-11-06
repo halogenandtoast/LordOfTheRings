@@ -2662,7 +2662,9 @@ runGameMessage msg g = case msg of
     pure g
   RevealShadowCard eid cid -> do
     for_ (Map.lookup eid g.entities.enemies) \enemy ->
-      when (any ((== cid) . ecId) enemy.shadowCards) $ send $ FlipCard cid
+      for_ (find ((== cid) . ecId) enemy.shadowCards) \card -> do
+        send $ FlipCard cid
+        resolveShadowEffect card msg
     pure g
   TurnShadowCardFaceUp eid cid -> do
     for_ (Map.lookup eid g.entities.enemies) \enemy ->
@@ -3183,18 +3185,30 @@ runGameMessage msg g = case msg of
   EndEffect e -> pure $ g & effectsL %~ (\es -> let (before, after) = break (== e) es in before <> drop 1 after)
   AdditionalPhases phases -> pure $ g & additionalPhasesL %~ (phases <>)
   -- the round goes on from its own phase once the additional instances after it are done
-  NextPhase phase -> case gameAdditionalPhases g of
-    extra : rest -> do
-      push $ Run [BeginPhase extra, EndPhase extra]
-      pure $ g & additionalPhasesL .~ rest & resumeAfterL %~ (<|> Just phase)
-    [] -> do
-      -- a phase skipped, as The Great River skips the encounter phase, does not begin
-      mods <- getModifiers GameTarget
-      let following p = case nextPhase p of
-            Just n | SkipPhase n `elem` mods -> following n
-            n -> n
-      push $ maybe EndRound (\next -> Run [BeginPhase next, EndPhase next]) (following $ fromMaybe phase (gameResumeAfter g))
-      pure $ g & resumeAfterL .~ Nothing
+  NextPhase phase -> do
+    mods <- getModifiers GameTarget
+    let skipping p = SkipPhase p `elem` mods
+        consume phases = filter \e -> not
+          ( effectDuration e == UntilSpent && effectTarget e == GameTarget
+              && any (`elem` effectModifiers e) (map SkipPhase phases)
+          )
+        following p = case nextPhase p of
+          Just n | skipping n -> let (skipped, next) = following n in (n : skipped, next)
+          next -> ([], next)
+    case gameAdditionalPhases g of
+      extra : rest | skipping extra -> do
+        push $ NextPhase phase
+        pure $ g & additionalPhasesL .~ rest & effectsL %~ consume [extra]
+      extra : rest -> do
+        push $ Run [BeginPhase extra, EndPhase extra]
+        pure $ g & additionalPhasesL .~ rest & resumeAfterL %~ (<|> Just phase)
+      [] -> do
+        -- A one-shot skip lasts across round boundaries until this phase is
+        -- actually skipped. Multiple instructions to skip the next such phase
+        -- all refer to that same occurrence.
+        let (skipped, next) = following $ fromMaybe phase (gameResumeAfter g)
+        push $ maybe EndRound (\p -> Run [BeginPhase p, EndPhase p]) next
+        pure $ g & resumeAfterL .~ Nothing & effectsL %~ consume skipped
   EndPhase phase -> do
     -- sharing the game split between staging areas, the cards at each stage see it end
     push $ case stageGroups g of
@@ -4190,6 +4204,12 @@ runGameMessage msg g = case msg of
         hide = [MakeHideTest $ HideTest revealer (CardIdSource card.id) n [] [] | Hide n <- toList (cdKeywords def)]
         -- Prowl, a keyword, resolves before the When Revealed effect (ALeP 3.094)
         revealing t = revealingWithDoomed t 0
+        revealingTreachery actor = do
+          let projected = g & entitiesL . treacheriesL %~ insertEntity actor
+              MonoidalMap own = runReadGame (execWriterT $ getModifiersFor actor) projected
+              surge = GainKeyword Surge `elem` map modifierType (Map.findWithDefault [] (toTarget actor) own)
+          messages <- revealing (toTarget actor)
+          pure $ [CreateEffect $ Effect GameSource (toTarget actor) [GainKeyword Surge] UntilEndOfPhase | surge] <> messages
         revealingEnemy actor = do
           -- Snapshot the enemy's own conditional Doomed before its revelation.
           -- Whisperer gains Doomed at Midnight; combine it with other instances
@@ -4246,7 +4266,7 @@ runGameMessage msg g = case msg of
         let counted = CreateEffect $ Effect (TreacherySource $ toId treachery) GameTarget [TreacheryRevealedThisRound] UntilEndOfRound
             countedForPhase = CreateEffect $ Effect (TreacherySource $ toId treachery) GameTarget [TreacheryRevealedThisPhase] UntilEndOfPhase
         pushAll . ([counted, countedForPhase] <>) . (<> [FinishRevelation (toId treachery), ResolveSurge (toTarget treachery) card])
-          =<< revealing (toTarget treachery)
+          =<< revealingTreachery treachery
         pure $ g & entitiesL . treacheriesL %~ insertEntity treachery
       -- a player card with the Encounter keyword, as Ranger of the North: it enters play
       -- under the first player, its When Revealed effect giving it to a player
