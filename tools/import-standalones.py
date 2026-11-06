@@ -188,6 +188,7 @@ def ensure_product_assets(pack):
         'the-battle-of-lake-town': ('MEC35', 'the_battle_of_lake_town'),
         'the-stone-of-erech': ('MEC33', 'the_stone_of_erech'),
         'the-old-forest': ('MEC37', 'the_old_forest'),
+        'the-ruins-of-belegost': ('OP014', 'the_ruins_of_belegost'),
     }
     if pack not in enabled:
         return

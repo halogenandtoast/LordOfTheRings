@@ -54,6 +54,7 @@ const implemented: Record<string, Gateable & { nightmare?: boolean; hard?: boole
   'the-battle-of-lake-town': { beta: true },
   'the-stone-of-erech': { beta: true },
   'the-old-forest': { beta: true },
+  'the-ruins-of-belegost': { beta: true },
   'the-hunt-for-the-dreadnaught': { beta: true, hard: true },
   'the-oath': { beta: true },
   'the-caves-of-nibin-dum': { beta: true },
@@ -188,6 +189,7 @@ export const campaignModes: Record<string, string> = {
 }
 
 export const campaigns: Campaign[] = [
+  campaign('the-ruins-of-belegost', 'The Ruins of Belegost', 'OP014', fromBox('OP014', ['The Ruins of Belegost']), 'scenario-pack'),
   campaign('the-old-forest', 'The Old Forest', 'MEC37', fromBox('MEC37', ['The Old Forest']), 'scenario-pack'),
   campaign('the-stone-of-erech', 'The Stone of Erech', 'MEC33', fromBox('MEC33', ['The Stone of Erech']), 'scenario-pack'),
   campaign('the-battle-of-lake-town', 'The Battle of Lake-town', 'MEC35', fromBox('MEC35', ['The Battle of Lake-town']), 'scenario-pack'),
