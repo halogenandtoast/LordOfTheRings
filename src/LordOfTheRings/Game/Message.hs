@@ -116,6 +116,7 @@ import LordOfTheRings.Effect (
     effectTarget
   ),
   EffectDuration (
+    UntilEnemyAttackEnds,
     UntilEndOfAttack,
     UntilEndOfPhase,
     UntilEndOfPhaseOf,
@@ -1137,6 +1138,7 @@ import LordOfTheRings.Game.Combat (
   attacksOf,
   canAttack,
   canDefend,
+  defenderControllerAllowed,
   canFight,
   dealAssigned,
   divideDamage,
@@ -2245,7 +2247,7 @@ runGameMessage msg g = case msg of
     pure g
   DeclareAsDefender pid eid d -> do
     undefendable <- elem CannotBeDefended <$> getModifiers eid
-    able <- canFight eid d
+    able <- andM [canFight eid d, defenderControllerAllowed eid d]
     unless (undefendable || not able) do
       pushAll [defendingEffect eid d, CheckWindows [mkAfter $ DeclaredAsDefender d eid]]
       -- the declaration still to come is the card's instead
@@ -2818,7 +2820,7 @@ runGameMessage msg g = case msg of
       InPlayArea pid -> push $ allyEntersPlay pid a
       _ -> pure ()
     pure g
-  AttackEndedUnresolved _ -> pure $ g & effectsL %~ filter ((/= UntilEndOfAttack) . effectDuration)
+  AttackEndedUnresolved eid -> pure $ g & effectsL %~ filter (\e -> effectDuration e /= UntilEndOfAttack && effectDuration e /= UntilEnemyAttackEnds eid)
   DamageAnotherCharacter source pid damaged -> do
     others <- filter (/= damaged) <$> charactersControlledBy pid
     -- each it damages is exhausted, as Terrible Strength reads: checked once the damage is
@@ -3369,7 +3371,10 @@ runGameMessage msg g = case msg of
         nextAttack = map \e -> case [m | ForNextAttack m <- effectModifiers e] of
           ms@(_ : _) | effectTarget e `elem` attackers -> e {effectModifiers = ms, effectDuration = UntilEndOfAttack}
           _ -> e
-    pure $ g & effectsL %~ filter (null . again) . passed . (if attackOver then filter ((/= UntilEndOfAttack) . effectDuration) else id)
+    let keepScoped e = case effectDuration e of
+          UntilEnemyAttackEnds eid -> not (any ((== eid) . fst) finished)
+          _ -> True
+    pure $ g & effectsL %~ filter keepScoped . filter (null . again) . passed . (if attackOver then filter ((/= UntilEndOfAttack) . effectDuration) else id)
   ResponseWindow windows order used passes
     | passes < length order
     , (pid : _) <- order -> do

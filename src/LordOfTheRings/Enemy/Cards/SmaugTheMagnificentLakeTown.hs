@@ -1,5 +1,6 @@
 module LordOfTheRings.Enemy.Cards.SmaugTheMagnificentLakeTown (smaugTheMagnificentLakeTown) where
 
+import LordOfTheRings.Helpers.Modifiers (getModifiers)
 import LordOfTheRings.Enemy.CardDefs qualified as Cards
 import LordOfTheRings.Enemy.Import.Lifted
 import LordOfTheRings.Scenario.Scenarios.TheBattleOfLakeTown.Helpers (lakeTownObjectives)
@@ -26,7 +27,8 @@ instance RunMessage SmaugTheMagnificentLakeTown where
       pure e
     UseCardAbility _ (isSource a -> True) 1 windows -> do
       towns <- lakeTownObjectives
+      mods <- getModifiers a
       for_ [n | Window _ (AttackDealtExcessDamage eid _ n) <- windows, eid == a.id] \n ->
-        for_ towns \oid -> dealDamage a oid n
+        for_ towns \oid -> unless (ExcessDamageTo (ObjectiveTarget oid) `elem` mods) $ dealDamage a oid n
       pure e
     _ -> SmaugTheMagnificentLakeTown <$> runMessage msg a

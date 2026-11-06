@@ -109,6 +109,7 @@ import LordOfTheRings.Modifier (
     CannotBeAttackedByCharactersOf,
     CannotBeAttackedByKeyword,
     AlliesCannotBeDeclaredDefenders,
+    DefendersControlledBy,
     CannotBeDefendedByAllies,
     CannotDefendAgainst,
     CannotExhaust,
@@ -467,7 +468,8 @@ canDefend eid c = do
   shipOnly <- andM [selectAny (EnemyWithId eid <> shipEnemy), not <$> isShipObjective c]
   -- nor one that cannot defend against it, as an ally against Uruk of Mordor
   barred <- (\ms -> anyM (\m -> selectAny (EnemyWithId eid <> m)) [m | CannotDefendAgainst m <- ms]) =<< getModifiers c
-  if (noAllies && isAlly) || exhausts || shipOnly || barred then pure False else canFight eid c
+  controllerAllowed <- defenderControllerAllowed eid c
+  if not controllerAllowed || (noAllies && isAlly) || exhausts || shipOnly || barred then pure False else canFight eid c
 
 -- | Whether the character is a Ship objective (Dream-chaser rules).
 isShipObjective :: Target -> GameT Bool
@@ -488,4 +490,9 @@ exhaustToDefend d eid = do
           (\t -> hasTrait t (toTarget eid) (toCardDef enemy))
           [t | DoesNotExhaustToDefendAgainst t <- mods]
 
--- | The encounter cards attached to the stage as conditions, as Old Hatreds, leave play with it.
+-- | An objective attack may grant the declaration step to just one player.
+defenderControllerAllowed :: EnemyId -> Target -> GameT Bool
+defenderControllerAllowed eid target = do
+  mods <- getModifiers eid
+  controller <- characterController target
+  pure $ all (\pid -> controller == Just pid) [pid | DefendersControlledBy pid <- mods]

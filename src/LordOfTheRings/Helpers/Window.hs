@@ -139,6 +139,7 @@ windowMatchesM matcher w@(Window timing wType) = case (matcher, wType) of
   (EnemyWithModifierEngagedWindow t m, EnemyEngaged eid _) | t == timing -> elem m . Map.findWithDefault [] (toTarget eid) <$> getsGame gameModifiers
   (EnemyCardRevealedWindow t, Revealed (EnemyTarget _)) -> windowMatchesM (CardRevealedWindow t) w
   -- only a card with When Revealed effects leaves A Test of Will something to cancel
+  (CancelableTreacheryRevealedWindow t, Revealed (TreacheryTarget _)) -> windowMatchesM (CardRevealedWindow t) w
   (CardRevealedWindow t, Revealed target) | t == timing -> do
     es <- getsGame gameEntities
     -- on the game, no card's can be, as while Foothills of Mordor is in the staging area

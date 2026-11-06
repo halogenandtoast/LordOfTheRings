@@ -2779,3 +2779,7 @@ chooseEpicTarget source pid query effect = push $ ChooseEpicTarget pid (toCardCo
 -- | Resolve the Burn values on all locations (The Battle of Lake-town).
 resolveBurnDamage :: (HasQueue Message m, Sourceable source) => source -> m ()
 resolveBurnDamage = push . ResolveBurnDamage . toSource
+
+-- | A modifier for this enemy's attack, retained across nested player attacks.
+enemyAttackModifier :: (ReverseQueue m, Sourceable source) => source -> EnemyId -> ModifierType -> m ()
+enemyAttackModifier source eid modifier = createEffect source eid [modifier] (UntilEnemyAttackEnds eid)

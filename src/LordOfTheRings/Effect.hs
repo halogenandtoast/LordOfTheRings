@@ -12,6 +12,8 @@ data EffectDuration
   | UntilEndOfRound
   | -- | until the attack being made resolves
     UntilEndOfAttack
+  | -- | this enemy's attack; a nested player attack does not end it
+    UntilEnemyAttackEnds EnemyId
   | -- | until the card that made it spends it, as Minas Tirith Lampwright's "the next
     -- encounter card revealed"
     UntilSpent

@@ -100,6 +100,7 @@ data ModifierType
   | CannotAttackOrDefend
   | -- | on an enemy: allies cannot defend while it attacks, as Snow Warg's
     CannotBeDefendedByAllies
+  | DefendersControlledBy PlayerId
   | PendingDefenseReductionFromDiscard
   | AlliesCannotBeDeclaredDefenders
   | CannotHaveAttachments

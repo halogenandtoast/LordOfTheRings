@@ -57,6 +57,7 @@ data WindowMatcher
   | -- | an enemy with the modifier, from that source, engaged a player, as Goblin Gate's
     -- ambusher does
     EnemyWithModifierEngagedWindow Timing Modifier
+  | CancelableTreacheryRevealedWindow Timing
   | TreacheryRevealedWindow Timing
   | -- | a treachery with the trait revealed from the encounter deck, as Thaurdir answers a
     -- Sorcery one
@@ -463,6 +464,7 @@ windowMatches matcher (Window timing wType) = case (matcher, wType) of
   (HeroDestroyedWindow t, CharacterDestroyed (HeroTarget _) _) -> t == timing
   (AllyDestroyedWindow t, CharacterDestroyed (AllyTarget _) _) -> t == timing
   (EnemyRevealedWindow t, Revealed (EnemyTarget _)) -> t == timing
+  (CancelableTreacheryRevealedWindow {}, _) -> False
   (TreacheryRevealedWindow t, Revealed (TreacheryTarget _)) -> t == timing
   (TreacheryWithTraitRevealedWindow {}, _) -> False
   (SideQuestRevealedWindow t, Revealed (QuestTarget _)) -> t == timing

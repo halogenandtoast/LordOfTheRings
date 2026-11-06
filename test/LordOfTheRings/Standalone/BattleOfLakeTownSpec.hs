@@ -1,11 +1,13 @@
 module LordOfTheRings.Standalone.BattleOfLakeTownSpec (spec) where
 
+import LordOfTheRings.Timing (Timing (When))
+import LordOfTheRings.Sphere (Sphere (Tactics))
 import LordOfTheRings.Event.CardDefs qualified as Events
 import LordOfTheRings.Treachery.CardDefs qualified as Treacheries
 import LordOfTheRings.Scenario (theBattleOfLakeTown)
 import LordOfTheRings.Scenario.Types (scenarioMeta)
 import LordOfTheRings.Scenario.Scenarios.TheBattleOfLakeTown.Meta (Meta (..), metaOf)
-import LordOfTheRings.Window (WindowType (PhaseBegins), mkAfter)
+import LordOfTheRings.Window (WindowType (PhaseBegins, Revealed), mkWhen, mkAfter)
 import LordOfTheRings.Phase (Phase (QuestPhase, TravelPhase))
 import LordOfTheRings.Card (CardDef (..), toCardDef)
 import LordOfTheRings.Objective.Types (ObjectiveAttrs (objectivePlacement))
@@ -14,12 +16,13 @@ import LordOfTheRings.Outcome (Outcome (Lost))
 import LordOfTheRings.Ally.CardDefs qualified as Allies
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Effect (Effect (..), EffectDuration (UntilEndOfRound))
-import LordOfTheRings.Helpers.Window (travelableLocations)
+import LordOfTheRings.Helpers.Window (travelableLocations, windowMatchesM)
+import LordOfTheRings.Ability (WindowMatcher (CardRevealedWindow, CancelableTreacheryRevealedWindow, EncounterCardRevealedWindow))
 import LordOfTheRings.Helpers.Modifiers (getModifiers)
 import LordOfTheRings.Keyword (Keyword (Burn))
 import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Matcher (getBurn, getEnemy, getHero, getAlly, getObjective)
-import LordOfTheRings.Modifier (ModifierType (CannotBeDiscardedByEncounterCards, Blank, GainKeyword, ImmuneToPlayerCardEffects, WhenRevealedCannotBeCanceled, AlliesCannotBeDeclaredDefenders, DefenseModifier, AttackModifier, DoesNotExhaustToAttack))
+import LordOfTheRings.Modifier (ModifierType (CannotBeDiscardedByEncounterCards, Blank, GainKeyword, ImmuneToPlayerCardEffects, WhenRevealedCannotBeCanceled, AlliesCannotBeDeclaredDefenders, DefenseModifier, AttackModifier, DoesNotExhaustToAttack, GainResourceIcon))
 import TestImport
 
 stageLocation :: CardDef -> GameT LocationId
@@ -714,6 +717,138 @@ spec = describe "Battle of Lake-town" do
       chooseTarget pid eid
       isExhausted hero `shouldReturn` True
       offersAbilityOf pid oid `shouldReturn` True
+
+  describe "Town-Baiting" do
+    it "puts an undefended attack directly on Lake-town without assigning it to a hero" . gameTest $ \pid -> do
+      town <- stageTown
+      run . AddToStaging =<< genEncounterCard Enemies.smaugTheTerrible
+      _ <- setEncounterDeck [Treacheries.townBaiting, Locations.westPier]
+      run RevealEncounterCard
+      resolveRevealed
+      passActions pid
+      chooseLabel "$label.takeAttackUndefended" pid
+      passActions pid
+      getDamage town `shouldReturn` 7
+      for_ ["01012", "01007", "01002"] $ \code -> do
+        target <- heroOf pid code
+        getDamage target `shouldReturn` 0
+
+    for_ [(Enemies.smaugTheTerrible, 5), (Enemies.smaugTheMagnificentLakeTown, 6)] $ \(smaug, excess) ->
+      it ("puts defended excess on Lake-town exactly once: " <> show (toCardCode smaug)) . gameTest $ \pid -> do
+        town <- stageTown
+        run . AddToStaging =<< genEncounterCard smaug
+        ally <- putAllyIntoPlay pid Allies.guardOfTheCitadel
+        _ <- setEncounterDeck [Treacheries.townBaiting, Locations.westPier]
+        run RevealEncounterCard
+        resolveRevealed
+        passActions pid
+        chooseTarget pid ally
+        passActions pid
+        passActions pid
+        getDamage town `shouldReturn` excess
+
+    it "gives the last player the defender choice" . twoPlayerTest testDeck $ \one two -> do
+      _ <- stageTown
+      run . AddToStaging =<< genEncounterCard Enemies.smaugTheTerrible
+      _ <- setEncounterDeck [Treacheries.townBaiting, Locations.westPier]
+      run RevealEncounterCard
+      resolveRevealed
+      replicateM_ 6 do
+        passActions one
+        passActions two
+      getQuestion one `shouldReturn` Nothing
+      getQuestion two >>= (`shouldSatisfy` isJust)
+      hero <- heroOf two "01012"
+      question <- getQuestion two
+      fmap questionChoices question `shouldSatisfy` maybe False (any (\case TargetLabel target _ -> target == hero; _ -> False))
+
+    it "does not route later ordinary attacks to the town" . gameTest $ \pid -> do
+      town <- stageTown
+      run . AddToStaging =<< genEncounterCard Enemies.smaugTheTerrible
+      eid <- onlySmaug
+      _ <- setEncounterDeck [Treacheries.townBaiting, Locations.westPier]
+      run RevealEncounterCard
+      resolveRevealed
+      passActions pid
+      chooseLabel "$label.takeAttackUndefended" pid
+      passActions pid
+      run $ EnemyAttack pid eid
+      passActions pid
+      chooseLabel "$label.takeAttackUndefended" pid
+      passActions pid
+      hero <- heroOf pid "01012"
+      chooseTarget pid hero
+      getDamage town `shouldReturn` 7
+
+    it "blocks When Revealed cancellation while preserving whole-card response windows" . gameTest $ \_ -> do
+      _ <- setEncounterDeck [Treacheries.townBaiting]
+      run RevealEncounterCard
+      target <- getsGame $ toTarget . fromJustNote "treachery missing" . headMay . toList . (.entities.treacheries)
+      let window = mkWhen $ Revealed target
+      for_ [CardRevealedWindow, CancelableTreacheryRevealedWindow] $ \matcher ->
+        windowMatchesM (matcher When) window `shouldReturn` False
+      windowMatchesM (EncounterCardRevealedWindow When) window `shouldReturn` True
+
+    it "does nothing when Smaug is absent" . gameTest $ \_ -> do
+      town <- stageTown
+      _ <- setEncounterDeck [Treacheries.townBaiting]
+      run RevealEncounterCard
+      resolveRevealed
+      getDamage town `shouldReturn` 0
+
+    it "still allows canceling a shadow card during the attack" . gameTest $ \pid -> do
+      town <- stageTown
+      run . AddToStaging =<< genEncounterCard Enemies.smaugTheTerrible
+      stroke <- putCardIntoHand pid Events.hastyStroke
+      eowyn <- heroOf pid "01007"
+      run $ PlaceTokens GameSource eowyn Resource 1
+      _ <- setEncounterDeck [Treacheries.townBaiting, Treacheries.closeToTheFlame]
+      run RevealEncounterCard
+      resolveRevealed
+      passActions pid
+      chooseTarget pid =<< heroOf pid "01012"
+      passActions pid
+      chooseTarget pid (CardIdTarget stroke.id)
+      passActions pid
+      getDamage town `shouldReturn` 1
+
+    it "keeps the town routing when a player makes a nested Quick Strike attack" . gameTest $ \pid -> do
+      town <- stageTown
+      run . AddToStaging =<< genEncounterCard Enemies.smaugTheTerrible
+      run . AddToStaging =<< genEncounterCard Enemies.forestSpider
+      spider <- getsGame $ toId . fromJustNote "spider missing" . find ((== toCardCode Enemies.forestSpider) . toCardCode) . toList . (.entities.enemies)
+      run $ EngageEnemy pid spider
+      hero <- heroOf pid "01012"
+      quick <- putCardIntoHand pid Events.quickStrike
+      run $ CreateEffect $ Effect GameSource hero [GainResourceIcon Tactics] UntilEndOfRound
+      run $ PlaceTokens GameSource hero Resource 1
+      _ <- setEncounterDeck [Treacheries.townBaiting, Locations.westPier]
+      run RevealEncounterCard
+      resolveRevealed
+      chooseTarget pid (CardIdTarget quick.id)
+      chooseTarget pid hero
+      chooseTarget pid spider
+      passActions pid
+      chooseLabel "$label.takeAttackUndefended" pid
+      passActions pid
+      getDamage town `shouldReturn` 7
+
+    it "does not allow another player's Sentinel to defend the objective attack" . twoPlayerTest testDeck $ \one two -> do
+      town <- stageTown
+      _ <- putAllyIntoPlay one Allies.gondorianSpearman
+      run . AddToStaging =<< genEncounterCard Enemies.smaugTheTerrible
+      _ <- setEncounterDeck [Treacheries.townBaiting, Locations.westPier]
+      run RevealEncounterCard
+      resolveRevealed
+      replicateM_ 6 do
+        passActions one
+        passActions two
+      chooseLabel "$label.takeAttackUndefended" two
+      replicateM_ 6 do
+        passActions one
+        passActions two
+      getQuestion one `shouldReturn` Nothing
+      getDamage town `shouldReturn` 7
 
 stageTown :: GameT Target
 stageTown = do
