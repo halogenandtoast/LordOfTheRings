@@ -14,8 +14,7 @@ import LordOfTheRings.Ally (
     allyDiscardWindow,
     allyExhausted,
     allyHandCriteria,
-    allyHandWindow,
-    allyOwner
+    allyHandWindow
   ),
   createAlly,
  )
@@ -668,7 +667,7 @@ enteredPlayThisRound a = CreateEffect $ Effect source (toTarget a) [EnteredPlayT
  where
   source
     | cdCardType (toCardDef a) == ObjectiveAllyType = GameSource
-    | otherwise = PlayerSource $ allyOwner $ toAttrs a
+    | otherwise = PlayerSource (toAttrs a).controller
 
 -- | The windows for an ally entering play under the player.
 allyEntersPlay :: PlayerId -> Ally -> Message

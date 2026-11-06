@@ -12,7 +12,7 @@ import LordOfTheRings.Id
 import LordOfTheRings.Json
 import LordOfTheRings.Matcher.Window
 import LordOfTheRings.Name
-import LordOfTheRings.Placement (Placement (..))
+import LordOfTheRings.Placement (Placement (..), placementController)
 import LordOfTheRings.Prelude
 import LordOfTheRings.Source
 import LordOfTheRings.Target
@@ -42,6 +42,8 @@ data AllyAttrs = AllyAttrs
   , allyCardId :: CardId
   , allyCardCode :: CardCode
   , allyOwner :: PlayerId
+  , allyController :: Maybe PlayerId
+  -- ^ The player building an out-of-play instance; in play its placement determines control.
   , allyPlacement :: Placement
   , allyTokens :: Tokens
   , allyExhausted :: Bool
@@ -77,7 +79,7 @@ instance ToJSON AllyAttrs where
   toJSON = genericToJSON (aesonOptions $ Just "ally")
 
 instance FromJSON AllyAttrs where
-  parseJSON = genericParseJSON (aesonOptions $ Just "ally") . withDefaults [("facedown", toJSON ([] :: [PlayerCard])), ("poison", toJSON ([] :: [PlayerCard])), ("unconscious", Bool False), ("handAction", toJSON (Nothing :: Maybe Criterion)), ("handCriteria", toJSON NoCriteria), ("asHero", Bool False)]
+  parseJSON = genericParseJSON (aesonOptions $ Just "ally") . withDefaults [("controller", toJSON (Nothing :: Maybe PlayerId)), ("facedown", toJSON ([] :: [PlayerCard])), ("poison", toJSON ([] :: [PlayerCard])), ("unconscious", Bool False), ("handAction", toJSON (Nothing :: Maybe Criterion)), ("handCriteria", toJSON NoCriteria), ("asHero", Bool False)]
 
 ally :: (AllyAttrs -> a) -> CardDef -> AllyCard a
 ally f cardDef =
@@ -90,6 +92,7 @@ ally f cardDef =
             , allyCardId = cardId
             , allyCardCode = cdCardCode cardDef
             , allyOwner = pid
+            , allyController = Just pid
             , allyPlacement = Unplaced
             , allyTokens = mempty
             , allyExhausted = False
@@ -173,6 +176,9 @@ instance HasField "id" AllyAttrs AllyId where
 instance HasField "owner" AllyAttrs PlayerId where
   getField = allyOwner
 
+instance HasField "controller" AllyAttrs PlayerId where
+  getField a = fromMaybe a.owner (placementController a.placement <|> a.allyController)
+
 instance HasField "name" AllyAttrs Name where
   getField = cdName . toCardDef
 
@@ -193,6 +199,9 @@ instance HasField "id" Ally AllyId where
 
 instance HasField "owner" Ally PlayerId where
   getField = (.owner) . toAttrs
+
+instance HasField "controller" Ally PlayerId where
+  getField = (.controller) . toAttrs
 
 instance HasField "name" Ally Name where
   getField = (.name) . toAttrs

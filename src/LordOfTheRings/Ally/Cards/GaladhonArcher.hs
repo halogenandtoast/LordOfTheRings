@@ -17,7 +17,7 @@ notEngagedWith = not_ . EnemyEngagedWith . PlayerWithId
 -- engaged with you.
 instance HasAbilities GaladhonArcher where
   getAbilities (GaladhonArcher a) =
-    [restricted a 1 (exists $ notEngagedWith a.owner) $ response $ EntersPlayWindow After (toTarget a)]
+    [restricted a 1 (exists $ notEngagedWith a.controller) $ response $ EntersPlayWindow After (toTarget a)]
 
 instance RunMessage GaladhonArcher where
   runMessage msg s@(GaladhonArcher a) = case msg of

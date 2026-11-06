@@ -15,7 +15,7 @@ gloin = ally Gloin Cards.gloin
 -- pool."
 instance HasAbilities Gloin where
   getAbilities (Gloin a) =
-    [ restricted a 1 (DwarvesAtLeast a.owner 5)
+    [ restricted a 1 (DwarvesAtLeast a.controller 5)
         $ response
         $ PlayedFromHandWindow After (CardIdTarget a.allyCardId)
     ]

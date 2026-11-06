@@ -19,7 +19,7 @@ instance HasModifiersFor DurinsAxeTactics where
 -- engaged with you.
 instance HasAbilities DurinsAxeTactics where
   getAbilities (DurinsAxeTactics a) =
-    [ restricted a 1 (exists $ EnemyEngagedWith (PlayerWithId a.owner)) $ response $ EnemyDestroyedByAttackWindow After (Just host)
+    [ restricted a 1 (exists $ EnemyEngagedWith (PlayerWithId a.controller)) $ response $ EnemyDestroyedByAttackWindow After (Just host)
     | AttachedTo host@(HeroTarget _) <- [a.placement]
     ]
 

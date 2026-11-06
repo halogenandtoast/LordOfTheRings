@@ -14,7 +14,7 @@ lindir = ally Lindir Cards.lindir
 -- until you have 3 cards in your hand.
 instance HasAbilities Lindir where
   getAbilities (Lindir a) =
-    [ restricted a 1 (NotCriterion $ PlayerExists $ PlayerWithId a.owner <> PlayerWithCardsInHand 3)
+    [ restricted a 1 (NotCriterion $ PlayerExists $ PlayerWithId a.controller <> PlayerWithCardsInHand 3)
         $ response
         $ EntersPlayWindow After (toTarget a)
     ]

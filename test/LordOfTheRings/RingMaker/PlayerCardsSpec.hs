@@ -12,7 +12,7 @@ import LordOfTheRings.Location (LocationAttrs (..))
 import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Phase
 import LordOfTheRings.Window (WindowType (DealtDamage, ThreatRaisedByEncounter), mkAfter)
-import TestImport
+import TestImport hiding (allyController)
 
 beravorCode, eowynCode, theodredCode, idraenCode :: CardCode
 beravorCode = "01012"

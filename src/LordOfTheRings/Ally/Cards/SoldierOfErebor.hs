@@ -15,7 +15,7 @@ soldierOfErebor = ally SoldierOfErebor Cards.soldierOfErebor
 instance HasAbilities SoldierOfErebor where
   getAbilities (SoldierOfErebor a) =
     [ limited (PlayerLimit PerRound 1)
-        $ restricted a 1 (exists (AllyWithId a.id <> ExhaustedAlly) <> PlayerExists (PlayerWithId a.owner <> PlayerWithCardsInDeck 3))
+        $ restricted a 1 (exists (AllyWithId a.id <> ExhaustedAlly) <> PlayerExists (PlayerWithId a.controller <> PlayerWithCardsInDeck 3))
         $ ActionAbility Free
     ]
 

@@ -15,7 +15,7 @@ ereborGuard = ally EreborGuard Cards.ereborGuard
 -- deck to reduce its cost by 2. Asked while it is paid for.
 instance HasModifiersFor EreborGuard where
   getModifiersFor (EreborGuard a) = when (a.placement == Unplaced) do
-    deck <- (.deck) <$> getPlayer a.owner
+    deck <- (.deck) <$> getPlayer a.controller
     when (length deck >= 2) $ modified a (CardIdTarget a.allyCardId) [ReducedByDiscardingFromDeck 2]
 
 instance RunMessage EreborGuard where

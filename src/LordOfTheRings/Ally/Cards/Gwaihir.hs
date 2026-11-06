@@ -23,17 +23,17 @@ eagleAlly = CardWithType AllyType <> CardWithTrait Eagle
 -- it into play under your control. At the end of the round, if that ally is still in play,
 -- add it to your hand.
 instance HasAbilities Gwaihir where
-  getAbilities (Gwaihir a) = [restricted a 1 (CardInDiscard a.owner eagleAlly) $ response $ entersPlay a]
+  getAbilities (Gwaihir a) = [restricted a 1 (CardInDiscard a.controller eagleAlly) $ response $ entersPlay a]
 
 instance RunMessage Gwaihir where
   runMessage msg s@(Gwaihir a) = case msg of
     UseCardAbility pid (isSource a -> True) 1 _ -> do
-      eagles <- filterM passesUnique . filter (cardMatches eagleAlly) . (.discard) =<< getPlayer a.owner
+      eagles <- filterM passesUnique . filter (cardMatches eagleAlly) . (.discard) =<< getPlayer a.controller
       chooseOrRunOneM pid do
         questionLabeled "gwaihir.chooseEagle"
         causedBy a
         targets [pc | PlayerCard pc <- eagles] \pc -> do
-          removeFromDiscard a.owner pc.id
+          removeFromDiscard a.controller pc.id
           roundModifier a (CardIdTarget pc.id) ReturnToHandAtEndOfRound
           putAllyIntoPlayUnder pid pc
       pure s

@@ -16,7 +16,7 @@ halbaradLeadership = ally HalbaradLeadership Cards.halbaradLeadership
 instance HasModifiersFor HalbaradLeadership where
   getModifiersFor (HalbaradLeadership a)
     | a.placement == Unplaced = do
-        n <- length <$> select (EnemyEngagedWith $ PlayerWithId a.owner)
+        n <- length <$> select (EnemyEngagedWith $ PlayerWithId a.controller)
         when (n > 0) $ modified a (CardIdTarget a.allyCardId) [CostModifier (negate n)]
     | otherwise = for_ (placementController a.placement) \you -> do
         enemies <- select (EnemyEngagedWith $ PlayerWithId you)

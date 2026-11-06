@@ -469,8 +469,8 @@ runPlayer msg player = case msg of
       pushWhen (notNull discarded) $ CheckWindows [mkAfter $ DiscardedFromHand pid c.id | c <- discarded]
       for_ resultSource \source -> push $ DiscardedRandomFromHand source pid discarded
       pure $ player & handL %~ filter (`notElem` discarded) & discardL %~ (ownDiscard <>)
-    -- an ally put into play from its owner's hand under any player's control, as Emery
-    PutAllyIntoPlayUnder _ card | card.owner == Just player.id -> pure $ player & handL %~ filter ((/= card.id) . (.id))
+    -- An ally may be in another player's hand, as after Groping Horror.
+    PutAllyIntoPlayUnder _ card | any ((== card.id) . (.id)) player.hand -> pure $ player & handL %~ filter ((/= card.id) . (.id))
     -- a set-aside card with the Encounter keyword, discarded from the encounter deck, is
     -- set aside no more
     PutInDiscard card | card.owner == Just player.id -> pure $ player & discardL %~ (PlayerCard card :) & setAsideCardsL %~ filter ((/= card.id) . (.id))

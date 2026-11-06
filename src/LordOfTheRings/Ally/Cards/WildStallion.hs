@@ -20,7 +20,7 @@ instance HasModifiersFor WildStallion where
 -- | The allies it may attach to: another you control that can take it, restricted, and
 -- has no Wild Stallion already (Limit 1 per ally).
 hosts :: AllyAttrs -> AllyMatcher
-hosts a = AllyControlledBy (PlayerWithId a.owner) <> NotAlly (AllyWithId a.id) <> NotAlly (AllyWithAttachment $ toCardCode Cards.wildStallion)
+hosts a = AllyControlledBy (PlayerWithId a.controller) <> NotAlly (AllyWithId a.id) <> NotAlly (AllyWithAttachment $ toCardCode Cards.wildStallion)
 
 -- | Planning Action: Attach Wild Stallion to an ally you control. (Counts as a Mount
 -- attachment with the text: "Restricted. Limit 1 per ally. Attached ally gets +1

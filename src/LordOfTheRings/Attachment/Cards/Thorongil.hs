@@ -18,7 +18,7 @@ thorongil :: AttachmentCard Thorongil
 thorongil = attachment Thorongil Cards.thorongil & fmap (overAttrs \a -> a {attachmentAttachTo = AttachToHero $ eligible a})
 
 eligible :: AttachmentAttrs -> HeroMatcher
-eligible a = HeroControlledBy (PlayerWithId a.owner) <> not_ (HeroWithSphere Fellowship) <> not_ (HeroWithSphere Baggins)
+eligible a = HeroControlledBy (PlayerWithId a.controller) <> not_ (HeroWithSphere Fellowship) <> not_ (HeroWithSphere Baggins)
 
 -- | The other non-Fellowship, non-Baggins versions of the hero: your collection is every
 -- hero the game has, as Helm of Secrecy reads it.

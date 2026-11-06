@@ -14,5 +14,5 @@ dwalin = ally Dwalin Cards.dwalin
 -- | While you control at least 5 Dwarf characters, lower the cost to play Dwalin by 2.
 instance HasModifiersFor Dwalin where
   getModifiersFor (Dwalin a) = do
-    dwarves <- dwarfCount a.owner
+    dwarves <- dwarfCount a.controller
     when (dwarves >= 5) $ modified a (CardIdTarget a.allyCardId) [CostModifier (-2)]

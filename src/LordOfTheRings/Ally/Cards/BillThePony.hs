@@ -17,7 +17,7 @@ billThePony = ally BillThePony Cards.billThePony
 instance HasModifiersFor BillThePony where
   getModifiersFor (BillThePony a)
     | a.placement == Unplaced = do
-        let you = PlayerWithId a.owner
+        let you = PlayerWithId a.controller
         sam <- orM [selectAny (HeroControlledBy you <> HeroWithTitle "Sam Gamgee"), selectAny (AllyControlledBy you <> AllyWithTitle "Sam Gamgee")]
         when sam $ modified a (CardIdTarget a.allyCardId) [CostModifier (-2)]
     | otherwise = do

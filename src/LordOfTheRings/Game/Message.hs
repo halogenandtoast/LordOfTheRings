@@ -3317,7 +3317,7 @@ runGameMessage msg g = case msg of
     push $ CheckWindows [mkAfter $ EntersPlay $ toTarget thisAlly]
     pure $ g & entitiesL . alliesL %~ insertEntity thisAlly
   PutAllyIntoPlayUnder pid card -> do
-    thisAlly <- entering =<< newAlly (fromMaybe pid card.owner) card
+    thisAlly <- entering =<< newAlly pid card
     runQueueT $ raiseThreatFromDoomed $ printedDoomed card
     push $ enteredPlayThisRound thisAlly
     push $ allyEntersPlay pid thisAlly

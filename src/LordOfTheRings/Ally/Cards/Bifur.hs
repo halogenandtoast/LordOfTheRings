@@ -14,7 +14,7 @@ bifur = ally Bifur Cards.bifur
 -- Bifur from your hand, draw 2 cards."
 instance HasAbilities Bifur where
   getAbilities (Bifur a) =
-    [ restricted a 1 (DwarvesAtLeast a.owner 5)
+    [ restricted a 1 (DwarvesAtLeast a.controller 5)
         $ response
         $ PlayedFromHandWindow After (CardIdTarget a.allyCardId)
     ]

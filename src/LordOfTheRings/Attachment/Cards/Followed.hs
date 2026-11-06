@@ -18,7 +18,7 @@ followed = attachment Followed Cards.followed & attachTo PlayIntoPlayArea
 instance HasModifiersFor Followed where
   getModifiersFor (Followed a) = case a.placement of
     AttachedTo (EnemyTarget eid) -> do
-      engaged <- selectAny (EnemyWithId eid <> EnemyEngagedWith (PlayerWithId a.owner))
+      engaged <- selectAny (EnemyWithId eid <> EnemyEngagedWith (PlayerWithId a.controller))
       x <- fromMaybe 0 . cdThreat . toCardDef <$> getEnemy eid
       when (engaged && x > 0) $ modified a GameTarget [StagingThreatBonus (negate x)]
     _ -> pure ()

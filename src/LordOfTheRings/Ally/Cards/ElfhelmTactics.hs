@@ -17,7 +17,7 @@ rohanHeroWithResources pid = HeroControlledBy (PlayerWithId pid) <> HeroWithTrai
 elfhelmTactics :: AllyCard ElfhelmTactics
 elfhelmTactics =
   ally
-    (\a -> ElfhelmTactics a {allyHandAction = Just $ exists (rohanHeroWithResources a.owner)})
+    (\a -> ElfhelmTactics a {allyHandAction = Just $ exists (rohanHeroWithResources a.controller)})
     Cards.elfhelmTactics
 
 instance RunMessage ElfhelmTactics where

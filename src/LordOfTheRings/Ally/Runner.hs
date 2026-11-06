@@ -77,8 +77,8 @@ instance RunMessage AllyAttrs where
       pushAll [PutInHand c | c <- attrs.allyFacedown, c.id == cid]
       pure $ attrs & facedownL %~ filter ((/= cid) . (.id))
     PlaceAlly aid placement | aid == attrs.allyId -> pure $ attrs & placementL .~ placement
-    GuardCharacter (isTarget attrs -> True) cid -> pure $ attrs & placementL .~ AttachedTo (CardIdTarget cid) & committedL .~ False
-    RescueCharacter (isTarget attrs -> True) -> pure $ attrs & placementL .~ InPlayArea attrs.allyOwner & exhaustedL .~ True
+    GuardCharacter (isTarget attrs -> True) cid -> pure $ attrs & controllerL .~ Just attrs.controller & placementL .~ AttachedTo (CardIdTarget cid) & committedL .~ False
+    RescueCharacter (isTarget attrs -> True) -> pure $ attrs & placementL .~ InPlayArea attrs.controller & exhaustedL .~ True
     -- the response of an ally in hand, as Brok Ironfist's, puts it into play
     UseHandAction pid cid | cid == attrs.allyCardId, isJust attrs.allyHandWindow -> do
       push $ PutAllyIntoPlay pid cid

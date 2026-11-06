@@ -22,7 +22,7 @@ instance RunMessage AttachmentAttrs where
     AttachCard aid host | aid == attrs.id -> do
       controller <- characterController host
       push $ CheckWindows [mkAfter $ Attached (toTarget attrs) host (cdCardTraits $ toCardDef attrs)]
-      pure $ attrs & placementL .~ AttachedTo host & controllerL .~ controller
+      pure $ attrs & placementL .~ AttachedTo host & controllerL .~ (controller <|> attrs.attachmentController)
     -- a Trap waiting in the staging area attaches to the next enemy that can take it
     CheckWindows ws
       | attrs.placement == StagingArea

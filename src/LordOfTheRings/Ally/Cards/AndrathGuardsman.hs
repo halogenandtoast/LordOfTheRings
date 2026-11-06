@@ -17,7 +17,7 @@ engagedWith pid = EnemyEngagedWith (PlayerWithId pid) <> not_ UniqueEnemy
 -- engaged with you. That enemy cannot attack you this round.
 instance HasAbilities AndrathGuardsman where
   getAbilities (AndrathGuardsman a) =
-    [ restricted a 1 (exists $ engagedWith a.owner)
+    [ restricted a 1 (exists $ engagedWith a.controller)
         $ response
         $ PlayedFromHandWindow After (CardIdTarget a.allyCardId)
     ]

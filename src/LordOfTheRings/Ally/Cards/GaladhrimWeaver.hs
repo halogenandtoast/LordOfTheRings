@@ -17,7 +17,7 @@ instance HasModifiersFor GaladhrimWeaver where
 -- | Response: After Galadhrim Weaver enters play, shuffle the top card of your discard
 -- pile into your deck.
 instance HasAbilities GaladhrimWeaver where
-  getAbilities (GaladhrimWeaver a) = [restricted a 1 (CardInDiscard a.owner AnyCard) $ response $ entersPlay a]
+  getAbilities (GaladhrimWeaver a) = [restricted a 1 (CardInDiscard a.controller AnyCard) $ response $ entersPlay a]
 
 instance RunMessage GaladhrimWeaver where
   runMessage msg s@(GaladhrimWeaver a) = case msg of

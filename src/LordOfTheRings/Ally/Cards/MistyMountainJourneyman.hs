@@ -15,5 +15,5 @@ mistyMountainJourneyman = ally MistyMountainJourneyman Cards.mistyMountainJourne
 -- enemy.
 instance HasModifiersFor MistyMountainJourneyman where
   getModifiersFor (MistyMountainJourneyman a) = when (a.placement == Unplaced) do
-    engaged <- selectAny $ EnemyEngagedWith (PlayerWithId a.owner)
+    engaged <- selectAny $ EnemyEngagedWith (PlayerWithId a.controller)
     unless engaged $ modified a (CardIdTarget a.allyCardId) [CannotBePlayedFromHand]

@@ -26,7 +26,7 @@ instance HasModifiersFor KeenLongbow where
 -- once the discarding is done.
 instance HasAbilities KeenLongbow where
   getAbilities (KeenLongbow a) =
-    [ restricted a 1 (CardInHandToDiscard a.owner AnyCard) $ response $ AttackerDeclaredWindow After (Just host)
+    [ restricted a 1 (CardInHandToDiscard a.controller AnyCard) $ response $ AttackerDeclaredWindow After (Just host)
     | AttachedTo host <- [a.placement]
     ]
 

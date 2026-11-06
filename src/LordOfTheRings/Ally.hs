@@ -340,7 +340,8 @@ instance RunMessage Ally where
   runMessage msg (Ally a) = Ally <$> runMessage msg a
 
 createAlly :: PlayerCard -> AllyId -> PlayerId -> Ally
-createAlly card hid pid = lookupAlly (toCardCode card) (pcId card) hid pid
+createAlly card hid pid =
+  overAttrs (\a -> a {allyOwner = fromMaybe pid card.owner}) $ lookupAlly (toCardCode card) (pcId card) hid pid
 
 lookupAlly :: (HasCallStack) => CardCode -> CardId -> AllyId -> PlayerId -> Ally
 lookupAlly cardCode cardId hid pid = case Map.lookup cardCode allAllies of

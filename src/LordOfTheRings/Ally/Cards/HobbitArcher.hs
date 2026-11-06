@@ -14,4 +14,4 @@ hobbitArcher = ally HobbitArcher Cards.hobbitArcher
 -- than your threat.
 instance HasModifiersFor HobbitArcher where
   getModifiersFor (HobbitArcher a) =
-    modifySelf a [AttackBonusAgainstMatching (EnemyWithEngagementCostAboveThreatOf a.owner) 1]
+    modifySelf a [AttackBonusAgainstMatching (EnemyWithEngagementCostAboveThreatOf a.controller) 1]

@@ -24,6 +24,6 @@ instance HasAbilities EagleEmissary where
 instance RunMessage EagleEmissary where
   runMessage msg s@(EagleEmissary a) = case msg of
     UseCardAbility _ (isSource a -> True) 1 _ -> do
-      payOrDiscard a.owner a Tactics
+      payOrDiscard a.controller a Tactics
       pure s
     _ -> EagleEmissary <$> runMessage msg a

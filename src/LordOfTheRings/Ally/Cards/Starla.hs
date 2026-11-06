@@ -17,7 +17,7 @@ starla = ally (\a -> Starla a {allyDiscardWindow = Just $ discarded a}) Cards.st
  where
   discarded a =
     AnyWindowOf
-      [ CardDiscardedFromHandWindow After a.owner a.allyCardId
+      [ CardDiscardedFromHandWindow After a.controller a.allyCardId
       , DiscardedFromDeckWindow After a.owner (Just a.allyCardId)
       ]
 

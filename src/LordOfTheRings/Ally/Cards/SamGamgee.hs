@@ -15,7 +15,7 @@ samGamgee = ally SamGamgee Cards.samGamgee
 -- | Reduce the cost to play Sam Gamgee by 2 if you control Frodo Baggins.
 instance HasModifiersFor SamGamgee where
   getModifiersFor (SamGamgee a) = when (a.placement == Unplaced) do
-    frodo <- selectAny (HeroControlledBy (PlayerWithId a.owner) <> HeroWithTitle "Frodo Baggins")
+    frodo <- selectAny (HeroControlledBy (PlayerWithId a.controller) <> HeroWithTitle "Frodo Baggins")
     when frodo $ modified a (CardIdTarget a.allyCardId) [CostModifier (-2)]
 
 -- | Response: After a player raises his threat, that player may spend 1 spirit resource to

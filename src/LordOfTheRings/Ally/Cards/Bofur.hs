@@ -15,7 +15,7 @@ newtype Bofur = Bofur AllyAttrs
 bofur :: AllyCard Bofur
 bofur =
   ally
-    (\a -> Bofur a {allyHandAction = Just $ DuringPhase QuestPhase <> ResourcesOfSphere (PlayerWithId a.owner) Spirit 1})
+    (\a -> Bofur a {allyHandAction = Just $ DuringPhase QuestPhase <> ResourcesOfSphere (PlayerWithId a.controller) Spirit 1})
     Cards.bofur
 
 -- | If you quest successfully this phase and Bofur is still in play, return him to your

@@ -1,5 +1,7 @@
 module LordOfTheRings.Standalone.StoneOfErechSpec (spec) where
 
+import Data.Aeson (Result (..))
+import Data.Aeson.KeyMap qualified as KeyMap
 import LordOfTheRings.Decklist (loadPlayer)
 import LordOfTheRings.Ally.CardDefs qualified as Allies
 import LordOfTheRings.Attachment.CardDefs qualified as Attachments
@@ -10,7 +12,7 @@ import LordOfTheRings.Phase (Phase (PlanningPhase, EncounterPhase, RefreshPhase,
 import LordOfTheRings.Sphere (Sphere (Lore, Spirit, Fellowship, Baggins))
 import LordOfTheRings.Helpers.Attachment (cardHosts)
 import LordOfTheRings.Helpers.Modifiers (getModifiers)
-import LordOfTheRings.Card (CardType (EventType))
+import LordOfTheRings.Card (CardType (EventType), IsCard (toCard))
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Objective.CardDefs qualified as Objectives
 import LordOfTheRings.Treachery.CardDefs qualified as Treacheries
@@ -18,8 +20,8 @@ import LordOfTheRings.Effect (Effect (..), EffectDuration (UntilEndOfRound))
 import LordOfTheRings.Helpers.Character (getAttackStrength, getWillpower)
 import LordOfTheRings.Helpers.Staging (getEnemyAttack, getEnemyDefense, getEnemyThreat, getLocationThreat, getLocationQuestPoints)
 import LordOfTheRings.Keyword (Keyword (Spectral))
-import LordOfTheRings.Matcher (getObjective, getThreat, getEnemy, getAlly, getHero, heroHasResourceIcon, HeroMatcher (HeroWithSphere), Query (select), CardMatcher (CardWithType))
-import LordOfTheRings.Modifier (ModifierType (AttackModifier, WillpowerModifier, AttackBonusAgainst, LoseKeyword, Blank, CannotPlay, RevealedEncounterCardsGainDoomed, GainResourceIcon, CannotExhaust, GainResourceIconFor, PrintedResourceIconForCard, SkipPhase))
+import LordOfTheRings.Matcher (getObjective, getThreat, getEnemy, getAlly, getHero, heroHasResourceIcon, HeroMatcher (HeroWithSphere), EnemyMatcher (EnemyWithEngagementCostAboveThreatOf), Query (select), CardMatcher (CardWithType))
+import LordOfTheRings.Modifier (ModifierType (AttackModifier, WillpowerModifier, AttackBonusAgainst, LoseKeyword, Blank, CannotPlay, RevealedEncounterCardsGainDoomed, GainResourceIcon, CannotExhaust, GainResourceIconFor, PrintedResourceIconForCard, SkipPhase, AttackBonusAgainstMatching, EnteredPlayThisRound))
 import LordOfTheRings.Scenario.Scenarios.TheStoneOfErech.Helpers (NightTime (..), currentNight, currentNightObjective)
 import LordOfTheRings.Trait (Trait (Oathbreaker))
 import LordOfTheRings.Window (WindowType (RoundEnds), mkWhen)
@@ -176,10 +178,92 @@ spec = describe "Stone of Erech" do
       initialThreat <- (.threat) <$> getPlayer two
       card <- putCardIntoHand one Events.theGaladhrimsGreeting
       run $ GiveFromHand one card.id two
-      run $ PlayAtNoCost two (case card of PlayerCard pc -> pc; _ -> error "expected player card")
+      run $ PlayFromHandAtNoCost two card.id
       chooseLabel "$label.theGaladhrimsGreeting.one" two
       chooseTarget two (PlayerTarget two)
       (.threat) <$> getPlayer two `shouldReturn` initialThreat - 6
+      (.hand) <$> getPlayer two `shouldReturn` []
+      (.discard) <$> getPlayer one `shouldReturn` [card]
+      (.discard) <$> getPlayer two `shouldReturn` []
+
+    for_ ["discard", "hand", "shuffle", "bottom"] \destination ->
+      it ("returns a played passed ally to its owner's " <> destination) . twoPlayerTest testDeck $ \one two -> do
+        card <- putCardIntoHand one Allies.guardOfTheCitadel
+        run $ GiveFromHand one card.id two
+        run $ PlayFromHandAtNoCost two card.id
+        ally <- getsGame $ fromJustNote "missing passed ally" . headMay . toList . (.entities.allies)
+        toCard ally `shouldBe` card
+        ally.placement `shouldBe` InPlayArea two
+        case destination of
+          "discard" -> run $ Discard GameSource (toTarget ally)
+          "hand" -> run $ ReturnToHand (toTarget ally)
+          "shuffle" -> run $ ShuffleIntoOwnersDeck (toTarget ally)
+          _ -> run $ PutOnBottomOfOwnersDeck (toTarget ally)
+        owner <- getPlayer one
+        holder <- getPlayer two
+        let cardsOf p = p.hand <> p.deck <> p.discard
+        cardsOf owner `shouldSatisfy` elem card
+        cardsOf holder `shouldSatisfy` notElem card
+
+    it "loads saved allies without the new controller field" . twoPlayerTest testDeck $ \one two -> do
+      card <- putCardIntoHand one Allies.guardOfTheCitadel
+      run $ GiveFromHand one card.id two
+      run $ PlayFromHandAtNoCost two card.id
+      ally <- getsGame $ fromJustNote "missing passed ally" . headMay . toList . (.entities.allies)
+      let old = case toJSON (toAttrs ally) of
+            Object fields -> Object (KeyMap.delete "controller" fields)
+            value -> value
+      case fromJSON old of
+        Success restored -> do
+          (restored :: AllyAttrs).controller `shouldBe` two
+          restored.owner `shouldBe` one
+        Error err -> liftIO $ expectationFailure err
+
+    it "uses the passed ally's controller for its text, including after control changes" . twoPlayerTest testDeck $ \one two -> do
+      card <- putCardIntoHand one Allies.hobbitArcher
+      run $ GiveFromHand one card.id two
+      run $ PlayFromHandAtNoCost two card.id
+      ally <- getsGame $ fromJustNote "missing passed ally" . headMay . toList . (.entities.allies)
+      getModifiers ally >>= (`shouldSatisfy` elem (AttackBonusAgainstMatching (EnemyWithEngagementCostAboveThreatOf two) 1))
+      run $ TakeControl (toId ally) one
+      getModifiers ally >>= (`shouldSatisfy` elem (AttackBonusAgainstMatching (EnemyWithEngagementCostAboveThreatOf one) 1))
+      (toCard <$> getAlly (toId ally)) `shouldReturn` card
+
+    it "preserves a passed attachment's owner while its recipient chooses their own hero" . twoPlayerTest testDeck $ \one two -> do
+      card <- putCardIntoHand one Attachments.resourceful
+      run $ GiveFromHand one card.id two
+      hero <- heroOf two "01012"
+      run $ PlayFromHandOnAtNoCost two card.id hero
+      att <- getsGame $ fromJustNote "missing passed attachment" . headMay . toList . (.entities.attachments)
+      toCard att `shouldBe` card
+      (toAttrs att).controller `shouldBe` two
+      run $ ReturnToHand (toTarget att)
+      (.hand) <$> getPlayer one `shouldReturn` [card]
+      (.hand) <$> getPlayer two `shouldReturn` []
+
+    it "removes a passed Curious Brandybuck from its holder's hand when its response puts it into play" . twoPlayerTest testDeck $ \one two -> do
+      card <- putCardIntoHand one Allies.curiousBrandybuck
+      run $ GiveFromHand one card.id two
+      run $ UseHandAction two card.id
+      chooseTarget two (PlayerTarget two)
+      (.hand) <$> getPlayer one `shouldReturn` []
+      (.hand) <$> getPlayer two `shouldReturn` []
+      ally <- getsGame $ fromJustNote "missing Brandybuck" . headMay . toList . (.entities.allies)
+      toCard ally `shouldBe` card
+      ally.placement `shouldBe` InPlayArea two
+      sources <- getsGame (map effectSource . filter (\e -> effectTarget e == toTarget ally && EnteredPlayThisRound `elem` effectModifiers e) . gameEffects)
+      sources `shouldBe` [PlayerSource two]
+
+    it "keeps control of a passed Trap when it attaches to an enemy" . twoPlayerTest testDeck $ \one two -> do
+      card <- putCardIntoHand one Attachments.followed
+      run $ GiveFromHand one card.id two
+      run $ PlayFromHandAtNoCost two card.id
+      eid <- stageErechEnemy Enemies.forestSpider
+      run $ EngageEnemy two eid
+      att <- getsGame $ fromJustNote "missing passed Trap" . headMay . toList . (.entities.attachments)
+      (toAttrs att).controller `shouldBe` two
+      toCard att `shouldBe` card
+      run $ Discard GameSource (toTarget att)
       (.discard) <$> getPlayer one `shouldReturn` [card]
       (.discard) <$> getPlayer two `shouldReturn` []
 

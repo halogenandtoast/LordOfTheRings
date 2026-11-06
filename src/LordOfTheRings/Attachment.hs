@@ -311,7 +311,8 @@ instance RunMessage Attachment where
   runMessage msg (Attachment a) = Attachment <$> runMessage msg a
 
 createAttachment :: PlayerCard -> AttachmentId -> PlayerId -> Attachment
-createAttachment card ident pid = lookupAttachment (toCardCode card) (pcId card) ident pid
+createAttachment card ident pid =
+  overAttrs (\a -> a {attachmentOwner = fromMaybe pid card.owner, attachmentController = Just pid}) $ lookupAttachment (toCardCode card) (pcId card) ident pid
 
 lookupAttachment :: (HasCallStack) => CardCode -> CardId -> AttachmentId -> PlayerId -> Attachment
 lookupAttachment cardCode cardId ident pid = case Map.lookup cardCode allAttachments of

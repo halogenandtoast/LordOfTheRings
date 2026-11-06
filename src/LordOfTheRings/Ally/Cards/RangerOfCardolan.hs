@@ -19,10 +19,10 @@ rangerOfCardolan =
     ( \a ->
         RangerOfCardolan
           a
-            { allyHandWindow = Just $ PlayerEngagedEnemyWindow After a.owner
+            { allyHandWindow = Just $ PlayerEngagedEnemyWindow After a.controller
             , allyHandCriteria =
-                exists (HeroControlledBy (PlayerWithId a.owner) <> HeroWithTrait Dunedain)
-                  <> ResourcesOfSphere (PlayerWithId a.owner) Neutral 1
+                exists (HeroControlledBy (PlayerWithId a.controller) <> HeroWithTrait Dunedain)
+                  <> ResourcesOfSphere (PlayerWithId a.controller) Neutral 1
             }
     )
     Cards.rangerOfCardolan

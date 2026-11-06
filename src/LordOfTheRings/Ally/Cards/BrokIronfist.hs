@@ -12,4 +12,4 @@ newtype BrokIronfist = BrokIronfist AllyAttrs
 -- from your hand.
 brokIronfist :: AllyCard BrokIronfist
 brokIronfist =
-  ally (\a -> BrokIronfist a {allyHandWindow = Just $ HeroLeftPlayWindow After a.owner Dwarf}) Cards.brokIronfist
+  ally (\a -> BrokIronfist a {allyHandWindow = Just $ HeroLeftPlayWindow After a.controller Dwarf}) Cards.brokIronfist

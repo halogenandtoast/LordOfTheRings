@@ -30,7 +30,7 @@ instance RunMessage LongLakeTrader where
       attached <- concat <$> (traverse playerAttachmentsOn =<< charactersControlledBy pid)
       items <- filterM (\att -> hasTrait Item (toTarget att) (toCardDef att)) attached
       moves <- for items \att -> do
-        hosts <- cardHosts (toAttrs att).owner (toCardCode att)
+        hosts <- cardHosts (toAttrs att).controller (toCardCode att)
         pure (att, [h | h <- hosts, AttachedTo h /= att.placement])
       chooseOneM pid do
         questionLabeled "longLakeTrader.attachment"

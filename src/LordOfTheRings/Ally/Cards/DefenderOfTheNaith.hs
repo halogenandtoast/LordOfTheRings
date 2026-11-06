@@ -17,7 +17,7 @@ instance HasAbilities DefenderOfTheNaith where
   getAbilities (DefenderOfTheNaith a) =
     [ restricted a 1 (exists $ AllyWithId a.id <> ExhaustedAlly)
         $ response
-        $ AllyWithTraitLeftPlayWindow After a.owner Silvan
+        $ AllyWithTraitLeftPlayWindow After a.controller Silvan
     ]
 
 instance RunMessage DefenderOfTheNaith where

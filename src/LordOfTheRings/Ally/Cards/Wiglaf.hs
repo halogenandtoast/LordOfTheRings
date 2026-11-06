@@ -20,7 +20,7 @@ wiglaf = ally Wiglaf Cards.wiglaf
 -- cost. Action: Exhaust an attachment on Wiglaf to ready him. (Limit once per phase.)
 instance HasAbilities Wiglaf where
   getAbilities (Wiglaf a) =
-    [ restricted a 1 (CardInHandMatching a.owner (CardWithType AttachmentType <> CardWithTrait Item))
+    [ restricted a 1 (CardInHandMatching a.controller (CardWithType AttachmentType <> CardWithTrait Item))
         $ response
         $ PlayedFromHandWindow After (CardIdTarget a.allyCardId)
     , limited (PlayerLimit PerPhase 1)

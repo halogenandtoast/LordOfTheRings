@@ -38,7 +38,7 @@ instance RunMessage PutOffPursuit where
       pure s
     DoStep 1 (DiscardedTopOfEncounterDeck (isSource a -> True) _ _) -> do
       enemies <- select (EnemyInStagingArea <> NotEnemy UniqueEnemy <> EnemyNotImmuneToPlayerCards)
-      chooseOrRunOneM a.owner do
+      chooseOrRunOneM a.controller do
         questionLabeled "putOffPursuit.shuffle"
         causedBy a
         targets enemies shuffleIntoEncounterDeck
