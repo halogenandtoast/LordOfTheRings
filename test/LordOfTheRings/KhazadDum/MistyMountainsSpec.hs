@@ -31,8 +31,9 @@ reveal defs = do
 -- | A Goblin Scout engaged with the player, dealt the shadow card.
 engagedWithShadow :: PlayerId -> CardDef -> GameT EnemyId
 engagedWithShadow pid shadow = do
+  existing <- getsGame (map toId . toList . (.entities.enemies))
   reveal [Enemies.goblinScout]
-  eid <- enemyOf Enemies.goblinScout
+  eid <- getsGame (fromJustNote "no newly revealed enemy" . fmap toId . find ((`notElem` existing) . toId) . toList . (.entities.enemies))
   run $ EngageEnemy pid eid
   run . AttachShadowCard eid =<< genEncounterCard shadow
   pure eid
