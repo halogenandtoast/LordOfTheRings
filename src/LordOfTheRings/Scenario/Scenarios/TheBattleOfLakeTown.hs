@@ -1,8 +1,9 @@
 module LordOfTheRings.Scenario.Scenarios.TheBattleOfLakeTown (theBattleOfLakeTown) where
 
+import LordOfTheRings.Objective.CardDefs qualified as Objectives
 import Data.Aeson.Types (parseMaybe)
 import LordOfTheRings.Ability (WindowMatcher (PhaseBeginsWindow), forced, mkAbility)
-import LordOfTheRings.Matcher (getLead, getDamage)
+import LordOfTheRings.Matcher (getLead, getDamage, getPlayerOrder, cardMatches, cardIs)
 import LordOfTheRings.Phase (Phase (QuestPhase))
 import LordOfTheRings.Scenario.Import.Lifted
 import LordOfTheRings.Scenario.Scenarios.TheBattleOfLakeTown.Helpers (smaugEnemies)
@@ -31,6 +32,16 @@ instance RunMessage TheBattleOfLakeTown where
       else pure oldMeta
     let a = withMeta m original
     case msg of
+      ScenarioSpecific "lakeTown.setup" _ -> do
+        let dragons = filter isSmaugCard a.encounterDeck
+            remaining = filter (not . isSmaugCard) a.encounterDeck
+            towns = filter (cardMatches $ cardIs Objectives.lakeTown) remaining
+            deck = filter (not . cardMatches (cardIs Objectives.lakeTown)) remaining
+        shuffled <- shuffleM dragons
+        for_ towns addToStaging
+        shuffleEncounterDeck
+        revealEncounterCards . length =<< getPlayerOrder
+        pure $ TheBattleOfLakeTown $ withMeta (Meta shuffled []) $ a & encounterDeckL .~ deck
       UseCardAbility _ (isSource a -> True) 1 _ -> do
         lead <- getLead
         chooseOneM lead do

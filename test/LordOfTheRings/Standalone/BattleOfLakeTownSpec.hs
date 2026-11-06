@@ -1,5 +1,6 @@
 module LordOfTheRings.Standalone.BattleOfLakeTownSpec (spec) where
 
+import LordOfTheRings.Quest.CardDefs qualified as Quests
 import LordOfTheRings.Timing (Timing (When))
 import LordOfTheRings.Sphere (Sphere (Tactics))
 import LordOfTheRings.Event.CardDefs qualified as Events
@@ -32,6 +33,53 @@ stageLocation def = do
 
 spec :: Spec
 spec = describe "Battle of Lake-town" do
+  describe "Terror from the Mountain" do
+    it "caps Smaug at six damage on side B, including later damage effects" . gameTest $ \pid -> do
+      _ <- stageTown
+      q <- putQuestStage Quests.terrorFromTheMountain
+      run $ Flip q
+      chooseTarget pid q
+      run . AddToStaging =<< genEncounterCard Enemies.smaugTheTerrible
+      eid <- onlySmaug
+      run $ PlaceTokens GameSource (toTarget eid) Damage 5
+      run $ PlaceTokens GameSource (toTarget eid) Damage 4
+      run $ PlaceTokens GameSource (toTarget eid) Damage 1
+      getDamage (toTarget eid) `shouldReturn` 6
+
+    it "does not cap Smaug on side A" . gameTest $ \_ -> do
+      _ <- putQuestStage Quests.terrorFromTheMountain
+      run . AddToStaging =<< genEncounterCard Enemies.smaugTheTerrible
+      eid <- onlySmaug
+      run $ PlaceTokens GameSource (toTarget eid) Damage 9
+      getDamage (toTarget eid) `shouldReturn` 9
+
+    it "deals one damage per player to Lake-town when revealed" . twoPlayerTest testDeck $ \one _ -> do
+      town <- stageTown
+      q <- putQuestStage Quests.terrorFromTheMountain
+      run $ Flip q
+      chooseTarget one q
+      getDamage town `shouldReturn` 2
+
+    it "separates all nine Smaug cards, stages Lake-town, and reveals one setup card per player" . gameTestIn theBattleOfLakeTown testDeck $ \_ -> do
+      let dragons = concatMap (replicate 3) [Enemies.smaugTheMightyLakeTown, Enemies.smaugTheTerrible, Enemies.smaugTheMagnificentLakeTown]
+      _ <- setEncounterDeck $ dragons <> [Objectives.lakeTown, Locations.westPier, Locations.southPier, Locations.northPier]
+      q <- putQuestStage Quests.terrorFromTheMountain
+      run $ PerformSetup q
+      -- Resolve the setup encounter card, then side B's When Revealed.
+      resolveRevealed
+      g <- getGame
+      let a = toAttrs g.scenario
+          m = metaOf a
+      length (smaugDeck m) `shouldBe` 9
+      smaugDiscard m `shouldBe` []
+      length a.encounterDeck `shouldBe` 2
+      length g.entities.locations `shouldBe` 1
+      length g.entities.objectives `shouldBe` 1
+      g.entities.enemies `shouldSatisfy` null
+      (.flipped) . toAttrs <$> getActiveQuest `shouldReturn` True
+      town <- getsGame $ toTarget . fromJustNote "Lake-town missing" . headMay . toList . (.entities.objectives)
+      getDamage town `shouldReturn` 1
+
   it "adds West Pier's Burn to each location, including itself and the active location" . gameTest $ \_ -> do
     pier <- stageLocation Locations.westPier
     wharf <- stageLocation Locations.esgarothWharf
