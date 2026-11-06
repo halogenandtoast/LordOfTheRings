@@ -35,6 +35,7 @@ data WindowType
   | -- | a card exhausted, as an objective does
     Exhausted Target
   | DeclaredAsDefender Target EnemyId
+  | ExhaustedToAttack Target EnemyId
   | DeclaredAsAttacker Target EnemyId
   | -- | characters attack the enemy, their attack about to deal its damage
     EnemyAttacked EnemyId

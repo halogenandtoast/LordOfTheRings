@@ -470,7 +470,7 @@ import LordOfTheRings.Message (
     ResolvePillage,
     AttackResolved,
     AttackStagingAreaAlone,
-    AttackWith,
+    AttackWithAgainst,
     BeginPhase,
     BeginRound,
     ChangeHeroController,
@@ -2415,7 +2415,7 @@ runGameMessage msg g = case msg of
       $ questionLabelWith (ikey "label.attackStagingAlone") (Just attacker) [] pid
       $ [ targetLabel
             eid
-            $ [ AttackWith attacker
+            $ [ AttackWithAgainst attacker eid
               , CreateEffect $ Effect GameSource attacker [AttackModifier 1] UntilEndOfAttack
               ]
             <> declaredAttacker attacker eid
@@ -2441,7 +2441,7 @@ runGameMessage msg g = case msg of
           questionLabelWith (ikey "label.declareAttackers") Nothing [toTarget eid] pid
             $ [ targetLabel
                   a
-                  (AttackWith a : declaredAttacker a eid <> [DeclareAttackers pid eid])
+                  (AttackWithAgainst a eid : declaredAttacker a eid <> [DeclareAttackers pid eid])
               | a <- attackers
               ]
             <> [Label (ikey "label.doneAttacking") [DeclareRangedAttackers pid eid others]]
@@ -2468,7 +2468,7 @@ runGameMessage msg g = case msg of
           questionLabelWith (ikey "label.joinAttackRanged") Nothing [toTarget eid] other
             $ [ targetLabel
                   a
-                  (AttackWith a : declaredAttacker a eid <> [DeclareRangedAttackers pid eid (other : rest)])
+                  (AttackWithAgainst a eid : declaredAttacker a eid <> [DeclareRangedAttackers pid eid (other : rest)])
               | a <- ranged
               ]
             <> [Label (ikey "label.doneAttacking") [DeclareRangedAttackers pid eid rest]]

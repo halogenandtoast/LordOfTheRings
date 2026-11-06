@@ -223,6 +223,7 @@ data EnemyMatcher
   | -- | an enemy of the title, whatever its subtitle or version, as "Thane Ulchor" reads of
     -- the scenario's own copy
     EnemyWithTitle Text
+  | EnemyWithTitleContaining Text
   | -- | the enemy whose card this is, as a card taken from a deck is found once in play
     EnemyWithCardId CardId
   | EnemyEngagedWith PlayerMatcher

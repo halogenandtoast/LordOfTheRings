@@ -16,7 +16,7 @@ import LordOfTheRings.Prelude
 import LordOfTheRings.Source
 import LordOfTheRings.Target
 import LordOfTheRings.Token
-import LordOfTheRings.Window (WindowType (BagginsResourceSpentOrDiscarded, BecameReady, Exhausted, RemovedFromQuest), mkAfter)
+import LordOfTheRings.Window (WindowType (BagginsResourceSpentOrDiscarded, BecameReady, ExhaustedToAttack, Exhausted, RemovedFromQuest), mkWhen, mkAfter)
 
 instance RunMessage HeroAttrs where
   runMessage msg attrs = case msg of
@@ -74,6 +74,8 @@ instance RunMessage HeroAttrs where
       blocked <- elem CannotExhaust <$> getModifiers attrs
       exhausting (not blocked) attrs
     Do (Exhaust (isTarget attrs -> True)) -> pure $ attrs & exhaustedL .~ True
+    AttackWithAgainst (isTarget attrs -> True) eid -> attackAgainst False eid
+    ExhaustToAttack (isTarget attrs -> True) eid -> attackAgainst True eid
     AttackWith (isTarget attrs -> True) -> do
       mods <- getModifiers attrs
       if any (`elem` mods) [CannotAttack, CannotAttackOrDefend]
@@ -114,6 +116,18 @@ instance RunMessage HeroAttrs where
       pure $ attrs & tokensL %~ subtractTokens token n
     _ -> pure attrs
    where
+    attackAgainst forced eid = do
+      mods <- getModifiers attrs
+      if any (`elem` mods) [CannotAttack, CannotAttackOrDefend]
+        then pure attrs
+        else do
+          when (CannotExhaust `notElem` mods && (forced || DoesNotExhaustToAttack `notElem` mods) && not attrs.heroExhausted) $ pushAll
+            [ CheckWindows [mkWhen $ Exhausted (toTarget attrs), mkWhen $ ExhaustedToAttack (toTarget attrs) eid]
+            , Do $ Exhaust (toTarget attrs)
+            , CheckWindows [mkAfter $ Exhausted (toTarget attrs), mkAfter $ ExhaustedToAttack (toTarget attrs) eid]
+            ]
+          pure $ attrs & attackingL .~ True
+
     leaving = do
       pushAll $ map PutInDiscard (attrs.heroFacedown <> attrs.heroPoison)
       pure $ attrs & facedownL .~ [] & poisonL .~ []

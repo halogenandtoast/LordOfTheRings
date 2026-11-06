@@ -14,7 +14,7 @@ import LordOfTheRings.Placement (Placement (AttachedTo, InPlayArea), placementCo
 import LordOfTheRings.Prelude
 import LordOfTheRings.Target
 import LordOfTheRings.Token
-import LordOfTheRings.Window (WindowType (BecameReady, Exhausted, RemovedFromQuest), mkAfter)
+import LordOfTheRings.Window (WindowType (BecameReady, ExhaustedToAttack, Exhausted, RemovedFromQuest), mkWhen, mkAfter)
 
 instance RunMessage AllyAttrs where
   runMessage msg attrs = if attrs.allyAsHero then pure attrs else case msg of
@@ -22,6 +22,8 @@ instance RunMessage AllyAttrs where
       blocked <- elem CannotExhaust <$> getModifiers attrs
       exhausting (not blocked) attrs
     Do (Exhaust (isTarget attrs -> True)) -> pure $ attrs & exhaustedL .~ True
+    AttackWithAgainst (isTarget attrs -> True) eid -> attackAgainst False eid
+    ExhaustToAttack (isTarget attrs -> True) eid -> attackAgainst True eid
     AttackWith (isTarget attrs -> True) -> do
       mods <- getModifiers attrs
       if any (`elem` mods) [CannotAttack, CannotAttackOrDefend]
@@ -98,6 +100,18 @@ instance RunMessage AllyAttrs where
       pure $ attrs & tokensL %~ subtractTokens token n
     _ -> pure attrs
    where
+    attackAgainst forced eid = do
+      mods <- getModifiers attrs
+      if any (`elem` mods) [CannotAttack, CannotAttackOrDefend]
+        then pure attrs
+        else do
+          when (CannotExhaust `notElem` mods && (forced || DoesNotExhaustToAttack `notElem` mods) && not attrs.allyExhausted) $ pushAll
+            [ CheckWindows [mkWhen $ Exhausted (toTarget attrs), mkWhen $ ExhaustedToAttack (toTarget attrs) eid]
+            , Do $ Exhaust (toTarget attrs)
+            , CheckWindows [mkAfter $ Exhausted (toTarget attrs), mkAfter $ ExhaustedToAttack (toTarget attrs) eid]
+            ]
+          pure $ attrs & attackingL .~ True
+
     leaving = do
       pushAll $ map PutInDiscard (attrs.allyFacedown <> attrs.allyPoison)
       pure $ attrs & facedownL .~ [] & poisonL .~ []

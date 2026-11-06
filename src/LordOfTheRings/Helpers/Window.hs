@@ -215,6 +215,7 @@ windowMatchesM matcher w@(Window timing wType) = case (matcher, wType) of
   (HeroDeclaredAsDefenderWindow t m, DeclaredAsDefender (HeroTarget hid) _) | t == timing -> selectAny (HeroWithId hid <> m)
   (CharacterDefenderDeclaredWindow t hm am em, DeclaredAsDefender c eid) | t == timing ->
     andM [characterMatches hm am c, selectAny (EnemyWithId eid <> em)]
+  (ExhaustedToAttackWindow t target em, ExhaustedToAttack target' eid) | t == timing && target == target' -> selectAny (EnemyWithId eid <> em)
   (CharacterAttackerDeclaredWindow t hm am em, DeclaredAsAttacker c eid) | t == timing ->
     andM [characterMatches hm am c, selectAny (EnemyWithId eid <> em)]
   -- the attachment played is in play by now, its host's only attachment

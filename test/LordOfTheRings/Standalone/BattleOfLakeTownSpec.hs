@@ -1,5 +1,6 @@
 module LordOfTheRings.Standalone.BattleOfLakeTownSpec (spec) where
 
+import LordOfTheRings.Event.CardDefs qualified as Events
 import LordOfTheRings.Treachery.CardDefs qualified as Treacheries
 import LordOfTheRings.Scenario (theBattleOfLakeTown)
 import LordOfTheRings.Scenario.Types (scenarioMeta)
@@ -7,6 +8,7 @@ import LordOfTheRings.Scenario.Scenarios.TheBattleOfLakeTown.Meta (Meta (..), me
 import LordOfTheRings.Window (WindowType (PhaseBegins), mkAfter)
 import LordOfTheRings.Phase (Phase (QuestPhase, TravelPhase))
 import LordOfTheRings.Card (CardDef (..), toCardDef)
+import LordOfTheRings.Objective.Types (ObjectiveAttrs (objectivePlacement))
 import LordOfTheRings.Objective.CardDefs qualified as Objectives
 import LordOfTheRings.Outcome (Outcome (Lost))
 import LordOfTheRings.Ally.CardDefs qualified as Allies
@@ -16,8 +18,8 @@ import LordOfTheRings.Helpers.Window (travelableLocations)
 import LordOfTheRings.Helpers.Modifiers (getModifiers)
 import LordOfTheRings.Keyword (Keyword (Burn))
 import LordOfTheRings.Location.CardDefs qualified as Locations
-import LordOfTheRings.Matcher (getBurn, getEnemy, getHero, getAlly)
-import LordOfTheRings.Modifier (ModifierType (CannotBeDiscardedByEncounterCards, Blank, GainKeyword, ImmuneToPlayerCardEffects, WhenRevealedCannotBeCanceled, AlliesCannotBeDeclaredDefenders, DefenseModifier))
+import LordOfTheRings.Matcher (getBurn, getEnemy, getHero, getAlly, getObjective)
+import LordOfTheRings.Modifier (ModifierType (CannotBeDiscardedByEncounterCards, Blank, GainKeyword, ImmuneToPlayerCardEffects, WhenRevealedCannotBeCanceled, AlliesCannotBeDeclaredDefenders, DefenseModifier, AttackModifier, DoesNotExhaustToAttack))
 import TestImport
 
 stageLocation :: CardDef -> GameT LocationId
@@ -610,6 +612,109 @@ spec = describe "Battle of Lake-town" do
         run $ ResolveShadowCard card.id eid pid defenders
         getDamage town `shouldReturn` if undefended then 4 else 1
 
+  describe "The Old Thrush" do
+    it "claims a free Thrush by exhausting the hero it attaches to" . gameTest $ \pid -> do
+      oid <- stageThrush
+      hero <- heroOf pid "01012"
+      run $ ActionWindow pid
+      chooseAbilityOf pid oid
+      chooseTarget pid hero
+      isExhausted hero `shouldReturn` True
+      objectivePlacement . toAttrs <$> getObjective oid `shouldReturn` AttachedTo hero
+
+    it "cannot be claimed while guarded" . gameTest $ \pid -> do
+      _ <- setEncounterDeck [Objectives.theOldThrush, Enemies.forestSpider]
+      run RevealEncounterCard
+      resolveRevealed
+      oid <- getsGame $ toId . fromJustNote "Thrush missing" . headMay . toList . (.entities.objectives)
+      run $ ActionWindow pid
+      offersAbilityOf pid oid `shouldReturn` False
+
+    it "reduces Smaug's defense by the cards actually discarded for the attack" . gameTest $ \pid -> do
+      oid <- stageThrush
+      hero <- heroOf pid "01012"
+      run $ ClaimObjective oid hero
+      run . AddToStaging =<< genEncounterCard Enemies.smaugTheTerrible
+      eid <- onlySmaug
+      run $ EngageEnemy pid eid
+      run $ CreateEffect $ Effect GameSource hero [AttackModifier 8] UntilEndOfRound
+      cards <- traverse (putCardIntoHand pid) [Allies.guardOfTheCitadel, Allies.gondorianSpearman]
+      _ <- putCardIntoHand pid Allies.wanderingTook
+      run $ DeclareAttackers pid eid
+      chooseTarget pid hero
+      chooseAbilityOf pid oid
+      for_ cards $ \card -> chooseTarget pid (CardIdTarget card.id)
+      chooseLabel "$label.doneDiscarding" pid
+      chooseLabel "$label.doneAttacking" pid
+      passActions pid
+      (.damage) <$> getEnemy eid `shouldReturn` 5
+
+    it "does not respond when its hero attacks without exhausting" . gameTest $ \pid -> do
+      oid <- stageThrush
+      hero <- heroOf pid "01012"
+      run $ ClaimObjective oid hero
+      _ <- putCardIntoHand pid Allies.guardOfTheCitadel
+      run $ CreateEffect $ Effect GameSource hero [DoesNotExhaustToAttack] UntilEndOfRound
+      run . AddToStaging =<< genEncounterCard Enemies.smaugTheTerrible
+      eid <- onlySmaug
+      run $ AttackWithAgainst hero eid
+      isExhausted hero `shouldReturn` False
+      offersAbilityOf pid oid `shouldReturn` False
+
+    it "does not respond when the hero exhausts to attack an enemy other than Smaug" . gameTest $ \pid -> do
+      oid <- stageThrush
+      hero <- heroOf pid "01012"
+      run $ ClaimObjective oid hero
+      _ <- putCardIntoHand pid Allies.guardOfTheCitadel
+      run . AddToStaging =<< genEncounterCard Enemies.forestSpider
+      eid <- onlySmaug
+      run $ AttackWithAgainst hero eid
+      isExhausted hero `shouldReturn` True
+      offersAbilityOf pid oid `shouldReturn` False
+
+    it "does not offer a defense reduction with an empty hand" . gameTest $ \pid -> do
+      oid <- stageThrush
+      hero <- heroOf pid "01012"
+      run $ ClaimObjective oid hero
+      hand <- (.hand) <$> getPlayer pid
+      for_ hand $ \card -> run $ DiscardFromHand pid card.id
+      run . AddToStaging =<< genEncounterCard Enemies.smaugTheTerrible
+      eid <- onlySmaug
+      run $ AttackWithAgainst hero eid
+      offersAbilityOf pid oid `shouldReturn` False
+
+    it "discards the Thrush when its attached hero leaves play" . gameTest $ \pid -> do
+      oid <- stageThrush
+      hero <- heroOf pid "01012"
+      run $ ClaimObjective oid hero
+      run $ Discard GameSource hero
+      discarded <- map toCardCode <$> getEncounterDiscard
+      discarded `shouldSatisfy` elem (toCardCode Objectives.theOldThrush)
+
+    it "discards the Thrush if it is detached into staging" . gameTest $ \pid -> do
+      oid <- stageThrush
+      hero <- heroOf pid "01012"
+      run $ ClaimObjective oid hero
+      run $ PlaceObjective oid StagingArea
+      discarded <- map toCardCode <$> getEncounterDiscard
+      discarded `shouldSatisfy` elem (toCardCode Objectives.theOldThrush)
+
+    it "responds to Quick Strike's required exhaustion even if the hero normally attacks without exhausting" . gameTest $ \pid -> do
+      oid <- stageThrush
+      hero <- heroOf pid "01012"
+      run $ ClaimObjective oid hero
+      _ <- putCardIntoHand pid Allies.guardOfTheCitadel
+      run $ CreateEffect $ Effect GameSource hero [DoesNotExhaustToAttack] UntilEndOfRound
+      run . AddToStaging =<< genEncounterCard Enemies.smaugTheTerrible
+      eid <- onlySmaug
+      run $ EngageEnemy pid eid
+      card <- genPlayerCard Events.quickStrike (Just pid)
+      run $ PlayAtNoCost pid card
+      chooseTarget pid hero
+      chooseTarget pid eid
+      isExhausted hero `shouldReturn` True
+      offersAbilityOf pid oid `shouldReturn` True
+
 stageTown :: GameT Target
 stageTown = do
   run . AddToStaging =<< genEncounterCard Objectives.lakeTown
@@ -637,3 +742,8 @@ resolveCardShadow pid def = do
   [card] <- setEncounterDeck [def]
   run $ DealShadowCard eid
   run $ ResolveShadowCard card.id eid pid []
+
+stageThrush :: GameT ObjectiveId
+stageThrush = do
+  run . AddToStaging =<< genEncounterCard Objectives.theOldThrush
+  getsGame $ toId . fromJustNote "Thrush missing" . headMay . toList . (.entities.objectives)

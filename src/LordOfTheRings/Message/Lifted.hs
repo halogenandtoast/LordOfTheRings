@@ -1692,7 +1692,7 @@ the attack resolves, as Great Yew Bow's ranged attack on an enemy in the staging
 -}
 declareSoleAttacker :: (ReverseQueue m, Targetable attacker) => PlayerId -> attacker -> EnemyId -> m ()
 declareSoleAttacker pid (toTarget -> attacker) eid =
-  pushAll $ AttackWith attacker : declaredAttacker attacker eid <> [CheckWindows [mkAfter $ AttackersDeclared eid], ResolveAttack pid eid]
+  pushAll $ AttackWithAgainst attacker eid : declaredAttacker attacker eid <> [CheckWindows [mkAfter $ AttackersDeclared eid], ResolveAttack pid eid]
 
 {- | The character attacks the enemy, wherever it is, as an effect declares it an
 attacker; its attack raised by the bonus for that attack alone.
@@ -1700,7 +1700,7 @@ attacker; its attack raised by the bonus for that attack alone.
 attackEnemyWith
   :: (ReverseQueue m, Sourceable source) => PlayerId -> source -> Target -> EnemyId -> Int -> m ()
 attackEnemyWith pid source attacker eid bonus = do
-  push $ AttackWith attacker
+  push $ AttackWithAgainst attacker eid
   when (bonus /= 0) $ createEffect source attacker [AttackModifier bonus] UntilEndOfAttack
   push $ ResolveAttack pid eid
 

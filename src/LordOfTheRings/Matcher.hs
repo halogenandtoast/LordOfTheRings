@@ -284,6 +284,7 @@ matchEnemy matcher enemy = case matcher of
   EnemyWithTrait trait -> hasTrait trait (toTarget enemy) (toCardDef enemy)
   EnemyWithCardCode code -> pure $ toCardCode enemy == code
   EnemyWithTitle title -> pure $ cardMatches (CardWithTitle title) enemy
+  EnemyWithTitleContaining part -> let Name title _ = cdName (toCardDef enemy) in pure $ part `isInfixOf` title
   EnemyWithCardId cid -> pure $ (toCard enemy).id == cid
   EnemyWithFacedownShadow -> any ((`notElem` (toAttrs enemy).enemyShadowRevealed) . (.id)) <$> shadowsPlayerCardsCanAffect enemy
   EnemyWithRevealedShadow -> pure $ notNull (toAttrs enemy).enemyShadowRevealed

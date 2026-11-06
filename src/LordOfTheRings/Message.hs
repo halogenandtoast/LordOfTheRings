@@ -768,6 +768,8 @@ data Message
     whether a ranged character of theirs joins the attack
     -}
     DeclareRangedAttackers PlayerId EnemyId [PlayerId]
+  | ExhaustToAttack Target EnemyId
+  | AttackWithAgainst Target EnemyId
   | AttackWith Target
   | ResolveAttack PlayerId EnemyId
   | -- | an attack on the enemy resolved: the player it was engaged with, the attackers, and

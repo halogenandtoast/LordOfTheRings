@@ -16,7 +16,7 @@ allObjectiveCards =
   Map.fromList $
     map
       (\def -> (cdCardCode def, def))
-      [lakeTown, rangerOfIthilien, corsairSkirmisherShipDreadnaught, eithiliant, eithiliantUpgraded, goldenWing, goldenWingUpgraded, prideOfLebennin, prideOfLebenninUpgraded, silentMist, silentMistUpgraded, swanShipOfDolAmroth, swanShipOfDolAmrothUpgraded, twilightsCall, twilightsCallUpgraded, gondorianWarship,  caveTorchDarkOfMirkwood
+      [theOldThrush, lakeTown, rangerOfIthilien, corsairSkirmisherShipDreadnaught, eithiliant, eithiliantUpgraded, goldenWing, goldenWingUpgraded, prideOfLebennin, prideOfLebenninUpgraded, silentMist, silentMistUpgraded, swanShipOfDolAmroth, swanShipOfDolAmrothUpgraded, twilightsCall, twilightsCallUpgraded, gondorianWarship,  caveTorchDarkOfMirkwood
       , gandalfsMap
       , theThreatToWilderland
       , ashenBrazier
@@ -1631,4 +1631,11 @@ lakeTown :: CardDef
 lakeTown = (objective "the-battle-of-lake-town-007" "Lake-town" TheBattleOfLakeTown 1)
   { cdUnique = True
   , cdCardTraits = setFromList [City]
+  }
+
+theOldThrush :: CardDef
+theOldThrush = (objective "the-battle-of-lake-town-008" "The Old Thrush" TheBattleOfLakeTown 1)
+  { cdUnique = True
+  , cdCardTraits = setFromList [Creature]
+  , cdKeywords = setFromList [Guarded]
   }
