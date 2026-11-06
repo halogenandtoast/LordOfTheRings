@@ -9,7 +9,7 @@ import LordOfTheRings.Helpers.Modifiers (getModifiers, immuneToSource, modifiedQ
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Message
 import LordOfTheRings.Placement (Placement (ActiveLocation))
-import LordOfTheRings.Modifier (ModifierType (NoProgressFromCardEffects, GainTrait, NoProgressFromPlayerCards, PhaseProgressLimitOnTrait, ProgressLimit, ProgressPerRoundLimit, ProgressPlacedOnTraitThisPhase, ProgressPlacedThisRound, ProgressReducedBy, ProgressReducedTo))
+import LordOfTheRings.Modifier (ModifierType (GainVictory, NoProgressFromCardEffects, GainTrait, NoProgressFromPlayerCards, PhaseProgressLimitOnTrait, ProgressLimit, ProgressPerRoundLimit, ProgressPlacedOnTraitThisPhase, ProgressPlacedThisRound, ProgressReducedBy, ProgressReducedTo))
 import LordOfTheRings.Effect (Effect (..), EffectDuration (UntilEndOfPhase, UntilEndOfRound))
 import LordOfTheRings.Prelude
 import LordOfTheRings.Source
@@ -66,6 +66,7 @@ instance RunMessage LocationAttrs where
     placeTokens source token n = do
       let attrs' = attrs & tokensL %~ addTokens token n
       questPoints <- modifiedQuestPoints attrs attrs'.questPoints
+      gainsVictory <- any (\case GainVictory _ -> True; _ -> False) <$> getModifiers attrs
       -- who placed it, as Haunted Hall reads "a player places any amount of progress"
       when (token == Progress && n > 0) $ push $ CheckWindows [mkAfter $ ProgressPlacedOnLocationBy source attrs.id]
       -- a location with as much progress as its quest points is explored, but one on the
@@ -74,7 +75,7 @@ instance RunMessage LocationAttrs where
         $ pushAll
           [ CheckWindows $ map mkWhen explored
           , -- a location with victory points goes to the victory display
-            if isJust (cdVictoryPoints $ toCardDef attrs)
+            if isJust (cdVictoryPoints $ toCardDef attrs) || gainsVictory
               then AddToVictoryDisplay (toTarget attrs)
               else Discard (toSource attrs) (toTarget attrs)
           , -- after it is explored, as Idraen answers; whether it was the active location,

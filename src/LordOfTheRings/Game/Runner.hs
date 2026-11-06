@@ -63,6 +63,7 @@ import LordOfTheRings.Matcher (
   ),
   Query (select),
   getLead,
+  getCurrentQuest,
   characterController,
   getPlayer,
   getLocation,
@@ -145,6 +146,7 @@ import LordOfTheRings.Modifier (
     ProgressReducedBy,
     RemoveFromGameIfLeavesPlay,
     TakesProgressBeforeQuest,
+    TakesProgressBeforeCurrentQuest,
     TakesQuestProgressFirst
   ),
  )
@@ -339,7 +341,15 @@ runGameAllowed msg g = case msg of
             )
       -- and all of it to one that takes progress before the quest, as Mines of Moria
       [] -> do
-        befores <- filterM (fmap (elem TakesProgressBeforeQuest) . getModifiers . fst) =<< takingProgressFirst
+        current <- getCurrentQuest
+        staged <- select LocationInStagingArea
+        befores <- flip mapMaybeM staged \lid -> do
+          modifiers <- getModifiers lid
+          location <- getLocation lid
+          room <- subtract location.progress <$> getLocationQuestPoints lid
+          let takes = TakesProgressBeforeQuest `elem` modifiers
+                || (current == Just target && TakesProgressBeforeCurrentQuest `elem` modifiers)
+          pure $ guard (takes && room > 0) $> (lid, room)
         if notNull befores
           then g <$ (push =<< progressFirst source n befores \k -> [PlaceTokens source target Progress k | k > 0])
           else placeOnQuest

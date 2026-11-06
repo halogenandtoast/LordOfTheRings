@@ -15,7 +15,7 @@ allLocationCards =
   Map.fromList $
     map
       (\def -> (cdCardCode def, def))
-      [theStoneOfErechStandalone, tarlangsNeck, banksOfMorthond, valeOfShadows, blackrootGraves, shadowOfDwimorberg, hauntedValley, westPier, theMastersManor, southPier, northPier, merchantsDistrict, eastPier, greatHouse, greatBridge, fishermansDock, esgarothWharf, capturedWatchtower, emynArnenOverlook, morgulduin, pelennorFieldsOsgiliath, ruinsOfOsgiliath, belfalasShipyard, cobasHavenDreadnaught, isleOfFortune, mouthsOfAnduin, tolfalasLanding, wickedCove,  theEavesOfMirkwoodDarkOfMirkwood
+      [withywindle, misleadingPath, deepGulley, strangeWoods, wallOfTrees, oppressiveForest, theStoneOfErechStandalone, tarlangsNeck, banksOfMorthond, valeOfShadows, blackrootGraves, shadowOfDwimorberg, hauntedValley, westPier, theMastersManor, southPier, northPier, merchantsDistrict, eastPier, greatHouse, greatBridge, fishermansDock, esgarothWharf, capturedWatchtower, emynArnenOverlook, morgulduin, pelennorFieldsOsgiliath, ruinsOfOsgiliath, belfalasShipyard, cobasHavenDreadnaught, isleOfFortune, mouthsOfAnduin, tolfalasLanding, wickedCove,  theEavesOfMirkwoodDarkOfMirkwood
       , forestGateDarkOfMirkwood
       , goblinTunnelsDarkOfMirkwood
       , lightlessPassageDarkOfMirkwood
@@ -5476,3 +5476,27 @@ hauntedValley :: CardDef
 hauntedValley = (location "the-stone-of-erech-021" "Haunted Valley" TheStoneOfErech 2 2 3)
   { cdCardTraits = setFromList [BlackrootVale]
   }
+
+withywindle :: CardDef
+withywindle = unique (location "the-old-forest-011" "Withywindle" TheOldForest 1 1 5)
+  { cdCardTraits = setFromList [Forest, River], cdVictoryPoints = Just 3 }
+
+misleadingPath :: CardDef
+misleadingPath = (location "the-old-forest-012" "Misleading Path" TheOldForest 2 1 2)
+  { cdCardTraits = setFromList [Forest], cdKeywords = setFromList [Surge], cdShadowEffect = True }
+
+deepGulley :: CardDef
+deepGulley = (location "the-old-forest-013" "Deep Gulley" TheOldForest 4 2 4)
+  { cdCardTraits = setFromList [Forest], cdVictoryPoints = Just 2 }
+
+strangeWoods :: CardDef
+strangeWoods = (location "the-old-forest-014" "Strange Woods" TheOldForest 3 3 3)
+  { cdCardTraits = setFromList [Forest], cdVictoryPoints = Just 1, cdShadowEffect = True }
+
+wallOfTrees :: CardDef
+wallOfTrees = (location "the-old-forest-015" "Wall of Trees" TheOldForest 4 0 4)
+  { cdCardTraits = setFromList [Forest] }
+
+oppressiveForest :: CardDef
+oppressiveForest = (location "the-old-forest-016" "Oppressive Forest" TheOldForest 2 2 5)
+  { cdCardTraits = setFromList [Forest], cdVictoryPoints = Just 2, cdShadowEffect = True }

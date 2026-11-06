@@ -1929,6 +1929,7 @@ library
       LordOfTheRings.Location.Cards.DecrepitRooftops
       LordOfTheRings.Location.Cards.DeepChasm
       LordOfTheRings.Location.Cards.DeepDarkPassage
+      LordOfTheRings.Location.Cards.DeepGulley
       LordOfTheRings.Location.Cards.DeepingCulvert
       LordOfTheRings.Location.Cards.DeepingWall
       LordOfTheRings.Location.Cards.DeepMines
@@ -2158,6 +2159,7 @@ library
       LordOfTheRings.Location.Cards.MinesOfGundabad
       LordOfTheRings.Location.Cards.MinesOfMoria
       LordOfTheRings.Location.Cards.MirkwoodPath
+      LordOfTheRings.Location.Cards.MisleadingPath
       LordOfTheRings.Location.Cards.MithlondHarbor
       LordOfTheRings.Location.Cards.MithrilLode
       LordOfTheRings.Location.Cards.MoonlitPassage
@@ -2196,6 +2198,7 @@ library
       LordOfTheRings.Location.Cards.OldWaterCourse
       LordOfTheRings.Location.Cards.OpenPit
       LordOfTheRings.Location.Cards.OpenWaters
+      LordOfTheRings.Location.Cards.OppressiveForest
       LordOfTheRings.Location.Cards.OrcCave
       LordOfTheRings.Location.Cards.OrcHold
       LordOfTheRings.Location.Cards.OrcPassage
@@ -2354,6 +2357,7 @@ library
       LordOfTheRings.Location.Cards.StoneBarrow
       LordOfTheRings.Location.Cards.StonewainValley
       LordOfTheRings.Location.Cards.Storehouse
+      LordOfTheRings.Location.Cards.StrangeWoods
       LordOfTheRings.Location.Cards.StreetsOfTharbad
       LordOfTheRings.Location.Cards.StreetsOfUlfast
       LordOfTheRings.Location.Cards.StreetsOfUmbar
@@ -2484,6 +2488,7 @@ library
       LordOfTheRings.Location.Cards.VastTrollFells
       LordOfTheRings.Location.Cards.VillageHut
       LordOfTheRings.Location.Cards.WallOfMorannon
+      LordOfTheRings.Location.Cards.WallOfTrees
       LordOfTheRings.Location.Cards.WallsOfCairAndros
       LordOfTheRings.Location.Cards.WallsOfUmbar
       LordOfTheRings.Location.Cards.WargLair
@@ -2516,6 +2521,7 @@ library
       LordOfTheRings.Location.Cards.WickedHilltops
       LordOfTheRings.Location.Cards.WindingCaverns
       LordOfTheRings.Location.Cards.WindingStairs
+      LordOfTheRings.Location.Cards.Withywindle
       LordOfTheRings.Location.Cards.WoldOfRohan
       LordOfTheRings.Location.Cards.WoodedGlade
       LordOfTheRings.Location.Cards.WoodedRiverbank

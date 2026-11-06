@@ -2,6 +2,12 @@
 
 module LordOfTheRings.Location (module LordOfTheRings.Location, module X) where
 
+import LordOfTheRings.Location.Cards.Withywindle (withywindle)
+import LordOfTheRings.Location.Cards.MisleadingPath (misleadingPath)
+import LordOfTheRings.Location.Cards.DeepGulley (deepGulley)
+import LordOfTheRings.Location.Cards.StrangeWoods (strangeWoods)
+import LordOfTheRings.Location.Cards.WallOfTrees (wallOfTrees)
+import LordOfTheRings.Location.Cards.OppressiveForest (oppressiveForest)
 import LordOfTheRings.Location.Cards.TheStoneOfErechStandalone (theStoneOfErechStandalone)
 import LordOfTheRings.Location.Cards.TarlangsNeck (tarlangsNeck)
 import LordOfTheRings.Location.Cards.BanksOfMorthond (banksOfMorthond)
@@ -804,7 +810,13 @@ allLocations =
   Map.fromList
     [ (toCardCode builder, card)
     | card@(SomeLocationCard builder) <-
-        [ SomeLocationCard theStoneOfErechStandalone
+        [ SomeLocationCard withywindle
+        , SomeLocationCard misleadingPath
+        , SomeLocationCard deepGulley
+        , SomeLocationCard strangeWoods
+        , SomeLocationCard wallOfTrees
+        , SomeLocationCard oppressiveForest
+        , SomeLocationCard theStoneOfErechStandalone
         , SomeLocationCard tarlangsNeck
         , SomeLocationCard banksOfMorthond
         , SomeLocationCard valeOfShadows

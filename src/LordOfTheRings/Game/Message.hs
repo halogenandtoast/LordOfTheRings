@@ -3767,6 +3767,9 @@ runGameMessage msg g = case msg of
   ShuffleIntoQuestDeck card -> pure $ g & entitiesL . questsL %~ Map.filter ((/= card.id) . (.cardId) . toAttrs)
   PutOnBottomOfQuestDeck card -> pure $ g & entitiesL . questsL %~ Map.filter ((/= card.id) . (.cardId) . toAttrs)
   AddToVictoryDisplay target@(LocationTarget lid) | Just l <- Map.lookup lid g.entities.locations -> do
+    gained <- headMay . (\ms -> [n | GainVictory n <- ms]) <$> getModifiers target
+    let card = toCard l
+        gainedL = maybe id (\n -> gainedVictoryPointsL %~ Map.insert card.id n) (guard (isNothing $ cdVictoryPoints $ toCardDef l) *> gained)
     pushAll
       $ [Discard GameSource (toTarget a) | a <- toList g.entities.attachments, a.placement == AttachedTo target]
       <> [Discard GameSource (toTarget t) | t <- toList g.entities.treacheries, t.placement == AttachedTo target]
@@ -3780,7 +3783,7 @@ runGameMessage msg g = case msg of
       %~ Map.delete lid
       & scenarioL
       %~ overAttrs
-        (victoryDisplayL %~ (EncounterCard (MkEncounterCard (locationCardId $ toAttrs l) (toCardCode l)) :))
+        (gainedL . (victoryDisplayL %~ (card :)))
   -- a card from the encounter deck, or a player's discard pile, as Out of the Wild takes them
   AddToVictoryDisplay (CardIdTarget cid) -> do
     let fromDeck = [EncounterCard c | c <- (toAttrs g.scenario).encounterDeck, c.id == cid]
