@@ -90,7 +90,7 @@ allQuestCards =
   Map.fromList $
     map
       (\def -> (cdCardCode def, def))
-      [farewellToTheShire, darkBadPlace, chokedWithBrambles, shiftingTrees, closingInAroundThem, theWickedWillow, theDisappearance, terrorOfTheDead, theShadowHost, theDragonsWrath, fireAndWater, terrorFromTheMountain, anduinCrossing, throughTheRuinsOsgiliath, beyondExpectations, raceToMinasTirith, searchingTheHighSeas, destroyTheDreadnaught,  afterTheRaid
+      [ruinsOfTheFirstAge, ancientEvilsDisturbed, deeperIntoThePast, theServantsOfMorgoth, theRootsOfEredLuin, theMinesOfBelegost, theBeastOfBelegost, farewellToTheShire, darkBadPlace, chokedWithBrambles, shiftingTrees, closingInAroundThem, theWickedWillow, theDisappearance, terrorOfTheDead, theShadowHost, theDragonsWrath, fireAndWater, terrorFromTheMountain, anduinCrossing, throughTheRuinsOsgiliath, beyondExpectations, raceToMinasTirith, searchingTheHighSeas, destroyTheDreadnaught,  afterTheRaid
       , mirkwoodForestTheOath
       , theRearguardTheOath
       , theDarkOfNibinDum
@@ -2298,3 +2298,12 @@ closingInAroundThem = quest "the-old-forest-005" "The Living Forest" TheOldFores
 
 theWickedWillow :: CardDef
 theWickedWillow = quest "the-old-forest-006" "The Wicked Willow" TheOldForest 3 18
+
+ruinsOfTheFirstAge, ancientEvilsDisturbed, deeperIntoThePast, theServantsOfMorgoth, theRootsOfEredLuin, theMinesOfBelegost, theBeastOfBelegost :: CardDef
+ruinsOfTheFirstAge = (quest "the-ruins-of-belegost-001" "Ruins of the First Age" TheRuinsOfBelegost 1 6)
+ancientEvilsDisturbed = (quest "the-ruins-of-belegost-002" "Ancient Evils Disturbed" TheRuinsOfBelegost 2 9) {cdWhenRevealed = True}
+deeperIntoThePast = (quest "the-ruins-of-belegost-003" "Deeper into the Past" TheRuinsOfBelegost 2 9) {cdWhenRevealed = True}
+theServantsOfMorgoth = (quest "the-ruins-of-belegost-004" "The Servants of Morgoth" TheRuinsOfBelegost 3 6) {cdWhenRevealed = True}
+theRootsOfEredLuin = (quest "the-ruins-of-belegost-005" "The Roots of Ered Luin" TheRuinsOfBelegost 3 6) {cdWhenRevealed = True}
+theMinesOfBelegost = (quest "the-ruins-of-belegost-006" "The Mines of Belegost" TheRuinsOfBelegost 3 6) {cdWhenRevealed = True}
+theBeastOfBelegost = (quest "the-ruins-of-belegost-007" "The Beast of Belegost" TheRuinsOfBelegost 4 0) {cdWhenRevealed = True}

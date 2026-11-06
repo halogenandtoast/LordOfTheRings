@@ -43,6 +43,8 @@ def icon(match):
 
 
 def normalize_text(value):
+    value = value.replace('Randomly select 1 of the 5 remaining UNRECOGNIZED TYPE: trait-searchkeyword', 'Randomly select 1 of the 5 remaining Loot objectives and place it facedown under Stalking the Ruins (without looking). Shuffle the others into the encounter deck (without looking at them).')
+    value = value.replace('Book of Aul‰', 'Book of Aulë').replace('advace to stage', 'advance to stage')
     value = value.replace('the fist player claims', 'the first player claims')
     value = value.replace('place 1 progress token on Stalking the Ruins', 'place 1 resource on Stalking the Ruins')
     value = value.replace('beginning of the ropund', 'beginning of the round')

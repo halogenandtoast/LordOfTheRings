@@ -2775,6 +2775,7 @@ library
       LordOfTheRings.Quest.Cards.BattleWithThePack
       LordOfTheRings.Quest.Cards.BattleWithTheSpiders
       LordOfTheRings.Quest.Cards.BeastsOfLegend
+      LordOfTheRings.Quest.Cards.BelegostExploration
       LordOfTheRings.Quest.Cards.BelowTheMines
       LordOfTheRings.Quest.Cards.BeyondExpectations
       LordOfTheRings.Quest.Cards.BlockedByFlame
@@ -3366,6 +3367,7 @@ library
       LordOfTheRings.Scenario.Scenarios.TheRiverRunning.Helpers
       LordOfTheRings.Scenario.Scenarios.TheRoadToIsengard
       LordOfTheRings.Scenario.Scenarios.TheRoadToIsengard.Helpers
+      LordOfTheRings.Scenario.Scenarios.TheRuinsOfBelegost
       LordOfTheRings.Scenario.Scenarios.TheRuinsOfBelegost.Helpers
       LordOfTheRings.Scenario.Scenarios.TheSeventhLevel
       LordOfTheRings.Scenario.Scenarios.TheSeventhLevel.Helpers

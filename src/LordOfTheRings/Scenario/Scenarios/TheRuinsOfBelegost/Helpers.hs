@@ -1,7 +1,7 @@
 module LordOfTheRings.Scenario.Scenarios.TheRuinsOfBelegost.Helpers
-  ( playerControlsLoot, lootControlledBy, stalkingResources, stalkingObjectives, placeStalkingResources, summonNaurlhug ) where
+  ( playerControlsLoot, lootControlledBy, stalkingResources, stalkingObjectives, placeStalkingResources, summonNaurlhug, controlledLootCount, inBelegostVictory, heroHasLoot ) where
 
-import LordOfTheRings.Card (toCardCode)
+import LordOfTheRings.Card (CardDef, toCardCode)
 import LordOfTheRings.Classes.Entity (toAttrs)
 import LordOfTheRings.Classes.HasGame
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
@@ -45,3 +45,14 @@ summonNaurlhug = do
   if null dragons
     then addSetAsideToStaging (cardIs Enemies.naurlhug)
     else for_ dragons \eid -> placeEnemy eid StagingArea
+
+controlledLootCount :: HasGame m => m Int
+controlledLootCount = sum <$> (traverse (fmap length . lootControlledBy) =<< getPlayerOrder)
+
+heroHasLoot :: HasGame m => CardDef -> m Bool
+heroHasLoot def = do
+  loot <- concatMapM lootControlledBy =<< getPlayerOrder
+  pure $ any ((== toCardCode def) . toCardCode) loot
+
+inBelegostVictory :: HasGame m => CardDef -> m Bool
+inBelegostVictory def = getsGame $ any ((== toCardCode def) . toCardCode) . (.victoryDisplay) . toAttrs . (.scenario)

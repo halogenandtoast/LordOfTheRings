@@ -3,6 +3,7 @@ module LordOfTheRings.Standalone.BelegostSpec (spec) where
 import Data.Map.Strict qualified as Map
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Event.CardDefs qualified as Events
+import LordOfTheRings.Scenario.Scenarios.TheRuinsOfBelegost (theRuinsOfBelegost)
 import LordOfTheRings.Ally.CardDefs qualified as Allies
 import LordOfTheRings.Attachment.CardDefs qualified as Attachments
 import LordOfTheRings.Objective.CardDefs qualified as Objectives
@@ -21,9 +22,9 @@ import LordOfTheRings.Keyword qualified as Keyword
 import LordOfTheRings.Objective (ObjectiveAttrs (..))
 import LordOfTheRings.Scenario.Types (ScenarioAttrs (..), encounterDiscardL)
 import LordOfTheRings.Quest.CardDefs qualified as Quests
-import LordOfTheRings.Phase (Phase (QuestPhase, PlanningPhase))
+import LordOfTheRings.Phase (Phase (QuestPhase, PlanningPhase, TravelPhase))
 import LordOfTheRings.Trait (Trait (Weapon))
-import LordOfTheRings.Window (WindowType (PhaseBegins, EnemyAttacking, AdvancedToStage, WhenRevealedCanceled), mkAfter, mkWhen)
+import LordOfTheRings.Window (WindowType (PhaseBegins, EnemyAttacking, AdvancedToStage, ActiveLocationExplored, WhenRevealedCanceled), mkAfter, mkWhen)
 import LordOfTheRings.Treachery.CardDefs qualified as Treacheries
 import TestImport
 
@@ -132,8 +133,150 @@ resolveTreacheryShadow pid eid def = do
   run $ DealShadowCard eid
   run $ ResolveShadowCard card.id eid pid []
 
+explorationStage :: CardDef -> GameT Target
+explorationStage def = do
+  target <- putQuestStage def
+  run $ Flip target
+  resolveRevealed
+  pure target
+
+belegostScenarioTable :: Int -> ([PlayerId] -> GameT ()) -> IO ()
+belegostScenarioTable size body = do
+  players <- for [1 .. size] \n -> either (error . show) id <$> loadPlayer ("Player " <> tshow n) testDeck
+  env <- newGameEnv (newTableIn theRuinsOfBelegost $ fromJustNote "empty table" $ nonEmpty players) (const $ pure ()) 1
+  runGameT env $ body =<< getsGame (.playerOrder)
+
 spec :: Spec
 spec = describe "Belegost enemies" do
+  describe "exploration quests" do
+    for_ [1 .. 4] \n ->
+      it ("sets up the printed physical cards and one secret Loot for " <> show n <> " players") . belegostScenarioTable n $ \players -> do
+        let lead = fromJustNote "no player" $ headMay players
+        run $ DoStep 1 Setup
+        run $ DoStep 7 Setup
+        chooseTarget lead =<< getActiveQuest
+        stage <- toAttrs <$> getActiveQuest
+        stage.flipped `shouldBe` True
+        toCardCode stage `shouldBe` toCardCode Quests.ruinsOfTheFirstAge
+        locations <- getsGame (toList . (.entities.locations))
+        length locations `shouldBe` n
+        map toCardCode locations `shouldSatisfy` all (== toCardCode Locations.abandonedMineBelegost)
+        hidden <- objectiveUnderneath <$> clock
+        length hidden `shouldBe` 1
+        map toCardCode hidden `shouldSatisfy` all (`elem` map toCardCode (drop 1 belegostLoot))
+        aside <- getsGame ((.scenarioSetAside) . toAttrs . (.scenario))
+        length aside `shouldBe` 4
+        map toCardCode aside `shouldSatisfy` all (`elem` map toCardCode [Enemies.lurkerOfTheDepths, Enemies.naurlhug, Locations.naurlhugsLair, Objectives.swordOfBelegost])
+        deck <- getEncounterDeck
+        length deck `shouldBe` 39 - n
+        let physical = map (.id) deck <> map (.id) aside <> map (.id) hidden <> map ((.cardId) . toAttrs) locations
+        length (ordNub physical) `shouldBe` length physical
+        length <$> getsGame ((.questDeck) . toAttrs . (.scenario)) `shouldReturn` 6
+
+    it "keeps progress on stage one until a hero controls Loot, then advances to 2A without Keys" . gameTestIn theRuinsOfBelegost testDeck $ \pid -> do
+      run $ DoStep 1 Setup
+      target <- toTarget <$> getActiveQuest
+      run $ Flip target
+      _ <- setEncounterDeck [Locations.oldForestRoad]
+      lurker <- genEncounterCard Enemies.lurkerOfTheDepths
+      run $ SetAside lurker
+      run $ PlaceTokens GameSource target Progress 6
+      toCardCode <$> getActiveQuest `shouldReturn` toCardCode Quests.ruinsOfTheFirstAge
+      claimLoot pid Objectives.dwarvenTorch
+      resolveRevealed
+      toCardCode <$> getActiveQuest `shouldReturn` toCardCode Quests.ancientEvilsDisturbed
+      eid <- enemyOf Enemies.lurkerOfTheDepths
+      (.cardId) . toAttrs <$> getEnemy eid `shouldReturn` lurker.id
+
+    it "advances to 2C when Keys are attached to a hero" . gameTestIn theRuinsOfBelegost testDeck $ \pid -> do
+      run $ DoStep 1 Setup
+      target <- toTarget <$> getActiveQuest
+      run $ Flip target
+      _ <- setEncounterDeck [Locations.oldForestRoad]
+      lurker <- genEncounterCard Enemies.lurkerOfTheDepths
+      run $ SetAside lurker
+      claimLoot pid Objectives.keysOfBelegost
+      run $ PlaceTokens GameSource target Progress 6
+      resolveRevealed
+      toCardCode <$> getActiveQuest `shouldReturn` toCardCode Quests.deeperIntoThePast
+      length <$> select (EnemyWithCardCode $ toCardCode Enemies.lurkerOfTheDepths) `shouldReturn` 0
+      getsGame (any ((== lurker.id) . (.id)) . (.scenarioSetAside) . toAttrs . (.scenario)) `shouldReturn` False
+
+    it "does not count guarded Loot toward the stage-one requirement" . gameTest $ \_ -> do
+      target <- explorationStage Quests.ruinsOfTheFirstAge
+      eid <- stageEnemy Enemies.forestSpider
+      run . (`PutObjectiveIntoPlayAttached` (EnemyTarget eid)) =<< genEncounterCard Objectives.keysOfBelegost
+      getModifiers target >>= (`shouldSatisfy` elem CannotBeDefeated)
+
+    it "returns the topmost discarded location only if no location is in play" . gameTest $ \_ -> do
+      _ <- explorationStage Quests.ruinsOfTheFirstAge
+      setEncounterDiscard [Treacheries.coveredPit, Locations.darkenedTunnel, Locations.sunkenTreasury]
+      run $ CheckWindows [mkAfter $ PhaseBegins TravelPhase]
+      locations <- getsGame (map toCardCode . toList . (.entities.locations))
+      locations `shouldBe` [toCardCode Locations.darkenedTunnel]
+      map toCardCode <$> getEncounterDiscard `shouldReturn` [toCardCode Treacheries.coveredPit, toCardCode Locations.sunkenTreasury]
+      run $ CheckWindows [mkAfter $ PhaseBegins TravelPhase]
+      getsGame (length . (.entities.locations)) `shouldReturn` 1
+
+    it "does not return a location when the only location is active" . gameTest $ \_ -> do
+      _ <- explorationStage Quests.ruinsOfTheFirstAge
+      _ <- activeLocation Locations.oldForestRoad
+      setEncounterDiscard [Locations.darkenedTunnel]
+      run $ CheckWindows [mkAfter $ PhaseBegins TravelPhase]
+      getsGame (length . (.entities.locations)) `shouldReturn` 1
+      length <$> getEncounterDiscard `shouldReturn` 1
+
+    it "requires two claimed Loot and the Lurker in the victory display at 2B" . twoPlayerTest testDeck $ \one two -> do
+      target <- explorationStage Quests.ancientEvilsDisturbed
+      claimLoot one Objectives.keysOfBelegost
+      claimLoot two Objectives.dwarvenTorch
+      getModifiers target >>= (`shouldSatisfy` elem CannotBeDefeated)
+      eid <- stageEnemy Enemies.lurkerOfTheDepths
+      run $ AddToVictoryDisplay (EnemyTarget eid)
+      getModifiers target >>= (`shouldSatisfy` notElem CannotBeDefeated)
+
+    it "still needs two claimed Loot after the Lurker has been defeated" . gameTest $ \pid -> do
+      target <- explorationStage Quests.ancientEvilsDisturbed
+      eid <- stageEnemy Enemies.lurkerOfTheDepths
+      run $ AddToVictoryDisplay (EnemyTarget eid)
+      claimLoot pid Objectives.keysOfBelegost
+      getModifiers target >>= (`shouldSatisfy` elem CannotBeDefeated)
+      claimLoot pid Objectives.dwarvenTorch
+      getModifiers target >>= (`shouldSatisfy` notElem CannotBeDefeated)
+
+    it "still needs two claimed Loot after three active locations have been explored" . gameTest $ \pid -> do
+      _ <- setEncounterDeck [Locations.oldForestRoad]
+      target <- explorationStage Quests.deeperIntoThePast
+      run $ PlaceTokens GameSource target Resource 3
+      claimLoot pid Objectives.keysOfBelegost
+      getModifiers target >>= (`shouldSatisfy` elem CannotBeDefeated)
+      claimLoot pid Objectives.dwarvenTorch
+      getModifiers target >>= (`shouldSatisfy` notElem CannotBeDefeated)
+
+    it "requires two claimed Loot and three explored active locations at 2D" . gameTest $ \pid -> do
+      _ <- setEncounterDeck [Locations.oldForestRoad]
+      target <- explorationStage Quests.deeperIntoThePast
+      claimLoot pid Objectives.keysOfBelegost
+      claimLoot pid Objectives.dwarvenTorch
+      getModifiers target >>= (`shouldSatisfy` elem CannotBeDefeated)
+      lid <- activeLocation Locations.oldForestRoad
+      for_ [1 .. 3 :: Int] \n -> do
+        run $ CheckWindows [mkAfter $ ActiveLocationExplored lid]
+        countTokens Resource . questTokens . toAttrs <$> getActiveQuest `shouldReturn` n
+      getModifiers target >>= (`shouldSatisfy` notElem CannotBeDefeated)
+
+    it "discards until the first location after shuffling Lurker and the discard into the deck" . gameTest $ \_ -> do
+      lurker <- genEncounterCard Enemies.lurkerOfTheDepths
+      run $ SetAside lurker
+      _ <- setEncounterDeck [Treacheries.coveredPit, Locations.oldForestRoad, Treacheries.concealedSpikes]
+      setEncounterDiscard [Locations.sunkenTreasury]
+      _ <- explorationStage Quests.deeperIntoThePast
+      getsGame (length . (.entities.locations)) `shouldReturn` 1
+      getsGame (any ((== lurker.id) . (.id)) . (.scenarioSetAside) . toAttrs . (.scenario)) `shouldReturn` False
+      deck <- getEncounterDeck
+      pile <- getEncounterDiscard
+      length (deck <> pile) `shouldBe` 4
+
   describe "Echoes in the Dark" do
     it "recalculates the first player's characters, stacks, and expires at phase end (FAQ 1.55)" . twoPlayerTest testDeck $ \one two -> do
       _ <- stageEnemy Enemies.forestSpider
