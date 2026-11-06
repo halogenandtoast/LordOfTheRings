@@ -262,6 +262,7 @@ library
       LordOfTheRings.Ally.Cards.QuickbeamTheTreasonOfSaruman
       LordOfTheRings.Ally.Cards.Radagast
       LordOfTheRings.Ally.Cards.RangerOfCardolan
+      LordOfTheRings.Ally.Cards.RangerOfIthilien
       LordOfTheRings.Ally.Cards.RangerOfTheNorth
       LordOfTheRings.Ally.Cards.RavenhillScout
       LordOfTheRings.Ally.Cards.RedwaterSentry
@@ -2605,6 +2606,7 @@ library
       LordOfTheRings.Objective.Cards.PitTrap
       LordOfTheRings.Objective.Cards.PoisonedCounsels
       LordOfTheRings.Objective.Cards.PoisonedSpear
+      LordOfTheRings.Objective.Cards.RangerOfIthilien
       LordOfTheRings.Objective.Cards.RescuedVillagers
       LordOfTheRings.Objective.Cards.RiseToPower
       LordOfTheRings.Objective.Cards.SarumansStaffTheRoadToIsengard
@@ -2715,6 +2717,7 @@ library
       LordOfTheRings.Quest.Cards.BattleWithTheSpiders
       LordOfTheRings.Quest.Cards.BeastsOfLegend
       LordOfTheRings.Quest.Cards.BelowTheMines
+      LordOfTheRings.Quest.Cards.BeyondExpectations
       LordOfTheRings.Quest.Cards.BlockedByFlame
       LordOfTheRings.Quest.Cards.BlockedByShadow
       LordOfTheRings.Quest.Cards.BreakingIsengard

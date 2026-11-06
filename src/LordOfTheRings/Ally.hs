@@ -2,6 +2,7 @@
 
 module LordOfTheRings.Ally (module LordOfTheRings.Ally, module X) where
 
+import LordOfTheRings.Ally.Cards.RangerOfIthilien (rangerOfIthilien)
 import Data.Map.Strict qualified as Map
 import LordOfTheRings.Card
 import LordOfTheRings.Objective.CardDefs qualified as Objectives
@@ -358,7 +359,8 @@ allAllies =
   Map.fromList
     [ (toCardCode builder, card)
     | card@(SomeAllyCard builder) <-
-        [ SomeAllyCard gondorianWarship
+        [ SomeAllyCard rangerOfIthilien
+        , SomeAllyCard gondorianWarship
         , SomeAllyCard eithiliant
         , SomeAllyCard eithiliantUpgraded
         , SomeAllyCard goldenWing

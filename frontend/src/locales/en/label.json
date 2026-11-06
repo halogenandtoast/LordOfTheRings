@@ -1,4 +1,8 @@
 {
+  "rangerOfIthilien": {
+    "shadow": "You may exhaust a character you control to take control of Ranger of Ithilien",
+    "decline": "Do not take control of Ranger of Ithilien"
+  },
   "snagaScouts": {
     "engage": "Choose the player with the lowest threat for all Snaga Scouts to engage"
   },

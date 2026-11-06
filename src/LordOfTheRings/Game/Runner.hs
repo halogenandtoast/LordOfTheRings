@@ -72,6 +72,7 @@ import LordOfTheRings.Message (
     BeginPhase,
     CheckWindows,
     CompleteQuest,
+    CommitToQuest,
     CreateEffect,
     DealDamage,
     Discard,
@@ -170,6 +171,7 @@ import LordOfTheRings.Window (
   Timing (When),
   Window (Window),
   WindowType (
+    CommittedToQuest,
     BecameActiveLocation,
     EnemyEnteredPlay,
     EnemyLeftPlay,
@@ -202,6 +204,14 @@ runGame msg g = protectDiscardedHeroes g msg >>= maybe (pure g) (\allowed -> run
 
 runGameAllowed :: Message -> Game -> GameT Game
 runGameAllowed msg g = case msg of
+  -- Committing an existing character opens a When window before its commitment.
+  -- A card entering play already committed uses CardIdTarget and does not commit
+  -- by declaration (Ranger of Ithilien’s printed When Revealed). After windows
+  -- still wait for the player's completed group, in CommitCharacters.
+  CommitToQuest target | isCharacter target -> do
+    pushAll [CheckWindows [mkWhen $ CommittedToQuest target], DoStep 2 msg]
+    pure g
+  DoStep 2 (CommitToQuest target) -> runGame'' (CommitToQuest target) g
   LowerThreat pid n -> do
     mods <- getModifiers $ PlayerTarget pid
     player <- getPlayer pid
@@ -549,3 +559,9 @@ runInPlay msg g =
         BeginPhase phase -> g'' <$ push (CheckWindows [mkAfter $ PhaseBegins phase])
         _ -> pure g''
 
+
+isCharacter :: Target -> Bool
+isCharacter = \case
+  HeroTarget _ -> True
+  AllyTarget _ -> True
+  _ -> False

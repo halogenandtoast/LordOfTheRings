@@ -16,7 +16,7 @@ allObjectiveCards =
   Map.fromList $
     map
       (\def -> (cdCardCode def, def))
-      [corsairSkirmisherShipDreadnaught, eithiliant, eithiliantUpgraded, goldenWing, goldenWingUpgraded, prideOfLebennin, prideOfLebenninUpgraded, silentMist, silentMistUpgraded, swanShipOfDolAmroth, swanShipOfDolAmrothUpgraded, twilightsCall, twilightsCallUpgraded, gondorianWarship,  caveTorchDarkOfMirkwood
+      [rangerOfIthilien, corsairSkirmisherShipDreadnaught, eithiliant, eithiliantUpgraded, goldenWing, goldenWingUpgraded, prideOfLebennin, prideOfLebenninUpgraded, silentMist, silentMistUpgraded, swanShipOfDolAmroth, swanShipOfDolAmrothUpgraded, twilightsCall, twilightsCallUpgraded, gondorianWarship,  caveTorchDarkOfMirkwood
       , gandalfsMap
       , theThreatToWilderland
       , ashenBrazier
@@ -1612,4 +1612,17 @@ corsairSkirmisherShipDreadnaught =
     , cdHitPoints = Just 6
     , cdCardTraits = setFromList [Corsair, Ship]
     , cdOtherSide = Just "the-hunt-for-the-dreadnaught-028"
+    }
+
+rangerOfIthilien :: CardDef
+rangerOfIthilien =
+  (objective "the-massing-at-osgiliath-015" "Ranger of Ithilien" TheMassingAtOsgiliath 2)
+    { cdCardType = ObjectiveAllyType
+    , cdWillpower = Just 2
+    , cdAttack = Just 2
+    , cdDefense = Just 1
+    , cdHitPoints = Just 2
+    , cdCardTraits = setFromList [Gondor, Ranger, AllyTrait]
+    , cdWhenRevealed = True
+    , cdShadowEffect = True
     }

@@ -2,6 +2,7 @@
 
 module LordOfTheRings.Quest (module LordOfTheRings.Quest, module X) where
 
+import LordOfTheRings.Quest.Cards.BeyondExpectations (beyondExpectations)
 import LordOfTheRings.Quest.Cards.RaceToMinasTirith (raceToMinasTirith)
 import Data.Map.Strict qualified as Map
 import LordOfTheRings.Card
@@ -479,7 +480,8 @@ allQuests =
   Map.fromList
     [ (toCardCode builder, card)
     | card@(SomeQuestCard builder) <-
-        [ SomeQuestCard raceToMinasTirith
+        [ SomeQuestCard beyondExpectations
+        , SomeQuestCard raceToMinasTirith
         , SomeQuestCard searchingTheHighSeas
         , SomeQuestCard destroyTheDreadnaught
         , SomeQuestCard afterTheRaid

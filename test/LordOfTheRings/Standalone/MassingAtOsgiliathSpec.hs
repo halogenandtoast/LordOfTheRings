@@ -1,6 +1,11 @@
 module LordOfTheRings.Standalone.MassingAtOsgiliathSpec (spec) where
 
-import LordOfTheRings.Card (toCard)
+import Data.Map.Strict qualified as Map
+import LordOfTheRings.Card (toCard, allEncounterCards, CardDef (..), CardType (QuestType))
+import LordOfTheRings.Decklist (loadPlayer)
+import LordOfTheRings.EncounterSet qualified as EncounterSet
+import LordOfTheRings.Objective.CardDefs qualified as Objectives
+import LordOfTheRings.Event.CardDefs qualified as Events
 import LordOfTheRings.Helpers.Window (travelableLocations)
 import LordOfTheRings.Keyword (Keyword (Doomed))
 import LordOfTheRings.Outcome (Outcome (Won))
@@ -18,7 +23,7 @@ import LordOfTheRings.Effect (Effect (..), EffectDuration (UntilEndOfPhase, Unti
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Helpers.Staging (getEnemyAttack, getLocationThreat, getStagingThreat)
 import LordOfTheRings.Location.CardDefs qualified as Locations
-import LordOfTheRings.Scenario.Types (encounterDiscardL)
+import LordOfTheRings.Scenario.Types (encounterDiscardL, scenarioSetAside)
 import LordOfTheRings.Scenario.Scenarios.TheMassingAtOsgiliath.Helpers (crossedAnduin)
 import TestImport hiding (before, first, second)
 
@@ -43,6 +48,25 @@ shadow pid eid def defenders = do
   [card] <- setEncounterDeck [def]
   run $ DealShadowCard eid
   run $ ResolveShadowCard card.id eid pid defenders
+
+massingDeck :: [CardDef]
+massingDeck = concat
+  [ replicate (fromMaybe 0 $ cdEncounterSetQuantity def) def
+  | def <- Map.elems allEncounterCards
+  , cdEncounterSet def == Just EncounterSet.TheMassingAtOsgiliath
+  , cdCardType def /= QuestType
+  ]
+
+massingTable :: Int -> ([PlayerId] -> GameT ()) -> IO ()
+massingTable size body = do
+  seats <- for [1 .. size] \seat ->
+    either (error . show) id <$> loadPlayer ("Player " <> tshow seat) testDeck
+  let table = fromJustNote "empty test table" $ nonEmpty seats
+  env <- newGameEnv (newTableIn passageThroughMirkwood table) (const $ pure ()) 1
+  runGameT env $ body =<< getsGame (.playerOrder)
+
+controlledRangers :: GameT [AllyAttrs]
+controlledRangers = getsGame $ map toAttrs . filter ((== toCardCode Objectives.rangerOfIthilien) . toCardCode) . toList . (.entities.allies)
 
 spec :: Spec
 spec = describe "The Massing at Osgiliath encounter cards" do
@@ -424,3 +448,114 @@ spec = describe "The Massing at Osgiliath encounter cards" do
       _ -> False
     (.hand) <$> getPlayer pid `shouldReturn` []
     getEnemyAttack scout `shouldReturn` 1
+
+  it "defines all 41 encounter cards in the Osgiliath encounter set"
+    (length massingDeck `shouldBe` 41 :: IO ())
+
+  for_ [1 .. 4] \size ->
+    it ("sets up exactly three Scouts per player at a table of " <> show size) . massingTable size $ \_ -> do
+      _ <- setEncounterDeck massingDeck
+      quest <- putQuestStage Quests.beyondExpectations
+      run $ PerformSetup quest
+      g <- getGame
+      let scouts = [Enemies.snagaScouts, Enemies.wolvesFromMordor, Enemies.wainriders]
+          foes = toList g.entities.enemies
+          remaining = (toAttrs g.scenario).encounterDeck
+      length foes `shouldBe` 3 * size
+      for_ scouts \def -> do
+        length (filter ((== toCardCode def) . toCardCode) foes) `shouldBe` size
+        length (filter ((== toCardCode def) . toCardCode) remaining) `shouldBe` 4 - size
+      length remaining `shouldBe` 40 - 3 * size
+      map toCardCode (scenarioSetAside $ toAttrs g.scenario) `shouldBe` [toCardCode Enemies.theWitchKingOsgiliath]
+      (.flipped) . toAttrs <$> getActiveQuest `shouldReturn` True
+
+  it "forbids West Bank travel on Beyond Expectations while allowing East Bank travel" . gameTest $ \_ -> do
+    west <- stageLocation Locations.capturedWatchtower
+    east <- stageLocation Locations.morgulduin
+    quest <- putQuestStage Quests.beyondExpectations
+    run $ Flip quest
+    travelableLocations >>= (`shouldSatisfy` \ls -> east `elem` ls && west `notElem` ls)
+
+  it "reveals Ranger of Ithilien exhausted and committed under the first player, then surges" . twoPlayerTest testDeck $ \_ _ -> do
+    lead <- getLead
+    reveal [Objectives.rangerOfIthilien, Locations.capturedWatchtower]
+    [ranger] <- controlledRangers
+    ranger.placement `shouldBe` InPlayArea lead
+    ranger.allyExhausted `shouldBe` True
+    ranger.allyCommitted `shouldBe` True
+    getsGame (length . (.entities.locations)) `shouldReturn` 1
+
+  it "can reveal both non-unique Rangers without violating the unique rule" . gameTest $ \_ -> do
+    reveal [Objectives.rangerOfIthilien, Objectives.rangerOfIthilien, Locations.capturedWatchtower]
+    length <$> controlledRangers `shouldReturn` 2
+
+  it "does not trigger Morgulduin's commitment damage for a Ranger entering committed" . gameTest $ \_ -> do
+    river <- stageLocation Locations.morgulduin
+    run $ PlaceLocation river ActiveLocation
+    reveal [Objectives.rangerOfIthilien, Locations.capturedWatchtower]
+    [ranger] <- controlledRangers
+    getDamage (toTarget ranger) `shouldReturn` 0
+
+  it "deals Ranger's shadow damage before the defending player exhausts a character to claim it" . twoPlayerTest testDeck $ \_ two -> do
+    attacker <- stageEnemy Enemies.urukVanguard
+    beravor <- heroOf two "01012"
+    shadow two attacker Objectives.rangerOfIthilien []
+    getDamage (toTarget attacker) `shouldReturn` 2
+    chooseTarget two beravor
+    [ranger] <- controlledRangers
+    ranger.placement `shouldBe` InPlayArea two
+    ranger.allyExhausted `shouldBe` False
+    ranger.allyCommitted `shouldBe` False
+    -- The first player's Beravor stays ready; the defending player's was exhausted.
+    characters <- getsGame $ filter ((== "01012") . toCardCode) . toList . (.entities.heroes)
+    map ((.heroExhausted) . toAttrs) [h | h <- characters, h.owner == two] `shouldBe` [True]
+    map ((.heroExhausted) . toAttrs) [h | h <- characters, h.owner /= two] `shouldBe` [False]
+    null . (.shadowCards) <$> getEnemy attacker `shouldReturn` True
+
+  it "can claim Ranger's shadow after its damage destroys the attacker" . gameTest $ \pid -> do
+    attacker <- stageEnemy Enemies.snagaScouts
+    beravor <- heroOf pid "01012"
+    shadow pid attacker Objectives.rangerOfIthilien []
+    getsGame (length . (.entities.enemies)) `shouldReturn` 0
+    chooseTarget pid beravor
+    [ranger] <- controlledRangers
+    ranger.placement `shouldBe` InPlayArea pid
+    map toCardCode <$> getEncounterDiscard `shouldReturn` [toCardCode Enemies.snagaScouts]
+
+  it "allows declining Ranger's shadow after dealing the damage" . gameTest $ \pid -> do
+    attacker <- stageEnemy Enemies.urukVanguard
+    shadow pid attacker Objectives.rangerOfIthilien []
+    chooseOptionMatching "decline the Ranger" pid \case
+      Label l _ -> "$label.rangerOfIthilien.decline" `isPrefixOf` l
+      _ -> False
+    controlledRangers `shouldReturn` []
+    getDamage (toTarget attacker) `shouldReturn` 2
+
+  it "cannot claim Ranger's shadow without a character that can exhaust" . gameTest $ \pid -> do
+    heroes <- getsGame $ map toTarget . toList . (.entities.heroes)
+    for_ heroes (run . Exhaust)
+    attacker <- stageEnemy Enemies.urukVanguard
+    shadow pid attacker Objectives.rangerOfIthilien []
+    chooseOptionMatching "decline with no ready characters" pid \case
+      Label l _ -> "$label.rangerOfIthilien.decline" `isPrefixOf` l
+      _ -> False
+    controlledRangers `shouldReturn` []
+
+  it "resolves Morgulduin when a hero actually commits to the quest" . gameTest $ \pid -> do
+    river <- stageLocation Locations.morgulduin
+    run $ PlaceLocation river ActiveLocation
+    beravor <- heroOf pid "01012"
+    run $ CommitToQuest beravor
+    getDamage beravor `shouldReturn` 1
+    (.heroCommitted) . toAttrs <$> getHeroWithCode "01012" `shouldReturn` True
+
+  it "does not claim or surge Ranger when its When Revealed effect is canceled" . gameTest $ \pid -> do
+    cancellation <- putCardIntoHand pid Events.aTestOfWill
+    eowyn <- heroOf pid "01007"
+    run $ PlaceTokens GameSource eowyn Resource 1
+    [_, nextCard] <- setEncounterDeck [Objectives.rangerOfIthilien, Locations.capturedWatchtower]
+    run RevealEncounterCard
+    chooseTarget pid (CardIdTarget cancellation.id)
+    resolveRevealed
+    controlledRangers `shouldReturn` []
+    getEncounterDeck `shouldReturn` [nextCard]
