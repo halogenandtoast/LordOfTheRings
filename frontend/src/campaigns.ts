@@ -52,6 +52,7 @@ const fromPacks = (packs: [string, string][]): ScenarioOption[] => packs.map(([c
 const implemented: Record<string, Gateable & { nightmare?: boolean; hard?: boolean }> = {
   'the-massing-at-osgiliath': { beta: true },
   'the-battle-of-lake-town': { beta: true },
+  'the-stone-of-erech': { beta: true },
   'the-hunt-for-the-dreadnaught': { beta: true, hard: true },
   'the-oath': { beta: true },
   'the-caves-of-nibin-dum': { beta: true },
@@ -186,6 +187,7 @@ export const campaignModes: Record<string, string> = {
 }
 
 export const campaigns: Campaign[] = [
+  campaign('the-stone-of-erech', 'The Stone of Erech', 'MEC33', fromBox('MEC33', ['The Stone of Erech']), 'scenario-pack'),
   campaign('the-battle-of-lake-town', 'The Battle of Lake-town', 'MEC35', fromBox('MEC35', ['The Battle of Lake-town']), 'scenario-pack'),
   campaign('the-massing-at-osgiliath', 'The Massing at Osgiliath', 'MEC15', fromBox('MEC15', ['The Massing at Osgiliath']), 'scenario-pack'),
   campaign('the-hunt-for-the-dreadnaught', 'The Hunt for the Dreadnaught', 'MEC86', fromBox('MEC86', ['The Hunt for the Dreadnaught']), 'scenario-pack'),

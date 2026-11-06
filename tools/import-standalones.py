@@ -43,6 +43,9 @@ def icon(match):
 
 
 def normalize_text(value):
+    if 'Driven by Fear' in value:
+        value = value.replace('first player attached', 'first player attaches').replace("Treat attacked character's", "Treat attached character's")
+    value = value.replace('attacks and Oathbreaker that enemy', 'attacks an Oathbreaker, that enemy').replace('insread.', 'instead.')
     return value.replace('Nazg√l', 'Nazgûl').replace('Rozbójnik', 'Brigand').replace('Créature', 'Creature').replace('Mort-vivant', 'Undead').replace('[PerPlayer]', '[per-player]').replace('Wiched Willow', 'Wicked Willow').replace('2..', '2.').replace('Doomed 3. instead', 'Doomed 3 instead').replace("Tarlang's Next", "Tarlang's Neck").replace('must engaged all enemies', 'must engage all enemies').replace('Exhuast a hero', 'Exhaust a hero').replace('The Stone of Erech is that active location', 'The Stone of Erech is the active location')
 
 
@@ -174,6 +177,7 @@ def ensure_product_assets(pack):
     enabled = {
         'the-massing-at-osgiliath': ('MEC15', 'the_massing_at_osgiliath'),
         'the-battle-of-lake-town': ('MEC35', 'the_battle_of_lake_town'),
+        'the-stone-of-erech': ('MEC33', 'the_stone_of_erech'),
     }
     if pack not in enabled:
         return
