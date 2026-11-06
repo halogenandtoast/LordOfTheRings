@@ -14,7 +14,7 @@ allTreacheryCards =
   Map.fromList $
     map
       (\def -> (cdCardCode def, def))
-      [longGropingArm, frozenByFear, dreadfulSong, echoesInTheDark, spawnOfThangorodrim, concealedSpikes, coveredPit, swayingWithoutWind, fallingBranches, songOfSleep, lostAndWitless, endingAndFailing, midnightThrong, murmursOfDread, gropingHorror, drivenByFear, theDeadRideBehind, theGloaming, townBaiting, direMagnificence, catchingFire, recklessInHisRage, closeToTheFlame, scorchingBlast, cutOffOsgiliath, darkPursuit, massingAtOsgiliath, ballistaBarrage, boardingPartyDreadnaught, grappledDreadnaught, outOfTheMist, overworked, takingOnWaterDreadnaught, violentTempest,  shinyDistraction
+      [imWaitingForYou, longGropingArm, frozenByFear, dreadfulSong, echoesInTheDark, spawnOfThangorodrim, concealedSpikes, coveredPit, swayingWithoutWind, fallingBranches, songOfSleep, lostAndWitless, endingAndFailing, midnightThrong, murmursOfDread, gropingHorror, drivenByFear, theDeadRideBehind, theGloaming, townBaiting, direMagnificence, catchingFire, recklessInHisRage, closeToTheFlame, scorchingBlast, cutOffOsgiliath, darkPursuit, massingAtOsgiliath, ballistaBarrage, boardingPartyDreadnaught, grappledDreadnaught, outOfTheMist, overworked, takingOnWaterDreadnaught, violentTempest,  shinyDistraction
       , guiltyConscience
       , drivenByShadowDarkOfMirkwood
       , surprisingSpeedDarkOfMirkwood
@@ -4003,3 +4003,7 @@ frozenByFear = (treachery "fog-on-the-barrow-downs-017" "Frozen by Fear" FogOnTh
   { cdKeywords = setFromList [Surge, Doomed 1], cdShadowEffect = True, cdEasyModeQuantity = Just 2 }
 dreadfulSong = (treachery "fog-on-the-barrow-downs-018" "Dreadful Song" FogOnTheBarrowDowns 2)
   { cdKeywords = setFromList [Peril], cdCardTraits = setFromList [Enchantment] }
+
+imWaitingForYou :: CardDef
+imWaitingForYou = (treachery "fog-on-the-barrow-downs-014" "I’m Waiting for You!" FogOnTheBarrowDowns 2)
+  { cdShadowEffect = True }

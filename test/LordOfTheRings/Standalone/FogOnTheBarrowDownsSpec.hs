@@ -5,15 +5,16 @@ import LordOfTheRings.Ally.CardDefs qualified as Allies
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Helpers.Modifiers (getModifiers)
 import LordOfTheRings.Helpers.Character (getWillpower)
-import LordOfTheRings.Helpers.Staging (getStagingThreat)
+import LordOfTheRings.Helpers.Staging (getStagingThreat, getEnemyAttack)
 import LordOfTheRings.Helpers.Window (getActionAbilities)
 import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Treachery.CardDefs qualified as Treacheries
 import LordOfTheRings.Treachery.Types (TreacheryAttrs (..))
 import LordOfTheRings.Event.CardDefs qualified as Events
-import LordOfTheRings.Trait (Trait (Condition))
+import LordOfTheRings.Trait (Trait (Condition, Wight))
+import LordOfTheRings.Objective.CardDefs qualified as Objectives
 import LordOfTheRings.Keyword (Keyword (Sentinel))
-import LordOfTheRings.Matcher (getHero, getThreat, getConditionAttachments)
+import LordOfTheRings.Matcher (getHero, getThreat, getConditionAttachments, select, LocationMatcher (LocationWithCardCode))
 import LordOfTheRings.Effect (Effect (..), EffectDuration (..))
 import LordOfTheRings.Modifier (ModifierType (..))
 import LordOfTheRings.Phase (Phase (ResourcePhase))
@@ -85,6 +86,88 @@ songs = getsGame $ map toAttrs . filter ((== toCardCode Treacheries.dreadfulSong
 
 spec :: Spec
 spec = describe "Fog on the Barrow-downs Wights" do
+  describe "I'm Waiting for You!" do
+    it "surges when no engaged Wight can attack, ignoring staged Wights and engaged non-Wights" . gameTest $ \pid -> do
+      _ <- stageEnemy Enemies.barrowWight
+      nonWight <- stageEnemy Enemies.forestSpider
+      run $ EngageEnemy pid nonWight
+      revealSpell pid Treacheries.imWaitingForYou
+      length <$> getEncounterDeck `shouldReturn` 1
+      getQuestion pid `shouldReturn` Nothing
+
+    it "surges when every engaged Wight is prevented from attacking" . gameTest $ \pid -> do
+      eid <- stageEnemy Enemies.coldWight
+      run $ EngageEnemy pid eid
+      run $ CreateEffect $ Effect GameSource (EnemyTarget eid) [CannotAttack] UntilEndOfRound
+      revealSpell pid Treacheries.imWaitingForYou
+      length <$> getEncounterDeck `shouldReturn` 1
+      getQuestion pid `shouldReturn` Nothing
+
+    it "surges if an engaged Wight cancels its attack" . gameTest $ \pid -> do
+      eid <- stageEnemy Enemies.cavernWarg
+      run $ CreateEffect $ Effect GameSource (EnemyTarget eid) [GainTrait Wight] UntilEndOfRound
+      run $ EngageEnemy pid eid
+      hero <- heroOf pid "01012"
+      torch <- genEncounterCard Objectives.caveTorchDarkOfMirkwood
+      run $ PutObjectiveIntoPlayAttached torch hero
+      -- One shadow, one Cave Torch discard, then the surge revelation.
+      _ <- setEncounterDeck [Treacheries.imWaitingForYou, Locations.oldForestRoad, Locations.oldForestRoad, Locations.oldForestRoad]
+      run RevealEncounterCard
+      resolveRevealed
+      chooseAbilityOf pid eid
+      passAttackActions
+      getQuestion pid `shouldReturn` Nothing
+      length <$> select (LocationWithCardCode $ toCardCode Locations.oldForestRoad) `shouldReturn` 1
+
+    it "does not surge if one of several Wights completes an attack" . gameTest $ \pid -> do
+      blocked <- stageEnemy Enemies.coldWight
+      attacker <- stageEnemy Enemies.darkWight
+      for_ [blocked, attacker] $ run . EngageEnemy pid
+      run $ CreateEffect $ Effect GameSource (EnemyTarget blocked) [CannotAttackPlayer pid] UntilEndOfRound
+      hero <- heroOf pid "01012"
+      run $ CreateEffect $ Effect GameSource hero [DefenseModifier 20] UntilEndOfRound
+      revealSpell pid Treacheries.imWaitingForYou
+      defendAttack pid hero
+      length <$> getEncounterDeck `shouldReturn` 1
+      getQuestion pid `shouldReturn` Nothing
+
+    it "attacks each engaged player in turn and does not surge after a completed attack" . twoPlayerTest testDeck $ \one two -> do
+      for_ [(one, Enemies.coldWight), (two, Enemies.darkWight)] \(pid, def) -> do
+        eid <- stageEnemy def
+        run $ EngageEnemy pid eid
+        hero <- heroOf pid "01012"
+        run $ CreateEffect $ Effect GameSource hero [DefenseModifier 20] UntilEndOfRound
+      revealSpell one Treacheries.imWaitingForYou
+      firstHero <- heroOf one "01012"
+      defendAttack one firstHero
+      secondHero <- heroOf two "01012"
+      defendAttack two secondHero
+      -- One shadow for each attack; no third revelation from surge.
+      getEncounterDeck `shouldReturn` []
+      for_ [one, two] \pid -> getQuestion pid `shouldReturn` Nothing
+      length <$> select (LocationWithCardCode $ toCardCode Locations.oldForestRoad) `shouldReturn` 0
+
+    it "discards shadows from an earlier attack before dealing its own shadow" . gameTest $ \pid -> do
+      eid <- stageEnemy Enemies.darkWight
+      run $ EngageEnemy pid eid
+      _ <- setEncounterDeck [Treacheries.frozenByFear]
+      run $ DealShadowCard eid
+      hero <- heroOf pid "01012"
+      run $ CreateEffect $ Effect GameSource hero [DefenseModifier 20] UntilEndOfRound
+      revealSpell pid Treacheries.imWaitingForYou
+      defendAttack pid hero
+      run $ PlaceTokens GameSource (EnemyTarget eid) Damage 1
+      getDamage (EnemyTarget eid) `shouldReturn` 1
+
+    for_ [False, True] \allyDefends ->
+      it ("adds the printed shadow attack bonus with ally defender = " <> show allyDefends) . gameTest $ \pid -> do
+        eid <- stageEnemy Enemies.darkWight
+        defender <- if allyDefends then putAllyIntoPlay pid Allies.guardOfTheCitadel else heroOf pid "01012"
+        [card] <- setEncounterDeck [Treacheries.imWaitingForYou]
+        run $ DealShadowCard eid
+        run $ ResolveShadowCard card.id eid pid [defender]
+        getEnemyAttack eid `shouldReturn` (if allyDefends then 6 else 4)
+
   describe "Frozen by Fear" do
     it "resolves doomed and surge, suppresses every player's actions, and expires at round end" . twoPlayerTest testDeck $ \one two -> do
       getActionAbilities one >>= (`shouldSatisfy` notNull)
