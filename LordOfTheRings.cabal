@@ -1109,6 +1109,8 @@ library
       LordOfTheRings.Enemy.Cards.ReanimatedDead
       LordOfTheRings.Enemy.Cards.RearguardAmbusher
       LordOfTheRings.Enemy.Cards.RecurringNightmare
+      LordOfTheRings.Enemy.Cards.RegretfulShade
+      LordOfTheRings.Enemy.Cards.RestlessDead
       LordOfTheRings.Enemy.Cards.Revenant
       LordOfTheRings.Enemy.Cards.RhunBackstabber
       LordOfTheRings.Enemy.Cards.RiderOfMordor
@@ -1144,6 +1146,7 @@ library
       LordOfTheRings.Enemy.Cards.ShadowDweller
       LordOfTheRings.Enemy.Cards.ShadowHost
       LordOfTheRings.Enemy.Cards.ShadowHostCaptain
+      LordOfTheRings.Enemy.Cards.ShadowMan
       LordOfTheRings.Enemy.Cards.ShadyBreeLander
       LordOfTheRings.Enemy.Cards.Shagrat
       LordOfTheRings.Enemy.Cards.Shelob
@@ -1227,6 +1230,7 @@ library
       LordOfTheRings.Enemy.Cards.TheGreatGoblinNightmare
       LordOfTheRings.Enemy.Cards.TheHandOfCastamir
       LordOfTheRings.Enemy.Cards.TheKingsElite
+      LordOfTheRings.Enemy.Cards.TheLordOfTheDead
       LordOfTheRings.Enemy.Cards.TheMouthOfSauron
       LordOfTheRings.Enemy.Cards.TheNamelessFear
       LordOfTheRings.Enemy.Cards.TheThingInTheDepths
@@ -1318,6 +1322,7 @@ library
       LordOfTheRings.Enemy.Cards.Werewolf
       LordOfTheRings.Enemy.Cards.WerewolfOfAngmar
       LordOfTheRings.Enemy.Cards.WereWorm
+      LordOfTheRings.Enemy.Cards.Whisperer
       LordOfTheRings.Enemy.Cards.WhiteWarg
       LordOfTheRings.Enemy.Cards.WickedHuorn
       LordOfTheRings.Enemy.Cards.WickedSpider

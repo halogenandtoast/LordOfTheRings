@@ -87,12 +87,16 @@ import LordOfTheRings.Card (
   lookupCardDef,
  )
 import LordOfTheRings.Card.Synthetic (orcGuard, reanimatedDead)
+import Control.Monad.Writer.Strict (execWriterT)
+import Data.Map.Monoidal.Strict (MonoidalMap (..))
+import LordOfTheRings.Classes.HasModifiersFor (getModifiersFor)
 import LordOfTheRings.Classes.Entity (
   Entity (overAttrs, toAttrs, toId),
   insertEntity,
  )
 import LordOfTheRings.Classes.HasGame (
   HasGame (getGame),
+  ReadGame (runReadGame),
   getsGame,
  )
 import LordOfTheRings.Classes.HasQueue (
@@ -4172,9 +4176,6 @@ runGameMessage msg g = case msg of
         rememberRevelation t =
           [CreateEffect $ Effect GameSource t (map GainKeyword gainedKeywords) UntilEndOfPhase | notNull gainedKeywords]
           <> [CreateEffect $ Effect GameSource GameTarget (map EnemyWithTraitRevealedThisRound firstTraits) UntilEndOfRound | notNull firstTraits]
-    doomed <- if doom <= 0 then pure [] else
-      inLogBlock (DoomedBlock doom)
-        $ concat [[RaiseThreat p doom, CheckWindows [mkAfter $ ThreatRaisedByEncounter p doom, mkAfter $ ThreatRaisedByDoomed p]] | p <- players]
     let
         -- the players as a group discard the resources from their heroes' pools (The
         -- Drúadan Forest rules)
@@ -4188,7 +4189,20 @@ runGameMessage msg g = case msg of
         -- resolves (The Black Riders rules insert, "Hide X")
         hide = [MakeHideTest $ HideTest revealer (CardIdSource card.id) n [] [] | Hide n <- toList (cdKeywords def)]
         -- Prowl, a keyword, resolves before the When Revealed effect (ALeP 3.094)
-        revealing t =
+        revealing t = revealingWithDoomed t 0
+        revealingEnemy actor = do
+          -- Snapshot the enemy's own conditional Doomed before its revelation.
+          -- Whisperer gains Doomed at Midnight; combine it with other instances
+          -- into one keyword resolution, rather than a cancelable card ability.
+          let projected = g & entitiesL . enemiesL %~ insertEntity actor
+              MonoidalMap own = runReadGame (execWriterT $ getModifiersFor actor) projected
+              extra = sum [n | m <- Map.findWithDefault [] (toTarget actor) own, GainKeyword (Doomed n) <- [modifierType m]]
+          revealingWithDoomed (toTarget actor) extra
+        doomedMessages total = if total <= 0 then pure [] else
+          inLogBlock (DoomedBlock total)
+            $ concat [[RaiseThreat p total, CheckWindows [mkAfter $ ThreatRaisedByEncounter p total, mkAfter $ ThreatRaisedByDoomed p]] | p <- players]
+        revealingWithDoomed t extra = do
+          doomed <- doomedMessages (doom + extra)
           inLogBlock (RevealBlock card)
             $ [CheckWindows [mkWhen $ Revealed t]] <> [WhileInPlay t (rememberRevelation t) | notNull firstTraits || notNull gainedKeywords] <> mischiefDamage t <> [WhileInPlay t prowl | notNull prowl] <> hide <> [whenRevealed t, WhileInPlay t doomed]
             -- Resolve the card's revelation before its staging-entry triggers. A
@@ -4201,13 +4215,13 @@ runGameMessage msg g = case msg of
       EnemyType | Just pid <- engaging -> do
         enemy <- withDamage <$> newEnemy card
         pushAll . ([EngageEnemy pid (toId enemy), CheckWindows [mkAfter $ EntersPlay $ toTarget enemy]] <>) . (<> [WhileInPlay (toTarget enemy) [ResolveSurge (toTarget enemy) card]])
-          =<< revealing (toTarget enemy)
+          =<< revealingEnemy enemy
         pure $ g & effectsL %~ filter (`notElem` mischief) & entitiesL . enemiesL %~ insertEntity (overAttrs (\a -> a {enemyPlacement = Unplaced}) enemy)
       EnemyType -> do
         enemy <- withDamage <$> newEnemy card
         let grapples = [ResolveGrapple (toId enemy) | any isGrapple (cdKeywords def)]
         pushAll . (<> grapples <> [WhileInPlay (toTarget enemy) [AmbushEngagementCheck (toId enemy), ResolveSurge (toTarget enemy) card]])
-          =<< revealing (toTarget enemy)
+          =<< revealingEnemy enemy
         pure
           $ g
           & effectsL %~ filter (`notElem` mischief)
@@ -4256,6 +4270,7 @@ runGameMessage msg g = case msg of
       t | t `elem` [ObjectiveType, ObjectiveAllyType] -> do
         -- an objective ally a player gains control of, as Gildor Inglorion, goes to him
         let comesOut = if gainsController def then AddToStaging card else PutObjectiveIntoPlay card
+        doomed <- doomedMessages doom
         pushAll . (<> doomed <> [ResolveSurge (CardIdTarget card.id) card]) =<< inLogBlock (RevealBlock card) (rememberRevelation (CardIdTarget card.id) <> [comesOut])
         pure g
       -- an encounter side quest goes to the staging area, where the players may quest

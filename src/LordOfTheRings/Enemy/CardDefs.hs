@@ -14,7 +14,7 @@ allEnemyCards =
   Map.fromList $
     map
       (\def -> (cdCardCode def, def))
-      [shadowHostCaptain, smaugTheMightyLakeTown, smaugTheTerrible, smaugTheMagnificentLakeTown, snagaScouts, theWitchKingOsgiliath, wolvesFromMordor, wainriders, wainriderCaptain, urukVanguard, dreadnaught, dreadnaughtDamaged, captainOfTheHaven, commanderOfTheDreadnaught, descendantOfCastamir, hydraken, ophidian, varjax, brashCorsairDreadnaught, corsairPlunderer, daringBuccaneer, fierceMarauder, southronSailorDreadnaught, umbarCaptainDreadnaught, blackSailsDreadnaught, corsairSkiffDreadnaught, corsairSkirmisherDreadnaught, corsairWarshipDreadnaught, rammingShipDreadnaught, slaveShipDreadnaught, warGalley, seaMonster,  stalkingGoblin
+      [theLordOfTheDeadErech, shadowMan, restlessDead, whisperer, regretfulShade, shadowHostCaptain, smaugTheMightyLakeTown, smaugTheTerrible, smaugTheMagnificentLakeTown, snagaScouts, theWitchKingOsgiliath, wolvesFromMordor, wainriders, wainriderCaptain, urukVanguard, dreadnaught, dreadnaughtDamaged, captainOfTheHaven, commanderOfTheDreadnaught, descendantOfCastamir, hydraken, ophidian, varjax, brashCorsairDreadnaught, corsairPlunderer, daringBuccaneer, fierceMarauder, southronSailorDreadnaught, umbarCaptainDreadnaught, blackSailsDreadnaught, corsairSkiffDreadnaught, corsairSkirmisherDreadnaught, corsairWarshipDreadnaught, rammingShipDreadnaught, slaveShipDreadnaught, warGalley, seaMonster,  stalkingGoblin
       , spidersOfMirkwoodDarkOfMirkwood
       , goblinSniperDarkOfMirkwood
       , goblinRunnersDarkOfMirkwood
@@ -5819,4 +5819,39 @@ shadowHostCaptain :: CardDef
 shadowHostCaptain = (enemy "the-stone-of-erech-015" "Shadow Host Captain" TheStoneOfErech 2 42 3 4 1 6)
   { cdCardTraits = setFromList [Undead, Oathbreaker]
   , cdKeywords = setFromList [Spectral]
+  }
+
+theLordOfTheDeadErech :: CardDef
+theLordOfTheDeadErech = (enemy "the-stone-of-erech-005" "The Lord of the Dead" TheStoneOfErech 1 30 5 6 3 9)
+  { cdCardTraits = setFromList [Undead, Oathbreaker]
+  , cdKeywords = setFromList [Spectral]
+  , cdUnique = True
+  }
+
+shadowMan :: CardDef
+shadowMan = (enemy "the-stone-of-erech-012" "Shadow-man" TheStoneOfErech 2 27 2 4 1 5)
+  { cdCardTraits = setFromList [Undead, Oathbreaker]
+  , cdKeywords = setFromList [Spectral]
+  , cdWhenRevealed = True
+  , cdShadowEffect = True
+  }
+
+restlessDead :: CardDef
+restlessDead = (enemy "the-stone-of-erech-013" "Restless Dead" TheStoneOfErech 4 12 2 3 0 2)
+  { cdCardTraits = setFromList [Undead, Oathbreaker]
+  , cdKeywords = setFromList [Spectral]
+  , cdWhenRevealed = True
+  }
+
+whisperer :: CardDef
+whisperer = (enemy "the-stone-of-erech-014" "Whisperer" TheStoneOfErech 3 35 2 2 2 4)
+  { cdCardTraits = setFromList [Undead, Oathbreaker]
+  , cdKeywords = setFromList [Spectral]
+  }
+
+regretfulShade :: CardDef
+regretfulShade = (enemy "the-stone-of-erech-016" "Regretful Shade" TheStoneOfErech 3 23 1 2 1 3)
+  { cdCardTraits = setFromList [Undead, Oathbreaker]
+  , cdKeywords = setFromList [Spectral, Surge]
+  , cdShadowEffect = True
   }

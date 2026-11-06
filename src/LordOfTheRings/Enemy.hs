@@ -2,6 +2,11 @@
 
 module LordOfTheRings.Enemy (module LordOfTheRings.Enemy, module X) where
 
+import LordOfTheRings.Enemy.Cards.TheLordOfTheDead (theLordOfTheDeadErech)
+import LordOfTheRings.Enemy.Cards.ShadowMan (shadowMan)
+import LordOfTheRings.Enemy.Cards.RestlessDead (restlessDead)
+import LordOfTheRings.Enemy.Cards.Whisperer (whisperer)
+import LordOfTheRings.Enemy.Cards.RegretfulShade (regretfulShade)
 import LordOfTheRings.Enemy.Cards.ShadowHostCaptain (shadowHostCaptain)
 import LordOfTheRings.Enemy.Cards.SmaugTheMightyLakeTown (smaugTheMightyLakeTown)
 import LordOfTheRings.Enemy.Cards.SmaugTheTerrible (smaugTheTerrible)
@@ -708,7 +713,12 @@ allEnemys =
   Map.fromList
     [ (toCardCode builder, card)
     | card@(SomeEnemyCard builder) <-
-        [ SomeEnemyCard shadowHostCaptain
+        [ SomeEnemyCard theLordOfTheDeadErech
+        , SomeEnemyCard shadowMan
+        , SomeEnemyCard restlessDead
+        , SomeEnemyCard whisperer
+        , SomeEnemyCard regretfulShade
+        , SomeEnemyCard shadowHostCaptain
         , SomeEnemyCard smaugTheMightyLakeTown
         , SomeEnemyCard smaugTheTerrible
         , SomeEnemyCard smaugTheMagnificentLakeTown
