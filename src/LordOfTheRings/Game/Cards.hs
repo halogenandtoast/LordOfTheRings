@@ -116,6 +116,7 @@ import LordOfTheRings.Keyword (
     GuardedBy,
     Hinder,
     LastPlayerGainsControl,
+    Loot,
     Permanent,
     Restricted
   ),
@@ -389,7 +390,10 @@ discardFromPlay target g = case target of
     case Map.lookup oid g.entities.objectives of
       Just _ | RemoveFromGameIfLeavesPlay `elem` mods ->
         pure $ g & entitiesL . objectivesL %~ Map.delete oid
-      Just o | LeavesPlayToEncounterDiscard `elem` mods -> do
+      -- FAQ 1.23: a claimed objective is also an attachment. Loot has no
+      -- return-to-staging replacement when discarded. Read its printed keyword
+      -- here even if its hero just left and its constant modifiers are inactive.
+      Just o | LeavesPlayToEncounterDiscard `elem` mods || Loot `member` cdKeywords (toCardDef o) -> do
         push $ AddToEncounterDiscard [MkEncounterCard (objectiveCardId $ toAttrs o) (toCardCode o)]
         pure $ g & entitiesL . objectivesL %~ Map.delete oid
       Just o | LeavesPlayToTopOfSackDeck `elem` mods -> do

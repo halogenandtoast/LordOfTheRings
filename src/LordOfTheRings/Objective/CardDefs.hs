@@ -16,7 +16,7 @@ allObjectiveCards =
   Map.fromList $
     map
       (\def -> (cdCardCode def, def))
-      [stalkingTheRuins, tomBombadilOldForest, derufin, relicFromTheDarkYears, eventide, dusk, midnight, theOldThrush, lakeTown, rangerOfIthilien, corsairSkirmisherShipDreadnaught, eithiliant, eithiliantUpgraded, goldenWing, goldenWingUpgraded, prideOfLebennin, prideOfLebenninUpgraded, silentMist, silentMistUpgraded, swanShipOfDolAmroth, swanShipOfDolAmrothUpgraded, twilightsCall, twilightsCallUpgraded, gondorianWarship,  caveTorchDarkOfMirkwood
+      [swordOfBelegost, mapOfEredLuin, keysOfBelegost, bookOfAulesChildren, dwarvenTorch, blueMountainGem, stalkingTheRuins, tomBombadilOldForest, derufin, relicFromTheDarkYears, eventide, dusk, midnight, theOldThrush, lakeTown, rangerOfIthilien, corsairSkirmisherShipDreadnaught, eithiliant, eithiliantUpgraded, goldenWing, goldenWingUpgraded, prideOfLebennin, prideOfLebenninUpgraded, silentMist, silentMistUpgraded, swanShipOfDolAmroth, swanShipOfDolAmrothUpgraded, twilightsCall, twilightsCallUpgraded, gondorianWarship,  caveTorchDarkOfMirkwood
       , gandalfsMap
       , theThreatToWilderland
       , ashenBrazier
@@ -1677,3 +1677,18 @@ tomBombadilOldForest = (objective "the-old-forest-022" "Tom Bombadil" TheOldFore
 stalkingTheRuins :: CardDef
 stalkingTheRuins = (objective "the-ruins-of-belegost-008" "Stalking the Ruins" TheRuinsOfBelegost 1)
   { cdCardTraits = setFromList [Dragon] }
+
+
+swordOfBelegost, mapOfEredLuin, keysOfBelegost, bookOfAulesChildren, dwarvenTorch, blueMountainGem :: CardDef
+swordOfBelegost = (objective "the-ruins-of-belegost-009" "Sword of Belegost" TheRuinsOfBelegost 1)
+  { cdUnique = True, cdCardTraits = setFromList [Artifact, Item, Weapon], cdKeywords = setFromList [Loot, Restricted] }
+mapOfEredLuin = (objective "the-ruins-of-belegost-010" "Map of Ered Luin" TheRuinsOfBelegost 1)
+  { cdUnique = True, cdCardTraits = setFromList [Artifact, Item], cdKeywords = setFromList [Loot] }
+keysOfBelegost = (objective "the-ruins-of-belegost-011" "Keys of Belegost" TheRuinsOfBelegost 1)
+  { cdUnique = True, cdCardTraits = setFromList [Artifact, Item], cdKeywords = setFromList [Loot] }
+bookOfAulesChildren = (objective "the-ruins-of-belegost-012" "Book of Aulë's Children" TheRuinsOfBelegost 1)
+  { cdUnique = True, cdCardTraits = setFromList [Artifact, Item], cdKeywords = setFromList [Loot] }
+dwarvenTorch = (objective "the-ruins-of-belegost-013" "Dwarven Torch" TheRuinsOfBelegost 1)
+  { cdUnique = True, cdCardTraits = setFromList [Artifact, Item], cdKeywords = setFromList [Loot] }
+blueMountainGem = (objective "the-ruins-of-belegost-014" "Blue Mountain Gem" TheRuinsOfBelegost 1)
+  { cdUnique = True, cdCardTraits = setFromList [Artifact, Item], cdKeywords = setFromList [Loot] }

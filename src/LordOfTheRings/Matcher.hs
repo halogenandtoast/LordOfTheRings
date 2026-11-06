@@ -58,6 +58,16 @@ matchPlayer matcher player = case matcher of
   PlayerWithCardsInHand n -> pure $ length player.hand >= n
   PlayerMatchAll ms -> allM (`matchPlayer` player) ms
   PlayerWithCardsInDeck n -> pure $ length player.deck >= n
+  PlayerCanDrawFromEncounterCard -> do
+    mods <- getModifiers player
+    pure $ not player.eliminated && notNull player.deck
+      && all (`notElem` mods) [CannotDrawCards, CannotDrawCardsFromCardEffects]
+  PlayerCanLowerThreatFromEncounterCard -> do
+    mods <- getModifiers player
+    let reduced = sum [n | ThreatReducedThisRound n <- mods]
+    pure $ not player.eliminated && player.threat > 0 && CannotReduceThreat `notElem` mods
+      && all (< player.threat) [n | CannotReduceThreatBelow n <- mods]
+      && all (> reduced) [n | ThreatReductionPerRoundLimit n <- mods]
   PlayerUsingErrata -> pure player.errata
   PlayerWithCampaignCardUsesBelow code n -> do
     l <- getsGame (scenarioCampaign . toAttrs . gameScenario)
@@ -133,6 +143,9 @@ matchHero matcher hero = case matcher of
   HeroCanHaveEncounterAttachment traits -> do
     mods <- getModifiers (toTarget hero)
     pure $ CannotHaveAttachments `notElem` mods && all (`member` traits) [trait | CannotHaveAttachmentsWithoutTrait trait <- mods]
+  HeroCanGainEncounterResources -> do
+    mods <- getModifiers (toTarget hero)
+    pure $ all (`notElem` mods) [CannotGainResourcesFromCardEffects, CannotGainResourcesFromNonTreasureCards]
   DamagedHero -> pure $ hero.damage > 0
   ExhaustedHero -> pure $ heroExhausted (toAttrs hero)
   PoisonedHero -> pure $ notNull (heroPoison $ toAttrs hero)

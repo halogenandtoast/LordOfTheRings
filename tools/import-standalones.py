@@ -43,6 +43,7 @@ def icon(match):
 
 
 def normalize_text(value):
+    value = value.replace('the fist player claims', 'the first player claims')
     value = value.replace('place 1 progress token on Stalking the Ruins', 'place 1 resource on Stalking the Ruins')
     value = value.replace('beginning of the ropund', 'beginning of the round')
     if 'Driven by Fear' in value:
@@ -61,6 +62,15 @@ def clean(value, rich=False):
 def number(value):
     value = clean(value)
     return int(value) if value.isdigit() else 'X' if value in ('X', '*') else None
+
+
+def printed_keywords(text):
+    keywords = []
+    pattern = r'^(Surge|Doomed \d+|Burn \d+|Spectral|Guarded|Indestructible|Battle|Siege|Archery \d+|Time \d+|Loot|Restricted|Discover \d+)\.\s*'
+    while match := re.match(pattern, text, re.I):
+        keywords.append(match[1])
+        text = text[match.end():]
+    return keywords
 
 
 def import_page(link, old, local):
@@ -116,12 +126,7 @@ def import_page(link, old, local):
     main_text = ''.join(re.findall(r"<p class=['\"]main-text['\"]>(.*?)</p>", blocks[0], re.S)) if blocks else ''
     # Only unconditional printed keywords belong in this field. A keyword
     # mentioned inside a conditional effect is not active on the card itself.
-    plain = clean(main_text)
-    keywords = []
-    keyword_pattern = r'^(Surge|Doomed \d+|Burn \d+|Spectral|Guarded|Indestructible|Battle|Siege|Archery \d+|Time \d+)\.\s*'
-    while match := re.match(keyword_pattern, plain, re.I):
-        keywords.append(match[1])
-        plain = plain[match.end():]
+    keywords = printed_keywords(clean(main_text))
     image_urls = list(dict.fromkeys(re.findall(r'data-src="([^"]+)"', page)))
     images = []
     for index, image_url in enumerate(image_urls):

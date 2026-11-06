@@ -34,6 +34,10 @@ data PlayerMatcher
     PlayerEngagedWith EnemyMatcher
   | -- | a player with at least this many cards in their deck, as a cost to discard them
     PlayerWithCardsInDeck Int
+  | -- | Can draw at least one card from an encounter card's effect.
+    PlayerCanDrawFromEncounterCard
+  | -- | An encounter card can reduce this player's threat by at least one.
+    PlayerCanLowerThreatFromEncounterCard
   | -- | a player whose cards follow the FAQ's errata
     PlayerUsingErrata
   | -- | a player whose threat is equal to or higher than the enemy's engagement cost, as City
@@ -77,6 +81,8 @@ data HeroMatcher
   | ExhaustableHero
   | -- | an encounter attachment with these traits can be attached to the hero
     HeroCanHaveEncounterAttachment (Set Trait)
+  | -- | Can gain resources from an encounter card's effect (not a Treasure).
+    HeroCanGainEncounterResources
   | DamagedHero
   | ExhaustedHero
   | -- | with poison attached (Flies and Spiders)

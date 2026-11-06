@@ -39,14 +39,12 @@ import LordOfTheRings.Log.Narrator (narrationFor)
 import LordOfTheRings.Log.Refs (sendLogInOpenBlock)
 import LordOfTheRings.Matcher (
   AllyMatcher (AnyAlly),
-  HeroMatcher (AnyHero, HeroControlledBy),
-  PlayerMatcher (PlayerWithId),
+  HeroMatcher (AnyHero),
   getLead,
   LocationMatcher (AnyLocation),
   getLocation,
   getMire,
   select,
-  selectAny,
   selectCharacters,
  )
 import LordOfTheRings.Message (
@@ -76,6 +74,7 @@ import LordOfTheRings.Modifier (
   ),
  )
 import LordOfTheRings.Objective (ObjectiveAttrs (objectiveGuard))
+import LordOfTheRings.Objective.Claim (claimableHeroes)
 import LordOfTheRings.Placement (Placement (StagingArea))
 import LordOfTheRings.Player.Runner (discardableHand)
 import LordOfTheRings.Prelude hiding (first, many)
@@ -222,8 +221,8 @@ claimFreeObjectives = do
       if guarding (toId o) then pure False else elem FirstPlayerClaimsWhenFree <$> getModifiers (toTarget o)
     unless (claiming || null candidates) do
       lead <- getLead
-      hasHero <- selectAny (HeroControlledBy $ PlayerWithId lead)
-      when hasHero $ for_ (take 1 candidates) $ push . ClaimFreeObjective . toId
+      claimable <- filterM (fmap notNull . claimableHeroes lead . toAttrs) candidates
+      for_ (take 1 claimable) $ push . ClaimFreeObjective . toId
 
 {- | Characters that are discarded once their willpower is 0, as The Mountains' Peaks
 reads, are discarded as soon as it is, unless their discard is already on its way.
