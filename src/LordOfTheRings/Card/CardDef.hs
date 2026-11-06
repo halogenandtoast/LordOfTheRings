@@ -292,3 +292,9 @@ nightmareSetup cCode name encounterSet = encounterCard cCode name NightmareType 
 
 isPlayerCardDef :: CardDef -> Bool
 isPlayerCardDef = isPlayerCardType . cdCardType
+
+-- | A new printing keeps its rules and stats while specifying its encounter set and
+-- normal/easy-mode quantities independently of the original edition.
+reprintEncounter :: CardCode -> EncounterSet -> Int -> Maybe Int -> CardDef -> CardDef
+reprintEncounter code encounterSet quantity easy def =
+  def {cdCardCode = code, cdEncounterSet = Just encounterSet, cdEncounterSetQuantity = Just quantity, cdEasyModeQuantity = easy}

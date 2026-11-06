@@ -23,6 +23,7 @@
     "attack": "Half-orc of Isengard gets +3 attack for this attack"
   },
   "rainOfArrows": {
+    "exhaust": "Exhaust a ranged character",
     "choose": "Choose Rain of Arrows’ effect",
     "resource": "Remove 1 resource from The Defense of Helm’s Deep",
     "archery": "Each staged location gains archery 1 until the end of the round"
@@ -118,6 +119,7 @@
     "attach": "Attach Freezing Cold to one of your heroes"
   },
   "fallenStones": {
+    "spend": "Spend Baggins resources to reduce Fallen Stones' damage",
     "chooseOne": "Fallen Stones: choose one",
     "removeProgress": "Remove all progress tokens from play",
     "reveal": "Reveal 2 encounter cards"
@@ -584,9 +586,6 @@
   },
   "hostOfGaladhrim": {
     "playNext": "Choose the next ally to play at no cost"
-  },
-  "rainOfArrows": {
-    "exhaust": "Exhaust a ranged character"
   },
   "theOneRing": {
     "choosePlayer": "Choose the player whose copy of The One Ring goes into play"
@@ -1778,7 +1777,15 @@
     "chooseBoon": "You may choose a boon to add to your hand and the Campaign Pool",
     "searchForBoon": "You may search your deck for a boon to add to your hand",
     "anduril": "Raise each player's threat by 1 to search your deck for Andúril?",
-    "searchForAnduril": "Raise each player's threat by 1 and search your deck for Andúril"
+    "searchForAnduril": "Raise each player's threat by 1 and search your deck for Andúril",
+    "adaptationTarget": "Choose a target for the Adaptation boon",
+    "chooseAdaptation": "Choose an Adaptation boon and attach it to a hero you control",
+    "boonChoice": "Choose this boon’s effect",
+    "noTimeToWaste": "Remove No Time to Waste! from the game and campaign pool: each player reduces their threat by 3, then reveal an encounter card",
+    "drawOne": "Draw 1 card",
+    "rangerSense": "Remove Ranger Sense from the game and campaign pool: look at the top 4 cards of your deck",
+    "rangerSenseTake": "Choose 1 card to add to your hand, then order the remaining cards",
+    "rangerReward": "Choose a player to receive Ranger Sense"
   },
   "protectTheInnocent": {
     "resources": "Protect the Innocent: place 4 damage on it to add 1 resource to each of your heroes?",
@@ -3691,7 +3698,11 @@
   },
   "aKnifeInTheDark": {
     "chooseRingwraith": "Choose an out-of-play Ringwraith to shuffle into the encounter deck",
-    "ringwraithFrom": {"setAside": "From the set-aside cards", "discard": "From the encounter discard pile", "victory": "From the victory display"},
+    "ringwraithFrom": {
+      "setAside": "From the set-aside cards",
+      "discard": "From the encounter discard pile",
+      "victory": "From the victory display"
+    },
     "shuffleRingwraith": "Shuffle 1 out of play Ringwraith into the encounter deck",
     "chooseBoon": "A Knife in the Dark: choose a boon to attach to a hero you control"
   },
@@ -4120,29 +4131,165 @@
     "allyDeclined": "Decline the aid",
     "locationToPool": "Campaign: choose a location in the staging area to add a copy of to the campaign pool"
   },
-  "wickedHilltops": {"discard": "Choose an ally without a Sack to discard"},
-  "oneByOne": {"destroy": "Choose a character with a Sack to destroy"},
-  "darkPassages": {"makeActive": "Choose a location to make active"},
-  "goblinProwler": {"discard": "Choose a character to discard"},
-  "lightningSplinters": {"discard": "Choose a card to discard"},
-  "fallenStones": {"spend": "Spend Baggins resources to reduce Fallen Stones' damage"},
-  "whereIsssIt": {"choose": "Discard resources or face Gollum's attack", "discard": "Discard 2 Baggins resources", "attack": "Gollum attacks Bilbo Baggins"},
-  "darkColony": {"poison": "Choose a hero to receive 1 poison to travel"},
-  "mirkwoodPath": {"unconscious": "Choose a hero to become unconscious"},
-  "aHorribleBattle": {"choose": "Give each hero poison or reveal an encounter card", "poison": "Give each hero you control 1 poison", "reveal": "Reveal an encounter card"},
-  "spiderBite": {"attach": "Attach Spider Bite to a conscious hero"},
-  "greatWarg": {"discard": "Choose an attachment you control to discard"},
-  "gundabadElite": {"choose": "Remove progress or face Gundabad Elite's attack", "remove": "Remove 2 progress from the current quest", "attack": "Gundabad Elite attacks the first player"},
-  "embattledValley": {"exhaust": "Exhaust a character to travel to Embattled Valley"},
-  "sniffingAndHissing": {"choose": "Exhaust The One Ring and reveal a card, or make a Hide test", "exhaust": "Exhaust The One Ring and reveal an encounter card", "hide": "Make a Hide 3 test"},
-  "southernSpy": {"choose": "Southern Spy: shuffle a Ringwraith or take an immediate attack", "attack": "Southern Spy makes an immediate attack"},
-  "bladeTip": {"attach": "Attach Blade Tip to a defending character damaged by this attack"},
-  "comeBack": {"choose": "Come Back!: reduce the Ring-bearer's life or take this attack undefended", "life": "Reduce the Ring-bearer's life by 1", "undefended": "Treat this attack as undefended"},
-  "theTwilightWorld": {"choose": "The Twilight World: exhaust The One Ring or reduce the Ring-bearer's life", "exhaust": "Exhaust The One Ring", "life": "Reduce the Ring-bearer's life by 1"},
-  "huntingHawk": {"choose": "Hunting Hawk: exhaust the ally or damage an active location", "exhaust": "Exhaust the ally just played", "damage": "Place 1 damage on an active location"},
-  "huntedInHollin": {"choose": "Hunted in Hollin: raise your threat or engage an enemy and reveal a card", "threat": "Raise your threat by 6", "engage": "Engage the lowest engagement cost enemy and reveal a card", "enemy": "Choose an enemy with the lowest engagement cost"},
-  "wareWare": {"choose": "Ware! Ware!: add this card under The Black Gate or engage the top card under The Cross-roads", "blackGate": "Place Ware! Ware! facedown under The Black Gate", "engage": "Put the top card under The Cross-roads into play engaged with you", "enemy": "Choose an enemy in staging to engage and deal a shadow card"},
-  "orcOfMinasMorgul": {"choose": "Orc of Minas Morgul: discard a random card or engage it and reveal another card", "discard": "Discard a random card from your hand", "engage": "Engage Orc of Minas Morgul and reveal an encounter card"},
-  "underGateSentry": {"choose": "Under-gate Sentry: discard a random card or exhaust a character", "discard": "Discard a random card from your hand", "exhaust": "Exhaust a character you control"},
-  "impenetrableDark": {"remove": "Remove a character you control from the quest and exhaust it", "exhaust": "Exhaust a character you control; it cannot ready this round"}
+  "wickedHilltops": {
+    "discard": "Choose an ally without a Sack to discard"
+  },
+  "oneByOne": {
+    "destroy": "Choose a character with a Sack to destroy"
+  },
+  "darkPassages": {
+    "makeActive": "Choose a location to make active"
+  },
+  "goblinProwler": {
+    "discard": "Choose a character to discard"
+  },
+  "lightningSplinters": {
+    "discard": "Choose a card to discard"
+  },
+  "whereIsssIt": {
+    "choose": "Discard resources or face Gollum's attack",
+    "discard": "Discard 2 Baggins resources",
+    "attack": "Gollum attacks Bilbo Baggins"
+  },
+  "darkColony": {
+    "poison": "Choose a hero to receive 1 poison to travel"
+  },
+  "mirkwoodPath": {
+    "unconscious": "Choose a hero to become unconscious"
+  },
+  "aHorribleBattle": {
+    "choose": "Give each hero poison or reveal an encounter card",
+    "poison": "Give each hero you control 1 poison",
+    "reveal": "Reveal an encounter card"
+  },
+  "spiderBite": {
+    "attach": "Attach Spider Bite to a conscious hero"
+  },
+  "greatWarg": {
+    "discard": "Choose an attachment you control to discard"
+  },
+  "gundabadElite": {
+    "choose": "Remove progress or face Gundabad Elite's attack",
+    "remove": "Remove 2 progress from the current quest",
+    "attack": "Gundabad Elite attacks the first player"
+  },
+  "embattledValley": {
+    "exhaust": "Exhaust a character to travel to Embattled Valley"
+  },
+  "sniffingAndHissing": {
+    "choose": "Exhaust The One Ring and reveal a card, or make a Hide test",
+    "exhaust": "Exhaust The One Ring and reveal an encounter card",
+    "hide": "Make a Hide 3 test"
+  },
+  "southernSpy": {
+    "choose": "Southern Spy: shuffle a Ringwraith or take an immediate attack",
+    "attack": "Southern Spy makes an immediate attack"
+  },
+  "bladeTip": {
+    "attach": "Attach Blade Tip to a defending character damaged by this attack"
+  },
+  "comeBack": {
+    "choose": "Come Back!: reduce the Ring-bearer's life or take this attack undefended",
+    "life": "Reduce the Ring-bearer's life by 1",
+    "undefended": "Treat this attack as undefended"
+  },
+  "theTwilightWorld": {
+    "choose": "The Twilight World: exhaust The One Ring or reduce the Ring-bearer's life",
+    "exhaust": "Exhaust The One Ring",
+    "life": "Reduce the Ring-bearer's life by 1"
+  },
+  "huntingHawk": {
+    "choose": "Hunting Hawk: exhaust the ally or damage an active location",
+    "exhaust": "Exhaust the ally just played",
+    "damage": "Place 1 damage on an active location"
+  },
+  "huntedInHollin": {
+    "choose": "Hunted in Hollin: raise your threat or engage an enemy and reveal a card",
+    "threat": "Raise your threat by 6",
+    "engage": "Engage the lowest engagement cost enemy and reveal a card",
+    "enemy": "Choose an enemy with the lowest engagement cost"
+  },
+  "wareWare": {
+    "choose": "Ware! Ware!: add this card under The Black Gate or engage the top card under The Cross-roads",
+    "blackGate": "Place Ware! Ware! facedown under The Black Gate",
+    "engage": "Put the top card under The Cross-roads into play engaged with you",
+    "enemy": "Choose an enemy in staging to engage and deal a shadow card"
+  },
+  "orcOfMinasMorgul": {
+    "choose": "Orc of Minas Morgul: discard a random card or engage it and reveal another card",
+    "discard": "Discard a random card from your hand",
+    "engage": "Engage Orc of Minas Morgul and reveal an encounter card"
+  },
+  "underGateSentry": {
+    "choose": "Under-gate Sentry: discard a random card or exhaust a character",
+    "discard": "Discard a random card from your hand",
+    "exhaust": "Exhaust a character you control"
+  },
+  "impenetrableDark": {
+    "remove": "Remove a character you control from the quest and exhaust it",
+    "exhaust": "Exhaust a character you control; it cannot ready this round"
+  },
+  "shinyDistraction": {
+    "choose": "Accept Shiny Distraction’s resources?",
+    "accept": "Add 1 resource to each hero’s pool and raise your threat by 5",
+    "decline": "Decline the resources"
+  },
+  "guiltyConscience": {
+    "attach": "Attach Guilty Conscience to a hero with the highest threat cost"
+  },
+  "greatSpider": {
+    "damage": "Choose a character you control to take 1 damage"
+  },
+  "goblinChieftain": {
+    "choose": "Choose Goblin Chieftain’s effect",
+    "progress": "Remove progress equal to the current quest stage number",
+    "return": "Return Goblin Chieftain to the staging area"
+  },
+  "obsidianArrowsDarkOfMirkwood": {
+    "damage": "Choose a character you control to take damage"
+  },
+  "lostInTheDark": {
+    "choose": "Choose Lost in the Dark’s effect",
+    "exhaust": "Exhaust Cave Torch",
+    "noProgress": "Place no progress on the current quest this phase"
+  },
+  "crackedPillar": {
+    "attack": "Attack Cracked Pillar?"
+  },
+  "aPerilousVoyage": {
+    "draw": "Choose one of the top 2 cards to draw",
+    "search": "Search your deck for a card",
+    "takeOrPlay": "Add the card to your hand or play it at 3 less cost",
+    "take": "Add it to your hand",
+    "play": "Play it, reducing its cost by 3"
+  },
+  "dreadnaught": {
+    "outOfTheMist": "Choose the enemy with the highest engagement cost",
+    "outOfTheMistShadow": "Raise your threat by 4 or resolve an additional attack",
+    "additionalAttack": "Attacking enemy makes an additional attack",
+    "isleOfFortune": "Choose a hero to receive a resource from Isle of Fortune",
+    "readyCard": "Choose an exhausted card to ready",
+    "playCard": "Choose a card to play",
+    "gainTraits": "Choose a hero to gain printed traits",
+    "copyTraits": "Choose another hero whose printed traits are gained",
+    "gainRanged": "Choose a hero to gain ranged",
+    "healCharacter": "Choose a character to heal 2 damage",
+    "resources": "Choose a hero to receive 2 resources",
+    "shuffleDiscard": "Choose up to 6 cards to shuffle into your deck",
+    "addVictory": "Choose up to 2 encounter discard cards to add to the victory display",
+    "takeEvents": "Choose up to 2 events from your discard pile or collection",
+    "returnFive": "Choose a card to shuffle back into your deck (5 in total)",
+    "warshipController": "Choose the player who gains control of Gondorian Warship",
+    "pillageDamage": "Choose a character you control to take 1 damage.",
+    "warGalley": "Raise your threat by 4 or War Galley gains Boarding 1.",
+    "raiseFour": "Raise your threat by 4",
+    "seaMonster": "Deal 4 damage to the Ship with the fewest hit points remaining."
+  },
+  "epic": {
+  "chooseTarget": "Choose a target in any group",
+  "target": "{card} — {group}",
+  "localTarget": "{card}",
+  "group": "Group: {group}",
+  "thisGroup": "This group"
+}
 }

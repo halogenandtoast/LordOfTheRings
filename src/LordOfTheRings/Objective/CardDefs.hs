@@ -16,7 +16,8 @@ allObjectiveCards =
   Map.fromList $
     map
       (\def -> (cdCardCode def, def))
-      [ gandalfsMap
+      [corsairSkirmisherShipDreadnaught, eithiliant, eithiliantUpgraded, goldenWing, goldenWingUpgraded, prideOfLebennin, prideOfLebenninUpgraded, silentMist, silentMistUpgraded, swanShipOfDolAmroth, swanShipOfDolAmrothUpgraded, twilightsCall, twilightsCallUpgraded, gondorianWarship,  caveTorchDarkOfMirkwood
+      , gandalfsMap
       , theThreatToWilderland
       , ashenBrazier
       , arnorRavaged
@@ -1411,3 +1412,204 @@ ashenBrazier =
       , cdCardTraits = setFromList [Artifact, Item, Boon]
       , cdKeywords = setFromList [Loot]
       }
+
+-- * Reprints in The Dark of Mirkwood
+
+caveTorchDarkOfMirkwood :: CardDef
+caveTorchDarkOfMirkwood = reprintEncounter "dark-of-mirkwood-029" TheCavesOfNibinDum 1 Nothing caveTorch
+
+-- * The Hunt for the Dreadnaught
+
+eithiliant :: CardDef
+eithiliant = (objective "the-hunt-for-the-dreadnaught-006" "Eithiliant" TheHuntForTheDreadnaught 1)
+  { cdUnique = True
+  , cdCardTraits = setFromList [GreyHavens, Ship, Basic]
+  , cdKeywords = setFromList [Sentinel]
+  , cdCardType = ObjectiveAllyType
+  , cdWillpower = Just 5
+  , cdAttack = Just 3
+  , cdDefense = Just 3
+  , cdHitPoints = Just 13
+  , cdDoubleSided = True
+  , cdOtherSide = Just "the-hunt-for-the-dreadnaught-006-b"
+  }
+
+eithiliantUpgraded :: CardDef
+eithiliantUpgraded = (objective "the-hunt-for-the-dreadnaught-006-b" "Eithiliant" TheHuntForTheDreadnaught 0)
+  { cdUnique = True
+  , cdCardTraits = setFromList [GreyHavens, Ship, Upgraded]
+  , cdKeywords = setFromList [Sentinel]
+  , cdCardType = ObjectiveAllyType
+  , cdWillpower = Just 6
+  , cdAttack = Just 4
+  , cdDefense = Just 4
+  , cdHitPoints = Just 15
+  , cdDoubleSided = True
+  , cdOtherSide = Just "the-hunt-for-the-dreadnaught-006"
+  }
+
+goldenWing :: CardDef
+goldenWing = (objective "the-hunt-for-the-dreadnaught-007" "Golden Wing" TheHuntForTheDreadnaught 1)
+  { cdUnique = True
+  , cdCardTraits = setFromList [GreyHavens, Ship, Basic]
+  , cdKeywords = setFromList [Ranged, Sentinel]
+  , cdCardType = ObjectiveAllyType
+  , cdWillpower = Just 2
+  , cdAttack = Just 5
+  , cdDefense = Just 3
+  , cdHitPoints = Just 15
+  , cdDoubleSided = True
+  , cdOtherSide = Just "the-hunt-for-the-dreadnaught-007-b"
+  }
+
+goldenWingUpgraded :: CardDef
+goldenWingUpgraded = (objective "the-hunt-for-the-dreadnaught-007-b" "Golden Wing" TheHuntForTheDreadnaught 0)
+  { cdUnique = True
+  , cdCardTraits = setFromList [GreyHavens, Ship, Upgraded]
+  , cdKeywords = setFromList [Ranged, Sentinel]
+  , cdCardType = ObjectiveAllyType
+  , cdWillpower = Just 3
+  , cdAttack = Just 6
+  , cdDefense = Just 4
+  , cdHitPoints = Just 18
+  , cdDoubleSided = True
+  , cdOtherSide = Just "the-hunt-for-the-dreadnaught-007"
+  }
+
+prideOfLebennin :: CardDef
+prideOfLebennin = (objective "the-hunt-for-the-dreadnaught-008" "Pride of Lebennin" TheHuntForTheDreadnaught 1)
+  { cdUnique = True
+  , cdCardTraits = setFromList [Gondor, Ship, Basic]
+  , cdKeywords = setFromList [Sentinel]
+  , cdCardType = ObjectiveAllyType
+  , cdWillpower = Just 3
+  , cdAttack = Just 2
+  , cdDefense = Just 5
+  , cdHitPoints = Just 16
+  , cdDoubleSided = True
+  , cdOtherSide = Just "the-hunt-for-the-dreadnaught-008-b"
+  }
+
+prideOfLebenninUpgraded :: CardDef
+prideOfLebenninUpgraded = (objective "the-hunt-for-the-dreadnaught-008-b" "Pride of Lebennin" TheHuntForTheDreadnaught 0)
+  { cdUnique = True
+  , cdCardTraits = setFromList [Gondor, Ship, Upgraded]
+  , cdKeywords = setFromList [Sentinel]
+  , cdCardType = ObjectiveAllyType
+  , cdWillpower = Just 4
+  , cdAttack = Just 3
+  , cdDefense = Just 6
+  , cdHitPoints = Just 19
+  , cdDoubleSided = True
+  , cdOtherSide = Just "the-hunt-for-the-dreadnaught-008"
+  }
+
+silentMist :: CardDef
+silentMist = (objective "the-hunt-for-the-dreadnaught-009" "Silent Mist" TheHuntForTheDreadnaught 1)
+  { cdUnique = True
+  , cdCardTraits = setFromList [Gondor, Ship, Basic]
+  , cdKeywords = setFromList [Sentinel]
+  , cdCardType = ObjectiveAllyType
+  , cdWillpower = Just 4
+  , cdAttack = Just 3
+  , cdDefense = Just 4
+  , cdHitPoints = Just 14
+  , cdDoubleSided = True
+  , cdOtherSide = Just "the-hunt-for-the-dreadnaught-009-b"
+  }
+
+silentMistUpgraded :: CardDef
+silentMistUpgraded = (objective "the-hunt-for-the-dreadnaught-009-b" "Silent Mist" TheHuntForTheDreadnaught 0)
+  { cdUnique = True
+  , cdCardTraits = setFromList [Gondor, Ship, Upgraded]
+  , cdKeywords = setFromList [Sentinel]
+  , cdCardType = ObjectiveAllyType
+  , cdWillpower = Just 5
+  , cdAttack = Just 4
+  , cdDefense = Just 5
+  , cdHitPoints = Just 17
+  , cdDoubleSided = True
+  , cdOtherSide = Just "the-hunt-for-the-dreadnaught-009"
+  }
+
+swanShipOfDolAmroth :: CardDef
+swanShipOfDolAmroth = (objective "the-hunt-for-the-dreadnaught-010" "Swan Ship of Dol Amroth" TheHuntForTheDreadnaught 1)
+  { cdUnique = True
+  , cdCardTraits = setFromList [Gondor, Ship, Basic]
+  , cdKeywords = setFromList [Sentinel]
+  , cdCardType = ObjectiveAllyType
+  , cdWillpower = Just 3
+  , cdAttack = Just 4
+  , cdDefense = Just 3
+  , cdHitPoints = Just 17
+  , cdDoubleSided = True
+  , cdOtherSide = Just "the-hunt-for-the-dreadnaught-010-b"
+  }
+
+swanShipOfDolAmrothUpgraded :: CardDef
+swanShipOfDolAmrothUpgraded = (objective "the-hunt-for-the-dreadnaught-010-b" "Swan Ship of Dol Amroth" TheHuntForTheDreadnaught 0)
+  { cdUnique = True
+  , cdCardTraits = setFromList [Gondor, Ship, Upgraded]
+  , cdKeywords = setFromList [Sentinel]
+  , cdCardType = ObjectiveAllyType
+  , cdWillpower = Just 4
+  , cdAttack = Just 5
+  , cdDefense = Just 4
+  , cdHitPoints = Just 20
+  , cdDoubleSided = True
+  , cdOtherSide = Just "the-hunt-for-the-dreadnaught-010"
+  }
+
+twilightsCall :: CardDef
+twilightsCall = (objective "the-hunt-for-the-dreadnaught-011" "Twilight's Call" TheHuntForTheDreadnaught 1)
+  { cdUnique = True
+  , cdCardTraits = setFromList [GreyHavens, Ship, Basic]
+  , cdKeywords = setFromList [Sentinel]
+  , cdCardType = ObjectiveAllyType
+  , cdWillpower = Just 3
+  , cdAttack = Just 4
+  , cdDefense = Just 4
+  , cdHitPoints = Just 18
+  , cdDoubleSided = True
+  , cdOtherSide = Just "the-hunt-for-the-dreadnaught-011-b"
+  }
+
+twilightsCallUpgraded :: CardDef
+twilightsCallUpgraded = (objective "the-hunt-for-the-dreadnaught-011-b" "Twilight's Call" TheHuntForTheDreadnaught 0)
+  { cdUnique = True
+  , cdCardTraits = setFromList [GreyHavens, Ship, Upgraded]
+  , cdKeywords = setFromList [Sentinel]
+  , cdCardType = ObjectiveAllyType
+  , cdWillpower = Just 4
+  , cdAttack = Just 5
+  , cdDefense = Just 5
+  , cdHitPoints = Just 22
+  , cdDoubleSided = True
+  , cdOtherSide = Just "the-hunt-for-the-dreadnaught-011"
+  }
+
+gondorianWarship :: CardDef
+gondorianWarship = (objective "the-hunt-for-the-dreadnaught-012" "Gondorian Warship" TheHuntForTheDreadnaught 4)
+  { cdWhenRevealed = True
+  , cdCardTraits = setFromList [Gondor, Ship]
+  , cdKeywords = setFromList [Ranged, Sentinel]
+  , cdShadowEffect = True
+  , cdCardType = ObjectiveAllyType
+  , cdWillpower = Just 3
+  , cdAttack = Just 5
+  , cdDefense = Just 4
+  , cdHitPoints = Just 10
+  }
+
+-- The captured enemy keeps its Dreadnaught printing and flips back to that enemy.
+corsairSkirmisherShipDreadnaught :: CardDef
+corsairSkirmisherShipDreadnaught =
+  (objective "the-hunt-for-the-dreadnaught-028-ship" "Corsair Skirmisher" TheHuntForTheDreadnaught 0)
+    { cdCardType = ObjectiveAllyType
+    , cdWillpower = Just 3
+    , cdAttack = Just 4
+    , cdDefense = Just 4
+    , cdHitPoints = Just 6
+    , cdCardTraits = setFromList [Corsair, Ship]
+    , cdOtherSide = Just "the-hunt-for-the-dreadnaught-028"
+    }

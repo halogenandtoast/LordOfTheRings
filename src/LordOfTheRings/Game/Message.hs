@@ -1,5 +1,7 @@
 module LordOfTheRings.Game.Message (module LordOfTheRings.Game.Message) where
 
+import LordOfTheRings.Epic.Runner (runEpicMessage)
+import LordOfTheRings.Enemy.AttackLocation (attackLocationEnemy)
 import Data.List (mapAccumL)
 import Data.Map.Strict qualified as Map (
   adjust,
@@ -7,6 +9,8 @@ import Data.Map.Strict qualified as Map (
   filter,
   findWithDefault,
   insert,
+  insertWith,
+  update,
   keys,
   lookup,
   member,
@@ -26,6 +30,7 @@ import LordOfTheRings.Ally (
   AllyAttrs (
     allyAttacking,
     allyCardId,
+    allyCardCode,
     allyCommitted,
     allyExhausted,
     allyFacedown,
@@ -90,6 +95,7 @@ import LordOfTheRings.Classes.HasGame (
   getsGame,
  )
 import LordOfTheRings.Classes.HasQueue (
+  peekQueue,
   HasQueue (pushAll),
   clearQueue,
   insertAfterMatching,
@@ -118,7 +124,9 @@ import LordOfTheRings.Effect (
  )
 import LordOfTheRings.Enemy (
   EnemyAttrs (
+    enemyAttackLocation,
     enemyCardId,
+    enemyCardCode,
     enemyFacedown,
     enemyOwner,
     enemyPlacement,
@@ -168,6 +176,7 @@ import LordOfTheRings.Game.Base (
     gameEffects,
     gameEntities,
     gameFortitudeTests,
+    gameResolvingAttachments,
     gameLeftPlay,
     gameLeftPlayLocations,
     gameModifiers,
@@ -195,6 +204,7 @@ import LordOfTheRings.Game.Base (
   isolated,
   joinArea,
   lastCommittedWillpowerL,
+  resolvingAttachmentsL,
   leftPlayL,
   leftPlayLocationsL,
   logBlocksL,
@@ -274,6 +284,7 @@ import LordOfTheRings.Hero (
  )
 import LordOfTheRings.I18n (cardVar, ikey, ikeyWith, intVar)
 import LordOfTheRings.Id (
+  PlayerId,
   AllyId (AllyId, unAllyId),
   AttachmentId (AttachmentId),
   EnemyId (EnemyId, unEnemyId),
@@ -454,6 +465,7 @@ import LordOfTheRings.Message (
     AttackDamage,
     AttackDefended,
     AttackEndedUnresolved,
+    ResolvePillage,
     AttackResolved,
     AttackStagingAreaAlone,
     AttackWith,
@@ -465,6 +477,9 @@ import LordOfTheRings.Message (
     CheckRestricted,
     CheckShadowRaisedAttack,
     CheckWindows,
+    ChooseEpicTarget,
+    ResolveEpicEffect,
+    ApplyEpicCommand,
     ChooseAndDiscard,
     ChooseAndDiscardFromHand,
     ChooseAnyDiscardFromHand,
@@ -485,6 +500,7 @@ import LordOfTheRings.Message (
     DamageAnotherCharacter,
     DealDamage,
     DealDamageDivided,
+    DamageControlledShip,
     DealDamageDividedAmong,
     DealShadowCard,
     DealShadowCardToCard,
@@ -535,6 +551,7 @@ import LordOfTheRings.Message (
     Flip,
     FlipKeepingProgress,
     FocusArea,
+    FinishAttachmentAbility,
     ForgetLeftPlay,
     GameOver,
     GiveFromHand,
@@ -584,6 +601,8 @@ import LordOfTheRings.Message (
     PlayAttachmentOn,
     PlayCard,
     PlayEvent,
+    BeginLocationAttack,
+    EndLocationAttack,
     PlayerAttacks,
     PrepareIslandMap,
     ProgressCanceled,
@@ -721,6 +740,7 @@ import LordOfTheRings.Message.Lifted.Queue (capture)
 import LordOfTheRings.Modifier (
   Modifier (modifierSource, modifierType),
   ModifierType (
+    DeclaredAttackerThisRound,
     AddCopyToCampaignPoolAtQuestResolution,
     AdditionalAttackAfterNextAttack,
     AdditionalStagingReveals,
@@ -767,6 +787,7 @@ import LordOfTheRings.Modifier (
     CannotDiscardFromHand,
     CannotEngagePlayer,
     CannotExhaust,
+    CannotLeaveStagingArea,
     CannotLoseFirstPlayerToken,
     CannotTakeCombatDamage,
     CannotTakeDamage,
@@ -943,6 +964,7 @@ import LordOfTheRings.Scenario (
 import LordOfTheRings.Source (
   Source (
     AllySource,
+    AttachmentSource,
     CardIdSource,
     EnemyAttackSource,
     EnemySource,
@@ -1028,6 +1050,7 @@ import LordOfTheRings.Window (
     GainedResources,
     Healed,
     LocationFlipped,
+    FlippedTo,
     LookedAtEncounterDeck,
     OptionallyEngaged,
     PassedHideTest,
@@ -1147,6 +1170,9 @@ import LordOfTheRings.Game.Query (
 
 runGameMessage :: Message -> Game -> GameT Game
 runGameMessage msg g = case msg of
+  ChooseEpicTarget {} -> runEpicMessage msg g
+  ResolveEpicEffect {} -> runEpicMessage msg g
+  ApplyEpicCommand {} -> runEpicMessage msg g
   -- the rest of an attack does nothing once its enemy has left play
   _ | Just eid <- attackingEnemy msg, not (Map.member eid g.entities.enemies) -> pure g
   Run msgs -> do
@@ -1170,6 +1196,20 @@ runGameMessage msg g = case msg of
     when (dealt == 0) $ pushAll msgs
     pure g
   OpenLogBlock block -> pure $ g & logBlocksL %~ (<> [block])
+  -- An activated attachment still resolves if its cost removes it or its host. The
+  -- snapshot is scoped to that activation, so leaving alone never grants abilities.
+  UseCardAbility _ (AttachmentSource aid) _ _
+    | not (Map.member aid g.entities.attachments)
+    , Just (attachment : rest) <- Map.lookup aid (gameResolvingAttachments g) -> do
+        resolved <- runEach msg attachment
+        pure $ g & resolvingAttachmentsL . ix aid .~ (resolved : rest)
+  DoStep _ (UseCardAbility _ (AttachmentSource aid) _ _)
+    | not (Map.member aid g.entities.attachments)
+    , Just (attachment : rest) <- Map.lookup aid (gameResolvingAttachments g) -> do
+        resolved <- runEach msg attachment
+        pure $ g & resolvingAttachmentsL . ix aid .~ (resolved : rest)
+  FinishAttachmentAbility aid ->
+    pure $ g & resolvingAttachmentsL %~ Map.update (\case _ : remaining | notNull remaining -> Just remaining; _ -> Nothing) aid
   -- an ally that has just left play answers its own leaving
   UseCardAbility _ (AllySource aid) _ _ | Just a <- Map.lookup aid (gameLeftPlay g) -> do
     a' <- runEach msg a
@@ -1501,6 +1541,11 @@ runGameMessage msg g = case msg of
   Discard _ target -> discardTarget target g
   -- damage that would be placed on the card goes first to another, as much as it still
   -- takes, the rest to this one, as City Wall takes Minas Tirith's
+  DealDamage source (EnemyTarget eid) n
+    | Just actor <- Map.lookup eid g.entities.enemies
+    , Just lid <- (toAttrs actor).enemyAttackLocation -> do
+        push $ DealDamage source (LocationTarget lid) n
+        pure g
   DealDamage source target n
     | n > 0
     , (first, room) : _ <- [(t, k) | DamagePlacedFirstOn t k <- map modifierType (Map.findWithDefault [] target (gameModifiers g)), k > 0, inPlay g t] -> do
@@ -1980,7 +2025,7 @@ runGameMessage msg g = case msg of
   EnemyEngagementChecks eid | Just enemy <- Map.lookup eid g.entities.enemies, enemy.placement == StagingArea -> do
     gameMods <- getModifiers GameTarget
     mods <- getModifiers eid
-    when (NoEngagementChecks `notElem` (gameMods <> mods)) do
+    when (NoEngagementChecks `notElem` (gameMods <> mods) && CannotLeaveStagingArea `notElem` mods) do
       cost <- getEngagementCost eid
       -- its cost against each player, as for an engagement check
       let costFor p = cost + sum [n | EngagementCostAgainst p' n <- mods, p' == p]
@@ -2132,6 +2177,7 @@ runGameMessage msg g = case msg of
       <> windows
       <> [ AttackDamage eid defender
          , AttackDefended pid eid [defender]
+         , ResolvePillage eid pid
          , CheckWindows [mkAfter $ EnemyAttacking eid pid, mkAfter $ DefendedAttack defender eid]
          ]
       <> windows
@@ -2203,6 +2249,7 @@ runGameMessage msg g = case msg of
           <> windows
           <> [ DefendedByMany pid eid chosen
              , AttackDefended pid eid chosen
+             , ResolvePillage eid pid
              , CheckWindows $ mkAfter (EnemyAttacking eid pid) : [mkAfter $ DefendedAttack d eid | d <- chosen]
              ]
           <> windows
@@ -2250,7 +2297,7 @@ runGameMessage msg g = case msg of
       : windows
       <> [ResolveShadow eid pid []]
       <> windows
-      <> [UndefendedDamage pid eid, CheckWindows [mkAfter $ EnemyAttacking eid pid]]
+      <> [UndefendedDamage pid eid, ResolvePillage eid pid, CheckWindows [mkAfter $ EnemyAttacking eid pid]]
       <> windows
     pure g
   UndefendedDamage pid eid -> do
@@ -2285,6 +2332,20 @@ runGameMessage msg g = case msg of
         then chooseOrRunOne pid (take 1 choices)
         else questionLabelWith (ikey "label.undefendedDamage") (Just $ toTarget eid) [] pid choices
     pure g
+  -- A location attacked as an engaged enemy uses the normal enemy attack sequence.
+  -- The temporary actor is unplaced and absent from ordinary enemy queries, so it never
+  -- contributes threat, counts as an extra enemy, or appears twice on the board.
+  BeginLocationAttack pid lid -> do
+    case Map.lookup lid g.entities.locations of
+      Nothing -> pure g
+      Just l -> do
+        eid <- getRandom
+        let actor = attackLocationEnemy lid pid eid (toAttrs l)
+        pushAll [DeclareAttackers pid eid, EndLocationAttack eid]
+        pure $ g & entitiesL . enemiesL %~ Map.insert eid actor
+  EndLocationAttack eid -> do
+    pure $ g & entitiesL . enemiesL %~ Map.delete eid
+             & effectsL %~ filter ((/= UntilEndOfAttack) . effectDuration)
   PlayerAttacks pid -> do
     enemies <- engagedByCost pid
     loners <-
@@ -2390,11 +2451,25 @@ runGameMessage msg g = case msg of
             <> [Label (ikey "label.doneAttacking") [DeclareRangedAttackers pid eid rest]]
     pure g
   -- the enemy is attacked, for its "when attacked" effects, before the damage is dealt
+  ResolveAttack _ eid
+    | Just actor <- Map.lookup eid g.entities.enemies
+    , Just lid <- (toAttrs actor).enemyAttackLocation
+    , not (Map.member lid g.entities.locations) -> do
+        attackers <- selectCharacters AttackingHero AttackingAlly
+        pushAll (map StopAttacking attackers)
+        pure $ g & entitiesL . enemiesL %~ Map.delete eid
   ResolveAttack _ eid -> do
     attackers <- selectCharacters AttackingHero AttackingAlly
     pushAll $ [CheckWindows [mkWhen $ EnemyAttacked eid] | notNull attackers, Map.member eid g.entities.enemies] <> [DoStep 1 msg]
     pure g
   -- what the last attack on an enemy destroyed is forgotten as the next resolves
+  DoStep 1 (ResolveAttack _ eid)
+    | Just actor <- Map.lookup eid g.entities.enemies
+    , Just lid <- (toAttrs actor).enemyAttackLocation
+    , not (Map.member lid g.entities.locations) -> do
+        attackers <- selectCharacters AttackingHero AttackingAlly
+        pushAll (map StopAttacking attackers)
+        pure $ g & entitiesL . enemiesL %~ Map.delete eid
   DoStep 1 (ResolveAttack pid eid) -> do
     -- ranged characters of other players among them
     attackers <- selectCharacters AttackingHero AttackingAlly
@@ -2428,7 +2503,7 @@ runGameMessage msg g = case msg of
         -- the attack may place progress in place of its damage, as The Passage Out reads
         asProgress <- elem ProgressInsteadOfAttackDamage <$> getModifiers GameTarget
         -- what a lone attack deals beyond the enemy's remaining hit points, as Firefoot reads
-        let excess = if asProgress then 0 else max 0 $ attack - defense - (hitPoints - enemy'.damage)
+        let excess = if asProgress || isJust (toAttrs enemy').enemyAttackLocation then 0 else max 0 $ attack - defense - (hitPoints - enemy'.damage)
             damaging = CannotTakeCombatDamage `notElem` mods && not asProgress
             -- what the attack deals an enemy that cannot have more than N damage, as City Guard
             dealt = foldr min (attack - defense) [max 0 (k - enemy'.damage) | MaxDamage k <- mods]
@@ -2514,16 +2589,14 @@ runGameMessage msg g = case msg of
     pure g
   -- a defender that left play before the damage leaves the attack undefended
   AttackDamage eid defender | not (inPlay g defender) -> do
-    lead <- getLead
-    engaged <- placementController . (.placement) <$> getEnemy eid
-    push $ UndefendedDamage (fromMaybe lead engaged) eid
+    pid <- attackRecipient eid
+    push $ UndefendedDamage pid eid
     pure g
   AttackDamage eid defender -> do
     attack <- getEnemyAttack eid
     defense <- getDefenseAgainst eid defender
-    engaged <- placementController . (.placement) <$> getEnemy eid
-    lead <- getLead
-    pushAll =<< attackDamage (fromMaybe lead engaged) eid defender (attack - defense)
+    pid <- attackRecipient eid
+    pushAll =<< attackDamage pid eid defender (attack - defense)
     pure g
   ResolveShadow eid pid defenders -> do
     -- a shadow card with no effect may be given one, as Mountains of Angmar gives
@@ -2643,6 +2716,10 @@ runGameMessage msg g = case msg of
         []
         pid
         [targetLabel c [Exhaust c, ChooseAndExhaust source pid (n - 1)] | c <- ready]
+    pure g
+  DamageControlledShip source pid -> do
+    ships <- shipObjectivesOf pid
+    unless (null ships) $ push $ chooseOrRunOne pid [targetLabel ship [DealDamage source (toTarget ship) 1] | ship <- ships]
     pure g
   DealDamageDivided source pid n assigned -> do
     characters <- withHitPointsLeft assigned =<< charactersControlledBy pid
@@ -3060,6 +3137,12 @@ runGameMessage msg g = case msg of
   PlayAtNoCost _ card -> do
     runQueueT $ raiseThreatFromDoomed $ printedDoomed card
     pure g
+  CreateEffect effect
+    | EnemyTarget eid <- effectTarget effect
+    , DeclaredAttackerThisRound `elem` effectModifiers effect
+    , Just actor <- Map.lookup eid g.entities.enemies
+    , Just lid <- (toAttrs actor).enemyAttackLocation ->
+        pure $ g & effectsL %~ (\es -> effect : effect {effectTarget = LocationTarget lid} : es)
   CreateEffect effect -> pure $ g & effectsL %~ (effect :)
   EndEffects duration -> pure $ g & effectsL %~ filter ((/= duration) . effectDuration)
   EndEffectsFrom source -> pure $ g & effectsL %~ filter ((/= source) . effectSource)
@@ -3288,10 +3371,16 @@ runGameMessage msg g = case msg of
                 <> [Label (ikey "label.pass") [next]]
         pure g
   UseAbility pid ab windows -> do
+    let saved = case ab.abilitySource of
+          AttachmentSource aid -> (aid,) <$> Map.lookup aid g.entities.attachments
+          _ -> Nothing
+        finish = [FinishAttachmentAbility aid | Just (aid, _) <- [saved]]
     pushAll
       =<< inLogBlock (AbilityBlock pid ab.abilitySource (isForcedAbility ab))
-      =<< payCost pid (abilityCost ab) [UseCardAbility pid ab.abilitySource ab.abilityIndex windows]
-    pure g
+      =<< payCost pid (abilityCost ab) (UseCardAbility pid ab.abilitySource ab.abilityIndex windows : finish)
+    pure $ case saved of
+      Just (aid, attachment) -> g & resolvingAttachmentsL %~ Map.insertWith (<>) aid [attachment]
+      Nothing -> g
   PlayEvent pid card _ -> do
     for_ (lookupEvent (toCardCode card) card.id pid) $ void . runEach msg
     pure g
@@ -4215,6 +4304,22 @@ runGameMessage msg g = case msg of
     push $ enteredPlayThisRound thisAlly
     push $ CheckWindows [mkAfter $ EntersPlay $ toTarget thisAlly]
     pure $ g & entitiesL . alliesL %~ insertEntity thisAlly
+  -- Same-kind flips keep the entity, its controller and all state. In particular,
+  -- upgrading a ship neither heals nor readies it; those are separate card effects.
+  Flip target@(AllyTarget aid)
+    | Just a <- Map.lookup aid g.entities.allies
+    , Just other <- cdOtherSide (toCardDef a)
+    , cdCardType (toCardDef other) `elem` [AllyType, ObjectiveAllyType] -> do
+        let changed = overAttrs (const $ (toAttrs a) {allyCardCode = other}) $ lookupAlly other (toCard a).id aid a.owner
+        push $ CheckWindows [mkAfter $ FlippedTo target other]
+        pure $ g & entitiesL . alliesL %~ insertEntity changed
+  Flip target@(EnemyTarget eid)
+    | Just e <- Map.lookup eid g.entities.enemies
+    , Just other <- cdOtherSide (toCardDef e)
+    , cdCardType (toCardDef other) == EnemyType -> do
+        let changed = overAttrs (const $ (toAttrs e) {enemyCardCode = other}) $ lookupEnemy other (toCard e).id eid
+        push $ CheckWindows [mkAfter $ FlippedTo target other]
+        pure $ g & entitiesL . enemiesL %~ insertEntity changed
   -- a card whose other side is another kind of card turns over, as Captain Sahír from enemy
   -- to objective-ally and back: it does not leave play, but what was on it is discarded and
   -- its tokens go, and the side it turns to is under the player that side names
@@ -4456,3 +4561,15 @@ runGameMessage msg g = case msg of
         %~ insertEntity (overAttrs (\a -> a {objectivePlacement = StagingArea}) thisObjective)
   _ -> pure g
 
+
+-- A Massive enemy has no engaged-player placement. Keep the attacked player from
+-- the attack's pending completion window, including when a shadow removed its
+-- defender; falling back to the first player would redirect that player's damage.
+attackRecipient :: EnemyId -> GameT PlayerId
+attackRecipient eid = do
+  queued <- peekQueue
+  case listToMaybe [pid | CheckWindows ws <- queued, Window After (EnemyAttacking attacking pid) <- ws, attacking == eid] of
+    Just pid -> pure pid
+    Nothing -> do
+      engaged <- placementController . (.placement) <$> getEnemy eid
+      maybe getLead pure engaged

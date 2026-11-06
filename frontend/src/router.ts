@@ -7,6 +7,7 @@ export const router = createRouter({
   routes: [
     { path: '/', component: Home, meta: { title: 'appName', requiresAuth: true } },
     { path: '/new-game', component: () => import('./views/NewGame.vue'), meta: { title: 'newGame.title', requiresAuth: true } },
+    { path: '/epic-events/:id', component: () => import('./views/EpicEvent.vue'), meta: { title: 'epic.title', requiresAuth: true } },
     { path: '/games/:id/spectate', component: () => import('./views/Game.vue'), meta: { title: 'common.game', spectate: true } },
     { path: '/watch', component: () => import('./views/Watch.vue'), meta: { title: 'nav.watch' } },
     { path: '/stats', component: () => import('./views/Stats.vue'), meta: { title: 'nav.stats' } },

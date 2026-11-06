@@ -1,7 +1,7 @@
 module LordOfTheRings.Ability.Types (module LordOfTheRings.Ability.Types) where
 
 import LordOfTheRings.Criteria
-import LordOfTheRings.Id (PlayerId)
+import LordOfTheRings.Id (PlayerId, QuestId)
 import LordOfTheRings.Json (withDefaults)
 import LordOfTheRings.Matcher.Types (AllyMatcher, HeroMatcher)
 import LordOfTheRings.Matcher.Window
@@ -16,6 +16,7 @@ data AbilityCost
   | ResourceCost Target Int
   | DiscardFromHandCost PlayerId Int
   | RaiseThreatCost Int
+  | QuestProgressPerPlayerCost QuestId Int
   | -- | the player advances The Uruk-hai pursuit tracker before resolving the effect
     IncreasePursuitCost Int
   | -- | the player spends resources of the sphere from their heroes' pools
@@ -33,6 +34,7 @@ data AbilityCost
   | -- | as 'SphereResourceCost', spent by whichever player uses the ability, as The Old
     -- Bridge's any player may
     SpendResourcesCost Sphere Int
+  | GroupResourcesCost Sphere Int
   | -- | the paying player exhausts The One Ring, which he controls, as Master cards read
     ExhaustTheOneRingCost
   deriving stock (Show, Eq, Generic)

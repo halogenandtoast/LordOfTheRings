@@ -37,7 +37,9 @@ data Enemy = forall a. (IsEnemy a) => Enemy a
 data SomeEnemyCard = forall a. (IsEnemy a) => SomeEnemyCard (EnemyCard a)
 
 data EnemyAttrs = EnemyAttrs
-  { enemyId :: EnemyId
+  { enemyAttackLocation :: Maybe LocationId
+  -- ^ A transient attack actor for a location treated as an enemy during an attack.
+  , enemyId :: EnemyId
   , enemyCardId :: CardId
   , enemyCardCode :: CardCode
   , enemyPlacement :: Placement
@@ -60,7 +62,7 @@ instance ToJSON EnemyAttrs where
   toJSON = genericToJSON (aesonOptions $ Just "enemy")
 
 instance FromJSON EnemyAttrs where
-  parseJSON = genericParseJSON (aesonOptions $ Just "enemy") . withDefaults [("shadowRevealed", toJSON ([] :: [CardId])), ("facedown", toJSON ([] :: [PlayerCard])), ("shadowFaceUp", toJSON ([] :: [CardId])), ("owner", Null)]
+  parseJSON = genericParseJSON (aesonOptions $ Just "enemy") . withDefaults [("attackLocation", Null), ("shadowRevealed", toJSON ([] :: [CardId])), ("facedown", toJSON ([] :: [PlayerCard])), ("shadowFaceUp", toJSON ([] :: [CardId])), ("owner", Null)]
 
 enemy :: (EnemyAttrs -> a) -> CardDef -> EnemyCard a
 enemy f cardDef =
@@ -69,7 +71,8 @@ enemy f cardDef =
     , cbCardBuilder = \cardId ident ->
         f
           EnemyAttrs
-            { enemyId = ident
+            { enemyAttackLocation = Nothing
+            , enemyId = ident
             , enemyCardId = cardId
             , enemyCardCode = cdCardCode cardDef
             , enemyPlacement = Unplaced

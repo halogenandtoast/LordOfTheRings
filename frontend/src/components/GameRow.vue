@@ -22,6 +22,7 @@ const phase = computed(() => `game.phases.${props.game.phase.replace(/Phase$/, '
           <span v-if="preview" class="title preview-title">{{ game.name }}</span>
           <RouterLink v-else class="title" :to="spectate ? `/games/${game.id}/spectate` : `/games/${game.id}`">{{ game.name }}</RouterLink>
           <div v-if="game.easyMode" class="badge easy">{{ $t('home.easyMode') }}</div>
+          <div v-if="game.hardMode" class="badge">{{ $t('newGame.mode.hard') }}</div>
           <div v-if="game.nightmare" class="badge nightmare">{{ $t('home.nightmare') }}</div>
           <RouterLink v-if="game.campaignId && !preview && !spectate" class="badge easy" :to="`/campaigns/${game.campaignId}`">{{ $t('campaignMode.log') }}</RouterLink>
           <div v-if="game.outcome" class="badge outcome" :class="game.outcome === 'Won' ? 'won' : 'lost'">
@@ -35,7 +36,7 @@ const phase = computed(() => `game.phases.${props.game.phase.replace(/Phase$/, '
           </div>
         </div>
         <div class="extra-details">
-          <div v-if="deleteGame" class="game-delete">
+          <div v-if="deleteGame && !game.campaignId" class="game-delete">
             <a href="#delete" :aria-label="$t('home.deleteGame')" @click.prevent="confirm?.open()">
               <TrashIcon />
             </a>
@@ -71,7 +72,7 @@ const phase = computed(() => `game.phases.${props.game.phase.replace(/Phase$/, '
         </li>
       </ul>
     </div>
-    <ConfirmDelete v-if="deleteGame" ref="confirm" :title="$t('home.confirmDelete')" @confirm="deleteGame()">
+    <ConfirmDelete v-if="deleteGame && !game.campaignId" ref="confirm" :title="$t('home.confirmDelete')" @confirm="deleteGame()">
       <span class="scenario-icon" aria-hidden="true" :style="{ '--icon': icon }" />
       <span class="confirm-details">
         <strong>{{ game.name }}</strong>

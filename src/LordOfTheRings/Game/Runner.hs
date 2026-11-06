@@ -60,6 +60,7 @@ import LordOfTheRings.Matcher (
   ),
   Query (select),
   getLead,
+  getPlayer,
   getLocation,
   progressPlacedThisRound,
   selectAny,
@@ -84,6 +85,7 @@ import LordOfTheRings.Message (
     PlaceInStagingAreaOf,
     PlaceLocation,
     PlaceTimeCounters,
+    LowerThreat,
     PlaceTokens,
     PutAllyIntoPlay,
     PutAllyIntoPlayUnder,
@@ -126,6 +128,8 @@ import LordOfTheRings.Modifier (
     ProgressCanceledThisRound,
     ProgressLimit,
     ProgressPerRoundLimit,
+    ThreatReducedThisRound,
+    ThreatReductionPerRoundLimit,
     ProgressPlacedThisPhase,
     ProgressPlacedThisRound,
     ProgressReducedBy,
@@ -152,7 +156,8 @@ import LordOfTheRings.Target (
     GameTarget,
     HeroTarget,
     LocationTarget,
-    QuestTarget
+    QuestTarget,
+    PlayerTarget
   ),
   Targetable (toTarget),
  )
@@ -197,6 +202,18 @@ runGame msg g = protectDiscardedHeroes g msg >>= maybe (pure g) (\allowed -> run
 
 runGameAllowed :: Message -> Game -> GameT Game
 runGameAllowed msg g = case msg of
+  LowerThreat pid n -> do
+    mods <- getModifiers $ PlayerTarget pid
+    player <- getPlayer pid
+    let reduced = sum [k | ThreatReducedThisRound k <- mods]
+        limit = foldr min n [max 0 (k - reduced) | ThreatReductionPerRoundLimit k <- mods]
+        amount = max 0 $ min player.threat limit
+    if amount <= 0
+      then pure g
+      else do
+        when (notNull [k | ThreatReductionPerRoundLimit k <- mods])
+          $ push $ CreateEffect $ Effect GameSource (PlayerTarget pid) [ThreatReducedThisRound amount] UntilEndOfRound
+        runGame'' (LowerThreat pid amount) g
   -- Card-effect immunity does not prevent combat damage.
   DealDamage source target _ -> do
     immune <- case source of

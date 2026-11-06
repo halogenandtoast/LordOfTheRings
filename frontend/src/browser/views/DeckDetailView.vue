@@ -75,6 +75,8 @@ const threat = computed(() => deck.value?.startingThreat ?? null)
 
 const unknown = computed(() => (deck.value ? unresolvedSlots(deck.value) : []))
 const size = computed(() => (deck.value ? drawDeckSize(deck.value) : 0))
+const minimum = computed(() => deck.value?.slots.some((slot) => slot.cardCode === 'the-hunt-for-the-dreadnaught-047') ? 100 : 50)
+const minimumCount = computed(() => size.value - (deck.value?.slots.filter((slot) => slot.card?.type === 'treasure').reduce((n, slot) => n + slot.quantity, 0) ?? 0))
 </script>
 
 <template>
@@ -101,8 +103,8 @@ const size = computed(() => (deck.value ? drawDeckSize(deck.value) : 0))
               {{ $t('browser.deck.onRingsdb') }} &#8599;
             </a>
           </p>
-          <p v-if="size < 50" class="head__warning">
-            {{ $t('browser.deck.tooSmall', { count: size }) }}
+          <p v-if="minimumCount < minimum" class="head__warning">
+            {{ $t('browser.deck.tooSmall', { count: minimumCount, minimum }) }}
           </p>
         </header>
 

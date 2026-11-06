@@ -66,6 +66,13 @@ export const provideCombat = (question: () => QuestionView | null, cards: () => 
       // after, until the attack resolves and its attackers stop
       const attacked = attackedId.value ? byId.get(attackedId.value) : undefined
       const enemy = q && isAttacking(q) ? byId.get(q.targetIds[0]) : attacked?.attackStrength !== undefined ? attacked : undefined
+      if (enemy?.type === 'Location') {
+        // Cracked Pillar takes attack damage against its threat, then discards damage
+        // to place progress. It has no hit-point threshold and cannot be defeated here.
+        const defense = stat(enemy, 'threat')
+        const strength = (enemy.attackStrength ?? 0) + (hovered?.attackAdding ?? 0)
+        return { [enemy.id]: { defend: { defense, damage: Math.max(0, strength - defense), defeated: false } } }
+      }
       if (enemy) {
         const strength = enemy.attackStrength ?? 0
         const defense = stat(enemy, 'defense')

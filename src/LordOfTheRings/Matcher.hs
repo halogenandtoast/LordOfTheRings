@@ -17,7 +17,7 @@ import LordOfTheRings.Enemy.Types hiding (enemy)
 import LordOfTheRings.Entities
 import LordOfTheRings.Game.Base
 import LordOfTheRings.Heading as X
-import LordOfTheRings.Helpers.Modifiers (cardsPlayedThisRound, defenseOf, engagementCostOf, getModifiers, hitPointsOf, modifiedValue)
+import LordOfTheRings.Helpers.Modifiers (cardsPlayedThisRound, defenseOf, modifiedEngagementCost, getModifiers, hitPointsOf, modifiedValue)
 import LordOfTheRings.Hero.Types hiding (hero)
 import LordOfTheRings.Id
 import LordOfTheRings.Keyword (Keyword (..))
@@ -59,6 +59,9 @@ matchPlayer matcher player = case matcher of
   PlayerMatchAll ms -> allM (`matchPlayer` player) ms
   PlayerWithCardsInDeck n -> pure $ length player.deck >= n
   PlayerUsingErrata -> pure player.errata
+  PlayerWithCampaignCardUsesBelow code n -> do
+    l <- getsGame (scenarioCampaign . toAttrs . gameScenario)
+    pure $ maybe False (\lg -> recordedCount CardUses code lg < n) l
   PlayerWithCampaignUsesBelow code n -> do
     seat <- elemIndex player.id <$> getsGame gamePlayerOrder
     l <- getsGame (scenarioCampaign . toAttrs . gameScenario)
@@ -67,7 +70,7 @@ matchPlayer matcher player = case matcher of
       _ -> False
   PlayerWithThreatAtLeastEngagementCostOf eid -> getsGame (Map.lookup eid . (.enemies) . gameEntities) >>= \case
     Nothing -> pure False
-    Just e -> (<=) <$> modifiedValue engagementCostOf (toTarget eid) e.engagementCost <*> getThreat player.id
+    Just e -> (<=) <$> modifiedEngagementCost (toTarget eid) e.engagementCost <*> getThreat player.id
   PlayerAtThisStage -> elem player.id <$> getStagePlayers
   PlayerWithHiddenCards -> getsGame (notNull . Map.findWithDefault [] player.id . (.hiddenCards) . toAttrs . gameScenario)
   PlayerEngagedWith m -> selectAny (m <> EnemyEngagedWith (PlayerWithId player.id))
@@ -131,6 +134,7 @@ matchHero matcher hero = case matcher of
   HeroWithKeyword k -> hasKeyword k (toTarget hero) (toCardDef hero)
   HeroWithPrintedKeyword k -> pure $ k `member` cdKeywords (toCardDef hero)
   ReadyHero -> pure $ not (heroExhausted $ toAttrs hero)
+  DamagedHero -> pure $ hero.damage > 0
   ExhaustedHero -> pure $ heroExhausted (toAttrs hero)
   PoisonedHero -> pure $ notNull (heroPoison $ toAttrs hero)
   UnconsciousHero -> pure $ heroUnconscious (toAttrs hero)
@@ -244,9 +248,23 @@ instance Query EnemyMatcher where
   select matcher = do
     -- an enemy attached to a character, as Grasping Tentacle becomes, is an attachment; one
     -- grappled with a location is still an enemy (The Thing in the Depths rules)
-    enemies <- getsGame (filter (not . attached . (.placement)) . toList . entitiesEnemies . gameEntities)
-    map toId <$> filterM (\e -> andM [notOutOfPlay (toTarget e), matchEnemy matcher e]) enemies
+    enemies <-
+      getsGame (filter (not . attached . (.placement)) . toList . entitiesEnemies . gameEntities)
+    map toId
+      <$> filterM
+        ( \e ->
+            andM
+              [ pure (isNothing (toAttrs e).enemyAttackLocation || namesEnemy matcher (toId e))
+              , notOutOfPlay (toTarget e)
+              , matchEnemy matcher e
+              ]
+        )
+        enemies
    where
+    namesEnemy m eid = case m of
+      EnemyWithId eid' -> eid == eid'
+      EnemyMatchAll ms -> any (`namesEnemy` eid) ms
+      _ -> False
     attached = \case
       AttachedTo (LocationTarget _) -> False
       AttachedTo _ -> True
@@ -269,6 +287,8 @@ matchEnemy matcher enemy = case matcher of
   EnemyWithCardId cid -> pure $ (toCard enemy).id == cid
   EnemyWithFacedownShadow -> any ((`notElem` (toAttrs enemy).enemyShadowRevealed) . (.id)) <$> shadowsPlayerCardsCanAffect enemy
   EnemyWithRevealedShadow -> pure $ notNull (toAttrs enemy).enemyShadowRevealed
+  EnemyEngagedWith pm | isJust (toAttrs enemy).enemyAttackLocation ->
+    maybe (pure False) (\pid -> elem pid <$> select pm) (toAttrs enemy).enemyOwner
   EnemyEngagedWith pm -> case enemy.placement of
     EngagedWith pid -> elem pid <$> select pm
     -- engaged with each matching player while it stays in the staging area, as Arkham's
@@ -289,9 +309,8 @@ matchEnemy matcher enemy = case matcher of
     AttachedTo (LocationTarget lid) -> elem lid <$> select lm
     _ -> pure False
   EnemyWithEngagementCostAboveThreatOf pid -> do
-    mods <- map modifierType . Map.findWithDefault [] (toTarget enemy) <$> getsGame gameModifiers
     threat <- getThreat pid
-    pure $ max 0 (enemy.engagementCost + sum [n | EngagementCostModifier n <- mods]) > threat
+    (> threat) <$> modifiedEngagementCost (toTarget enemy) enemy.engagementCost
   AnyEnemy -> pure True
   NotEnemy m -> not <$> matchEnemy m enemy
   EnemyMatchAll ms -> allM (`matchEnemy` enemy) ms
@@ -1010,9 +1029,15 @@ getConditionAttachments = do
   conditions <- filterM (\a -> hasTrait Condition (toTarget a) (toCardDef a)) (toList es.attachments)
   enemies <- filterM (\e -> hasTrait Condition (toTarget e) (toCardDef e)) [e | e <- toList es.enemies, isAttached e.placement]
   objectives <- filterM (\o -> hasTrait Condition (toTarget o) (toCardDef o)) [o | o <- toList es.objectives, isAttached o.placement]
+  -- Older attached treacheries implement their Condition text through attachment
+  -- placement. Adaptation burdens explicitly have another attachment trait instead.
+  treacheries <- filterM (\t -> do
+    adaptation <- hasTrait Adaptation (toTarget t) (toCardDef t)
+    condition <- hasTrait Condition (toTarget t) (toCardDef t)
+    pure $ not adaptation || condition) [t | t <- toList es.treacheries, isAttached t.placement]
   pure
     $ map toTarget conditions
-    <> [toTarget t | t <- toList es.treacheries, isAttached t.placement]
+    <> map toTarget treacheries
     <> map toTarget enemies
     <> map toTarget objectives
     -- poison, facedown on characters (The Hobbit: On the Doorstep rules insert)
@@ -1227,6 +1252,12 @@ getBoarding eid = do
   base <- keywordValue (\case Boarding n -> Just n; _ -> Nothing) (toTarget eid) (toCardDef e)
   mods <- map modifierType . Map.findWithDefault [] (toTarget eid) <$> getsGame gameModifiers
   pure $ max 0 $ base + sum [n | BoardingModifier n <- mods]
+
+-- | Pillage values stack just like Archery and Boarding; blanking removes printed values.
+getPillage :: HasGame m => EnemyId -> m Int
+getPillage eid = do
+  e <- getEnemy eid
+  keywordValue (\case Pillage n -> Just n; _ -> Nothing) (toTarget eid) (toCardDef e)
 
 -- | The location's Aflame X, 0 when it has none (Raid on the Grey Havens).
 getAflame :: HasGame m => LocationId -> m Int

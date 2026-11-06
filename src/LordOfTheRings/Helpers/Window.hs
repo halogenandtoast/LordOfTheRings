@@ -2,17 +2,21 @@ module LordOfTheRings.Helpers.Window (module LordOfTheRings.Helpers.Window) wher
 
 import Data.Foldable (foldrM)
 import Data.Map.Strict qualified as Map
+import {-# SOURCE #-} LordOfTheRings.Player.Runner (playableCardsByEffect)
 import LordOfTheRings.Ability
 import LordOfTheRings.Ally.Types (allyTokens)
 import LordOfTheRings.Attachment.Types
 import LordOfTheRings.Card (cdShadowEffect, cdCardTraits, cdHitPoints, cdKeywords, cdName, cdShadowCannotBeCanceled, cdVictoryPoints, cdWhenRevealed, ecId, toCard, toCardCode, toCardDef)
 import LordOfTheRings.Effect (Effect (..))
+import LordOfTheRings.Epic.Board (epicBoardFor, matchesEpicTarget)
+import LordOfTheRings.Epic.Types
 import LordOfTheRings.Classes.Entity
 import LordOfTheRings.Classes.HasGame
 import LordOfTheRings.Enemy.Types (enemyCardId)
 import LordOfTheRings.Entities
 import LordOfTheRings.Game.Base
 import LordOfTheRings.Campaign (recorded)
+import LordOfTheRings.Helpers.Ready (readyableCards)
 import LordOfTheRings.Helpers.Attachment (cardHosts, playableAttachmentsInHand)
 import LordOfTheRings.Helpers.Campaign (getCampaignLog)
 import LordOfTheRings.Helpers.Fellowship (readySagaOneRing, theOneRingExhausted)
@@ -34,7 +38,8 @@ import LordOfTheRings.Modifier (
  )
 import LordOfTheRings.Phase (Phase (QuestPhase))
 import LordOfTheRings.Placement
-import LordOfTheRings.Scenario.Types (scenarioBurdenDeck)
+import LordOfTheRings.Player.Types (discardableHand)
+import LordOfTheRings.Scenario.Types (scenarioBurdenDeck, scenarioEpic)
 import LordOfTheRings.Prelude
 import LordOfTheRings.Source
 import LordOfTheRings.Target
@@ -162,6 +167,9 @@ windowMatchesM matcher w@(Window timing wType) = case (matcher, wType) of
   (LocationBecameActiveWindow t m, BecameActiveLocation lid) | t == timing -> selectAny (LocationWithId lid <> m)
   (PlayerCardPlacedProgressWindow t m, ProgressPlacedOnLocationBy source lid) | t == timing ->
     andM [isJust <$> playerCardController source, selectAny (LocationWithId lid <> m)]
+  (EnemyAttacksYouWindow t m, EnemyAttacking eid pid) | t == timing -> do
+    active <- getsGame gameActivePlayer
+    if active == pid then selectAny (EnemyWithId eid <> m) else pure False
   (EnemyAttacksPlayerWindow t pid m, EnemyAttacking eid pid') | t == timing && pid == pid' -> selectAny (EnemyWithId eid <> m)
   (MatchingEnemyAttacksWindow t m, EnemyAttacking eid _) | t == timing -> selectAny (EnemyWithId eid <> m)
   (MatchingEnemyRevealedWindow t m, Revealed (EnemyTarget eid)) | t == timing -> selectAny (EnemyWithId eid <> m)
@@ -362,6 +370,8 @@ passesCriteria = \case
   HeroExists m -> selectAny m
   AllyExists m -> selectAny m
   PlayerExists m -> selectAny m
+  ReadyObjectiveWithCardCode code -> getsGame (any (\o -> toCardCode o == code && not o.exhausted) . toList . (.entities.objectives))
+  CardInEncounterDeckOrDiscard matcher -> getsGame (\g -> let s = toAttrs g.scenario in any (cardMatches matcher) (s.encounterDeck <> s.encounterDiscard))
   DuringPhase phase -> (== phase) <$> getsGame gamePhase
   CardNotInPlay cid -> do
     es <- getsGame gameEntities
@@ -379,6 +389,16 @@ passesCriteria = \case
   AffordableAttachmentInDiscard pid sphere ->
     anyM (\(_, pc, _) -> notNull <$> cardHosts pid (toCardCode pc)) =<< affordableDiscardedAttachments pid sphere
   AffordableAllyInHand pid sphere reduction minimumCost -> notNull <$> affordableAlliesInHand pid sphere reduction minimumCost
+  EpicTargetsExist query -> do
+    g <- getGame
+    let replica = scenarioEpic $ toAttrs g.scenario
+        own = maybe (GroupOrdinal 0) epicGroup replica
+        boards = epicBoardFor own "" g : [b | r <- maybeToList replica, b <- r.epicBoards, b.epicBoardGroup /= own]
+    pure $ if query == EpicWarshipGroup
+      then any epicBoardHasWarship boards
+      else any (any (matchesEpicTarget query) . epicBoardTargets) boards
+  ReadyableCardExists charactersOnly -> notNull <$> readyableCards charactersOnly
+  PlayableCardInHand pid matcher reduction -> notNull <$> playableCardsByEffect pid matcher reduction
   PlayableAttachmentInHand pid matcher reduction -> notNull <$> playableAttachmentsInHand pid matcher reduction
   AffordableAllyInHandWithoutMatch pid matcher -> notNull <$> affordableAlliesInHandWithoutMatch pid matcher
   BeforeCommitting ->
@@ -445,9 +465,13 @@ canPay = \case
   ResourceCost (AllyTarget aid) n -> (>= n) . countTokens Resource . allyTokens . toAttrs <$> getAlly aid
   ResourceCost _ _ -> pure False
   DiscardFromHandCost pid n ->
-    andM [(>= n) . length . (.hand) <$> getPlayer pid, notElem CannotDiscardFromHand <$> getModifiers (PlayerTarget pid)]
+    andM [(>= n) . length . discardableHand <$> getPlayer pid, notElem CannotDiscardFromHand <$> getModifiers (PlayerTarget pid)]
+  QuestProgressPerPlayerCost qid n -> do
+    players <- getsGame (length . gamePlayerOrder)
+    maybe False ((>= n * players) . (.progress)) . Map.lookup qid . entitiesQuests <$> getsGame gameEntities
   RaiseThreatCost _ -> pure True
   IncreasePursuitCost _ -> pure True
+  GroupResourcesCost sphere n -> (>= n) . sum <$> (traverse (`getResourcesOfSphere` sphere) =<< getRemainingPlayers)
   SphereResourceCost pid sphere n -> (>= n) <$> getResourcesOfSphere pid sphere
   ExhaustHeroCost m -> notNull <$> exhaustableHeroes m
   DamageHeroCost m _ -> notNull <$> damageableHeroes m
@@ -489,6 +513,9 @@ payCost pid cost rest = case cost of
   ExhaustHeroCost m -> pure [PayExhaustHeroCost pid m rest]
   DamageHeroCost m n -> pure [PayDamageHeroCost pid m n rest]
   ExhaustCharacterCost hm am -> pure [PayExhaustCharacterCost pid hm am rest]
+  QuestProgressPerPlayerCost qid n -> do
+    players <- getsGame (length . gamePlayerOrder)
+    pure $ RemoveTokens (PlayerSource pid) (QuestTarget qid) Progress (n * players) : rest
   Costs cs -> foldrM (payCost pid) rest cs
   ExhaustTheOneRingCost ->
     getTheOneRing >>= \case
@@ -499,6 +526,7 @@ payCost pid cost rest = case cost of
 costMessages :: Source -> AbilityCost -> [Message]
 costMessages source = \case
   Free -> []
+  QuestProgressPerPlayerCost _ _ -> [] -- counted and paid by payCost
   ExhaustCost target -> [Exhaust target]
   ResourceCost target n -> case source of
     PlayerSource pid -> [SpendResourcesFrom pid [(target, n)]]
@@ -514,6 +542,9 @@ costMessages source = \case
   Costs cs -> concatMap (costMessages source) cs
   ExhaustCharacterCost _ _ -> []
   ExhaustTheOneRingCost -> [] -- found as it is paid, by 'payCost'
+  GroupResourcesCost sphere n -> case source of
+    PlayerSource pid -> [SpendGroupResources pid sphere n]
+    _ -> []
   SpendResourcesCost sphere n -> case source of
     PlayerSource pid -> [SpendResources pid sphere n]
     _ -> []

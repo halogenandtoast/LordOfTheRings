@@ -278,6 +278,10 @@ allAttachmentCards =
       , mrUnderhill
       , tirelessRanger
       , skilledHealer
+      , theFervorOfLore
+      , theMightOfTactics
+      , thePowerOfSpirit
+      , theSecretOfLeadership
       , valiantWarrior
       , nobleHero
       , gandalfsStaff
@@ -2247,3 +2251,15 @@ theSteadfast = accolade "EMC178" "The Steadfast"
 
 dragonSlayer :: CardDef
 dragonSlayer = accolade "EMC179" "Dragon-slayer"
+
+theFervorOfLore :: CardDef
+theFervorOfLore = (attachment "dark-of-mirkwood-044" "The Fervor of Lore" Neutral (StaticCost 0)) {cdCardTraits = setFromList [Adaptation, Boon]}
+
+theMightOfTactics :: CardDef
+theMightOfTactics = (attachment "dark-of-mirkwood-045" "The Might of Tactics" Neutral (StaticCost 0)) {cdCardTraits = setFromList [Adaptation, Boon]}
+
+thePowerOfSpirit :: CardDef
+thePowerOfSpirit = (attachment "dark-of-mirkwood-046" "The Power of Spirit" Neutral (StaticCost 0)) {cdCardTraits = setFromList [Adaptation, Boon]}
+
+theSecretOfLeadership :: CardDef
+theSecretOfLeadership = (attachment "dark-of-mirkwood-047" "The Secret of Leadership" Neutral (StaticCost 0)) {cdCardTraits = setFromList [Adaptation, Boon]}

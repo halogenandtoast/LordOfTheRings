@@ -7,15 +7,18 @@ import LordOfTheRings.Card.Code
 import LordOfTheRings.Name (Name)
 import LordOfTheRings.Prelude
 
--- | The campaign cards: each sits next to the quest deck in campaign mode, its setup
--- followed as the scenario is set up and the resolution on its back once it is won. What
--- they say is their scenario's to do; see "LordOfTheRings.Campaign".
+{- | The campaign cards: each sits next to the quest deck in campaign mode, its setup
+followed as the scenario is set up and the resolution on its back once it is won. What
+they say is their scenario's to do; see "LordOfTheRings.Campaign".
+-}
 allCampaignCards :: Map CardCode CardDef
 allCampaignCards =
   Map.fromList
     $ map
       (\def -> (cdCardCode def, def))
       [ passageThroughMirkwoodCampaign
+      , theOathCampaign
+      , theCavesOfNibinDumCampaign
       , journeyAlongTheAnduinCampaign
       , escapeFromDolGuldurCampaign
       , voyageAcrossBelegaerCampaign
@@ -106,6 +109,7 @@ aStormOnCobasHavenCampaign = campaignCard "DCC209" "A Storm on Cobas Haven"
 
 theCityOfCorsairsCampaign :: CardDef
 theCityOfCorsairsCampaign = campaignCard "DCC215" "The City of Corsairs"
+
 -- The Angmar Awakened Campaign Expansion
 
 intrudersInChetwoodCampaign :: CardDef
@@ -219,3 +223,11 @@ mountGundabadCampaign = campaignCard "EMC193" "Mount Gundabad"
 
 theFateOfWilderlandCampaign :: CardDef
 theFateOfWilderlandCampaign = campaignCard "EMC195" "The Fate of Wilderland"
+
+-- * The Dark of Mirkwood
+
+theOathCampaign :: CardDef
+theOathCampaign = campaignCard "dark-of-mirkwood-050" "The Oath"
+
+theCavesOfNibinDumCampaign :: CardDef
+theCavesOfNibinDumCampaign = campaignCard "dark-of-mirkwood-051" "The Caves of Nibin-Dûm"

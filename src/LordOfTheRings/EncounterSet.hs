@@ -3,7 +3,12 @@ module LordOfTheRings.EncounterSet (module LordOfTheRings.EncounterSet) where
 import LordOfTheRings.Prelude
 
 data EncounterSet
-  = AJourneyToRhosgobel
+  = TheHuntForTheDreadnaught
+  | TheOath
+  | TheGoblins
+  | TheCavesOfNibinDum
+  | TheDarkOfMirkwoodCampaign
+  | AJourneyToRhosgobel
   | AJourneyToRhosgobelNightmare
   | AStormOnCobasHaven
   | AStormOnCobasHavenNightmare

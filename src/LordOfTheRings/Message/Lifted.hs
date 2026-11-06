@@ -10,7 +10,7 @@ module LordOfTheRings.Message.Lifted (
 
 import LordOfTheRings.Attachment.CardDefs qualified as Attachments
 import LordOfTheRings.Campaign (CampaignLogUpdate (DiscoverTreasure))
-import LordOfTheRings.Card (Card (..), CardCode, CardCost (StaticCost), CardDef, CardType, EncounterCard, HasCardCode (..), IsCard (..), PlayerCard, cdCardTraits, cdCardType, cdCost, cdWhenRevealed, genEncounterCard, genPlayerCard, lookupCardDef, toCardDef)
+import LordOfTheRings.Card (Card (..), CardCode, CardCost (StaticCost), AdditionalCost (DiscardCardsFromHand), cdAdditionalCost, CardDef, CardType (ContractType), EncounterCard, HasCardCode (..), IsCard (..), PlayerCard, cdCardTraits, cdCardType, cdCost, cdWhenRevealed, genEncounterCard, genPlayerCard, lookupCardDef, toCardDef)
 import LordOfTheRings.Trait (Trait (Boon, Master))
 import LordOfTheRings.Classes.Entity (Entity (toAttrs, toId))
 import LordOfTheRings.Scenario.Types (ScenarioAttrs (scenarioSetAside))
@@ -18,12 +18,14 @@ import LordOfTheRings.Classes.HasGame (HasGame, getsGame)
 import LordOfTheRings.Log.Block (LogBlockKind (DoomedBlock, PlayBlock))
 import LordOfTheRings.Log.Refs (sourceCardCode)
 import LordOfTheRings.Classes.HasQueue
+import LordOfTheRings.Epic.Types (EpicTargetQuery, EpicEffect)
 import LordOfTheRings.Effect
 import LordOfTheRings.Entities (entitiesLocations, entitiesQuests)
 import LordOfTheRings.Game.Base (gameEffects, gameEntities, gamePhase, gamePlayerOrder, gameRevealer, gameScenario)
 import LordOfTheRings.Saga (FellowshipSetup (..), fellowshipSetup)
 import LordOfTheRings.Scenario.Types (scenarioId)
 import LordOfTheRings.Helpers.Modifiers (cardsPlayedThisRound, getModifiers, immuneToSource, onlyMasterCardsAffect)
+import LordOfTheRings.Helpers.Ready (readyableCards)
 import LordOfTheRings.Helpers.Staging (getLocationQuestPoints)
 import LordOfTheRings.Ally.Types (allyCardId)
 import LordOfTheRings.Hero.Types (heroCardId)
@@ -54,7 +56,7 @@ import LordOfTheRings.Token
 import LordOfTheRings.Window (
   Timing (After, When),
   Window (..),
-  WindowType (Revealed, AttackUndefended, ShadowEffectAgainst, AllyDiscardedByCardEffect, AttackersDeclared, CharacterRescued, DeclaredAsAttacker, DeclaredAsDefender, DefendedAttack, DiscardedFromEncounterDeck, EnemyAttacking, ShadowCardRevealed, ShadowEffectTriggered, StagingStepEnds, ThreatRaisedByDoomed, ThreatRaisedByEncounter, ThreatReduced, Traveled, WhenRevealedCanceled, EncounterEffectCanceled),
+  WindowType (ReadiedByPlayerCard, Revealed, AttackUndefended, ShadowEffectAgainst, AllyDiscardedByCardEffect, AttackersDeclared, CharacterRescued, DeclaredAsAttacker, DeclaredAsDefender, DefendedAttack, DiscardedFromEncounterDeck, EnemyAttacking, ShadowCardRevealed, ShadowEffectTriggered, StagingStepEnds, ThreatRaisedByDoomed, ThreatRaisedByEncounter, ThreatReduced, Traveled, WhenRevealedCanceled, EncounterEffectCanceled),
   mkAfter,
   mkWhen,
  )
@@ -226,11 +228,13 @@ lowerThreatBy source pid n' = do
   dire <- mainQuestIsDire
   boon <- sourceIsBoon (toSource source)
   direReduced <- if dire then getThreatReducedByNonBoonPlayerCardsThisRound pid else pure 0
+  contractEffect <- getsGame $ \g -> maybe False ((== ContractType) . cdCardType) (lookupCardDef =<< sourceCardCode g (toSource source))
   let barred = CannotReduceThreat `elem` mods
       direLimit = [max 0 (1 - direReduced) | dire, not boon]
-      limited = if isPlayerCardSource (toSource source) then foldr min n' ([k | PlayerCardThreatReductionLimit k <- mods] <> direLimit) else n'
+      limited = if isPlayerCardSource (toSource source) then foldr min n' ([k | PlayerCardThreatReductionLimit k <- mods] <> [k | not contractEffect, NonContractPlayerCardThreatReductionLimit k <- mods] <> direLimit) else n'
       -- no lower than a floor, as The Paths of the Dead sets
-      n = foldr min limited [threat - k | CannotReduceThreatBelow k <- mods]
+      reduced = sum [k | ThreatReducedThisRound k <- mods]
+      n = foldr min limited ([threat - k | CannotReduceThreatBelow k <- mods] <> [max 0 (k - reduced) | ThreatReductionPerRoundLimit k <- mods])
   unless (barred || n <= 0 || threat <= 0) do
     push $ LowerThreat pid n
     -- counted for the round, as Moonlit Passage limits it
@@ -325,7 +329,10 @@ ready (toTarget -> t) = do
         HeroTarget _ -> True
         AllyTarget _ -> True
         _ -> False
-  unless (character && barred) $ cardEffectOn t (Ready t)
+  unless (character && barred) do
+    canReady <- elem t <$> readyableCards True
+    cardEffectOn t (Ready t)
+    when (character && canReady) $ push $ CheckWindows [Window After $ ReadiedByPlayerCard t]
 
 -- | An encounter or quest card's effect readies the card, as Find Water's own Response.
 encounterReadies :: (ReverseQueue m, Targetable target) => target -> m ()
@@ -1102,6 +1109,13 @@ shuffleVictoryDisplayIntoEncounterDeck = push . ShuffleVictoryDisplayIntoEncount
 shuffleEncounterDiscardIntoDeck :: ReverseQueue m => CardMatcher -> m ()
 shuffleEncounterDiscardIntoDeck = push . ShuffleEncounterDiscardIntoDeck
 
+-- | Each player finds a differently named card, then the encounter deck is shuffled.
+-- The flag includes the discard pile in the search when the stage permits it.
+searchDifferentEncounterCards
+  :: (ReverseQueue m, Targetable source) => [PlayerId] -> source -> CardMatcher -> Bool -> m ()
+searchDifferentEncounterCards players source matcher withDiscard =
+  push $ SearchDifferentEncounterCards players (toTarget source) matcher withDiscard []
+
 {- | The player searches the encounter deck and discard pile for a matching card to add to
 the staging area, then shuffles the encounter deck.
 -}
@@ -1632,6 +1646,15 @@ putAttachmentIntoPlay pid = push . PutAttachmentIntoPlay pid
 playFromHand :: (ReverseQueue m, HasField "id" card CardId) => PlayerId -> card -> m ()
 playFromHand pid card = push $ PlayCardInWindow pid card.id []
 
+-- | Play a card found in the deck, paying its cost reduced by the effect.
+-- It is played from the deck, so it opens no played-from-hand windows.
+playFromDeck :: (ReverseQueue m, Sourceable source) => source -> PlayerId -> PlayerCard -> Int -> m ()
+playFromDeck source pid card reduction = do
+  removeFromDeck pid card.id
+  when (reduction > 0) $ createEffect source (PlayerTarget pid) [LowerNextCostOf (CardWithCode $ toCardCode card) reduction] UntilSpent
+  let additional = [ChooseAndDiscardFromHand pid (toSource source) n | Just (DiscardCardsFromHand n) <- [cdAdditionalCost $ toCardDef card]]
+  pushAll =<< inLogBlock (PlayBlock pid $ PlayerCard card) (additional <> [PayForCard pid (PlayerCard card) False []])
+
 -- | Play an attachment from the player's hand on the host without paying its cost, as
 -- Wiglaf plays an Item attachment on himself.
 playOnFromHandAtNoCost :: (ReverseQueue m, HasField "id" card CardId, Targetable host) => PlayerId -> card -> host -> m ()
@@ -1759,8 +1782,14 @@ immediateAttack = immediateAttackWithShadowCards 1
 -- | As 'immediateAttack', dealt this many shadow cards for it, as Saruman's Staff's "deal
 -- and resolve 2 shadow cards for this attack" reads.
 immediateAttackWithShadowCards :: ReverseQueue m => Int -> PlayerId -> EnemyId -> m ()
-immediateAttackWithShadowCards n pid eid = do
+immediateAttackWithShadowCards n pid eid = immediateAttackWithPreparation n pid eid (pure ())
+
+-- | Prepare an attack after its shadow cards are dealt and before defenders are
+-- declared, as Hydraken raises threat for the additional attack.
+immediateAttackWithPreparation :: ReverseQueue m => Int -> PlayerId -> EnemyId -> m () -> m ()
+immediateAttackWithPreparation n pid eid prepare = do
   replicateM_ n $ push $ DealShadowCard eid
+  prepare
   push $ EnemyAttack pid eid
   phase <- getsGame gamePhase
   when (phase /= CombatPhase) $ push $ DiscardShadowCards eid
@@ -2577,6 +2606,7 @@ cancelAttack eid = lift $ withQueue_ $ mapMaybe \case
   UndefendedAttack _ e | e == eid -> Nothing
   UndefendedDamage _ e | e == eid -> Nothing
   AttackDefended _ e _ | e == eid -> Nothing
+  ResolvePillage e _ | e == eid -> Nothing
   -- the enemy has not attacked, so no "after it attacks" window opens, but its "for this
   -- attack" effects still end
   CheckWindows ws | any ending ws -> Just $ case filter (\w -> not (ending w || defended w)) ws of
@@ -2740,3 +2770,8 @@ setUpTheOneRing lead = do
 -- Misplaced Trust attaches itself after it is drawn.
 attachEncounterCardFromHand :: (ReverseQueue m, Targetable host) => PlayerId -> EncounterCard -> host -> m ()
 attachEncounterCardFromHand pid card = push . AttachEncounterCardFromHand pid card . toTarget
+
+-- | A choice explicitly allowed in any group. Ordinary games offer their local
+-- targets; Epic games additionally offer the other groups' public boards.
+chooseEpicTarget :: (ReverseQueue m, HasCardCode source) => source -> PlayerId -> EpicTargetQuery -> EpicEffect -> m ()
+chooseEpicTarget source pid query effect = push $ ChooseEpicTarget pid (toCardCode source) query effect

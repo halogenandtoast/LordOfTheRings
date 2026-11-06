@@ -39,6 +39,7 @@ data TreacheryAttrs = TreacheryAttrs
   { treacheryId :: TreacheryId
   , treacheryCardId :: CardId
   , treacheryCardCode :: CardCode
+  , treacheryMeta :: Value
   , treacheryPlacement :: Placement
   , treacheryTokens :: Tokens
   , -- | the player whose card it is, an encounter card with a player card back attached
@@ -53,7 +54,7 @@ instance ToJSON TreacheryAttrs where
   toJSON = genericToJSON (aesonOptions $ Just "treachery")
 
 instance FromJSON TreacheryAttrs where
-  parseJSON = genericParseJSON (aesonOptions $ Just "treachery")
+  parseJSON = genericParseJSON (aesonOptions $ Just "treachery") . withDefaults [("meta", Null)]
 
 treachery :: (TreacheryAttrs -> a) -> CardDef -> TreacheryCard a
 treachery f cardDef =
@@ -67,6 +68,7 @@ treachery f cardDef =
             , treacheryCardCode = cdCardCode cardDef
             , treacheryPlacement = Unplaced
             , treacheryTokens = mempty
+            , treacheryMeta = Null
             , treacheryOwner = Nothing
             }
     }

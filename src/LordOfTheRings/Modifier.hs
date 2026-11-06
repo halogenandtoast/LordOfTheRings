@@ -33,6 +33,7 @@ data ModifierType
   | -- | on a location: its threat, every other modifier applied, is reduced by half,
     -- rounding up, as Secret Entrance reduces The Lonely Mountain's
     ThreatHalved
+  | SetEngagementCost Int
   | EngagementCostModifier Int
   | -- | on an enemy: its engagement cost is this much higher as the player makes an
     -- engagement check against it, as Hunting Pack's is lower
@@ -216,6 +217,8 @@ data ModifierType
   | -- | on the game: each ally in play takes the modifier, one that enters play later too,
     -- for as long as the effect lasts, as Pit into the Depths reads
     EachAlly ModifierType
+  | EachMatchingAlly CardMatcher ModifierType
+  | EachMatchingEnemy CardMatcher ModifierType
   | -- | on the game: each character in play, including one that enters later
     EachCharacter ModifierType
   | -- | on the game: each character takes the modifier while it is exhausted, as Weighed
@@ -431,6 +434,7 @@ data ModifierType
   | -- | on a player, by an effect until the end of the round: player card effects reduced
     -- his threat by this much this round, for Moonlit Passage's limit to count
     ThreatReducedByPlayerCardsThisRound Int
+  | ThreatReducedThisRound Int
   | -- | on a hero: it cannot commit to Fortitude tests, as Heavy and Tired's host
     CannotCommitToFortitudeTests
   | -- | on the game: Eye icons added to each Fortitude test, as Brake of Thorns adds
@@ -619,6 +623,8 @@ data ModifierType
   | -- | on a player: a player card reduces their threat by at most this much, as Mines of
     -- Cirith Gurat's "reduce that amount to 1" reads
     PlayerCardThreatReductionLimit Int
+  | NonContractPlayerCardThreatReductionLimit Int
+  | ThreatReductionPerRoundLimit Int
   | -- | on a player: the threat at which they are eliminated, 50, moves by this much, as
     -- Double Dealings lowers it by 10
     EliminationThreatModifier Int
@@ -847,14 +853,17 @@ data ModifierType
   | -- | on an enemy: the damage its attack deals past the character's remaining hit points
     -- is dealt to a Ship objective the defending player controls, as Sudden Storms' shadow
     ExcessDamageToShipObjective
+  | -- | Each excess point is assigned separately to a controlled Ship (Varjax).
+    ExcessDamageToShipOneAtATime
   | -- | on an enemy: the damage its attack deals past the character's remaining hit points
     -- is placed on an Aflame location in the staging area, as Elite Marauder reads
     ExcessDamageToAflameLocation
   | -- | on an enemy: the player's characters cannot attack it, as Umbar Captain reads for
     -- Ship enemies
     CannotBeAttackedByCharactersOf PlayerId
-  | -- | on an enemy: only Ship objectives can be declared as attackers against it, as
-    -- Raider Flagship reads
+  | -- | A Ship objective may attack or defend against this enemy despite its lacking Ship.
+    CanBeFoughtByShipObjectives
+  | -- | Only Ship objectives may attack this enemy, as Raider Flagship reads.
     OnlyAttackedByShipObjectives
   | -- | on an enemy: each damage its attack deals adds 1 to the total threat in the
     -- staging area until the end of the phase, as Ramming Speed! reads
@@ -976,6 +985,7 @@ data ModifierType
   | -- | on the game: each player draws this many more cards in his starting hand, as
     -- Gandalf's Delay has each draw 1 less
     StartingHandSize Int
+  | CannotMulligan
   | -- | on the game: the players cannot win, a win waiting until nothing gives this, as
     -- The Blood of Gondor's Nightmare setup card reads
     PlayersCannotWin

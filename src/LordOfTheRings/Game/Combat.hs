@@ -70,6 +70,7 @@ import LordOfTheRings.Message (
     CheckWindows,
     DamageAflameLocation,
     DamageAnotherCharacter,
+    DamageControlledShip,
     DealDamage,
     DeclareAttackers,
     DeclareDefenders,
@@ -111,6 +112,7 @@ import LordOfTheRings.Modifier (
     CannotDefendAgainst,
     CannotExhaust,
     CannotFight,
+    CannotLeaveStagingArea,
     CaptureInsteadOfAttackDamage,
     DeclaredAttackerThisRound,
     DoesNotExhaustToAttack,
@@ -124,11 +126,13 @@ import LordOfTheRings.Modifier (
     ExcessDamageToAflameLocation,
     ExcessDamageToOtherCharacters,
     ExcessDamageToShipObjective,
+    ExcessDamageToShipOneAtATime,
     ExcessDamageToThreat,
     NotFoughtByAllies,
     NotFoughtByDamaged,
     NotFoughtByHeroesWithoutResources,
     OnlyAttackedByShipObjectives,
+    CanBeFoughtByShipObjectives,
     OnlyFoughtBy,
     OnlyFoughtByKeyword
   ),
@@ -205,9 +209,15 @@ attacksOf :: PlayerId -> GameT [EnemyId]
 attacksOf pid = byCost . ordNub =<< (<>) <$> select (EnemyEngagedWith $ PlayerWithId pid) <*> attacksAsIfEngaged pid
 
 -- | The enemies the players may engage from the staging area: those there, not one only
--- considered to be, as Tide-runner engaged or in the Stormcaller's area.
+-- considered to be, as Tide-runner engaged or in the Stormcaller's area. Enemies
+-- that cannot leave staging must not be selected for another engagement check.
 engageableFromStaging :: GameT [EnemyId]
-engageableFromStaging = filterM (fmap ((== StagingArea) . (.placement)) . getEnemy) =<< select EnemyInStagingArea
+engageableFromStaging = filterM canEngage =<< select EnemyInStagingArea
+ where
+  canEngage eid = do
+    enemy <- getEnemy eid
+    mods <- getModifiers eid
+    pure $ enemy.placement == StagingArea && CannotLeaveStagingArea `notElem` mods
 
 -- | The enemies in the staging area that attack the player as if engaged, as Snow-Giant.
 attacksAsIfEngaged :: PlayerId -> GameT [EnemyId]
@@ -327,6 +337,7 @@ attackDamage' pid eid target n = do
         <> concat [[PlaceTokens (EnemyAttackSource eid) (LocationTarget l) Damage excess, CheckDefeated (EnemyAttackSource eid) (LocationTarget l)] | excessToLocation, excess > 0, l <- active]
         <> [RemoveTokens (EnemyAttackSource eid) (toTarget q) Progress (min excess q.progress) | excessToQuests, excess > 0, q <- quests, q.progress > 0]
         <> toShip
+        <> replicate (if ExcessDamageToShipOneAtATime `elem` mods then excess else 0) (DamageControlledShip (EnemyAttackSource eid) pid)
         <> [chooseOrRunOne pid [targetLabel t [DealDamage (EnemyAttackSource eid) t excess] | t <- excessTo] | notNull excessTo, excess > 0]
         <> toAflame
         <> [DiscardTopOfDeck pid excess | excessToDeck, excess > 0]
@@ -406,7 +417,7 @@ canFight eid c = do
   def <- characterCardDef c
   andM
     [ -- a Ship objective fights only Ship enemies (Dream-chaser rules)
-      orM [not <$> isShipObjective c, selectAny (EnemyWithId eid <> shipEnemy)]
+      orM [not <$> isShipObjective c, selectAny (EnemyWithId eid <> shipEnemy), pure $ CanBeFoughtByShipObjectives `elem` mods]
     , -- and only a Ship objective fights one such as Raider Flagship
       if OnlyAttackedByShipObjectives `elem` mods then isShipObjective c else pure True
     , allM (\(t, k) -> orM [hasTrait t c def, hasKeyword k c def]) [(t, k) | OnlyFoughtBy t k <- mods]

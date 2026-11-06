@@ -54,6 +54,15 @@ chooseOneM pid body = do
   (st, choices) <- runChooseT body
   unless (null choices) $ push $ ask' pid st choices
 
+-- | A choice whose candidates must be rebuilt when another Epic group changes
+-- the public board while this player is deciding.
+chooseOneRebuildingM :: ReverseQueue m => PlayerId -> Message -> ChooseT m a -> m ()
+chooseOneRebuildingM pid rebuild body = do
+  (st, choices) <- runChooseT body
+  unless (null choices) $ case ask' pid st choices of
+    Ask who question -> push $ Ask who $ PlayerWindow rebuild question
+    _ -> pure ()
+
 -- | As 'chooseOneM', but a lone choice is taken without asking.
 chooseOrRunOneM :: (ReverseQueue m) => PlayerId -> ChooseT m a -> m ()
 chooseOrRunOneM pid body = do

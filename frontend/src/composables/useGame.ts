@@ -72,6 +72,7 @@ export const useGame = (gameId: string, spectate = false) => {
   }
 
   const update = async (next: GameData, animate = true) => {
+    if ((next.revision ?? 0) < (data.value?.revision ?? 0)) return
     data.value = next
     // the log afresh: on opening the game, and after an undo or a deal
     if (next.log) {

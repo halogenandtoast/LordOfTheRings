@@ -200,6 +200,10 @@ deckProblem dl
     | length dl.heroes > limit = Just $ ikeyWith "error.contractHeroCount" (named c <> [intVar "n" limit])
     | otherwise = Nothing
   contractProblem c = case toCardCode c of
+    code | code == toCardCode Contracts.aPerilousVoyage ->
+      if deckSize < 100
+        then Just $ ikeyWith "error.contractMinimumDeckSize" (named c <> [intVar "n" 100, intVar "count" deckSize])
+        else Nothing
     -- "Your deck cannot include ally cards."
     code | code == toCardCode Contracts.forthTheThreeHunters -> if any ((== AllyType) . cdCardType . fst) defs then barred c "error.contractBarsAllies" else Nothing
     -- "You cannot include attachments in your deck."
@@ -240,4 +244,4 @@ loadPlayer name dl = do
     let (setAside, deck) = partition (member Encounter . cdKeywords . toCardDef) cards
     contractCard <- traverse (`genPlayerCard` Just pid) contractDef
     pure
-      ((newPlayer pid name deck) {playerErrata = dl.errata, playerStartingHeroes = dl.heroes, playerMessengerOfTheKingAlly = dl.messengerOfTheKingAlly, playerSetAsideCards = setAside, playerContract = contractCard}, heroes)
+      ((newPlayer pid name deck) {playerDeckbuildingCards = dl.cards, playerErrata = dl.errata, playerStartingHeroes = dl.heroes, playerMessengerOfTheKingAlly = dl.messengerOfTheKingAlly, playerSetAsideCards = setAside, playerContract = contractCard}, heroes)

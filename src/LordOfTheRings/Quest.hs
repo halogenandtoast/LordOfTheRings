@@ -14,6 +14,15 @@ import LordOfTheRings.Quest.Cards.AChosenPathDontLeaveThePath
 import LordOfTheRings.Quest.Cards.AForkInTheRoad
 import LordOfTheRings.Quest.Cards.AmbushOnTheShore
 import LordOfTheRings.Quest.Cards.AnduinPassage
+import LordOfTheRings.Quest.Cards.SearchingTheHighSeas
+import LordOfTheRings.Quest.Cards.DestroyTheDreadnaught
+import LordOfTheRings.Quest.Cards.AfterTheRaid
+import LordOfTheRings.Quest.Cards.MirkwoodForestTheOath
+import LordOfTheRings.Quest.Cards.TheRearguardTheOath
+import LordOfTheRings.Quest.Cards.TheDarkOfNibinDum
+import LordOfTheRings.Quest.Cards.SurpriseAttackNibinDum
+import LordOfTheRings.Quest.Cards.TheChasm
+import LordOfTheRings.Quest.Cards.Oathkeepers
 import LordOfTheRings.Quest.Cards.FliesAndSpiders
 import LordOfTheRings.Quest.Cards.OutOfTheDungeons
 import LordOfTheRings.Quest.Cards.TheNecromancersTower
@@ -469,7 +478,16 @@ allQuests =
   Map.fromList
     [ (toCardCode builder, card)
     | card@(SomeQuestCard builder) <-
-        [ SomeQuestCard fliesAndSpiders
+        [ SomeQuestCard searchingTheHighSeas
+        , SomeQuestCard destroyTheDreadnaught
+        , SomeQuestCard afterTheRaid
+        , SomeQuestCard mirkwoodForestTheOath
+        , SomeQuestCard theRearguardTheOath
+        , SomeQuestCard theDarkOfNibinDum
+        , SomeQuestCard surpriseAttackNibinDum
+        , SomeQuestCard theChasm
+        , SomeQuestCard oathkeepers
+        , SomeQuestCard fliesAndSpiders
         , SomeQuestCard enteringTheMines
         , SomeQuestCard goblinPatrol
         , SomeQuestCard aWayUp

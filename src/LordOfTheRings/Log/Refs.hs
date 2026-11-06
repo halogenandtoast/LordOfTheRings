@@ -38,7 +38,7 @@ targetRefFor target = do
     AllyTarget k -> pure $ ref RefAlly es.allies k <|> ref RefAlly (gameLeftPlay g) k
     EnemyTarget k -> pure $ ref RefEnemy es.enemies k
     LocationTarget k -> pure $ ref RefLocation es.locations k
-    AttachmentTarget k -> pure $ ref RefAttachment es.attachments k
+    AttachmentTarget k -> pure $ ref RefAttachment es.attachments k <|> (entityRef RefAttachment k <$> (headMay =<< Map.lookup k (gameResolvingAttachments g)))
     TreacheryTarget k -> pure $ ref RefTreachery es.treacheries k
     ObjectiveTarget k -> pure $ ref RefObjective es.objectives k
     -- drawn on the side it shows
@@ -81,7 +81,7 @@ sourceCardCode g = code
     AbilitySource s _ -> code s
     HeroSource i -> toCardCode <$> Map.lookup i es.heroes
     AllySource i -> toCardCode <$> Map.lookup i es.allies
-    AttachmentSource i -> toCardCode <$> Map.lookup i es.attachments
+    AttachmentSource i -> toCardCode <$> (Map.lookup i es.attachments <|> (headMay =<< Map.lookup i (gameResolvingAttachments g)))
     ObjectiveSource i -> toCardCode <$> Map.lookup i es.objectives
     ContractSource i -> toCardCode <$> Map.lookup i es.contracts
     LocationSource i -> toCardCode <$> Map.lookup i es.locations

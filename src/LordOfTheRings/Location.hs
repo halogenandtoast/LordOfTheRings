@@ -2,8 +2,23 @@
 
 module LordOfTheRings.Location (module LordOfTheRings.Location, module X) where
 
+import LordOfTheRings.Location.Cards.BelfalasShipyard
+import LordOfTheRings.Location.Cards.IsleOfFortune
+import LordOfTheRings.Location.Cards.DreadnaughtCoast
+import LordOfTheRings.Location.Cards.TangledGrove
+import LordOfTheRings.Location.Cards.SpiderDen
+import LordOfTheRings.Location.Cards.GoblinTrail
+import LordOfTheRings.Location.Cards.AbandonedCampDarkOfMirkwood
+import LordOfTheRings.Location.Cards.CrackedPillar
+import LordOfTheRings.Location.Cards.CollapsedMine
+import LordOfTheRings.Location.Cards.GoblinDungeon
+import LordOfTheRings.Location.Cards.CrumblingStairsDarkOfMirkwood
+import LordOfTheRings.Location.CardDefs qualified as Cards
 import Data.Map.Strict qualified as Map
 import LordOfTheRings.Card
+import LordOfTheRings.Classes.HasGame (HasGame, getsGame)
+import LordOfTheRings.Game.Base (gamePlayerOrder)
+import LordOfTheRings.Token (Token (Resource), addTokens)
 import LordOfTheRings.Classes.Entity
 import LordOfTheRings.Classes.RunMessage
 import LordOfTheRings.Helpers.Modifiers (getModifiers)
@@ -744,8 +759,11 @@ lookupLocation cardCode cardId ident = case Map.lookup cardCode allLocations of
   Nothing -> error $ "Unknown location: " <> show cardCode
 
 -- | A location card entering play: an Uncharted one enters Lost Island side faceup.
-newLocation :: (MonadRandom m) => EncounterCard -> m Location
-newLocation card = enterFaceUp . createLocation card <$> getRandom
+newLocation :: (MonadRandom m, HasGame m) => EncounterCard -> m Location
+newLocation card = do
+  l@(Location inner) <- enterFaceUp . createLocation card <$> getRandom
+  players <- getsGame (length . gamePlayerOrder)
+  pure $ overAttrs (\a -> a {locationTokens = addTokens Resource (players * initialResourcesPerPlayer inner) a.locationTokens}) l
 
 -- | The location with the side it enters play with faceup: an Uncharted one's Lost Island
 -- side.
@@ -764,7 +782,26 @@ allLocations =
   Map.fromList
     [ (toCardCode builder, card)
     | card@(SomeLocationCard builder) <-
-        [ SomeLocationCard greatForestWeb
+        [ SomeLocationCard belfalasShipyard
+        , SomeLocationCard isleOfFortune
+        , SomeLocationCard mouthsOfAnduin
+        , SomeLocationCard tolfalasLanding
+        , SomeLocationCard wickedCove
+        , SomeLocationCard (reprintLocation Cards.cobasHavenDreadnaught cobasHaven)
+        , SomeLocationCard (reprintLocation Cards.theEavesOfMirkwoodDarkOfMirkwood theEavesOfMirkwood)
+        , SomeLocationCard (reprintLocation Cards.forestGateDarkOfMirkwood forestGate)
+        , SomeLocationCard (reprintLocation Cards.goblinTunnelsDarkOfMirkwood goblinTunnels)
+        , SomeLocationCard (reprintLocation Cards.lightlessPassageDarkOfMirkwood lightlessPassage)
+        , SomeLocationCard (reprintLocation Cards.branchingPathsDarkOfMirkwood branchingPaths)
+        , SomeLocationCard tangledGrove
+        , SomeLocationCard spiderDen
+        , SomeLocationCard goblinTrail
+        , SomeLocationCard abandonedCampDarkOfMirkwood
+        , SomeLocationCard crackedPillar
+        , SomeLocationCard collapsedMine
+        , SomeLocationCard goblinDungeon
+        , SomeLocationCard crumblingStairsDarkOfMirkwood
+        , SomeLocationCard greatForestWeb
         , SomeLocationCard expanseOfHollin
         , SomeLocationCard westernEmynMuil
         , SomeLocationCard helmsDike
@@ -1481,3 +1518,8 @@ allLocations =
         , SomeLocationCard abandonedRuin
         ]
     ]
+
+-- | Reuse a printing's implementation with the new card identity and definition.
+reprintLocation :: IsLocation a => CardDef -> LocationCard a -> LocationCard a
+reprintLocation def builder =
+  (fmap (overAttrs (\attrs -> attrs {locationCardCode = toCardCode def})) builder) {cbCardDef = def}

@@ -119,6 +119,7 @@ data WindowType
     ThreatRaisedByEncounter PlayerId Int
   | -- | a character readied during the refresh phase, with its traits
     Readied Target (Set Trait)
+  | ReadiedByPlayerCard Target
   | -- | damage was healed from a character, by the source
     Healed Target Source
   | -- | an ally entered play: who controls it, and its traits

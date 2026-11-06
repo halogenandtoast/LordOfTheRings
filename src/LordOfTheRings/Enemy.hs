@@ -2,6 +2,17 @@
 
 module LordOfTheRings.Enemy (module LordOfTheRings.Enemy, module X) where
 
+import LordOfTheRings.Enemy.AttackLocation (AttackLocation (..))
+import LordOfTheRings.Enemy.Cards.Dreadnaught
+import LordOfTheRings.Enemy.Cards.DreadnaughtCaptains
+import LordOfTheRings.Enemy.Cards.DreadnaughtShips
+import LordOfTheRings.Enemy.Cards.DreadnaughtPillagers
+import LordOfTheRings.Enemy.Cards.GreatSpider
+import LordOfTheRings.Enemy.Cards.GoblinTroopDarkOfMirkwood
+import LordOfTheRings.Enemy.Cards.WildWargsDarkOfMirkwood
+import LordOfTheRings.Enemy.Cards.GoblinChieftain
+import LordOfTheRings.Enemy.Cards.CavernWarg
+import LordOfTheRings.Enemy.CardDefs qualified as Cards
 import Data.Map.Strict qualified as Map
 import LordOfTheRings.Card
 import LordOfTheRings.Classes.Entity
@@ -42,6 +53,7 @@ import LordOfTheRings.Enemy.Cards.WickedWolf
 import LordOfTheRings.Enemy.Cards.GoblinProwler
 import LordOfTheRings.Enemy.Cards.AMurderOfCrows
 import LordOfTheRings.Enemy.Cards.BlackForestBats
+import LordOfTheRings.Enemy.Cards.StalkingGoblin (stalkingGoblin)
 import LordOfTheRings.Enemy.Cards.GoblinScout
 import LordOfTheRings.Enemy.Cards.GoblinSwordsman
 import LordOfTheRings.Enemy.Cards.PatrolLeader
@@ -661,7 +673,9 @@ import LordOfTheRings.Prelude
 instance FromJSON Enemy where
   parseJSON v = do
     attrs <- parseJSON @EnemyAttrs v
-    pure $ overAttrs (const attrs) $ lookupEnemy (enemyCardCode attrs) (enemyCardId attrs) (enemyId attrs)
+    pure $ case enemyAttackLocation attrs of
+      Just _ -> Enemy $ AttackLocation attrs
+      Nothing -> overAttrs (const attrs) $ lookupEnemy (enemyCardCode attrs) (enemyCardId attrs) (enemyId attrs)
 
 instance RunMessage Enemy where
   runMessage msg (Enemy a) = Enemy <$> runMessage msg a
@@ -684,7 +698,39 @@ allEnemys =
   Map.fromList
     [ (toCardCode builder, card)
     | card@(SomeEnemyCard builder) <-
-        [ SomeEnemyCard kingSpider
+        [ SomeEnemyCard dreadnaught
+        , SomeEnemyCard dreadnaughtDamaged
+        , SomeEnemyCard captainOfTheHaven
+        , SomeEnemyCard commanderOfTheDreadnaught
+        , SomeEnemyCard descendantOfCastamir
+        , SomeEnemyCard hydraken
+        , SomeEnemyCard ophidian
+        , SomeEnemyCard varjax
+        , SomeEnemyCard blackSailsDreadnaught
+        , SomeEnemyCard warGalley
+        , SomeEnemyCard seaMonster
+        , SomeEnemyCard corsairPlunderer
+        , SomeEnemyCard daringBuccaneer
+        , SomeEnemyCard fierceMarauder
+        , SomeEnemyCard (reprintEnemy Cards.brashCorsairDreadnaught brashCorsair)
+        , SomeEnemyCard (reprintEnemy Cards.southronSailorDreadnaught southronSailor)
+        , SomeEnemyCard (reprintEnemy Cards.umbarCaptainDreadnaught umbarCaptain)
+        , SomeEnemyCard (reprintEnemy Cards.corsairSkiffDreadnaught corsairSkiff)
+        , SomeEnemyCard (reprintEnemy Cards.corsairSkirmisherDreadnaught corsairSkirmisher)
+        , SomeEnemyCard (reprintEnemy Cards.corsairWarshipDreadnaught corsairWarship)
+        , SomeEnemyCard (reprintEnemy Cards.rammingShipDreadnaught rammingShip)
+        , SomeEnemyCard (reprintEnemy Cards.slaveShipDreadnaught slaveShip)
+        , SomeEnemyCard (reprintEnemy Cards.spidersOfMirkwoodDarkOfMirkwood spidersOfMirkwood)
+        , SomeEnemyCard (reprintEnemy Cards.goblinSniperDarkOfMirkwood goblinSniper)
+        , SomeEnemyCard (reprintEnemy Cards.goblinRunnersDarkOfMirkwood goblinRunners)
+        , SomeEnemyCard (reprintEnemy Cards.goblintownScavengersDarkOfMirkwood goblintownScavengers)
+        , SomeEnemyCard (reprintEnemy Cards.greatCaveTrollJourneyInTheDarkDarkOfMirkwood greatCaveTrollJourneyInTheDark)
+        , SomeEnemyCard greatSpider
+        , SomeEnemyCard goblinTroopDarkOfMirkwood
+        , SomeEnemyCard wildWargsDarkOfMirkwood
+        , SomeEnemyCard goblinChieftain
+        , SomeEnemyCard cavernWarg
+        , SomeEnemyCard kingSpider
         , SomeEnemyCard orcOfMinasMorgul
         , SomeEnemyCard underGateSentry
         , SomeEnemyCard southronWarrior
@@ -719,6 +765,7 @@ allEnemys =
         , SomeEnemyCard lowerGateSentries
         , SomeEnemyCard wickedWolf
         , SomeEnemyCard goblinProwler
+        , SomeEnemyCard stalkingGoblin
         , SomeEnemyCard goblinScout
         , SomeEnemyCard goblinSwordsman
         , SomeEnemyCard patrolLeader
@@ -1336,3 +1383,8 @@ allEnemys =
         , SomeEnemyCard gundabadStalker
         ]
     ]
+
+-- | Reuse a printing's implementation with the new card identity and definition.
+reprintEnemy :: IsEnemy a => CardDef -> EnemyCard a -> EnemyCard a
+reprintEnemy def builder =
+  (fmap (overAttrs (\attrs -> attrs {enemyCardCode = toCardCode def})) builder) {cbCardDef = def}

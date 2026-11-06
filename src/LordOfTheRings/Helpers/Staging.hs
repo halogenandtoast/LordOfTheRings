@@ -75,7 +75,7 @@ getLocationQuestPoints lid = do
 getEngagementCost :: (HasGame m) => EnemyId -> m Int
 getEngagementCost eid = do
   enemy <- getEnemy eid
-  modifiedValue engagementCostOf (toTarget eid) enemy.engagementCost
+  modifiedEngagementCost (toTarget eid) enemy.engagementCost
 
 getEnemyHitPoints :: (HasGame m) => EnemyId -> m Int
 getEnemyHitPoints eid = do

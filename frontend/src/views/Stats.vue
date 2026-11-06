@@ -34,7 +34,7 @@ const toggle = (row: ScenarioStats) => {
   if (!open.value.delete(k)) open.value.add(k)
   open.value = new Set(open.value)
 }
-const modeLabel = { NormalMode: 'newGame.mode.normal', EasyMode: 'newGame.mode.easy', NightmareMode: 'newGame.mode.nightmare' }
+const modeLabel = { NormalMode: 'newGame.mode.normal', EasyMode: 'newGame.mode.easy', HardMode: 'newGame.mode.hard', NightmareMode: 'newGame.mode.nightmare' }
 const totals = computed(() => (stats.value ?? []).reduce((sum, row) => ({
   started: sum.started + row.total.started,
   won: sum.won + row.total.won,

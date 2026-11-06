@@ -111,9 +111,9 @@ export interface ScenarioView {
   victoryPoints: number
   /** The Dream-chaser's heading, lower-cased, once the fleet is prepared. */
   heading: string | null
-  /** NormalMode, EasyMode or NightmareMode. */
+  /** NormalMode, EasyMode, HardMode or NightmareMode. */
   mode: string
-  /** The Nightmare Deck's setup card, flipped beside the quest deck, in nightmare mode. */
+  /** The active difficulty or Nightmare setup card beside the quest deck. */
   nightmareCard: CardView | null
   /** The Corsair deck's size, while there is one, and its discard pile. */
   corsairDeck: number | null

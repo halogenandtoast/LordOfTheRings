@@ -90,7 +90,14 @@ allQuestCards =
   Map.fromList $
     map
       (\def -> (cdCardCode def, def))
-      [ fliesAndSpiders
+      [searchingTheHighSeas, destroyTheDreadnaught,  afterTheRaid
+      , mirkwoodForestTheOath
+      , theRearguardTheOath
+      , theDarkOfNibinDum
+      , surpriseAttackNibinDum
+      , theChasm
+      , oathkeepers
+      , fliesAndSpiders
       , protectTheInnocent
       , mysteriousOmens
       , fendOffDespair
@@ -2219,3 +2226,32 @@ theWallIsBreached = (quest "143075" "The Wall is Breached!" HelmsDeep 4 8) {cdKe
 
 theKingRidesOut :: CardDef
 theKingRidesOut = (quest "143076" "The King Rides Out" HelmsDeep 5 0) {cdQuestPoints = Nothing}
+
+afterTheRaid :: CardDef
+afterTheRaid = quest "dark-of-mirkwood-001" "After the Raid" TheOath 1 9
+
+mirkwoodForestTheOath :: CardDef
+mirkwoodForestTheOath = quest "dark-of-mirkwood-002" "Mirkwood Forest" TheOath 2 12
+
+theRearguardTheOath :: CardDef
+theRearguardTheOath = quest "dark-of-mirkwood-003" "The Rearguard" TheOath 3 6
+
+theDarkOfNibinDum :: CardDef
+theDarkOfNibinDum = quest "dark-of-mirkwood-004" "The Dark of Nibin-Dûm" TheCavesOfNibinDum 1 8
+
+surpriseAttackNibinDum :: CardDef
+surpriseAttackNibinDum = quest "dark-of-mirkwood-005" "Surprise Attack" TheCavesOfNibinDum 2 0
+
+theChasm :: CardDef
+theChasm = (quest "dark-of-mirkwood-006" "The Chasm" TheCavesOfNibinDum 3 0) {cdQuestPoints = Nothing}
+
+oathkeepers :: CardDef
+oathkeepers = quest "dark-of-mirkwood-007" "Oathkeepers" TheCavesOfNibinDum 4 8
+
+-- * The Hunt for the Dreadnaught
+
+searchingTheHighSeas :: CardDef
+searchingTheHighSeas = (quest "the-hunt-for-the-dreadnaught-004" "Searching the High Seas" TheHuntForTheDreadnaught 1 0)
+
+destroyTheDreadnaught :: CardDef
+destroyTheDreadnaught = (quest "the-hunt-for-the-dreadnaught-005" "Destroy the Dreadnaught" TheHuntForTheDreadnaught 2 0)

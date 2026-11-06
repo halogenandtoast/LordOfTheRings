@@ -2,7 +2,9 @@
 
 module LordOfTheRings.Scenario.Runner (module LordOfTheRings.Scenario.Runner, module X) where
 
+import Data.ByteString qualified as BS
 import Data.Map.Strict qualified as Map
+import Data.UUID.V5 qualified as UUID
 import LordOfTheRings.Card hiding (hero)
 import LordOfTheRings.Classes.HasGame (getsGame)
 import LordOfTheRings.Classes.HasQueue
@@ -25,6 +27,7 @@ import LordOfTheRings.Phase (Phase (QuestPhase))
 import LordOfTheRings.Placement (GuardRelease (..), Placement (AttachedTo))
 import LordOfTheRings.Prelude
 import LordOfTheRings.Question
+import LordOfTheRings.Epic.Types (EpicReplica (..), SharedDelta (..), SharedEventState (revision), EpicCommand (..), applySharedDelta)
 import LordOfTheRings.Scenario.Sailing (discardEncounterCard, runSailing)
 import LordOfTheRings.Saga (Saga (..), removedBurdenSets, sagaOf, treasureSetsFor)
 import LordOfTheRings.Scenario.Types as X
@@ -74,8 +77,31 @@ gatherEncounterSets attrs sets = case attrs.nightmareDeck of
 nightmareOr :: ScenarioAttrs -> CardDef -> CardDef -> CardDef
 nightmareOr attrs standard replacement = if attrs.nightmare then replacement else standard
 
+-- Undo restores the game's RNG, but the event revision never rewinds. Namespace
+-- transport IDs by that revision so a new branch cannot reuse an accepted delta.
+-- IDs stored in the outbox remain stable when delivery itself is retried.
+epicMessageId :: MonadRandom m => EpicReplica -> m UUID
+epicMessageId replica = do
+  seed <- getRandom
+  pure $ UUID.generateNamed seed $ BS.unpack $ encodeUtf8 $ tshow (replica.epicGroup, replica.epicShared.revision)
+
 instance RunMessage ScenarioAttrs where
   runMessage msg attrs = resetEmptyEncounterDeck =<< case msg of
+    QueueEpicCommand destination code effect target -> case scenarioEpic attrs of
+      Nothing -> pure attrs
+      Just replica -> do
+        ident <- epicMessageId replica
+        let command = EpicCommand ident replica.epicGroup destination code effect target
+        pure $ attrs {scenarioEpic = Just replica {epicPendingCommands = replica.epicPendingCommands <> [command]}}
+    SyncEpic shared -> pure $ attrs {scenarioEpic = fmap (\replica -> replica {epicShared = shared}) (scenarioEpic attrs)}
+    ContributeShared key amount -> case scenarioEpic attrs of
+      Nothing -> pure attrs
+      Just replica -> do
+        ident <- epicMessageId replica
+        let delta = SharedDelta ident replica.epicGroup key amount
+            (shared, _) = applySharedDelta delta replica.epicShared
+        pure $ attrs {scenarioEpic = Just replica {epicShared = shared, epicPendingDeltas = replica.epicPendingDeltas <> [delta]}}
+
     -- the scenario gathers its encounter deck at step 1; shuffle it before any setup reveals
     -- in campaign mode the encounter cards of the Campaign Pool are shuffled in with it
     DoStep 2 Setup -> do
@@ -467,7 +493,12 @@ instance RunMessage ScenarioAttrs where
       pushAll [PutInDiscard (MkPlayerCard c.id (toCardCode c) (Just owner)) | (c, Just owner) <- owned]
       -- a card of the Corsair deck goes to its own discard pile, while there is one; a
       -- set-aside card discarded is part of the encounter deck from then on (MEC61 rules)
-      pure $ foldr discardEncounterCard attrs [c | (c, Nothing) <- owned] & setAsideL %~ filter (`notElem` cards)
+      let discarded = foldr discardEncounterCard attrs [c | (c, Nothing) <- owned] & setAsideL %~ filter (`notElem` cards)
+      if scenarioId attrs == "the-hunt-for-the-dreadnaught" && discarded.corsairDeck == Just []
+        then do
+          deck <- shuffleM discarded.corsairDiscard
+          pure $ discarded & corsairDeckL ?~ deck & corsairDiscardL .~ []
+        else pure discarded
     RemoveSetAsideFromGame cards -> pure $ attrs & setAsideL %~ filter (`notElem` cards)
     -- a set-aside card with the Encounter keyword, as Ranger Summons shuffles one in, or a
     -- card in the encounter discard pile, as Calaerion shuffles one back
@@ -479,6 +510,23 @@ instance RunMessage ScenarioAttrs where
     RemoveFromEncounterDeck card -> pure $ attrs & encounterDeckL %~ filter (/= card)
     RemoveFromEncounterDiscard card -> pure $ attrs & encounterDiscardL %~ filter (/= card)
     RemoveFromVictoryDisplay card -> pure $ attrs & victoryDisplayL %~ filter ((/= card.id) . (.id))
+    SearchDifferentEncounterCards [] _ _ _ _ -> do
+      push $ ShuffleDeck EncounterDeck
+      pure attrs
+    SearchDifferentEncounterCards (pid : players) source matcher withDiscard chosen -> do
+      let matches c = cardMatches matcher c && toCardCode c `notElem` chosen
+          cards = filter matches attrs.encounterDeck <> [c | withDiscard, c <- attrs.encounterDiscard, matches c]
+          next codes = SearchDifferentEncounterCards players source matcher withDiscard codes
+          takeCard c = targetLabel c
+            [ RemoveFromEncounterDeck c
+            , RemoveFromEncounterDiscard c
+            , AddToStaging c
+            , next (toCardCode c : chosen)
+            ]
+      push $ Ask pid $ QuestionLabel (ikey "label.searchChoose") (Just source) []
+        $ SearchCards (map EncounterCard cards) $ ChooseOne
+        $ if null cards then [Label (ikey "label.continue") [next chosen]] else map takeCard cards
+      pure attrs
     SearchEncounterDeckAndDiscard pid source matcher -> search False pid source matcher AddToStaging
     SearchEncounterDeckAndDiscardToEngage pid source matcher -> search False pid source matcher (PutEnemyIntoPlayEngaged pid)
     SearchEncounterDeckAndDiscardToReveal pid source matcher -> search False pid source matcher RevealCard

@@ -44,6 +44,8 @@ data PlayerMatcher
   | -- | in campaign mode, a player whose seat has marked fewer than so many uses of the
     -- card in the campaign log, as Beldis allows each player 4
     PlayerWithCampaignUsesBelow CardCode Int
+  | -- | A card-wide campaign limit, independent of its current controller.
+    PlayerWithCampaignCardUsesBelow CardCode Int
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
@@ -72,6 +74,7 @@ data HeroMatcher
   | -- | a hero with the keyword printed on its card, as Great Yew Bow attaches to
     HeroWithPrintedKeyword Keyword
   | ReadyHero
+  | DamagedHero
   | ExhaustedHero
   | -- | with poison attached (Flies and Spiders)
     PoisonedHero

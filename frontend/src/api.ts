@@ -20,6 +20,29 @@ const json = async <T>(response: Response): Promise<T> => {
 
 export const fetchGames = () => apiFetch('/api/games').then((r) => json<GameSummary[]>(r))
 
+export type EpicDifficulty = 'EasyMode' | 'NormalMode' | 'HardMode'
+export interface EpicEvent {
+  id: string
+  name: string
+  organizer: number
+  canStart: boolean
+  difficulty: EpicDifficulty
+  started: boolean
+  totalPlayers: number | null
+  progress: number
+  damage: number
+  searchComplete: boolean
+  groups: { id: string; ordinal: number; name: string; gameId: string; owner: number; canOpen: boolean; seats: number; joinedSeats: number; difficulty: EpicDifficulty }[]
+}
+export const fetchEpicEvents = () => apiFetch('/api/epic-events').then(r => json<EpicEvent[]>(r))
+export const fetchEpicEvent = (id: string) => apiFetch(`/api/epic-events/${id}`).then(r => json<EpicEvent>(r))
+export const createEpicEvent = (event: { name: string; difficulty: EpicDifficulty }) =>
+  apiFetch('/api/epic-events', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(event) }).then(r => json<EpicEvent>(r))
+export const createEpicGroup = (id: string, group: { name: string; seats: number; difficulty: EpicDifficulty }) =>
+  apiFetch(`/api/epic-events/${id}/groups`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(group) }).then(r => json<{ gameId: string }>(r))
+export const startEpicEvent = (id: string) =>
+  apiFetch(`/api/epic-events/${id}/start`, { method: 'POST' }).then(r => json<EpicEvent>(r))
+
 /** Games in progress that are open to spectators. */
 export const fetchSpectatableGames = () => apiFetch('/api/spectatable').then((r) => json<GameSummary[]>(r))
 
@@ -50,7 +73,7 @@ export interface StatLine {
 export interface ScenarioStats {
   scenario: string
   name: string
-  mode: 'NormalMode' | 'EasyMode' | 'NightmareMode'
+  mode: 'NormalMode' | 'EasyMode' | 'HardMode' | 'NightmareMode'
   total: StatLine
   decks: { heroes: string[]; stats: StatLine }[]
 }
@@ -62,7 +85,7 @@ export const fetchStats = (mine: boolean) => apiFetch(mine ? '/api/stats?mine' :
  * cards follow the FAQ's errata (the server takes them to unless told otherwise). */
 export type DeckChoice = ({ starter: string } | { deckId: number } | { list: DeckList }) & { errata?: boolean; contract?: string }
 
-export const createGame = (game: { name: string; seed?: number; scenario?: string; deck?: DeckChoice; decks?: DeckChoice[]; seats?: number; allowSpectators?: boolean; easyMode?: boolean; nightmare?: boolean; publicScoring?: boolean }) =>
+export const createGame = (game: { name: string; seed?: number; scenario?: string; deck?: DeckChoice; decks?: DeckChoice[]; seats?: number; allowSpectators?: boolean; easyMode?: boolean; nightmare?: boolean; hardMode?: boolean; publicScoring?: boolean }) =>
   apiFetch('/api/games', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -138,15 +161,26 @@ export interface CampaignView {
   upgrades: XpCard[]
   /** Between scenarios, the next one waiting in the lobby. */
   canSpendXp: boolean
+  canExtendMirkwoodPaths: boolean
+  canClaimRangerSense: boolean
 }
 
 /** Start a campaign: its first scenario's game, waiting for its seats. */
-export const createCampaign = (campaign: { name: string; campaign: string; seats?: number; allowSpectators?: boolean; easyMode?: boolean; nightmare?: boolean; publicScoring?: boolean }) =>
+export const createCampaign = (campaign: { name: string; campaign: string; rewardCampaign?: string; rewardSeats?: number[]; seats?: number; allowSpectators?: boolean; easyMode?: boolean; nightmare?: boolean; publicScoring?: boolean }) =>
   apiFetch('/api/campaigns', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(campaign),
   }).then((r) => json<{ id: string; campaignId: string }>(r))
+
+/** Continue a completed Core Set campaign with its existing log. */
+export const extendMirkwoodPaths = (id: string) =>
+  apiFetch(`/api/campaigns/${id}/extend`, { method: 'POST' }).then((r) => json<{ id: string }>(r))
+
+export const deleteCampaign = async (id: string) => {
+  const response = await apiFetch(`/api/campaigns/${id}`, { method: 'DELETE' })
+  if (!response.ok) throw new Error((await response.text()) || response.statusText)
+}
 
 export const fetchCampaign = (id: string) => apiFetch(`/api/campaigns/${id}`).then((r) => json<CampaignView>(r))
 

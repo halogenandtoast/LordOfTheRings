@@ -109,6 +109,7 @@ export interface ServerGame {
   question: Record<string, Question>
   questionVersion: number
   scenario: {
+    id?: string
     name: string
     encounterDeckSize: number
     encounterDiscard: Card[]
@@ -132,7 +133,7 @@ export interface ServerGame {
     evilCreaturesDiscard?: Card[]
     /** The player cards each encounter card, by its card id, guards: a Guarded (X) attachment, or Hobgoblin's card. */
     guardedPlayerCards?: Record<string, [string, Card][]>
-    /** NormalMode, EasyMode or NightmareMode; older games carry only easyMode. */
+    /** NormalMode, EasyMode, HardMode or NightmareMode; older games carry only easyMode. */
     mode?: string
     /** The scenario's Nightmare Deck, when it has one: its setup card is shown in nightmare mode. */
     nightmareDeck?: { setupCard: string } | null
@@ -206,6 +207,8 @@ export interface ServerGame {
 }
 
 export interface GameData {
+  /** Monotonic server publication order; undo also increments it in Epic games. */
+  revision?: number
   started: boolean
   game: ServerGame | null
   playerId: string | null
@@ -219,6 +222,8 @@ export interface GameData {
 
 /** Who plays: with friends, who sits where (seat n plays the nth player); otherwise the owner plays every seat. */
 export interface Table {
+  epicEventId?: string | null
+  undoFloor?: number
   withFriends: boolean
   seats: number
   owner: number
@@ -249,6 +254,7 @@ export interface GameSummary {
   /** The campaign the game is a scenario of. */
   campaignId?: string | null
   nightmare: boolean
+  hardMode?: boolean
   /** Who plays, in turn order, with their heroes; none until the game is dealt. */
   seats: { name: string; threat: number; eliminated: boolean; heroes: { code: string; sphere: string | null }[] }[]
 }

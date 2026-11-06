@@ -11,7 +11,12 @@ import LordOfTheRings.Objective (ObjectiveAttrs (..))
 import LordOfTheRings.Objective.CardDefs qualified as Objectives
 import LordOfTheRings.Outcome (Outcome (..))
 import LordOfTheRings.Quest.CardDefs qualified as Quests
-import LordOfTheRings.Scenario.Types (GameMode (NightmareMode), scenarioCampaignCardFlipped, scenarioMeta, scenarioMode)
+import LordOfTheRings.Scenario.Types (
+  GameMode (NightmareMode),
+  scenarioCampaignCardFlipped,
+  scenarioMeta,
+  scenarioMode,
+ )
 import LordOfTheRings.Treachery.CardDefs qualified as Treacheries
 import LordOfTheRings.Window (WindowType (..), mkAfter)
 import TestImport
@@ -29,8 +34,16 @@ mendors = getsGame (filter ((== toCardCode Objectives.mendor) . toCardCode) . to
 attachedTo :: CardDef -> GameT [Target]
 attachedTo def =
   getsGame \g ->
-    [t | a <- toList g.entities.attachments, toCardCode a == toCardCode def, AttachedTo t <- [attachmentPlacement (toAttrs a)]]
-      <> [t | o <- toList g.entities.objectives, toCardCode o == toCardCode def, AttachedTo t <- [objectivePlacement (toAttrs o)]]
+    [ t
+    | a <- toList g.entities.attachments
+    , toCardCode a == toCardCode def
+    , AttachedTo t <- [attachmentPlacement (toAttrs a)]
+    ]
+      <> [ t
+         | o <- toList g.entities.objectives
+         , toCardCode o == toCardCode def
+         , AttachedTo t <- [objectivePlacement (toAttrs o)]
+         ]
 
 setMeta :: Value -> GameT ()
 setMeta v = putGame . (scenarioL %~ overAttrs (\a -> a {scenarioMeta = v})) =<< getGame
@@ -49,15 +62,51 @@ spec = describe "Campaign mode" do
       (.threatPenalty) <$> seatHeroes [["01001", "01002", "01004"]] seated `shouldBe` Right 1
 
     pureIt "refuses a fallen hero" do
-      seatHeroes [["01001", "01002", "01003"]] (seated {campaignLogFallenHeroes = ["01003"]}) `shouldBe` Left ["01003"]
+      seatHeroes [["01001", "01002", "01003"]] (seated {campaignLogFallenHeroes = ["01003"]})
+        `shouldBe` Left ["01003"]
 
     pureIt "drops the Permanent cards of a fallen hero from the pool" do
-      let l = seated {campaignLogPool = [PoolCard "RC007" Nothing (Just "01003"), PoolCard "RC005" Nothing Nothing]}
+      let l =
+            seated
+              { campaignLogPool = [PoolCard "RC007" Nothing (Just "01003"), PoolCard "RC005" Nothing Nothing]
+              }
       (.pool) (recordFallen ["01003"] l) `shouldBe` [PoolCard "RC005" Nothing Nothing]
 
     pureIt "plays the scenarios in order" do
       nextScenario core `shouldBe` Just "passage-through-mirkwood"
-      nextScenario seated {campaignLogCompleted = [CompletedScenario "passage-through-mirkwood" 100]} `shouldBe` Just "journey-along-the-anduin"
+      nextScenario seated {campaignLogCompleted = [CompletedScenario "passage-through-mirkwood" 100]}
+        `shouldBe` Just "journey-along-the-anduin"
+
+  describe "The Dark of Mirkwood campaign routes" do
+    pureIt "begins the mini campaign with The Oath and an empty log" do
+      let l = newCampaignLog "dark-of-mirkwood"
+      nextScenario l `shouldBe` Just "the-oath"
+      l.pool `shouldBe` []
+      l.completed `shouldBe` []
+
+    pureIt "continues from the core scenarios with the same campaign log" do
+      let l =
+            (newCampaignLog "mirkwood-paths")
+              { campaignLogCompleted =
+                  map
+                    (`CompletedScenario` 100)
+                    ["passage-through-mirkwood", "journey-along-the-anduin", "escape-from-dol-guldur"]
+              , campaignLogThreatPenalty = 2
+              , campaignLogPool = [PoolCard "RC003" (Just 0) Nothing]
+              }
+      nextScenario l `shouldBe` Just "the-oath"
+      partNumber l "the-oath" `shouldBe` 4
+      partNumber l "the-caves-of-nibin-dum" `shouldBe` 5
+      l.threatPenalty `shouldBe` 2
+      l.pool `shouldBe` [PoolCard "RC003" (Just 0) Nothing]
+
+    pureIt "finishes the mini campaign after the Caves" do
+      let l =
+            (newCampaignLog "dark-of-mirkwood")
+              { campaignLogCompleted =
+                  [CompletedScenario "the-oath" 100, CompletedScenario "the-caves-of-nibin-dum" 100]
+              }
+      nextScenario l `shouldBe` Nothing
 
   describe "setting up" do
     it "adds the threat penalty to each player's starting threat" . campaignTestIn passageThroughMirkwood seated {campaignLogThreatPenalty = 2} starterDeck $ \pid -> do
@@ -65,11 +114,24 @@ spec = describe "Campaign mode" do
       run $ DoStep 2 Setup
       (.threat) <$> getPlayer pid `shouldReturn` heroes + 2
 
-    it "shuffles the Campaign Pool's encounter cards into the encounter deck" . campaignTestIn passageThroughMirkwood seated {campaignLogPool = [PoolCard (toCardCode Treacheries.lingeringVenom) Nothing Nothing]} starterDeck $ \_ -> do
+    it "shuffles the Campaign Pool's encounter cards into the encounter deck" . campaignTestIn
+      passageThroughMirkwood
+      seated {campaignLogPool = [PoolCard (toCardCode Treacheries.lingeringVenom) Nothing Nothing]}
+      starterDeck $ \_ -> do
       run $ DoStep 2 Setup
-      map toCardCode <$> getEncounterDeck >>= (`shouldSatisfy` elem (toCardCode Treacheries.lingeringVenom))
+      map toCardCode
+        <$> getEncounterDeck
+        >>= (`shouldSatisfy` elem (toCardCode Treacheries.lingeringVenom))
 
-    it "attaches the Permanent boons and burdens to the heroes the log records" . campaignTestIn passageThroughMirkwood seated {campaignLogPool = [PoolCard (toCardCode Attachments.valor) Nothing (Just "01002"), PoolCard (toCardCode Objectives.scarred) Nothing (Just "01003")]} starterDeck $ \_ -> do
+    it "attaches the Permanent boons and burdens to the heroes the log records" . campaignTestIn
+      passageThroughMirkwood
+      seated
+        { campaignLogPool =
+            [ PoolCard (toCardCode Attachments.valor) Nothing (Just "01002")
+            , PoolCard (toCardCode Objectives.scarred) Nothing (Just "01003")
+            ]
+        }
+      starterDeck $ \_ -> do
       run $ DoStep 4 Setup
       theodred <- toTarget <$> getHeroWithCode "01002"
       gloin <- toTarget <$> getHeroWithCode "01003"
@@ -77,7 +139,8 @@ spec = describe "Campaign mode" do
       attachedTo Objectives.scarred `shouldReturn` [gloin]
 
   describe "Scarred" do
-    it "raises the threat of the hero's controller for a character they control destroyed, an objective-ally too" . campaignTestIn passageThroughMirkwood seated starterDeck $ \pid -> do
+    it
+      "raises the threat of the hero's controller for a character they control destroyed, an objective-ally too" . campaignTestIn passageThroughMirkwood seated starterDeck $ \pid -> do
       gloin <- getHeroWithCode "01003"
       run . (`PutObjectiveIntoPlayAttached` toTarget gloin) =<< genEncounterCard Objectives.scarred
       run . PutObjectiveAllyIntoPlayUnder pid =<< genEncounterCard Objectives.calaerion
@@ -111,7 +174,10 @@ spec = describe "Campaign mode" do
     it "takes Lingering Venom after Don't Leave the Path" . campaignTestIn passageThroughMirkwood seated starterDeck $ \_ -> do
       setMeta $ toJSON $ toCardCode Quests.aChosenPathDontLeaveThePath
       run $ GameOver Won
-      map (.code) . (.pool) <$> getCampaignLog >>= (`shouldSatisfy` elem (toCardCode Treacheries.lingeringVenom))
+      map (.code)
+        . (.pool)
+        <$> getCampaignLog
+        >>= (`shouldSatisfy` elem (toCardCode Treacheries.lingeringVenom))
 
     it "records a hero in its owner's discard pile as fallen, and scores the game" . campaignTestIn passageThroughMirkwood seated starterDeck $ \pid -> do
       gloin <- getHeroWithCode "01003"
@@ -159,7 +225,11 @@ spec = describe "Campaign mode" do
       map (.placement) <$> mendors `shouldReturn` [AttachedTo (toTarget theodred.id)]
       getsGame (scenarioCampaignCardFlipped . toAttrs . (.scenario)) `shouldReturn` True
 
-    it "takes the named prisoner in nightmare mode too" . campaignTestIn (overAttrs (\a -> a {scenarioMode = NightmareMode}) escapeFromDolGuldur) prisoner starterDeck $ \_ -> do
+    it "takes the named prisoner in nightmare mode too" . campaignTestIn
+      (overAttrs (\a -> a {scenarioMode = NightmareMode}) escapeFromDolGuldur)
+      prisoner
+      starterDeck $ \_ -> do
       _ <- putQuestStage Quests.theNecromancersTower
       run . WhenRevealed . toTarget =<< getActiveQuest
-      getsGame (map toCardCode . filter (heroPrisoner . toAttrs) . toList . (.entities.heroes)) `shouldReturn` ["01002"]
+      getsGame (map toCardCode . filter (heroPrisoner . toAttrs) . toList . (.entities.heroes))
+        `shouldReturn` ["01002"]

@@ -6,6 +6,7 @@ import Data.Map.Strict qualified as Map
 import LordOfTheRings.Card
 import LordOfTheRings.Classes.Entity
 import LordOfTheRings.Classes.RunMessage
+import LordOfTheRings.Contract.Cards.APerilousVoyage
 import LordOfTheRings.Contract.Cards.BondOfFriendship
 import LordOfTheRings.Contract.Cards.CouncilOfTheWise
 import LordOfTheRings.Contract.Cards.Fellowship
@@ -42,7 +43,8 @@ allContracts =
   Map.fromList
     [ (toCardCode builder, card)
     | card@(SomeContractCard builder) <-
-        [ SomeContractCard fellowship
+        [ SomeContractCard aPerilousVoyage
+        , SomeContractCard fellowship
         , SomeContractCard theBurglarsTurn
         , SomeContractCard forthTheThreeHunters
         , SomeContractCard theGreyWanderer

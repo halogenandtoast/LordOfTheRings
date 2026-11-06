@@ -25,6 +25,7 @@ import { currentUser } from '../auth'
 import FileBug from '../components/FileBug.vue'
 import StoryModal, { type StoryPart } from '../components/StoryModal.vue'
 import { slug } from '../campaigns'
+import EpicStatus from '../components/EpicStatus.vue'
 import { exportGame } from '../api'
 import { useGame } from '../composables/useGame'
 import { table as tableStyle } from '../table'
@@ -46,7 +47,7 @@ const leavePublicDialog = useTemplateRef<InstanceType<typeof ConfirmDelete>>('le
 // the server held back a debug message or an undo: ask before it takes the deal out
 watch(leavingPublic, (held) => held && leavePublicDialog.value?.open())
 const resetDialog = useTemplateRef<InstanceType<typeof ConfirmDelete>>('resetDialog')
-const askReset = () => resetDialog.value?.open()
+const askReset = () => { if (!table.value?.epicEventId) resetDialog.value?.open() }
 const surrenderDialog = useTemplateRef<InstanceType<typeof ConfirmDelete>>('surrenderDialog')
 const askSurrender = () => surrenderDialog.value?.open()
 // With friends you play your own seats; otherwise every seat is yours.
@@ -276,6 +277,7 @@ watch(question, (asked) => {
   <div class="game-view" :data-table="tableStyle">
   <GameBar
     :can-undo="canUndo"
+    :epic="!!table?.epicEventId"
     :show-sidebar="showSidebar"
     :debugging="debugging"
     :spectate="spectate"
@@ -293,6 +295,7 @@ watch(question, (asked) => {
     @toggle-sidebar="showSidebar = !showSidebar"
     @toggle-debug="debugging = !debugging"
   />
+  <EpicStatus v-if="table?.epicEventId" :id="table.epicEventId" />
   <StoryModal :scenario="storyId" :name="scenario?.name ?? ''" :part="storyPart" :campaign="!!campaignId" :mode="scenario?.mode" @close="storyPart = null" />
   <ConfirmDelete
     ref="leavePublicDialog"

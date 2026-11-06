@@ -6,6 +6,10 @@ import Data.Map.Strict qualified as Map
 import LordOfTheRings.Card
 import LordOfTheRings.Classes.Entity
 import LordOfTheRings.Classes.RunMessage
+import LordOfTheRings.Attachment.Cards.TheFervorOfLore
+import LordOfTheRings.Attachment.Cards.TheMightOfTactics
+import LordOfTheRings.Attachment.Cards.ThePowerOfSpirit
+import LordOfTheRings.Attachment.Cards.TheSecretOfLeadership
 import LordOfTheRings.Attachment.Cards.AncientMathom
 import LordOfTheRings.Attachment.Cards.SpearOfTheMark
 import LordOfTheRings.Attachment.Cards.SteedOfTheMark
@@ -575,6 +579,10 @@ allAttachments =
         , SomeAttachmentCard mrUnderhill
         , SomeAttachmentCard tirelessRanger
         , SomeAttachmentCard skilledHealer
+        , SomeAttachmentCard theFervorOfLore
+        , SomeAttachmentCard theMightOfTactics
+        , SomeAttachmentCard thePowerOfSpirit
+        , SomeAttachmentCard theSecretOfLeadership
         , SomeAttachmentCard valiantWarrior
         , SomeAttachmentCard nobleHero
         , SomeAttachmentCard gandalfsStaff

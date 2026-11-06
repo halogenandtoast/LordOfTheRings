@@ -191,7 +191,7 @@
   "deck": {
     "allDecks": "All decks",
     "onRingsdb": "on RingsDB",
-    "tooSmall": "A deck needs at least 50 cards; this one has {count}.",
+    "tooSmall": "A deck needs at least {minimum} cards; this one has {count}.",
     "unresolved": "{count} card is not in our database and is shown by the code the source used. | {count} cards are not in our database and are shown by the code the source used.",
     "other": "Other",
     "sideboard": "Sideboard"

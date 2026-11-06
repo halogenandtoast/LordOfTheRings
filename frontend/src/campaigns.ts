@@ -12,9 +12,11 @@ export interface ScenarioOption extends Gateable {
   icon: string
   /** The engine builds its Nightmare Deck, so it may be played in nightmare mode. */
   nightmare?: boolean
+  hard?: boolean
 }
 
 export interface Campaign {
+  category: 'campaign' | 'scenario-pack'
   id: string
   name: string
   image: string
@@ -47,7 +49,10 @@ const fromPacks = (packs: [string, string][]): ScenarioOption[] => packs.map(([c
 
 // The scenarios the engine scripts, with how far along each is (see displayRules.ts):
 // all but the core box's three are beta. The rest are unimplemented. `nightmare: true` once its Nightmare Deck is scripted.
-const implemented: Record<string, Gateable & { nightmare?: boolean }> = {
+const implemented: Record<string, Gateable & { nightmare?: boolean; hard?: boolean }> = {
+  'the-hunt-for-the-dreadnaught': { beta: true, hard: true },
+  'the-oath': { beta: true },
+  'the-caves-of-nibin-dum': { beta: true },
   'passage-through-mirkwood': { nightmare: true },
   'journey-along-the-anduin': { nightmare: true },
   'escape-from-dol-guldur': { nightmare: true },
@@ -155,7 +160,8 @@ const implemented: Record<string, Gateable & { nightmare?: boolean }> = {
   'helms-deep': { beta: true, nightmare: true },
 }
 
-const campaign = (id: string, name: string, code: string, scenarios: ScenarioOption[]): Campaign => ({
+const campaign = (id: string, name: string, code: string, scenarios: ScenarioOption[], category: Campaign['category'] = 'campaign'): Campaign => ({
+  category,
   id,
   name,
   image: product(code),
@@ -169,6 +175,7 @@ const campaign = (id: string, name: string, code: string, scenarios: ScenarioOpt
 // scenarios, The Grey Havens' and the cycle's, one campaign, and Ered Mithrin's nine.
 export const campaignModes: Record<string, string> = {
   'core-set': 'revised-core',
+  'dark-of-mirkwood': 'dark-of-mirkwood',
   'angmar-awakened': 'angmar-awakened',
   'dream-chaser': 'dream-chaser',
   'the-hobbit': 'the-hobbit',
@@ -177,6 +184,10 @@ export const campaignModes: Record<string, string> = {
 }
 
 export const campaigns: Campaign[] = [
+  campaign('the-hunt-for-the-dreadnaught', 'The Hunt for the Dreadnaught', 'MEC86', fromBox('MEC86', ['The Hunt for the Dreadnaught']), 'scenario-pack'),
+  campaign('dark-of-mirkwood', 'The Dark of Mirkwood', 'MEC102', [
+    ...fromBox('MEC102', ['The Oath', 'The Caves of Nibin-dûm']),
+  ], 'scenario-pack'),
   // the core set's cycle is Shadows of Mirkwood
   campaign('core-set', 'Core Set', 'MEC01', [
     ...fromBox('MEC01', ['Passage Through Mirkwood', 'Journey Along the Anduin', 'Escape from Dol Guldur']),

@@ -72,6 +72,7 @@ const choice = (): DeckChoice => ({
 <template>
   <section class="lobby">
     <h2>{{ $t(solo ? 'game.lobby.chooseDeck' : 'game.lobby.waiting') }}</h2>
+    <p v-if="table.epicEventId" class="hint"><RouterLink :to="`/epic-events/${table.epicEventId}`">{{ $t('epic.backToEvent') }}</RouterLink> · {{ $t('epic.organizerStarts') }}</p>
 
     <ol v-if="!solo" class="seats">
       <li v-for="(seat, position) in seats" :key="position" class="seat" :class="{ open: !seat, you: seat?.userId === currentUser?.id }">
@@ -104,12 +105,12 @@ const choice = (): DeckChoice => ({
           <option v-for="c in contracts" :key="c.code" :value="c.code">{{ c.name }}</option>
         </select>
       </label>
-      <button v-if="!loading" type="button" class="join" @click="emit('join', choice())">{{ $t(solo ? 'game.lobby.start' : mine > 0 ? 'game.lobby.takeAnother' : 'game.lobby.join') }}</button>
+      <button v-if="!loading" type="button" class="join" @click="emit('join', choice())">{{ $t(table.epicEventId ? 'epic.takeSeat' : solo ? 'game.lobby.start' : mine > 0 ? 'game.lobby.takeAnother' : 'game.lobby.join') }}</button>
     </template>
     <template v-if="mine > 0">
-      <p class="hint">{{ $t('game.lobby.dealtWhenFull') }}</p>
+      <p class="hint">{{ $t(table.epicEventId ? 'epic.organizerStarts' : 'game.lobby.dealtWhenFull') }}</p>
       <div class="actions">
-        <button v-if="owner" type="button" class="join" @click="emit('start')">{{ $t('game.lobby.startNow', table.seated.length) }}</button>
+        <button v-if="owner && !table.epicEventId" type="button" class="join" @click="emit('start')">{{ $t('game.lobby.startNow', table.seated.length) }}</button>
         <button type="button" class="secondary" @click="emit('leave')">{{ $t('game.lobby.leave', mine) }}</button>
       </div>
     </template>

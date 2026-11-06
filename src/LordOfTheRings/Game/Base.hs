@@ -7,6 +7,7 @@ import Data.Map.Strict qualified as Map
 import Data.Set qualified as Set
 import LordOfTheRings.ActiveCost
 import LordOfTheRings.Ally.Types (Ally)
+import LordOfTheRings.Attachment.Types (Attachment)
 import LordOfTheRings.Location.Types (Location)
 import LordOfTheRings.Card (Card)
 import LordOfTheRings.Matcher.Types (cardMatches)
@@ -47,6 +48,9 @@ data Game = Game
   -- ^ What was committed at the last quest resolution, for the board's tally
   , gameLogBlocks :: [LogBlock]
   -- ^ The log's open blocks, outermost first. See "LordOfTheRings.Log.Block".
+  , gameResolvingAttachments :: Map AttachmentId [Attachment]
+  -- ^ Snapshots of activated attachments until their costs and effects finish. Nested
+  -- uses form a stack; only a resolving ability, never an unrelated leaving, uses them.
   , gameLeftPlay :: Map AllyId Ally
   -- ^ Allies that just left play, kept until the window for their leaving closes so
   -- their own abilities can answer it.

@@ -14,7 +14,18 @@ allEnemyCards =
   Map.fromList $
     map
       (\def -> (cdCardCode def, def))
-      [ orcOfMinasMorgul
+      [dreadnaught, dreadnaughtDamaged, captainOfTheHaven, commanderOfTheDreadnaught, descendantOfCastamir, hydraken, ophidian, varjax, brashCorsairDreadnaught, corsairPlunderer, daringBuccaneer, fierceMarauder, southronSailorDreadnaught, umbarCaptainDreadnaught, blackSailsDreadnaught, corsairSkiffDreadnaught, corsairSkirmisherDreadnaught, corsairWarshipDreadnaught, rammingShipDreadnaught, slaveShipDreadnaught, warGalley, seaMonster,  stalkingGoblin
+      , spidersOfMirkwoodDarkOfMirkwood
+      , goblinSniperDarkOfMirkwood
+      , goblinRunnersDarkOfMirkwood
+      , goblintownScavengersDarkOfMirkwood
+      , greatCaveTrollJourneyInTheDarkDarkOfMirkwood
+      , greatSpider
+      , goblinTroopDarkOfMirkwood
+      , wildWargsDarkOfMirkwood
+      , goblinChieftain
+      , cavernWarg
+      , orcOfMinasMorgul
       , underGateSentry
       , southronWarrior
       , southronRearguard
@@ -5547,3 +5558,197 @@ orcOfMinasMorgul = (enemy "the-land-of-shadow-nightmare-shelobs-lair-005" "Orc o
 underGateSentry :: CardDef
 underGateSentry = (enemy "the-land-of-shadow-nightmare-shelobs-lair-006" "Under-gate Sentry" ShelobsLairNightmare 3 30 3 5 3 5)
   {cdCardTraits = setFromList [Orc, Uruk], cdShadowEffect = True}
+
+-- * The Dark of Mirkwood
+
+greatSpider :: CardDef
+greatSpider =
+  (enemy "dark-of-mirkwood-009" "Great Spider" TheOath 2 34 2 3 1 3) {cdCardTraits = setFromList [Spider], cdShadowEffect = True}
+
+goblinTroopDarkOfMirkwood :: CardDef
+goblinTroopDarkOfMirkwood =
+  (enemy "dark-of-mirkwood-019" "Goblin Troop" TheGoblins 1 35 3 5 3 6) {cdCardTraits = setFromList [Goblin, Orc], cdShadowEffect = True}
+
+wildWargsDarkOfMirkwood :: CardDef
+wildWargsDarkOfMirkwood =
+  (enemy "dark-of-mirkwood-023" "Wild Wargs" TheGoblins 1 28 2 2 1 3) {cdCardTraits = setFromList [Creature, Warg]}
+
+goblinChieftain :: CardDef
+goblinChieftain =
+  unique $ (enemy "dark-of-mirkwood-027" "Goblin Chieftain" TheCavesOfNibinDum 1 40 0 0 0 8) {cdCardTraits = setFromList [Goblin, Orc]}
+
+cavernWarg :: CardDef
+cavernWarg =
+  (enemy "dark-of-mirkwood-031" "Cavern Warg" TheCavesOfNibinDum 2 33 2 3 2 3) {cdCardTraits = setFromList [Creature, Warg], cdShadowEffect = True}
+
+-- * The Dark of Mirkwood campaign burdens
+stalkingGoblin :: CardDef
+stalkingGoblin = (enemy "dark-of-mirkwood-041" "Stalking Goblin" TheDarkOfMirkwoodCampaign 1 10 2 2 2 2)
+  { cdEncounterSet = Nothing, cdSetIcon = Just TheDarkOfMirkwoodCampaign
+  , cdCardTraits = setFromList [Goblin, Orc, Burden], cdShadowEffect = True
+  }
+
+-- * Reprints in The Dark of Mirkwood
+
+spidersOfMirkwoodDarkOfMirkwood :: CardDef
+spidersOfMirkwoodDarkOfMirkwood = reprintEncounter "dark-of-mirkwood-008" TheOath 2 (Just 0) spidersOfMirkwood
+
+goblinSniperDarkOfMirkwood :: CardDef
+goblinSniperDarkOfMirkwood = reprintEncounter "dark-of-mirkwood-020" TheGoblins 2 Nothing goblinSniper
+
+goblinRunnersDarkOfMirkwood :: CardDef
+goblinRunnersDarkOfMirkwood = reprintEncounter "dark-of-mirkwood-021" TheGoblins 2 (Just 0) goblinRunners
+
+goblintownScavengersDarkOfMirkwood :: CardDef
+goblintownScavengersDarkOfMirkwood = reprintEncounter "dark-of-mirkwood-022" TheGoblins 2 Nothing goblintownScavengers
+
+greatCaveTrollJourneyInTheDarkDarkOfMirkwood :: CardDef
+greatCaveTrollJourneyInTheDarkDarkOfMirkwood = reprintEncounter "dark-of-mirkwood-030" TheCavesOfNibinDum 2 (Just 0) greatCaveTrollJourneyInTheDark
+
+-- * The Hunt for the Dreadnaught
+
+dreadnaught :: CardDef
+dreadnaught = (enemy "the-hunt-for-the-dreadnaught-013" "Dreadnaught" TheHuntForTheDreadnaught 1 0 4 7 4 0)
+  { cdUnique = True
+  , cdCardTraits = setFromList [Corsair, Ship, Elite]
+  , cdKeywords = setFromList [Archery 1, Massive]
+  , cdDoubleSided = True
+  , cdOtherSide = Just "the-hunt-for-the-dreadnaught-013-b"
+  }
+
+dreadnaughtDamaged :: CardDef
+dreadnaughtDamaged = (enemy "the-hunt-for-the-dreadnaught-013-b" "Dreadnaught" TheHuntForTheDreadnaught 0 0 3 5 3 0)
+  { cdUnique = True
+  , cdCardTraits = setFromList [Corsair, Ship, Damaged]
+  , cdKeywords = setFromList [Massive]
+  , cdVictoryPoints = Just 99
+  , cdDoubleSided = True
+  , cdOtherSide = Just "the-hunt-for-the-dreadnaught-013"
+  }
+
+captainOfTheHaven :: CardDef
+captainOfTheHaven = (enemy "the-hunt-for-the-dreadnaught-014" "Captain of the Haven" TheHuntForTheDreadnaught 1 31 3 8 5 7)
+  { cdUnique = True
+  , cdCardTraits = setFromList [Corsair, Pillager, Elite]
+  , cdKeywords = setFromList [Pillage 8]
+  , cdVictoryPoints = Just 10
+  }
+
+commanderOfTheDreadnaught :: CardDef
+commanderOfTheDreadnaught = (enemy "the-hunt-for-the-dreadnaught-015" "Commander of the Dreadnaught" TheHuntForTheDreadnaught 1 39 5 5 2 9)
+  { cdUnique = True
+  , cdCardTraits = setFromList [Corsair, Elite]
+  , cdVictoryPoints = Just 10
+  }
+
+descendantOfCastamir :: CardDef
+descendantOfCastamir = (enemy "the-hunt-for-the-dreadnaught-016" "Descendant of Castamir" TheHuntForTheDreadnaught 1 42 1 3 2 5)
+  { cdUnique = True
+  , cdCardTraits = setFromList [Corsair, Elite]
+  , cdVictoryPoints = Just 10
+  }
+
+hydraken :: CardDef
+hydraken = (enemy "the-hunt-for-the-dreadnaught-017" "Hydraken" TheHuntForTheDreadnaught 1 41 4 4 4 6)
+  { cdUnique = True
+  , cdCardTraits = setFromList [Corsair, Elite]
+  , cdVictoryPoints = Just 10
+  }
+
+ophidian :: CardDef
+ophidian = (enemy "the-hunt-for-the-dreadnaught-018" "Ophidian" TheHuntForTheDreadnaught 1 34 2 6 1 8)
+  { cdUnique = True
+  , cdCardTraits = setFromList [Corsair, Elite]
+  , cdVictoryPoints = Just 10
+  }
+
+varjax :: CardDef
+varjax = (enemy "the-hunt-for-the-dreadnaught-019" "Varjax" TheHuntForTheDreadnaught 1 35 6 7 3 6)
+  { cdUnique = True
+  , cdCardTraits = setFromList [Corsair, Elite]
+  , cdKeywords = setFromList [Archery 3]
+  , cdVictoryPoints = Just 10
+  }
+
+brashCorsairDreadnaught :: CardDef
+brashCorsairDreadnaught = (enemy "the-hunt-for-the-dreadnaught-020" "Brash Corsair" TheHuntForTheDreadnaught 1 16 3 3 4 3)
+  { cdCardTraits = setFromList [Corsair]
+  }
+
+corsairPlunderer :: CardDef
+corsairPlunderer = (enemy "the-hunt-for-the-dreadnaught-021" "Corsair Plunderer" TheHuntForTheDreadnaught 3 12 1 2 3 1)
+  { cdCardTraits = setFromList [Corsair, Pillager]
+  , cdKeywords = setFromList [Pillage 2]
+  }
+
+daringBuccaneer :: CardDef
+daringBuccaneer = (enemy "the-hunt-for-the-dreadnaught-022" "Daring Buccaneer" TheHuntForTheDreadnaught 3 23 3 3 2 2)
+  { cdCardTraits = setFromList [Corsair, Pillager]
+  , cdKeywords = setFromList [Pillage 3]
+  }
+
+fierceMarauder :: CardDef
+fierceMarauder = (enemy "the-hunt-for-the-dreadnaught-023" "Fierce Marauder" TheHuntForTheDreadnaught 3 19 2 3 2 3)
+  { cdCardTraits = setFromList [Corsair, Pillager]
+  , cdKeywords = setFromList [Pillage 3]
+  }
+
+southronSailorDreadnaught :: CardDef
+southronSailorDreadnaught = (enemy "the-hunt-for-the-dreadnaught-024" "Southron Sailor" TheHuntForTheDreadnaught 2 28 0 2 1 4)
+  { cdCardTraits = setFromList [Corsair]
+  }
+
+umbarCaptainDreadnaught :: CardDef
+umbarCaptainDreadnaught = (enemy "the-hunt-for-the-dreadnaught-025" "Umbar Captain" TheHuntForTheDreadnaught 1 40 4 5 3 5)
+  { cdCardTraits = setFromList [Corsair]
+  }
+
+blackSailsDreadnaught :: CardDef
+blackSailsDreadnaught = (enemy "the-hunt-for-the-dreadnaught-026" "Black Sails" TheHuntForTheDreadnaught 2 37 4 6 2 10)
+  { cdCardTraits = setFromList [Corsair, Ship]
+  , cdKeywords = setFromList [Boarding 2]
+  , cdShadowEffect = True
+  }
+
+corsairSkiffDreadnaught :: CardDef
+corsairSkiffDreadnaught = (enemy "the-hunt-for-the-dreadnaught-027" "Corsair Skiff" TheHuntForTheDreadnaught 2 24 1 2 2 5)
+  { cdCardTraits = setFromList [Corsair, Ship]
+  , cdKeywords = setFromList [Surge]
+  }
+
+corsairSkirmisherDreadnaught :: CardDef
+corsairSkirmisherDreadnaught = (enemy "the-hunt-for-the-dreadnaught-028" "Corsair Skirmisher" TheHuntForTheDreadnaught 1 28 3 4 4 6)
+  { cdCardTraits = setFromList [Corsair, Ship]
+  , cdOtherSide = Just "the-hunt-for-the-dreadnaught-028-ship"
+  , cdKeywords = setFromList [Boarding 1]
+  }
+
+corsairWarshipDreadnaught :: CardDef
+corsairWarshipDreadnaught = (enemy "the-hunt-for-the-dreadnaught-029" "Corsair Warship" TheHuntForTheDreadnaught 1 44 3 8 4 9)
+  { cdCardTraits = setFromList [Corsair, Ship]
+  , cdKeywords = setFromList [Boarding 3]
+  , cdVictoryPoints = Just 6
+  }
+
+rammingShipDreadnaught :: CardDef
+rammingShipDreadnaught = (enemy "the-hunt-for-the-dreadnaught-030" "Ramming Ship" TheHuntForTheDreadnaught 1 28 4 4 3 8)
+  { cdCardTraits = setFromList [Corsair, Ship]
+  , cdShadowEffect = True
+  }
+
+slaveShipDreadnaught :: CardDef
+slaveShipDreadnaught = (enemy "the-hunt-for-the-dreadnaught-031" "Slave Ship" TheHuntForTheDreadnaught 1 32 3 7 5 5)
+  { cdCardTraits = setFromList [Corsair, Ship]
+  , cdKeywords = setFromList [Boarding 1]
+  }
+
+warGalley :: CardDef
+warGalley = (enemy "the-hunt-for-the-dreadnaught-032" "War Galley" TheHuntForTheDreadnaught 3 33 3 5 2 7)
+  { cdCardTraits = setFromList [Corsair, Ship]
+  , cdKeywords = setFromList [Archery 2, Boarding 1]
+  }
+
+seaMonster :: CardDef
+seaMonster = (enemy "the-hunt-for-the-dreadnaught-033" "Sea Monster" TheHuntForTheDreadnaught 2 26 2 4 0 11)
+  { cdCardTraits = setFromList [Creature]
+  }

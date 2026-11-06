@@ -25,7 +25,7 @@ instance FromJSON Entities where
 instance FromJSON Game where
   parseJSON =
     genericParseJSON (aesonOptions $ Just "game")
-      . withDefaults [("logBlocks", toJSON ([] :: [Value])), ("leftPlay", object []), ("leftPlayLocations", object []), ("attackDestroyed", toJSON ([] :: [Value])), ("damageDealt", toJSON ([] :: [Value])), ("separation", Null), ("additionalPhases", toJSON ([] :: [Value])), ("resumeAfter", Null), ("revealer", Null), ("peril", Null), ("fortitudeTests", toJSON ([] :: [Value])), ("surgeChain", toJSON ([] :: [Value]))]
+      . withDefaults [("logBlocks", toJSON ([] :: [Value])), ("resolvingAttachments", object []), ("leftPlay", object []), ("leftPlayLocations", object []), ("attackDestroyed", toJSON ([] :: [Value])), ("damageDealt", toJSON ([] :: [Value])), ("separation", Null), ("additionalPhases", toJSON ([] :: [Value])), ("resumeAfter", Null), ("revealer", Null), ("peril", Null), ("fortitudeTests", toJSON ([] :: [Value])), ("surgeChain", toJSON ([] :: [Value]))]
 
 instance FromJSON Separation where
   parseJSON = genericParseJSON (aesonOptions $ Just "separation") . withDefaults [("shared", toJSON False)]

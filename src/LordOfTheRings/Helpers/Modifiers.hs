@@ -4,7 +4,7 @@ import Control.Monad.Writer.Strict (execWriterT)
 import Data.Map.Monoidal.Strict (MonoidalMap (..))
 import Data.Map.Strict qualified as Map
 import Data.Set qualified as Set
-import LordOfTheRings.Card (Card (EncounterCard), CardCode, CardType (AllyType, ObjectiveAllyType), IsCard (toCard), cdCardTraits, cdCardType, cdSphere, isTreasure, toCardCode, toCardDef)
+import LordOfTheRings.Card (Card (EncounterCard), CardCode, CardType (AllyType, ObjectiveAllyType), IsCard (toCard), lookupCardDef, isPlayerCardDef, cdKeywords, cdCardTraits, cdCardType, cdSphere, isTreasure, toCardCode, toCardDef)
 import LordOfTheRings.Sphere (Sphere (Fellowship))
 import LordOfTheRings.Classes.HasGame
 import LordOfTheRings.Classes.HasModifiersFor
@@ -20,7 +20,8 @@ import LordOfTheRings.Token (Token (Damage), countTokens)
 import LordOfTheRings.Entities
 import LordOfTheRings.Game.Base
 import LordOfTheRings.Id (PlayerId)
-import LordOfTheRings.Matcher.Types (cardMatches)
+import LordOfTheRings.Matcher.Types (PlayerMatcher (AnyPlayer), cardMatches)
+import LordOfTheRings.Keyword (Keyword (Massive))
 import LordOfTheRings.Modifier
 import LordOfTheRings.Placement (Placement (..))
 import LordOfTheRings.Prelude
@@ -140,9 +141,15 @@ preloadModifiers g = do
           (<>)
           [ (toTarget (toId a), [Modifier (effectSource e) m])
           | e <- liveEffects
-          , EachAlly m <- effectModifiers e
           , a <- toList es.allies
+          , m <- [m | EachAlly m <- effectModifiers e] <> [m | EachMatchingAlly cm m <- effectModifiers e, cardMatches cm a]
           ]
+      enemiesMatching = Map.fromListWith (<>)
+        [(toTarget e, [Modifier effect.effectSource m])
+        | effect <- liveEffects
+        , EachMatchingEnemy cm m <- effect.effectModifiers
+        , e <- toList es.enemies
+        , cardMatches cm e]
       -- and on each character while it is exhausted
       wearied =
         Map.fromListWith
@@ -170,7 +177,7 @@ preloadModifiers g = do
              , a <- toList es.allies
              , countTokens Damage (allyTokens $ toAttrs a) > 0
              ]
-      all0 = Map.unionsWith (<>) [Map.map (filter (not . ownText)) fromEntities, fromEffects, followed, staged, stagedEnemies, allied, wearied, attachedOut]
+      all0 = Map.unionsWith (<>) [Map.map (filter (not . ownText)) fromEntities, fromEffects, followed, staged, stagedEnemies, enemiesMatching, allied, wearied, attachedOut]
       -- an encounter card's lasting effect counted from tokens is recalculated as they
       -- change (FAQ 1.55): each such modifier adds its count as the plain modifier
       counted t = \case
@@ -181,7 +188,16 @@ preloadModifiers g = do
         Modifier source AttackPerActiveLocationDamage -> [Modifier source (AttackModifier activeDamage)]
         _ -> []
       activeDamage = sum [countTokens Damage (locationTokens $ toAttrs l) | l <- toList es.locations, l.placement == ActiveLocation]
-      all' = Map.mapWithKey (\t ms -> ms <> concatMap (counted t) ms) all0
+      -- Massive's engagement and placement rules are keyword rules, so blanking and
+      -- gained/lost keywords work the same as for printed card abilities.
+      massive = Map.fromList
+        [ (toTarget e, map (Modifier $ EnemySource $ toId e)
+            [EngagedWithEachPlayer AnyPlayer, CannotLeaveStagingArea, CannotBeOptionallyEngagedBy AnyPlayer])
+        | e <- toList es.enemies
+        , let ms = map modifierType $ Map.findWithDefault [] (toTarget e) all0
+        , Massive `elem` ([k | Blank `notElem` ms, k <- toList $ cdKeywords $ toCardDef e] <> [k | GainKeyword k <- ms])
+        ]
+      all' = Map.mapWithKey (\t ms -> ms <> concatMap (counted t) ms) $ Map.unionWith (<>) all0 massive
       tokensOn t token = maybe 0 (countTokens token) case t of
         EnemyTarget i -> enemyTokens . toAttrs <$> Map.lookup i es.enemies
         ObjectiveTarget i -> objectiveTokens . toAttrs <$> Map.lookup i es.objectives
@@ -199,7 +215,7 @@ preloadModifiers g = do
       -- Modification attachments are encounter cards (Dream-chaser rules, "Gaining XP"), so a
       -- ship-objective's immunity lets theirs through
       modifications = setFromList [toTarget x | x <- toList es.attachments, Modification `member` cdCardTraits (toCardDef x)] :: Set Target
-      fromPlayerCard m = isPlayerCardSource (modifierSource m) && maybe True (`notMember` modifications) (sourceTarget $ modifierSource m)
+      fromPlayerCard m = isPlayerCardSource (modifierSource m) && not (maybe False (objectiveAllyTarget g) (sourceTarget $ modifierSource m)) && maybe True (`notMember` modifications) (sourceTarget $ modifierSource m)
       unaffected t ms =
         let ms' = if immune ms then filter (\m -> sourceTarget (modifierSource m) == Just t || not (fromPlayerCard m)) ms else ms
             types = map modifierType ms'
@@ -262,11 +278,11 @@ immuneToSource source a = do
   master <- maybe (pure False) isMasterCard (sourceTarget source)
   pure
     $ ImmuneToCardEffects `elem` mods
-    || (isPlayerCardSource source && not (maybe False (objectiveAllyTarget g) (sourceTarget source)) && ImmuneToPlayerCardEffects `elem` mods)
-    || (isPlayerEventSource source && ImmuneToPlayerEvents `elem` mods)
+    || (isPlayerCardSource source && not (isEncounterCardSource g source) && ImmuneToPlayerCardEffects `elem` mods)
+    || (isPlayerEventSource source && not (isEncounterCardSource g source) && ImmuneToPlayerEvents `elem` mods)
     || immuneToEncounterSource g mods source
     || (not master && ImmuneToNonMasterCardEffects `elem` mods)
-    || (isPlayerCardSource source && ImmuneToNonFellowshipPlayerCardEffects `elem` mods && not (maybe False (fellowshipCard g) (sourceTarget source)))
+    || (isPlayerCardSource source && not (isEncounterCardSource g source) && ImmuneToNonFellowshipPlayerCardEffects `elem` mods && not (maybe False (fellowshipCard g) (sourceTarget source)))
 
 {- | Whether the card is an objective ally: an encounter card under a player's control, not
 a player card, which has the player card back, so a card immune to player card effects is
@@ -327,7 +343,22 @@ modifiedValue select' a base = do
   mods <- getModifiers a
   pure $ max 0 $ base + sum (mapMaybe select' mods)
 
-willpowerOf, attackOf, defenseOf, hitPointsOf, threatOf, engagementCostOf, questPointsOf :: ModifierType -> Maybe Int
+-- | Effects which treat an engagement cost as a fixed number apply after modifiers.
+modifiedEngagementCost :: (HasGame m, Targetable a) => a -> Int -> m Int
+modifiedEngagementCost a base = do
+  mods <- getModifiers a
+  case [n | SetEngagementCost n <- mods] of
+    n : _ -> pure n
+    [] -> modifiedValue engagementCostOf a base
+
+willpowerOf
+  , attackOf
+  , defenseOf
+  , hitPointsOf
+  , threatOf
+  , engagementCostOf
+  , questPointsOf
+    :: ModifierType -> Maybe Int
 willpowerOf = \case WillpowerModifier n -> Just n; _ -> Nothing
 attackOf = \case AttackModifier n -> Just n; _ -> Nothing
 defenseOf = \case DefenseModifier n -> Just n; _ -> Nothing
@@ -374,7 +405,9 @@ isEncounterCardSource g (AbilitySource source _) = isEncounterCardSource g sourc
 -- a shadow card known by its card id, still dealt to its enemy as its effect resolves
 isEncounterCardSource g (CardIdSource cid) =
   any (any ((== cid) . (.id)) . (.shadowCards)) g.entities.enemies
+isEncounterCardSource _ (CardCodeSource code) = maybe False (not . isPlayerCardDef) (lookupCardDef code)
 isEncounterCardSource g source = case sourceTarget source of
+  Just t@(AllyTarget _) -> objectiveAllyTarget g t
   Just (EnemyTarget i) -> encounter $ Map.lookup i es.enemies
   Just (LocationTarget i) -> encounter $ Map.lookup i es.locations
   Just (TreacheryTarget i) -> encounter $ Map.lookup i es.treacheries

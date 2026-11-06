@@ -1,30 +1,39 @@
 <script lang="ts" setup>
-import { computed, nextTick, ref, watch } from 'vue'
+import { computed, nextTick, onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute, useRouter } from 'vue-router'
-import { createCampaign, createGame } from '../api'
+import { createCampaign, createGame, createEpicEvent, fetchCampaign, type CampaignView } from '../api'
 import { currentUser, updateSettings } from '../auth'
 import { campaigns as allCampaigns, campaignModes, type ScenarioOption } from '../campaigns'
 import { alphaEnabled, filterDisplayable, isDevBuild } from '../displayRules'
 import { useServerText } from '../i18n'
 import { useShortcuts } from '../browser/lib/keys'
+import ScenarioRoutePreview from '../components/ScenarioRoutePreview.vue'
 
 const tr = useServerText()
 
 
 const { t } = useI18n()
 const router = useRouter()
+const route = useRoute()
 const displayRules = {
-  alpha: alphaEnabled(useRoute().query),
+  alpha: alphaEnabled(route.query),
   dev: isDevBuild(),
 }
 // the campaigns with something to show, and only what they have to show
 const campaigns = allCampaigns
   .map((c) => ({ ...c, scenarios: filterDisplayable(c.scenarios, displayRules) }))
   .filter((c) => c.scenarios.length > 0)
+const campaignGroups = [
+  { id: 'campaign', title: 'newGame.campaigns', items: campaigns.filter((c) => c.category === 'campaign') },
+  { id: 'scenario-pack', title: 'newGame.scenarioPacks', items: campaigns.filter((c) => c.category === 'scenario-pack') },
+].filter((group) => group.items.length > 0)
 const selectedCampaign = ref<(typeof campaigns)[number] | null>(null)
 type Shown = ScenarioOption & { playable: boolean }
 const selectedScenario = ref<Shown | null>(null)
+const epic = ref(false)
+const offersEpic = computed(() => selectedScenario.value?.id === 'the-hunt-for-the-dreadnaught')
+watch(selectedScenario, () => { epic.value = false })
 const gameName = ref('')
 const creating = ref(false)
 // As in Arkham: decided when the game is made, starting from the player's default,
@@ -40,17 +49,32 @@ const makeDefault = async () => {
   savedDefault.value = true
 }
 // normal, easy or nightmare: one at a time, nightmare only where the scenario has its deck
-type Mode = 'normal' | 'easy' | 'nightmare'
+type Mode = 'normal' | 'easy' | 'nightmare' | 'hard'
 const mode = ref<Mode>('normal')
 const modes = computed(() =>
-  (['easy', 'normal', 'nightmare'] as const)
-    .filter((m) => m !== 'nightmare' || selectedScenario.value?.nightmare)
+  (['easy', 'normal', 'hard', 'nightmare'] as const)
+    .filter((m) => (m !== 'nightmare' || selectedScenario.value?.nightmare) && (m !== 'hard' || selectedScenario.value?.hard))
     .map((value) => ({ value, label: t(`newGame.mode.${value}`) })),
 )
 watch(selectedScenario, (s) => {
-  if (mode.value === 'nightmare' && !s?.nightmare) mode.value = 'normal'
+  if ((mode.value === 'nightmare' && !s?.nightmare) || (mode.value === 'hard' && !s?.hard)) mode.value = 'normal'
 })
 const error = ref<string | null>(null)
+const rewardSource = ref<CampaignView | null>(null)
+const includeReward = ref(true)
+const chosenRewardSeats = ref([0, 1, 2, 3])
+onMounted(async () => {
+  const source = route.query.rewardCampaign
+  if (typeof source !== 'string') return
+  try {
+    const campaign = await fetchCampaign(source)
+    if (!campaign.canClaimRangerSense) throw new Error('$error.rewardUnavailable')
+    rewardSource.value = campaign
+  } catch (e) {
+    includeReward.value = false
+    error.value = e instanceof Error ? e.message : String(e)
+  }
+})
 
 // Seats are taken, each with a deck, once the game is made, where its link brings
 // friends to the open ones.
@@ -74,24 +98,50 @@ const step = (change: () => void) => {
 const chooseCampaign = (c: (typeof campaigns)[number]) =>
   step(() => {
     selectedCampaign.value = c
-    selectedScenario.value = null
+    selectedScenario.value = c.category === 'scenario-pack' && c.scenarios.length === 1
+      ? c.scenarios[0] ?? null
+      : null
   })
 
 const chooseScenario = (s: Shown) => step(() => (selectedScenario.value = s))
 
 // Campaign mode: the box's scenarios in order, from its first, as one campaign.
 const asCampaign = ref(false)
-const campaignMode = computed(() => (selectedCampaign.value ? campaignModes[selectedCampaign.value.id] ?? null : null))
+const extendedMirkwoodPaths = ref(false)
+const showCampaignChoices = ref(false)
+watch(selectedCampaign, () => {
+  extendedMirkwoodPaths.value = false
+  showCampaignChoices.value = false
+})
+const offersMirkwoodPaths = computed(() => ['core-set', 'dark-of-mirkwood'].includes(selectedCampaign.value?.id ?? ''))
+const campaignMode = computed(() => extendedMirkwoodPaths.value && offersMirkwoodPaths.value
+  ? 'mirkwood-paths'
+  : selectedCampaign.value ? campaignModes[selectedCampaign.value.id] ?? null : null)
+const campaignTitle = computed(() => offersMirkwoodPaths.value
+  ? t(extendedMirkwoodPaths.value ? 'campaignMode.mirkwoodPaths' : selectedCampaign.value?.id === 'core-set' ? 'campaignMode.coreCampaign' : 'campaignMode.miniCampaign')
+  : selectedCampaign.value?.name ?? '')
+const campaignRoute = computed(() => {
+  if (!offersMirkwoodPaths.value) return allCampaigns.find((c) => c.id === selectedCampaign.value?.id)?.scenarios ?? []
+  const core = allCampaigns.find((c) => c.id === 'core-set')?.scenarios.slice(0, 3) ?? []
+  const dark = allCampaigns.find((c) => c.id === 'dark-of-mirkwood')?.scenarios ?? []
+  return extendedMirkwoodPaths.value ? [...core, ...dark] : selectedCampaign.value?.id === 'core-set' ? core : dark
+})
 const chooseCampaignMode = () =>
   step(() => {
     asCampaign.value = true
-    selectedScenario.value = selectedCampaign.value?.scenarios[0] ?? null
+    const first = extendedMirkwoodPaths.value
+      ? campaigns.find((c) => c.id === 'core-set')?.scenarios[0]
+      : selectedCampaign.value?.scenarios[0]
+    selectedScenario.value = first ?? null
   })
 
 // a step back: from the game's options to the scenarios, from there to the campaigns
 const back = () =>
   step(() => {
-    if (selectedScenario.value) selectedScenario.value = null
+    if (selectedCampaign.value?.category === 'scenario-pack' && selectedCampaign.value.scenarios.length === 1) {
+      selectedScenario.value = null
+      selectedCampaign.value = null
+    } else if (selectedScenario.value) selectedScenario.value = null
     else selectedCampaign.value = null
     asCampaign.value = false
     error.value = null
@@ -105,10 +155,20 @@ const create = async () => {
   creating.value = true
   error.value = null
   try {
+    if (offersEpic.value && epic.value) {
+      const event = await createEpicEvent({
+        name: gameName.value.trim() || defaultName.value,
+        difficulty: mode.value === 'easy' ? 'EasyMode' : mode.value === 'hard' ? 'HardMode' : 'NormalMode',
+      })
+      await router.push(`/epic-events/${event.id}`)
+      return
+    }
     const { id } = asCampaign.value && campaignMode.value
       ? await createCampaign({
-          name: gameName.value.trim() || selectedCampaign.value?.name || defaultName.value,
+          name: gameName.value.trim() || campaignTitle.value || defaultName.value,
           campaign: campaignMode.value,
+          rewardCampaign: includeReward.value && chosenRewardSeats.value.some((seat) => seat < seatCount.value) ? rewardSource.value?.id : undefined,
+          rewardSeats: chosenRewardSeats.value.filter((seat) => seat < seatCount.value),
           seats: seatCount.value,
           allowSpectators: allowSpectators.value,
           easyMode: mode.value === 'easy',
@@ -122,6 +182,7 @@ const create = async () => {
       seats: seatCount.value,
       allowSpectators: allowSpectators.value,
       easyMode: mode.value === 'easy',
+      hardMode: mode.value === 'hard',
       nightmare: mode.value === 'nightmare',
       publicScoring: publicScoring.value,
     })
@@ -141,21 +202,29 @@ const create = async () => {
       <button type="button" class="cancel-new-game-button" @click="cancel">{{ $t('common.cancel') }}</button>
     </header>
 
+    <section v-if="rewardSource" class="card reward-banner">
+      <label class="reward-choice"><input v-model="includeReward" type="checkbox" />{{ $t('campaignMode.includeRangerReward', { campaign: rewardSource.name }) }}</label>
+      <p class="hint">{{ $t('campaignMode.rangerRewardNewHint') }}</p>
+      <div v-if="includeReward" class="reward-seats">
+        <label v-for="seat in seatCount" :key="seat" class="reward-choice"><input v-model="chosenRewardSeats" type="checkbox" :value="seat - 1" />{{ $t('campaignMode.player', { n: seat }) }}</label>
+      </div>
+    </section>
+    <p v-if="error && !selectedScenario" class="error">{{ tr(error) }}</p>
     <div v-if="!selectedCampaign" id="new-game">
-      <section class="card">
-        <h3 class="card-title">{{ $t('newGame.campaign') }}</h3>
+      <section v-for="group in campaignGroups" :key="group.id" class="card" :aria-labelledby="`new-game-${group.id}`">
+        <h3 :id="`new-game-${group.id}`" class="card-title">{{ $t(group.title) }}</h3>
         <div class="campaigns">
           <button
-            v-for="c in campaigns"
+            v-for="c in group.items"
             :key="c.id"
             type="button"
             class="campaign-box"
-            :class="{ unavailable: playableCount(c) === 0 }"
+            :class="{ unavailable: playableCount(c) === 0, 'scenario-pack': c.category === 'scenario-pack' }"
             @click="chooseCampaign(c)"
           >
             <img :src="c.image" alt="" :style="{ viewTransitionName: `campaign-${c.id}` }" />
             <span class="campaign-name"><span class="icon" :style="{ '--icon': `url(${c.symbol})` }" />{{ c.name }}</span>
-            <span class="campaign-count">
+            <span v-if="c.scenarios.length > 1" class="campaign-count">
               {{ $t('newGame.scenarioCount', c.scenarios.length) }}<template v-if="playableCount(c) < c.scenarios.length"> &middot; {{ $t('newGame.playableCount', { count: playableCount(c) }) }}</template>
             </span>
           </button>
@@ -164,48 +233,105 @@ const create = async () => {
     </div>
 
     <form v-else id="new-game" @submit.prevent="create">
-      <section v-if="!selectedScenario" class="card split">
+      <section v-if="!selectedScenario" class="card split" :class="{ 'expansion-selection': campaignMode }">
         <div class="panel">
-          <h3 class="card-title">{{ $t('newGame.campaign') }}</h3>
+          <h3 class="card-title">{{ $t(campaignMode ? 'campaignMode.expansionLabel' : 'newGame.campaign') }}</h3>
           <img :src="selectedCampaign.image" alt="" :style="{ viewTransitionName: `campaign-${selectedCampaign.id}` }" />
           <h3 class="panel-title"><span class="icon" :style="{ '--icon': `url(${selectedCampaign.symbol})` }" />{{ selectedCampaign.name }}</h3>
-          <button v-if="campaignMode" type="button" class="campaign-mode" @click="chooseCampaignMode">{{ $t('campaignMode.start') }}</button>
         </div>
-        <div class="card-body">
-          <h3 class="card-title">{{ $t('common.scenario') }}</h3>
-          <div class="scenarios">
-            <button
-              v-for="option in selectedCampaign.scenarios"
-              :key="option.id"
-              type="button"
-              class="scenario-box"
-              :class="{ unavailable: !option.playable, alpha: option.alpha, beta: option.beta }"
-              :disabled="!option.playable"
-              @click="chooseScenario(option)"
-            >
-              <img :src="option.image" alt="" :style="{ viewTransitionName: `scenario-${option.id}` }" />
-              <span class="scenario-name"><span class="icon" :style="{ '--icon': `url(${option.icon})` }" />{{ option.name }}</span>
-            </button>
+        <div class="card-body" :class="{ 'play-choices': campaignMode }">
+          <div v-if="campaignMode" class="play-mode">
+            <div class="segmented" role="radiogroup" :aria-label="$t('campaignMode.playMode')">
+              <button type="button" role="radio" :aria-checked="!showCampaignChoices" :class="{ selected: !showCampaignChoices }" @click="showCampaignChoices = false">{{ $t('campaignMode.singleScenario') }}</button>
+              <button type="button" role="radio" :aria-checked="showCampaignChoices" :class="{ selected: showCampaignChoices }" @click="showCampaignChoices = true">{{ $t('campaignMode.campaignOption') }}</button>
+            </div>
           </div>
+          <section v-if="campaignMode && showCampaignChoices" class="campaign-path" aria-labelledby="campaign-path-title">
+            <div class="choice-heading">
+              <h3 id="campaign-path-title">{{ $t('campaignMode.playCampaign') }}<span v-if="!offersMirkwoodPaths" class="route-count">{{ $t('newGame.scenarioCount', campaignRoute.length) }}</span></h3>
+              <p>{{ $t('campaignMode.campaignChoiceHint') }}</p>
+            </div>
+            <fieldset v-if="offersMirkwoodPaths" class="campaign-length">
+              <legend class="visually-hidden">{{ $t('campaignMode.chooseRoute') }}</legend>
+              <label class="route-option" :class="{ 'is-selected': !extendedMirkwoodPaths }">
+                <input v-model="extendedMirkwoodPaths" type="radio" :value="false" />
+                <span class="route-copy">
+                  <strong>{{ $t(selectedCampaign.id === 'core-set' ? 'campaignMode.coreRouteTitle' : 'campaignMode.miniRouteTitle') }}</strong>
+                  <span>{{ $t(selectedCampaign.id === 'core-set' ? 'campaignMode.coreRouteDescription' : 'campaignMode.miniRouteDescription') }}</span>
+                </span>
+                <span class="route-count">{{ $t('newGame.scenarioCount', selectedCampaign.id === 'core-set' ? 3 : 2) }}</span>
+              </label>
+              <label class="route-option" :class="{ 'is-selected': extendedMirkwoodPaths }">
+                <input v-model="extendedMirkwoodPaths" type="radio" :value="true" />
+                <span class="route-copy">
+                  <strong>{{ $t('campaignMode.fullRouteTitle') }}</strong>
+                  <span>{{ $t('campaignMode.fullRouteDescription') }}</span>
+                </span>
+                <span class="route-count">{{ $t('newGame.scenarioCount', 5) }}</span>
+              </label>
+            </fieldset>
+            <div class="route-preview">
+              <ScenarioRoutePreview :scenarios="campaignRoute" />
+            </div>
+            <button type="button" class="campaign-mode campaign-continue" @click="chooseCampaignMode">{{ $t('campaignMode.setUpCampaign') }}<span aria-hidden="true">→</span></button>
+          </section>
+          <section v-if="!campaignMode || !showCampaignChoices" :class="{ 'standalone-path': campaignMode }">
+            <h3 class="card-title">{{ $t(campaignMode ? 'campaignMode.standalone' : 'common.scenario') }}</h3>
+            <p v-if="campaignMode" class="standalone-hint">{{ $t('campaignMode.standaloneHint') }}</p>
+            <div class="scenarios">
+              <button
+                v-for="option in selectedCampaign.scenarios"
+                :key="option.id"
+                type="button"
+                class="scenario-box"
+                :class="{ unavailable: !option.playable, alpha: option.alpha, beta: option.beta }"
+                :disabled="!option.playable"
+                @click="chooseScenario(option)"
+              >
+                <span class="scenario-art" :class="{ alpha: option.alpha, beta: option.beta }" :style="{ viewTransitionName: `scenario-${option.id}` }">
+                  <img :src="option.image" alt="" />
+                </span>
+                <span class="scenario-name"><span class="icon" :style="{ '--icon': `url(${option.icon})` }" />{{ option.name }}</span>
+              </button>
+            </div>
+          </section>
         </div>
       </section>
 
       <template v-else>
-        <section class="card split">
+        <section class="card split" :class="{ 'expansion-selection': campaignMode }">
           <div class="panel">
             <h3 class="card-title">{{ $t('common.scenario') }}</h3>
-            <img :src="selectedScenario.image" alt="" :style="{ viewTransitionName: `scenario-${selectedScenario.id}` }" />
+            <span class="scenario-art" :class="{ alpha: selectedScenario.alpha, beta: selectedScenario.beta }" :style="{ viewTransitionName: `scenario-${selectedScenario.id}` }">
+              <img :src="selectedScenario.image" alt="" />
+            </span>
             <h3 class="panel-title"><span class="icon" :style="{ '--icon': `url(${selectedScenario.icon})` }" />{{ selectedScenario.name }}</h3>
           </div>
           <div class="card-body">
             <h3 class="card-title">{{ $t('common.game') }}</h3>
             <p v-if="selectedScenario.beta" class="beta-warning">{{ $t('newGame.betaWarning') }}</p>
-            <p v-if="asCampaign && selectedCampaign" class="hint">{{ $t('campaignMode.startHint', { campaign: selectedCampaign.name }) }}</p>
+            <div v-if="offersEpic" class="option">
+              <span class="option-title">{{ $t('epic.playMode') }}</span>
+              <div class="segmented" role="radiogroup" :aria-label="$t('epic.playMode')">
+                <button type="button" role="radio" :aria-checked="!epic" :class="{ selected: !epic }" @click="epic = false">{{ $t('epic.singleGroup') }}</button>
+                <button type="button" role="radio" :aria-checked="epic" :class="{ selected: epic }" @click="epic = true">{{ $t('epic.title') }}</button>
+              </div>
+              <p v-if="epic" class="hint">{{ $t('epic.description') }}</p>
+            </div>
+            <div v-if="asCampaign && selectedCampaign" class="campaign-summary">
+              <span class="card-title">{{ $t('campaignMode.playCampaign') }}</span>
+              <strong>{{ campaignTitle }}</strong>
+              <details v-if="campaignRoute.length">
+                <summary>{{ $t('campaignMode.viewRoute') }}</summary>
+                <ScenarioRoutePreview class="summary-scenarios" :scenarios="campaignRoute" />
+              </details>
+              <p v-else class="hint">{{ $t('campaignMode.startHint', { campaign: campaignTitle }) }}</p>
+            </div>
             <label>
               {{ $t('newGame.gameName') }}
               <input v-model="gameName" type="text" :placeholder="defaultName" />
             </label>
-            <div class="option">
+            <div v-if="!epic" class="option">
               <span class="option-title">{{ $t('newGame.numberOfPlayers') }}</span>
               <div class="segmented" role="radiogroup">
                 <button
@@ -234,7 +360,7 @@ const create = async () => {
               </div>
               <p class="hint">{{ $t(asCampaign && mode === 'nightmare' ? 'newGame.mode.nightmareCampaignHint' : `newGame.mode.${mode}Hint`) }}</p>
             </div>
-            <div class="toggle-row">
+            <div v-if="!epic" class="toggle-row">
               <label class="switch">
                 <input v-model="allowSpectators" type="checkbox" role="switch" />
                 <span class="track" aria-hidden="true" />
@@ -244,7 +370,7 @@ const create = async () => {
               <span v-else-if="savedDefault" class="saved">{{ $t('newGame.defaultSaved') }}</span>
               <p class="hint">{{ $t('newGame.allowSpectatorsHint') }}</p>
             </div>
-            <div class="toggle-row">
+            <div v-if="!epic" class="toggle-row">
               <label class="switch">
                 <input v-model="publicScoring" type="checkbox" role="switch" />
                 <span class="track" aria-hidden="true" />
@@ -375,18 +501,21 @@ header {
   transition: border-color 0.15s, transform 0.15s;
 }
 .campaign-box img { width: 100%; aspect-ratio: 1; object-fit: cover; display: block; }
+.campaign-box.scenario-pack { align-self: start; }
+.campaign-box.scenario-pack img { aspect-ratio: auto; height: auto; object-fit: contain; }
 .campaign-box:hover { border-color: var(--accent); transform: translateY(-2px); }
 .campaign-box.unavailable img { filter: grayscale(70%); }
 .campaign-name { display: flex; align-items: center; gap: 6px; padding: 8px 8px 0; font-weight: 700; text-align: left; }
+.campaign-name:last-child { padding-bottom: 8px; }
 .campaign-name .icon, .scenario-name .icon { font-size: 1.2em; }
 .campaign-count { padding: 2px 8px 8px; font-size: 0.75em; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.04em; }
 
-.panel img { width: 100%; border-radius: 4px; box-shadow: 0 2px 8px var(--shadow); }
+.panel > img, .panel > .scenario-art { width: 100%; border-radius: 4px; box-shadow: 0 2px 8px var(--shadow); }
 .panel-title { display: flex; align-items: center; gap: 6px; margin: 0; color: var(--title); font-size: 1.2em; }
 
 .scenarios {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(0, 150px));
   gap: 12px;
 }
 
@@ -405,14 +534,20 @@ header {
 }
 /* adventure packs' art is portrait and deluxe boxes' square: each sits whole in the
    middle of the same square, padded out to it */
+.scenario-box .scenario-art { aspect-ratio: 1; }
 .scenario-box img { width: 100%; aspect-ratio: 1; box-sizing: border-box; padding: 8px; object-fit: contain; display: block; }
 .scenario-box:not(:disabled):hover { border-color: var(--accent); }
 .scenario-box.unavailable img { filter: grayscale(100%); }
 .scenario-box.unavailable { cursor: not-allowed; opacity: 0.6; }
 /* a ribbon across the corner, as in Arkham */
-.scenario-box.alpha::after,
-.scenario-box.beta::after {
+/* Capture the art and its ribbon together: named transition snapshots are painted
+   above the page, so a ribbon on the outer button would fall behind the image. */
+.scenario-art { display: block; position: relative; isolation: isolate; overflow: hidden; width: 100%; border-radius: 4px; }
+.scenario-art img { display: block; width: 100%; }
+.scenario-art.alpha::after,
+.scenario-art.beta::after {
   position: absolute;
+  z-index: 1;
   top: 9px;
   left: -22px;
   width: 86px;
@@ -426,8 +561,8 @@ header {
   text-transform: uppercase;
   box-shadow: 0 4px 10px var(--shadow);
 }
-.scenario-box.beta::after { content: 'beta'; background: darkgoldenrod; }
-.scenario-box.alpha::after { content: 'alpha'; background: darkred; }
+.scenario-art.beta::after { content: 'beta'; background: darkgoldenrod; }
+.scenario-art.alpha::after { content: 'alpha'; background: darkred; }
 .scenario-name { display: flex; align-items: center; justify-content: center; gap: 6px; padding: 8px; font-weight: 700; text-align: center; }
 
 
@@ -483,8 +618,55 @@ input::placeholder { color: var(--text-muted); opacity: 0.7; }
 .segmented button:hover:not(.selected) { background: var(--surface-4); }
 .segmented button.selected { background: var(--accent); color: var(--button-primary-text); }
 
+.reward-banner { width: 70vw; max-width: 98vw; margin: 0 auto 16px; box-sizing: border-box; }
+.reward-seats { display: flex; flex-wrap: wrap; gap: 12px; }
+.reward-choice { display: flex; align-items: center; gap: 8px; color: var(--text); }
+@media (max-width: 768px) { .reward-banner { width: 100%; } }
 .campaign-mode { padding: 10px; border: 1px solid var(--accent); border-radius: 3px; background: none; color: var(--accent); font: inherit; font-weight: 700; cursor: pointer; }
 .campaign-mode:hover { background: var(--accent); color: var(--button-primary-text); }
+
+.split .play-choices { gap: 0; padding: 0; }
+.card-body > section:not(.campaign-path):not(.standalone-path) { display: grid; gap: 12px; }
+.play-mode { padding: 24px 28px 0; }
+.play-mode .segmented button { padding: 12px 16px; }
+.play-mode button:focus-visible { outline: 2px solid var(--text); outline-offset: -4px; }
+.campaign-path { padding: 24px 28px 28px; }
+.choice-heading h3 { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 0; font-size: 1.4rem; color: var(--title); line-height: 1.25; }
+.choice-heading p { margin: 8px 0 22px; color: var(--text-muted); font-size: 0.9rem; line-height: 1.55; max-width: 52ch; }
+.campaign-length { display: grid; gap: 10px; margin: 0; padding: 0; border: 0; min-width: 0; }
+.route-option { display: grid; grid-template-columns: auto 1fr auto; gap: 12px; align-items: center; padding: 16px; border: 1px solid var(--box-border); border-radius: 5px; cursor: pointer; background: var(--input-background); transition: border-color 160ms, background 160ms; }
+.route-option:hover { border-color: var(--text-muted); }
+.route-option.is-selected { border-color: var(--accent); background: var(--box-background); box-shadow: inset 3px 0 var(--accent); }
+.route-option input { margin: 0; accent-color: var(--accent); width: 16px; height: 16px; }
+.route-copy { display: grid; gap: 5px; }
+.route-copy strong { color: var(--text); font-size: 1rem; font-weight: 600; }
+.route-copy > span { color: var(--text-muted); font-size: 0.8rem; line-height: 1.45; }
+.route-count { color: var(--text-muted); font-size: 0.75rem; white-space: nowrap; }
+.is-selected .route-copy strong, .is-selected .route-count { color: var(--accent); }
+.route-preview { margin: 20px 0; }
+.campaign-continue { display: flex; align-items: center; justify-content: space-between; gap: 20px; width: 100%; padding: 13px 16px; background: var(--button-primary); border-color: transparent; color: var(--button-primary-text); }
+.campaign-continue:hover { background: var(--button-primary-hover); }
+.standalone-path { padding: 24px 28px 28px; }
+.standalone-path > .card-title { color: var(--text); font-size: 1rem; text-transform: none; letter-spacing: normal; font-weight: 600; }
+.standalone-hint { margin: 6px 0 14px; font-size: 0.8rem; color: var(--text-muted); line-height: 1.5; }
+.campaign-summary { display: grid; gap: 8px; padding-bottom: 16px; margin-bottom: 4px; border-bottom: 1px solid var(--line-strong); }
+.campaign-summary > strong { color: var(--title); font-size: 1.1rem; }
+.campaign-summary summary { color: var(--text-muted); font-size: 0.8rem; cursor: pointer; }
+.campaign-summary .summary-scenarios { margin-top: 12px; }
+.route-option:focus-within, .campaign-continue:focus-visible, .scenario-box:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+.visually-hidden { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; border: 0; }
+@media (max-width: 900px) {
+  .route-option { grid-template-columns: auto 1fr; }
+  .route-count { grid-column: 2; }
+}
+@media (max-width: 600px) {
+  .expansion-selection .panel { display: grid; grid-template-columns: 64px 1fr; column-gap: 16px; align-items: center; }
+  .expansion-selection .panel > img, .expansion-selection .panel > .scenario-art { grid-column: 1; grid-row: 1 / 3; width: 64px; }
+  .expansion-selection .panel .card-title { grid-column: 2; align-self: end; }
+  .expansion-selection .panel-title { grid-column: 2; align-self: start; font-size: 1rem; }
+  .campaign-path, .standalone-path { padding: 20px; }
+  .play-mode { padding: 20px 20px 0; }
+}
 .make-default { background: none; border: 0; padding: 0; color: var(--accent); font: inherit; text-decoration: underline; cursor: pointer; }
 .saved { color: var(--text-muted); }
 .hint { margin: 0; font-size: 0.8rem; }

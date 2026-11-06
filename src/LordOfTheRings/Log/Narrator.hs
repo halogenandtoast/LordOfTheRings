@@ -468,6 +468,9 @@ narrationFor = \case
           ]
         | card <- filter ((== cid) . (.id)) player.deck
         ]
+  Pillaged eid pid cards | notNull cards -> Just $ whenRef (toTarget eid) \enemyRef -> do
+    who <- playerRefFor pid
+    one $ mechanic [ikeyPart "log.pillaged" ["enemy" ~> enemyRef, "player" ~> who, "cards" ~> cards]]
   DiscardFromHand pid cid -> Just $ withPlayer pid \player who ->
     pure
       [ mechanic [ikeyPart "log.discardsFromHand" ["player" ~> who, "card" ~> card]]

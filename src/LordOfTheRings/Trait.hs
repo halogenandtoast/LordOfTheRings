@@ -4,7 +4,10 @@ import Data.Char (isUpper)
 import LordOfTheRings.Prelude
 
 data Trait
-  = Accolade
+  = Basic
+  | Damaged
+  | Pillager
+  | Accolade
   | Archer
   | Assault
   | Attack
@@ -22,6 +25,7 @@ data Trait
   | BoarClan
   | Bree
   | Body
+  | Adaptation
   | Boon
   | Bridge
   | Brigand
@@ -236,6 +240,7 @@ data Trait
   | SiegeTrait
   | Stream
   | SurgeTrait
+  | TreasureTrait
   | Trollshaws
   | UrukHai
   | Vale
@@ -247,6 +252,7 @@ data Trait
 -- | The trait as a player reads it, its words apart: "Carn Dûm"'s accents aside.
 traitName :: Trait -> Text
 traitName = \case
+  TreasureTrait -> "Treasure"
   WilderlandsTrait -> "Wilderlands"
   DoomedTrait -> "Doomed"
   FellowshipTrait -> "Fellowship"

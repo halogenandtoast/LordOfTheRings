@@ -14,7 +14,18 @@ allTreacheryCards =
   Map.fromList $
     map
       (\def -> (cdCardCode def, def))
-      [ impenetrableDark
+      [ballistaBarrage, boardingPartyDreadnaught, grappledDreadnaught, outOfTheMist, overworked, takingOnWaterDreadnaught, violentTempest,  shinyDistraction
+      , guiltyConscience
+      , drivenByShadowDarkOfMirkwood
+      , surprisingSpeedDarkOfMirkwood
+      , caughtInAWebDarkOfMirkwood
+      , goblinsAreUponYouDarkOfMirkwood
+      , eyesInTheDarkDarkOfMirkwood
+      , crumblingRuinDarkOfMirkwood
+      , watchfulEyesDarkOfMirkwood
+      , obsidianArrowsDarkOfMirkwood
+      , lostInTheDark
+      , impenetrableDark
       , growingStench
       , blindWrath
       , wareWare
@@ -3797,3 +3808,91 @@ impenetrableDark = (treachery "the-land-of-shadow-nightmare-shelobs-lair-007" "I
 growingStench :: CardDef
 growingStench = (treachery "the-land-of-shadow-nightmare-shelobs-lair-008" "Growing Stench" ShelobsLairNightmare 2)
   {cdKeywords = setFromList [Surge], cdShadowEffect = True}
+
+-- * The Dark of Mirkwood
+
+obsidianArrowsDarkOfMirkwood :: CardDef
+obsidianArrowsDarkOfMirkwood =
+  (treachery "dark-of-mirkwood-026" "Obsidian Arrows" TheGoblins 2) {cdShadowEffect = True}
+
+lostInTheDark :: CardDef
+lostInTheDark =
+  (treachery "dark-of-mirkwood-039" "Lost in the Dark" TheCavesOfNibinDum 2) {cdShadowEffect = True}
+
+-- * The Dark of Mirkwood campaign burdens
+shinyDistraction :: CardDef
+shinyDistraction = (treachery "dark-of-mirkwood-042" "Shiny Distraction" TheDarkOfMirkwoodCampaign 1)
+  { cdEncounterSet = Nothing, cdSetIcon = Just TheDarkOfMirkwoodCampaign
+  , cdCardTraits = setFromList [TreasureTrait, Burden], cdKeywords = setFromList [Surge, Doomed 1]
+  }
+
+guiltyConscience :: CardDef
+guiltyConscience = (treachery "dark-of-mirkwood-043" "Guilty Conscience" TheDarkOfMirkwoodCampaign 1)
+  { cdEncounterSet = Nothing, cdSetIcon = Just TheDarkOfMirkwoodCampaign
+  , cdCardTraits = setFromList [Adaptation, Burden], cdKeywords = setFromList [Surge]
+  }
+
+-- * Reprints in The Dark of Mirkwood
+
+drivenByShadowDarkOfMirkwood :: CardDef
+drivenByShadowDarkOfMirkwood = reprintEncounter "dark-of-mirkwood-016" TheOath 2 Nothing drivenByShadow
+
+surprisingSpeedDarkOfMirkwood :: CardDef
+surprisingSpeedDarkOfMirkwood = reprintEncounter "dark-of-mirkwood-017" TheOath 2 Nothing surprisingSpeed
+
+caughtInAWebDarkOfMirkwood :: CardDef
+caughtInAWebDarkOfMirkwood = reprintEncounter "dark-of-mirkwood-018" TheOath 1 (Just 0) caughtInAWeb
+
+goblinsAreUponYouDarkOfMirkwood :: CardDef
+goblinsAreUponYouDarkOfMirkwood = reprintEncounter "dark-of-mirkwood-024" TheGoblins 1 (Just 0) goblinsAreUponYou
+
+eyesInTheDarkDarkOfMirkwood :: CardDef
+eyesInTheDarkDarkOfMirkwood = reprintEncounter "dark-of-mirkwood-025" TheGoblins 2 Nothing eyesInTheDark
+
+crumblingRuinDarkOfMirkwood :: CardDef
+crumblingRuinDarkOfMirkwood = reprintEncounter "dark-of-mirkwood-038" TheCavesOfNibinDum 2 Nothing crumblingRuin
+
+watchfulEyesDarkOfMirkwood :: CardDef
+watchfulEyesDarkOfMirkwood = reprintEncounter "dark-of-mirkwood-040" TheCavesOfNibinDum 1 (Just 0) watchfulEyes
+
+-- * The Hunt for the Dreadnaught
+
+ballistaBarrage :: CardDef
+ballistaBarrage = (treachery "the-hunt-for-the-dreadnaught-040" "Ballista Barrage" TheHuntForTheDreadnaught 3)
+  { cdCardTraits = setFromList [Attack]
+  , cdKeywords = setFromList [Doomed 1]
+  , cdShadowEffect = True
+  }
+
+boardingPartyDreadnaught :: CardDef
+boardingPartyDreadnaught = (treachery "the-hunt-for-the-dreadnaught-041" "Boarding Party" TheHuntForTheDreadnaught 1)
+  { cdShadowEffect = True
+  }
+
+grappledDreadnaught :: CardDef
+grappledDreadnaught = (treachery "the-hunt-for-the-dreadnaught-042" "Grappled!" TheHuntForTheDreadnaught 1)
+  { cdShadowEffect = True
+  }
+
+outOfTheMist :: CardDef
+outOfTheMist = (treachery "the-hunt-for-the-dreadnaught-043" "Out of the Mist" TheHuntForTheDreadnaught 3)
+  { cdCardTraits = setFromList [Attack]
+  , cdShadowEffect = True
+  }
+
+overworked :: CardDef
+overworked = (treachery "the-hunt-for-the-dreadnaught-044" "Overworked" TheHuntForTheDreadnaught 2)
+  { cdCardTraits = setFromList [Hazard]
+  , cdShadowEffect = True
+  }
+
+takingOnWaterDreadnaught :: CardDef
+takingOnWaterDreadnaught = (treachery "the-hunt-for-the-dreadnaught-045" "Taking on Water" TheHuntForTheDreadnaught 2)
+  { cdShadowEffect = True
+  }
+
+violentTempest :: CardDef
+violentTempest = (treachery "the-hunt-for-the-dreadnaught-046" "Violent Tempest" TheHuntForTheDreadnaught 3)
+  { cdCardTraits = setFromList [Weather]
+  , cdShadowEffect = True
+  }

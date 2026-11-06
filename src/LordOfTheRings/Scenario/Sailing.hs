@@ -9,6 +9,7 @@ import LordOfTheRings.Campaign (upgradedCode)
 import LordOfTheRings.Card
 import LordOfTheRings.Classes.HasQueue (push)
 import LordOfTheRings.Classes.RunMessage ()
+import LordOfTheRings.EncounterSet (EncounterSet (TheHuntForTheDreadnaught))
 import LordOfTheRings.GameT (GameT)
 import LordOfTheRings.Helpers.Modifiers (getModifiers)
 import LordOfTheRings.I18n (intVar)
@@ -22,12 +23,13 @@ import LordOfTheRings.Queue (QueueT)
 import LordOfTheRings.Scenario.Types
 import LordOfTheRings.Source
 import LordOfTheRings.Target
-import LordOfTheRings.Trait (Trait (Ship))
+import LordOfTheRings.Trait (Trait (Ship, Corsair))
 import LordOfTheRings.Window (WindowType (CommittedToSailingTest, DiscardedFromEncounterDeck), mkAfter)
 
 -- | A card of the Corsair deck: an enemy without the Ship trait.
 isCorsairDeckCard :: EncounterCard -> Bool
 isCorsairDeckCard card = cdCardType def == EnemyType && Ship `notMember` cdCardTraits def
+  && (cdEncounterSet def /= Just TheHuntForTheDreadnaught || Corsair `member` cdCardTraits def)
  where
   def = toCardDef card
 
@@ -155,4 +157,9 @@ runSailing msg attrs = case msg of
           push $ RevealCardEngaged pid top
           when shadowed $ push $ DealShadowCardToCard top.id
           push $ RevealedFromCorsairDeck source pid top
-          pure $ attrs & corsairDeckL ?~ rest & corsairDiscardL .~ discarded
+          -- Dreadnaught rules require the discard to be shuffled immediately when
+          -- the deck empties, rather than waiting for the next boarding effect.
+          (remaining, pile) <- if scenarioId attrs == "the-hunt-for-the-dreadnaught" && null rest
+            then (,[]) <$> shuffleM discarded
+            else pure (rest, discarded)
+          pure $ attrs & corsairDeckL ?~ remaining & corsairDiscardL .~ pile

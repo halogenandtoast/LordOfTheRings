@@ -10,7 +10,7 @@ allContractCards =
   Map.fromList
     $ map
       (\def -> (cdCardCode def, def))
-      [fellowship, theBurglarsTurn, forthTheThreeHunters, theGreyWanderer, councilOfTheWise, messengerOfTheKing, bondOfFriendship]
+      [aPerilousVoyage, fellowship, theBurglarsTurn, forthTheThreeHunters, theGreyWanderer, councilOfTheWise, messengerOfTheKing, bondOfFriendship]
 
 fellowship :: CardDef
 fellowship = (contract "21074" "Fellowship") {cdDoubleSided = True}
@@ -32,3 +32,10 @@ messengerOfTheKing = (contract "22134" "Messenger of the King") {cdDoubleSided =
 
 bondOfFriendship :: CardDef
 bondOfFriendship = contract "22147" "Bond of Friendship"
+
+-- * The Hunt for the Dreadnaught
+
+aPerilousVoyage :: CardDef
+aPerilousVoyage = (contract "the-hunt-for-the-dreadnaught-047" "A Perilous Voyage")
+  { cdDoubleSided = True
+  }

@@ -50,6 +50,8 @@ LotrGame sql=lotr_games
   currentQueue Value
   randomGen Text
   step Int
+  -- | monotonic publication order for Epic updates, including undo
+  revision Int default=0
   -- | what reset deals again: the scenario, and the deck when it was not the starter
   scenario Text default='passage-through-mirkwood'
   deck Value Maybe
@@ -66,6 +68,8 @@ LotrGame sql=lotr_games
   -- | the scenario's Nightmare Deck in place of its standard encounter deck; never with
   -- easy mode
   nightmare Bool default=false
+  -- | the Dreadnaught pack's printed Hard Mode setup, distinct from a Nightmare Deck
+  hardMode Bool default=false
   -- | the campaign the game is a scenario of, in campaign mode
   campaignId LotrCampaignId Maybe OnDeleteSetNull
   -- | chosen when the game is made: each deal counts toward everyone's statistics until a
@@ -80,6 +84,55 @@ LotrGame sql=lotr_games
   updatedAt UTCTime
   deriving Show
 
+-- | One Epic Multiplayer event owns independent group games and their shared counters.
+LotrEpicEvent sql=lotr_epic_events
+  Id UUID default=gen_random_uuid()
+  userId UserId OnDeleteCascade
+  name Text
+  mode Text
+  started Bool default=false
+  sharedState Value
+  createdAt UTCTime
+  updatedAt UTCTime
+  deriving Show
+
+LotrEpicGroup sql=lotr_epic_groups
+  Id UUID default=gen_random_uuid()
+  eventId LotrEpicEventId OnDeleteCascade
+  gameId LotrGameId OnDeleteCascade
+  ordinal Int
+  name Text
+  UniqueEpicOrdinal eventId ordinal
+  UniqueEpicGame gameId
+  deriving Show
+
+-- | Effective contributions, stamped with the originating game's undo step.
+LotrEpicDelta sql=lotr_epic_deltas
+  eventId LotrEpicEventId OnDeleteCascade
+  gameId LotrGameId OnDeleteCascade
+  step Int
+  delta Value
+  createdAt UTCTime
+  deriving Show
+
+-- | Durable, idempotent cross-group delivery, committed with its originating move.
+LotrEpicDelivery sql=lotr_epic_deliveries
+  Id UUID default=gen_random_uuid()
+  eventId LotrEpicEventId OnDeleteCascade
+  commandId UUID
+  gameId LotrGameId OnDeleteCascade
+  command Value
+  delivered Bool default=false
+  createdAt UTCTime
+  UniqueEpicCommand commandId
+  deriving Show
+
+LotrEpicUndoFloor sql=lotr_epic_undo_floors
+  gameId LotrGameId OnDeleteCascade
+  step Int
+  UniqueEpicUndoFloor gameId
+  deriving Show
+
 -- | A campaign played scenario by scenario, each its own game (see "LordOfTheRings.Campaign").
 -- The log is as the scenario being played began; the game holds it as that scenario is
 -- resolved, and it comes back here as the next one is dealt.
@@ -90,6 +143,7 @@ LotrCampaign sql=lotr_campaigns
   log Value
   -- | whether each scenario's game counts toward public statistics, as a game's does
   publicScoring Bool default=false
+  nextCampaignRewardClaimed Bool default=false
   createdAt UTCTime
   updatedAt UTCTime
   deriving Show

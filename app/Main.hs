@@ -21,6 +21,8 @@ import Data.Time.Clock (addUTCTime, nominalDay)
 import Database.Persist.Postgresql
 import Decks
 import GameLog
+import Epic qualified
+import LordOfTheRings.Epic.Types qualified as EpicTypes
 import LordOfTheRings.Campaign
 import LordOfTheRings.Card (
   CardCode (..),
@@ -48,10 +50,10 @@ import LordOfTheRings.Log.Entry
 import LordOfTheRings.Message
 import LordOfTheRings.Outcome
 import LordOfTheRings.Phase
-import LordOfTheRings.Prelude hiding (Handler, delete)
+import LordOfTheRings.Prelude hiding (Handler, delete, member)
 import LordOfTheRings.Scenario (Scenario, lookupScenario)
 import LordOfTheRings.Saga (campaignResolvesOn)
-import LordOfTheRings.Scenario.Types (GameMode (..), ScenarioAttrs (scenarioCampaign, scenarioId), modeL, scenarioName, campaignModeFor)
+import LordOfTheRings.Scenario.Types (GameMode (..), ScenarioAttrs (scenarioCampaign, scenarioId, scenarioEpic), modeL, scenarioName, campaignModeFor)
 import Model
 import Network.HTTP.Client (Manager)
 import Network.HTTP.Client.TLS (newTlsManager)
@@ -72,6 +74,9 @@ data Table = Table
   , seats :: Int
   , owner :: UserId
   , seated :: [SeatView]
+  , campaignLocked :: Bool
+  , epicEventId :: Maybe LotrEpicEventId
+  , undoFloor :: Int
   }
   deriving stock Generic
   deriving anyclass ToJSON
@@ -101,6 +106,10 @@ mkYesod
   "App"
   [parseRoutes|
 /api ApiP:
+  /epic-events EpicEventsR GET POST
+  /epic-events/#LotrEpicEventId EpicEventR GET
+  /epic-events/#LotrEpicEventId/groups EpicGroupsR POST
+  /epic-events/#LotrEpicEventId/start EpicStartR POST
   /games GamesR GET POST
   /games/#LotrGameId GameR GET POST DELETE
   /games/#LotrGameId/spectate SpectateR GET
@@ -129,6 +138,7 @@ mkYesod
   /campaigns CampaignsR POST
   /campaigns/#LotrCampaignId CampaignR GET DELETE
   /campaigns/#LotrCampaignId/next CampaignNextR POST
+  /campaigns/#LotrCampaignId/extend CampaignExtendR POST
   /campaigns/#LotrCampaignId/xp CampaignXpR POST
 |]
 
@@ -150,6 +160,7 @@ data GameData = GameData
   -- ^ the log's latest entries, when the client should take them afresh
   , campaignId :: Maybe LotrCampaignId
   -- ^ the campaign the game is a scenario of
+  , revision :: Int
   }
   deriving stock Generic
   deriving anyclass ToJSON
@@ -171,6 +182,7 @@ data GameSummary = GameSummary
   -- ^ a game with friends that has not been dealt, waiting for seats to fill
   , easyMode :: Bool
   , nightmare :: Bool
+  , hardMode :: Bool
   , campaignId :: Maybe LotrCampaignId
   , seats :: [SeatSummary]
   -- ^ who plays, in turn order, and with which heroes; none until the game is dealt
@@ -431,6 +443,8 @@ storedGame row =
 
 tableFor :: LotrGameId -> LotrGame -> Handler Table
 tableFor gid row = do
+  locked <- campaignGameLocked gid row
+  (epic, floorEntry) <- runDB $ (,) <$> getBy (UniqueEpicGame gid) <*> getBy (UniqueEpicUndoFloor gid)
   seated <- runDB do
     seats <- selectList [LotrSeatGameId ==. gid] [Asc LotrSeatPosition]
     for seats \(Entity _ seat) ->
@@ -443,6 +457,9 @@ tableFor gid row = do
       , seats = row.lotrGameSeats
       , owner = row.lotrGameUserId
       , seated
+      , campaignLocked = locked
+      , epicEventId = lotrEpicGroupEventId . entityVal <$> epic
+      , undoFloor = maybe 0 (lotrEpicUndoFloorStep . entityVal) floorEntry
       }
 
 {- | The game as a viewer may see it: with friends, only your own seat's hand, and only
@@ -454,10 +471,11 @@ gameData viewer row table g entries =
     (isJust g)
     (toJSON . (\g' -> publicGameFor (seesHand table viewer g'.playerOrder) g') <$> g)
     ((.activePlayer) <$> g)
-    (row.lotrGameStep > 0)
+    (row.lotrGameStep > table.undoFloor && not table.campaignLocked)
     table
     (filter (readsEntry $ seesHand table viewer (maybe [] (.playerOrder) g)) <$> entries)
     row.lotrGameCampaignId
+    row.lotrGameRevision
 
 -- | Whether a viewer sees a player's hand: with friends, only their own seat's.
 seesHand :: Table -> Maybe UserId -> [PlayerId] -> PlayerId -> Bool
@@ -520,6 +538,7 @@ summary _ (Entity gid row) | awaitingPlayers row = do
       , waiting = True
       , easyMode = row.lotrGameEasyMode
       , nightmare = row.lotrGameNightmare
+      , hardMode = row.lotrGameHardMode
       , campaignId = row.lotrGameCampaignId
       , seats = []
       }
@@ -541,6 +560,7 @@ summary friendDecks (Entity gid row) = case fromJSON row.lotrGameCurrentData of
         , waiting = False
         , easyMode = row.lotrGameEasyMode
         , nightmare = row.lotrGameNightmare
+        , hardMode = row.lotrGameHardMode
         , campaignId = row.lotrGameCampaignId
         , seats =
             [ SeatSummary
@@ -603,6 +623,7 @@ data NewGame = NewGame
   -}
   , allowSpectators :: Maybe Bool
   , easyMode :: Maybe Bool
+  , hardMode :: Maybe Bool
   , nightmare :: Maybe Bool
   -- ^ only for a scenario with a Nightmare Deck, and never with easy mode
   , publicScoring :: Maybe Bool
@@ -710,8 +731,9 @@ startGame scenario mode players seed = do
   (,) <$> currentState env <*> (reverse <$> readIORef said)
 
 -- | The mode a game is dealt in, from its easy and nightmare flags.
-gameMode :: Bool -> Bool -> GameMode
-gameMode easy nightmare
+gameMode :: Bool -> Bool -> Bool -> GameMode
+gameMode easy nightmare hard
+  | hard = HardMode
   | nightmare = NightmareMode
   | easy = EasyMode
   | otherwise = NormalMode
@@ -736,9 +758,12 @@ postGamesR = do
   refuseOversizedDecks scenarioId $ fromMaybe starterDeck <$> deckLists
   let easyMode = fromMaybe False new.easyMode
       nightmare = fromMaybe False new.nightmare
+      hard = fromMaybe False new.hardMode
       seatCount = fromMaybe (length deckLists) new.seats
       -- seats left open are for friends, and the game waits for them
       friends = seatCount > length deckLists
+  when (hard && (easyMode || nightmare || scenarioId /= "the-hunt-for-the-dreadnaught"))
+    $ sendResponseStatus status400 (ikey "error.noHardMode")
   when (nightmare && (easyMode || isNothing (toAttrs scenario).nightmareDeck))
     $ sendResponseStatus status400 (ikey "error.noNightmareMode")
   when (seatCount < max 1 (length deckLists) || seatCount > 4)
@@ -753,13 +778,14 @@ postGamesR = do
           , lotrGameCurrentData = g
           , lotrGameCurrentQueue = queue
           , lotrGameRandomGen = showGen gen
-          , lotrGameStep = 0
+          , lotrGameStep = 0, lotrGameRevision = 0
           , lotrGameScenario = scenarioId
           , lotrGameDeck = storedDecks =<< nonEmpty deckLists
           , lotrGameAllowSpectators = fromMaybe False new.allowSpectators
           , lotrGameWithFriends = friends
           , lotrGameEasyMode = easyMode
           , lotrGameNightmare = nightmare
+          , lotrGameHardMode = hard
           , lotrGameCampaignId = Nothing
           , lotrGameSeats = seatCount
           , -- a seed given knows the decks' order
@@ -773,7 +799,7 @@ postGamesR = do
     Just dealt | not friends -> do
       ((g, queue, gen), said) <-
         liftIO
-          . startGame scenario (gameMode easyMode nightmare) (soloSeats playerName $ fromMaybe starterDeck <$> dealt)
+          . startGame scenario (gameMode easyMode nightmare hard) (soloSeats playerName $ fromMaybe starterDeck <$> dealt)
           =<< maybe (liftIO randomIO) pure new.seed
       runDB do
         let row = newGame' (toJSON g) (toJSON queue) gen
@@ -794,6 +820,34 @@ several, anyone else one. Taking the last one deals the game.
 -}
 postJoinR :: LotrGameId -> Handler ()
 postJoinR gid = do
+  member <- runDB $ getBy $ UniqueEpicGame gid
+  if isJust member then postEpicJoin gid else postOrdinaryJoin gid
+
+postEpicJoin :: LotrGameId -> Handler ()
+postEpicJoin gid = do
+  userId <- requireUserId
+  request <- requireCheckJsonBody @_ @JoinGame
+  chosen <- resolveDeck userId request.deck
+  row <- runDB do
+    member <- lockEpicForGame gid
+    let groupRow = entityVal $ fromJustNote "Epic group disappeared" member
+    event <- getJust groupRow.lotrEpicGroupEventId
+    when event.lotrEpicEventStarted $ lift $ sendResponseStatus status409 (ikey "error.epicStarted")
+    row <- getJust gid
+    seats <- selectList [LotrSeatGameId ==. gid] []
+    when (row.lotrGameUserId /= userId && any ((== userId) . lotrSeatUserId . entityVal) seats)
+      $ lift $ sendResponseStatus status409 (ikey "error.alreadySeated")
+    existing <- for seats \(Entity _ seat) -> maybe (pure starterDeck) (Epic.parseStored "Epic deck") seat.lotrSeatDeck
+    lift $ refuseSharedHeroes (fromMaybe starterDeck chosen : existing)
+    lift $ refuseOversizedDecks row.lotrGameScenario [fromMaybe starterDeck chosen]
+    case [0 .. row.lotrGameSeats - 1] \\ map (lotrSeatPosition . entityVal) seats of
+      [] -> lift $ sendResponseStatus status409 (ikey "error.noFreeSeat")
+      position : _ -> insert_ $ LotrSeat gid position userId (toJSON <$> chosen)
+    pure row
+  broadcast gid row Nothing Nothing
+
+postOrdinaryJoin :: LotrGameId -> Handler ()
+postOrdinaryJoin gid = do
   userId <- requireUserId
   row <- runDB $ get404 gid
   unless (row.lotrGameWithFriends && awaitingPlayers row)
@@ -818,6 +872,22 @@ postJoinR gid = do
 -- | Give up your seats at a game with friends before it is dealt.
 postLeaveR :: LotrGameId -> Handler ()
 postLeaveR gid = do
+  member <- runDB $ getBy $ UniqueEpicGame gid
+  if isJust member then postEpicLeave gid else postOrdinaryLeave gid
+
+postEpicLeave :: LotrGameId -> Handler ()
+postEpicLeave gid = do
+  userId <- requireUserId
+  row <- runDB do
+    member <- lockEpicForGame gid
+    event <- getJust $ (entityVal $ fromJustNote "Epic group disappeared" member).lotrEpicGroupEventId
+    when event.lotrEpicEventStarted $ lift $ sendResponseStatus status409 (ikey "error.epicStarted")
+    deleteWhere [LotrSeatGameId ==. gid, LotrSeatUserId ==. userId]
+    getJust gid
+  broadcast gid row Nothing Nothing
+
+postOrdinaryLeave :: LotrGameId -> Handler ()
+postOrdinaryLeave gid = do
   userId <- requireUserId
   row <- runDB $ get404 gid
   unless (awaitingPlayers row) $ sendResponseStatus status409 (ikey "error.notWaitingForPlayers")
@@ -830,6 +900,7 @@ The seats are numbered again from 0 so they still match the players dealt.
 postStartR :: LotrGameId -> Handler ()
 postStartR gid = do
   row <- requireOwnedGame gid
+  refuseIndividualEpic gid
   unless (awaitingPlayers row) $ sendResponseStatus status409 (ikey "error.notWaitingForPlayers")
   seats <- runDB $ selectList [LotrSeatGameId ==. gid] [Asc LotrSeatPosition]
   when (null seats) $ sendResponseStatus status409 (ikey "error.noSeatTaken")
@@ -848,7 +919,7 @@ deal gid row players' = do
       $ lookupScenario (ScenarioId row.lotrGameScenario)
   (scenario, players) <- inCampaign row scenario' players'
   ((g, queue, gen), said) <-
-    liftIO . startGame scenario (gameMode row.lotrGameEasyMode row.lotrGameNightmare) players =<< liftIO randomIO
+    liftIO . startGame scenario (gameMode row.lotrGameEasyMode row.lotrGameNightmare row.lotrGameHardMode) players =<< liftIO randomIO
   now <- liftIO getCurrentTime
   (row', entries) <- runDB do
     deleteWhere [LotrStepGameId ==. gid]
@@ -1035,9 +1106,62 @@ postDebugR gid = do
   leavingPublicScoring gid row True
   advance gid row \_ -> pure $ runDebug msg
 
+-- | Epic writers serialize on the aggregate before reading any group state.
+lockEpicForGame :: LotrGameId -> ReaderT SqlBackend Handler (Maybe (Entity LotrEpicGroup))
+lockEpicForGame gid = do
+  membership <- getBy $ UniqueEpicGame gid
+  for_ membership $ \(Entity _ member) -> void $ Epic.lockEvent member.lotrEpicGroupEventId
+  pure membership
+
 -- | Play a stored game on from where it stands, keeping the move as an undoable step.
 advance :: LotrGameId -> LotrGame -> (Game -> Handler (GameT Game)) -> Handler ()
 advance gid row prepare = do
+  member <- runDB $ getBy $ UniqueEpicGame gid
+  case member of
+    Nothing -> advanceOrdinary gid row prepare
+    Just _ -> advanceEpic gid prepare
+
+advanceEpic :: LotrGameId -> (Game -> Handler (GameT Game)) -> Handler ()
+advanceEpic gid prepare = do
+  committed <- runDB do
+    member <- lockEpicForGame gid
+    let eid = (entityVal $ fromJustNote "Epic membership disappeared" member).lotrEpicGroupEventId
+    games <- Epic.loadGames eid
+    let source = fromJustNote "Epic source game missing" $ find ((== gid) . Epic.gameIdOf) games
+        row = source.epicGameRow
+    (env, said) <- lift $ loadGame row
+    (before, queue, generator) <- liftIO $ currentState env
+    play <- lift $ prepare before
+    void $ liftIO $ runGameT env play
+    (after, queue', generator') <- liftIO $ currentState env
+    sent <- liftIO $ reverse <$> readIORef said
+    let step = row.lotrGameStep + 1
+        next = source
+          { Epic.epicGameRow = row
+              { lotrGameStep = step
+              , lotrGameRevealedStep = if revealsInformation before after then step else row.lotrGameRevealedStep
+              }
+          , Epic.epicGameState = after
+          , Epic.epicGameQueue = queue'
+          , Epic.epicGameGenerator = generator'
+          , Epic.epicGameSent = sent
+          }
+    final <- Epic.commitGames eid Nothing [if Epic.gameIdOf snapshot == gid then next else snapshot | snapshot <- games]
+    let saved = fromJustNote "Epic committed source missing" $ find ((== gid) . Epic.gameIdOf) final
+    now <- liftIO getCurrentTime
+    insert_ $ LotrStep gid step (toJSON $ Diff.diff (toJSON saved.epicGameState) (toJSON before))
+      (toJSON queue) (showGen generator) before.round (tshow before.phase) now
+    for_ final \snapshot -> do
+      let old = fromJustNote "Epic previous group missing" $ find ((== Epic.gameIdOf snapshot) . Epic.gameIdOf) games
+      when (old.epicGameState.outcome /= snapshot.epicGameState.outcome)
+        $ recordOutcome (Epic.gameIdOf snapshot) snapshot.epicGameState now
+    pure final
+  for_ committed \snapshot -> do
+    publish (Epic.gameIdOf snapshot) snapshot.epicGameRow snapshot.epicGameState.playerOrder snapshot.epicGameSent
+    broadcast (Epic.gameIdOf snapshot) snapshot.epicGameRow (Just snapshot.epicGameState) Nothing
+
+advanceOrdinary :: LotrGameId -> LotrGame -> (Game -> Handler (GameT Game)) -> Handler ()
+advanceOrdinary gid row prepare = do
   (env, said) <- loadGame row
   (before, queue, gen) <- liftIO $ currentState env
   play <- prepare before
@@ -1093,7 +1217,7 @@ recordStart gid row decks now =
       { lotrPlayGameId = Just gid
       , lotrPlayUserId = row.lotrGameUserId
       , lotrPlayScenario = row.lotrGameScenario
-      , lotrPlayMode = tshow $ gameMode row.lotrGameEasyMode row.lotrGameNightmare
+      , lotrPlayMode = tshow $ gameMode row.lotrGameEasyMode row.lotrGameNightmare row.lotrGameHardMode
       , lotrPlayCampaign = isJust row.lotrGameCampaignId
       , lotrPlayPublic = row.lotrGamePublicScoring
       , lotrPlayDecks = toJSON decks
@@ -1117,7 +1241,15 @@ recordOutcome gid g now =
       ]
 
 deleteGameR :: LotrGameId -> Handler ()
-deleteGameR gid = requireOwnedGame gid >> runDB (delete gid)
+deleteGameR gid = do
+  row <- requireOwnedGame gid
+  when (isJust row.lotrGameCampaignId) $ sendResponseStatus status409 (ikey "error.deleteCampaignInstead")
+  runDB do
+    member <- lockEpicForGame gid
+    for_ member $ \(Entity _ groupRow) -> do
+      event <- getJust groupRow.lotrEpicGroupEventId
+      when event.lotrEpicEventStarted $ lift $ sendResponseStatus status409 (ikey "error.epicStartTogether")
+    delete gid
 
 -- | The page of the log before the entry given, for scrolling back.
 getLogR :: LotrGameId -> Handler Value
@@ -1146,15 +1278,14 @@ postChatR gid = do
   when (null said || length said > 500)
     $ sendResponseStatus status400 ("say something shorter" :: Text)
   now <- liftIO getCurrentTime
-  stored <-
-    runDB
-      $ storeLog
-        gid
-        row.lotrGameStep
-        now
-        [Logged $ chat [LogText user.userUsername, LogText ": ", LogText said]]
-  g <- storedGame row
-  publish gid row (maybe [] (.playerOrder) g) stored
+  (current, stored) <- runDB do
+    member <- lockEpicForGame gid
+    current <- if isJust member then get404 gid else pure row
+    stored <- storeLog gid current.lotrGameStep now
+      [Logged $ chat [LogText user.userUsername, LogText ": ", LogText said]]
+    pure (current, stored)
+  g <- storedGame current
+  publish gid current (maybe [] (.playerOrder) g) stored
 
 getDecksR :: Handler Value
 getDecksR = do
@@ -1204,10 +1335,73 @@ stepsToUndo target latestFirst = case (target, latestFirst) of
   samePhase a b = sameRound a b && a.lotrStepPhase == b.lotrStepPhase
   sameRound a b = a.lotrStepRound == b.lotrStepRound
 
+-- | Earlier campaign games become immutable to undo as soon as a successor exists.
+-- Deriving this from the campaign history also locks campaigns created before this rule.
+campaignGameLocked :: LotrGameId -> LotrGame -> Handler Bool
+campaignGameLocked gid row = case row.lotrGameCampaignId of
+  Nothing -> pure False
+  Just cid -> do
+    latest <- runDB $ selectFirst [LotrGameCampaignId ==. Just cid] [Desc LotrGameCreatedAt]
+    pure $ maybe False ((/= gid) . entityKey) latest
+
 -- | Step a game back by applying the latest steps' patches, newest first.
 postUndoR :: LotrGameId -> Handler ()
 postUndoR gid = do
+  member <- runDB $ getBy $ UniqueEpicGame gid
+  if isJust member then postEpicUndo gid else postOrdinaryUndo gid
+
+postEpicUndo :: LotrGameId -> Handler ()
+postEpicUndo gid = do
+  void $ requirePlayableGame gid
+  stepParam <- (readMaybe . unpack =<<) <$> lookupGetParam "step"
+  target <- lookupGetParam "to" <&> \case
+    Just "phase" -> StartOfPhase
+    Just "round" -> StartOfRound
+    Just "step" | Just n <- stepParam -> ToStep n
+    _ -> LastAnswer
+  committed <- runDB do
+    member <- lockEpicForGame gid
+    let eid = (entityVal $ fromJustNote "Epic group disappeared" member).lotrEpicGroupEventId
+    games <- Epic.loadGames eid
+    let source = fromJustNote "Epic source missing" $ find ((== gid) . Epic.gameIdOf) games
+        row = source.epicGameRow
+    steps <- selectList [LotrStepGameId ==. gid] [Desc LotrStepStep]
+    let undone = take (stepsToUndo target $ map entityVal steps) steps
+        destination = row.lotrGameStep - length undone
+    floor' <- maybe 0 (lotrEpicUndoFloorStep . entityVal) <$> getBy (UniqueEpicUndoFloor gid)
+    when (destination < floor') $ lift $ sendResponseStatus status409 (ikey "error.epicUndoFloor")
+    case lastMay undone of
+      Nothing -> pure []
+      Just (Entity _ oldest) -> do
+        previous <- foldM (\current (Entity _ step) -> do
+          patch <- Epic.parseStored "Epic undo patch" step.lotrStepPatchDown
+          case Diff.patch patch current of
+            Success value -> pure value
+            Error message -> lift $ sendResponseStatus status400 ("could not undo: " <> pack @Text message)
+          ) row.lotrGameCurrentData undone
+        state <- Epic.parseStored "Epic restored game" previous
+        queue <- Epic.parseStored "Epic restored queue" oldest.lotrStepQueue
+        generator <- Epic.parseGenerator oldest.lotrStepRandomGen
+        let restored = source
+              { Epic.epicGameRow = row {lotrGameStep = destination}
+              , Epic.epicGameState = state, Epic.epicGameQueue = queue, Epic.epicGameGenerator = generator
+              }
+        baseline <- Epic.revertSteps eid gid (map (lotrStepStep . entityVal) undone)
+        deleteWhere [LotrStepId <-. map entityKey undone]
+        trimLog gid destination
+        final <- Epic.commitGames eid (Just baseline) [if Epic.gameIdOf snapshot == gid then restored else snapshot | snapshot <- games]
+        now <- liftIO getCurrentTime
+        for_ final \snapshot -> recordOutcome (Epic.gameIdOf snapshot) snapshot.epicGameState now
+        pure final
+  for_ committed \snapshot -> do
+    entries <- runDB $ logTail $ Epic.gameIdOf snapshot
+    broadcastAnimated False (Epic.gameIdOf snapshot) snapshot.epicGameRow (Just snapshot.epicGameState) (Just entries)
+
+postOrdinaryUndo :: LotrGameId -> Handler ()
+postOrdinaryUndo gid = do
   row <- requirePlayableGame gid
+  locked <- campaignGameLocked gid row
+  when locked $ sendResponseStatus status409 (ikey "error.campaignGameLocked")
   stepParam <- (readMaybe . unpack =<<) <$> lookupGetParam "step"
   target <-
     lookupGetParam "to" <&> \case
@@ -1248,6 +1442,7 @@ postUndoR gid = do
 postResetR :: LotrGameId -> Handler ()
 postResetR gid = do
   row <- requireOwnedGame gid
+  refuseIndividualEpic gid
   when (awaitingPlayers row) $ sendResponseStatus status409 (ikey "error.notDealtYet")
   players <-
     if row.lotrGameWithFriends
@@ -1354,6 +1549,7 @@ postImportR = do
     $ sendResponseStatus status400 (ikey "error.unsupportedExport")
   -- refuse a file the engine cannot read before storing any of it
   imported <- decodeOrFail @Game "game" exported.game
+  when (isJust $ scenarioEpic $ toAttrs imported.scenario) $ sendResponseStatus status400 (ikey "error.epicImport")
   _ <- decodeOrFail @[Message] "queue" exported.queue
   _ <- readGen exported.randomGen
   now <- liftIO getCurrentTime
@@ -1368,12 +1564,14 @@ postImportR = do
           , lotrGameCurrentQueue = exported.queue
           , lotrGameRandomGen = exported.randomGen
           , lotrGameStep = exported.step
+          , lotrGameRevision = 0
           , lotrGameScenario = unScenarioId $ toId imported.scenario
           , lotrGameDeck = Nothing
           , lotrGameAllowSpectators = False
           , lotrGameWithFriends = False
           , lotrGameEasyMode = (toAttrs imported.scenario).easyMode
           , lotrGameNightmare = (toAttrs imported.scenario).nightmare
+          , lotrGameHardMode = (toAttrs imported.scenario).mode == HardMode
           , lotrGameCampaignId = Nothing
           , lotrGameSeats = length imported.playerOrder
           , lotrGamePublicScoring = False
@@ -1456,6 +1654,8 @@ data NewCampaign = NewCampaign
   , easyMode :: Maybe Bool
   , nightmare :: Maybe Bool
   , publicScoring :: Maybe Bool
+  , rewardCampaign :: Maybe LotrCampaignId
+  , rewardSeats :: Maybe [Int]
   }
   deriving stock Generic
   deriving anyclass FromJSON
@@ -1470,7 +1670,7 @@ campaignGame userId playerName cid campaignName sid seatCount spectators easy ni
     , lotrGameCurrentData = Null
     , lotrGameCurrentQueue = toJSON ([] :: [Message])
     , lotrGameRandomGen = showGen (mkStdGen 0)
-    , lotrGameStep = 0
+    , lotrGameStep = 0, lotrGameRevision = 0
     , lotrGameScenario = sid.unScenarioId
     , lotrGameDeck = Nothing
     , lotrGameAllowSpectators = spectators
@@ -1478,6 +1678,7 @@ campaignGame userId playerName cid campaignName sid seatCount spectators easy ni
     , lotrGameSeats = seatCount
     , lotrGameEasyMode = actualMode == EasyMode
     , lotrGameNightmare = actualMode == NightmareMode
+    , lotrGameHardMode = False
     , lotrGameCampaignId = Just cid
     , lotrGamePublicScoring = public
     , lotrGameCountsPublicly = public
@@ -1487,7 +1688,7 @@ campaignGame userId playerName cid campaignName sid seatCount spectators easy ni
     }
 
  where
-  actualMode = maybe NormalMode (campaignModeFor (gameMode easy nightmare) . toAttrs) (lookupScenario sid)
+  actualMode = maybe NormalMode (campaignModeFor (gameMode easy nightmare False) . toAttrs) (lookupScenario sid)
 
 -- | Start a campaign: its log, and its first scenario's game, waiting for its seats.
 postCampaignsR :: Handler Value
@@ -1495,8 +1696,22 @@ postCampaignsR = do
   userId <- requireUserId
   user <- runDB $ get404 userId
   new <- requireCheckJsonBody @_ @NewCampaign
-  let l = newCampaignLog new.campaign
+  let blank = newCampaignLog new.campaign
       seatCount = fromMaybe 1 new.seats
+      chosenRewardSeats = fromMaybe [0 .. seatCount - 1] new.rewardSeats
+  (l, sourceReward) <- case new.rewardCampaign of
+    Nothing -> pure (blank, Nothing)
+    Just _ | null chosenRewardSeats -> pure (blank, Nothing)
+    Just sourceId -> do
+      unless (all (\seat -> seat >= 0 && seat < seatCount) chosenRewardSeats && length chosenRewardSeats == length (ordNub chosenRewardSeats)) $
+        sendResponseStatus status400 (ikey "error.rewardSeats")
+      source <- runDB $ get404 sourceId
+      unless (source.lotrCampaignUserId == userId) notFound
+      (_, latest, sourceLog) <- campaignState sourceId source
+      when (source.lotrCampaignNextCampaignRewardClaimed || isNothing ((.outcome) =<< latest)) $
+        sendResponseStatus status409 (ikey "error.rewardUnavailable")
+      rewarded <- maybe (sendResponseStatus status409 (ikey "error.rewardUnavailable")) pure (carryRangerSenseRewardFor chosenRewardSeats seatCount sourceLog blank)
+      pure (rewarded, Just sourceId)
   sid <- maybe (sendResponseStatus status400 (ikey "error.noSuchCampaign")) pure $ nextScenario l
   when (seatCount < 1 || seatCount > 4) $ sendResponseStatus status400 (ikey "error.seatCount")
   -- Start with the first scenario's Nightmare Deck. Later chapters without one
@@ -1508,7 +1723,11 @@ postCampaignsR = do
   now <- liftIO getCurrentTime
   (cid, gid) <- runDB do
     let public = fromMaybe True new.publicScoring
-    cid <- insert $ LotrCampaign userId new.name (toJSON l) public now now
+    -- Claim inside the same transaction as creation: a source cannot fund two campaigns.
+    for_ sourceReward $ \sourceId -> do
+      changed <- updateWhereCount [LotrCampaignId ==. sourceId, LotrCampaignNextCampaignRewardClaimed ==. False] [LotrCampaignNextCampaignRewardClaimed =. True]
+      when (changed /= 1) $ lift $ sendResponseStatus status409 (ikey "error.rewardUnavailable")
+    cid <- insert $ LotrCampaign userId new.name (toJSON l) public False now now
     gid <- insert $ campaignGame userId user.userUsername cid new.name sid seatCount (fromMaybe False new.allowSpectators) easy nightmare public now
     pure (cid, gid)
   pure $ object ["id" .= gid, "campaignId" .= cid]
@@ -1535,6 +1754,10 @@ data CampaignView = CampaignView
   -- ^ playing, won (the next scenario awaits), lost (play it again) or finished
   , upgrades :: [XpCard]
   -- ^ what XP may be spent on (the Dream-chaser campaign)
+  , canClaimRangerSense :: Bool
+  -- ^ unredeemed next-campaign reward of The Caves of Nibin-dûm
+  , canExtendMirkwoodPaths :: Bool
+  -- ^ the owner may continue a completed Revised Core campaign into The Dark of Mirkwood
   , canSpendXp :: Bool
   -- ^ between scenarios: the next one waits in the lobby, not yet dealt
   }
@@ -1567,6 +1790,7 @@ requireCampaign cid = do
 
 getCampaignR :: LotrCampaignId -> Handler Value
 getCampaignR cid = do
+  userId <- requireUserId
   campaign <- requireCampaign cid
   (games, latest, l) <- campaignState cid campaign
   def <- maybe (sendResponseStatus status400 (ikey "error.noSuchCampaign")) pure $ lookupCampaign l.campaign
@@ -1594,6 +1818,8 @@ getCampaignR cid = do
         , next
         , status
         , upgrades = xpCards l
+        , canClaimRangerSense = campaign.lotrCampaignUserId == userId && not campaign.lotrCampaignNextCampaignRewardClaimed && status == "finished" && isJust (carryRangerSenseReward 1 l (newCampaignLog "dark-of-mirkwood"))
+        , canExtendMirkwoodPaths = campaign.lotrCampaignUserId == userId && isJust (extendMirkwoodPaths l) && status == "finished"
         , canSpendXp = maybe False (awaitingPlayers . entityVal) (headMay games)
         }
 
@@ -1602,7 +1828,9 @@ deleteCampaignR cid = do
   userId <- requireUserId
   campaign <- runDB $ get404 cid
   unless (campaign.lotrCampaignUserId == userId) notFound
-  runDB $ delete cid
+  runDB do
+    deleteWhere [LotrGameCampaignId ==. Just cid]
+    delete cid
 
 {- | Go on once the last scenario has ended: won, its resolved log is the campaign's and
 the next scenario is dealt; lost, the same scenario is played again (Revised Core
@@ -1623,6 +1851,32 @@ postCampaignNextR cid = do
   gid <- runDB do
     update cid [LotrCampaignLog =. toJSON l, LotrCampaignUpdatedAt =. now]
     insert $ campaignGame userId user.userUsername cid campaign.lotrCampaignName sid row.lotrGameSeats row.lotrGameAllowSpectators row.lotrGameEasyMode (any (lotrGameNightmare . entityVal) games) campaign.lotrCampaignPublicScoring now
+  for_ (headMay games) \(Entity previousId previousRow) -> broadcastAnimated False previousId previousRow latest Nothing
+  pure $ object ["id" .= gid]
+
+-- | Continue the three-part Revised Core campaign into parts 4–5. The next lobby and
+-- migrated log are written together: its resolved Dol Guldur game keeps its old log.
+postCampaignExtendR :: LotrCampaignId -> Handler Value
+postCampaignExtendR cid = do
+  userId <- requireUserId
+  campaign <- runDB $ get404 cid
+  unless (campaign.lotrCampaignUserId == userId) notFound
+  (games, _, l) <- campaignState cid campaign
+  extended <- maybe (sendResponseStatus status409 (ikey "error.cannotExtendCampaign")) pure (extendMirkwoodPaths l)
+  states <- traverse (storedGame . entityVal) games
+  when (null games || any (\mg -> isNothing $ (.outcome) =<< mg) states) $
+    sendResponseStatus status409 (ikey "error.campaignInProgress")
+  row <- maybe (sendResponseStatus status409 (ikey "error.campaignInProgress")) (pure . entityVal) (headMay games)
+  sid <- maybe (sendResponseStatus status409 (ikey "error.campaignOver")) pure (nextScenario extended)
+  user <- runDB $ get404 userId
+  now <- liftIO getCurrentTime
+  gid <- runDB do
+    changed <- updateWhereCount [LotrCampaignId ==. cid, LotrCampaignUpdatedAt ==. campaign.lotrCampaignUpdatedAt] [LotrCampaignLog =. toJSON extended, LotrCampaignUpdatedAt =. now]
+    when (changed /= 1) $ lift $ sendResponseStatus status409 (ikey "error.cannotExtendCampaign")
+    insert $ campaignGame userId user.userUsername cid campaign.lotrCampaignName sid row.lotrGameSeats row.lotrGameAllowSpectators row.lotrGameEasyMode (any (lotrGameNightmare . entityVal) games) campaign.lotrCampaignPublicScoring now
+  for_ (headMay games) \(Entity previousId previousRow) -> do
+    previous <- storedGame previousRow
+    broadcastAnimated False previousId previousRow previous Nothing
   pure $ object ["id" .= gid]
 
 newtype SpendXp = SpendXp {card :: CardCode}
@@ -1646,6 +1900,146 @@ postCampaignXpR cid = do
   now <- liftIO getCurrentTime
   runDB $ update cid [LotrCampaignLog =. toJSON l', LotrCampaignUpdatedAt =. now]
   pure $ toJSON l'
+
+data NewEpicEvent = NewEpicEvent {name :: Text, difficulty :: Maybe GameMode}
+  deriving stock Generic
+  deriving anyclass FromJSON
+
+data NewEpicGroup = NewEpicGroup {name :: Text, seats :: Maybe Int, difficulty :: Maybe GameMode}
+  deriving stock Generic
+  deriving anyclass FromJSON
+
+checkEpicDifficulty :: GameMode -> Handler ()
+checkEpicDifficulty mode = when (mode == NightmareMode)
+  $ sendResponseStatus status400 (ikey "error.epicDifficulty")
+
+-- An individual group cannot redeal independently after contributing to the event.
+refuseIndividualEpic :: LotrGameId -> Handler ()
+refuseIndividualEpic gid = do
+  member <- runDB $ getBy $ UniqueEpicGame gid
+  when (isJust member) $ sendResponseStatus status409 (ikey "error.epicStartTogether")
+
+postEpicEventsR :: Handler Value
+postEpicEventsR = do
+  userId <- requireUserId
+  request <- requireCheckJsonBody @_ @NewEpicEvent
+  let mode = fromMaybe NormalMode request.difficulty
+  checkEpicDifficulty mode
+  when (T.null $ T.strip request.name) $ sendResponseStatus status400 (ikey "error.epicName")
+  now <- liftIO getCurrentTime
+  eid <- runDB $ insert $ LotrEpicEvent userId (T.strip request.name) (tshow mode) False Null now now
+  epicEventView userId eid
+
+getEpicEventsR :: Handler Value
+getEpicEventsR = do
+  userId <- requireUserId
+  events <- runDB do
+    seats <- selectList [LotrSeatUserId ==. userId] []
+    owned <- selectKeysList [LotrGameUserId ==. userId] []
+    groups <- selectList [LotrEpicGroupGameId <-. (owned <> map (lotrSeatGameId . entityVal) seats)] []
+    selectKeysList ([LotrEpicEventUserId ==. userId] ||. [LotrEpicEventId <-. map (lotrEpicGroupEventId . entityVal) groups]) [Desc LotrEpicEventCreatedAt]
+  toJSON <$> traverse (epicEventView userId) events
+
+getEpicEventR :: LotrEpicEventId -> Handler Value
+getEpicEventR eid = requireUserId >>= (`epicEventView` eid)
+
+epicEventView :: UserId -> LotrEpicEventId -> Handler Value
+epicEventView viewer eid = do
+  event <- runDB $ get404 eid
+  groups <- runDB do
+    members <- selectList [LotrEpicGroupEventId ==. eid] [Asc LotrEpicGroupOrdinal]
+    for members \(Entity key groupRow) -> do
+      gameRow <- getJust groupRow.lotrEpicGroupGameId
+      seats <- Database.Persist.Postgresql.count [LotrSeatGameId ==. groupRow.lotrEpicGroupGameId]
+      ownSeat <- selectFirst [LotrSeatGameId ==. groupRow.lotrEpicGroupGameId, LotrSeatUserId ==. viewer] []
+      let canOpen = not event.lotrEpicEventStarted || gameRow.lotrGameUserId == viewer || isJust ownSeat
+      pure $ object
+        [ "id" .= key, "ordinal" .= groupRow.lotrEpicGroupOrdinal, "name" .= groupRow.lotrEpicGroupName
+        , "gameId" .= groupRow.lotrEpicGroupGameId, "owner" .= gameRow.lotrGameUserId, "canOpen" .= canOpen
+        , "seats" .= gameRow.lotrGameSeats, "joinedSeats" .= seats
+        , "difficulty" .= gameMode gameRow.lotrGameEasyMode gameRow.lotrGameNightmare gameRow.lotrGameHardMode
+        ]
+  shared <- if event.lotrEpicEventStarted then Just <$> decodeOrFail "Epic state" event.lotrEpicEventSharedState else pure Nothing
+  let counter key = maybe 0 (EpicTypes.sharedCounter key) shared
+  pure $ object
+    [ "id" .= eid, "name" .= event.lotrEpicEventName, "organizer" .= event.lotrEpicEventUserId
+    , "canStart" .= (viewer == event.lotrEpicEventUserId && not event.lotrEpicEventStarted)
+    , "difficulty" .= event.lotrEpicEventMode, "started" .= event.lotrEpicEventStarted
+    , "groups" .= groups, "totalPlayers" .= fmap EpicTypes.totalPlayers shared
+    , "searchComplete" .= maybe False EpicTypes.stageOneComplete shared
+    , "progress" .= counter EpicTypes.SearchingTheHighSeasProgress, "damage" .= counter EpicTypes.DreadnaughtDamage
+    ]
+
+newEpicGame :: UserId -> Text -> Text -> Int -> GameMode -> UTCTime -> LotrGame
+newEpicGame userId username name seats mode now = LotrGame
+  { lotrGameUserId = userId, lotrGameName = name, lotrGamePlayerName = username
+  , lotrGameCurrentData = Null, lotrGameCurrentQueue = toJSON ([] :: [Message])
+  , lotrGameRandomGen = showGen (mkStdGen 0), lotrGameStep = 0, lotrGameRevision = 0
+  , lotrGameScenario = "the-hunt-for-the-dreadnaught", lotrGameDeck = Nothing
+  , lotrGameAllowSpectators = False, lotrGameWithFriends = True, lotrGameSeats = seats
+  , lotrGameEasyMode = mode == EasyMode, lotrGameNightmare = False, lotrGameHardMode = mode == HardMode
+  , lotrGameCampaignId = Nothing, lotrGamePublicScoring = False, lotrGameCountsPublicly = False
+  , lotrGameRevealedStep = 0, lotrGameCreatedAt = now, lotrGameUpdatedAt = now
+  }
+
+postEpicGroupsR :: LotrEpicEventId -> Handler Value
+postEpicGroupsR eid = do
+  userId <- requireUserId
+  user <- runDB $ get404 userId
+  request <- requireCheckJsonBody @_ @NewEpicGroup
+  let seats = fromMaybe 1 request.seats
+  when (seats < 1 || seats > 4) $ sendResponseStatus status400 (ikey "error.seatCount")
+  when (T.null $ T.strip request.name) $ sendResponseStatus status400 (ikey "error.epicName")
+  void $ runDB $ get404 eid
+  gid <- runDB do
+    event <- Epic.lockEvent eid
+    when event.lotrEpicEventStarted $ lift $ sendResponseStatus status409 (ikey "error.epicStarted")
+    mode <- maybe (Epic.parseStored "Epic difficulty" $ String event.lotrEpicEventMode) pure request.difficulty
+    lift $ checkEpicDifficulty mode
+    groups <- selectList [LotrEpicGroupEventId ==. eid] [Desc LotrEpicGroupOrdinal, LimitTo 1]
+    now <- liftIO getCurrentTime
+    let ordinal = maybe 0 ((+ 1) . lotrEpicGroupOrdinal . entityVal) (headMay groups)
+    gid <- insert $ newEpicGame userId user.userUsername (event.lotrEpicEventName <> " · " <> T.strip request.name) seats mode now
+    insert_ $ LotrEpicGroup eid gid ordinal (T.strip request.name)
+    pure gid
+  pure $ object ["gameId" .= gid, "eventId" .= eid]
+
+postEpicStartR :: LotrEpicEventId -> Handler Value
+postEpicStartR eid = do
+  userId <- requireUserId
+  void $ runDB $ get404 eid
+  committed <- runDB do
+    event <- Epic.lockEvent eid
+    unless (event.lotrEpicEventUserId == userId) $ lift notFound
+    when event.lotrEpicEventStarted $ lift $ sendResponseStatus status409 (ikey "error.epicStarted")
+    groups <- selectList [LotrEpicGroupEventId ==. eid] [Asc LotrEpicGroupOrdinal]
+    when (null groups) $ lift $ sendResponseStatus status409 (ikey "error.epicNotReady")
+    prepared <- for groups \(Entity _ groupRow) -> do
+      row <- getJust groupRow.lotrEpicGroupGameId
+      seats <- selectList [LotrSeatGameId ==. groupRow.lotrEpicGroupGameId] [Asc LotrSeatPosition]
+      unless (awaitingPlayers row && length seats == row.lotrGameSeats)
+        $ lift $ sendResponseStatus status409 (ikey "error.epicNotReady")
+      players <- for seats \(Entity _ seat) -> do
+        user <- getJust seat.lotrSeatUserId
+        deck <- maybe (pure starterDeck) (Epic.parseStored "Epic deck") seat.lotrSeatDeck
+        pure (user.userUsername, deck)
+      pure (groupRow, row, fromJustNote "Epic group has no players" $ nonEmpty players)
+    let shared = fromJustNote "Epic event has no players" $ EpicTypes.newSharedEvent $ sum [length players | (_, _, players) <- prepared]
+    now <- liftIO getCurrentTime
+    games <- for prepared \(groupRow, row, players) -> do
+      let replica = EpicTypes.EpicReplica (EpicTypes.GroupOrdinal groupRow.lotrEpicGroupOrdinal) shared [] [] [] mempty
+          base = fromJustNote "Dreadnaught scenario missing" $ lookupScenario "the-hunt-for-the-dreadnaught"
+          scenario = overAttrs (\a -> a {scenarioEpic = Just replica}) base
+          mode = gameMode row.lotrGameEasyMode False row.lotrGameHardMode
+      ((state, queue, generator), sent) <- liftIO . startGame scenario mode players =<< liftIO randomIO
+      recordStart groupRow.lotrEpicGroupGameId row (snd <$> players) now
+      pure $ Epic.EpicGame groupRow row state queue generator sent
+    update eid [LotrEpicEventStarted =. True, LotrEpicEventSharedState =. toJSON shared, LotrEpicEventUpdatedAt =. now]
+    Epic.commitGames eid Nothing games
+  for_ committed \snapshot -> do
+    publish (Epic.gameIdOf snapshot) snapshot.epicGameRow snapshot.epicGameState.playerOrder snapshot.epicGameSent
+    broadcast (Epic.gameIdOf snapshot) snapshot.epicGameRow (Just snapshot.epicGameState) Nothing
+  epicEventView userId eid
 
 main :: IO ()
 main = do

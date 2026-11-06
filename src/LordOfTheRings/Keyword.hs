@@ -4,7 +4,11 @@ import LordOfTheRings.Card.CardType (CardType)
 import LordOfTheRings.Prelude
 
 data Keyword
-  = -- | on a location: it takes 1 damage at the end of each round while in the staging
+  = -- | after an enemy attacks, discard this many cards from the defending player's deck
+    Pillage Int
+  | -- | stays in staging, is engaged with every player, and attacks each in turn
+    Massive
+  | -- | on a location: it takes 1 damage at the end of each round while in the staging
     -- area, and is destroyed once it has this much (Raid on the Grey Havens)
     Aflame Int
   | -- | as the enemy enters play, each player in turn order makes an engagement check

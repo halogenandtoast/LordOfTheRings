@@ -7,6 +7,8 @@ import LordOfTheRings.Event.Cards.GandalfsSearch
 import LordOfTheRings.Event.Cards.WillOfTheWest
 import LordOfTheRings.Event.Cards.DwarvenTomb
 import LordOfTheRings.Event.Cards.FortuneOrFate
+import LordOfTheRings.Event.Cards.NoTimeToWaste
+import LordOfTheRings.Event.Cards.RangerSense
 import LordOfTheRings.Event.Cards.MendorsSupport
 import LordOfTheRings.Event.Cards.Determination
 import LordOfTheRings.Event.Cards.LoreOfAncientArnor
@@ -285,6 +287,8 @@ allEvents =
         , SomeEventCard dwarvenTomb
         , SomeEventCard fortuneOrFate
         , SomeEventCard standAndFight
+        , SomeEventCard noTimeToWaste
+        , SomeEventCard rangerSense
         , SomeEventCard mendorsSupport
         , SomeEventCard determination
         , SomeEventCard loreOfAncientArnor

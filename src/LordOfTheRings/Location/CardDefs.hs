@@ -15,7 +15,20 @@ allLocationCards =
   Map.fromList $
     map
       (\def -> (cdCardCode def, def))
-      [ foulSmellingCave
+      [belfalasShipyard, cobasHavenDreadnaught, isleOfFortune, mouthsOfAnduin, tolfalasLanding, wickedCove,  theEavesOfMirkwoodDarkOfMirkwood
+      , forestGateDarkOfMirkwood
+      , goblinTunnelsDarkOfMirkwood
+      , lightlessPassageDarkOfMirkwood
+      , branchingPathsDarkOfMirkwood
+      , tangledGrove
+      , spiderDen
+      , goblinTrail
+      , abandonedCampDarkOfMirkwood
+      , crackedPillar
+      , collapsedMine
+      , goblinDungeon
+      , crumblingStairsDarkOfMirkwood
+      , foulSmellingCave
       , torechUngol
       , cobwebbedTunnel
       , woodedGlade
@@ -5220,3 +5233,90 @@ torechUngol = (location "the-land-of-shadow-nightmare-shelobs-lair-003" "Torech 
 cobwebbedTunnel :: CardDef
 cobwebbedTunnel = (location "the-land-of-shadow-nightmare-shelobs-lair-004" "Cobwebbed Tunnel" ShelobsLairNightmare 3 2 5)
   {cdCardTraits = setFromList [Underground]}
+
+-- * The Dark of Mirkwood
+
+tangledGrove :: CardDef
+tangledGrove =
+  (location "dark-of-mirkwood-011" "Tangled Grove" TheOath 2 0 3) {cdEasyModeQuantity = Just 0, cdCardTraits = setFromList [Forest]}
+
+spiderDen :: CardDef
+spiderDen =
+  (location "dark-of-mirkwood-013" "Spider Den" TheOath 2 4 4) {cdCardTraits = setFromList [Forest]}
+
+goblinTrail :: CardDef
+goblinTrail =
+  (location "dark-of-mirkwood-014" "Goblin Trail" TheOath 2 3 6) {cdCardTraits = setFromList [Forest], cdVictoryPoints = Just 3}
+
+abandonedCampDarkOfMirkwood :: CardDef
+abandonedCampDarkOfMirkwood =
+  (location "dark-of-mirkwood-015" "Abandoned Camp" TheOath 1 2 3) {cdCardTraits = setFromList [Forest]}
+
+crackedPillar :: CardDef
+crackedPillar =
+  unique $ (location "dark-of-mirkwood-028" "Cracked Pillar" TheCavesOfNibinDum 1 2 2) {cdCardTraits = setFromList [Underground]}
+
+collapsedMine :: CardDef
+collapsedMine =
+  (location "dark-of-mirkwood-035" "Collapsed Mine" TheCavesOfNibinDum 2 2 6) {cdCardTraits = setFromList [Underground, Dark], cdShadowEffect = True}
+
+goblinDungeon :: CardDef
+goblinDungeon =
+  (location "dark-of-mirkwood-036" "Goblin Dungeon" TheCavesOfNibinDum 2 3 5) {cdCardTraits = setFromList [Underground]}
+
+crumblingStairsDarkOfMirkwood :: CardDef
+crumblingStairsDarkOfMirkwood =
+  (location "dark-of-mirkwood-037" "Crumbling Stairs" TheCavesOfNibinDum 1 3 3) {cdCardTraits = setFromList [Underground]}
+
+-- * Reprints in The Dark of Mirkwood
+
+theEavesOfMirkwoodDarkOfMirkwood :: CardDef
+theEavesOfMirkwoodDarkOfMirkwood = reprintEncounter "dark-of-mirkwood-010" TheOath 2 Nothing theEavesOfMirkwood
+
+forestGateDarkOfMirkwood :: CardDef
+forestGateDarkOfMirkwood = reprintEncounter "dark-of-mirkwood-012" TheOath 2 Nothing forestGate
+
+goblinTunnelsDarkOfMirkwood :: CardDef
+goblinTunnelsDarkOfMirkwood = reprintEncounter "dark-of-mirkwood-032" TheCavesOfNibinDum 2 Nothing goblinTunnels
+
+lightlessPassageDarkOfMirkwood :: CardDef
+lightlessPassageDarkOfMirkwood = reprintEncounter "dark-of-mirkwood-033" TheCavesOfNibinDum 2 Nothing lightlessPassage
+
+branchingPathsDarkOfMirkwood :: CardDef
+branchingPathsDarkOfMirkwood = reprintEncounter "dark-of-mirkwood-034" TheCavesOfNibinDum 2 (Just 0) branchingPaths
+
+-- * The Hunt for the Dreadnaught
+
+belfalasShipyard :: CardDef
+belfalasShipyard = (location "the-hunt-for-the-dreadnaught-034" "Belfalas Shipyard" TheHuntForTheDreadnaught 2 4 6)
+  { cdCardTraits = setFromList [Coastland, Ocean]
+  , cdShadowEffect = True
+  }
+
+cobasHavenDreadnaught :: CardDef
+cobasHavenDreadnaught = (location "the-hunt-for-the-dreadnaught-035" "Cobas Haven" TheHuntForTheDreadnaught 1 2 4)
+  { cdCardTraits = setFromList [Coastland, Ocean]
+  }
+
+isleOfFortune :: CardDef
+isleOfFortune = (location "the-hunt-for-the-dreadnaught-036" "Isle of Fortune" TheHuntForTheDreadnaught 3 3 5)
+  { cdCardTraits = setFromList [Ocean]
+  }
+
+mouthsOfAnduin :: CardDef
+mouthsOfAnduin = (location "the-hunt-for-the-dreadnaught-037" "Mouths of Anduin" TheHuntForTheDreadnaught 3 2 5)
+  { cdCardTraits = setFromList [Coastland, Ocean]
+  , cdShadowEffect = True
+  }
+
+tolfalasLanding :: CardDef
+tolfalasLanding = (location "the-hunt-for-the-dreadnaught-038" "Tolfalas Landing" TheHuntForTheDreadnaught 3 2 5)
+  { cdCardTraits = setFromList [Ocean]
+  , cdShadowEffect = True
+  }
+
+wickedCove :: CardDef
+wickedCove = (location "the-hunt-for-the-dreadnaught-039" "Wicked Cove" TheHuntForTheDreadnaught 3 2 4)
+  { cdCardTraits = setFromList [Coastland, Ocean]
+  , cdShadowEffect = True
+  }

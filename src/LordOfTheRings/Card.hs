@@ -23,7 +23,7 @@ import LordOfTheRings.Name
 import LordOfTheRings.Objective.CardDefs (allObjectiveCards)
 import LordOfTheRings.Prelude
 import LordOfTheRings.Quest.CardDefs (allPlayerSideQuestCards, allQuestCards)
-import LordOfTheRings.Scenario.CardDefs (allNightmareCards)
+import LordOfTheRings.Scenario.CardDefs (allNightmareCards, allSetupCards)
 import LordOfTheRings.Sphere as X
 import LordOfTheRings.Target
 import LordOfTheRings.Treachery.CardDefs (allTreacheryCards)
@@ -78,6 +78,7 @@ allEncounterCards =
     , allObjectiveCards
     , syntheticCards
     , allCampaignCards
+    , allSetupCards
     , allNightmareCards
     ]
 

@@ -2,6 +2,7 @@ module LordOfTheRings.Scenario.CardDefs (module LordOfTheRings.Scenario.CardDefs
 
 import Data.Map.Strict qualified as Map
 import LordOfTheRings.Card.CardDef
+import LordOfTheRings.Card.CardType (CardType (SetupType))
 import LordOfTheRings.Card.Code
 import LordOfTheRings.EncounterSet
 import LordOfTheRings.Prelude
@@ -310,3 +311,28 @@ shelobsLairNightmare = nightmareSetup "the-land-of-shadow-nightmare-shelobs-lair
 
 thePassageOfTheMarshesNightmare :: CardDef
 thePassageOfTheMarshesNightmare = nightmareSetup "the-land-of-shadow-nightmare-the-passage-of-the-marshes-001" "The Passage of the Marshes" ThePassageOfTheMarshesNightmare
+
+-- * The Hunt for the Dreadnaught difficulty setup cards
+
+allSetupCards :: Map CardCode CardDef
+allSetupCards = Map.fromList [(cdCardCode def, def) | def <- [dreadnaughtEasySetup, dreadnaughtStandardSetup, dreadnaughtHardSetup]]
+
+-- * The Hunt for the Dreadnaught
+
+dreadnaughtEasySetup :: CardDef
+dreadnaughtEasySetup = (emptyCardDef "the-hunt-for-the-dreadnaught-001" "Easy Mode" SetupType)
+  { cdDoubleSided = True
+  , cdSetIcon = Just TheHuntForTheDreadnaught
+  }
+
+dreadnaughtStandardSetup :: CardDef
+dreadnaughtStandardSetup = (emptyCardDef "the-hunt-for-the-dreadnaught-002" "Standard Mode" SetupType)
+  { cdDoubleSided = True
+  , cdSetIcon = Just TheHuntForTheDreadnaught
+  }
+
+dreadnaughtHardSetup :: CardDef
+dreadnaughtHardSetup = (emptyCardDef "the-hunt-for-the-dreadnaught-003" "Hard Mode" SetupType)
+  { cdDoubleSided = True
+  , cdSetIcon = Just TheHuntForTheDreadnaught
+  }

@@ -3,6 +3,7 @@ module LordOfTheRings.Criteria (module LordOfTheRings.Criteria) where
 import LordOfTheRings.Campaign (CampaignLogKey)
 import LordOfTheRings.Card.CardType
 import LordOfTheRings.Card.Code (CardCode)
+import LordOfTheRings.Epic.Types (EpicTargetQuery)
 import LordOfTheRings.Heading (HeadingMatcher)
 import LordOfTheRings.Id
 import LordOfTheRings.Matcher.Types
@@ -25,6 +26,10 @@ data Criterion
   | -- | a matching card in hand that the unique rule lets into play
     CardInHandMatching PlayerId CardMatcher
   | PlayerExists PlayerMatcher
+  | -- | A ready objective of this printing can be exhausted, as Cavern Warg requires.
+    ReadyObjectiveWithCardCode CardCode
+  | -- | A search can supply its mandatory encounter card, as Spider Den requires.
+    CardInEncounterDeckOrDiscard CardMatcher
   | DuringPhase Phase
   | -- | no enemy or location in play is that card
     CardNotInPlay CardId
@@ -41,6 +46,10 @@ data Criterion
   | -- | a matching attachment in hand the player could play for so much less, on a host it
     -- could go on, as Anvil of Gundabad's action needs
     PlayableAttachmentInHand PlayerId CardMatcher Int
+  | EpicTargetsExist EpicTargetQuery
+  | PlayableCardInHand PlayerId CardMatcher Int
+  | -- True restricts the choice to a character.
+    ReadyableCardExists Bool
   | -- | a matching ally in hand affordable with resources of any sphere
     AffordableAllyInHandWithoutMatch PlayerId CardMatcher
   | -- | in the quest phase, before any character is committed

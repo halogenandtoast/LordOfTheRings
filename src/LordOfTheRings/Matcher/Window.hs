@@ -208,6 +208,7 @@ data WindowMatcher
     AttachmentPlayedOnHeroWindow Timing PlayerId
   | -- | a matching enemy attacked the player
     EnemyAttacksPlayerWindow Timing PlayerId EnemyMatcher
+  | EnemyAttacksYouWindow Timing EnemyMatcher
   | -- | a player engaged the enemy in the optional engagement step
     EnemyOptionallyEngagedWindow Timing EnemyId
   | -- | the active location explored, as "after the active location leaves play as an
@@ -595,6 +596,7 @@ windowMatches matcher (Window timing wType) = case (matcher, wType) of
   (TraveledToWindow {}, _) -> False
   (AttachmentPlayedOnHeroWindow {}, _) -> False
   (EnemyAttacksPlayerWindow {}, _) -> False
+  (EnemyAttacksYouWindow {}, _) -> False
   (ExploredWithoutVictoryWindow {}, _) -> False
   (CharacterWithTraitDealtDamageWindow {}, _) -> False
   (HeroGainedResourcesWindow {}, _) -> False

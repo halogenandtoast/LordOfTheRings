@@ -28,11 +28,12 @@ newtype CampaignId = CampaignId {unCampaignId :: Text}
   deriving stock (Show, Eq, Ord, Generic)
   deriving newtype (ToJSON, FromJSON, IsString)
 
--- | A boon or burden earned (Revised Core rulebook, "The Campaign Pool"). Whether it is a
--- boon or a burden its card says, by its trait. A player card goes to its seat's deck, an
--- encounter card into the encounter deck, or with a seat into that seat's deck once its
--- starting hand is drawn, as Recurring Nightmare; one with the Permanent keyword is
--- attached to the hero recorded with it instead.
+{- | A boon or burden earned (Revised Core rulebook, "The Campaign Pool"). Whether it is a
+boon or a burden its card says, by its trait. A player card goes to its seat's deck, an
+encounter card into the encounter deck, or with a seat into that seat's deck once its
+starting hand is drawn, as Recurring Nightmare; one with the Permanent keyword is
+attached to the hero recorded with it instead.
+-}
 data PoolCard = PoolCard
   { poolCardCode :: CardCode
   , poolCardSeat :: Maybe Int
@@ -42,90 +43,117 @@ data PoolCard = PoolCard
   }
   deriving stock (Show, Eq, Generic)
 
--- | What a campaign notes in the log, by name, as Arkham's 'CampaignLogKey': the cards
--- recorded under it.
+{- | What a campaign notes in the log, by name, as Arkham's 'CampaignLogKey': the cards
+recorded under it.
+-}
 data CampaignLogKey
-  = -- | the hero taken prisoner at the start of Escape from Dol Guldur (Journey Along the
-    -- Anduin's resolution)
+  = {- | the hero taken prisoner at the start of Escape from Dol Guldur (Journey Along the
+    Anduin's resolution)
+    -}
     Prisoner
-  | -- | Mendor, added to the Campaign Pool for the next campaign (Escape from Dol
-    -- Guldur's resolution)
+  | {- | Mendor, added to the Campaign Pool for the next campaign (Escape from Dol
+    Guldur's resolution)
+    -}
     MendorJoinsTheNextCampaign
-  | -- | Graxar was in the victory display at the end of Raid on the Grey Havens: Parrying
-    -- Cutlass or Throwing Axe is chosen, and its hero, as the next scenario is set up
+  | -- | Each player may add Ranger Sense at the start of their next campaign (MEC102).
+    RangerSenseNextCampaign
+  | {- | Graxar was in the victory display at the end of Raid on the Grey Havens: Parrying
+    Cutlass or Throwing Axe is chosen, and its hero, as the next scenario is set up
+    -}
     GraxarDefeated
-  | -- | the boons each player chose during this scenario's setup, as Galdor's Counsel: they
-    -- add 1 to Ominous Fate's X, and join the Campaign Pool once the scenario is won
+  | {- | the boons each player chose during this scenario's setup, as Galdor's Counsel: they
+    add 1 to Ominous Fate's X, and join the Campaign Pool once the scenario is won
+    -}
     ChosenDuringSetup
   | -- | Captain Sahír has had his campaign card's attachments this scenario
     SahirKeyed
-  | -- | Captain Sahír has turned over, and had what The Thing in the Depths' campaign card
-    -- gives as he does
+  | {- | Captain Sahír has turned over, and had what The Thing in the Depths' campaign card
+    gives as he does
+    -}
     SahirTurned
-  | -- | Temple of the Deceived's secrets, one under each Temple of the Deceived location
-    -- in its row of the Island Map, none once flipped
+  | {- | Temple of the Deceived's secrets, one under each Temple of the Deceived location
+    in its row of the Island Map, none once flipped
+    -}
     Secrets
   | -- | the secrets flipped over
     RevealedSecrets
-  | -- | the Recurring Nightmares Temple of the Deceived's resolution adds to the Campaign
-    -- Pool, each for a player the first player chooses as the next scenario is set up
+  | {- | the Recurring Nightmares Temple of the Deceived's resolution adds to the Campaign
+    Pool, each for a player the first player chooses as the next scenario is set up
+    -}
     RecurringNightmares
-  | -- | Angmar Awakened: the damage on Protect the Innocent, later Arnor Ravaged, as its
-    -- campaign cards note it ('counted')
+  | {- | Angmar Awakened: the damage on Protect the Innocent, later Arnor Ravaged, as its
+    campaign cards note it ('counted')
+    -}
     ProtectTheInnocentDamage
   | -- | Angmar Awakened: the characters "determined", by Determination (The Wastes of Eriador)
     Determined
-  | -- | Angmar Awakened: the unique cards left in a captured deck at the end of Escape from
-    -- Mount Gram, which no deck may include for the rest of the campaign
+  | {- | Angmar Awakened: the unique cards left in a captured deck at the end of Escape from
+    Mount Gram, which no deck may include for the rest of the campaign
+    -}
     LostInMountGram
-  | -- | Angmar Awakened: the damage on each hero at the end of The Battle of Carn Dûm
-    -- ('counted'), each hero beginning The Dread Realm with as much
+  | {- | Angmar Awakened: the damage on each hero at the end of The Battle of Carn Dûm
+    ('counted'), each hero beginning The Dread Realm with as much
+    -}
     HeroDamage
-  | -- | Angmar Awakened: Deadmen's Dike's resolution has the players choose Iârion's
-    -- Pendant or Amarthiúl's Courage, which they do as the next scenario is set up
+  | {- | Angmar Awakened: Deadmen's Dike's resolution has the players choose Iârion's
+    Pendant or Amarthiúl's Courage, which they do as the next scenario is set up
+    -}
     ChoosePendantOrCourage
-  | -- | the players have lost the campaign, as Mount Doom's resolution may have them: no
-    -- scenario follows
+  | {- | the players have lost the campaign, as Mount Doom's resolution may have them: no
+    scenario follows
+    -}
     CampaignLost
-  | -- | the resources on The Black Gate as The Black Gate Opens ends ('counted', by The
-    -- Black Gate's code): Mount Doom's campaign card places as many on itself
+  | {- | the resources on The Black Gate as The Black Gate Opens ends ('counted', by The
+    Black Gate's code): Mount Doom's campaign card places as many on itself
+    -}
     BlackGateResources
-  | -- | Angmar Awakened: the books The Treachery of Rhudaur's resolution lets each player
-    -- add for a Clue they control, by the seat of that player ('counted'), offered as the
-    -- next scenario is set up
+  | {- | Angmar Awakened: the books The Treachery of Rhudaur's resolution lets each player
+    add for a Clue they control, by the seat of that player ('counted'), offered as the
+    next scenario is set up
+    -}
     BooksEarned
-  | -- | The Lord of the Rings: the name and quantity of each Harad enemy underneath The
-    -- Black Gate at the end of Journey to the Cross-roads ('counted', by card code), which
-    -- The Battle of the Pelennor Fields sets aside
+  | {- | The Lord of the Rings: the name and quantity of each Harad enemy underneath The
+    Black Gate at the end of Journey to the Cross-roads ('counted', by card code), which
+    The Battle of the Pelennor Fields sets aside
+    -}
     HaradEnemies
-  | -- | The Lord of the Rings: the resources on The Corsair Fleet at the end of The Siege of
-    -- Gondor ('counted'), placed on it as The Battle of the Pelennor Fields is set up
+  | {- | The Lord of the Rings: the resources on The Corsair Fleet at the end of The Siege of
+    Gondor ('counted'), placed on it as The Battle of the Pelennor Fields is set up
+    -}
     CorsairFleetResources
-  | -- | The Lord of the Rings: the heroes taken captive at the end of Breaking of the
-    -- Fellowship, one for each player
+  | {- | The Lord of the Rings: the heroes taken captive at the end of Breaking of the
+    Fellowship, one for each player
+    -}
     Captives
-  | -- | Ered Mithrin: the uses of a card's campaign-long ability each seat has marked
-    -- ('counted', by 'seatUseCode'), as Beldis's 4 uses for each player
+  | {- | Ered Mithrin: the uses of a card's campaign-long ability each seat has marked
+    ('counted', by 'seatUseCode'), as Beldis's 4 uses for each player
+    -}
     CardUses
-  | -- | Ered Mithrin: the treasures the players have discovered, by title, as the campaign
-    -- log writes them alongside the boons (MEC115 rules, "Treasure")
+  | {- | Ered Mithrin: the treasures the players have discovered, by title, as the campaign
+    log writes them alongside the boons (MEC115 rules, "Treasure")
+    -}
     Treasures
-  | -- | Ered Mithrin: "Turayn has taken an oath of vigilance" (Journey Up the Anduin's
-    -- resolution)
+  | {- | Ered Mithrin: "Turayn has taken an oath of vigilance" (Journey Up the Anduin's
+    resolution)
+    -}
     TuraynsOath
-  | -- | Ered Mithrin: "Melanwar has given you guidance on traversing Wilderland" (Lost in
-    -- Mirkwood's resolution)
+  | {- | Ered Mithrin: "Melanwar has given you guidance on traversing Wilderland" (Lost in
+    Mirkwood's resolution)
+    -}
     MelanwarsGuidance
   | -- | Ered Mithrin: "Isolde is on the hunt" (The King's Quest's resolution)
     IsoldeOnTheHunt
-  | -- | Ered Mithrin: "Beldis's care has bolstered the heroes' spirits" (Fire in the
-    -- Night's resolution)
+  | {- | Ered Mithrin: "Beldis's care has bolstered the heroes' spirits" (Fire in the
+    Night's resolution)
+    -}
     BeldisCare
-  | -- | Ered Mithrin: the main quest stage of The Withered Heath just defeated, while its
-    -- window is open, as its Accolade boon is offered
+  | {- | Ered Mithrin: the main quest stage of The Withered Heath just defeated, while its
+    window is open, as its Accolade boon is offered
+    -}
     DefeatedStage
-  | -- | Ered Mithrin: The Ghost of Framsburg's campaign card has attached its treasure to
-    -- Fram's Shade (group limit once per game)
+  | {- | Ered Mithrin: The Ghost of Framsburg's campaign card has attached its treasure to
+    Fram's Shade (group limit once per game)
+    -}
     FramsShadeTreasure
   deriving stock (Show, Eq, Ord, Generic, Enum, Bounded)
   deriving anyclass (ToJSON, FromJSON)
@@ -158,16 +186,19 @@ data CampaignLog = CampaignLog
   , campaignLogMarked :: Map CardCode Int
   -- ^ the checkboxes marked by each scalable or upgradable card's title
   , campaignLogCardResources :: Int
-  -- ^ the resources on this scenario's campaign card, as Revenant places them: counted for
-  -- XP as it is resolved, none carried to the next
+  {- ^ the resources on this scenario's campaign card, as Revenant places them: counted for
+  XP as it is resolved, none carried to the next
+  -}
   , campaignLogCounts :: Map CampaignLogKey (Map CardCode Int)
   -- ^ numbers noted for cards, as the damage on Protect the Innocent
   , campaignLogSeatThreatPenalty :: Map Int Int
-  -- ^ a starting threat penalty of one seat's alone, as The Passage of the Marshes'
-  -- resolution gives a player who chooses it
+  {- ^ a starting threat penalty of one seat's alone, as The Passage of the Marshes'
+  resolution gives a player who chooses it
+  -}
   , campaignLogTreasureHeroes :: Map Int (Map CardCode [[CardCode]])
-  -- ^ by seat and treasure, each group of heroes the seat had as it discovered the
-  -- treasure, sorted ('discoveredWith')
+  {- ^ by seat and treasure, each group of heroes the seat had as it discovered the
+  treasure, sorted ('discoveredWith')
+  -}
   }
   deriving stock (Show, Eq, Generic)
 
@@ -188,7 +219,16 @@ instance ToJSON CampaignLog where
 
 -- | A log kept before XP was recorded has none.
 instance FromJSON CampaignLog where
-  parseJSON = genericParseJSON (aesonOptions $ Just "campaignLog") . withDefaults [("xp", Number 0), ("marked", object []), ("cardResources", Number 0), ("counts", object []), ("seatThreatPenalty", object []), ("treasureHeroes", object [])]
+  parseJSON =
+    genericParseJSON (aesonOptions $ Just "campaignLog")
+      . withDefaults
+        [ ("xp", Number 0)
+        , ("marked", object [])
+        , ("cardResources", Number 0)
+        , ("counts", object [])
+        , ("seatThreatPenalty", object [])
+        , ("treasureHeroes", object [])
+        ]
 
 instance HasField "campaign" CampaignLog CampaignId where
   getField = campaignLogCampaign
@@ -233,8 +273,9 @@ instance HasField "treasureHeroes" CampaignLog (Map Int (Map CardCode [[CardCode
 seatThreatPenalty :: Int -> CampaignLog -> Int
 seatThreatPenalty seat l = l.threatPenalty + Map.findWithDefault 0 seat l.seatThreatPenalty
 
--- | A campaign: its scenarios in order, each with its campaign card, The Hobbit's having
--- none.
+{- | A campaign: its scenarios in order, each with its campaign card, The Hobbit's having
+none.
+-}
 data CampaignDef = CampaignDef
   { campaignDefId :: CampaignId
   , campaignDefName :: Text
@@ -252,8 +293,26 @@ revisedCore =
     , ("escape-from-dol-guldur", Just Cards.escapeFromDolGuldurCampaign)
     ]
 
--- | The Dream-chaser Campaign Expansion: The Grey Havens' three scenarios and the
--- Dream-chaser cycle's six, one campaign.
+-- | MEC102: either a fresh two-scenario campaign, or parts 4–5 of Mirkwood Paths.
+darkOfMirkwood :: CampaignDef
+darkOfMirkwood =
+  CampaignDef
+    "dark-of-mirkwood"
+    "The Dark of Mirkwood"
+    [ ("the-oath", Just Cards.theOathCampaign)
+    , ("the-caves-of-nibin-dum", Just Cards.theCavesOfNibinDumCampaign)
+    ]
+
+mirkwoodPaths :: CampaignDef
+mirkwoodPaths =
+  CampaignDef
+    "mirkwood-paths"
+    "Mirkwood Paths"
+    (campaignDefScenarios revisedCore <> campaignDefScenarios darkOfMirkwood)
+
+{- | The Dream-chaser Campaign Expansion: The Grey Havens' three scenarios and the
+Dream-chaser cycle's six, one campaign.
+-}
 dreamChaser :: CampaignDef
 dreamChaser =
   CampaignDef
@@ -270,9 +329,9 @@ dreamChaser =
     , ("the-city-of-corsairs", Just Cards.theCityOfCorsairsCampaign)
     ]
 
-
--- | The Angmar Awakened Campaign Expansion: The Lost Realm's scenarios and the Angmar
--- Awakened cycle's, one campaign.
+{- | The Angmar Awakened Campaign Expansion: The Lost Realm's scenarios and the Angmar
+Awakened cycle's, one campaign.
+-}
 angmarAwakened :: CampaignDef
 angmarAwakened =
   CampaignDef
@@ -289,14 +348,16 @@ angmarAwakened =
     , ("the-dread-realm", Just Cards.theDreadRealmCampaign)
     ]
 
--- | The Hobbit Saga Expansions' six scenarios, played in order with the same heroes, the
--- treasures each player discovers carried to the later ones (The Hobbit: Over Hill and
--- Under Hill rules insert, "Treasure").
+{- | The Hobbit Saga Expansions' six scenarios, played in order with the same heroes, the
+treasures each player discovers carried to the later ones (The Hobbit: Over Hill and
+Under Hill rules insert, "Treasure").
+-}
 theHobbit :: CampaignDef
 theHobbit = CampaignDef "the-hobbit" "The Hobbit" [(sid, Nothing) | sid <- hobbitScenarios]
 
--- | The Lord of the Rings Saga Expansions' eighteen scenarios, one campaign (The Black
--- Riders rules insert, "Campaign Mode").
+{- | The Lord of the Rings Saga Expansions' eighteen scenarios, one campaign (The Black
+Riders rules insert, "Campaign Mode").
+-}
 theLordOfTheRings :: CampaignDef
 theLordOfTheRings =
   CampaignDef
@@ -322,8 +383,9 @@ theLordOfTheRings =
     , ("mount-doom", Just Cards.mountDoomCampaign)
     ]
 
--- | The Ered Mithrin Campaign Expansion: the Ered Mithrin cycle's nine scenarios, one
--- campaign (MEC115 rules, "Campaign Mode").
+{- | The Ered Mithrin Campaign Expansion: the Ered Mithrin cycle's nine scenarios, one
+campaign (MEC115 rules, "Campaign Mode").
+-}
 eredMithrin :: CampaignDef
 eredMithrin =
   CampaignDef
@@ -341,7 +403,16 @@ eredMithrin =
     ]
 
 allCampaigns :: [CampaignDef]
-allCampaigns = [revisedCore, angmarAwakened, dreamChaser, theHobbit, theLordOfTheRings, eredMithrin]
+allCampaigns =
+  [ revisedCore
+  , mirkwoodPaths
+  , darkOfMirkwood
+  , angmarAwakened
+  , dreamChaser
+  , theHobbit
+  , theLordOfTheRings
+  , eredMithrin
+  ]
 
 lookupCampaign :: CampaignId -> Maybe CampaignDef
 lookupCampaign cid = find ((== cid) . campaignDefId) allCampaigns
@@ -368,37 +439,56 @@ data XpCard = XpCard
 instance ToJSON XpCard where
   toJSON = genericToJSON (aesonOptions $ Just "xp")
 
--- | The checkboxes by each title on the Dream-chaser Campaign Log sheet (Dream-chaser
--- Campaign Expansion rules, p. 31).
+{- | The checkboxes by each title on the Dream-chaser Campaign Log sheet (Dream-chaser
+Campaign Expansion rules, p. 31).
+-}
 xpCards :: CampaignLog -> [XpCard]
 xpCards l = case l.campaign of
   "dream-chaser" ->
     [upgrade code n | (code, n) <- upgradable]
       -- the Grey Havens' and the cycle's own cards, their Upgraded sides the expansion's
-      <> [XpCard "11080" 4 (Just "DCC136U"), XpCard "11081" 4 (Just "DCC137U"), XpCard "11082" 4 (Just "DCC140U"), XpCard "11083" 4 (Just "DCC141U"), XpCard "12071" 2 (Just "DCC078U")]
+      <> [ XpCard "11080" 4 (Just "DCC136U")
+         , XpCard "11081" 4 (Just "DCC137U")
+         , XpCard "11082" 4 (Just "DCC140U")
+         , XpCard "11083" 4 (Just "DCC141U")
+         , XpCard "12071" 2 (Just "DCC078U")
+         ]
       <> [XpCard code 5 Nothing | code <- scalable]
       <> [XpCard code 4 Nothing | code <- command]
       -- Send for Help: Leadership 3, Tactics 2, Spirit 4, Lore 3
-      <> [XpCard "DCC211" 3 Nothing, XpCard "DCC212" 2 Nothing, XpCard "DCC213" 4 Nothing, XpCard "DCC214" 3 Nothing]
+      <> [ XpCard "DCC211" 3 Nothing
+         , XpCard "DCC212" 2 Nothing
+         , XpCard "DCC213" 4 Nothing
+         , XpCard "DCC214" 3 Nothing
+         ]
       -- "Gavin returned", once A Storm on Cobas Haven is won
       <> [XpCard "DCC210" 4 Nothing | "a-storm-on-cobas-haven" `elem` map completedScenario l.completed]
   _ -> []
  where
   upgrade code n = XpCard code n (Just $ CardCode $ unCardCode code <> "U")
   upgradable =
-    [ ("DCC172", 2), ("DCC173", 2), ("DCC174", 2), ("DCC175", 2)
-    , ("DCC180", 3), ("DCC183", 4), ("DCC189", 5), ("DCC190", 5)
-    , ("DCC192", 5), ("DCC193", 5)
+    [ ("DCC172", 2)
+    , ("DCC173", 2)
+    , ("DCC174", 2)
+    , ("DCC175", 2)
+    , ("DCC180", 3)
+    , ("DCC183", 4)
+    , ("DCC189", 5)
+    , ("DCC190", 5)
+    , ("DCC192", 5)
+    , ("DCC193", 5)
     ]
   -- Galdor's Counsel, Come Together, Starla and Círdan's Blessing
-  scalable = ["DCC184", "DCC185", "DCC186", "DCC187", "DCC195", "DCC198", "DCC205", "DCC206", "DCC207", "DCC208"]
+  scalable =
+    ["DCC184", "DCC185", "DCC186", "DCC187", "DCC195", "DCC198", "DCC205", "DCC206", "DCC207", "DCC208"]
   command = ["DCC201", "DCC202", "DCC203", "DCC204"]
 
 marked :: CardCode -> CampaignLog -> Int
 marked code = Map.findWithDefault 0 code . (.marked)
 
--- | A scalable card's level: the boxes marked by its title, 0 with none ("A scalable
--- card is leveled up for each checkbox marked by its title").
+{- | A scalable card's level: the boxes marked by its title, 0 with none ("A scalable
+card is leveled up for each checkbox marked by its title").
+-}
 level :: CardCode -> CampaignLog -> Int
 level = marked
 
@@ -407,7 +497,9 @@ isUpgraded code l = any (\x -> xpCard x == code && marked code l >= xpBoxes x) (
 
 -- | The side of the card to use: its Upgraded side once upgraded.
 upgradedCode :: CampaignLog -> CardCode -> CardCode
-upgradedCode l code = fromMaybe code $ headMay [u | x <- xpCards l, xpCard x == code, Just u <- [xpUpgraded x], isUpgraded code l]
+upgradedCode l code =
+  fromMaybe code
+    $ headMay [u | x <- xpCards l, xpCard x == code, Just u <- [xpUpgraded x], isUpgraded code l]
 
 {- | Spend 1 XP to mark one of the card's checkboxes. Its Upgraded side replaces it in
 the Campaign Pool once every box is marked. Nothing if there is no XP left or no box.
@@ -427,7 +519,8 @@ nextScenario :: CampaignLog -> Maybe ScenarioId
 nextScenario l = do
   guard $ not (Map.member CampaignLost l.notes)
   def <- lookupCampaign l.campaign
-  headMay [sid | (sid, _) <- campaignDefScenarios def, sid `notElem` map completedScenario l.completed]
+  headMay
+    [sid | (sid, _) <- campaignDefScenarios def, sid `notElem` map completedScenario l.completed]
 
 -- | The campaign card set next to the quest deck while the scenario is played.
 campaignCardFor :: CampaignLog -> ScenarioId -> Maybe CardCode
@@ -455,7 +548,13 @@ seatHeroes seats l
           { campaignLogHeroes = seats
           , campaignLogThreatPenalty = l.threatPenalty + changed + (if restored then 1 else 0)
           , campaignLogFallenHeroes = filter (\c -> not (restored && title c == "Aragorn")) l.fallenHeroes
-          , campaignLogPool = [maybe p (\a -> p {poolCardAttachedTo = Just a}) (guard (maybe False ((== "Aragorn") . title) p.attachedTo) *> fellowshipAragorn) | p <- l.pool]
+          , campaignLogPool =
+              [ maybe
+                  p
+                  (\a -> p {poolCardAttachedTo = Just a})
+                  (guard (maybe False ((== "Aragorn") . title) p.attachedTo) *> fellowshipAragorn)
+              | p <- l.pool
+              ]
           }
  where
   title code = maybe "" (\d -> let Name t _ = cdName d in t) (Map.lookup code allPlayerCards)
@@ -475,10 +574,14 @@ seatHeroes seats l
   -- whose campaign card lets heroes change freely
   changed
     | maybe False (`elem` freeHeroChange) next = 0
-    | otherwise = min (length (filter (`notElem` newTitles) oldTitles)) (length (filter (`notElem` oldTitles) newTitles))
+    | otherwise =
+        min
+          (length (filter (`notElem` newTitles) oldTitles))
+          (length (filter (`notElem` oldTitles) newTitles))
 
--- | The scenarios whose campaign card reads "Each player may change hero cards without
--- incurring the +1 threat penalty", The Passage of the Marshes' as the FAQ's errata has it.
+{- | The scenarios whose campaign card reads "Each player may change hero cards without
+incurring the +1 threat penalty", The Passage of the Marshes' as the FAQ's errata has it.
+-}
 freeHeroChange :: [ScenarioId]
 freeHeroChange =
   [ "the-wastes-of-eriador"
@@ -494,11 +597,12 @@ freeHeroChange =
   , "the-ghost-of-framsburg"
   ]
 
--- | Heroes the campaign does not allow yet: the Amarthiúl hero, in Angmar Awakened, until
--- The Battle of Carn Dûm's campaign card lets him in. In Ered Mithrin the Haldan hero,
--- save in The King's Quest: "Haldan cannot be used as a hero in this campaign" (MEC115
--- rules, "Campaign Mode"), and its campaign card reads "Haldan may be included among a
--- player's heroes".
+{- | Heroes the campaign does not allow yet: the Amarthiúl hero, in Angmar Awakened, until
+The Battle of Carn Dûm's campaign card lets him in. In Ered Mithrin the Haldan hero,
+save in The King's Quest: "Haldan cannot be used as a hero in this campaign" (MEC115
+rules, "Campaign Mode"), and its campaign card reads "Haldan may be included among a
+player's heroes".
+-}
 lockedHeroes :: CampaignLog -> [CardCode]
 lockedHeroes l
   | l.campaign == "angmar-awakened"
@@ -510,8 +614,9 @@ lockedHeroes l
       [cdCardCode Heroes.haldan]
   | otherwise = []
 
--- | A seat's deck as the campaign deals it: its boons and burdens that are player cards
--- added, and the cards the log bars from every deck left out.
+{- | A seat's deck as the campaign deals it: its boons and burdens that are player cards
+added, and the cards the log bars from every deck left out.
+-}
 seatDeck :: Int -> CampaignLog -> [(CardCode, Int)] -> [(CardCode, Int)]
 seatDeck seat l cards = filter (keeps . fst) cards <> [(c, 1) | c <- seatPoolCards seat l]
  where
@@ -521,11 +626,19 @@ seatDeck seat l cards = filter (keeps . fst) cards <> [(c, 1) | c <- seatPoolCar
   titleOf code = (\d -> let Name t _ = cdName d in t) <$> Map.lookup code allPlayerCards
   keeps code = code `notElem` recorded LostInMountGram l && maybe True (`notElem` fallenTitles) (titleOf code)
 
--- | Each seat's boons and burdens that are player cards, to shuffle into its deck: those
--- not attached to a hero. (An encounter card for its deck the scenario shuffles in, and a
--- treasure its player chooses to add as the scenario is set up.)
+{- | Each seat's boons and burdens that are player cards, to shuffle into its deck: those
+not attached to a hero. (An encounter card for its deck the scenario shuffles in, and a
+treasure its player chooses to add as the scenario is set up.)
+-}
 seatPoolCards :: Int -> CampaignLog -> [CardCode]
-seatPoolCards seat l = [p.code | p <- l.pool, p.seat == Just seat, isNothing p.attachedTo, Just def <- [Map.lookup p.code allPlayerCards], not (cdTreasure def)]
+seatPoolCards seat l =
+  [ p.code
+  | p <- l.pool
+  , p.seat == Just seat
+  , isNothing p.attachedTo
+  , Just def <- [Map.lookup p.code allPlayerCards]
+  , not (cdTreasure def)
+  ]
 
 instance HasField "code" PoolCard CardCode where
   getField = poolCardCode
@@ -536,8 +649,9 @@ instance HasField "seat" PoolCard (Maybe Int) where
 instance HasField "attachedTo" PoolCard (Maybe CardCode) where
   getField = poolCardAttachedTo
 
--- | Heroes in their owners' discard piles at the end of a scenario fall: recorded as
--- Fallen Heroes, the Permanent boons and burdens on them leave the Campaign Pool.
+{- | Heroes in their owners' discard piles at the end of a scenario fall: recorded as
+Fallen Heroes, the Permanent boons and burdens on them leave the Campaign Pool.
+-}
 recordFallen :: [CardCode] -> CampaignLog -> CampaignLog
 recordFallen heroes l =
   l
@@ -553,9 +667,16 @@ played with the same hero cards throughout, so another version of a hero is anot
 -}
 discoverTreasure :: Int -> CardCode -> CampaignLog -> CampaignLog
 discoverTreasure seat code l =
-  addToPool (PoolCard code (Just seat) Nothing) l
-    { campaignLogTreasureHeroes = Map.insertWith (Map.unionWith (\new old -> ordNub (old <> new))) seat (Map.singleton code [seatGroup seat l]) l.treasureHeroes
-    }
+  addToPool
+    (PoolCard code (Just seat) Nothing)
+    l
+      { campaignLogTreasureHeroes =
+          Map.insertWith
+            (Map.unionWith (\new old -> ordNub (old <> new)))
+            seat
+            (Map.singleton code [seatGroup seat l])
+            l.treasureHeroes
+      }
 
 seatGroup :: Int -> CampaignLog -> [CardCode]
 seatGroup seat l = sort $ fromMaybe [] (atMay l.heroes seat)
@@ -567,10 +688,11 @@ with these heroes.
 discoveredWith :: Int -> CardCode -> CampaignLog -> Bool
 discoveredWith seat code l = maybe True (seatGroup seat l `elem`) (Map.lookup code =<< Map.lookup seat l.treasureHeroes)
 
--- | "When the players discover a treasure during scenario resolution, they write that
--- treasure's title in the campaign log alongside the boons they have earned." Once
--- discovered, a treasure is the group's, not a seat's or a group of heroes': any player
--- may add it to their deck before a later game (MEC115 rules, "Treasure").
+{- | "When the players discover a treasure during scenario resolution, they write that
+treasure's title in the campaign log alongside the boons they have earned." Once
+discovered, a treasure is the group's, not a seat's or a group of heroes': any player
+may add it to their deck before a later game (MEC115 rules, "Treasure").
+-}
 markTreasure :: CardCode -> CampaignLog -> CampaignLog
 markTreasure code l = record Treasures (ordNub $ recorded Treasures l <> [code]) l
 
@@ -609,21 +731,24 @@ recordedCount key code = Map.findWithDefault 0 code . Map.findWithDefault mempty
 seatUseCode :: CardCode -> Int -> CardCode
 seatUseCode code seat = CardCode (unCardCode code <> ":" <> tshow seat)
 
--- | What a card writes to the log while its scenario is played, as Mysterious Omens' boons
--- or Fend Off Despair's threat. Kept if the scenario is won, as the rest of its log.
+{- | What a card writes to the log while its scenario is played, as Mysterious Omens' boons
+or Fend Off Despair's threat. Kept if the scenario is won, as the rest of its log.
+-}
 data CampaignLogUpdate
   = AddToPool PoolCard
   | RemoveFromPool CardCode
-  | -- | one copy comes out of the Campaign Pool, as Fire in the Night's resolution lets each
-    -- player remove a card
+  | {- | one copy comes out of the Campaign Pool, as Fire in the Night's resolution lets each
+    player remove a card
+    -}
     RemoveOneFromPool PoolCard
   | AdjustThreatPenalty Int
   | Record CampaignLogKey [CardCode]
   | Unrecord CampaignLogKey
   | -- | the hero goes on the list of fallen heroes, as Fallen into Evil's does
     AddFallenHero CardCode
-  | -- | the hero comes off it, as Beyond All Hope's, or The Black Gate Opens' resolution
-    -- keeps a hero off it
+  | {- | the hero comes off it, as Beyond All Hope's, or The Black Gate Opens' resolution
+    keeps a hero off it
+    -}
     RemoveFallenHero CardCode
   | -- | the seat discovers the treasure ('discoverTreasure')
     DiscoverTreasure Int CardCode
@@ -631,15 +756,18 @@ data CampaignLogUpdate
     AdjustSeatThreatPenalty Int Int
   | -- | so much more of the number noted for the card, as a seat marks a use of Beldis
     AddToCount CampaignLogKey CardCode Int
-  | -- | Ered Mithrin: the players discover the treasure, its title written in the log
-    -- ('markTreasure')
+  | {- | Ered Mithrin: the players discover the treasure, its title written in the log
+    ('markTreasure')
+    -}
     MarkTreasure CardCode
-  | -- | Ered Mithrin: a copy of the encounter card joins the Campaign Pool, if a collection
-    -- holds one more ('addEncounterCardToPool')
+  | {- | Ered Mithrin: a copy of the encounter card joins the Campaign Pool, if a collection
+    holds one more ('addEncounterCardToPool')
+    -}
     AddEncounterCardToPool CardCode
-  | -- | the seat's recorded heroes: the first taken off, if one is given, the second put on,
-    -- the change at no threat penalty, as a hero Beyond All Hope brings back from the
-    -- fallen joins its player (The Uruk-hai's resolution)
+  | {- | the seat's recorded heroes: the first taken off, if one is given, the second put on,
+    the change at no threat penalty, as a hero Beyond All Hope brings back from the
+    fallen joins its player (The Uruk-hai's resolution)
+    -}
     ReplaceSeatHero Int (Maybe CardCode) CardCode
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
@@ -659,4 +787,34 @@ updateLog = \case
   RemoveFallenHero code -> \l -> l {campaignLogFallenHeroes = filter (/= code) l.fallenHeroes}
   AdjustSeatThreatPenalty seat n -> \l -> l {campaignLogSeatThreatPenalty = Map.insertWith (+) seat n l.seatThreatPenalty}
   AddToCount key code n -> \l -> recordCount key code (recordedCount key code l + n) l
-  ReplaceSeatHero seat old new -> \l -> l {campaignLogHeroes = [if i == seat then filter ((/= old) . Just) hs <> [new] else hs | (i, hs) <- zip [0 ..] l.heroes]}
+  ReplaceSeatHero seat old new -> \l ->
+    l
+      { campaignLogHeroes =
+          [if i == seat then filter ((/= old) . Just) hs <> [new] else hs | (i, hs) <- zip [0 ..] l.heroes]
+      }
+
+-- | The Dark of Mirkwood rules, p. 7: continue parts 1–3 using the same log.
+-- Only the route changes; heroes, scores, boons, burdens and all notes survive.
+extendMirkwoodPaths :: CampaignLog -> Maybe CampaignLog
+extendMirkwoodPaths l = do
+  guard (l.campaign == "revised-core")
+  guard (isNothing $ nextScenario l)
+  guard $ all (`elem` map completedScenario l.completed) ["passage-through-mirkwood", "journey-along-the-anduin", "escape-from-dol-guldur"]
+  guard $ not (Map.member CampaignLost l.notes)
+  pure l {campaignLogCampaign = "mirkwood-paths"}
+
+-- | The Caves of Nibin-dûm campaign resolution: one copy in each player's deck
+-- and Campaign Pool at the start of the next campaign. Redemption is stored by
+-- the server separately from the resolved scenario's immutable campaign log.
+carryRangerSenseReward :: Int -> CampaignLog -> CampaignLog -> Maybe CampaignLog
+carryRangerSenseReward seats = carryRangerSenseRewardFor [0 .. seats - 1] seats
+
+carryRangerSenseRewardFor :: [Int] -> Int -> CampaignLog -> CampaignLog -> Maybe CampaignLog
+carryRangerSenseRewardFor chosen seats source destination = do
+  guard (notNull chosen && length chosen == length (ordNub chosen))
+  guard (all (\seat -> seat >= 0 && seat < seats) chosen)
+  guard (seats >= 1 && seats <= 4)
+  guard (notNull $ recorded RangerSenseNextCampaign source)
+  guard (isNothing $ nextScenario source)
+  guard $ not (Map.member CampaignLost source.notes)
+  pure $ foldl' (flip addToPool) destination [PoolCard "dark-of-mirkwood-049" (Just seat) Nothing | seat <- chosen]

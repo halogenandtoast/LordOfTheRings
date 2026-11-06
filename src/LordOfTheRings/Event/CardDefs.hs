@@ -39,6 +39,8 @@ allEventCards =
       , willOfTheWest
       , aTestOfWill
       , standAndFight
+      , noTimeToWaste
+      , rangerSense
       , mendorsSupport
       , aLightInTheDark
       , dwarvenTomb
@@ -1147,3 +1149,9 @@ layOfCourage = eredMithrinSong "EMC182" "Lay of Courage"
 
 rhymeOfTheSlayer :: CardDef
 rhymeOfTheSlayer = eredMithrinSong "EMC183" "Rhyme of the Slayer"
+
+noTimeToWaste :: CardDef
+noTimeToWaste = (event "dark-of-mirkwood-048" "No Time to Waste!" Neutral (StaticCost 0)) {cdCardTraits = setFromList [Boon]}
+
+rangerSense :: CardDef
+rangerSense = (event "dark-of-mirkwood-049" "Ranger Sense" Neutral (StaticCost 0)) {cdCardTraits = setFromList [Boon]}

@@ -226,9 +226,14 @@ publicGameFor seesHand g = hideDecks $ toJSON merged
     attackers <- (<>) <$> (map toTarget <$> select AttackingHero) <*> (map toTarget <$> select AttackingAlly)
     if null attackers
       then pure mempty
-      else fmap mapFromList $ select AnyEnemy >>= traverse \i -> do
-        e <- getEnemy i
-        ((toCard e).id,) <$> getAttackStrength attackers i (toCardDef e)
+      else do
+        enemies <- select AnyEnemy
+        -- A location attacked as an enemy still shows the normal attack preview on
+        -- its location card, without adding an enemy or imaginary hit points to it.
+        actors <- getsGame (map (.id) . filter (isJust . enemyAttackLocation . toAttrs) . toList . (.entities.enemies))
+        fmap mapFromList $ for (enemies <> actors) \i -> do
+          e <- getEnemy i
+          ((toCard e).id,) <$> getAttackStrength attackers i (toCardDef e)
   -- while attackers are asked for, the attack each one choosable would add to the attack
   -- on the enemy, with its bonuses against it
   attackAdding :: ReadGame (Map CardId Int)

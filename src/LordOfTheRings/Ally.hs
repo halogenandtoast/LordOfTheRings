@@ -4,8 +4,11 @@ module LordOfTheRings.Ally (module LordOfTheRings.Ally, module X) where
 
 import Data.Map.Strict qualified as Map
 import LordOfTheRings.Card
+import LordOfTheRings.Objective.CardDefs qualified as Objectives
 import LordOfTheRings.Classes.Entity
 import LordOfTheRings.Classes.RunMessage
+import LordOfTheRings.Ally.Cards.GondorianWarship
+import LordOfTheRings.Ally.Cards.DreadnaughtFleet
 import LordOfTheRings.Ally.Cards.Beorn
 import LordOfTheRings.Ally.Cards.BrokIronfist
 import LordOfTheRings.Ally.Cards.DaughterOfTheNimrodel
@@ -355,7 +358,21 @@ allAllies =
   Map.fromList
     [ (toCardCode builder, card)
     | card@(SomeAllyCard builder) <-
-        [ SomeAllyCard guardOfTheCitadel
+        [ SomeAllyCard gondorianWarship
+        , SomeAllyCard eithiliant
+        , SomeAllyCard eithiliantUpgraded
+        , SomeAllyCard goldenWing
+        , SomeAllyCard goldenWingUpgraded
+        , SomeAllyCard prideOfLebennin
+        , SomeAllyCard prideOfLebenninUpgraded
+        , SomeAllyCard silentMist
+        , SomeAllyCard silentMistUpgraded
+        , SomeAllyCard swanShipOfDolAmroth
+        , SomeAllyCard swanShipOfDolAmrothUpgraded
+        , SomeAllyCard twilightsCall
+        , SomeAllyCard twilightsCallUpgraded
+        , SomeAllyCard (reprintAlly Objectives.corsairSkirmisherShipDreadnaught corsairSkirmisherShip)
+        , SomeAllyCard guardOfTheCitadel
         , SomeAllyCard faramir
         , SomeAllyCard sonOfArnor
         , SomeAllyCard snowbournScout
@@ -678,3 +695,8 @@ allAllies =
         , SomeAllyCard beldis
         ]
     ]
+
+-- Reprinted objective allies retain the new identity when their shared logic runs.
+reprintAlly :: IsAlly a => CardDef -> AllyCard a -> AllyCard a
+reprintAlly def builder =
+  (fmap (overAttrs (\attrs -> attrs {allyCardCode = toCardCode def})) builder) {cbCardDef = def}

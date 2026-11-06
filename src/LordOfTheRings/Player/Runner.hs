@@ -9,6 +9,7 @@ import Data.UUID qualified as UUID
 import LordOfTheRings.Ally (createAlly)
 import LordOfTheRings.Ally.Types (AllyAttrs (allyHandAction))
 import Data.List (elemIndex)
+import LordOfTheRings.Decklist (DeckList (DeckList), deckProblem)
 import LordOfTheRings.Campaign (seatThreatPenalty)
 import LordOfTheRings.Card
 import LordOfTheRings.Classes.Entity
@@ -28,7 +29,7 @@ import LordOfTheRings.Helpers.Window (actionsAndResponsesAllowed, exhaustableCha
 import LordOfTheRings.Hero.Types
 import LordOfTheRings.I18n
 import LordOfTheRings.Keyword (Keyword (Doomed, GuardedBy, Secrecy))
-import LordOfTheRings.Id (AllyId (..), PlayerId (..))
+import LordOfTheRings.Id (AllyId (..), PlayerId (..), CardId (..))
 import LordOfTheRings.Log.Block (LogBlockKind (..))
 import LordOfTheRings.Log.Refs (phaseKey)
 import LordOfTheRings.Matcher
@@ -99,18 +100,17 @@ runPlayer msg player = case msg of
       penalty <- getsGame (maybe 0 (seatThreatPenalty seat) . scenarioCampaign . toAttrs . gameScenario)
       pure $ player & threatL .~ threat + penalty & startingThreatL .~ threat + penalty
     DoStep 5 Setup -> do
+      cannotMulligan <- elem CannotMulligan <$> getModifiers (PlayerTarget player.id)
       -- a response instead of a mulligan, as Galdor of the Havens', takes the question away
       push $ CheckWindows [mkAfter $ SetupHandDrawn player.id]
       push
         $ questionLabel
           (ikey "label.keepStartingHand")
           player.id
-          [ Label (ikey "label.keepHand") []
-          , Label (ikey "label.mulligan") [Mulligan player.id]
-          ]
+          ([Label (ikey "label.keepHand") []] <> [Label (ikey "label.mulligan") [Mulligan player.id] | not cannotMulligan])
       -- a card a hero's Setup put in hand stays there, as Thurindir's side quest (Caleb's
       -- ruling: it is searched for before the setup hand, and kept through a mulligan)
-      size <- getStartingHandSize
+      size <- getStartingHandSizeFor player.id
       let (hand, deck) = splitAt size player.deck
       pure $ player & handL <>~ hand & deckL .~ deck
     DiscardEventsFromHand pid | pid == player.id -> do
@@ -118,7 +118,7 @@ runPlayer msg player = case msg of
       pure $ player & handL .~ rest & discardL %~ (events <>)
     Mulligan pid | pid == player.id -> do
       -- only the setup hand, the last cards in hand, goes back
-      size <- getStartingHandSize
+      size <- getStartingHandSizeFor player.id
       let (kept, drawn) = splitAt (length player.hand - size) player.hand
       send $ ShuffleIntoDeck $ map (.id) drawn
       (hand, deck) <- splitAt size <$> shuffleM (drawn <> player.deck)
@@ -392,6 +392,14 @@ runPlayer msg player = case msg of
     ChooseFromSearchIntoPlay pid _ _ _ _ _ | pid == player.id -> do
       push $ ShufflePlayerDeck pid
       pure player
+    ResolvePillage eid pid | pid == player.id -> do
+      alive <- selectAny $ EnemyWithId eid
+      n <- if alive then getPillage eid else pure 0
+      let discarded = take n player.deck
+      when (notNull discarded) do
+        push $ DiscardTopOfDeck pid n
+        push $ Pillaged eid pid discarded
+      pure player
     DiscardTopOfDeck pid n | pid == player.id -> do
       let (discarded, deck) = splitAt n player.deck
       pushWhen (notNull discarded) $ CheckWindows [mkAfter $ DiscardedFromDeck pid c.id | c <- discarded]
@@ -447,7 +455,21 @@ runPlayer msg player = case msg of
     -- a set-aside card with the Encounter keyword, discarded from the encounter deck, is
     -- set aside no more
     PutInDiscard card | card.owner == Just player.id -> pure $ player & discardL %~ (PlayerCard card :) & setAsideCardsL %~ filter ((/= card.id) . (.id))
+    AddCollectionCardToHand pid code | pid == player.id -> do
+      choices <- collectionEventChoices pid
+      if code `elem` map toCardCode choices
+        then do
+          card <- genPlayerCard (toCardDef code) (Just pid)
+          pure $ player & handL <>~ [PlayerCard card] & deckbuildingCardsL %~ ((code, 1) :)
+        else pure player
     PutInHand card | card.owner == Just player.id -> pure $ player & handL <>~ [PlayerCard card]
+    -- A boon event may remove itself after resolving, when it is already in discard.
+    RemoveFromGame (CardIdTarget cid) ->
+      pure $ player
+        & handL %~ filter ((/= cid) . (.id))
+        & deckL %~ filter ((/= cid) . (.id))
+        & discardL %~ filter ((/= cid) . (.id))
+        & setAsideCardsL %~ filter ((/= cid) . (.id))
     RemoveFromHand pid cid | pid == player.id -> pure $ player & handL %~ filter ((/= cid) . (.id))
     DiscardEncounterCardFromHand pid cid | pid == player.id -> do
       let discarded = [ec | EncounterCard ec <- player.hand, ec.id == cid]
@@ -780,3 +802,39 @@ startingHandSize = 6
 -- | The starting hand, with what changes it, as Gandalf's Delay has each player draw 1 less.
 getStartingHandSize :: HasGame m => m Int
 getStartingHandSize = (\ms -> max 0 $ startingHandSize + sum [n | StartingHandSize n <- ms]) <$> getModifiers GameTarget
+
+-- | Playing through a card action bypasses normal ally/attachment phase timing,
+-- while preserving payment, unique, host, additional-cost and event criteria.
+playableCardsByEffect :: HasGame m => PlayerId -> CardMatcher -> Int -> m [Card]
+playableCardsByEffect pid matcher reduction = do
+  player <- getPlayer pid
+  filterM (\c -> andM [canAffordWith reduction player c, canPlayAtNoCost c, canPayAdditional player c, not <$> cannotPlay pid c, not <$> barredFromHand player c])
+    [c | c <- player.hand, cardMatches matcher c]
+
+-- | Cards an effect can play from the deck, with the stated discount, outside
+-- ordinary ally/attachment timing. Restrictions specific to hand do not apply.
+playableCardsFromDeckByEffect :: HasGame m => PlayerId -> Int -> m [Card]
+playableCardsFromDeckByEffect pid reduction = do
+  player <- getPlayer pid
+  filterM (\c -> andM [canAffordWith reduction player c, canPlayAtNoCost c, canPayAdditional player c, not <$> cannotPlay pid c])
+    [c | c@PlayerCard {} <- player.deck]
+
+-- The physical deck's construction list persists through ordinary movement of
+-- cards. Collection additions extend it; retrieving an existing discard does not.
+collectionEventChoices :: HasGame m => PlayerId -> m [CardDef]
+collectionEventChoices pid = do
+  player <- getPlayer pid
+  let ident = CardId UUID.nil
+  let original = if null player.playerDeckbuildingCards
+        then [(toCardCode c, 1) | c <- player.deck <> player.hand <> player.discard]
+        else player.playerDeckbuildingCards
+      eligible def =
+        cdCardType def == EventType && isJust (lookupEvent (toCardCode def) ident pid)
+          && isNothing (deckProblem $ DeckList player.startingHeroes ((toCardCode def, 1) : original) player.errata player.playerMessengerOfTheKingAlly (toCardCode <$> player.contract))
+  pure $ filter eligible (toList allPlayerCards)
+
+-- Global changes (such as Gandalf's Delay) and this player's ship both apply.
+getStartingHandSizeFor :: HasGame m => PlayerId -> m Int
+getStartingHandSizeFor pid = do
+  mods <- (<>) <$> getModifiers GameTarget <*> getModifiers (PlayerTarget pid)
+  pure $ max 0 $ startingHandSize + sum [n | StartingHandSize n <- mods]

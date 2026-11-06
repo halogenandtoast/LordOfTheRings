@@ -2,6 +2,11 @@
 
 module LordOfTheRings.Treachery (module LordOfTheRings.Treachery, module X) where
 
+import LordOfTheRings.Treachery.Cards.OutOfTheMist
+import LordOfTheRings.Treachery.Cards.DreadnaughtWeather
+import LordOfTheRings.Treachery.Cards.ObsidianArrowsDarkOfMirkwood
+import LordOfTheRings.Treachery.Cards.LostInTheDark
+import LordOfTheRings.Treachery.CardDefs qualified as Cards
 import Data.Map.Strict qualified as Map
 import LordOfTheRings.Card
 import LordOfTheRings.Classes.Entity
@@ -539,6 +544,8 @@ import LordOfTheRings.Treachery.Cards.UnwantedAttention
 import LordOfTheRings.Treachery.Cards.BlackBreath
 import LordOfTheRings.Treachery.Cards.TheRammasIsBreached (theRammasIsBreached)
 import LordOfTheRings.Treachery.Cards.FellBeast (fellBeast)
+import LordOfTheRings.Treachery.Cards.ShinyDistraction (shinyDistraction)
+import LordOfTheRings.Treachery.Cards.GuiltyConscience (guiltyConscience)
 import LordOfTheRings.Treachery.Cards.BlackDart (blackDart)
 import LordOfTheRings.Treachery.Cards.SpellsOfRuin (spellsOfRuin)
 import LordOfTheRings.Treachery.Cards.DreadAndDespair (dreadAndDespair)
@@ -616,7 +623,23 @@ allTreacherys =
   Map.fromList
     [ (toCardCode builder, card)
     | card@(SomeTreacheryCard builder) <-
-        [ SomeTreacheryCard eyesOfTheForest
+        [ SomeTreacheryCard outOfTheMist
+        , SomeTreacheryCard ballistaBarrage
+        , SomeTreacheryCard overworked
+        , SomeTreacheryCard violentTempest
+        , SomeTreacheryCard (reprintTreachery Cards.boardingPartyDreadnaught boardingParty)
+        , SomeTreacheryCard (reprintTreachery Cards.grappledDreadnaught grappled)
+        , SomeTreacheryCard (reprintTreachery Cards.takingOnWaterDreadnaught takingOnWater)
+        , SomeTreacheryCard (reprintTreachery Cards.drivenByShadowDarkOfMirkwood drivenByShadow)
+        , SomeTreacheryCard (reprintTreachery Cards.surprisingSpeedDarkOfMirkwood surprisingSpeed)
+        , SomeTreacheryCard (reprintTreachery Cards.caughtInAWebDarkOfMirkwood caughtInAWeb)
+        , SomeTreacheryCard (reprintTreachery Cards.goblinsAreUponYouDarkOfMirkwood goblinsAreUponYou)
+        , SomeTreacheryCard (reprintTreachery Cards.eyesInTheDarkDarkOfMirkwood eyesInTheDark)
+        , SomeTreacheryCard (reprintTreachery Cards.crumblingRuinDarkOfMirkwood crumblingRuin)
+        , SomeTreacheryCard (reprintTreachery Cards.watchfulEyesDarkOfMirkwood watchfulEyes)
+        , SomeTreacheryCard obsidianArrowsDarkOfMirkwood
+        , SomeTreacheryCard lostInTheDark
+        , SomeTreacheryCard eyesOfTheForest
         , SomeTreacheryCard huntedInHollin
         , SomeTreacheryCard discordAndDistrust
         , SomeTreacheryCard huntingTheRing
@@ -1139,6 +1162,8 @@ allTreacherys =
         , SomeTreacheryCard blackBreath
         , SomeTreacheryCard theRammasIsBreached
         , SomeTreacheryCard fellBeast
+        , SomeTreacheryCard shinyDistraction
+        , SomeTreacheryCard guiltyConscience
         , SomeTreacheryCard blackDart
         , SomeTreacheryCard spellsOfRuin
         , SomeTreacheryCard dreadAndDespair
@@ -1201,3 +1226,8 @@ allTreacherys =
         , SomeTreacheryCard dragonSickness
         ]
     ]
+
+-- | Reuse a printing's implementation with the new card identity and definition.
+reprintTreachery :: IsTreachery a => CardDef -> TreacheryCard a -> TreacheryCard a
+reprintTreachery def builder =
+  (fmap (overAttrs (\attrs -> attrs {treacheryCardCode = toCardCode def})) builder) {cbCardDef = def}

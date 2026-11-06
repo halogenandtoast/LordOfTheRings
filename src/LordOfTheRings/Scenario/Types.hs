@@ -3,6 +3,7 @@
 module LordOfTheRings.Scenario.Types (module LordOfTheRings.Scenario.Types) where
 
 import LordOfTheRings.Campaign (CampaignLog)
+import LordOfTheRings.Epic.Types (EpicReplica)
 import Data.Aeson.KeyMap qualified as KeyMap
 import Data.Map.Strict qualified as Map
 import LordOfTheRings.Card
@@ -36,7 +37,7 @@ data Scenario = forall a. (IsScenario a) => Scenario a
 
 -- | How hard the game is dealt: easy mode thins the encounter deck and gives each hero a
 -- resource, nightmare mode builds the scenario's nightmare deck.
-data GameMode = NormalMode | EasyMode | NightmareMode
+data GameMode = NormalMode | EasyMode | NightmareMode | HardMode
   deriving stock (Show, Eq, Ord, Enum, Bounded, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
@@ -63,6 +64,7 @@ nightmareDeck setup set removals = NightmareDeck (toCardCode setup) set [(toCard
 
 data ScenarioAttrs = ScenarioAttrs
   { scenarioId :: ScenarioId
+  , scenarioEpic :: Maybe EpicReplica
   , scenarioName :: Text
   , scenarioEncounterDeck :: [EncounterCard]
   , scenarioEncounterDiscard :: [EncounterCard]
@@ -145,7 +147,7 @@ instance ToJSON ScenarioAttrs where
   toJSON = genericToJSON (aesonOptions $ Just "scenario")
 
 instance FromJSON ScenarioAttrs where
-  parseJSON = genericParseJSON (aesonOptions $ Just "scenario") . withDefaults [("setAside", toJSON ([] :: [EncounterCard])), ("orcGuards", object []), ("nightmareDeck", Null), ("meta", Null), ("hiddenCards", object []), ("heading", Null), ("corsairDeck", Null), ("corsairDiscard", toJSON ([] :: [EncounterCard])), ("unchartedDeck", toJSON ([] :: [EncounterCard])), ("grottoDeck", toJSON ([] :: [EncounterCard])), ("campaign", Null), ("campaignCardFlipped", toJSON False), ("outOfPlayResources", object []), ("guardedPlayerCards", object []), ("cavesDeck", toJSON ([] :: [EncounterCard])), ("evilCreaturesDeck", Null), ("evilCreaturesDiscard", toJSON ([] :: [EncounterCard])), ("gainedVictoryPoints", object []), ("powerOfMordorDeck", toJSON ([] :: [EncounterCard])), ("sackDeck", toJSON ([] :: [EncounterCard])), ("burdenDeck", toJSON ([] :: [EncounterCard])), ("inResolution", toJSON False), ("heldReset", Null)] . withMode
+  parseJSON = genericParseJSON (aesonOptions $ Just "scenario") . withDefaults [("epic", Null), ("setAside", toJSON ([] :: [EncounterCard])), ("orcGuards", object []), ("nightmareDeck", Null), ("meta", Null), ("hiddenCards", object []), ("heading", Null), ("corsairDeck", Null), ("corsairDiscard", toJSON ([] :: [EncounterCard])), ("unchartedDeck", toJSON ([] :: [EncounterCard])), ("grottoDeck", toJSON ([] :: [EncounterCard])), ("campaign", Null), ("campaignCardFlipped", toJSON False), ("outOfPlayResources", object []), ("guardedPlayerCards", object []), ("cavesDeck", toJSON ([] :: [EncounterCard])), ("evilCreaturesDeck", Null), ("evilCreaturesDiscard", toJSON ([] :: [EncounterCard])), ("gainedVictoryPoints", object []), ("powerOfMordorDeck", toJSON ([] :: [EncounterCard])), ("sackDeck", toJSON ([] :: [EncounterCard])), ("burdenDeck", toJSON ([] :: [EncounterCard])), ("inResolution", toJSON False), ("heldReset", Null)] . withMode
    where
     -- a game saved before modes kept only whether it was easy
     withMode = \case
@@ -158,6 +160,7 @@ scenario f sid name =
   f
     ScenarioAttrs
       { scenarioId = sid
+      , scenarioEpic = Nothing
       , scenarioName = name
       , scenarioEncounterDeck = []
       , scenarioEncounterDiscard = []

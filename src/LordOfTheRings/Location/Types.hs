@@ -30,7 +30,11 @@ class
   , EntityId a ~ LocationId
   , EntityAttrs a ~ LocationAttrs
   )
-  => IsLocation a
+  => IsLocation a where
+  -- Resources printed as entering with the location are present before any entry
+  -- windows, including when the card was put into play without being revealed.
+  initialResourcesPerPlayer :: a -> Int
+  initialResourcesPerPlayer _ = 0
 
 type LocationCard a = CardBuilder LocationId a
 

@@ -1,4 +1,15 @@
 {
+  "epicImport": "An Epic group belongs to a shared event and cannot be imported as an independent game.",
+  "epicDifficulty": "Choose Easy, Normal, or Hard for this Epic group.",
+  "epicName": "Enter a name for the event or group.",
+  "epicStarted": "This Epic event has already started; its groups and player count are fixed.",
+  "epicNotReady": "Create at least one group and fill every group’s seats before starting the event.",
+  "epicStartTogether": "Epic groups start together from the event lobby. A group cannot be redealt or deleted independently after the event starts.",
+  "epicUndoFloor": "This move affects another Epic group and cannot be undone independently.",
+  "noHardMode": "Hard Mode is available only for The Hunt for the Dreadnaught and cannot be combined with another difficulty.",
+  "rewardSeats": "Choose each recipient once, using a player seat in the new campaign.",
+  "rewardUnavailable": "This campaign has no available Ranger Sense reward for a new campaign, or it has already been used.",
+  "cannotExtendCampaign": "Only a completed three-scenario Mirkwood Paths campaign can continue into The Dark of Mirkwood.",
   "sharedHeroes": "Heroes are unique, and more than one deck brings {heroes}.",
   "barredHeroes": "This scenario's rules keep {heroes} out of play.",
   "scenarioDeckSize": "This scenario's rules allow decks of no more than {n} cards; one has {count}.",
@@ -24,6 +35,7 @@
   "contractBarsAllies": "{contract}: your deck cannot include ally cards.",
   "contractBarsAttachments": "{contract}: your deck cannot include attachments.",
   "contractCopies": "{contract} allows no more than {n} copies of a card by title: {cards}.",
+  "contractMinimumDeckSize": "{contract} needs a deck of at least {n} cards; this one has {count}.",
   "contractDeckSize": "{contract} needs a deck of exactly {n} cards; this one has {count}.",
   "contractSphereCount": "{contract} needs exactly {n} cards from each of Leadership, Lore, Spirit and Tactics: {spheres} is off.",
   "contractHeroSpheres": "{contract}: each of your heroes must belong to a different sphere.",
@@ -40,6 +52,8 @@
   "fallenHeroes": "These heroes cannot be used in this scenario of the campaign (fallen, or not yet joined): {heroes}",
   "noSuchCampaign": "No such campaign.",
   "campaignInProgress": "Finish the scenario being played first.",
+  "campaignGameLocked": "This scenario is locked because the campaign has advanced.",
+  "deleteCampaignInstead": "Delete the whole campaign instead of an individual scenario.",
   "campaignOver": "The campaign is over.",
   "cannotSpendXp": "No XP is left to spend, or that card has no checkbox left."
 }

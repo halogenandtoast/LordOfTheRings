@@ -8,6 +8,7 @@ import Data.Aeson.Types (Parser)
 import LordOfTheRings.Ability.Types
 import LordOfTheRings.Campaign (CampaignLogUpdate)
 import LordOfTheRings.Card
+import LordOfTheRings.Epic.Types (SharedEventState, SharedKey, GroupOrdinal, EpicEffect, EpicTargetQuery, EpicCommand)
 import LordOfTheRings.Effect
 import LordOfTheRings.Heading (HeadingShift)
 import LordOfTheRings.I18n (ikeyWith, intVar)
@@ -310,12 +311,21 @@ data Message
   | {- | the player searches the encounter deck and discard pile for a matching card to
     add to the staging area, then the deck is shuffled
     -}
-    SearchEncounterDeckAndDiscard PlayerId Target CardMatcher
+    SearchDifferentEncounterCards [PlayerId] Target CardMatcher Bool [CardCode]
+  | SearchEncounterDeckAndDiscard PlayerId Target CardMatcher
   | ShuffleDeck DeckSignifier
+  | AddCollectionCardToHand PlayerId CardCode
+  | ChooseEpicTarget PlayerId CardCode EpicTargetQuery EpicEffect
+  | ResolveEpicEffect CardCode EpicEffect Target
+  | QueueEpicCommand GroupOrdinal CardCode EpicEffect Target
+  | ApplyEpicCommand EpicCommand
+  | SyncEpic SharedEventState
+  | ContributeShared SharedKey Int
   | CheckWindows [Window]
   | ResponseWindow [Window] [PlayerId] [(Source, Int)] Int
   | UseAbility PlayerId Ability [Window]
   | UseCardAbility PlayerId Source Int [Window]
+  | FinishAttachmentAbility AttachmentId
   | CreateEffect Effect
   | -- | the lasting effects of that duration end, as the round's do once the round's end
     -- has resolved
@@ -374,6 +384,7 @@ data Message
   | -- | the player divides the damage among characters they control, a point at a time,
     -- the points assigned so far kept; it is dealt once all are assigned
     DealDamageDivided Source PlayerId Int [Target]
+  | DamageControlledShip Source PlayerId
   | -- | as 'DealDamageDivided', among the characters given: the player divides the damage,
     -- the points assigned so far kept
     DealDamageDividedAmong Source PlayerId [Target] Int [Target]
@@ -536,6 +547,8 @@ data Message
     play, each with the modifiers until the end of the round, then shuffles their deck
     -}
     ChooseFromSearchIntoPlay PlayerId Source [Card] CardMatcher Int [ModifierType]
+  | ResolvePillage EnemyId PlayerId
+  | Pillaged EnemyId PlayerId [Card]
   | DiscardTopOfDeck PlayerId Int
   | -- | an enemy card put into play engaged with the player
     PutEnemyIntoPlayEngaged PlayerId EncounterCard
@@ -741,6 +754,8 @@ data Message
     ResolveShadowCard CardId EnemyId PlayerId [Target]
   | AttackDamage EnemyId Target
   | AddToEncounterDiscard [EncounterCard]
+  | BeginLocationAttack PlayerId LocationId
+  | EndLocationAttack EnemyId
   | PlayerAttacks PlayerId
   | -- | the player chooses which of these enemies to attack next
     ChooseAttackTarget PlayerId [EnemyId]
