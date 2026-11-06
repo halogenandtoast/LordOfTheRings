@@ -293,7 +293,7 @@ runPlayer msg player = case msg of
     PlayTopOfDeckAtNoCostOrBottom pid source | pid == player.id -> do
       for_ (headMay player.deck) \case
         top@(PlayerCard pc) -> do
-          able <- canPlayAtNoCost top
+          able <- canPlayAtNoCost pid top
           -- an ally or attachment is put into play, not played: only an event is played
           -- (ruling, Vilya)
           let putIntoPlay = top.cardType == AllyType || isAttachmentType top.cardType
@@ -618,7 +618,7 @@ discardPlayers pid c = do
   pure [t | Modifier source (MayPlayFromDiscard m) <- mods, cardMatches m c, Just t <- [sourceTarget source]]
 
 canPlay :: HasGame m => Player -> Card -> m Bool
-canPlay p c = andM [canAfford p c, passesUnique c, correctPhase c, hasPlayableHost c, canPayAdditional p c, not <$> cannotPlay p.id c, not <$> barredFromHand p c]
+canPlay p c = andM [canAfford p c, passesUnique c, correctPhase p.id c, hasPlayableHost p.id c, canPayAdditional p c, not <$> cannotPlay p.id c, not <$> barredFromHand p c]
 
 -- | Whether the card, in the player's hand, gives itself 'CannotBePlayedFromHand'.
 barredFromHand :: HasGame m => Player -> Card -> m Bool
@@ -651,7 +651,7 @@ cannotPlay pid c =
 canAfford :: HasGame m => Player -> Card -> m Bool
 canAfford p c = do
   -- an attachment costs what the host that lowers it most leaves
-  discount <- foldr max 0 <$> (traverse (attachDiscount c) =<< attachableHosts c)
+  discount <- foldr max 0 <$> (traverse (attachDiscount c) =<< attachableHosts p.id c)
   canAffordWith discount p c
 
 -- | Whether the player can afford the card with its cost lowered by so much, as the host
@@ -729,52 +729,52 @@ payerHeroes pid cards = do
   others <- concatMapM select [m | PayableFromHeroes m <- mods]
   traverse getHero (nub $ own <> others)
 
-hasPlayableHost :: HasGame m => Card -> m Bool
-hasPlayableHost c
+hasPlayableHost :: HasGame m => PlayerId -> Card -> m Bool
+hasPlayableHost pid c
   | PlayerCard pc <- c
   , isAttachmentType c.cardType
-  , attachMatcherFor (cardOwner pc) (toCardCode c) `notElem` [PlayIntoStagingArea, PlayIntoPlayArea] =
-      andM [passesCriteria (attachmentCriteriaFor pc), notNull <$> playableCardHosts (cardOwner pc) (toCardCode c)]
-  | otherwise = hasHost c
+  , attachMatcherFor pid (toCardCode c) `notElem` [PlayIntoStagingArea, PlayIntoPlayArea] =
+      andM [passesCriteria (attachmentCriteriaFor pid pc), notNull <$> playableCardHosts pid (toCardCode c)]
+  | otherwise = hasHost pid c
 
-hasHost :: HasGame m => Card -> m Bool
-hasHost c
+hasHost :: HasGame m => PlayerId -> Card -> m Bool
+hasHost pid c
   | PlayerCard pc <- c
   , isAttachmentType c.cardType =
-      if attachMatcherFor (cardOwner pc) (toCardCode c) `elem` [PlayIntoStagingArea, PlayIntoPlayArea]
+      if attachMatcherFor pid (toCardCode c) `elem` [PlayIntoStagingArea, PlayIntoPlayArea]
         then pure True
         -- an attachment's play criteria are checked here too, with its hosts
-        else andM [passesCriteria (attachmentCriteriaFor pc), notNull <$> attachableHosts c]
+        else andM [passesCriteria (attachmentCriteriaFor pid pc), notNull <$> attachableHosts pid c]
   | otherwise = pure True
 
--- | Where an attachment card could go, for its owner, none for any other card.
-attachableHosts :: HasGame m => Card -> m [Target]
-attachableHosts = \case
-  c@(PlayerCard pc) | isAttachmentType c.cardType -> cardHosts (cardOwner pc) (toCardCode c)
+-- | Where an attachment could go when played by this player.
+attachableHosts :: HasGame m => PlayerId -> Card -> m [Target]
+attachableHosts pid = \case
+  c@(PlayerCard _) | isAttachmentType c.cardType -> cardHosts pid (toCardCode c)
   _ -> pure []
 
 cardOwner :: PlayerCard -> PlayerId
 cardOwner = fromMaybe (PlayerId UUID.nil) . (.owner)
 
-correctPhase :: HasGame m => Card -> m Bool
-correctPhase (PlayerCard card) = case cdCardType (toCardDef card) of
+correctPhase :: HasGame m => PlayerId -> Card -> m Bool
+correctPhase pid (PlayerCard card) = case cdCardType (toCardDef card) of
   AllyType -> isPhase PlanningPhase
   AttachmentType -> isPhase PlanningPhase
   TreasureType -> isPhase PlanningPhase
   PlayerSideQuestType -> isPhase PlanningPhase
   -- an action event can be played in any action window; responses are offered by theirs
-  EventType -> actionEventPlayable card
+  EventType -> actionEventPlayable pid card
   _ -> pure False
-correctPhase (EncounterCard _) = pure False
+correctPhase _ (EncounterCard _) = pure False
 
 -- | Whether an event is an action whose criteria let it be played now.
-actionEventPlayable :: HasGame m => PlayerCard -> m Bool
-actionEventPlayable card = do
+actionEventPlayable :: HasGame m => PlayerId -> PlayerCard -> m Bool
+actionEventPlayable pid card = do
   allowed <- actionsAndResponsesAllowed
-  if allowed then actionEventPlayableAllowed card else pure False
+  if allowed then actionEventPlayableAllowed pid card else pure False
 
-actionEventPlayableAllowed :: HasGame m => PlayerCard -> m Bool
-actionEventPlayableAllowed card = case card.owner >>= lookupEvent (toCardCode card) card.id of
+actionEventPlayableAllowed :: HasGame m => PlayerId -> PlayerCard -> m Bool
+actionEventPlayableAllowed pid card = case lookupEvent (toCardCode card) card.id pid of
   Just e | Nothing <- (toAttrs e).eventWindow -> passesCriteria (toAttrs e).eventCriteria
   Just e | Just criteria <- (toAttrs e).eventActionCriteria -> passesCriteria criteria
   _ -> pure False
@@ -782,11 +782,11 @@ actionEventPlayableAllowed card = case card.owner >>= lookupEvent (toCardCode ca
 {- | Whether a card could be played with nothing to pay for it, at any time: as the
 unique rule, an attachment's hosts and an event's criteria allow.
 -}
-canPlayAtNoCost :: HasGame m => Card -> m Bool
-canPlayAtNoCost c = andM [passesUnique c, hasHost c, eventOk]
+canPlayAtNoCost :: HasGame m => PlayerId -> Card -> m Bool
+canPlayAtNoCost pid c = andM [passesUnique c, hasHost pid c, eventOk]
  where
   eventOk = case c of
-    PlayerCard pc | c.cardType == EventType -> actionEventPlayable pc
+    PlayerCard pc | c.cardType == EventType -> actionEventPlayable pid pc
     _ -> pure True
 
 isPhase :: HasGame m => Phase -> m Bool
@@ -841,7 +841,7 @@ getStartingHandSize = (\ms -> max 0 $ startingHandSize + sum [n | StartingHandSi
 playableCardsByEffect :: HasGame m => PlayerId -> CardMatcher -> Int -> m [Card]
 playableCardsByEffect pid matcher reduction = do
   player <- getPlayer pid
-  filterM (\c -> andM [canAffordWith reduction player c, canPlayAtNoCost c, canPayAdditional player c, not <$> cannotPlay pid c, not <$> barredFromHand player c])
+  filterM (\c -> andM [canAffordWith reduction player c, canPlayAtNoCost pid c, canPayAdditional player c, not <$> cannotPlay pid c, not <$> barredFromHand player c])
     [c | c <- player.hand, cardMatches matcher c]
 
 -- | Cards an effect can play from the deck, with the stated discount, outside
@@ -849,7 +849,7 @@ playableCardsByEffect pid matcher reduction = do
 playableCardsFromDeckByEffect :: HasGame m => PlayerId -> Int -> m [Card]
 playableCardsFromDeckByEffect pid reduction = do
   player <- getPlayer pid
-  filterM (\c -> andM [canAffordWith reduction player c, canPlayAtNoCost c, canPayAdditional player c, not <$> cannotPlay pid c])
+  filterM (\c -> andM [canAffordWith reduction player c, canPlayAtNoCost pid c, canPayAdditional player c, not <$> cannotPlay pid c])
     [c | c@PlayerCard {} <- player.deck]
 
 -- The physical deck's construction list persists through ordinary movement of

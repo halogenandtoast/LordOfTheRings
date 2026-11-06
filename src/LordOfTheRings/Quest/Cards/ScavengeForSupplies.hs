@@ -37,7 +37,7 @@ instance RunMessage ScavengeForSupplies where
           causedBy attrs
           targets tied \pid -> searchEncounterDeckAndDiscardToEngage pid attrs troll
         eachPlayer \pid -> do
-          hand <- filterM canPlayAtNoCost . (.hand) =<< getPlayer pid
+          hand <- filterM (canPlayAtNoCost pid) . (.hand) =<< getPlayer pid
           unless (null hand) $ chooseOneM pid do
             questionLabeled "scavengeForSupplies.play"
             causedBy attrs

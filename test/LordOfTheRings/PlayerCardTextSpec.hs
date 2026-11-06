@@ -276,11 +276,11 @@ spec = describe "Player card text" do
       let houses = case card of
             PlayerCard pc -> pc
             _ -> error "a player card"
-      actionEventPlayable houses `shouldReturn` False
+      actionEventPlayable pid houses `shouldReturn` False
       _ <- putInDiscard pid Allies.henamarthRiversong
-      actionEventPlayable houses `shouldReturn` False
+      actionEventPlayable pid houses `shouldReturn` False
       _ <- putInDiscard pid Heroes.gimli
-      actionEventPlayable houses `shouldReturn` True
+      actionEventPlayable pid houses `shouldReturn` True
 
   describe "Tides of Fate" do
     it "gives +3 attack for the character's next attack only" . gameTest $ \_ -> do

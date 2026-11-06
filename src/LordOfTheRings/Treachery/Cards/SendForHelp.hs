@@ -66,7 +66,7 @@ instance RunMessage SendForHelp where
             causedBy attrs
             showing deck
             for_ [pc | PlayerCard pc <- deck] \pc -> targeting (CardIdTarget pc.id) do
-              playable <- canPlayAtNoCost (PlayerCard pc)
+              playable <- canPlayAtNoCost pid (PlayerCard pc)
               chooseOneM pid do
                 questionLabeled "sendForHelp.drawOrPlay"
                 causedBy attrs

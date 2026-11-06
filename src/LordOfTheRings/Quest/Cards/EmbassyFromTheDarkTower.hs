@@ -59,7 +59,7 @@ instance RunMessage EmbassyFromTheDarkTower where
       pairUp [] faceup encounter
       pure q
     DoStep 1 (PlayAtNoCost owner pc) -> do
-      playable <- canPlayAtNoCost (PlayerCard pc)
+      playable <- canPlayAtNoCost owner (PlayerCard pc)
       if playable then playAtNoCost owner pc else putInDiscard pc
       pure q
     _ -> EmbassyFromTheDarkTower <$> runMessage msg attrs

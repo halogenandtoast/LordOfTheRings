@@ -6,6 +6,7 @@ import LordOfTheRings.Decklist (loadPlayer)
 import LordOfTheRings.Ally.CardDefs qualified as Allies
 import LordOfTheRings.Attachment.CardDefs qualified as Attachments
 import LordOfTheRings.Event.CardDefs qualified as Events
+import LordOfTheRings.Hero.CardDefs qualified as Heroes
 import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Helpers.Window (travelableLocations, getActionAbilities, shadowCardCancelable)
 import LordOfTheRings.Phase (Phase (PlanningPhase, EncounterPhase, RefreshPhase, CombatPhase, QuestPhase, TravelPhase))
@@ -20,8 +21,8 @@ import LordOfTheRings.Effect (Effect (..), EffectDuration (UntilEndOfRound))
 import LordOfTheRings.Helpers.Character (getAttackStrength, getWillpower)
 import LordOfTheRings.Helpers.Staging (getEnemyAttack, getEnemyDefense, getEnemyThreat, getLocationThreat, getLocationQuestPoints)
 import LordOfTheRings.Keyword (Keyword (Spectral))
-import LordOfTheRings.Matcher (getObjective, getThreat, getEnemy, getAlly, getHero, heroHasResourceIcon, HeroMatcher (HeroWithSphere), EnemyMatcher (EnemyWithEngagementCostAboveThreatOf), Query (select), CardMatcher (CardWithType))
-import LordOfTheRings.Modifier (ModifierType (AttackModifier, WillpowerModifier, AttackBonusAgainst, LoseKeyword, Blank, CannotPlay, RevealedEncounterCardsGainDoomed, GainResourceIcon, CannotExhaust, GainResourceIconFor, PrintedResourceIconForCard, SkipPhase, AttackBonusAgainstMatching, EnteredPlayThisRound))
+import LordOfTheRings.Matcher (getObjective, getThreat, getEnemy, getAlly, getHero, heroHasResourceIcon, HeroMatcher (HeroWithSphere), EnemyMatcher (EnemyWithEngagementCostAboveThreatOf), Query (select), CardMatcher (CardWithType, AnyCard))
+import LordOfTheRings.Modifier (ModifierType (AttackModifier, WillpowerModifier, AttackBonusAgainst, LoseKeyword, Blank, CannotPlay, RevealedEncounterCardsGainDoomed, GainResourceIcon, CannotExhaust, GainResourceIconFor, PrintedResourceIconForCard, SkipPhase, AttackBonusAgainstMatching, EnteredPlayThisRound, ReduceCostToAttach))
 import LordOfTheRings.Scenario.Scenarios.TheStoneOfErech.Helpers (NightTime (..), currentNight, currentNightObjective)
 import LordOfTheRings.Trait (Trait (Oathbreaker))
 import LordOfTheRings.Window (WindowType (RoundEnds), mkWhen)
@@ -266,6 +267,39 @@ spec = describe "Stone of Erech" do
       run $ Discard GameSource (toTarget att)
       (.discard) <$> getPlayer one `shouldReturn` [card]
       (.discard) <$> getPlayer two `shouldReturn` []
+
+    for_ [False, True] \eligibleHolder ->
+      it ("checks passed Lembas against the holder's heroes: " <> show eligibleHolder) . twoPlayerTest testDeck $ \one two -> do
+        run . PutHeroIntoPlay (if eligibleHolder then two else one) =<< genPlayerCard Heroes.glorfindel (Just $ if eligibleHolder then two else one)
+        card <- putCardIntoHand one Attachments.lembas
+        run $ GiveFromHand one card.id two
+        canPlayAtNoCost two card `shouldReturn` eligibleHolder
+
+    it "checks a passed action event against the holder's allies" . twoPlayerTest testDeck $ \one two -> do
+      _ <- putAllyIntoPlay one Allies.guardOfTheCitadel
+      _ <- putAllyIntoPlay one Allies.snowbournScout
+      card <- putCardIntoHand one Events.aVeryGoodTale
+      run $ GiveFromHand one card.id two
+      canPlayAtNoCost two card `shouldReturn` False
+      _ <- putAllyIntoPlay two Allies.guardOfTheCitadel
+      _ <- putAllyIntoPlay two Allies.snowbournScout
+      canPlayAtNoCost two card `shouldReturn` True
+
+    it "offers only the holder's heroes for a passed Resourceful" . twoPlayerTest testDeck $ \one two -> do
+      card <- putCardIntoHand one Attachments.resourceful
+      run $ GiveFromHand one card.id two
+      hosts <- attachableHosts two card
+      expected <- traverse (heroOf two) ["01002", "01007", "01012"]
+      sort hosts `shouldBe` sort expected
+
+    it "uses the holder's eligible attachment hosts when calculating discounts" . twoPlayerTest testDeck $ \one two -> do
+      card <- putCardIntoHand one Attachments.resourceful
+      run $ GiveFromHand one card.id two
+      hero <- heroOf two "01012"
+      run $ PlaceTokens GameSource hero Resource 1
+      run $ CreateEffect (Effect GameSource hero [ReduceCostToAttach AnyCard 3] UntilEndOfRound)
+      holder <- getPlayer two
+      canAfford holder card `shouldReturn` True
 
     it "passes original hands left simultaneously and preserves card ownership" . threePlayerErechTest $ \one two three -> do
       a <- putCardIntoHand one Allies.guardOfTheCitadel

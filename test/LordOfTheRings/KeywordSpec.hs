@@ -91,7 +91,7 @@ spec = describe "Keywords and limits" do
 
     it "can be with one" . gameTestWith (fromJustNote "no deck" $ lookup "elves-of-lorien" starterDecks) $ \pid -> do
       PlayerCard pc <- putCardIntoHand pid Attachments.lembas
-      passesCriteria (attachmentCriteriaFor pc) `shouldReturn` True
+      passesCriteria (attachmentCriteriaFor pid pc) `shouldReturn` True
 
   describe "Sentinel" do
     it "is offered to its controller once the attacked player declares no defender" . twoPlayerTest (coreDeck "tactics") $ \one two -> do

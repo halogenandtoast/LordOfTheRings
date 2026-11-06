@@ -54,7 +54,7 @@ instance RunMessage TheCouncilOfElrond where
     assign :: ReverseQueue m => [Fate] -> [(PlayerId, PlayerCard)] -> m ()
     assign (fate : fates) cards@(_ : _) = do
       lead <- getLead
-      playable <- filterM (canPlayAtNoCost . PlayerCard . snd) cards
+      playable <- filterM (\(pid, pc) -> canPlayAtNoCost pid (PlayerCard pc)) cards
       -- a card that cannot be played is still the one chosen to be: it is discarded
       let eligible = if fate == Play && notNull playable then playable else cards
       chooseOneM lead do

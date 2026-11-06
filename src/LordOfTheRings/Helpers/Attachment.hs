@@ -16,16 +16,16 @@ import LordOfTheRings.Modifier
 import LordOfTheRings.Prelude
 import LordOfTheRings.Target
 
--- | What an attachment card can be attached to, read from its builder, for its owner, as
+-- | What an attachment card can be attached to, read from its builder, for the player, as
 -- Resourceful's "a hero you control" reads.
 attachMatcherFor :: PlayerId -> CardCode -> AttachMatcher
 attachMatcherFor owner code =
   (toAttrs $ lookupAttachment code (CardId UUID.nil) (AttachmentId UUID.nil) owner).attachTo
 
--- | What must be true for the player card, an attachment, to be played by its owner.
-attachmentCriteriaFor :: PlayerCard -> Criterion
-attachmentCriteriaFor card =
-  (toAttrs $ lookupAttachment (toCardCode card) card.id (AttachmentId UUID.nil) (fromMaybe (PlayerId UUID.nil) card.owner)).attachmentCriteria
+-- | What must be true for an attachment to be played by this player.
+attachmentCriteriaFor :: PlayerId -> PlayerCard -> Criterion
+attachmentCriteriaFor pid card =
+  (toAttrs $ lookupAttachment (toCardCode card) card.id (AttachmentId UUID.nil) pid).attachmentCriteria
 
 -- | Where the attachment card can go: its matcher's hosts, less those already carrying
 -- a copy of a card limited to 1 per character, and, for a restricted card, those that
