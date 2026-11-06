@@ -67,19 +67,23 @@ export const toView = (data: GameData, defs: Record<string, CardDef>, previous: 
   const pendingResources = pendingResourcePayments(game.question)
 
   // The card an entity target refers to, so a choice can highlight it on the board.
+  // an ally or location that just left play, kept while its own responses to leaving are
+  // asked, as Goblin Trail's once it is explored
+  const departedEntity = (target: Target | undefined): Entity | undefined =>
+    target?.tag === 'AllyTarget' ? game.leftPlay?.[target.contents ?? '']
+      : target?.tag === 'LocationTarget' ? game.leftPlayLocations?.[target.contents ?? ''] : undefined
+
   const targetCardId = (target: Target | undefined): string | null => {
     if (!target?.contents) return null
     if (target.tag === 'CardIdTarget') return target.contents
     const kind = targetKinds[target.tag]
-    // an ally that just left play is still named, as its own response is asked
-    const departed = target.tag === 'AllyTarget' ? game.leftPlay?.[target.contents] : undefined
-    return kind ? entities[kind]?.[target.contents]?.cardId ?? departed?.cardId ?? null : null
+    return kind ? entities[kind]?.[target.contents]?.cardId ?? departedEntity(target)?.cardId ?? null : null
   }
 
   const targetName = (target: Target | undefined) => {
     if (target?.tag === 'PlayerTarget') return game.players[target.contents ?? '']?.name ?? ''
     const cardId = targetCardId(target)
-    const entity = [...Object.values(entities), game.leftPlay ?? {}].flatMap((es) => Object.values(es)).find((e) => e.cardId === cardId)
+    const entity = [...Object.values(entities), game.leftPlay ?? {}, game.leftPlayLocations ?? {}].flatMap((es) => Object.values(es)).find((e) => e.cardId === cardId)
     return entity ? def(entity.cardCode).name ?? '' : ''
   }
 
@@ -381,7 +385,7 @@ export const toView = (data: GameData, defs: Record<string, CardDef>, previous: 
             ? entities[targetKinds[sourceCard.tag]]?.[sourceCard.contents ?? ''] : undefined
           const tooltip = sourceEntity?.cardCode === '02095' && [1, 2].includes(ui.ability?.abilityIndex ?? 0)
             ? ikey(`label.boromir.action${ui.ability!.abilityIndex}`) : undefined
-          const departed = source?.tag === 'AllySource' && source.contents && game.leftPlay?.[source.contents]
+          const departed = sourceEntity ? undefined : departedEntity(sourceCard)
           const seen = Object.values(game.players).some((p) => [...(p.hand ?? []), ...p.discard].some((c) => c.id === cardId))
           if (departed && !seen) return { index, label, targetId: null, action: label, card: card(departed.cardCode, departed.cardId) }
           // a button too, naming the card in the action box and showing it on hover

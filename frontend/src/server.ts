@@ -149,6 +149,8 @@ export interface ServerGame {
   }
   /** Allies that just left play, kept while their own responses to leaving are asked. */
   leftPlay?: Record<string, Entity>
+  /** Locations that just left play, as an explored one, kept while their responses are asked. */
+  leftPlayLocations?: Record<string, Entity>
   /** Cards being paid for, by cost id. */
   activeCosts: Record<string, { player: string; card: Card }>
   committedWillpower: number
