@@ -43,7 +43,7 @@ def icon(match):
 
 
 def normalize_text(value):
-    return value.replace('Nazg√l', 'Nazgûl').replace('Rozbójnik', 'Brigand').replace('Créature', 'Creature').replace('Mort-vivant', 'Undead').replace('[PerPlayer]', '[per-player]').replace('Wiched Willow', 'Wicked Willow').replace('2..', '2.').replace('Doomed 3. instead', 'Doomed 3 instead')
+    return value.replace('Nazg√l', 'Nazgûl').replace('Rozbójnik', 'Brigand').replace('Créature', 'Creature').replace('Mort-vivant', 'Undead').replace('[PerPlayer]', '[per-player]').replace('Wiched Willow', 'Wicked Willow').replace('2..', '2.').replace('Doomed 3. instead', 'Doomed 3 instead').replace("Tarlang's Next", "Tarlang's Neck").replace('must engaged all enemies', 'must engage all enemies').replace('Exhuast a hero', 'Exhaust a hero').replace('The Stone of Erech is that active location', 'The Stone of Erech is the active location')
 
 
 def clean(value, rich=False):
