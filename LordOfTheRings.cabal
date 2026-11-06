@@ -3238,6 +3238,7 @@ library
       LordOfTheRings.Scenario.Scenarios.TheBattleOfLakeTown
       LordOfTheRings.Scenario.Scenarios.TheBattleOfLakeTown.Helpers
       LordOfTheRings.Scenario.Scenarios.TheBattleOfLakeTown.Meta
+      LordOfTheRings.Scenario.Scenarios.TheBattleOfLakeTown.Shadow
       LordOfTheRings.Scenario.Scenarios.TheBattleOfThePelennorFields
       LordOfTheRings.Scenario.Scenarios.TheBattleOfThePelennorFields.Helpers
       LordOfTheRings.Scenario.Scenarios.TheBlackGateOpens
@@ -3430,6 +3431,7 @@ library
       LordOfTheRings.Treachery.Cards.ChaosInTheCavern
       LordOfTheRings.Treachery.Cards.ChaosInTheNight
       LordOfTheRings.Treachery.Cards.ChillOfTheRoots
+      LordOfTheRings.Treachery.Cards.CloseToTheFlame
       LordOfTheRings.Treachery.Cards.ClosingIn
       LordOfTheRings.Treachery.Cards.ColdFromAngmar
       LordOfTheRings.Treachery.Cards.CollateralDamage
@@ -3778,6 +3780,7 @@ library
       LordOfTheRings.Treachery.Cards.SavageFray
       LordOfTheRings.Treachery.Cards.SaveUs
       LordOfTheRings.Treachery.Cards.ScalingLadders
+      LordOfTheRings.Treachery.Cards.ScorchingBlast
       LordOfTheRings.Treachery.Cards.ScorchingSun
       LordOfTheRings.Treachery.Cards.ScourgeOfMordor
       LordOfTheRings.Treachery.Cards.SecretCultist

@@ -14,7 +14,7 @@ allTreacheryCards =
   Map.fromList $
     map
       (\def -> (cdCardCode def, def))
-      [cutOffOsgiliath, darkPursuit, massingAtOsgiliath, ballistaBarrage, boardingPartyDreadnaught, grappledDreadnaught, outOfTheMist, overworked, takingOnWaterDreadnaught, violentTempest,  shinyDistraction
+      [closeToTheFlame, scorchingBlast, cutOffOsgiliath, darkPursuit, massingAtOsgiliath, ballistaBarrage, boardingPartyDreadnaught, grappledDreadnaught, outOfTheMist, overworked, takingOnWaterDreadnaught, violentTempest,  shinyDistraction
       , guiltyConscience
       , drivenByShadowDarkOfMirkwood
       , surprisingSpeedDarkOfMirkwood
@@ -3922,3 +3922,11 @@ massingAtOsgiliath = (treachery "the-massing-at-osgiliath-014" "Massing at Osgil
   , cdWhenRevealed = True
   , cdKeywords = setFromList [Surge]
   }
+
+closeToTheFlame :: CardDef
+closeToTheFlame = (treachery "the-battle-of-lake-town-009" "Close to the Flame" TheBattleOfLakeTown 3)
+  { cdWhenRevealed = True, cdShadowEffect = True }
+
+scorchingBlast :: CardDef
+scorchingBlast = (treachery "the-battle-of-lake-town-010" "Scorching Blast" TheBattleOfLakeTown 3)
+  { cdWhenRevealed = True, cdShadowEffect = True }

@@ -1,5 +1,6 @@
 module LordOfTheRings.Standalone.BattleOfLakeTownSpec (spec) where
 
+import LordOfTheRings.Treachery.CardDefs qualified as Treacheries
 import LordOfTheRings.Scenario (theBattleOfLakeTown)
 import LordOfTheRings.Scenario.Types (scenarioMeta)
 import LordOfTheRings.Scenario.Scenarios.TheBattleOfLakeTown.Meta (Meta (..), metaOf)
@@ -15,7 +16,7 @@ import LordOfTheRings.Helpers.Modifiers (getModifiers)
 import LordOfTheRings.Keyword (Keyword (Burn))
 import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Matcher (getBurn, getEnemy, getHero, getAlly)
-import LordOfTheRings.Modifier (ModifierType (Blank, GainKeyword, ImmuneToPlayerCardEffects, WhenRevealedCannotBeCanceled))
+import LordOfTheRings.Modifier (ModifierType (CannotBeDiscardedByEncounterCards, Blank, GainKeyword, ImmuneToPlayerCardEffects, WhenRevealedCannotBeCanceled))
 import TestImport
 
 stageLocation :: CardDef -> GameT LocationId
@@ -360,6 +361,69 @@ spec = describe "Battle of Lake-town" do
       smaugDiscard m `shouldBe` []
       getEncounterDiscard `shouldReturn` []
 
+  describe "Lake-town treacheries" do
+    it "deals Close to the Flame's damage to every character" . gameTest $ \pid -> do
+      ally <- putAllyIntoPlay pid Allies.guardOfTheCitadel
+      _ <- setEncounterDeck [Treacheries.closeToTheFlame]
+      run RevealEncounterCard
+      resolveRevealed
+      for_ ["01012", "01007", "01002"] $ \code -> do
+        target <- heroOf pid code
+        getDamage target `shouldReturn` 1
+      getDamage ally `shouldReturn` 1
+
+    it "lets a player sacrifice a hero to cancel Close to the Flame's shadow" . gameTest $ \pid -> do
+      ally <- putAllyIntoPlay pid Allies.guardOfTheCitadel
+      hero <- heroOf pid "01012"
+      resolveCardShadow pid Treacheries.closeToTheFlame
+      chooseTarget pid hero
+      getsGame (any ((== hero) . toTarget) . toList . (.entities.heroes)) `shouldReturn` False
+      getDamage ally `shouldReturn` 0
+
+    it "resolves Close to the Flame's shadow when nobody sacrifices a hero" . gameTest $ \pid -> do
+      ally <- putAllyIntoPlay pid Allies.guardOfTheCitadel
+      resolveCardShadow pid Treacheries.closeToTheFlame
+      chooseLabel "$label.lakeTown.resolveShadow" pid
+      getDamage ally `shouldReturn` 1
+
+    it "resolves Burn when Scorching Blast is revealed" . gameTest $ \pid -> do
+      town <- stageTown
+      _ <- stageLocation Locations.southPier
+      _ <- setEncounterDeck [Treacheries.scorchingBlast]
+      run RevealEncounterCard
+      resolveRevealed
+      chooseLabel "$label.lakeTown.takeBurn" pid
+      getDamage town `shouldReturn` 2
+
+    it "lets a hero cancel Scorching Blast's shadow without resolving Burn" . gameTest $ \pid -> do
+      town <- stageTown
+      _ <- stageLocation Locations.southPier
+      hero <- heroOf pid "01012"
+      resolveCardShadow pid Treacheries.scorchingBlast
+      chooseTarget pid hero
+      getDamage town `shouldReturn` 0
+      getQuestion pid `shouldReturn` Nothing
+
+    it "asks each player about their own heroes before resolving the shadow" . twoPlayerTest testDeck $ \one two -> do
+      town <- stageTown
+      _ <- stageLocation Locations.southPier
+      hero <- heroOf two "01012"
+      resolveCardShadow one Treacheries.scorchingBlast
+      chooseLabel "$label.lakeTown.resolveShadow" one
+      chooseTarget two hero
+      getsGame (any ((== hero) . toTarget) . toList . (.entities.heroes)) `shouldReturn` False
+      getDamage town `shouldReturn` 0
+
+    it "cannot sacrifice a hero protected from encounter-card discards" . gameTest $ \pid -> do
+      town <- stageTown
+      _ <- stageLocation Locations.southPier
+      for_ ["01012", "01007", "01002"] $ \code -> do
+        target <- heroOf pid code
+        run $ CreateEffect $ Effect GameSource target [CannotBeDiscardedByEncounterCards] UntilEndOfRound
+      resolveCardShadow pid Treacheries.scorchingBlast
+      chooseLabel "$label.lakeTown.takeBurn" pid
+      getDamage town `shouldReturn` 2
+
 stageTown :: GameT Target
 stageTown = do
   run . AddToStaging =<< genEncounterCard Objectives.lakeTown
@@ -379,3 +443,11 @@ setSmaugDeck defs = do
   cards <- traverse genEncounterCard defs
   g <- getGame
   putGame $ g & scenarioL %~ overAttrs (\a -> a {scenarioMeta = toJSON $ Meta cards []})
+
+resolveCardShadow :: PlayerId -> CardDef -> GameT ()
+resolveCardShadow pid def = do
+  run . AddToStaging =<< genEncounterCard Enemies.forestSpider
+  eid <- getsGame $ toId . fromJustNote "enemy missing" . headMay . toList . (.entities.enemies)
+  [card] <- setEncounterDeck [def]
+  run $ DealShadowCard eid
+  run $ ResolveShadowCard card.id eid pid []
