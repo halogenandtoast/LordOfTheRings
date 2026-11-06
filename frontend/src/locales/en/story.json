@@ -3603,6 +3603,7 @@
   },
   "the-river-running": {
     "intro": [
+      "Difficulty level = 6",
       "It was late spring and the trees were already blossoming in Dale when envoys from Dorwinion arrived with an urgent message for King Brand. The city guard escorted the weary travelers to the great keep where they found the King holding court from upon his wooden throne. Citizens of Dale and nearby Lake-town were gathered there seeking audience, and a motley band of adventurers stood to one side observing what was said. The guards made their way through the crowd and brought the Dorwinions straight to the foot of Brand’s throne.",
       "“Welcome friends,” said King Brand to the weary Dorwinions. “What brings you here in such haste?”",
       "The Dorwinions bowed, and one of them said, “A great darkness has befallen our fair country, my lord.”",
@@ -3655,6 +3656,7 @@
   },
   "the-temple-of-doom": {
     "intro": [
+      "Difficulty level = 7",
       "It took the heroes several days to reach the Hills of Rhûn, and several more before they found a narrow path that wound between the ridges and gorges of the hills. On the path were the unmistakable signs of captives being led upwards, so the heroes followed the trail with redoubled speed and vigil until at last they found what they sought: A mighty temple carved directly into a sheer rockface.",
       "The entrance to the temple was like the gaping maw of a ravenous beast, and the jagged pillars that flanked either side left no doubt in the heroes’ minds: this was a temple built to Sauron during the dark years of His reign over Middle-earth when the Elves and Númenóreans abandoned the lands east of the Anduin to His rule. Rumors of dark rituals and dreadful sacrifices came to the West out of those years, but never any witnesses. When the Dark Lord was overthrown by the Last Alliance of Elves and Men, those who worshipped Sauron fled the wrath of the West, and they hid themselves in dark places where the High-elves and Sea-kings did not go.",
       "But when the power of Mordor arose once more, those who still worshipped the dark were drawn back to the land of shadow; and there Sauron filled them with terrible malice and vengeance against the West. He sent them abroad to lands such as Dorwinion to plant fear and sow dissent in the hearts of those who might oppose Him. They went here and there whispering shade in the ears of the unwise. Some they won to their cause with promises of power; others they subdued with threats of violence. In time, they had won nearly all the lands of Rhûn to their Master’s will.",
@@ -3696,6 +3698,7 @@
   },
   "the-city-of-ulfast": {
     "intro": [
+      "Difficulty Level = 6",
       "On the southern shore of the Sea of Rhûn, a tall man knelt down next to his horse to examine the ground.",
       "“Here is the trail we seek,” he proclaimed to his mounted companions, pointing to the obvious trampling of booted feet in the soft earth. “See how it hugs the shore? Just as I thought it would.”",
       "“How did you know that Ulchor would travel East and not South toward Mordor?” asked one of the companions as the tall man mounted his horse.",
@@ -3740,6 +3743,7 @@
   },
   "under-the-ash-mountains": {
     "intro": [
+      "Difficulty Level = 7",
       "It had been two days since the heroes left the Wainrider camp and headed south toward Mordor. The first day of their journey was spent trading stories with their guides as they followed them across the plains. They learned much about the Wainriders and how they had come to roam the open lands of Rhûn.",
       "The second day was different. As they drew nearer to the northern fences of Mordor, the ground became hard and the sky above them grew dark. A dreadful stillness was on the land. They rode in silence, looking anxiously about them like hunted beasts that fear an attack. But they saw nothing in that barren waste except the black wall of the Ash Mountains looming ever higher before them.",
       "When they reached the foothills of those mountains, they stopped next to a wide, washed-out basin. The Wainriders refused to go any further. The heroes were dismayed by this, but there was nothing they could say that would convince their guides to climb with them.",
@@ -3772,6 +3776,7 @@
   },
   "danger-in-dorwinion": {
     "intro": [
+      "Difficulty level = 5",
       "Built upon the shore of the Sea of Rhûn, the capital of Dorwinion was at most times a cacaphony of trade: The docks were lined with boats from Lake-town, hired hands loaded and unloaded cargo, and mules brayed loudly as they pulled heavy carts to and fro. Shouting could also be heard from the merchant district as sellers peddled their wares to the crowds of people who passed between their stands.",
       "But not this day. When the heroes had arrived in Dorwinion, they found the capital a much quieter place. A shadow of fear hung over the city. People spoke in hushed tones, if they spoke at all. Most of the Dorwinions they met on the street did not greet them but rather looked down and walked faster. Nearly every home and shop around them was shut tight with windows shuttered.",
       "Rutland guided them to the home of his cousin, and there a woman motioned for them to come inside. After the heroes entered her home, she glanced outside before closing the door.",
@@ -3821,10 +3826,11 @@
   },
   "wrath-and-ruin": {
     "intro": [
+      "Difficulty Level = 7",
       "The land of Dorwinion seemed both bright and beautiful now that the shadow of Mordor had been driven back. A light breeze tickled the leaves on the trees, and sunlight danced on the waves that rolled in from the Sea of Rhûn as the heroes strolled through the land that they had rescued from darkness.",
       "It had been a month since the heroes returned to Dorwinion with the captives they had rescued from the Temple of Sauron. They had not planned to stay for so long, but the people of Dorwinion insisted that the heroes rest and enjoy their hospitality after doing so much for their country. They stayed in the home of Niena and her husband, Torwald, whose life they had saved in that hideous temple.",
       "The heroes insisted that they should pay their hosts for their lodging, but Niena would hear none of it. “My husband would have died if not for you,” she said. “It is the same for every family in the city, so it is our honor to have you here.” The heroes relented and expressed their thanks for her generosity.",
-      "In their hearts, the companions were glad that they were able to bring peace to Dorwinion after her people had endured such hardship, but in their thoughts there lingered still a shadow that disturbed their peace: Ulchor. Deadly servant of Sauron and the one responsible for the recent suffering of Dorwinion, whom the heroes thought died at their hands several years ago. At that time, they knew him as Lord Alcaron, a Gondorian nobleman. But he was revealed to be a Black Númenórean and a traitor, whose machinations nearly led to their deaths in the Morgul Vale.",
+      "In their hearts, the companions were glad that they were able to bring peace to Dorwinon after her people had endured such hardship, but in their thoughts there lingered still a shadow that disturbed their peace: Ulchor. Deadly servant of Sauron and the one responsible for the recent suffering of Dorwinion, whom the heroes thought died at their hands several years ago. At that time, they knew him as Lord Alcaron, a Gondorian nobleman. But he was revealed to be a Black Númenórean and a traitor, whose machinations nearly led to their deaths in the Morgul Vale.",
       "It was believed that Lord Alcaron had died in that evil place; the heroes had just defeated him when he revealed his true name and allegiance to Mordor.",
       "They were shocked to discover him in the Temple of Sauron, alive and empowered. Ulchor had used their momentary confusion to make his escape, and had promised dark vengeance upon them. This, the heroes knew, was not idle talk, so they had resolved to pursue him when they were rested.",
       "“Then it is agreed,” spoke one of the heroes. “Tomorrow we begin the hunt for Thane Ulchor.”",
@@ -3862,6 +3868,7 @@
   },
   "challenge-of-the-wainriders": {
     "intro": [
+      "Difficulty Level = 5",
       "The heroes followed Ulchor’s trail from the city of Ulfast south across the expanse of Rhûn. It seemed clear to them that the villain now intended to return to his province of Nurn, in the land of Mordor. The heroes rode hard in the hope that they might overtake him before he reached the Black Land.",
       "At first their pursuit was aided by good weather and a clear trail, but fortune turned against them when they came upon a camp of Wainriders. These were a nomadic band of Easterlings who roamed about Rhûn in great wains. They valued their freedom too much to swear allegiance to Sauron, but they were no friends to the West either. When they saw the heroes approaching on horseback, they mounted their horses and quickly encircled the heroes.",
       "Seeing that escape was impossible, the heroes raised their hands in surrender. They did not wish to fight the Wainriders, especially when they were so badly outnumbered. They were taken as prisoners and brought to the Wainrider camp. There, the heroes were questioned about where they came from and where they were going by the Wainrider’s chieftain. When they told the Wainriders about their quest to capture Thane Ulchor, their captors laughed and said, “Yes, we know that one! He was here just before you. He threatened us by the power of Mordor if we did not let him go, and he promised us gold if we killed any who followed him.”",
@@ -3908,6 +3915,7 @@
   },
   "the-fortress-of-nurn": {
     "intro": [
+      "Difficulty Level = 10",
       "The heroes were huddled behind a low hill less than a mile from the gate of Dol Rhugar. Gathered about them were the prisoners they had rescued from the slave-fields that surrounded the fortress. They were waiting under the cover of night for the signal to attack. The Gondorian, Arador, had come up with a plan to infiltrate the city. He took with him Edrahil the Elf and Farin the Dwarf. The three of them were going to rally the captives inside the city in order to open the gate. A single, long horn blast would be their signal to begin the full attack.",
       "As the heroes waited for the signal, they reflected on the string of chances that had led them to this moment. “I feel as if some fate has brought us to this place,” said one of the heroes looking at his companions. “How else could we possibly have gathered an army just outside Ulchor’s fortress, deep in Mordor, ready to launch a surprise attack?”",
       "“It is a wondrous turn of events,” replied another hero. “Perhaps it is the Valar who have guided us here?”",
@@ -3916,7 +3924,7 @@
       "“The wrath of the Enemy has often been our unwitting ally through the long years,” agreed one of the companions. “The desire for vengeance has often overruled wiser counsel.”",
       "There was a short pause as each of the heroes considered their own motives, and then one of them spoke, “After Dorwinion was attacked, I swore an oath of vengeance to channel my grief and focus my rage. That oath nearly led me to overlook those who are gathered with us now.” He bowed his head with shame.",
       "“We all swore the same oath,” said another, placing her hand on his shoulder. “We are all in this together, but let us now amend our oath to seek justice rather than revenge.”",
-      "The man looked up at her and answered, “Aye, I swear by the Valar that when gate of Dol Rhugar opens, I will bring justice to Ulchor or die in the attempt.”",
+      "The man looked up at her and answered, “Aye, I swear by the Valar, that when gate of Dol Rhugar opens, I will bring justice to Ulchor or die in the attempt.”",
       "All the heroes swore likewise. Then there came a change in the wind, and a breeze coming up from the south carrying the salty tang of the sea. Their spirits were lifted by the smell, and their limbs strengthened. They looked up and saw the stars piercing the darkness like bright lances.",
       "There was another breeze, and this time it carried the sound of a long horn-cry."
     ],
@@ -3958,6 +3966,7 @@
   },
   "the-land-of-sorrow": {
     "intro": [
+      "Difficulty Level = 9",
       "After descending from the southern fences of the Ered Lithui, the heroes headed south toward the Sea of Núrnen where they knew they would find Ulchor’s fortress upon the northern shore. They had learned this much from the King of Ulfast, who was eager to have his revenge upon the Thane of Nurn. He told them to follow the river that flowed south from the Ash Mountains, which would lead them to Ulchor’s fortress of Dol Rhugar.",
       "Dol Rhugar was the capital city of Nurn. From there Thane Ulchor ruled over that land, but it was not Ulchor who built the city. The fortress was built by the Númenóreans during the Watchful Peace, after The Last Alliance of Elves and Men overthrew Sauron. They built a tower of guard to keep watch over the eastern border of Mordor, and a city grew up around it. Minas Fuin it was called in those days, and those that lived there were not without gladness, for the land of Nurn prospered under Númenórean rule.",
       "But those days were long passed. When the Númenórean race declined and Sauron again rose to power, those who had worshipped him in secret came forth to declare themselves. Among them were Ulchor’s ancestors, who helped to overthrow the last remnants of the Númenórean forces in Nurn. As a reward for their fealty, The Dark Lord granted the land of Nurn to Ulchor’s family and bestowed upon them the title of Thane. But in return, Sauron demanded provisions for his armies in the region of Gorgoroth, where nothing grew.",
@@ -4002,7 +4011,10 @@
   },
   "the-passing-of-the-grey-company": {
     "intro": [
-      "Having seen in the Palantír that the Corsairs threaten Gondor's coast, Aragorn leads the Grey Company on the quickest road south: the haunted Paths of the Dead, where the cursed Oathbreakers linger."
+      "While Frodo, Sam and Gollum journeyed through the glades of Ithilien, Aragorn and his companions fought the battle of Helm’s Deep and rode to the wreck of Isengard to deal with the traitor, Saruman. During their parley, the Wizard’s servant, Gríma, hurled a Palantír from a high balcony, narrowly missing them. Aragorn left Saruman and his servant in the care of the Ents who guarded the tower of Orthanc, but the orb he took with him back to Helm’s Deep, and in the high tower of the Hornburg he looked into the Seeing Stone and learned much of the Enemy’s movements.",
+      "In the Palantír he saw a fleet of Corsairs drawing near to the coast of Gondor just as the army of Minas Morgul marched to war against Minas Tirith. Seeing how the White City would fall if help could not reach the coast in time, the Heir of Isildur resolved to take the most direct route through the mountains to Pelargir: The Paths of the Dead.",
+      "A name of dread among those who dwell near to its entrance, The Paths of the Dead were said to be haunted by the ghosts of men from the second age of Middle-earth; Oathbreakers who refused to join Isildur when he summoned them to war against Mordor. Isildur cursed them for their unfaithfulness and doomed them to linger in the shadowy hills until their oath was fulfilled.",
+      "It was uncertain whether they would help or hinder Isildur’s Heir, but Aragorn was determined to reach the coast by the speediest way..."
     ],
     "setup": [
       "The encounter deck is built from The Passing of the Grey Company encounter set. The first player takes control of the Fellowship sphere Aragorn."
@@ -4020,7 +4032,11 @@
   },
   "the-ring-goes-south": {
     "intro": [
-      "Having escaped the Nine at the Ford of Bruinen and rested in Rivendell, Frodo and his companions set out from the House of Elrond, bound for Mordor to unmake the Ring. Their road south runs along the Misty Mountains, through snow, Wargs and spying crows."
+      "Difficulty level = 6",
+      "At the end of a tiring journey, Frodo and the Ring were nearly captured by the Nazgûl who had pursued him from the Shire all the way to the borders of Rivendell. At the Ford of Bruinen, the Lord of Rivendell caused the River Loudwater to flood and the servants of Sauron were swept away. Afterwards, the wound Frodo received at Weathertop was treated, and he and his companions were given a long respite in the House of Elrond.",
+      "Yet the threat of Mordor still remained and the Dark Lord’s power continued to grow, and the question of what to do with the One Ring had to be addressed. So the Council of Elrond was summoned and the fate of Middle-earth was long debated.",
+      "In the end, it was decided that the only hope for the enemies of Sauron was to send the One Ring back to Mordor, to the mountain of fire where it was forged. Only there, at the Cracks of Doom, could the One Ring be unmade and the Dark Lord’s power destroyed.",
+      "Frodo Baggins of the Shire was chosen to carry out this task, and Elrond appointed companions to accompany him on his quest. So it was that on a cold morning near the end of December, the Fellowship of the Ring departed Rivendell and began their perilous journey south along the western edge of the Misty Mountains..."
     ],
     "setup": [
       "The encounter deck is built from The Ring Goes South encounter set."
@@ -4034,7 +4050,10 @@
   },
   "the-passage-of-the-marshes": {
     "intro": [
-      "Frodo and Sam have crossed the Anduin and wandered the Emyn Muil to the edge of the Dead Marshes, with Gollum following close behind. They mean to catch him before going any further."
+      "Difficulty level = 6",
+      "After Boromir attempted to seize the One Ring for himself in the woods of Amon Hen, Frodo resolved to leave the Fellowship and continue the quest to Mount Doom on his own. But his faithful servant, Sam, guessed his master’s plan and caught up with Frodo just as he was preparing to cross the Anduin in one of the Elven boats. Sam refused to let Frodo leave him behind, so the two Hobbits crossed the river together.",
+      "Upon reaching the Eastern shore, they became lost in the Emyn Muil, a maze of rocky hills and steep cliffs. After wandering for days, they were finally able to make their way down near to the edge of the Dead Marshes only to discover that they were being followed: The creature, Gollum, had tracked them across the Anduin and through the Emyn Muil, and was drawing nearer.",
+      "The Hobbits knew they would have to confront Gollum before moving on, or they would risk being strangled in their sleep. So they set a trap for the old villain..."
     ],
     "setup": [
       "Build the encounter deck from the The Passage of the Marshes, Gollum and Morgul Nazgûl encounter sets."
@@ -4056,7 +4075,11 @@
   },
   "journey-to-the-cross-roads": {
     "intro": [
-      "With the Black Gate barred to them, Frodo and Sam follow Sméagol south through the green woods of Ithilien toward a secret way into Mordor, only to find themselves in the path of Southron soldiers marching to swell Sauron's armies, and of the Rangers of Gondor who lie in wait for them."
+      "Difficulty level = 8",
+      "Having made it across the Dead Marshes, the Hobbits, led by Sméagol, finally reached The Black Gate of Mordor. But, there was no hope of entering the land of Sauron that way. Evil things and sleepless eyes guarded the entrance to the Black Land, and the Hobbits would surely have been discovered if they approached the gate. Still, Frodo was determined to finish the task given to him by the Council, and he made ready to set out when Sméagol pleaded with him to go a different way, a secret way known only to him.",
+      "While Sam was suspicious of Gollum’s true motives, Frodo believed that Sméagol would keep his promise to help them. In either case, there was no chance of entering Mordor through The Black Gate, so the Hobbits consented to follow Sméagol south to the Morgul Vale and the entrance to the secret pass.",
+      "Their road led them into the land of Ithilien, a wooded country of tree-covered hills and fast-running streams. The wholesome air of the land about them put the Hobbits at ease, and they were caught off guard when they were suddenly joined by a company of Gondorian Rangers who patrolled those woods.",
+      "The Rangers were on a mission to ambush the men of Harad who were marching up the road to Mordor to swell the hosts of Sauron. Before they knew it, the Hobbits were caught in the middle of a battle of men, and Gollum was nowhere to be seen..."
     ],
     "setup": [
       "Build the encounter deck from the Journey to the Cross-roads and Men of Harad encounter sets."
@@ -4064,7 +4087,7 @@
   },
   "flies-and-spiders": {
     "intro": [
-      "Rested after their stay with Beorn, Bilbo and the dwarves press on toward the Lonely Mountain. Their road leads through the dark eaves of Mirkwood, where giant spiders lie in wait for any traveler who strays from the path."
+      "Having been rescued from the goblins and their warg allies by the eagles of the Misty Mountains and fostered in the house of Beorn, Bilbo Baggins and his travel companions resumed their quest for The Lonely Mountain. However, in order to reach Thorin’s ancestral home, Bilbo and the dwarves had to find their way through the dangerous forest of Mirkwood where giant spiders wove their webs from tree-trunk to tree-trunk to catch unwary travelers."
     ],
     "setup": [
       "Flies and Spiders is played with an encounter deck built from the Flies and Spiders and Wilderland encounter sets. Players may add previously discovered treasures from the scenarios of Over Hill and Under Hill."
@@ -4072,7 +4095,7 @@
   },
   "the-battle-of-five-armies": {
     "intro": [
-      "With the dragon dead, Men, Elves and Dwarves gather before the Lonely Mountain to argue over its treasure, until an army of Goblins and Wargs led by Bolg sweeps down from the north and forces them to fight side by side."
+      "Enraged by the theft of his treasure, Smaug launched a savage attack on Lake-Town to revenge himself on those he deemed responsible. There, in an unforeseen turn of events, Smaug was slain by Bard the Bowman when an old thrush brought him the knowledge of the dragon’s weak spot, learned from Bilbo Baggins. In the aftermath of Smaug’s death and the ruin of Esgaroth, the armies of men, elves, and dwarves converged on The Lonely Mountain to lay their claim to the dragon’s hoard. But before their dispute could come to unhappy blows, an even greater threat descended suddenly from the north: an army of orcs and Wargs had come to take the treasure of Erebor for themselves."
     ],
     "setup": [
       "The encounter deck is built from The Battle of Five Armies and Wilderland encounter sets. The first player takes control of the Baggins sphere Bilbo Baggins."
@@ -4086,7 +4109,7 @@
   },
   "we-must-away-ere-break-of-day": {
     "intro": [
-      "Bilbo has left the Shire with Gandalf, Thorin and the dwarves, bound for the Lonely Mountain. Not far into the wild, the company stumbles upon a camp of three hungry trolls."
+      "Bilbo Baggins, a well-to-do hobbit, was enjoying a peaceful morning in the quiet land of The Shire when the wizard, Gandalf, invited him to join an adventure with Thorin Oakenshield and his company of dwarves. After hosting the unexpected party and hearing their tales, Bilbo found himself trading the comfort of his hobbit-hole for the chance to join their quest to the Lonely Mountain. But long miles lay before the mountain, and the company ran into trouble sooner than expected when they encountered three hungry trolls in the wild."
     ],
     "setup": [
       "Build the encounter deck from the We Must Away, Ere Break of Day and Western Lands encounter sets. The seven Sack objectives form a separate sack deck.",
@@ -4096,7 +4119,7 @@
   },
   "over-the-misty-mountains-grim": {
     "intro": [
-      "Rested after their stay in Rivendell, Bilbo and the dwarves set out to cross the Misty Mountains, where giants hurl stones for sport and goblins wait in the caves below."
+      "After a brief respite at the House of Elrond in Rivendell, Bilbo and the dwarves began the long climb over The Misty Mountains. Elrond warned them the mountains were full of danger: stone-giants tossed huge boulders for fun and evil things lurked in dark caves waiting for unsuspecting travelers to let their guard down. Yet those were the perils Bilbo and his companions had to face to reach the other side of the mountains and continue their quest."
     ],
     "setup": [
       "Played with two encounter decks. The Over the Misty Mountains Grim and Western Lands encounter sets make up the active encounter deck. The Great Goblin and Misty Mountain Goblins encounter sets make up a second deck, set aside, inactive.",
@@ -4107,7 +4130,7 @@
   },
   "dungeons-deep-and-caverns-dim": {
     "intro": [
-      "Lost in the tunnels under the Misty Mountains, Bilbo stumbles on a ring in the dark and on Gollum beside an underground lake, where his life hangs on a contest of riddles. Far from him, the dwarves break out of the goblins' halls only to find wolves waiting among the pines."
+      "During their escape from the goblins who captured them on the western side of the mountains, Bilbo was separated from his companions and lost in the lightless caverns below. There he was confronted by the creature Gollum. Meanwhile, the dwarves fought their way out the eastern gate and down the mountainside. They fled from the goblins’ caves only to be surrounded by wargs in a forest glade!"
     ],
     "setup": [
       "Build the encounter deck from the Dungeons Deep and Caverns Dim and Misty Mountain Goblins encounter sets. Lake in the Cavern starts in the staging area.",
@@ -4118,7 +4141,7 @@
   },
   "the-lonely-mountain": {
     "intro": [
-      "Freed from the Elvenking's dungeons and welcomed in Lake-town, the company at last reaches the Lonely Mountain. There Thorin sends his burglar down into the dragon's lair to steal what he can from Smaug's hoard without waking him."
+      "After being saved from the spiders and subsequently captured by the elves of Mirkwood, the dwarves were held prisoner in the dungeons of the Elvenking until the intrepid Mr. Baggins contrived a most unusual method for their escape. And so they arrived at Lake-Town on the mouth of the River Running neatly packed in large barrels rowed downstream by unsuspecting wood elves. There they received a warm welcome and were resupplied for the last leg of their journey. Upon reaching the Lonely Mountain, Thorin informed Bilbo that it was the burglar’s job to investigate the dragon’s lair and steal the treasure from Smaug’s hoard."
     ],
     "setup": [
       "The Lonely Mountain is played with an encounter deck built from The Lonely Mountain and Wilderland encounter sets. Players may add previously discovered treasures from the scenarios of Over Hill and Under Hill and from Flies and Spiders. The five Erebor treasures are stacked facedown under The Lonely Mountain."
@@ -4140,7 +4163,10 @@
   },
   "a-shadow-of-the-past": {
     "intro": [
-      "Black Riders have come to the Shire asking after Baggins, and Gandalf has not returned. Frodo must slip away with the Ring and reach Buckland unseen."
+      "Difficulty level = 6",
+      "Before leaving the Shire, Bilbo Baggins left his entire estate at Bag End to his nephew, Frodo, including the magic ring he discovered on his adventure. After his uncle’s departure, Frodo was visited by the wizard, Gandalf, who suspected that Bilbo’s ring was in fact the Master Ring forged by the Dark Lord Sauron for the dominion of Middle-earth. When Gandalf threw the ring into Frodo’s fireplace, ancient runes appeared on the band that confirmed it was indeed the One Ring, an ancient and indestructible evil.",
+      "Knowing that servants of the Enemy would be searching for the Ring, Gandalf told Frodo he must leave the Shire and take the Ring to Elrond in Rivendell. He advised Frodo to sell Bag End and act as if he were moving to Buckland to avoid drawing suspicion before the wizard himself left to seek help.",
+      "Gandalf promised to return, but danger has arrived sooner than he expected: Black Riders have appeared in the Shire looking for “Baggins” and the Grey Wizard has yet to be seen. Frodo knows he can’t wait any longer. He must move quickly and quietly if he hopes to make it to Buckland alive..."
     ],
     "setup": [
       "The encounter deck is built from the A Shadow of the Past, Hunted, The Ring and The Black Riders encounter sets. The first player takes control of Frodo Baggins, the Ring-bearer, with The One Ring attached."
@@ -4166,7 +4192,9 @@
   },
   "flight-to-the-ford": {
     "intro": [
-      "Wounded by a Morgul blade on Weathertop, Frodo grows weaker by the day. Strider leads the hobbits through the wild towards Rivendell with the Nazgûl close behind, and only the Ford of Bruinen lies between them and safety."
+      "Difficulty level = 5",
+      "Frodo was gravely injured during the fight at Weathertop before the Nazgûl retreated. Strider cannot understand the Enemy’s withdrawal until he examines Frodo’s wound: the tip of the blade has broken off and is working its way toward his heart.",
+      "Knowing that Frodo will eventually fade into the world of the Ringwraiths if he doesn’t get to Rivendell in time, Strider leads the hobbits toward the hidden valley as fast as he can. But Frodo’s wound slows them, and the Nazgûl are in close pursuit. In the end, a race to the Ford of Bruinen will decide the fate of the Ring..."
     ],
     "setup": [
       "The encounter deck is built from the Flight to the Ford, Hunted, The Black Riders and The Nazgûl encounter sets. The first player takes control of Frodo Baggins, the Ring-bearer, with The One Ring attached. Stage 1A builds the Burden deck from the Flight to the Ford burden set, attaches An Evil Wound to the Ring-bearer and sets his life at 15."
@@ -4184,7 +4212,9 @@
   },
   "a-knife-in-the-dark": {
     "intro": [
-      "The hobbits reach the village of Bree, but the Enemy's spies are already at work there. A ranger called Strider offers to guide them into the wild toward Rivendell, while the Ringwraiths close in on the old watch-hill of Weathertop."
+      "Difficulty level = 7",
+      "Having narrowly escaped from the Nazgûl in the Shire, Frodo and his hobbit companions arrive at the town of Bree and find lodging at The Prancing Pony. The innkeeper is a friendly man, but the Enemy is already at work in the little crossroads town: Black Riders have been seen lurking about, and some of the locals are in their service.",
+      "The hobbits don’t know who to trust, when a mysterious ranger named Strider offers to lead them to Rivendell. Strider is in fact Gandalf’s friend, Aragorn, and he leads Frodo out of Bree into the wild to throw off pursuit. But the servants of the Enemy are waiting for them at the tall hill called Weathertop..."
     ],
     "setup": [
       "The encounter deck is built from the A Knife in the Dark, Hunted, The Ring and The Nazgûl encounter sets. The first player takes control of Frodo Baggins, the Ring-bearer, with The One Ring attached."
@@ -4206,7 +4236,10 @@
   },
   "the-siege-of-gondor": {
     "intro": [
-      "Out of the mountains, Aragorn rides hard for Pelargir with the Dead at his back, racing to break the Corsair fleet of Umbar before it can sail up the Anduin to join Mordor's assault on Gondor."
+      "After a harrowing journey under Dwimorberg, Aragorn and his companions emerged on the southern end of the Haunted Mountain and rode to The Stone of Erech. There the Heir of Isildur summoned the Dead Men of Dunharrow to fulfill their oaths and follow him to Pelargir where the fleet of Umbar drew nigh.",
+      "To the astonishment of his companions, the Army of the Dead obeyed Aragorn and heeded his commands, but it was still a hard ride to reach Pelargir in time. The hardship the companions endured was beyond the strength of most mortals, but need drove them and the will of Aragorn held them together.",
+      "In five days’ time, they raced more than ninety leagues to reach the port of Pelargir. At the ford of Gilrain they came upon the men of Lamedon as they fought with Corsair raiders who had sailed up the river. Friend and foe alike fled at their coming for the fear of the dead, but when they reached Pelargir, the Corsairs turned to give battle.",
+      "There upon Anduin, the main strength of the Umbar fleet was gathered for the sack of Gondor. A great army of Corsairs stood before them, and the Grey Company was already tired from the long journey, but Aragorn ordered the Army of the Dead to attack and led his companions into battle once more..."
     ],
     "setup": [
       "The encounter deck is built from The Siege of Gondor encounter set. The first player takes control of the Fellowship sphere Aragorn."
@@ -4214,7 +4247,9 @@
   },
   "the-battle-of-the-pelennor-fields": {
     "intro": [
-      "The host of Minas Morgul falls upon Minas Tirith while darkness covers the sky. The defenders of the White City must hold the walls until the Riders of Rohan arrive, and Aragorn sails up the Anduin with the captured Corsair fleet."
+      "As Aragorn and his companions raced toward the port of Pelargir on Anduin, Sauron at last ordered the great assault that he had long prepared for the destruction of Gondor and the utter defeat of the West. Orcs issuing from The Black Gate overran the island fortress of Cair Andros, and the main host of Mordor marched forth from Minas Morgul led by The Black Captain, The Witch-king of Angmar.",
+      "Denethor, Steward of Gondor, sent messengers to King Theoden in Dunharrow to ask for all his strength to ride to Minas Tirith, and the beacon fires were lit between Gondor and Rohan. Meanwhile, men from the outland fiefs of Gondor marched in to Minas Tirith to bolster the city’s garrison. Yet, they sent less strength than hoped for because of the Corsair threat to the coastlands.",
+      "So it was that The Witch-king found the men of Gondor not wholly unprepared for the assault, but still greatly overmatched by the host of Mordor. On the eve of the attack Mount Doom belched fire, black clouds darkened the sky, and night fell on Minas Tirith. Unless help beyond hope could reach the White City in time, Gondor would surely fall..."
     ],
     "setup": [
       "The encounter deck is built from The Battle of the Pelennor Fields encounter set. The first player takes control of the Fellowship sphere Aragorn."
@@ -4236,7 +4271,9 @@
   },
   "the-tower-of-cirith-ungol": {
     "intro": [
-      "Frodo has been carried off by the Orcs to the top of the tower of Cirith Ungol. Alone, Sam must slip past the Silent Watchers at the gate and climb through a fortress torn by fighting between its own garrison to bring his master out again."
+      "While Aragorn raced across southern Gondor towards the port of Pelargir, the twisted creature, Gollum, led Frodo and Sam into Shelob’s Lair as part of his plan to recapture his “Precious.” But Gollum greatly misjudged the strength of Sam’s desperate courage. The giant Spider, Shelob, was mortally wounded when it cast itself upon the Hobbit’s Elven-dagger, and Gollum was driven off empty-handed.",
+      "Yet Gollum’s betrayal still came at a heavy price. Frodo was stung with Shelob’s poison and Sam, believing himself to be the last surviving member of the Fellowship of the Ring, took the burden upon himself to continue the quest for Mount Doom alone. He had not gone far, however, when a troop of Orcs discovered Frodo’s body and he overheard surprising news: Frodo was not dead! The sting that poisoned him would eventually wear off, but when he awoke he would find himself a captive of the Orcs.",
+      "Horrified by this revelation, Sam determined to rescue his master and followed the Orcs to the tower of Cirith Ungol. When he reached the outer wall, he was surprised to hear the sounds of fighting inside. It seemed that the Orcs were quarreling over what to do with their captive. Encouraged by this new twist, Sam plucked up the courage to enter the fortress alone, but first he would have to get past the Silent Guardians..."
     ],
     "setup": [
       "The encounter deck is built from The Tower of Cirith Ungol, Orcs of Mordor and Deep Shadows encounter sets. No player may use Aragorn in this scenario."
@@ -4244,7 +4281,10 @@
   },
   "the-black-gate-opens": {
     "intro": [
-      "With no hope of victory by arms, Aragorn leads the Host of the West to the gates of Mordor to draw the Dark Lord's gaze away from the Ring-bearer. A messenger of Barad-dûr rides out to meet them, and behind him the Black Gate begins to open. The longer the captains hold, the more time Frodo has to reach the Mountain of Fire."
+      "Following the miraculous victory in battle upon the Pelennor Fields, Aragorn called a counsel of lords to determine their next course of action. There Gandalf advised that they should not wait for Sauron’s next move, but rather they should ready their armies to march upon Mordor itself in a desperate gamble to keep his Eye fixed on them.",
+      "Though he had not yet claimed the kingship of Gondor, the attending lords nontheless agreed to follow Aragorn’s banner to the Black Gate of Sauron’s realm if it meant giving the Ring-bearer the time he needed to complete his quest. So it was that only three days after the Battle of the Pelennor Fields, the Host of the West marched from Minas Tirith towards Mordor.",
+      "Yet they marched without hope of victory. Each man knew that their army had not the strength to challenge Sauron in earnest. Rather they hoped to draw Sauron’s forces out of his land and clear the way for Frodo and Sam to finish the last leg of their journey to Mount Doom.",
+      "As the Hobbits made their way across the Black Land, Aragorn led his army north to the Morannon. There he raised the standard of Elendil and challenged the Dark Lord himself to come forth and face judgement. For a long time there was no answer, but just as Aragorn and his entourage turned their horses to rejoin their army, the Black Gate opened and an embassy from Barad-dûr rode out to parley with them..."
     ],
     "setup": [
       "Shuffle The Black Gate Opens and Orcs of Mordor sets into the encounter deck. Aragorn joins the first player; Frodo is away in Mordor and sits this one out."
@@ -4262,7 +4302,10 @@
   },
   "mount-doom": {
     "intro": [
-      "While the armies of the West draw Sauron's gaze to the Black Gate, Frodo and Sam struggle across the ash and fumes of Gorgoroth toward the fiery mountain. Every step is watched for, and the Ring grows heavier with each one."
+      "Having barely escaped from the Tower of Cirith Ungol, Frodo and Sam stood momentarily on the edge of the Morgai, the inner fence of Mordor’s western mountain range. Below them they could see the vast plain of Gorgoroth dotted with enemy camps. Sauron was gathering all his strength to Mordor after his defeat at Minas Tirith.",
+      "Orcs swarmed like ants upon the ashen plain and countless watchfires flickered across the Black Land like the stars in the sky. As the Hobbits made their way down along the Morgai, there appeared no way for them to reach Mount Doom without being discovered.",
+      "Then, to the wonder of the Ring-bearer and his servant, the vast armies of Mordor began to march away north, leaving the path to Orodruin unwatched. Sauron was directing all of his forces to the Morannon where Aragorn had marched his army to challenge the Dark Lord.",
+      "Neither of the Hobbits knew this reason, but they could plainly see that this was their opportunity to complete the quest. This final stage would determine the future of Middle-earth: Either the Ring would be destroyed in the fires of Mount Doom, or the Ring-bearer would be discovered and the Ring would be delivered back to the hand of its dark Master..."
     ],
     "setup": [
       "Shuffle the Mount Doom and Deep Shadows sets into the encounter deck. The first player takes a Fellowship Ring-bearer carrying The One Ring; Aragorn is fighting elsewhere."
@@ -4280,7 +4323,9 @@
   },
   "journey-in-the-dark": {
     "intro": [
-      "Turned back by the snows of the Redhorn Pass and driven by Wargs, the Company has gone under the mountains into Moria. They find no trace of Balin's Dwarves, only darkness and the sense that something below has noticed the Ring. Their one hope is to cross the mines in secret and reach the eastern gate."
+      "Difficulty level = 8",
+      "After their attempt to climb the Redhorn Pass over the Misty Mountains was thwarted by heavy snow, and their journey through Hollin hounded by evil Wargs, the Fellowship of the Ring was forced to seek passage under the mountains through the Mines of Moria. Once the greatest dwelling place of the Dwarves, Khazad-dûm was often plundered by Orcs and it had become a name of ill omen. Yet there was still some hope that Frodo and his companions might find the colony of Dwarves that had been led there years before by Balin son of Fundin, one of Thorin Oakenshield’s renowned companions in the quest for the Lonely Mountain and a friend of Bilbo Baggins.",
+      "However, the Company of the Ring discovered no sign of Balin’s colony upon entering Moria; instead they were surrounded by constant darkness and a growing dread. With the way behind them blocked by the Watcher in the Water, the Fellowship’s only choice was to make the hazardous journey across the mines to the eastern door many twisting miles away. They hoped to make the crossing in secret but the presence of the One Ring would not go undetected by the evil things lurking in the deep dark..."
     ],
     "setup": [
       "The encounter deck is built from the Journey in the Dark encounter set."
@@ -4288,7 +4333,10 @@
   },
   "breaking-of-the-fellowship": {
     "intro": [
-      "Out of the darkness of Moria, the Company finds shelter and counsel in the Golden Wood, and leaves it with gifts and boats. Down the Great River they go, while the question of which shore to take, and which road after it, threatens to tear the Fellowship apart. Orcs of more than one master already watch both banks."
+      "Difficulty level = 7",
+      "After escaping the Mines of Moria at great personal cost, the Company of the Ring was pursued by Orcs to the eaves of Lothlórien, a closely guarded realm of secretive Elves. The border sentries of the Golden Wood rescued the Company from the Orcs and led them to Caras Galadhon, the city of the Galadhrim at the heart of the forest. There, on a wide flet set high among the tall mallorn trees of that land, Frodo and his companions were presented to Celeborn and Galadriel, the lord and lady of Lórien.",
+      "The Elves already knew of the Fellowship’s quest, and the weary companions were sheltered in Lothlórien long enough to regain their strength. Celeborn furnished the Company with boats to take them down the River Anduin, and Galadriel blessed each member of the Fellowship with a unique gift before they said farewell to Lórien.",
+      "While the boats greatly aided their progress south, the Company was divided over which side of the river they should finally go to. Boromir urged them to keep to the west bank and continue south to the city of Minas Tirith where his people prepared for war with the Dark Lord. But in Frodo’s heart he knew the path to Mount Doom lay on the eastern shore, under the shadow of Mordor. Yet none of them knew that Orcs already prowled both sides of the river, some bearing the Red Eye of Sauron, and others the White Hand of Saruman..."
     ],
     "setup": [
       "The encounter deck is built from the Breaking of the Fellowship encounter set."
@@ -4302,7 +4350,10 @@
   },
   "shelobs-lair": {
     "intro": [
-      "Turned away from the Black Gate, Frodo and Sam let Sméagol lead them south through Ithilien towards a hidden pass into Mordor. Past the Morgul Vale the path climbs to Cirith Ungol, where something old and hungry waits in the dark."
+      "Difficulty level = 7",
+      "In the aftermath of the battle with the Southrons, the Hobbits were briefly sequestered by the Rangers of Ithilien. The company was led by Faramir, the younger brother of Boromir. Frodo feared what the Captain of Gondor might do when he discovered what it was that the Hobbit bore, yet Faramir proved to be a different sort of man than his brother: instead of attempting to take the Ring, he aided the Hobbits with fresh supplies and good counsel before releasing them to continue their quest.",
+      "Faramir warned Frodo that he sensed evil in Gollum, who his men had captured, and he revealed the name of the pass the creature was leading them to: Cirith Ungol, a name of ill omen in Gondor. However, since the young captain could offer no alternate route into Mordor, Frodo saw no choice but to climb the stairs of Cirith Ungol and brave the haunted pass.",
+      "So Faramir released Gollum back into Frodo’s custody, and the Hobbits continued to follow Sméagol as he led them towards the Morgul Vale..."
     ],
     "setup": [
       "Build the encounter deck from the Shelob's Lair, The Great Spider, Gollum and Morgul Nazgûl encounter sets. Cleft of Cirith Ungol, Shelob and The Great Spider are set aside for later stages."
@@ -4320,7 +4371,11 @@
   },
   "the-road-to-isengard": {
     "intro": [
-      "With Saruman's army broken at Helm's Deep, Gandalf, Aragorn and Théoden ride for Isengard to confront the traitor. The Ents of Fangorn, roused at last, march on the fortress to tear down its walls, but the Wizard still commands sorcery and a voice few can resist."
+      "Difficulty level = 7",
+      "The brave men of Rohan paid a high price at the battle of Helm’s Deep, but with the aid of Gandalf and Aragorn, the warriors of Théoden won a great victory over the forces of Isengard. The army of Saruman was utterly defeated and it was time to deal with the treacherous Wizard himself. So it was that Gandalf led Aragorn, Théoden, and the riders of his house to Isengard to parley with Saruman.",
+      "Believing Isengard to be beyond the strength of his enemies to assault, Saruman had committed nearly all of his forces to the attack on Rohan. Yet, there was an ancient power that the Wizard had failed to account for in his schemes. The trees of Fangorn Forest had suffered much from the axes of Isengard Orcs, and the slow burning anger of the Ents was ready to explode.",
+      "The coming of Aragorn’s lost companions to Fangorn Forest with news of Saruman’s treachery was just the spark the Ents needed to rouse them from their inaction. After hearing about Saruman’s part in the great events unfolding in the world around them, the leader of the Ents, Treebeard, called an Entmoot to urge his compatriots to war.",
+      "In their anger, the Ents had the strength to tear down the walls of Isengard and destroy Saruman’s war machines. Still, Saruman was a cunning Wizard. Even when caught off guard, he had many dangerous powers at his command, especially his voice, which could daunt all but the most strong-willed individuals. All of these dangers would have to be faced if the treason of Isengard was to be thwarted..."
     ],
     "setup": [
       "“The Road to Isengard” is played with an encounter deck built with all the cards from the following encounter sets: The Road to Isengard and Snaga Orcs."
@@ -4334,7 +4389,11 @@
   },
   "the-uruk-hai": {
     "intro": [
-      "With the Fellowship scattered at Amon Hen and some of its members carried off by the Orcs of Saruman, Aragorn and the remaining companions set out across the plains of Rohan to overtake the Uruk-hai before they reach Isengard."
+      "Difficulty level = 6",
+      "Following a fateful confrontation upon Amon Hen, the Fellowship of the Ring was broken. Large Orcs bearing the White Hand of Saruman attacked the company, and in the confusion members of the company were captured, others killed.",
+      "In the aftermath of the attack, Aragorn and the remainder of the company discovered that Frodo had escaped to the east side of the Anduin in one of the elven boats. Their choice, it seemed, was either to follow the Ring-bearer to Mordor, or attempt to rescue their captive friends.",
+      "Unwilling to abandon the captured members of their fellowship to torment and death, Aragorn decided to pursue the Orcs. The trail made by the Orc company was easy for the skilled Ranger to follow, and it quickly became clear that the Orcs were taking their captives to Isengard, the fortress of Saruman.",
+      "The fate of the captives would be decided by a footrace across the plains of Rohan..."
     ],
     "setup": [
       "Build the encounter deck from The Uruk-hai, Orcs of the White Hand and Snaga Orcs encounter sets."
@@ -4348,7 +4407,11 @@
   },
   "helms-deep": {
     "intro": [
-      "The Riders of Rohan cut down the Orcs before they reached Isengard, and Gandalf turned Aragorn and his companions from the eaves of Fangorn toward Edoras. Now King Théoden must ready his people, for the armies of Saruman are marching on the fortress of Helm's Deep."
+      "Difficulty level = 8",
+      "In an unanticipated turn of events, it was the Riders of Rohan who intervened to prevent the Orcs of Saruman from delivering their captives to Isengard. However, when the Riders overtook Aragorn and his fellow hunters on the plains, they could tell him no news of his captured friends.",
+      "For a tense moment it seemed that the Riders might mistake the mysterious Ranger for a spy from Isengard, but the heir of Elendil chose that moment to reveal himself and his lineage to them. In response, the Third Marshal of the Riddermark, Éomer, decided to aid Aragorn and his companions in their quest by loaning them horses. Grateful for their aid, Aragorn promised to return the horses to Edoras, the capital city of Rohan, upon learning the fate of his friends.",
+      "After Éomer and the men of his Éored departed, Aragorn searched for his friends at the site of the battle near the borders of Fangorn Forest. He found tracks leading into Fangorn, but before he could follow them deeper into the forest, he and his companions were stopped by Gandalf.",
+      "The Wizard told them of Saruman’s plot to destroy Rohan and urged them to ride with him at once to Edoras. Content with Gandalf’s assurance that his friends were safe in Fangorn, Aragorn rode with all speed to the Golden Hall of Meduseld in Edoras to help King Théoden prepare for war..."
     ],
     "setup": [
       "Build the encounter deck from the Helm's Deep and Orcs of the White Hand encounter sets."
