@@ -165,7 +165,8 @@ spec = describe "The Wilds of Rhovanion's shared encounter sets" do
       -- the additional attack asks for a defender again, dealt no other shadow card
       Just (QuestionLabel _ source _ _) <- getQuestion pid
       source `shouldBe` Just (toTarget wargs)
-      fmap (length . (.shadowCards)) (getEnemy wargs) `shouldReturn` 1
+      -- FAQ 1.42 discards the previous attack's shadows, even with no new deal.
+      fmap (length . (.shadowCards)) (getEnemy wargs) `shouldReturn` 0
 
     it "returns the attacking enemy to the staging area after the attack with Pack of Wargs' shadow" . gameTest $ \pid -> do
       spider <- engaged pid Enemies.forestSpider

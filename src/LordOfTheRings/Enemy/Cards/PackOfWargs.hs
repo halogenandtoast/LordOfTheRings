@@ -14,7 +14,7 @@ packOfWargs = enemy PackOfWargs Cards.packOfWargs
 {- | Forced: If Pack of Wargs is dealt a shadow card with no effect, Pack of Wargs makes an
 additional attack after this one. (Do not deal it a shadow card.)
 Read as each shadow card turns faceup ('revealedShadowCards'): the additional attack
-resolves no shadow card, the one dealt for this attack already turned faceup.
+resolves no shadow card; FAQ 1.42 discards the previous attack's shadow first.
 Shadow: Return attacking enemy to the staging area after this attack.
 -}
 instance RunMessage PackOfWargs where

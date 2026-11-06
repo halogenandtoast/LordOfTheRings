@@ -920,10 +920,14 @@ payOrDiscard pid card sphere = do
 
 -- | Reveal the next encounter card once the card's revelation, its keywords too, has resolved.
 revealEncounterCardAfter :: (MonadTrans t, HasQueue Message m) => Target -> t m ()
-revealEncounterCardAfter t = lift $ insertAfterMatching [RevealEncounterCard] \case
-  WhileInPlay t' _ -> t == t'
-  ResolveSurge t' _ -> t == t'
-  _ -> False
+revealEncounterCardAfter t = lift $ withQueue_ \queue ->
+  let matches = \case
+        WhileInPlay t' _ -> t == t'
+        ResolveSurge t' _ -> t == t'
+        _ -> False
+   in case lastMay [i | (i, message) <- zip [0 ..] queue, matches message] of
+        Nothing -> queue
+        Just i -> let (earlier, later) = splitAt (i + 1) queue in earlier <> [RevealEncounterCard] <> later
 
 {- | The player does not raise their threat for questing unsuccessfully, from the window
 before it is raised, as Ever Onward reads.
@@ -1798,7 +1802,11 @@ immediateAttackWithPreparation n pid eid prepare = do
 -- | The enemy makes an immediate attack against the player, dealt no shadow card for it,
 -- as "it makes an immediate attack (do not deal it a shadow card)" reads.
 immediateAttackWithoutShadow :: ReverseQueue m => PlayerId -> EnemyId -> m ()
-immediateAttackWithoutShadow pid eid = push $ EnemyAttack pid eid
+immediateAttackWithoutShadow pid eid = do
+  -- FAQ 1.42: an additional attack discards all previously dealt shadows,
+  -- including when its card explicitly prevents dealing a new one.
+  push $ DiscardShadowCards eid
+  push $ EnemyAttack pid eid
 
 {- | The enemy engages the player with the highest threat and makes an immediate attack,
 the first player choosing among players tied for it, as Prowling Orc's Scour and Jailor
