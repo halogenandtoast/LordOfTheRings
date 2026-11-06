@@ -260,18 +260,22 @@ runPlayer msg player = case msg of
     -- a Guarded (X) attachment is guarded first, as one played is (MEC65 rules)
     PlayFromHandOnAtNoCost pid cid host | pid == player.id -> case find ((== cid) . (.id)) player.hand of
       Just card@(PlayerCard pc) -> do
-        raiseThreatFromDoomed $ sum [n | Doomed n <- toList (cdKeywords $ toCardDef pc)]
-        let attach = maybe (PlayAttachmentOn pid pc host) (ResolveGuardedPlayerCard pid pc) $ headMay [ts | GuardedBy ts <- toList (cdKeywords $ toCardDef pc)]
-        pushAll
-          =<< inLogBlock
-            (PlayBlock pid card)
-            ( markPlayed pid pc
-                <> [ attach
-                   , CheckWindows
-                       [mkAfter $ PlayedCard pid pc, mkAfter $ PlayedFromHand (toTarget pc), mkAfter $ PlayedCardFromHand pid (toCardCode pc)]
-                   ]
-            )
-        pure $ player & handL %~ filter ((/= cid) . (.id))
+        eligible <- elem host <$> playableCardHosts pid (toCardCode pc)
+        if not eligible
+          then pure player
+          else do
+            raiseThreatFromDoomed $ sum [n | Doomed n <- toList (cdKeywords $ toCardDef pc)]
+            let attach = maybe (PlayAttachmentOn pid pc host) (ResolveGuardedPlayerCard pid pc) $ headMay [ts | GuardedBy ts <- toList (cdKeywords $ toCardDef pc)]
+            pushAll
+              =<< inLogBlock
+                (PlayBlock pid card)
+                ( markPlayed pid pc
+                    <> [ attach
+                       , CheckWindows
+                           [mkAfter $ PlayedCard pid pc, mkAfter $ PlayedFromHand (toTarget pc), mkAfter $ PlayedCardFromHand pid (toCardCode pc)]
+                       ]
+                )
+            pure $ player & handL %~ filter ((/= cid) . (.id))
       _ -> pure player
     PlayTopOfDeckAtNoCostOrBottom pid source | pid == player.id -> do
       for_ (headMay player.deck) \case
@@ -306,7 +310,7 @@ runPlayer msg player = case msg of
       playable <- flip filterM [pc | PlayerCard pc <- player.discard, cdCardType (toCardDef pc) == AttachmentType] \pc -> do
         let card = PlayerCard pc
         discount <- attachDiscount card host
-        andM [elem host <$> cardHosts pid (toCardCode pc), passesUnique card, not <$> cannotPlay pid card, canAffordWith discount player card]
+        andM [elem host <$> playableCardHosts pid (toCardCode pc), passesUnique card, not <$> cannotPlay pid card, canAffordWith discount player card]
       choices <- for playable \pc ->
         targetLabel (CardIdTarget pc.id)
           <$> inLogBlock (PlayBlock pid (PlayerCard pc)) [RemoveFromDiscard pid pc.id, PayToAttach pid (PlayerCard pc) False [] host]
@@ -598,7 +602,7 @@ discardPlayers pid c = do
   pure [t | Modifier source (MayPlayFromDiscard m) <- mods, cardMatches m c, Just t <- [sourceTarget source]]
 
 canPlay :: HasGame m => Player -> Card -> m Bool
-canPlay p c = andM [canAfford p c, passesUnique c, correctPhase c, hasHost c, canPayAdditional p c, not <$> cannotPlay p.id c, not <$> barredFromHand p c]
+canPlay p c = andM [canAfford p c, passesUnique c, correctPhase c, hasPlayableHost c, canPayAdditional p c, not <$> cannotPlay p.id c, not <$> barredFromHand p c]
 
 -- | Whether the card, in the player's hand, gives itself 'CannotBePlayedFromHand'.
 barredFromHand :: HasGame m => Player -> Card -> m Bool
@@ -705,6 +709,14 @@ payerHeroes pid cards = do
   own <- select (HeroControlledBy $ PlayerWithId pid)
   others <- concatMapM select [m | PayableFromHeroes m <- mods]
   traverse getHero (nub $ own <> others)
+
+hasPlayableHost :: HasGame m => Card -> m Bool
+hasPlayableHost c
+  | PlayerCard pc <- c
+  , isAttachmentType c.cardType
+  , attachMatcherFor (cardOwner pc) (toCardCode c) `notElem` [PlayIntoStagingArea, PlayIntoPlayArea] =
+      andM [passesCriteria (attachmentCriteriaFor pc), notNull <$> playableCardHosts (cardOwner pc) (toCardCode c)]
+  | otherwise = hasHost c
 
 hasHost :: HasGame m => Card -> m Bool
 hasHost c

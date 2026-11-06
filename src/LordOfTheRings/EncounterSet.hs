@@ -3,7 +3,8 @@ module LordOfTheRings.EncounterSet (module LordOfTheRings.EncounterSet) where
 import LordOfTheRings.Prelude
 
 data EncounterSet
-  = TheHuntForTheDreadnaught
+  = TheMassingAtOsgiliath
+  | TheHuntForTheDreadnaught
   | TheOath
   | TheGoblins
   | TheCavesOfNibinDum

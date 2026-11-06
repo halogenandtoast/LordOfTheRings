@@ -14,7 +14,7 @@ allEnemyCards =
   Map.fromList $
     map
       (\def -> (cdCardCode def, def))
-      [dreadnaught, dreadnaughtDamaged, captainOfTheHaven, commanderOfTheDreadnaught, descendantOfCastamir, hydraken, ophidian, varjax, brashCorsairDreadnaught, corsairPlunderer, daringBuccaneer, fierceMarauder, southronSailorDreadnaught, umbarCaptainDreadnaught, blackSailsDreadnaught, corsairSkiffDreadnaught, corsairSkirmisherDreadnaught, corsairWarshipDreadnaught, rammingShipDreadnaught, slaveShipDreadnaught, warGalley, seaMonster,  stalkingGoblin
+      [theWitchKingOsgiliath, wolvesFromMordor, wainriders, wainriderCaptain, urukVanguard, dreadnaught, dreadnaughtDamaged, captainOfTheHaven, commanderOfTheDreadnaught, descendantOfCastamir, hydraken, ophidian, varjax, brashCorsairDreadnaught, corsairPlunderer, daringBuccaneer, fierceMarauder, southronSailorDreadnaught, umbarCaptainDreadnaught, blackSailsDreadnaught, corsairSkiffDreadnaught, corsairSkirmisherDreadnaught, corsairWarshipDreadnaught, rammingShipDreadnaught, slaveShipDreadnaught, warGalley, seaMonster,  stalkingGoblin
       , spidersOfMirkwoodDarkOfMirkwood
       , goblinSniperDarkOfMirkwood
       , goblinRunnersDarkOfMirkwood
@@ -5751,4 +5751,38 @@ warGalley = (enemy "the-hunt-for-the-dreadnaught-032" "War Galley" TheHuntForThe
 seaMonster :: CardDef
 seaMonster = (enemy "the-hunt-for-the-dreadnaught-033" "Sea Monster" TheHuntForTheDreadnaught 2 26 2 4 0 11)
   { cdCardTraits = setFromList [Creature]
+  }
+
+wainriderCaptain :: CardDef
+wainriderCaptain = (enemy "the-massing-at-osgiliath-005" "Wainrider Captain" TheMassingAtOsgiliath 3 40 3 3 3 4)
+  { cdCardTraits = setFromList [Easterling, Captain]
+  , cdWhenRevealed = True
+  , cdShadowEffect = True
+  }
+
+urukVanguard :: CardDef
+urukVanguard = (enemy "the-massing-at-osgiliath-006" "Uruk Vanguard" TheMassingAtOsgiliath 3 45 2 2 1 8)
+  { cdCardTraits = setFromList [Uruk, Orc]
+  , cdShadowEffect = True
+  }
+
+theWitchKingOsgiliath :: CardDef
+theWitchKingOsgiliath = (enemy "the-massing-at-osgiliath-001" "The Witch-king" TheMassingAtOsgiliath 1 40 6 6 6 11)
+  { cdCardTraits = setFromList [Nazgul, Captain]
+  , cdUnique = True
+  , cdShadowEffect = False
+  }
+
+wolvesFromMordor :: CardDef
+wolvesFromMordor = (enemy "the-massing-at-osgiliath-003" "Wolves from Mordor" TheMassingAtOsgiliath 4 27 1 4 1 3)
+  { cdCardTraits = setFromList [Creature, Scout]
+  , cdUnique = False
+  , cdShadowEffect = True
+  }
+
+wainriders :: CardDef
+wainriders = (enemy "the-massing-at-osgiliath-004" "Wainriders" TheMassingAtOsgiliath 4 35 2 3 1 4)
+  { cdCardTraits = setFromList [Easterling, Scout]
+  , cdUnique = False
+  , cdShadowEffect = False
   }

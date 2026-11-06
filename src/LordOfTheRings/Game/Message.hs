@@ -228,6 +228,7 @@ import LordOfTheRings.Helpers.Attachment (
   attachMatcherFor,
   attachmentHosts,
   cardHosts,
+  playableCardHosts,
  )
 import LordOfTheRings.Helpers.Character (
   escapeTestTotals,
@@ -757,6 +758,7 @@ import LordOfTheRings.Modifier (
     AttackDamageModifiesDamagedUntilEndOfRound,
     AttackDamageModifiesUntilEndOfRound,
     AttackDamageRaisesThreatOf,
+    AttackDamageRaisesDefendingPlayerThreat,
     AttackDamageRedirectedTo,
     AttackDamageRemovesProgress,
     AttackDamageTakesPrisoner,
@@ -1111,6 +1113,7 @@ import LordOfTheRings.Game.Cards (
   lowest,
   objectiveAllyController,
   playAttachment,
+  playPlayedAttachment,
   playsBeforeCommitting,
   printedFor,
   refreshing,
@@ -1621,7 +1624,10 @@ runGameMessage msg g = case msg of
     attackMods <- case source of
       EnemyAttackSource eid -> getModifiers eid
       _ -> pure []
-    let raising = [pid | AttackDamageRaisesThreatOf pid <- attackMods]
+    attacked <- case source of
+      EnemyAttackSource eid | AttackDamageRaisesDefendingPlayerThreat `elem` attackMods -> pure . pure =<< attackRecipient eid
+      _ -> pure []
+    let raising = attacked <> [pid | AttackDamageRaisesThreatOf pid <- attackMods]
         -- each point of it removes 1 progress from each quest card, as Traitorous Wight's
         -- shadow reads
         removing =
@@ -3107,7 +3113,7 @@ runGameMessage msg g = case msg of
     | isAttachmentType card.cardType
     , not (any (\case GuardedBy _ -> True; _ -> False) (cdKeywords $ toCardDef card)) -> do
         -- a host that lowers the cost is chosen before paying
-        hosts <- cardHosts pid (toCardCode card)
+        hosts <- playableCardHosts pid (toCardCode card)
         discounts <- traverse (attachDiscount card) hosts
         if any (> 0) discounts
           then
@@ -3122,7 +3128,11 @@ runGameMessage msg g = case msg of
                 )
           else payFor g pid card fromHand windows Nothing 0
     | otherwise -> payFor g pid card fromHand windows Nothing 0
-  PayToAttach pid card fromHand windows host -> payFor g pid card fromHand windows (Just host) =<< attachDiscount card host
+  PayToAttach pid card fromHand windows host -> do
+    eligible <- playableCardHosts pid (toCardCode card)
+    if host `elem` eligible
+      then payFor g pid card fromHand windows (Just host) =<< attachDiscount card host
+      else pure g
   PaidCost costId -> do
     -- a card with Doomed, printed or gained, raises each player's threat as it is played,
     -- by its X less what lowers it, as Saruman's Staff
@@ -3285,8 +3295,11 @@ runGameMessage msg g = case msg of
     runQueueT $ raiseThreatFromDoomed $ printedDoomed card
     hosts <- cardHosts pid (toCardCode card)
     let unattached = attachMatcherFor pid (toCardCode card) `elem` [PlayIntoStagingArea, PlayIntoPlayArea]
-    push $ if null hosts && not unattached && isNothing (guardedTypes card) then PutInDiscard card else PlayAttachment pid card
-    pure g
+    if null hosts && not unattached && isNothing (guardedTypes card)
+      then g <$ push (PutInDiscard card)
+      else case guardedTypes card of
+        Just types -> g <$ push (ResolveGuardedPlayerCard pid card types)
+        Nothing -> playAttachment pid card g
   PutSideQuestIntoPlay pid card -> do
     sideQuest <- newSideQuest pid card
     pure $ g & entitiesL . questsL %~ insertEntity sideQuest
@@ -3939,7 +3952,7 @@ runGameMessage msg g = case msg of
     pure $ g & entitiesL . questsL %~ Map.filter isSideQuest
   -- a Guarded (X) attachment is guarded before it is attached (MEC65 rules)
   PlayAttachment pid card | Just types <- guardedTypes card -> g <$ push (ResolveGuardedPlayerCard pid card types)
-  PlayAttachment pid card -> playAttachment pid card g
+  PlayAttachment pid card -> playPlayedAttachment pid card g
   -- free of encounters, it attaches to an eligible card, or with none is discarded
   -- the card is claimed once attached, as an Ered Mithrin treasure's "After you claim"
   AttachFreedCard pid card -> do

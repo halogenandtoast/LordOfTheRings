@@ -17,7 +17,7 @@ import LordOfTheRings.Entities
 import LordOfTheRings.Game.Base
 import LordOfTheRings.Campaign (recorded)
 import LordOfTheRings.Helpers.Ready (readyableCards)
-import LordOfTheRings.Helpers.Attachment (cardHosts, playableAttachmentsInHand)
+import LordOfTheRings.Helpers.Attachment (playableCardHosts, playableAttachmentsInHand)
 import LordOfTheRings.Helpers.Campaign (getCampaignLog)
 import LordOfTheRings.Helpers.Fellowship (readySagaOneRing, theOneRingExhausted)
 import LordOfTheRings.Helpers.Engagement (highestToughnessEngagements)
@@ -387,7 +387,7 @@ passesCriteria = \case
   ResourcesOfSphere pm sphere n -> anyM (\p -> (>= n) <$> getResourcesOfSphere p sphere) =<< select pm
   AffordableAllyInDiscard pid sphere -> notNull <$> affordableDiscardedAllies pid sphere
   AffordableAttachmentInDiscard pid sphere ->
-    anyM (\(_, pc, _) -> notNull <$> cardHosts pid (toCardCode pc)) =<< affordableDiscardedAttachments pid sphere
+    anyM (\(_, pc, _) -> notNull <$> playableCardHosts pid (toCardCode pc)) =<< affordableDiscardedAttachments pid sphere
   AffordableAllyInHand pid sphere reduction minimumCost -> notNull <$> affordableAlliesInHand pid sphere reduction minimumCost
   EpicTargetsExist query -> do
     g <- getGame

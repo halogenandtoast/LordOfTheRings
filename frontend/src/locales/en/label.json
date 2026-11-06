@@ -1,4 +1,9 @@
 {
+  "theWitchKingOsgiliath": {
+    "choose": "Return The Witch-king to the staging area or raise your threat by 3.",
+    "return": "Return The Witch-king to the staging area",
+    "threat": "Raise your threat by 3"
+  },
   "rotAndVapors": {
     "choose": "Choose Rot and Vapors’ effect",
     "threat": "Raise your threat by 1 for each questing character you control",

@@ -1,6 +1,6 @@
 cabal-version: 1.12
 
--- This file has been generated from package.yaml by hpack version 0.37.0.
+-- This file has been generated from package.yaml by hpack version 0.39.6.
 --
 -- see: https://github.com/sol/hpack
 
@@ -1229,6 +1229,7 @@ library
       LordOfTheRings.Enemy.Cards.TheWatcherNightmare
       LordOfTheRings.Enemy.Cards.TheWitchKing
       LordOfTheRings.Enemy.Cards.TheWitchKingCaptain
+      LordOfTheRings.Enemy.Cards.TheWitchKingOsgiliath
       LordOfTheRings.Enemy.Cards.ThingsInThePools
       LordOfTheRings.Enemy.Cards.ThrashingArm
       LordOfTheRings.Enemy.Cards.ThrashingTentacle
@@ -1286,6 +1287,7 @@ library
       LordOfTheRings.Enemy.Cards.UrukPursuer
       LordOfTheRings.Enemy.Cards.UrukSoldier
       LordOfTheRings.Enemy.Cards.UrukSoldierOrcsOfMordor
+      LordOfTheRings.Enemy.Cards.UrukVanguard
       LordOfTheRings.Enemy.Cards.UrukWargRider
       LordOfTheRings.Enemy.Cards.VanguardOfBolg
       LordOfTheRings.Enemy.Cards.VengefulHillman
@@ -1295,7 +1297,9 @@ library
       LordOfTheRings.Enemy.Cards.ViciousMarauder
       LordOfTheRings.Enemy.Cards.ViciousTrackers
       LordOfTheRings.Enemy.Cards.VigilantOrc
+      LordOfTheRings.Enemy.Cards.WainriderCaptain
       LordOfTheRings.Enemy.Cards.WainriderChampion
+      LordOfTheRings.Enemy.Cards.Wainriders
       LordOfTheRings.Enemy.Cards.WargRider
       LordOfTheRings.Enemy.Cards.Wargs
       LordOfTheRings.Enemy.Cards.WarMumak
@@ -1327,6 +1331,7 @@ library
       LordOfTheRings.Enemy.Cards.WolfRider
       LordOfTheRings.Enemy.Cards.WolfsGuardian
       LordOfTheRings.Enemy.Cards.WolfSpirit
+      LordOfTheRings.Enemy.Cards.WolvesFromMordor
       LordOfTheRings.Enemy.Cards.WoundedUruk
       LordOfTheRings.Enemy.Cards.WraithOfCarnDum
       LordOfTheRings.Enemy.Cards.WraithOnWings
@@ -3255,6 +3260,7 @@ library
       LordOfTheRings.Scenario.Scenarios.TheLongArmOfMordor.Helpers
       LordOfTheRings.Scenario.Scenarios.TheLongDark
       LordOfTheRings.Scenario.Scenarios.TheLongDark.Helpers
+      LordOfTheRings.Scenario.Scenarios.TheMassingAtOsgiliath.Helpers
       LordOfTheRings.Scenario.Scenarios.TheMorgulVale
       LordOfTheRings.Scenario.Scenarios.TheMorgulVale.Helpers
       LordOfTheRings.Scenario.Scenarios.TheMountainOfFire.Helpers
@@ -4318,6 +4324,7 @@ test-suite LordOfTheRings-test
       LordOfTheRings.ShadowsOfMirkwood.TheDeadMarshesSpec
       LordOfTheRings.ShadowsOfMirkwood.TheHillsOfEmynMuilSpec
       LordOfTheRings.ShadowsOfMirkwood.TheHuntForGollumSpec
+      LordOfTheRings.Standalone.MassingAtOsgiliathSpec
       LordOfTheRings.Starter.DefendersOfGondorSpec
       LordOfTheRings.Starter.DwarvesOfDurinSpec
       LordOfTheRings.Starter.ElvesOfLorienSpec

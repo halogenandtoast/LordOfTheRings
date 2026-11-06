@@ -46,6 +46,10 @@ cardHosts owner code = do
  where
   def = toCardDef code
 
+-- | Legal hosts when playing an attachment, rather than putting it into play.
+playableCardHosts :: HasGame m => PlayerId -> CardCode -> m [Target]
+playableCardHosts owner code = filterM (fmap (notElem CannotPlayAttachmentsOn) . getModifiers) =<< cardHosts owner code
+
 {- | The matching attachment cards in the player's hand he could play now for so much less:
 the unique rule lets each in, his heroes have the resources of its sphere, and it has a
 host to go on, as Anvil of Gundabad's action plays an Item attachment "reducing its cost
@@ -57,7 +61,7 @@ playableAttachmentsInHand pid matcher reduction = do
   flip filterM [c | c@(PlayerCard _) <- player.hand, cardMatches matcher c] \c -> do
     resources <- getResourcesOfSphere pid (fromMaybe Neutral c.sphere)
     let cost = maybe 0 costAsResources c.cost
-    andM [passesUnique c, pure (resources >= cost - reduction), notNull <$> cardHosts pid (toCardCode c)]
+    andM [passesUnique c, pure (resources >= cost - reduction), notNull <$> playableCardHosts pid (toCardCode c)]
 
 attachmentHosts :: (HasGame m) => AttachMatcher -> m [Target]
 attachmentHosts matcher = filterM (fmap (\ms -> CannotHaveAttachments `notElem` ms && CannotHavePlayerAttachments `notElem` ms) . getModifiers) =<< hosts matcher

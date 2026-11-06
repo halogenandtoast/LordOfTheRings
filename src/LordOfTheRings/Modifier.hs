@@ -100,6 +100,8 @@ data ModifierType
   | -- | on an enemy: allies cannot defend while it attacks, as Snow Warg's
     CannotBeDefendedByAllies
   | CannotHaveAttachments
+  | -- | Attachments cannot be played on this host; putting them into play or moving them is allowed.
+    CannotPlayAttachmentsOn
   | -- | on a character: no treachery card can be attached to it, as Beyond All Hope reads
     CannotHaveTreacheryAttachments
   | -- | no player attachment without the trait can be attached to it, as a Nazgûl's
@@ -631,6 +633,8 @@ data ModifierType
   | -- | on an enemy: the damage its attack deals raises the player's threat as much, as
     -- Seedy Inn's shadow reads
     AttackDamageRaisesThreatOf PlayerId
+  | -- | Each damage this enemy deals raises the attacked player’s threat.
+    AttackDamageRaisesDefendingPlayerThreat
   | -- | on the game: each enemy gets +1 threat for each damage on it, as Orcish Howls reads
     EnemiesGetThreatPerDamage
   | -- | on an enemy: the damage its attack would deal is canceled, and the defending

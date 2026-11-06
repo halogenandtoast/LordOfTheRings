@@ -53,6 +53,11 @@ import LordOfTheRings.Enemy.Cards.WickedWolf
 import LordOfTheRings.Enemy.Cards.GoblinProwler
 import LordOfTheRings.Enemy.Cards.AMurderOfCrows
 import LordOfTheRings.Enemy.Cards.BlackForestBats
+import LordOfTheRings.Enemy.Cards.TheWitchKingOsgiliath (theWitchKingOsgiliath)
+import LordOfTheRings.Enemy.Cards.WolvesFromMordor (wolvesFromMordor)
+import LordOfTheRings.Enemy.Cards.Wainriders (wainriders)
+import LordOfTheRings.Enemy.Cards.WainriderCaptain (wainriderCaptain)
+import LordOfTheRings.Enemy.Cards.UrukVanguard (urukVanguard)
 import LordOfTheRings.Enemy.Cards.StalkingGoblin (stalkingGoblin)
 import LordOfTheRings.Enemy.Cards.GoblinScout
 import LordOfTheRings.Enemy.Cards.GoblinSwordsman
@@ -698,7 +703,12 @@ allEnemys =
   Map.fromList
     [ (toCardCode builder, card)
     | card@(SomeEnemyCard builder) <-
-        [ SomeEnemyCard dreadnaught
+        [ SomeEnemyCard wolvesFromMordor
+        , SomeEnemyCard wainriders
+        , SomeEnemyCard theWitchKingOsgiliath
+        , SomeEnemyCard wainriderCaptain
+        , SomeEnemyCard urukVanguard
+        , SomeEnemyCard dreadnaught
         , SomeEnemyCard dreadnaughtDamaged
         , SomeEnemyCard captainOfTheHaven
         , SomeEnemyCard commanderOfTheDreadnaught

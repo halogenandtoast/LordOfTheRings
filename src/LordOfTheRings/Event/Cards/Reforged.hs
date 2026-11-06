@@ -3,7 +3,7 @@ module LordOfTheRings.Event.Cards.Reforged (reforged) where
 import LordOfTheRings.Card (toCardCode)
 import LordOfTheRings.Event.CardDefs qualified as Cards
 import LordOfTheRings.Event.Import.Lifted
-import LordOfTheRings.Helpers.Attachment (cardHosts)
+import LordOfTheRings.Helpers.Attachment (playableCardHosts)
 import LordOfTheRings.Sphere (Sphere (Spirit))
 
 newtype Reforged = Reforged EventAttrs
@@ -23,7 +23,7 @@ reforged = eventWith Reforged Cards.reforged \a -> a & criteriaL .~ AffordableAt
 instance RunMessage Reforged where
   runMessage msg e@(Reforged attrs) = case msg of
     PlayEvent pid card _ | card.id == toId attrs -> do
-      attachments <- filterM (\(_, pc, _) -> notNull <$> cardHosts pid (toCardCode pc)) =<< affordableDiscardedAttachments pid Spirit
+      attachments <- filterM (\(_, pc, _) -> notNull <$> playableCardHosts pid (toCardCode pc)) =<< affordableDiscardedAttachments pid Spirit
       chooseOneM pid do
         questionLabeled "reforged.choose"
         causedBy attrs

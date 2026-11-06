@@ -25,6 +25,7 @@ import LordOfTheRings.Attachment (
  )
 import LordOfTheRings.Card (
   Card (..),
+  CardCode,
   CardDef (
     cdCardTraits,
     cdCardType,
@@ -90,7 +91,7 @@ import LordOfTheRings.Game.Base (
   scenarioL,
  )
 import LordOfTheRings.GameT (GameT)
-import LordOfTheRings.Helpers.Attachment (cardHosts)
+import LordOfTheRings.Helpers.Attachment (cardHosts, playableCardHosts)
 import LordOfTheRings.Helpers.Character (characterCardDef)
 import LordOfTheRings.Helpers.Modifiers (getModifiers)
 import LordOfTheRings.Helpers.Window (
@@ -327,7 +328,13 @@ guardedTypes card = headMay [ts | GuardedBy ts <- toList (cdKeywords $ toCardDef
 
 -- | The attachment card enters play and attaches to a host its player chooses.
 playAttachment :: PlayerId -> PlayerCard -> Game -> GameT Game
-playAttachment pid card g = do
+playAttachment = playAttachmentWithHosts cardHosts
+
+playPlayedAttachment :: PlayerId -> PlayerCard -> Game -> GameT Game
+playPlayedAttachment = playAttachmentWithHosts playableCardHosts
+
+playAttachmentWithHosts :: (PlayerId -> CardCode -> GameT [Target]) -> PlayerId -> PlayerCard -> Game -> GameT Game
+playAttachmentWithHosts eligibleHosts pid card g = do
   attachment <- newAttachment pid card
   let entered = CheckWindows [mkAfter $ EntersPlay $ toTarget attachment]
       attachTo host = targetLabel host [AttachCard (toId attachment) host, entered]
@@ -347,7 +354,7 @@ playAttachment pid card g = do
         . attachmentsL
         %~ insertEntity (overAttrs (\a -> a {attachmentPlacement = InPlayArea pid}) attachment)
     _ -> do
-      hosts <- cardHosts pid (toCardCode card)
+      hosts <- eligibleHosts pid (toCardCode card)
       push $ case hosts of
         [host] -> uiToRun (attachTo host)
         _ ->
