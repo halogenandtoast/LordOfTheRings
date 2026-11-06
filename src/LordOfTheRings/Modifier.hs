@@ -43,6 +43,8 @@ data ModifierType
     ThreatForEngagementChecks Int
   | GainTrait Trait
   | GainResourceIcon Sphere
+  | -- | on a hero: the printed or gained resource icon is lost
+    LoseResourceIcon Sphere
   | ReturnToHandAtEndOfPhase
   | -- | on an ally, or its card id: it is discarded at the end of the phase, as Command's
     DiscardAtEndOfPhase
@@ -93,6 +95,8 @@ data ModifierType
     CannotExhaust
   | -- | on a character; on the game, no character readies, as Enfeebled reads
     CannotReady
+  | -- | on a character: its current willpower must reach this value to ready
+    CannotReadyWithWillpowerBelow Int
   | -- | on an enemy: characters with ranged may attack it in the staging area
     AttackableInStagingAreaByRanged
   | -- | on an enemy: it cannot attack that player, though it may attack others

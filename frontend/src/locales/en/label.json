@@ -1,4 +1,10 @@
 {
+  "erech": {
+    "neck": "End the encounter phase, or have the first player engage all enemies in staging?",
+    "endEncounter": "End the encounter phase",
+    "engageAll": "The first player engages all enemies in staging",
+    "hauntedHero": "Choose a hero to exhaust"
+  },
   "lakeTown": {
     "removeDamage": "Choose how much questing progress to spend removing damage from Lake-town",
     "dockHero": "Exhaust a hero to travel to Fisherman’s Dock",

@@ -74,6 +74,7 @@ data HeroMatcher
   | -- | a hero with the keyword printed on its card, as Great Yew Bow attaches to
     HeroWithPrintedKeyword Keyword
   | ReadyHero
+  | ExhaustableHero
   | DamagedHero
   | ExhaustedHero
   | -- | with poison attached (Flies and Spiders)

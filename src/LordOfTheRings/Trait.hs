@@ -125,6 +125,7 @@ data Trait
   | Mordor
   | Mount
   | MountGram
+  | BlackrootVale
   | Mountain
   | Mumak
   | Nameless

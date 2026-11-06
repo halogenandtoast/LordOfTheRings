@@ -665,7 +665,7 @@ canAffordWith discount p c = case (c.cost, c.sphere) of
         | otherwise -> pure $ sum (map (.resources) payers) + fromAllies >= needed
   _ -> pure False
  where
-  matchesSphere sphere h = (\own -> h.sphere == sphere || GainResourceIcon sphere `elem` own) <$> getModifiers h
+  matchesSphere = heroHasResourceIcon
 
 {- | What modifiers add to the cost of the card the player would play: the game's, the
 player's own and the card's (negative when they lower it), less its secrecy while the
@@ -795,8 +795,9 @@ barredFrom c h = any (\case CannotPayFor m -> cardMatches m c; _ -> False) <$> g
 
 -- | Whether the hero has the sphere's resource icon while paying for the card.
 iconFor :: HasGame m => Card -> Sphere -> Hero -> m Bool
-iconFor c sphere h =
-  orM
+iconFor c sphere h = do
+  lost <- elem (LoseResourceIcon sphere) <$> getModifiers h
+  if lost then pure False else orM
     [ any (\case GainResourceIconFor m s -> s == sphere && cardMatches m c; _ -> False) <$> getModifiers h
     , printedIconFor c sphere h
     ]
@@ -804,8 +805,9 @@ iconFor c sphere h =
 -- | Whether the hero is considered to have the sphere's printed resource icon while paying
 -- for the card.
 printedIconFor :: HasGame m => Card -> Sphere -> Hero -> m Bool
-printedIconFor c sphere h =
-  any (\case PrintedResourceIconFor m s -> s == sphere && cardMatches m c; PrintedResourceIconForCard cid s -> s == sphere && cid == c.id; _ -> False) <$> getModifiers h
+printedIconFor c sphere h = do
+  own <- getModifiers h
+  pure $ LoseResourceIcon sphere `notElem` own && any (\case PrintedResourceIconFor m s -> s == sphere && cardMatches m c; PrintedResourceIconForCard cid s -> s == sphere && cid == c.id; _ -> False) own
 
 -- | Whether the card's cost may be paid with resources of any sphere.
 noMatchNeeded :: HasGame m => Card -> m Bool

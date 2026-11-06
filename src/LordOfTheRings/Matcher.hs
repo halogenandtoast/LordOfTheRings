@@ -125,15 +125,11 @@ matchHero matcher hero = case matcher of
   HeroWithTitle name -> pure $ hero.name == name
   HeroWithTrait trait -> hasTrait trait (toTarget hero) (toCardDef hero)
   -- a hero belongs to the sphere of each resource icon it gains too, as Song of Wisdom's
-  HeroWithSphere sphere ->
-    (hero.sphere == sphere ||)
-      . elem (GainResourceIcon sphere)
-      . map modifierType
-      . Map.findWithDefault [] (toTarget hero)
-      <$> getsGame gameModifiers
+  HeroWithSphere sphere -> heroHasResourceIcon sphere hero
   HeroWithKeyword k -> hasKeyword k (toTarget hero) (toCardDef hero)
   HeroWithPrintedKeyword k -> pure $ k `member` cdKeywords (toCardDef hero)
   ReadyHero -> pure $ not (heroExhausted $ toAttrs hero)
+  ExhaustableHero -> (not (heroExhausted $ toAttrs hero) &&) . notElem CannotExhaust <$> getModifiers (toTarget hero)
   DamagedHero -> pure $ hero.damage > 0
   ExhaustedHero -> pure $ heroExhausted (toAttrs hero)
   PoisonedHero -> pure $ notNull (heroPoison $ toAttrs hero)
@@ -432,6 +428,12 @@ characterTraits target = case target of
   AllyTarget aid -> getTraits target . toCardDef =<< getAlly aid
   _ -> pure mempty
 
+-- | A current printed or gained icon. Removing an icon wins over gaining it.
+heroHasResourceIcon :: HasGame m => Sphere -> Hero -> m Bool
+heroHasResourceIcon sphere h = do
+  own <- map modifierType . Map.findWithDefault [] (toTarget h) <$> getsGame gameModifiers
+  pure $ LoseResourceIcon sphere `notElem` own && (h.sphere == sphere || GainResourceIcon sphere `elem` own)
+
 {- | Whether the hero's resources can pay for a card or cost of the sphere: its own
 sphere's, one a gained resource icon gives it, or any while the game lets resources be
 spent as that sphere's.
@@ -445,8 +447,7 @@ heroPaysFor sphere h = do
     $ CannotSpendResources `notElem` own
     && or
       [ sphere == Neutral
-      , h.sphere == sphere
-      , GainResourceIcon sphere `elem` own
+      , LoseResourceIcon sphere `notElem` own && (h.sphere == sphere || GainResourceIcon sphere `elem` own)
       , ResourcesSpendableAs sphere `elem` on GameTarget
       ]
 

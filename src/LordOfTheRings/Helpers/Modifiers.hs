@@ -4,7 +4,7 @@ import Control.Monad.Writer.Strict (execWriterT)
 import Data.Map.Monoidal.Strict (MonoidalMap (..))
 import Data.Map.Strict qualified as Map
 import Data.Set qualified as Set
-import LordOfTheRings.Card (Card (EncounterCard), CardCode, CardType (AllyType, ObjectiveAllyType), IsCard (toCard), lookupCardDef, isPlayerCardDef, cdKeywords, cdCardTraits, cdCardType, cdSphere, isTreasure, toCardCode, toCardDef)
+import LordOfTheRings.Card (Card (EncounterCard), CardCode, CardDef, cdWillpower, CardType (AllyType, ObjectiveAllyType), IsCard (toCard), lookupCardDef, isPlayerCardDef, cdKeywords, cdCardTraits, cdCardType, cdSphere, isTreasure, toCardCode, toCardDef)
 import LordOfTheRings.Sphere (Sphere (Fellowship))
 import LordOfTheRings.Classes.HasGame
 import LordOfTheRings.Classes.HasModifiersFor
@@ -237,7 +237,33 @@ doesNotExhaustToCommit :: (HasGame m) => Target -> m Bool
 doesNotExhaustToCommit target = elem DoesNotExhaustToCommit <$> getModifiers target
 
 getModifiers :: (HasGame m, Targetable a) => a -> m [ModifierType]
-getModifiers a = map modifierType . Map.findWithDefault [] (toTarget a) <$> getsGame gameModifiers
+getModifiers a = do
+  g <- getGame
+  let target = toTarget a
+      mods = map modifierType $ Map.findWithDefault [] target (gameModifiers g)
+      limits = [n | CannotReadyWithWillpowerBelow n <- mods]
+      character = case target of
+        HeroTarget hid -> toCardDef <$> Map.lookup hid g.entities.heroes
+        AllyTarget aid -> toCardDef <$> Map.lookup aid g.entities.allies
+        ObjectiveTarget oid -> toCardDef <$> Map.lookup oid g.entities.objectives
+        _ -> Nothing
+      blocked = case character of
+        Just def -> any (willpowerValue def mods [] <) limits
+        Nothing -> False
+  -- Keep stat-dependent readying restrictions current even when a lasting effect
+  -- has just changed willpower. Constant abilities read the previous cache while
+  -- the new cache is built, so materializing CannotReady there would lag a message.
+  pure $ mods <> [CannotReady | notNull limits && blocked]
+
+-- | Modified willpower, including its floor and effects preventing reductions.
+-- Used by both the stat reader and restrictions that depend on that current stat.
+willpowerValue :: CardDef -> [ModifierType] -> [Int] -> Int
+willpowerValue def mods bonuses =
+  let protected = CannotHaveWillpowerReduced `elem` mods
+      changes = bonuses <> mapMaybe willpowerOf mods
+      counted = if protected then filter (> 0) changes else changes
+   in if WillpowerReducedToZero `elem` mods && not protected then 0
+      else max 0 $ fromMaybe 0 (cdWillpower def) + sum counted
 
 -- | Whether an event card may shuffle cards from a discard pile into a deck: not while
 -- 'EventsCannotShuffleDiscardIntoDeck' holds, as Passage into Mordor reads.

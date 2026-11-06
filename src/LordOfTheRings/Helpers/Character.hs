@@ -38,11 +38,7 @@ getWillpowerWith :: HasGame m => Target -> [Int] -> m Int
 getWillpowerWith target bonuses = do
   mods <- getModifiers target
   def <- characterCardDef target
-  let floored = CannotHaveWillpowerReduced `elem` mods
-      changes = bonuses <> mapMaybe willpowerOf mods
-      counted = if floored then filter (> 0) changes else changes
-  pure $ if WillpowerReducedToZero `elem` mods && not floored then 0
-    else max 0 $ fromMaybe 0 (cdWillpower def) + sum counted
+  pure $ willpowerValue def mods bonuses
 
 getAttack target = do
   blank <- elem DoesNotCountAttack <$> getModifiers target

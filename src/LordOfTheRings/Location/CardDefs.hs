@@ -15,7 +15,7 @@ allLocationCards =
   Map.fromList $
     map
       (\def -> (cdCardCode def, def))
-      [westPier, theMastersManor, southPier, northPier, merchantsDistrict, eastPier, greatHouse, greatBridge, fishermansDock, esgarothWharf, capturedWatchtower, emynArnenOverlook, morgulduin, pelennorFieldsOsgiliath, ruinsOfOsgiliath, belfalasShipyard, cobasHavenDreadnaught, isleOfFortune, mouthsOfAnduin, tolfalasLanding, wickedCove,  theEavesOfMirkwoodDarkOfMirkwood
+      [theStoneOfErechStandalone, tarlangsNeck, banksOfMorthond, valeOfShadows, blackrootGraves, shadowOfDwimorberg, hauntedValley, westPier, theMastersManor, southPier, northPier, merchantsDistrict, eastPier, greatHouse, greatBridge, fishermansDock, esgarothWharf, capturedWatchtower, emynArnenOverlook, morgulduin, pelennorFieldsOsgiliath, ruinsOfOsgiliath, belfalasShipyard, cobasHavenDreadnaught, isleOfFortune, mouthsOfAnduin, tolfalasLanding, wickedCove,  theEavesOfMirkwoodDarkOfMirkwood
       , forestGateDarkOfMirkwood
       , goblinTunnelsDarkOfMirkwood
       , lightlessPassageDarkOfMirkwood
@@ -5433,4 +5433,46 @@ esgarothWharf = (location "the-battle-of-lake-town-024" "Esgaroth Wharf" TheBatt
   , cdVictoryPoints = Just 4
   , cdKeywords = setFromList [Burn 1]
   , cdShadowEffect = True
+  }
+
+theStoneOfErechStandalone :: CardDef
+theStoneOfErechStandalone = (location "the-stone-of-erech-006" "The Stone of Erech" TheStoneOfErech 1 0 6)
+  { cdCardTraits = setFromList [BlackrootVale]
+  , cdVictoryPoints = Just 5
+  , cdUnique = True
+  }
+
+tarlangsNeck :: CardDef
+tarlangsNeck = (location "the-stone-of-erech-007" "Tarlang's Neck" TheStoneOfErech 1 3 6)
+  { cdCardTraits = setFromList [BlackrootVale, Road]
+  , cdVictoryPoints = Just 1
+  , cdUnique = True
+  }
+
+banksOfMorthond :: CardDef
+banksOfMorthond = (location "the-stone-of-erech-017" "Banks of Morthond" TheStoneOfErech 2 2 7)
+  { cdCardTraits = setFromList [BlackrootVale, Riverland]
+  , cdShadowEffect = True
+  }
+
+valeOfShadows :: CardDef
+valeOfShadows = (location "the-stone-of-erech-018" "Vale of Shadows" TheStoneOfErech 2 1 3)
+  { cdCardTraits = setFromList [BlackrootVale]
+  , cdWhenRevealed = True
+  }
+
+blackrootGraves :: CardDef
+blackrootGraves = (location "the-stone-of-erech-019" "Blackroot Graves" TheStoneOfErech 3 4 1)
+  { cdCardTraits = setFromList [BlackrootVale]
+  , cdShadowEffect = True
+  }
+
+shadowOfDwimorberg :: CardDef
+shadowOfDwimorberg = (location "the-stone-of-erech-020" "Shadow of Dwimorberg" TheStoneOfErech 2 1 4)
+  { cdCardTraits = setFromList [BlackrootVale, Mountain]
+  }
+
+hauntedValley :: CardDef
+hauntedValley = (location "the-stone-of-erech-021" "Haunted Valley" TheStoneOfErech 2 2 3)
+  { cdCardTraits = setFromList [BlackrootVale]
   }

@@ -4,6 +4,9 @@ import LordOfTheRings.Ally.CardDefs qualified as Allies
 import LordOfTheRings.Attachment.CardDefs qualified as Attachments
 import LordOfTheRings.Event.CardDefs qualified as Events
 import LordOfTheRings.Location.CardDefs qualified as Locations
+import LordOfTheRings.Helpers.Window (travelableLocations, getActionAbilities)
+import LordOfTheRings.Phase (Phase (PlanningPhase, EncounterPhase, RefreshPhase))
+import LordOfTheRings.Sphere (Sphere (Lore, Spirit, Fellowship, Baggins))
 import LordOfTheRings.Helpers.Attachment (cardHosts)
 import LordOfTheRings.Helpers.Modifiers (getModifiers)
 import LordOfTheRings.Card (CardType (EventType))
@@ -12,10 +15,10 @@ import LordOfTheRings.Objective.CardDefs qualified as Objectives
 import LordOfTheRings.Treachery.CardDefs qualified as Treacheries
 import LordOfTheRings.Effect (Effect (..), EffectDuration (UntilEndOfRound))
 import LordOfTheRings.Helpers.Character (getAttackStrength)
-import LordOfTheRings.Helpers.Staging (getEnemyAttack, getEnemyDefense, getEnemyThreat)
+import LordOfTheRings.Helpers.Staging (getEnemyAttack, getEnemyDefense, getEnemyThreat, getLocationThreat, getLocationQuestPoints)
 import LordOfTheRings.Keyword (Keyword (Spectral))
-import LordOfTheRings.Matcher (getObjective, getThreat, getEnemy, CardMatcher (CardWithType))
-import LordOfTheRings.Modifier (ModifierType (AttackModifier, WillpowerModifier, AttackBonusAgainst, LoseKeyword, Blank, CannotPlay, RevealedEncounterCardsGainDoomed))
+import LordOfTheRings.Matcher (getObjective, getThreat, getEnemy, getAlly, getHero, heroHasResourceIcon, HeroMatcher (HeroWithSphere), Query (select), CardMatcher (CardWithType))
+import LordOfTheRings.Modifier (ModifierType (AttackModifier, WillpowerModifier, AttackBonusAgainst, LoseKeyword, Blank, CannotPlay, RevealedEncounterCardsGainDoomed, GainResourceIcon, CannotExhaust, GainResourceIconFor, PrintedResourceIconForCard))
 import LordOfTheRings.Scenario.Scenarios.TheStoneOfErech.Helpers (NightTime (..), currentNight, currentNightObjective)
 import LordOfTheRings.Trait (Trait (Oathbreaker))
 import LordOfTheRings.Window (WindowType (RoundEnds), mkWhen)
@@ -46,6 +49,214 @@ endRoundWindow = run $ CheckWindows [mkWhen RoundEnds]
 
 spec :: Spec
 spec = describe "Stone of Erech" do
+  describe "Erech locations" do
+    it "gives The Stone of Erech two threat per player" . twoPlayerTest testDeck $ \_ _ -> do
+      stone <- stageErechLocation Locations.theStoneOfErechStandalone
+      getLocationThreat stone `shouldReturn` 4
+
+    it "exhausts low-willpower characters to travel, prevents their readying, and reacts to willpower bonuses" . gameTest $ \pid -> do
+      stone <- stageErechLocation Locations.theStoneOfErechStandalone
+      theodred <- heroOf pid "01002"
+      beravor <- heroOf pid "01012"
+      run $ TravelTo stone
+      (.placement) <$> getLocation stone `shouldReturn` ActiveLocation
+      heroExhaustedTarget theodred `shouldReturn` True
+      heroExhaustedTarget beravor `shouldReturn` False
+      run $ Ready theodred
+      heroExhaustedTarget theodred `shouldReturn` True
+      run $ CreateEffect $ Effect GameSource theodred [WillpowerModifier 1] UntilEndOfRound
+      run $ Ready theodred
+      heroExhaustedTarget theodred `shouldReturn` False
+
+    it "also evaluates an ally's current willpower when it readies" . gameTest $ \pid -> do
+      stone <- stageErechLocation Locations.theStoneOfErechStandalone
+      ally <- putAllyIntoPlay pid Allies.guardOfTheCitadel
+      run $ TravelTo stone
+      let exhausted = case ally of AllyTarget aid -> allyExhausted . toAttrs <$> getAlly aid; _ -> error "ally missing"
+      exhausted `shouldReturn` True
+      run $ Ready ally
+      exhausted `shouldReturn` True
+      run $ CreateEffect $ Effect GameSource ally [WillpowerModifier 2] UntilEndOfRound
+      run $ Ready ally
+      exhausted `shouldReturn` False
+
+    it "bars travel if a character needed for its cost is already exhausted" . gameTest $ \pid -> do
+      stone <- stageErechLocation Locations.theStoneOfErechStandalone
+      run . Exhaust =<< heroOf pid "01002"
+      travelableLocations >>= (`shouldSatisfy` notElem stone)
+      run $ TravelTo stone
+      (.placement) <$> getLocation stone `shouldReturn` StagingArea
+
+    it "keeps the Stone immune to player progress effects, and puts it in victory when explored" . gameTest $ \pid -> do
+      stone <- stageErechLocation Locations.theStoneOfErechStandalone
+      hero <- heroOf pid "01012"
+      let source = case hero of HeroTarget hid -> HeroSource hid; _ -> GameSource
+      run $ PlaceTokens source (toTarget stone) Progress 6
+      (.progress) <$> getLocation stone `shouldReturn` 0
+      run $ PlaceTokens GameSource (toTarget stone) Progress 6
+      cards <- getsGame ((.victoryDisplay) . toAttrs . (.scenario))
+      map toCardCode cards `shouldBe` [toCardCode Locations.theStoneOfErechStandalone]
+
+    it "lets Tarlang's Neck end the encounter phase before engagement checks" . gameTest $ \pid -> do
+      neck <- stageErechLocation Locations.tarlangsNeck
+      run $ PlaceLocation neck ActiveLocation
+      eid <- stageErechEnemy Enemies.restlessDead
+      initial <- getThreat pid
+      run $ Run [BeginPhase EncounterPhase, RaiseThreat pid 10, EndPhase EncounterPhase]
+      chooseLabel "$label.erech.endEncounter" pid
+      getThreat pid `shouldReturn` initial
+      (.placement) . toAttrs <$> getEnemy eid `shouldReturn` StagingArea
+
+    it "lets Tarlang's Neck make the first player engage every staged enemy" . twoPlayerTest testDeck $ \one two -> do
+      neck <- stageErechLocation Locations.tarlangsNeck
+      run $ PlaceLocation neck ActiveLocation
+      enemies <- traverse stageErechEnemy [Enemies.restlessDead, Enemies.shadowMan]
+      initial <- getThreat one
+      run $ Run [BeginPhase EncounterPhase, RaiseThreat one 1, EndPhase EncounterPhase]
+      chooseLabel "$label.erech.engageAll" one
+      replicateM_ 3 do
+        passActions one
+        passActions two
+      for_ enemies \eid -> (.placement) . toAttrs <$> getEnemy eid `shouldReturn` EngagedWith one
+      getThreat one `shouldReturn` initial + 1
+
+    it "reduces staging locations' threat only while Banks of Morthond is active" . gameTest $ \_ -> do
+      banks <- stageErechLocation Locations.banksOfMorthond
+      vale <- stageErechLocation Locations.valeOfShadows
+      eid <- stageErechEnemy Enemies.whisperer
+      getLocationThreat vale `shouldReturn` 1
+      run $ PlaceLocation banks ActiveLocation
+      getLocationThreat vale `shouldReturn` 0
+      getLocationThreat banks `shouldReturn` 2
+      getEnemyThreat eid `shouldReturn` 2
+      run $ PlaceLocation banks StagingArea
+      getLocationThreat vale `shouldReturn` 1
+
+    for_ [(True, 1), (False, 0)] \(killed, progress) ->
+      it ("progresses Night from Banks of Morthond's shadow only if the attack kills: " <> show killed) . gameTest $ \pid -> do
+        _ <- prepareNights
+        eid <- stageErechEnemy Enemies.forestSpider
+        defender <- if killed then putAllyIntoPlay pid Allies.guardOfTheCitadel else heroOf pid "01012"
+        run $ EngageEnemy pid eid
+        card <- genEncounterCard Locations.banksOfMorthond
+        run $ AttachShadowCard eid card
+        run $ EnemyAttack pid eid
+        passActions pid
+        chooseTarget pid defender
+        passActions pid
+        passActions pid
+        nightProgress `shouldReturn` progress
+
+    for_ [(Objectives.eventide, 3, 1), (Objectives.dusk, 5, 3), (Objectives.midnight, 7, 5)] \(night, points, threat) ->
+      it ("applies the Night bonuses to Vale of Shadows and Shadow of Dwimorberg at " <> show (toCardCode night)) . gameTest $ \_ -> do
+        _ <- stageNight night
+        vale <- stageErechLocation Locations.valeOfShadows
+        shadow <- stageErechLocation Locations.shadowOfDwimorberg
+        getLocationQuestPoints vale `shouldReturn` points
+        getLocationThreat shadow `shouldReturn` threat
+
+    it "makes revealed Vale of Shadows active and returns the previous active location to staging" . gameTest $ \_ -> do
+      banks <- stageErechLocation Locations.banksOfMorthond
+      run $ PlaceLocation banks ActiveLocation
+      _ <- setEncounterDeck [Locations.valeOfShadows]
+      run RevealEncounterCard
+      resolveRevealed
+      (.placement) <$> getLocation banks `shouldReturn` StagingArea
+      locations <- getsGame (toList . (.entities.locations))
+      let vale = fromJustNote "vale missing" $ find ((== toCardCode Locations.valeOfShadows) . toCardCode) locations
+      (.placement) (toAttrs vale) `shouldBe` ActiveLocation
+
+    it "returns the topmost Undead enemy engaged with the first player when Blackroot Graves is explored, without revealing it" . twoPlayerTest testDeck $ \one _ -> do
+      cards <- traverse genEncounterCard [Enemies.forestSpider, Enemies.shadowMan, Enemies.whisperer]
+      run $ AddToEncounterDiscard cards
+      graves <- stageErechLocation Locations.blackrootGraves
+      run $ PlaceTokens GameSource (toTarget graves) Progress 1
+      enemy <- getsGame $ fromJustNote "returned enemy missing" . headMay . toList . (.entities.enemies)
+      toCardCode enemy `shouldBe` toCardCode Enemies.shadowMan
+      (.placement) (toAttrs enemy) `shouldBe` EngagedWith one
+      getModifiers GameTarget >>= (`shouldSatisfy` notElem (CannotPlay $ CardWithType EventType))
+
+    for_ [(0, 2), (1, 0)] \(willpower, damage) ->
+      it ("deals Blackroot Graves' shadow damage to a defender with willpower " <> show willpower) . gameTest $ \pid -> do
+        eid <- stageErechEnemy Enemies.forestSpider
+        defender <- heroOf pid "01002"
+        run $ CreateEffect $ Effect GameSource defender [WillpowerModifier (willpower - 1)] UntilEndOfRound
+        card <- genEncounterCard Locations.blackrootGraves
+        run $ AttachShadowCard eid card
+        run $ ResolveShadowCard card.id eid pid [defender]
+        getDamage defender `shouldReturn` damage
+
+  describe "Haunted Valley" do
+    it "removes printed and gained standard icons from ready heroes and restores them when exhausted" . gameTest $ \pid -> do
+      _ <- stageErechLocation Locations.hauntedValley
+      beravor <- heroOf pid "01012"
+      let hid = case beravor of HeroTarget ident -> ident; _ -> error "hero missing"
+      run $ CreateEffect $ Effect GameSource beravor [GainResourceIcon Spirit, GainResourceIcon Fellowship, GainResourceIcon Baggins] UntilEndOfRound
+      hero <- getHero hid
+      heroHasResourceIcon Lore hero `shouldReturn` False
+      heroHasResourceIcon Spirit hero `shouldReturn` False
+      heroHasResourceIcon Fellowship hero `shouldReturn` True
+      heroHasResourceIcon Baggins hero `shouldReturn` True
+      select (HeroWithSphere Lore) >>= (`shouldSatisfy` notElem hid)
+      run $ Exhaust beravor
+      heroHasResourceIcon Lore hero `shouldReturn` True
+      heroHasResourceIcon Spirit hero `shouldReturn` True
+      select (HeroWithSphere Lore) >>= (`shouldSatisfy` elem hid)
+
+    it "blocks paying for both paid and zero-cost cards until the appropriate hero exhausts" . gameTest $ \pid -> do
+      _ <- stageErechLocation Locations.hauntedValley
+      beravor <- heroOf pid "01012"
+      eowyn <- heroOf pid "01007"
+      run $ PlaceTokens GameSource eowyn Resource 3
+      free <- putCardIntoHand pid Events.daeronsRunes
+      paid <- putCardIntoHand pid Events.theGaladhrimsGreeting
+      player <- getPlayer pid
+      canPlay player free `shouldReturn` False
+      canPlay player paid `shouldReturn` False
+      run $ Exhaust beravor
+      run $ Exhaust eowyn
+      canPlay player free `shouldReturn` True
+      canPlay player paid `shouldReturn` True
+
+    it "also removes card-specific gained icons used for payment" . gameTest $ \pid -> do
+      _ <- stageErechLocation Locations.hauntedValley
+      eowyn <- heroOf pid "01007"
+      card <- putCardIntoHand pid Events.daeronsRunes
+      run $ CreateEffect $ Effect GameSource eowyn [GainResourceIconFor (CardWithType EventType) Lore, PrintedResourceIconForCard card.id Lore] UntilEndOfRound
+      player <- getPlayer pid
+      canPlay player card `shouldReturn` False
+      run $ Exhaust eowyn
+      canPlay player card `shouldReturn` True
+
+    it "lets either player exhaust a hero through its planning action" . twoPlayerTest testDeck $ \one two -> do
+      valley <- stageErechLocation Locations.hauntedValley
+      putGame . (phaseL .~ PlanningPhase) =<< getGame
+      let available pid = any (\ab -> sourceTarget ab.abilitySource == Just (toTarget valley)) <$> getActionAbilities pid
+      available one `shouldReturn` True
+      available two `shouldReturn` True
+      hero <- heroOf one "01012"
+      run $ UseCardAbility two (LocationSource valley) 1 []
+      chooseTarget two hero
+      heroExhaustedTarget hero `shouldReturn` True
+      putGame . (phaseL .~ RefreshPhase) =<< getGame
+      available one `shouldReturn` False
+
+    it "does not offer an exhaust action when no hero can exhaust" . gameTest $ \pid -> do
+      valley <- stageErechLocation Locations.hauntedValley
+      heroes <- traverse (heroOf pid) ["01002", "01007", "01012"]
+      for_ heroes \hero -> run $ CreateEffect $ Effect GameSource hero [CannotExhaust] UntilEndOfRound
+      abilities <- getActionAbilities pid
+      abilities `shouldSatisfy` not . any (\ab -> sourceTarget ab.abilitySource == Just (toTarget valley))
+
+    it "stops removing icons after leaving the staging area" . gameTest $ \pid -> do
+      valley <- stageErechLocation Locations.hauntedValley
+      target <- heroOf pid "01012"
+      let hid = case target of HeroTarget ident -> ident; _ -> error "hero missing"
+      hero <- getHero hid
+      heroHasResourceIcon Lore hero `shouldReturn` False
+      run $ PlaceLocation valley ActiveLocation
+      heroHasResourceIcon Lore hero `shouldReturn` True
+
   describe "The Lord of the Dead" do
     it "blanks only the characters of the player engaged with him, and restores them when he leaves" . twoPlayerTest testDeck $ \one two -> do
       eid <- stageErechEnemy Enemies.theLordOfTheDeadErech
@@ -306,3 +517,12 @@ stageErechEnemy :: CardDef -> GameT EnemyId
 stageErechEnemy def = do
   run . AddToStaging =<< genEncounterCard def
   getsGame $ toId . fromJustNote "enemy missing" . find ((== toCardCode def) . toCardCode) . toList . (.entities.enemies)
+
+stageErechLocation :: CardDef -> GameT LocationId
+stageErechLocation def = do
+  run . AddToStaging =<< genEncounterCard def
+  getsGame $ toId . fromJustNote "location missing" . find ((== toCardCode def) . toCardCode) . toList . (.entities.locations)
+
+heroExhaustedTarget :: Target -> GameT Bool
+heroExhaustedTarget (HeroTarget hid) = heroExhausted . toAttrs <$> getHero hid
+heroExhaustedTarget _ = error "expected a hero"

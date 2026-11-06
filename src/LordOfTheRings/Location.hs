@@ -2,6 +2,13 @@
 
 module LordOfTheRings.Location (module LordOfTheRings.Location, module X) where
 
+import LordOfTheRings.Location.Cards.TheStoneOfErechStandalone (theStoneOfErechStandalone)
+import LordOfTheRings.Location.Cards.TarlangsNeck (tarlangsNeck)
+import LordOfTheRings.Location.Cards.BanksOfMorthond (banksOfMorthond)
+import LordOfTheRings.Location.Cards.ValeOfShadows (valeOfShadows)
+import LordOfTheRings.Location.Cards.BlackrootGraves (blackrootGraves)
+import LordOfTheRings.Location.Cards.ShadowOfDwimorberg (shadowOfDwimorberg)
+import LordOfTheRings.Location.Cards.HauntedValley (hauntedValley)
 import LordOfTheRings.Location.Cards.FishermansDock (fishermansDock)
 import LordOfTheRings.Location.Cards.MerchantsDistrict (merchantsDistrict)
 import LordOfTheRings.Location.Cards.GreatBridge (greatBridge)
@@ -797,7 +804,14 @@ allLocations =
   Map.fromList
     [ (toCardCode builder, card)
     | card@(SomeLocationCard builder) <-
-        [ SomeLocationCard fishermansDock
+        [ SomeLocationCard theStoneOfErechStandalone
+        , SomeLocationCard tarlangsNeck
+        , SomeLocationCard banksOfMorthond
+        , SomeLocationCard valeOfShadows
+        , SomeLocationCard blackrootGraves
+        , SomeLocationCard shadowOfDwimorberg
+        , SomeLocationCard hauntedValley
+        , SomeLocationCard fishermansDock
         , SomeLocationCard merchantsDistrict
         , SomeLocationCard greatBridge
         , SomeLocationCard theMastersManor

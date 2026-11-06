@@ -1809,6 +1809,7 @@ library
       LordOfTheRings.Location.Cards.Bamfurlong
       LordOfTheRings.Location.Cards.BanksOfEntwash
       LordOfTheRings.Location.Cards.BanksOfMorgulduin
+      LordOfTheRings.Location.Cards.BanksOfMorthond
       LordOfTheRings.Location.Cards.BanksOfSirannon
       LordOfTheRings.Location.Cards.BanksOfTheAnduin
       LordOfTheRings.Location.Cards.BareHilltop
@@ -1820,6 +1821,7 @@ library
       LordOfTheRings.Location.Cards.BelfalasShipyard
       LordOfTheRings.Location.Cards.BesiegedCourtyard
       LordOfTheRings.Location.Cards.BesiegedHomestead
+      LordOfTheRings.Location.Cards.BlackrootGraves
       LordOfTheRings.Location.Cards.BlightOfCarnDum
       LordOfTheRings.Location.Cards.BlisteringErg
       LordOfTheRings.Location.Cards.BlockedPassage
@@ -2082,6 +2084,7 @@ library
       LordOfTheRings.Location.Cards.HauntedMere
       LordOfTheRings.Location.Cards.HauntedPath
       LordOfTheRings.Location.Cards.HauntedPillars
+      LordOfTheRings.Location.Cards.HauntedValley
       LordOfTheRings.Location.Cards.HeartOfFangorn
       LordOfTheRings.Location.Cards.HelmOfTheStormcaller
       LordOfTheRings.Location.Cards.HelmsDike
@@ -2293,6 +2296,7 @@ library
       LordOfTheRings.Location.Cards.SeedyTavern
       LordOfTheRings.Location.Cards.Sewers
       LordOfTheRings.Location.Cards.ShadowedCorridor
+      LordOfTheRings.Location.Cards.ShadowOfDwimorberg
       LordOfTheRings.Location.Cards.ShadowyThicket
       LordOfTheRings.Location.Cards.ShadowyVale
       LordOfTheRings.Location.Cards.SharpJetties
@@ -2353,6 +2357,7 @@ library
       LordOfTheRings.Location.Cards.TangledForest
       LordOfTheRings.Location.Cards.TangledGrove
       LordOfTheRings.Location.Cards.TangledWoods
+      LordOfTheRings.Location.Cards.TarlangsNeck
       LordOfTheRings.Location.Cards.TempleFoothills
       LordOfTheRings.Location.Cards.TempleHalls
       LordOfTheRings.Location.Cards.TempleOfSauron
@@ -2418,6 +2423,7 @@ library
       LordOfTheRings.Location.Cards.TheSpidersLair
       LordOfTheRings.Location.Cards.TheSpidersRing
       LordOfTheRings.Location.Cards.TheStoneOfErech
+      LordOfTheRings.Location.Cards.TheStoneOfErechStandalone
       LordOfTheRings.Location.Cards.TheStorehouse
       LordOfTheRings.Location.Cards.TheTowerOfBaradDur
       LordOfTheRings.Location.Cards.TheTrollsCamp
@@ -2467,6 +2473,7 @@ library
       LordOfTheRings.Location.Cards.UnholyCrypt
       LordOfTheRings.Location.Cards.UpperHall
       LordOfTheRings.Location.Cards.UrukGuardroom
+      LordOfTheRings.Location.Cards.ValeOfShadows
       LordOfTheRings.Location.Cards.VastCoastland
       LordOfTheRings.Location.Cards.VastTrollFells
       LordOfTheRings.Location.Cards.VillageHut
