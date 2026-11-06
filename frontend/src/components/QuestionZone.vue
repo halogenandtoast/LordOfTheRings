@@ -17,9 +17,10 @@ const emit = defineEmits<{ choose: [index: number] }>()
 
 const labelChoices = computed<ChoiceView[]>(() =>
   // an amount is picked in its own panel
-  question?.amount ? [] : (question?.choices ?? []).filter((choice) => choice.targetId === null),
+  // an ability is a button as well as its card, so the box says where it is from
+  question?.amount ? [] : (question?.choices ?? []).filter((choice) => choice.targetId === null || choice.card),
 )
-const targeted = computed(() => (question?.choices ?? []).length - labelChoices.value.length)
+const targeted = computed(() => (question?.choices ?? []).some((choice) => choice.targetId !== null))
 const choiceSearch = ref('')
 watch(() => question, () => { choiceSearch.value = '' })
 const visibleLabelChoices = computed(() => {
