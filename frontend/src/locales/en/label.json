@@ -7,7 +7,8 @@
     "neck": "End the encounter phase, or have the first player engage all enemies in staging?",
     "endEncounter": "End the encounter phase",
     "engageAll": "The first player engages all enemies in staging",
-    "hauntedHero": "Choose a hero to exhaust"
+    "hauntedHero": "Choose a hero to exhaust",
+    "claimRelic": "Choose a hero you control to claim Relic from the Dark Years."
   },
   "lakeTown": {
     "removeDamage": "Choose how much questing progress to spend removing damage from Lake-town",

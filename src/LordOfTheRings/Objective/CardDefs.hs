@@ -16,7 +16,7 @@ allObjectiveCards =
   Map.fromList $
     map
       (\def -> (cdCardCode def, def))
-      [eventide, dusk, midnight, theOldThrush, lakeTown, rangerOfIthilien, corsairSkirmisherShipDreadnaught, eithiliant, eithiliantUpgraded, goldenWing, goldenWingUpgraded, prideOfLebennin, prideOfLebenninUpgraded, silentMist, silentMistUpgraded, swanShipOfDolAmroth, swanShipOfDolAmrothUpgraded, twilightsCall, twilightsCallUpgraded, gondorianWarship,  caveTorchDarkOfMirkwood
+      [derufin, relicFromTheDarkYears, eventide, dusk, midnight, theOldThrush, lakeTown, rangerOfIthilien, corsairSkirmisherShipDreadnaught, eithiliant, eithiliantUpgraded, goldenWing, goldenWingUpgraded, prideOfLebennin, prideOfLebenninUpgraded, silentMist, silentMistUpgraded, swanShipOfDolAmroth, swanShipOfDolAmrothUpgraded, twilightsCall, twilightsCallUpgraded, gondorianWarship,  caveTorchDarkOfMirkwood
       , gandalfsMap
       , theThreatToWilderland
       , ashenBrazier
@@ -1644,3 +1644,19 @@ eventide, dusk, midnight :: CardDef
 eventide = (objective "the-stone-of-erech-008" "Eventide" TheStoneOfErech 1) {cdCardTraits = setFromList [Night]}
 dusk = (objective "the-stone-of-erech-009" "Dusk" TheStoneOfErech 1) {cdCardTraits = setFromList [Night]}
 midnight = (objective "the-stone-of-erech-010" "Midnight" TheStoneOfErech 1) {cdCardTraits = setFromList [Night]}
+
+
+derufin :: CardDef
+derufin = (objective "the-stone-of-erech-004" "Derufin" TheStoneOfErech 1)
+  { cdCardType = ObjectiveAllyType
+  , cdUnique = True
+  , cdCardTraits = setFromList [Gondor]
+  , cdWillpower = Just 3
+  , cdAttack = Just 1
+  , cdDefense = Just 1
+  , cdHitPoints = Just 2
+  }
+
+relicFromTheDarkYears :: CardDef
+relicFromTheDarkYears = (objective "the-stone-of-erech-011" "Relic from the Dark Years" TheStoneOfErech 1)
+  { cdCardTraits = setFromList [Item, Artifact] }

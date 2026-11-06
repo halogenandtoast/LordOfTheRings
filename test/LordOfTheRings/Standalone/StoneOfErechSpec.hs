@@ -3,11 +3,13 @@ module LordOfTheRings.Standalone.StoneOfErechSpec (spec) where
 import Data.Aeson (Result (..))
 import Data.Aeson.KeyMap qualified as KeyMap
 import LordOfTheRings.Decklist (loadPlayer)
+import LordOfTheRings.Ally (Ally)
 import LordOfTheRings.Ally.CardDefs qualified as Allies
 import LordOfTheRings.Attachment.CardDefs qualified as Attachments
 import LordOfTheRings.Event.CardDefs qualified as Events
 import LordOfTheRings.Hero.CardDefs qualified as Heroes
 import LordOfTheRings.Location.CardDefs qualified as Locations
+import LordOfTheRings.Outcome (Outcome (Lost))
 import LordOfTheRings.Helpers.Window (travelableLocations, getActionAbilities, shadowCardCancelable)
 import LordOfTheRings.Phase (Phase (PlanningPhase, EncounterPhase, RefreshPhase, CombatPhase, QuestPhase, TravelPhase))
 import LordOfTheRings.Sphere (Sphere (Lore, Spirit, Fellowship, Baggins))
@@ -22,10 +24,10 @@ import LordOfTheRings.Helpers.Character (getAttackStrength, getWillpower)
 import LordOfTheRings.Helpers.Staging (getEnemyAttack, getEnemyDefense, getEnemyThreat, getLocationThreat, getLocationQuestPoints)
 import LordOfTheRings.Keyword (Keyword (Spectral))
 import LordOfTheRings.Matcher (getObjective, getThreat, getEnemy, getAlly, getHero, heroHasResourceIcon, HeroMatcher (HeroWithSphere), EnemyMatcher (EnemyWithEngagementCostAboveThreatOf), Query (select), CardMatcher (CardWithType, AnyCard))
-import LordOfTheRings.Modifier (ModifierType (AttackModifier, WillpowerModifier, AttackBonusAgainst, LoseKeyword, Blank, CannotPlay, RevealedEncounterCardsGainDoomed, GainResourceIcon, CannotExhaust, GainResourceIconFor, PrintedResourceIconForCard, SkipPhase, AttackBonusAgainstMatching, EnteredPlayThisRound, ReduceCostToAttach))
+import LordOfTheRings.Modifier (ModifierType (AttackModifier, WillpowerModifier, AttackBonusAgainst, LoseKeyword, Blank, CannotPlay, RevealedEncounterCardsGainDoomed, GainResourceIcon, CannotExhaust, GainResourceIconFor, PrintedResourceIconForCard, SkipPhase, AttackBonusAgainstMatching, EnteredPlayThisRound, ReduceCostToAttach, CannotHaveAttachments))
 import LordOfTheRings.Scenario.Scenarios.TheStoneOfErech.Helpers (NightTime (..), currentNight, currentNightObjective)
 import LordOfTheRings.Trait (Trait (Oathbreaker))
-import LordOfTheRings.Window (WindowType (RoundEnds), mkWhen)
+import LordOfTheRings.Window (WindowType (RoundEnds, DeclaredAsAttacker), mkWhen, mkAfter)
 import TestImport
 
 stageNight :: CardDef -> GameT Target
@@ -53,6 +55,113 @@ endRoundWindow = run $ CheckWindows [mkWhen RoundEnds]
 
 spec :: Spec
 spec = describe "Stone of Erech" do
+  describe "Erech objectives" do
+    it "rescues Derufin for the first player after traveling to the Stone" . twoPlayerTest testDeck $ \one two -> do
+      stone <- stageErechLocation Locations.theStoneOfErechStandalone
+      captive <- stageNight Objectives.derufin
+      let oid = case captive of ObjectiveTarget ident -> ident; _ -> error "objective missing"
+      run $ ClaimObjective oid (LocationTarget stone)
+      run $ SetFirstPlayer two
+      run $ TravelTo stone
+      ally <- erechAlly Objectives.derufin
+      ally.placement `shouldBe` InPlayArea two
+      getsGame (isNothing . lookup oid . (.entities.objectives)) `shouldReturn` True
+      getQuestion one `shouldReturn` Nothing
+
+    it "does not rescue Derufin when the Stone becomes active without traveling" . gameTest $ \_ -> do
+      stone <- stageErechLocation Locations.theStoneOfErechStandalone
+      captive <- stageNight Objectives.derufin
+      let oid = case captive of ObjectiveTarget ident -> ident; _ -> error "objective missing"
+      run $ ClaimObjective oid (LocationTarget stone)
+      run $ PlaceLocation stone ActiveLocation
+      getsGame (.entities.allies) >>= (`shouldSatisfy` null)
+      (.placement) . toAttrs <$> getObjective oid `shouldReturn` AttachedTo (LocationTarget stone)
+
+    for_ [(Objectives.eventide, 3), (Objectives.dusk, 2), (Objectives.midnight, 1)] \(time, willpower) ->
+      it ("gives Derufin the printed willpower at " <> show (toCardCode time)) . gameTest $ \pid -> do
+        _ <- stageNight time
+        aid <- controlDerufin pid
+        getWillpower (AllyTarget aid) `shouldReturn` willpower
+
+    for_ ["discard", "return", "remove", "damage"] \way ->
+      it ("loses when Derufin leaves play by " <> way) . gameTest $ \pid -> do
+        aid <- controlDerufin pid
+        case way of
+          "discard" -> run $ Discard GameSource (AllyTarget aid)
+          "return" -> run $ ReturnToHand (AllyTarget aid)
+          "remove" -> run $ RemoveFromGame (AllyTarget aid)
+          _ -> run $ DealDamage GameSource (AllyTarget aid) 2
+        getsGame (.outcome) `shouldReturn` Just Lost
+
+    it "does not trigger Derufin's lost-game text if the Lord of the Dead blanked him as he left play" . gameTest $ \pid -> do
+      aid <- controlDerufin pid
+      lord <- stageErechEnemy Enemies.theLordOfTheDeadErech
+      run $ EngageEnemy pid lord
+      getModifiers aid >>= (`shouldSatisfy` elem Blank)
+      run $ Discard GameSource (AllyTarget aid)
+      getsGame (.outcome) `shouldReturn` Nothing
+      getModifiers aid >>= (`shouldSatisfy` notElem Blank)
+
+    for_ [(Objectives.eventide, False), (Objectives.dusk, False), (Objectives.midnight, True)] \(time, claimable) ->
+      it ("offers the Relic's claim action only at Midnight: " <> show (toCardCode time)) . gameTest $ \pid -> do
+        _ <- stageNight time
+        relic <- stageNight Objectives.relicFromTheDarkYears
+        available <- any (\ab -> sourceTarget ab.abilitySource == Just relic) <$> getActionAbilities pid
+        available `shouldBe` claimable
+
+    it "lets any player attach the Relic to an exhausted hero they control without exhausting it" . twoPlayerTest testDeck $ \one two -> do
+      _ <- stageNight Objectives.midnight
+      relic <- stageNight Objectives.relicFromTheDarkYears
+      hero <- heroOf two "01012"
+      run $ Exhaust hero
+      run . PutHeroIntoPlay two =<< genPlayerCard Heroes.beorn (Just two)
+      blocked <- heroOf two (toCardCode Heroes.beorn)
+      let oid = case relic of ObjectiveTarget ident -> ident; _ -> error "objective missing"
+      run $ UseCardAbility two (ObjectiveSource oid) 1 []
+      offered <- maybe [] questionChoices <$> getQuestion two
+      offered `shouldSatisfy` any (\case TargetLabel t _ -> t == hero; _ -> False)
+      offered `shouldSatisfy` not . any (\case TargetLabel t _ -> t == blocked; _ -> False)
+      other <- heroOf one "01012"
+      offered `shouldSatisfy` not . any (\case TargetLabel t _ -> t == other; _ -> False)
+      chooseTarget two hero
+      (.placement) . toAttrs <$> getObjective oid `shouldReturn` AttachedTo hero
+      heroExhaustedTarget hero `shouldReturn` True
+
+    it "does not offer the Relic's claim action to a player whose heroes cannot have attachments" . gameTest $ \pid -> do
+      _ <- stageNight Objectives.midnight
+      relic <- stageNight Objectives.relicFromTheDarkYears
+      heroes <- traverse (heroOf pid) ["01002", "01007", "01012"]
+      for_ heroes \hero -> run $ CreateEffect (Effect GameSource hero [CannotHaveAttachments] UntilEndOfRound)
+      abilities <- getActionAbilities pid
+      abilities `shouldSatisfy` not . any (\ab -> sourceTarget ab.abilitySource == Just relic)
+
+    it "removes Spectral from the Oathbreaker attacked by the Relic's hero for the phase" . gameTest $ \pid -> do
+      _ <- stageNight Objectives.midnight
+      relic <- stageNight Objectives.relicFromTheDarkYears
+      hero <- heroOf pid "01007"
+      other <- heroOf pid "01012"
+      let oid = case relic of ObjectiveTarget ident -> ident; _ -> error "objective missing"
+      run $ ClaimObjective oid hero
+      foe <- stageCaptain
+      run $ CheckWindows [mkAfter $ DeclaredAsAttacker other foe]
+      getModifiers foe >>= (`shouldSatisfy` notElem (LoseKeyword Spectral))
+      run $ CheckWindows [mkAfter $ DeclaredAsAttacker hero foe]
+      getModifiers foe >>= (`shouldSatisfy` elem (LoseKeyword Spectral))
+      getAttackStrength [hero] foe Enemies.shadowHostCaptain `shouldReturn` 1
+      run $ EndPhase CombatPhase
+      getModifiers foe >>= (`shouldSatisfy` notElem (LoseKeyword Spectral))
+      getAttackStrength [hero] foe Enemies.shadowHostCaptain `shouldReturn` 4
+
+    it "does not remove Spectral from a non-Oathbreaker" . gameTest $ \pid -> do
+      _ <- stageNight Objectives.midnight
+      relic <- stageNight Objectives.relicFromTheDarkYears
+      hero <- heroOf pid "01012"
+      let oid = case relic of ObjectiveTarget ident -> ident; _ -> error "objective missing"
+      run $ ClaimObjective oid hero
+      foe <- stageErechEnemy Enemies.forestSpider
+      run $ CheckWindows [mkAfter $ DeclaredAsAttacker hero foe]
+      getModifiers foe >>= (`shouldSatisfy` notElem (LoseKeyword Spectral))
+
   describe "Erech treacheries" do
     it "lets every player search for and reveal an Undead enemy in first-player order" . twoPlayerTest testDeck $ \one two -> do
       _ <- stageNight Objectives.midnight
@@ -857,3 +966,13 @@ threePlayerErechTest body = do
     case ids of
       [one, two, three] -> body one two three
       _ -> error "expected three players"
+
+erechAlly :: CardDef -> GameT Ally
+erechAlly def = getsGame (fromJustNote "Erech ally missing" . find ((== toCardCode def) . toCardCode) . toList . (.entities.allies))
+
+controlDerufin :: PlayerId -> GameT AllyId
+controlDerufin pid = do
+  captive <- stageNight Objectives.derufin
+  let oid = case captive of ObjectiveTarget ident -> ident; _ -> error "objective missing"
+  run $ PutObjectiveAllyIntoPlay oid pid
+  toId <$> erechAlly Objectives.derufin

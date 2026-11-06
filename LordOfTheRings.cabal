@@ -79,6 +79,7 @@ library
       LordOfTheRings.Ally.Cards.Deorwine
       LordOfTheRings.Ally.Cards.DerndingleWarrior
       LordOfTheRings.Ally.Cards.Derufin
+      LordOfTheRings.Ally.Cards.DerufinErech
       LordOfTheRings.Ally.Cards.DescendantOfGirion
       LordOfTheRings.Ally.Cards.DescendantOfThorondor
       LordOfTheRings.Ally.Cards.DolAmrothWarship
@@ -2583,6 +2584,7 @@ library
       LordOfTheRings.Objective.Cards.DaechanarsBrand
       LordOfTheRings.Objective.Cards.Daybreak
       LordOfTheRings.Objective.Cards.DeadVillagers
+      LordOfTheRings.Objective.Cards.Derufin
       LordOfTheRings.Objective.Cards.DocksOfDolAmroth
       LordOfTheRings.Objective.Cards.DoomDoomDoom
       LordOfTheRings.Objective.Cards.DragonSign
@@ -2637,6 +2639,7 @@ library
       LordOfTheRings.Objective.Cards.PoisonedCounsels
       LordOfTheRings.Objective.Cards.PoisonedSpear
       LordOfTheRings.Objective.Cards.RangerOfIthilien
+      LordOfTheRings.Objective.Cards.RelicFromTheDarkYears
       LordOfTheRings.Objective.Cards.RescuedVillagers
       LordOfTheRings.Objective.Cards.RiseToPower
       LordOfTheRings.Objective.Cards.SarumansStaffTheRoadToIsengard

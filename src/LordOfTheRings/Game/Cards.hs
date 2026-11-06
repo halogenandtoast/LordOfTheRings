@@ -56,7 +56,8 @@ import LordOfTheRings.Effect (
   EffectDuration (
     UntilEndOfAttack,
     UntilEndOfPhase,
-    UntilEndOfRound
+    UntilEndOfRound,
+    UntilSpent
   ),
  )
 import LordOfTheRings.Enemy (
@@ -139,6 +140,7 @@ import LordOfTheRings.Message (
     CheckRestricted,
     CheckWindows,
     CreateEffect,
+    EndEffect,
     Discard,
     Flip,
     ForgetLeftPlay,
@@ -168,6 +170,7 @@ import LordOfTheRings.Modifier (
     AlliesEnterPlayExhausted,
     AlliesLeavePlayToHand,
     AttackDealsNoDamage,
+    Blank,
     Defending,
     EnteredPlayThisRound,
     GainKeyword,
@@ -212,6 +215,7 @@ import LordOfTheRings.Scenario (
 import LordOfTheRings.Scenario.Sailing (discardEncounterCard)
 import LordOfTheRings.Source (
   Source (
+    AllySource,
     CardIdSource,
     EnemyAttackSource,
     GameSource,
@@ -584,8 +588,13 @@ leftPlay g target = do
     AllyTarget aid
       | Just a <- Map.lookup aid g.entities.allies
       , notNull windows -> do
-          pushAll [CheckWindows (map mkAfter windows), ForgetLeftPlay aid]
-          pure $ g & leftPlayL %~ Map.insert aid a
+          -- Preserve the text the ally had as it left play. A dynamic blanking
+          -- source (the Lord of the Dead, for example) no longer selects it once
+          -- it is gone, but its own leaving-play abilities must still be blank.
+          blank <- elem Blank <$> getModifiers target
+          let snapshot = Effect (AllySource aid) target [Blank] UntilSpent
+          pushAll $ [CheckWindows (map mkAfter windows)] <> [EndEffect snapshot | blank] <> [ForgetLeftPlay aid]
+          pure $ g & leftPlayL %~ Map.insert aid a & effectsL %~ (\es -> [snapshot | blank] <> es)
     _ -> do
       unless (null windows) $ push $ CheckWindows (map mkAfter windows)
       pure g

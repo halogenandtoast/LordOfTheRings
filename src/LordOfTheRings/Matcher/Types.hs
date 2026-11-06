@@ -75,6 +75,8 @@ data HeroMatcher
     HeroWithPrintedKeyword Keyword
   | ReadyHero
   | ExhaustableHero
+  | -- | an encounter attachment with these traits can be attached to the hero
+    HeroCanHaveEncounterAttachment (Set Trait)
   | DamagedHero
   | ExhaustedHero
   | -- | with poison attached (Flies and Spiders)

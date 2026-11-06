@@ -130,6 +130,9 @@ matchHero matcher hero = case matcher of
   HeroWithPrintedKeyword k -> pure $ k `member` cdKeywords (toCardDef hero)
   ReadyHero -> pure $ not (heroExhausted $ toAttrs hero)
   ExhaustableHero -> (not (heroExhausted $ toAttrs hero) &&) . notElem CannotExhaust <$> getModifiers (toTarget hero)
+  HeroCanHaveEncounterAttachment traits -> do
+    mods <- getModifiers (toTarget hero)
+    pure $ CannotHaveAttachments `notElem` mods && all (`member` traits) [trait | CannotHaveAttachmentsWithoutTrait trait <- mods]
   DamagedHero -> pure $ hero.damage > 0
   ExhaustedHero -> pure $ heroExhausted (toAttrs hero)
   PoisonedHero -> pure $ notNull (heroPoison $ toAttrs hero)
