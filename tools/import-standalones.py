@@ -170,15 +170,19 @@ PRODUCTS = [
 
 
 def ensure_product_assets(pack):
-    # Standalone products become selectable as their scenario scripts are enabled.
-    # The Massing at Osgiliath uses its printed standalone symbol for both icons.
-    if pack != 'the-massing-at-osgiliath':
+    # Enabled standalones use their printed symbol for both icons.
+    enabled = {
+        'the-massing-at-osgiliath': ('MEC15', 'the_massing_at_osgiliath'),
+        'the-battle-of-lake-town': ('MEC35', 'the_battle_of_lake_town'),
+    }
+    if pack not in enabled:
         return
-    cover = ROOT / 'images/products/MEC15.jpg'
+    product, icon = enabled[pack]
+    cover = ROOT / f'images/products/{product}.jpg'
     if not cover.exists():
         cover.parent.mkdir(parents=True, exist_ok=True)
-        cover.write_bytes(fetch('https://hallofbeorn-resources.s3.amazonaws.com/Images/Products/MEC15.jpg'))
-    symbol = 'https://raw.githubusercontent.com/KevBelisle/lotr-lcg-assets/HEAD/' + urllib.parse.quote('icons/expansion symbols/pod/the_massing_at_osgiliath.svg')
+        cover.write_bytes(fetch(f'https://hallofbeorn-resources.s3.amazonaws.com/Images/Products/{product}.jpg'))
+    symbol = 'https://raw.githubusercontent.com/KevBelisle/lotr-lcg-assets/HEAD/' + urllib.parse.quote(f'icons/expansion symbols/pod/{icon}.svg')
     svg = None
     for kind in ('expansions', 'scenarios'):
         target = ROOT / 'images/icons' / kind / (pack + '.svg')
