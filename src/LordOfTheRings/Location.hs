@@ -2,6 +2,11 @@
 
 module LordOfTheRings.Location (module LordOfTheRings.Location, module X) where
 
+import LordOfTheRings.Location.Cards.NorthPier (northPier)
+import LordOfTheRings.Location.Cards.WestPier (westPier)
+import LordOfTheRings.Location.Cards.SouthPier (southPier)
+import LordOfTheRings.Location.Cards.EastPier (eastPier)
+import LordOfTheRings.Location.Cards.EsgarothWharf (esgarothWharf)
 import LordOfTheRings.Location.Cards.CapturedWatchtower (capturedWatchtower)
 import LordOfTheRings.Location.Cards.EmynArnenOverlook (emynArnenOverlook)
 import LordOfTheRings.Location.Cards.Morgulduin (morgulduin)
@@ -787,7 +792,12 @@ allLocations =
   Map.fromList
     [ (toCardCode builder, card)
     | card@(SomeLocationCard builder) <-
-        [ SomeLocationCard capturedWatchtower
+        [ SomeLocationCard northPier
+        , SomeLocationCard westPier
+        , SomeLocationCard southPier
+        , SomeLocationCard eastPier
+        , SomeLocationCard esgarothWharf
+        , SomeLocationCard capturedWatchtower
         , SomeLocationCard emynArnenOverlook
         , SomeLocationCard morgulduin
         , SomeLocationCard pelennorFieldsOsgiliath

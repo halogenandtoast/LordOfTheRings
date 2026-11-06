@@ -580,6 +580,10 @@ keywordValue value target def = do
   let printed = [n | Blank `notElem` mods, Just n <- map value (toList (cdKeywords def))]
   pure $ sum $ printed <> [n | GainKeyword k <- mods, Just n <- [value k]]
 
+-- | Burn values from multiple sources add, including West Pier.
+getBurn :: HasGame m => Target -> CardDef -> m Int
+getBurn = keywordValue \case Burn n -> Just n; _ -> Nothing
+
 -- | The archery the card has, printed or gained, as Archery X reads.
 getArchery :: HasGame m => Target -> CardDef -> m Int
 getArchery = keywordValue \case Archery n -> Just n; _ -> Nothing

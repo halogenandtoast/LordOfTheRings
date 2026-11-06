@@ -15,7 +15,7 @@ allLocationCards =
   Map.fromList $
     map
       (\def -> (cdCardCode def, def))
-      [capturedWatchtower, emynArnenOverlook, morgulduin, pelennorFieldsOsgiliath, ruinsOfOsgiliath, belfalasShipyard, cobasHavenDreadnaught, isleOfFortune, mouthsOfAnduin, tolfalasLanding, wickedCove,  theEavesOfMirkwoodDarkOfMirkwood
+      [westPier, theMastersManor, southPier, northPier, merchantsDistrict, eastPier, greatHouse, greatBridge, fishermansDock, esgarothWharf, capturedWatchtower, emynArnenOverlook, morgulduin, pelennorFieldsOsgiliath, ruinsOfOsgiliath, belfalasShipyard, cobasHavenDreadnaught, isleOfFortune, mouthsOfAnduin, tolfalasLanding, wickedCove,  theEavesOfMirkwoodDarkOfMirkwood
       , forestGateDarkOfMirkwood
       , goblinTunnelsDarkOfMirkwood
       , lightlessPassageDarkOfMirkwood
@@ -5355,4 +5355,82 @@ ruinsOfOsgiliath = (location "the-massing-at-osgiliath-011" "Ruins of Osgiliath"
   { cdCardTraits = setFromList [EastBank]
   , cdUnique = False
   , cdShadowEffect = False
+  }
+
+westPier :: CardDef
+westPier = (location "the-battle-of-lake-town-015" "West Pier" TheBattleOfLakeTown 1 2 2)
+  { cdCardTraits = setFromList [LakeTown, Pier]
+  , cdVictoryPoints = Just 2
+  }
+
+theMastersManor :: CardDef
+theMastersManor = (location "the-battle-of-lake-town-016" "The Master's Manor" TheBattleOfLakeTown 1 4 8)
+  { cdCardTraits = setFromList [LakeTown]
+  , cdVictoryPoints = Just 8
+  , cdKeywords = setFromList [Burn 3]
+  , cdShadowEffect = True
+  , cdWhenRevealed = True
+  }
+
+southPier :: CardDef
+southPier = (location "the-battle-of-lake-town-017" "South Pier" TheBattleOfLakeTown 1 1 4)
+  { cdCardTraits = setFromList [LakeTown, Pier]
+  , cdVictoryPoints = Just 4
+  , cdKeywords = setFromList [Burn 2]
+  }
+
+northPier :: CardDef
+northPier = (location "the-battle-of-lake-town-018" "North Pier" TheBattleOfLakeTown 1 2 2)
+  { cdCardTraits = setFromList [LakeTown, Pier]
+  , cdVictoryPoints = Just 2
+  , cdKeywords = setFromList [Burn 2]
+  }
+
+merchantsDistrict :: CardDef
+merchantsDistrict = (location "the-battle-of-lake-town-019" "Merchant's District" TheBattleOfLakeTown 4 4 3)
+  { cdCardTraits = setFromList [LakeTown]
+  , cdVictoryPoints = Just 3
+  , cdKeywords = setFromList [Burn 1]
+  , cdShadowEffect = True
+  }
+
+eastPier :: CardDef
+eastPier = (location "the-battle-of-lake-town-020" "East Pier" TheBattleOfLakeTown 1 2 2)
+  { cdCardTraits = setFromList [LakeTown, Pier]
+  , cdVictoryPoints = Just 2
+  , cdKeywords = setFromList [Burn 1]
+  }
+
+greatHouse :: CardDef
+greatHouse = (location "the-battle-of-lake-town-021" "Great House" TheBattleOfLakeTown 1 6 6)
+  { cdCardTraits = setFromList [LakeTown]
+  , cdVictoryPoints = Just 6
+  , cdUnique = True
+  , cdKeywords = setFromList [Burn 3]
+  , cdWhenRevealed = True
+  }
+
+greatBridge :: CardDef
+greatBridge = (location "the-battle-of-lake-town-022" "Great Bridge" TheBattleOfLakeTown 1 3 4)
+  { cdCardTraits = setFromList [LakeTown]
+  , cdVictoryPoints = Just 4
+  , cdUnique = True
+  , cdKeywords = setFromList [Burn 2]
+  , cdWhenRevealed = True
+  }
+
+fishermansDock :: CardDef
+fishermansDock = (location "the-battle-of-lake-town-023" "Fisherman's Dock" TheBattleOfLakeTown 4 2 2)
+  { cdCardTraits = setFromList [LakeTown]
+  , cdVictoryPoints = Just 2
+  , cdKeywords = setFromList [Burn 1]
+  , cdShadowEffect = True
+  }
+
+esgarothWharf :: CardDef
+esgarothWharf = (location "the-battle-of-lake-town-024" "Esgaroth Wharf" TheBattleOfLakeTown 4 3 4)
+  { cdCardTraits = setFromList [LakeTown]
+  , cdVictoryPoints = Just 4
+  , cdKeywords = setFromList [Burn 1]
+  , cdShadowEffect = True
   }

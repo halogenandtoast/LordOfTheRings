@@ -19,6 +19,8 @@ data Keyword
     Archery Int
   | -- | on a quest: characters quest with their attack instead of their willpower
     Battle
+  | -- | on a location: contributes this much when Lake-town resolves Burn damage
+    Burn Int
   | -- | on a Ship enemy: engaging a player from the staging area, it reveals this many cards
     -- of the Corsair deck, put into play engaged with him (Dream-chaser rules)
     Boarding Int

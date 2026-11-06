@@ -44,6 +44,8 @@ data Trait
   | Cave
   | Champion
   | City
+  | LakeTown
+  | Pier
   | Clue
   | Coastland
   | Condition
@@ -256,6 +258,7 @@ data Trait
 -- | The trait as a player reads it, its words apart: "Carn Dûm"'s accents aside.
 traitName :: Trait -> Text
 traitName = \case
+  LakeTown -> "Lake-town"
   AllyTrait -> "Ally"
   TreasureTrait -> "Treasure"
   WilderlandsTrait -> "Wilderlands"
