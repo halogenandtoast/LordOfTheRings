@@ -2,6 +2,7 @@
 
 module LordOfTheRings.Location (module LordOfTheRings.Location, module X) where
 
+import LordOfTheRings.Location.Cards.BelegostLocations
 import LordOfTheRings.Location.Cards.Withywindle (withywindle)
 import LordOfTheRings.Location.Cards.MisleadingPath (misleadingPath)
 import LordOfTheRings.Location.Cards.DeepGulley (deepGulley)
@@ -810,7 +811,13 @@ allLocations =
   Map.fromList
     [ (toCardCode builder, card)
     | card@(SomeLocationCard builder) <-
-        [ SomeLocationCard withywindle
+        [ SomeLocationCard naurlhugsLair
+        , SomeLocationCard abandonedMineBelegost
+        , SomeLocationCard floodedHall
+        , SomeLocationCard darkenedTunnel
+        , SomeLocationCard sunkenTreasury
+        , SomeLocationCard secretChamber
+        , SomeLocationCard withywindle
         , SomeLocationCard misleadingPath
         , SomeLocationCard deepGulley
         , SomeLocationCard strangeWoods

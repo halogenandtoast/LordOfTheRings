@@ -2,6 +2,7 @@ module LordOfTheRings.Standalone.BelegostSpec (spec) where
 
 import Data.Map.Strict qualified as Map
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
+import LordOfTheRings.Ally.CardDefs qualified as Allies
 import LordOfTheRings.Attachment.CardDefs qualified as Attachments
 import LordOfTheRings.Objective.CardDefs qualified as Objectives
 import LordOfTheRings.Location.CardDefs qualified as Locations
@@ -10,17 +11,19 @@ import LordOfTheRings.Helpers.Character (getAttack)
 import LordOfTheRings.Helpers.Window (getActionAbilities)
 import LordOfTheRings.Helpers.Attachment (attachmentHosts)
 import LordOfTheRings.Helpers.Staging (getEnemyThreat, getEnemyAttack, getEnemyDefense, getEngagementCost, getLocationThreat)
-import LordOfTheRings.Matcher (getEnemy, select, getThreat, playerCardsGuardedBy, AttachMatcher (AttachToEnemy), EnemyMatcher (AnyEnemy, EnemyEngagedWith, EnemyWithCardCode), PlayerMatcher (PlayerWithId))
+import LordOfTheRings.Matcher (getEnemy, getHero, select, getThreat, getDiscoverValue, playerCardsGuardedBy, AttachMatcher (AttachToEnemy), EnemyMatcher (AnyEnemy, EnemyEngagedWith, EnemyWithCardCode), PlayerMatcher (PlayerWithId))
+import LordOfTheRings.Decklist (loadPlayer)
 import LordOfTheRings.Modifier (ModifierType (..))
 import LordOfTheRings.Effect (Effect (..), EffectDuration (..))
 import LordOfTheRings.Keyword (Keyword (Ranged, Sentinel))
 import LordOfTheRings.Keyword qualified as Keyword
 import LordOfTheRings.Objective (ObjectiveAttrs (..))
-import LordOfTheRings.Scenario.Types (ScenarioAttrs (..))
+import LordOfTheRings.Scenario.Types (ScenarioAttrs (..), encounterDiscardL)
 import LordOfTheRings.Quest.CardDefs qualified as Quests
-import LordOfTheRings.Phase (Phase (QuestPhase))
+import LordOfTheRings.Phase (Phase (QuestPhase, PlanningPhase))
 import LordOfTheRings.Trait (Trait (Weapon))
-import LordOfTheRings.Window (WindowType (PhaseBegins, EnemyAttacking, AdvancedToStage), mkAfter, mkWhen)
+import LordOfTheRings.Window (WindowType (PhaseBegins, EnemyAttacking, AdvancedToStage, WhenRevealedCanceled), mkAfter, mkWhen)
+import LordOfTheRings.Treachery.CardDefs qualified as Treacheries
 import TestImport
 
 stageEnemy :: CardDef -> GameT EnemyId
@@ -29,11 +32,15 @@ stageEnemy def = do
   run $ AddToStaging card
   getsGame $ toId . fromJustNote "missing enemy" . find ((== card.id) . (.cardId) . toAttrs) . toList . (.entities.enemies)
 
-activeLocation :: CardDef -> GameT LocationId
-activeLocation def = do
+stageLocation :: CardDef -> GameT LocationId
+stageLocation def = do
   card <- genEncounterCard def
   run $ AddToStaging card
-  lid <- getsGame $ toId . fromJustNote "missing location" . find ((== card.id) . (.cardId) . toAttrs) . toList . (.entities.locations)
+  getsGame $ toId . fromJustNote "missing location" . find ((== card.id) . (.cardId) . toAttrs) . toList . (.entities.locations)
+
+activeLocation :: CardDef -> GameT LocationId
+activeLocation def = do
+  lid <- stageLocation def
   run $ PlaceLocation lid ActiveLocation
   pure lid
 
@@ -93,8 +100,257 @@ useLoot pid def = do
 belegostLoot :: [CardDef]
 belegostLoot = [Objectives.swordOfBelegost, Objectives.mapOfEredLuin, Objectives.keysOfBelegost, Objectives.bookOfAulesChildren, Objectives.dwarvenTorch, Objectives.blueMountainGem]
 
+belegostTable :: Int -> ([PlayerId] -> GameT ()) -> IO ()
+belegostTable size body = do
+  players <- for [1 .. size] \n -> either (error . show) id <$> loadPlayer ("Player " <> tshow n) testDeck
+  env <- newGameEnv (newTableIn passageThroughMirkwood $ fromJustNote "empty table" $ nonEmpty players) (const $ pure ()) 1
+  runGameT env $ body =<< getsGame (.playerOrder)
+
+finishDiscover :: PlayerId -> GameT ()
+finishDiscover pid = getQuestion pid >>= \case
+  Just (QuestionLabel label _ _ _) | label `elem` ["$label.discoverLooked", "$label.discoverChooseLoot", "$label.discoverExtraHazard"] -> do
+    chooseOptionMatching "finish Discover" pid (const True)
+    finishDiscover pid
+  _ -> pure ()
+
+setEncounterDiscard :: [CardDef] -> GameT ()
+setEncounterDiscard defs = do
+  cards <- traverse genEncounterCard defs
+  g <- getGame
+  putGame $ g & scenarioL %~ overAttrs (encounterDiscardL .~ cards)
+
 spec :: Spec
 spec = describe "Belegost enemies" do
+  describe "Abandoned Mine" do
+    for_ [1 .. 4] \n ->
+      it ("examines " <> show (2 + n) <> " cards for " <> show n <> " players without increasing Discover") . belegostTable n $ \players -> do
+        let lead = fromJustNote "no player" $ headMay players
+        lid <- activeLocation Locations.abandonedMineBelegost
+        _ <- setEncounterDeck $ replicate (3 + n) Locations.oldForestRoad
+        eid <- stageEnemy Enemies.namelessCaveDweller
+        run $ ResolveDiscover lead lid
+        q <- fromJustNote "no Discover question" <$> getQuestion lead
+        length (searchedCards q) `shouldBe` 2 + n
+        getDiscoverValue lid `shouldReturn` Just 2
+        stats eid `shouldReturn` [3, 3, 3]
+        finishDiscover lead
+        length <$> getEncounterDeck `shouldReturn` 1
+
+    it "reshuffles the discard pile for its additional examined cards" . gameTest $ \pid -> do
+      lid <- activeLocation Locations.abandonedMineBelegost
+      _ <- setEncounterDeck [Locations.oldForestRoad]
+      setEncounterDiscard $ replicate 3 Locations.oldForestRoad
+      run $ ResolveDiscover pid lid
+      q <- fromJustNote "no Discover question" <$> getQuestion pid
+      length (searchedCards q) `shouldBe` 3
+      finishDiscover pid
+      length <$> getEncounterDeck `shouldReturn` 1
+      length <$> getEncounterDiscard `shouldReturn` 3
+
+    it "protects other staged locations while allowing progress on either printing of Abandoned Mine and on the active location" . gameTest $ \_ -> do
+      mine <- stageLocation Locations.abandonedMineBelegost
+      oldMine <- stageLocation Locations.abandonedMine
+      other <- stageLocation Locations.oldForestRoad
+      active <- activeLocation Locations.oldForestRoad
+      for_ [mine, oldMine, other, active] \lid -> run $ PlaceTokens GameSource (LocationTarget lid) Progress 1
+      (.progress) . toAttrs <$> getLocation mine `shouldReturn` 1
+      (.progress) . toAttrs <$> getLocation oldMine `shouldReturn` 1
+      (.progress) . toAttrs <$> getLocation other `shouldReturn` 0
+      (.progress) . toAttrs <$> getLocation active `shouldReturn` 1
+      run $ PlaceLocation active StagingArea
+      run $ PlaceLocation mine ActiveLocation
+      run $ PlaceTokens GameSource (LocationTarget other) Progress 1
+      (.progress) . toAttrs <$> getLocation other `shouldReturn` 1
+
+  describe "Flooded Hall" do
+    for_ [1 .. 4] \n ->
+      it ("reveals up to " <> show n <> " looked-at Hazards for " <> show n <> " players") . belegostTable n $ \players -> do
+        let lead = fromJustNote "no player" $ headMay players
+        lid <- activeLocation Locations.floodedHall
+        _ <- setEncounterDeck $ replicate 4 Enemies.namelessCaveDweller <> [Locations.oldForestRoad]
+        run $ ResolveDiscover lead lid
+        finishDiscover lead
+        length <$> select (EnemyWithCardCode $ toCardCode Enemies.namelessCaveDweller) `shouldReturn` n
+        length <$> getEncounterDiscard `shouldReturn` 4 - n
+        length <$> getEncounterDeck `shouldReturn` 1
+
+    it "lets the first player choose the additional Hazard after the random first one" . twoPlayerTest testDeck $ \one two -> do
+      lid <- activeLocation Locations.floodedHall
+      _ <- setEncounterDeck $ replicate 4 Enemies.namelessCaveDweller <> [Locations.oldForestRoad]
+      run $ ResolveDiscover one lid
+      chooseLabel "$label.continue" one
+      q <- fromJustNote "no additional Hazard choice" <$> getQuestion one
+      let targets = [t | TargetLabel t _ <- questionChoices q]
+      length targets `shouldBe` 3
+      let chosen = fromJustNote "no target" $ lastMay targets
+      getQuestion two `shouldReturn` Nothing
+      chooseTarget one chosen
+      case chosen of
+        CardIdTarget cid -> getsGame (any ((== cid) . (.cardId) . toAttrs) . toList . (.entities.enemies)) `shouldReturn` True
+        _ -> error "expected encounter card target"
+
+    it "reveals only the available Hazards when there are fewer than players" . belegostTable 4 $ \players -> do
+      let lead = fromJustNote "no player" $ headMay players
+      lid <- activeLocation Locations.floodedHall
+      _ <- setEncounterDeck [Enemies.namelessCaveDweller, Locations.oldForestRoad, Locations.oldForestRoad, Locations.oldForestRoad, Locations.oldForestRoad]
+      run $ ResolveDiscover lead lid
+      finishDiscover lead
+      length <$> select (EnemyWithCardCode $ toCardCode Enemies.namelessCaveDweller) `shouldReturn` 1
+      length <$> getEncounterDiscard `shouldReturn` 3
+
+    it "increases actual ally play costs only while staged" . gameTest $ \pid -> do
+      g <- getGame
+      putGame $ g & phaseL .~ PlanningPhase
+      hall <- stageLocation Locations.floodedHall
+      card <- putCardIntoHand pid Allies.guardOfTheCitadel
+      h <- heroOf pid "01002"
+      run $ PlaceTokens GameSource h Resource 2
+      player <- getPlayer pid
+      canPlay player card `shouldReturn` False
+      run $ PlaceLocation hall ActiveLocation
+      canPlay player card `shouldReturn` True
+
+    it "keeps the chosen Loot guarded and discards the unchosen Loot after revealing its Hazards" . twoPlayerTest testDeck $ \one _ -> do
+      lid <- activeLocation Locations.floodedHall
+      [keyCard, torchCard, _, _, _] <- setEncounterDeck [Objectives.keysOfBelegost, Objectives.dwarvenTorch, Enemies.namelessCaveDweller, Enemies.namelessCaveDweller, Locations.oldForestRoad]
+      run $ ResolveDiscover one lid
+      chooseTarget one keyCard
+      finishDiscover one
+      guardian <- (.cardId) . toAttrs <$> getLocation lid
+      objectiveGuard <$> lootOf Objectives.keysOfBelegost `shouldReturn` Just guardian
+      map (.id) <$> getEncounterDiscard `shouldReturn` [torchCard.id]
+      length <$> select (EnemyWithCardCode $ toCardCode Enemies.namelessCaveDweller) `shouldReturn` 2
+
+  describe "Darkened Tunnel" do
+    it "reveals a discarded Hazard fully, including its when-revealed effect" . gameTest $ \pid -> do
+      _ <- stageLocation Locations.darkenedTunnel
+      active <- activeLocation Locations.oldForestRoad
+      run $ PlaceTokens GameSource (LocationTarget active) Progress 2
+      _ <- setEncounterDeck [Treacheries.slickFooting, Locations.oldForestRoad]
+      run $ CheckWindows [mkAfter $ WhenRevealedCanceled pid GameTarget]
+      resolveRevealed
+      (.progress) . toAttrs <$> getLocation active `shouldReturn` 1
+      length <$> getEncounterDeck `shouldReturn` 1
+
+    it "discards a non-Hazard without revealing it" . gameTest $ \pid -> do
+      _ <- stageLocation Locations.darkenedTunnel
+      _ <- setEncounterDeck [Enemies.forestSpider, Locations.oldForestRoad]
+      run $ CheckWindows [mkAfter $ WhenRevealedCanceled pid GameTarget]
+      map toCardCode <$> getEncounterDiscard `shouldReturn` [toCardCode Enemies.forestSpider]
+      select (EnemyWithCardCode $ toCardCode Enemies.forestSpider) `shouldReturn` []
+
+    it "has no cancellation penalty while active and places a clock resource as its travel cost" . gameTest $ \pid -> do
+      _ <- stageClock
+      lid <- stageLocation Locations.darkenedTunnel
+      _ <- setEncounterDeck $ replicate 4 Locations.oldForestRoad
+      run $ TravelTo lid
+      finishDiscover pid
+      (.resources) <$> clock `shouldReturn` 1
+      deckSize <- length <$> getEncounterDeck
+      run $ CheckWindows [mkAfter $ WhenRevealedCanceled pid GameTarget]
+      length <$> getEncounterDeck `shouldReturn` deckSize
+
+    it "cannot pay its travel cost without Stalking the Ruins in play" . gameTest $ \_ -> do
+      lid <- stageLocation Locations.darkenedTunnel
+      getModifiers (LocationTarget lid) >>= (`shouldSatisfy` elem CannotBeTraveledTo)
+
+  describe "Sunken Treasury" do
+    it "counts only Loot attached to heroes in its threat" . gameTest $ \pid -> do
+      lid <- stageLocation Locations.sunkenTreasury
+      getLocationThreat lid `shouldReturn` 1
+      claimLoot pid Objectives.keysOfBelegost
+      claimLoot pid Objectives.mapOfEredLuin
+      guardian <- (.cardId) . toAttrs <$> getLocation lid
+      treasure <- genEncounterCard Objectives.dwarvenTorch
+      run $ PutObjectiveIntoPlayGuardedBy treasure guardian
+      getLocationThreat lid `shouldReturn` 3
+
+    it "requires every player to have a card to discard, then discards one random card from each hand" . twoPlayerTest testDeck $ \one two -> do
+      lid <- stageLocation Locations.sunkenTreasury
+      _ <- putCardIntoHand one Allies.guardOfTheCitadel
+      getModifiers (LocationTarget lid) >>= (`shouldSatisfy` elem CannotBeTraveledTo)
+      _ <- putCardIntoHand two Allies.guardOfTheCitadel
+      getModifiers (LocationTarget lid) >>= (`shouldSatisfy` notElem CannotBeTraveledTo)
+      _ <- setEncounterDeck $ replicate 4 Locations.oldForestRoad
+      run $ TravelTo lid
+      finishDiscover one
+      length . (.hand) <$> getPlayer one `shouldReturn` 0
+      length . (.hand) <$> getPlayer two `shouldReturn` 0
+
+    it "exhausts one character controlled by the defending player as its shadow" . twoPlayerTest testDeck $ \one two -> do
+      eid <- stageEnemy Enemies.forestSpider
+      [card, _] <- setEncounterDeck [Locations.sunkenTreasury, Locations.oldForestRoad]
+      run $ DealShadowCard eid
+      run $ ResolveShadowCard card.id eid two []
+      h <- heroOf two "01012"
+      other <- heroOf one "01012"
+      chooseTarget two h
+      case (h, other) of
+        (HeroTarget hid, HeroTarget otherId) -> do
+          heroExhausted . toAttrs <$> getHero hid `shouldReturn` True
+          heroExhausted . toAttrs <$> getHero otherId `shouldReturn` False
+        _ -> error "expected heroes"
+
+  describe "Secret Chamber" do
+    it "pays two threat per player and can guard a Loot objective from the discard pile after Discover finds none" . twoPlayerTest testDeck $ \one two -> do
+      lid <- stageLocation Locations.secretChamber
+      setEncounterDiscard [Objectives.keysOfBelegost]
+      _ <- setEncounterDeck $ replicate 4 Locations.oldForestRoad
+      run $ TravelTo lid
+      finishDiscover one
+      getThreat one `shouldReturn` 2
+      getThreat two `shouldReturn` 2
+      offersAbilityOf one (LocationTarget lid) `shouldReturn` True
+      chooseAbilityOf one (LocationTarget lid)
+      guardian <- (.cardId) . toAttrs <$> getLocation lid
+      objectiveGuard <$> lootOf Objectives.keysOfBelegost `shouldReturn` Just guardian
+      run $ PlaceTokens GameSource (LocationTarget lid) Progress 2
+      h <- heroOf one "01012"
+      chooseTarget one h
+      (.placement) <$> lootOf Objectives.keysOfBelegost `shouldReturn` AttachedTo h
+      objectiveGuard <$> lootOf Objectives.keysOfBelegost `shouldReturn` Nothing
+
+    it "offers no response when Discover already found Loot, even with another in discard" . gameTest $ \pid -> do
+      lid <- stageLocation Locations.secretChamber
+      setEncounterDiscard [Objectives.mapOfEredLuin]
+      _ <- setEncounterDeck [Objectives.keysOfBelegost, Locations.oldForestRoad, Locations.oldForestRoad, Locations.oldForestRoad]
+      run $ TravelTo lid
+      finishDiscover pid
+      offersAbilityOf pid (LocationTarget lid) `shouldReturn` False
+      getQuestion pid `shouldReturn` Nothing
+
+    it "offers no response when no Loot can be found in discard" . gameTest $ \pid -> do
+      lid <- stageLocation Locations.secretChamber
+      _ <- setEncounterDeck $ replicate 4 Locations.oldForestRoad
+      run $ TravelTo lid
+      finishDiscover pid
+      getQuestion pid `shouldReturn` Nothing
+
+  describe "Naurlhûg's Lair" do
+    for_ [1 .. 4] \n ->
+      it ("places " <> show n <> " resources on Stalking the Ruins to travel") . belegostTable n $ \players -> do
+        let lead = fromJustNote "no player" $ headMay players
+        _ <- stageClock
+        lid <- stageLocation Locations.naurlhugsLair
+        _ <- setEncounterDeck $ replicate 6 Locations.oldForestRoad
+        run $ TravelTo lid
+        finishDiscover lead
+        (.resources) <$> clock `shouldReturn` n
+
+    it "is immune to player cards and releases the hidden treasure faceup when explored" . gameTest $ \pid -> do
+      oid <- stageClock
+      treasure <- genEncounterCard Objectives.bookOfAulesChildren
+      run $ PlaceUnderneath (ObjectiveTarget oid) [EncounterCard treasure]
+      lid <- activeLocation Locations.naurlhugsLair
+      getModifiers (LocationTarget lid) >>= (`shouldSatisfy` elem ImmuneToPlayerCardEffects)
+      run $ PlaceTokens GameSource (LocationTarget lid) Progress 6
+      h <- heroOf pid "01012"
+      chooseTarget pid h
+      (.objectiveUnderneath) <$> clock `shouldReturn` []
+      (.placement) <$> lootOf Objectives.bookOfAulesChildren `shouldReturn` AttachedTo h
+      (.cardId) <$> lootOf Objectives.bookOfAulesChildren `shouldReturn` treasure.id
+      map toCardCode . (.victoryDisplay) . toAttrs <$> getsGame (.scenario) `shouldReturn` [toCardCode Locations.naurlhugsLair]
+
   describe "Loot" do
     for_ belegostLoot \def ->
       it ("claims freed " <> show (toCardCode def) <> " for a first-player hero") . twoPlayerTest testDeck $ \one two -> do

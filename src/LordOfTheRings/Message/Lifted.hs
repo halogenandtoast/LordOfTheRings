@@ -2284,6 +2284,11 @@ removeSourceCardFromGame source = case source of
 placeUnderneath :: (ReverseQueue m, Targetable target) => target -> [Card] -> m ()
 placeUnderneath target = push . PlaceUnderneath (toTarget target)
 
+-- | Take a stored card before moving it elsewhere, as Naurlhûg's Lair releases
+-- the treasure underneath Stalking the Ruins.
+takeFromUnderneath :: (ReverseQueue m, Targetable target) => target -> CardId -> m ()
+takeFromUnderneath target = push . TakeFromUnderneath (toTarget target)
+
 {- | Place damage tokens on the card, as encounter cards place them on a location, then
 check whether that defeats it.
 -}

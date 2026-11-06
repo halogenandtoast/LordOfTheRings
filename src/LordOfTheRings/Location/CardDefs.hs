@@ -15,7 +15,7 @@ allLocationCards =
   Map.fromList $
     map
       (\def -> (cdCardCode def, def))
-      [withywindle, misleadingPath, deepGulley, strangeWoods, wallOfTrees, oppressiveForest, theStoneOfErechStandalone, tarlangsNeck, banksOfMorthond, valeOfShadows, blackrootGraves, shadowOfDwimorberg, hauntedValley, westPier, theMastersManor, southPier, northPier, merchantsDistrict, eastPier, greatHouse, greatBridge, fishermansDock, esgarothWharf, capturedWatchtower, emynArnenOverlook, morgulduin, pelennorFieldsOsgiliath, ruinsOfOsgiliath, belfalasShipyard, cobasHavenDreadnaught, isleOfFortune, mouthsOfAnduin, tolfalasLanding, wickedCove,  theEavesOfMirkwoodDarkOfMirkwood
+      [naurlhugsLair, abandonedMineBelegost, floodedHall, darkenedTunnel, sunkenTreasury, secretChamber, withywindle, misleadingPath, deepGulley, strangeWoods, wallOfTrees, oppressiveForest, theStoneOfErechStandalone, tarlangsNeck, banksOfMorthond, valeOfShadows, blackrootGraves, shadowOfDwimorberg, hauntedValley, westPier, theMastersManor, southPier, northPier, merchantsDistrict, eastPier, greatHouse, greatBridge, fishermansDock, esgarothWharf, capturedWatchtower, emynArnenOverlook, morgulduin, pelennorFieldsOsgiliath, ruinsOfOsgiliath, belfalasShipyard, cobasHavenDreadnaught, isleOfFortune, mouthsOfAnduin, tolfalasLanding, wickedCove,  theEavesOfMirkwoodDarkOfMirkwood
       , forestGateDarkOfMirkwood
       , goblinTunnelsDarkOfMirkwood
       , lightlessPassageDarkOfMirkwood
@@ -5500,3 +5500,18 @@ wallOfTrees = (location "the-old-forest-015" "Wall of Trees" TheOldForest 4 0 4)
 oppressiveForest :: CardDef
 oppressiveForest = (location "the-old-forest-016" "Oppressive Forest" TheOldForest 2 2 5)
   { cdCardTraits = setFromList [Forest], cdVictoryPoints = Just 2, cdShadowEffect = True }
+
+
+naurlhugsLair, abandonedMineBelegost, floodedHall, darkenedTunnel, sunkenTreasury, secretChamber :: CardDef
+naurlhugsLair = (location "the-ruins-of-belegost-021" "Naurlhûg's Lair" TheRuinsOfBelegost 1 4 6)
+  { cdUnique = True, cdCardTraits = setFromList [Underground], cdKeywords = setFromList [Discover 5], cdVictoryPoints = Just 4 }
+abandonedMineBelegost = (location "the-ruins-of-belegost-022" "Abandoned Mine" TheRuinsOfBelegost 4 2 3)
+  { cdCardTraits = setFromList [Underground], cdKeywords = setFromList [Discover 2] }
+floodedHall = (location "the-ruins-of-belegost-023" "Flooded Hall" TheRuinsOfBelegost 2 4 4)
+  { cdCardTraits = setFromList [Underground], cdKeywords = setFromList [Discover 4] }
+darkenedTunnel = (location "the-ruins-of-belegost-024" "Darkened Tunnel" TheRuinsOfBelegost 2 3 3)
+  { cdCardTraits = setFromList [Underground], cdKeywords = setFromList [Discover 2] }
+sunkenTreasury = (location "the-ruins-of-belegost-025" "Sunken Treasury" TheRuinsOfBelegost 3 1 4)
+  { cdCardTraits = setFromList [Underground], cdKeywords = setFromList [Discover 3], cdShadowEffect = True }
+secretChamber = (location "the-ruins-of-belegost-026" "Secret Chamber" TheRuinsOfBelegost 3 3 2)
+  { cdCardTraits = setFromList [Underground, Hazard], cdKeywords = setFromList [Discover 3] }

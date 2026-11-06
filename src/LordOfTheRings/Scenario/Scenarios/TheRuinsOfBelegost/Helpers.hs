@@ -1,5 +1,5 @@
 module LordOfTheRings.Scenario.Scenarios.TheRuinsOfBelegost.Helpers
-  ( playerControlsLoot, stalkingResources, summonNaurlhug ) where
+  ( playerControlsLoot, stalkingResources, stalkingObjectives, placeStalkingResources, summonNaurlhug ) where
 
 import LordOfTheRings.Card (toCardCode)
 import LordOfTheRings.Classes.Entity (toAttrs)
@@ -9,10 +9,12 @@ import LordOfTheRings.Id (PlayerId)
 import LordOfTheRings.Matcher
 import LordOfTheRings.Message.Lifted
 import LordOfTheRings.Objective.CardDefs qualified as Objectives
+import LordOfTheRings.Objective.Types (ObjectiveAttrs)
 import LordOfTheRings.Placement (Placement (AttachedTo, StagingArea))
 import LordOfTheRings.Prelude
 import LordOfTheRings.Scenario.Scenarios.TheGhostOfFramsburg.Helpers (lootObjectives)
 import LordOfTheRings.Target (toTarget)
+import LordOfTheRings.Source (Sourceable)
 
 playerControlsLoot :: HasGame m => PlayerId -> m Bool
 playerControlsLoot pid = do
@@ -21,11 +23,17 @@ playerControlsLoot pid = do
   pure $ any (\o -> any (\h -> o.placement == AttachedTo (toTarget h)) heroes) loot
 
 stalkingResources :: HasGame m => m Int
-stalkingResources = getsGame \g -> sum
-  [ (toAttrs o).resources
+stalkingResources = sum . map (.resources) <$> stalkingObjectives
+
+stalkingObjectives :: HasGame m => m [ObjectiveAttrs]
+stalkingObjectives = getsGame \g ->
+  [ toAttrs o
   | o <- toList g.entities.objectives
   , toCardCode o == toCardCode Objectives.stalkingTheRuins
   ]
+
+placeStalkingResources :: (ReverseQueue m, Sourceable source) => source -> Int -> m ()
+placeStalkingResources source n = traverse_ (\o -> placeResources source o n) =<< stalkingObjectives
 
 summonNaurlhug :: ReverseQueue m => m ()
 summonNaurlhug = do

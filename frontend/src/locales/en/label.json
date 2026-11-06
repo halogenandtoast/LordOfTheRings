@@ -495,6 +495,8 @@
   "searchTake": "Take cards into your hand",
   "searchPutIntoPlay": "Put allies into play",
   "revealOne": "Reveal 1 of these cards; the rest are discarded",
+  "discoverExtraHazard": "Choose an additional Hazard to reveal",
+  "belegost.secretChamberLoot": "Choose a Loot objective to guard with Secret Chamber",
   "belegostLoot.location": "Choose a non-unique location",
   "belegostLoot.hero": "Choose a hero to gain 1 resource",
   "belegostLoot.player": "Choose a player",

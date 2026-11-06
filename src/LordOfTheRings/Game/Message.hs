@@ -668,6 +668,7 @@ import LordOfTheRings.Message (
     ResolveCampaign,
     ResolveDeep,
     ResolveDiscover,
+    ResolveDiscoverHazards,
     ResolveEscapeTest,
     ResolveFortitudeTest,
     ResolveGrapple,
@@ -853,6 +854,8 @@ import LordOfTheRings.Modifier (
     IgnoreAmbush,
     IgnoreDeep,
     IgnoreDiscover,
+    AdditionalDiscoverCards,
+    AdditionalDiscoverHazards,
     CannotBeDiscardedByEncounterCards,
     IgnoresDefenseOfWhenAttackingAlone,
     IgnoresDefenseWhenAttackingAlone,
@@ -1948,18 +1951,22 @@ runGameMessage msg g = case msg of
   ResolveDiscover pid lid | Just l <- Map.lookup lid g.entities.locations -> do
     ignored <- elem IgnoreDiscover <$> getModifiers GameTarget
     value <- if ignored then pure Nothing else discoverValue (toTarget l) (toCardDef l)
+    mods <- getModifiers (LocationTarget lid)
+    let additionalCards = sum [n | AdditionalDiscoverCards n <- mods]
+        additionalHazards = max 0 $ sum [n | AdditionalDiscoverHazards n <- mods]
     let spent e = effectDuration e == UntilSpent && effectTarget e == toTarget lid && any isDiscoverValueModifier (effectModifiers e)
         g' = g & effectsL %~ filter (not . spent)
         s = toAttrs g.scenario
     case value of
       Nothing -> pure g'
       Just x -> do
-        let (top, rest) = splitAt x s.encounterDeck
+        let examined = max 0 (x + additionalCards)
+            (top, rest) = splitAt examined s.encounterDeck
         (looked, deck, discarded) <-
-          if length top < x && notNull s.encounterDiscard
+          if length top < examined && notNull s.encounterDiscard
             then do
               shuffled <- shuffleM s.encounterDiscard
-              let (more, rest') = splitAt (x - length top) shuffled
+              let (more, rest') = splitAt (examined - length top) shuffled
               pure (top <> more, rest', [])
             else pure (top, rest, s.encounterDiscard)
         hazard <- headMay <$> shuffleM (filter ((Hazard `member`) . cdCardTraits . toCardDef) looked)
@@ -1968,8 +1975,7 @@ runGameMessage msg g = case msg of
               let others = [c | c <- looked, Just c /= chosen, Just c /= hazard]
                in [PutObjectiveIntoPlayGuardedBy c (toCard l).id | Just c <- [chosen]]
                     <> [RevealCard h | Just h <- [hazard]]
-                    <> [AddToEncounterDiscard others | notNull others]
-                    <> [CheckWindows [mkAfter $ DiscoverResolved lid (isJust hazard)]]
+                    <> [ResolveDiscoverHazards pid lid additionalHazards others (isJust hazard)]
         pushWhen (notNull looked) $ CheckWindows [mkAfter $ LookedAtEncounterDeck pid]
         push $ case loot of
           _ : _ : _ ->
@@ -1986,6 +1992,23 @@ runGameMessage msg g = case msg of
               $ ChooseOne [Label (ikey "label.continue") (resolve $ headMay loot)]
         pure $ g' & scenarioL %~ overAttrs (\a -> a & encounterDeckL .~ deck & encounterDiscardL .~ discarded)
   ResolveDiscover _ _ -> pure g
+  ResolveDiscoverHazards pid lid n remaining revealed -> do
+    let hazards = filter ((Hazard `member`) . cdCardTraits . toCardDef) remaining
+        revealing h =
+          [ RevealCard h
+          , ResolveDiscoverHazards pid lid (n - 1) (filter ((/= h.id) . (.id)) remaining) True
+          ]
+    if n <= 0 || null hazards
+      then pushAll $ [AddToEncounterDiscard remaining | notNull remaining] <> [CheckWindows [mkAfter $ DiscoverResolved lid revealed]]
+      else case hazards of
+        [h] -> pushAll $ revealing h
+        _ -> do
+          player <- getPlayer pid
+          chooser <- if player.eliminated then getLead else pure pid
+          push $ Ask chooser $ QuestionLabel (ikey "label.discoverExtraHazard") (Just $ LocationTarget lid) []
+            $ SearchCards (map EncounterCard remaining)
+            $ ChooseOne [targetLabel h (revealing h) | h <- hazards]
+    pure g
   -- a Loot objective revealed from the encounter deck is discarded, and another card
   -- revealed in its place: it enters play only by the Discover keyword (MEC69 rules)
   DiscardLoot card -> g <$ pushAll [AddToEncounterDiscard [card], RevealEncounterCard]

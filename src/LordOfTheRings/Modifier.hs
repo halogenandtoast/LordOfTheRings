@@ -443,6 +443,12 @@ data ModifierType
   | -- | on a location: its Discover value moves by this much, as Hidden Staircase's X and
     -- Crypt Key's 1 read
     DiscoverValueModifier Int
+  | -- | Extra cards examined by Discover, without changing its keyword value
+    -- (Abandoned Mine, The Ruins of Belegost).
+    AdditionalDiscoverCards Int
+  | -- | After its random Hazard, the resolving player chooses this many more
+    -- looked-at Hazards to reveal (Flooded Hall).
+    AdditionalDiscoverHazards Int
   | -- | On an enemy: add the active location's current Discover value plus this
     -- offset to threat, attack and defense. Read after the modifier cache is built,
     -- so a change to Discover applies immediately (Nameless Cave Dweller).

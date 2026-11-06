@@ -442,6 +442,9 @@ data Message
     ResolveDeep LocationId
   | -- | the player resolves the Discover keyword of the location, if it has it (MEC69 rules)
     ResolveDiscover PlayerId LocationId
+  | -- | Remaining looked-at cards, extra Hazard reveals, and whether a Hazard
+    -- has already been revealed. Discard the remainder after all reveals.
+    ResolveDiscoverHazards PlayerId LocationId Int [EncounterCard] Bool
   | -- | a Loot objective revealed from the encounter deck is discarded, and another card
     -- revealed in its place (MEC69 rules)
     DiscardLoot EncounterCard
@@ -885,6 +888,9 @@ data Message
     them: from a player's hand, deck or discard pile, or a location in play
     -}
     PlaceUnderneath Target [Card]
+  | -- | Take a card from underneath an objective, location or quest before
+    -- moving it elsewhere.
+    TakeFromUnderneath Target CardId
   | -- | as 'PayExhaustHeroCost', a hero or an ally the matchers pick out
     PayExhaustCharacterCost PlayerId HeroMatcher AllyMatcher [Message]
   | -- | as 'CreateEnemyEngaged', the enemy not yet engaging: it is engaged by a message of

@@ -27,6 +27,7 @@ instance RunMessage LocationAttrs where
     PlaceTokens source (isTarget attrs -> True) Progress n0 | n0 > 0 -> placeProgress source n0
     PlaceTokens source (isTarget attrs -> True) token n -> placeTokens source token n
     PlaceUnderneath (isTarget attrs -> True) cards -> pure $ attrs & underneathL <>~ cards
+    TakeFromUnderneath (isTarget attrs -> True) cid -> pure $ attrs & underneathL %~ filter ((/= cid) . (.id))
     -- a player card under it taken to its owner's hand or discard pile, as Truly Lost's
     PutInHand card -> pure $ attrs & underneathL %~ filter ((/= card.id) . (.id))
     PutInDiscard card -> pure $ attrs & underneathL %~ filter ((/= card.id) . (.id))

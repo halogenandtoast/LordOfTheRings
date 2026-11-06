@@ -22,7 +22,7 @@ import LordOfTheRings.Window (WindowType (EntersStagingArea, Exhausted), mkAfter
 
 instance RunMessage ObjectiveAttrs where
   runMessage msg attrs = case msg of
-    ClaimObjective oid host | oid == attrs.objectiveId -> pure $ attrs & placementL .~ AttachedTo host
+    ClaimObjective oid host | oid == attrs.objectiveId -> pure $ attrs & placementL .~ AttachedTo host & guardL .~ Nothing
     PlaceObjective oid placement | oid == attrs.objectiveId -> do
       pushWhen (placement == StagingArea && attrs.placement /= StagingArea)
         $ CheckWindows [mkAfter $ EntersStagingArea (toTarget attrs)]
@@ -48,6 +48,7 @@ instance RunMessage ObjectiveAttrs where
       blocked <- elem CannotReady <$> getModifiers attrs
       pure $ attrs & exhaustedL %~ (&& blocked)
     PlaceUnderneath (isTarget attrs -> True) cards -> pure $ attrs & underneathL <>~ cards
+    TakeFromUnderneath (isTarget attrs -> True) cid -> pure $ attrs & underneathL %~ filter ((/= cid) . (.id))
     PlaceTokens _ (isTarget attrs -> True) token n -> do
       pure $ attrs & tokensL %~ addTokens token n
     RemoveTokens _ (isTarget attrs -> True) token n -> do
