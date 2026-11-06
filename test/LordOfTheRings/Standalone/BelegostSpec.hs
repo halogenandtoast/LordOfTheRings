@@ -1,6 +1,9 @@
 module LordOfTheRings.Standalone.BelegostSpec (spec) where
 
 import Data.Map.Strict qualified as Map
+import Data.Aeson.KeyMap qualified as KeyMap
+import LordOfTheRings.Game.Public (publicGame)
+import LordOfTheRings.Card qualified as Card
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Event.CardDefs qualified as Events
 import LordOfTheRings.Scenario.Scenarios.TheRuinsOfBelegost (theRuinsOfBelegost)
@@ -13,17 +16,19 @@ import LordOfTheRings.Helpers.Character (getAttack)
 import LordOfTheRings.Helpers.Window (getActionAbilities)
 import LordOfTheRings.Helpers.Attachment (attachmentHosts)
 import LordOfTheRings.Helpers.Staging (getStagingThreat, getEnemyThreat, getEnemyAttack, getEnemyDefense, getEngagementCost, getLocationThreat)
-import LordOfTheRings.Matcher (getAttachmentsControlledBy, getEnemy, getHero, select, getThreat, getDiscoverValue, playerCardsGuardedBy, AttachMatcher (AttachToEnemy), AllyMatcher (AllyControlledBy), EnemyMatcher (AnyEnemy, EnemyEngagedWith, EnemyWithCardCode), PlayerMatcher (PlayerWithId))
+import LordOfTheRings.Matcher (CardMatcher (AnyCard), getAttachmentsControlledBy, getEnemy, getHero, select, getThreat, getDiscoverValue, playerCardsGuardedBy, AttachMatcher (AttachToEnemy), AllyMatcher (AllyControlledBy), EnemyMatcher (AnyEnemy, EnemyEngagedWith, EnemyWithCardCode), PlayerMatcher (PlayerWithId))
 import LordOfTheRings.Decklist (loadPlayer)
+import LordOfTheRings.Entities (questsL)
+import LordOfTheRings.Outcome (Outcome (Won))
 import LordOfTheRings.Modifier (ModifierType (..))
 import LordOfTheRings.Effect (Effect (..), EffectDuration (..))
 import LordOfTheRings.Keyword (Keyword (Ranged, Sentinel))
 import LordOfTheRings.Keyword qualified as Keyword
 import LordOfTheRings.Objective (ObjectiveAttrs (..))
-import LordOfTheRings.Scenario.Types (ScenarioAttrs (..), encounterDiscardL)
+import LordOfTheRings.Scenario.Types (ScenarioAttrs (..), GameMode (EasyMode), encounterDiscardL, encounterDeckL)
 import LordOfTheRings.Quest.CardDefs qualified as Quests
 import LordOfTheRings.Phase (Phase (QuestPhase, PlanningPhase, TravelPhase))
-import LordOfTheRings.Trait (Trait (Weapon))
+import LordOfTheRings.Trait (Trait (Weapon, Hazard))
 import LordOfTheRings.Window (WindowType (PhaseBegins, EnemyAttacking, AdvancedToStage, ActiveLocationExplored, WhenRevealedCanceled), mkAfter, mkWhen)
 import LordOfTheRings.Treachery.CardDefs qualified as Treacheries
 import TestImport
@@ -146,14 +151,392 @@ belegostScenarioTable size body = do
   env <- newGameEnv (newTableIn theRuinsOfBelegost $ fromJustNote "empty table" $ nonEmpty players) (const $ pure ()) 1
   runGameT env $ body =<< getsGame (.playerOrder)
 
+belegostStage :: PlayerId -> CardDef -> GameT Target
+belegostStage pid def = do
+  run $ DoStep 1 Setup
+  run $ DoStep 7 Setup
+  chooseTarget pid =<< getActiveQuest
+  deck <- getsGame ((.questDeck) . toAttrs . (.scenario))
+  card <- maybe (genEncounterCard def) pure $ find ((== toCardCode def) . toCardCode) deck
+  g <- getGame
+  putGame $ g & entitiesL . questsL .~ mempty
+  run $ PutQuestIntoPlay card
+  _ <- setEncounterDeck $ replicate 8 Locations.oldForestRoad
+  target <- toTarget <$> getActiveQuest
+  run $ Flip target
+  resolveRevealed
+  pure target
+
+finishBelegostChoices :: PlayerId -> Target -> Int -> GameT ()
+finishBelegostChoices _ _ 0 = error "Belegost choices did not finish"
+finishBelegostChoices pid hero remaining = getQuestion pid >>= \case
+  Nothing -> pure ()
+  Just q -> do
+    case q of
+      QuestionLabel "$label.takeAction" _ _ _ -> passActions pid
+      _ | any (\case TargetLabel t _ -> t == hero; _ -> False) (questionChoices q) -> chooseTarget pid hero
+      _ -> chooseOptionMatching "finish Belegost encounter choices" pid (const True)
+    finishBelegostChoices pid hero (remaining - 1)
+
+-- Reorder only physical cards already in the encounter deck/discard, so the
+-- integration game keeps the printed card supply and its secret setup Loot.
+prepareLootDiscover :: Maybe CardDef -> Int -> GameT ()
+prepareLootDiscover loot amount = do
+  run $ ShuffleEncounterDiscardIntoDeck AnyCard
+  deck <- getEncounterDeck
+  let chosen = maybe [] (\def -> take 1 $ filter ((== toCardCode def) . toCardCode) deck) loot
+      safe c = let def = Card.toCardDef c in Hazard `notMember` Card.cdCardTraits def && Keyword.Loot `notMember` Card.cdKeywords def
+      top = chosen <> take (amount - length chosen) (filter safe deck)
+  length top `shouldBe` amount
+  when (isJust loot) $ length chosen `shouldBe` 1
+  g <- getGame
+  putGame $ g & scenarioL %~ overAttrs (encounterDeckL .~ (top <> filter (`notElem` top) deck))
+
+nextBelegostMine :: GameT LocationId
+nextBelegostMine = do
+  staged <- getsGame $ find (\l -> toCardCode l == toCardCode Locations.abandonedMineBelegost && (toAttrs l).placement == StagingArea) . toList . (.entities.locations)
+  case staged of
+    Just location -> pure $ toId location
+    Nothing -> do
+      run $ ShuffleEncounterDiscardIntoDeck AnyCard
+      deck <- getEncounterDeck
+      let card = fromJustNote "no physical mine available" $ find ((== toCardCode Locations.abandonedMineBelegost) . toCardCode) deck
+      run $ RemoveFromEncounterDeck card
+      run $ AddToStaging card
+      getsGame $ toId . fromJustNote "mine missing" . find ((== card.id) . (.cardId) . toAttrs) . toList . (.entities.locations)
+
 spec :: Spec
 spec = describe "Belegost enemies" do
+  it "runs from full setup through physical Loot discoveries, branching quests, the lair and a winning player attack" . gameTestIn theRuinsOfBelegost testDeck $ \pid -> do
+    run Setup
+    chooseLabel "$label.keepHand" pid
+    chooseTarget pid =<< getActiveQuest
+    h <- heroOf pid "01012"
+    run $ CreateEffect $ Effect GameSource h [DefenseModifier 30, HitPointModifier 100, AttackModifier 30] UntilSpent
+    hidden <- objectiveUnderneath <$> clock
+    let hiddenCode = toCardCode $ fromJustNote "no hidden Loot" $ headMay hidden
+        initial = if hiddenCode == toCardCode Objectives.keysOfBelegost then Objectives.dwarvenTorch else Objectives.keysOfBelegost
+        secondLoot = if hiddenCode == toCardCode Objectives.bookOfAulesChildren then Objectives.mapOfEredLuin else Objectives.bookOfAulesChildren
+        thirdLoot = if toCardCode initial /= toCardCode Objectives.keysOfBelegost then Objectives.mapOfEredLuin
+          else if hiddenCode == toCardCode Objectives.blueMountainGem then Objectives.dwarvenTorch else Objectives.blueMountainGem
+        explore loot progress = do
+          mine <- nextBelegostMine
+          prepareLootDiscover loot 3
+          run $ TravelTo mine
+          finishBelegostChoices pid h 100
+          run $ PlaceProgressOnQuest progress
+          finishBelegostChoices pid h 100
+    explore (Just initial) 9
+    toCardCode <$> getActiveQuest `shouldReturn` toCardCode (if toCardCode initial == toCardCode Objectives.keysOfBelegost then Quests.deeperIntoThePast else Quests.ancientEvilsDisturbed)
+    explore (Just secondLoot) 12
+    explore (Just thirdLoot) 3
+    if toCardCode initial == toCardCode Objectives.keysOfBelegost
+      then explore Nothing 3
+      else do
+        eid <- enemyOf Enemies.lurkerOfTheDepths
+        replicateM_ 3 do
+          run $ PlaceTokens GameSource (EnemyTarget eid) Damage 4
+          run $ EndEffects UntilEndOfRound
+        run $ CheckDefeated GameSource (EnemyTarget eid)
+        finishBelegostChoices pid h 100
+    -- At most one circuit step is needed with these three accessible Loot.
+    for_ [1 .. 3 :: Int] \_ -> do
+      final <- (== toCardCode Quests.theBeastOfBelegost) . toCardCode <$> getActiveQuest
+      unless final do
+        run $ PlaceProgressOnQuest 6
+        finishBelegostChoices pid h 100
+    toCardCode <$> getActiveQuest `shouldReturn` toCardCode Quests.theBeastOfBelegost
+    lair <- getsGame $ toId . fromJustNote "lair missing" . find ((== toCardCode Locations.naurlhugsLair) . toCardCode) . toList . (.entities.locations)
+    prepareLootDiscover (Just Objectives.swordOfBelegost) 5
+    run $ TravelTo lair
+    finishBelegostChoices pid h 100
+    run $ PlaceProgressOnQuest 6
+    finishBelegostChoices pid h 100
+    (.placement) <$> lootOf Objectives.swordOfBelegost `shouldReturn` AttachedTo h
+    eid <- enemyOf Enemies.naurlhug
+    getModifiers eid >>= (`shouldSatisfy` notElem CannotTakeDamage)
+    run $ EngageEnemy pid eid
+    run $ Ready h
+    run $ DeclareAttackers pid eid
+    finishBelegostChoices pid h 100
+    getsGame (.outcome) `shouldReturn` Just Won
+
+  describe "deeper quest stages" do
+    for_ [Quests.theServantsOfMorgoth, Quests.theRootsOfEredLuin, Quests.theMinesOfBelegost] \def -> do
+      for_ [1 .. 4] \n ->
+        it ("shuffles the discard and reveals one card per player at " <> show (toCardCode def) <> " for " <> show n <> " players") . belegostScenarioTable n $ \_ -> do
+          _ <- setEncounterDeck $ replicate (n + 1) Locations.oldForestRoad
+          setEncounterDiscard [Locations.oldForestRoad]
+          _ <- explorationStage def
+          getsGame (length . (.entities.locations)) `shouldReturn` n
+          length <$> getEncounterDeck `shouldReturn` 2
+          length <$> getEncounterDiscard `shouldReturn` 0
+
+      it ("requires travel to a legal location at " <> show (toCardCode def)) . gameTest $ \pid -> do
+        _ <- setEncounterDeck $ replicate 3 Locations.oldForestRoad
+        _ <- explorationStage def
+        run $ DoStep 1 (BeginPhase TravelPhase)
+        q <- fromJustNote "missing travel question" <$> getQuestion pid
+        [l | Label l _ <- questionChoices q] `shouldBe` []
+        length (questionChoices q) `shouldBe` 1
+
+    it "keeps a specific mandatory destination ahead of the general travel requirement" . gameTest $ \pid -> do
+      _ <- setEncounterDeck $ replicate 3 Locations.oldForestRoad
+      _ <- explorationStage Quests.theRootsOfEredLuin
+      required <- stageLocation Locations.oldForestRoad
+      run $ CreateEffect $ Effect GameSource (LocationTarget required) [MustBeTraveledTo] UntilEndOfPhase
+      run $ DoStep 1 (BeginPhase TravelPhase)
+      q <- fromJustNote "missing travel question" <$> getQuestion pid
+      [t | TargetLabel t _ <- questionChoices q] `shouldBe` [LocationTarget required]
+
+    it "increases active Discover and Nameless Cave Dweller's stats immediately" . gameTest $ \pid -> do
+      _ <- setEncounterDeck $ replicate 3 Locations.oldForestRoad
+      _ <- explorationStage Quests.theRootsOfEredLuin
+      lid <- activeLocation Locations.abandonedMineBelegost
+      finishDiscover pid
+      eid <- stageEnemy Enemies.namelessCaveDweller
+      getDiscoverValue lid `shouldReturn` Just 3
+      stats eid `shouldReturn` [4, 4, 4]
+
+    it "reveals another card after Discover finds no Hazard, including its when-revealed text" . gameTest $ \pid -> do
+      _ <- setEncounterDeck $ replicate 3 Locations.oldForestRoad
+      _ <- explorationStage Quests.theMinesOfBelegost
+      lid <- activeLocation Locations.darkenedTunnel
+      finishDiscover pid
+      resolveRevealed
+      _ <- setEncounterDeck [Locations.oldForestRoad, Locations.oldForestRoad, Treacheries.echoesInTheDark, Locations.oldForestRoad]
+      run $ ResolveDiscover pid lid
+      finishDiscover pid
+      resolveRevealed
+      getThreat pid `shouldReturn` 1
+      length <$> getEncounterDeck `shouldReturn` 1
+
+    it "reveals no extra card after Discover reveals a Hazard" . gameTest $ \pid -> do
+      _ <- setEncounterDeck $ replicate 3 Locations.oldForestRoad
+      _ <- explorationStage Quests.theMinesOfBelegost
+      lid <- activeLocation Locations.darkenedTunnel
+      finishDiscover pid
+      resolveRevealed
+      _ <- setEncounterDeck [Enemies.namelessCaveDweller, Locations.oldForestRoad, Locations.oldForestRoad]
+      run $ ResolveDiscover pid lid
+      finishDiscover pid
+      length <$> getEncounterDeck `shouldReturn` 1
+
+    it "gives only the first Hazard of the round surge, across enemy, location and treachery types" . gameTest $ \_ -> do
+      _ <- setEncounterDeck $ replicate 3 Locations.oldForestRoad
+      _ <- explorationStage Quests.theServantsOfMorgoth
+      _ <- setEncounterDeck [Enemies.namelessCaveDweller, Locations.oldForestRoad, Locations.secretChamber, Treacheries.coveredPit, Locations.oldForestRoad]
+      run RevealEncounterCard
+      resolveRevealed
+      length <$> getEncounterDeck `shouldReturn` 3
+      run RevealEncounterCard
+      resolveRevealed
+      length <$> getEncounterDeck `shouldReturn` 2
+      run RevealEncounterCard
+      resolveRevealed
+      length <$> getEncounterDeck `shouldReturn` 1
+      run $ EndEffects UntilEndOfRound
+      _ <- setEncounterDeck [Treacheries.coveredPit, Locations.oldForestRoad, Locations.oldForestRoad]
+      run RevealEncounterCard
+      resolveRevealed
+      length <$> getEncounterDeck `shouldReturn` 1
+
+    it "keeps a first Hazard's surge and round history when Eleanor cancels and discards it" . gameTestWith (coreDeck "spirit") $ \pid -> do
+      _ <- setEncounterDeck $ replicate 3 Locations.oldForestRoad
+      _ <- explorationStage Quests.theServantsOfMorgoth
+      _ <- setEncounterDeck [Treacheries.coveredPit, Locations.oldForestRoad, Locations.oldForestRoad]
+      run RevealEncounterCard
+      eleanor <- heroOf pid "01008"
+      chooseAbilityOf pid eleanor
+      resolveRevealed
+      length <$> getEncounterDeck `shouldReturn` 0
+      _ <- setEncounterDeck [Enemies.namelessCaveDweller, Locations.oldForestRoad]
+      run RevealEncounterCard
+      resolveRevealed
+      length <$> getEncounterDeck `shouldReturn` 1
+
+    it "counts a Hazard revealed before entering stage 3B as the first of that round" . gameTest $ \_ -> do
+      _ <- setEncounterDeck [Locations.secretChamber, Locations.oldForestRoad]
+      run RevealEncounterCard
+      _ <- setEncounterDeck $ replicate 3 Locations.oldForestRoad
+      _ <- explorationStage Quests.theServantsOfMorgoth
+      _ <- setEncounterDeck [Enemies.namelessCaveDweller, Locations.oldForestRoad, Locations.oldForestRoad]
+      run RevealEncounterCard
+      resolveRevealed
+      length <$> getEncounterDeck `shouldReturn` 2
+
+    for_ [(Quests.ancientEvilsDisturbed, Quests.theServantsOfMorgoth, Quests.theRootsOfEredLuin), (Quests.deeperIntoThePast, Quests.theRootsOfEredLuin, Quests.theMinesOfBelegost)] \(start, withoutBook, withBook) ->
+      for_ [False, True] \book ->
+        it ("routes from " <> show (toCardCode start) <> " with Book: " <> show book) . gameTestIn theRuinsOfBelegost testDeck $ \pid -> do
+          target <- belegostStage pid start
+          claimLoot pid Objectives.keysOfBelegost
+          claimLoot pid (if book then Objectives.bookOfAulesChildren else Objectives.dwarvenTorch)
+          if toCardCode start == toCardCode Quests.ancientEvilsDisturbed then do
+            eid <- enemyOf Enemies.lurkerOfTheDepths
+            run $ AddToVictoryDisplay (EnemyTarget eid)
+          else run $ PlaceTokens GameSource target Resource 3
+          run $ PlaceTokens GameSource target Progress 9
+          resolveRevealed
+          toCardCode <$> getActiveQuest `shouldReturn` toCardCode (if book then withBook else withoutBook)
+
+    for_ [(Quests.theServantsOfMorgoth, Objectives.dwarvenTorch, Quests.theRootsOfEredLuin), (Quests.theRootsOfEredLuin, Objectives.mapOfEredLuin, Quests.theMinesOfBelegost), (Quests.theMinesOfBelegost, Objectives.blueMountainGem, Quests.theServantsOfMorgoth)] \(start, loot, next) ->
+      for_ [False, True] \held ->
+        it ("routes from " <> show (toCardCode start) <> " with its required Loot: " <> show held) . gameTestIn theRuinsOfBelegost testDeck $ \pid -> do
+          target <- belegostStage pid start
+          when held $ claimLoot pid loot
+          run $ PlaceTokens GameSource target Progress 6
+          resolveRevealed
+          toCardCode <$> getActiveQuest `shouldReturn` toCardCode (if held then Quests.theBeastOfBelegost else next)
+          getsGame (length . filter ((== toCardCode start) . toCardCode) . (.questDeck) . toAttrs . (.scenario)) `shouldReturn` 1
+
+    it "cycles through all three stage-three cards and clears their old progress" . gameTestIn theRuinsOfBelegost testDeck $ \pid -> do
+      _ <- belegostStage pid Quests.theServantsOfMorgoth
+      initial <- (.cardId) . toAttrs <$> getActiveQuest
+      let complete expected = do
+            q <- getActiveQuest
+            run $ PlaceTokens GameSource (toTarget q) Progress 6
+            resolveRevealed
+            toCardCode <$> getActiveQuest `shouldReturn` toCardCode expected
+      complete Quests.theRootsOfEredLuin
+      complete Quests.theMinesOfBelegost
+      complete Quests.theServantsOfMorgoth
+      q <- getActiveQuest
+      (toAttrs q).cardId `shouldBe` initial
+      (.progress) . toAttrs <$> getActiveQuest `shouldReturn` 0
+
+  describe "The Beast of Belegost" do
+    it "adds the same dragon and lair, shuffles Sword and discard, and never completes from progress" . gameTestIn theRuinsOfBelegost testDeck $ \pid -> do
+      target <- belegostStage pid Quests.theBeastOfBelegost
+      eid <- enemyOf Enemies.naurlhug
+      getModifiers eid >>= (`shouldSatisfy` elem CannotTakeDamage)
+      locations <- getsGame (map toCardCode . toList . (.entities.locations))
+      locations `shouldSatisfy` elem (toCardCode Locations.naurlhugsLair)
+      map toCardCode <$> getEncounterDeck >>= (`shouldSatisfy` elem (toCardCode Objectives.swordOfBelegost))
+      run $ PlaceTokens GameSource target Progress 100
+      toCardCode <$> getActiveQuest `shouldReturn` toCardCode Quests.theBeastOfBelegost
+
+    it "allows damage only after the lair reaches victory and wins by defeating Naurlhug" . gameTestIn theRuinsOfBelegost testDeck $ \pid -> do
+      _ <- belegostStage pid Quests.theBeastOfBelegost
+      eid <- enemyOf Enemies.naurlhug
+      run $ PlaceTokens GameSource (EnemyTarget eid) Damage 5
+      getDamage (EnemyTarget eid) `shouldReturn` 0
+      lair <- getsGame $ toId . fromJustNote "lair missing" . find ((== toCardCode Locations.naurlhugsLair) . toCardCode) . toList . (.entities.locations)
+      run $ AddToVictoryDisplay (LocationTarget lair)
+      getModifiers eid >>= (`shouldSatisfy` notElem CannotTakeDamage)
+      run $ PlaceTokens GameSource (EnemyTarget eid) Damage 20
+      run $ CheckDefeated GameSource (EnemyTarget eid)
+      getsGame (.outcome) `shouldReturn` Just Won
+
+    it "makes no next-player attack in solo after a blank shadow (FAQ 1.46)" . gameTestIn theRuinsOfBelegost testDeck $ \pid -> do
+      _ <- belegostStage pid Quests.theBeastOfBelegost
+      eid <- enemyOf Enemies.naurlhug
+      run $ EngageEnemy pid eid
+      h <- strongDefender pid
+      _ <- setEncounterDeck [Locations.oldForestRoad, Locations.oldForestRoad]
+      run $ DealShadowCard eid
+      run $ EnemyAttack pid eid
+      defendAttack pid h
+      getQuestion pid `shouldReturn` Nothing
+      length <$> getEncounterDeck `shouldReturn` 1
+
+    it "attacks the next player once, with no new shadow and no loop from the old blank card" . twoPlayerTestIn theRuinsOfBelegost testDeck $ \one two -> do
+      _ <- belegostStage one Quests.theBeastOfBelegost
+      eid <- enemyOf Enemies.naurlhug
+      run $ EngageEnemy one eid
+      h1 <- strongDefender one
+      h2 <- strongDefender two
+      _ <- setEncounterDeck [Locations.oldForestRoad, Locations.oldForestRoad]
+      run $ DealShadowCard eid
+      run $ EnemyAttack one eid
+      defendAttack one h1
+      defendAttack two h2
+      (.shadowCards) . toAttrs <$> getEnemy eid `shouldReturn` []
+      (.placement) . toAttrs <$> getEnemy eid `shouldReturn` EngagedWith two
+      length <$> getEncounterDeck `shouldReturn` 1
+      getQuestion one `shouldReturn` Nothing
+      getQuestion two `shouldReturn` Nothing
+
+    it "forgets shadows discarded before an attack and keeps its private tracking through save/load" . twoPlayerTestIn theRuinsOfBelegost testDeck $ \one two -> do
+      _ <- belegostStage one Quests.theBeastOfBelegost
+      eid <- enemyOf Enemies.naurlhug
+      run $ EngageEnemy one eid
+      h <- strongDefender one
+      _ <- setEncounterDeck [Locations.oldForestRoad, Locations.oldForestRoad]
+      run $ DealShadowCard eid
+      g <- getGame
+      fmap toJSON (eitherDecode (encode g) :: Either String Game) `shouldBe` Right (toJSON g)
+      case publicGame g of
+        Object top -> case KeyMap.lookup "scenario" top of
+          Just (Object publicScenario) -> KeyMap.lookup "meta" publicScenario `shouldBe` Nothing
+          _ -> error "missing public scenario"
+        _ -> error "missing public game"
+      run $ DiscardShadowCards eid
+      run $ EnemyAttack one eid
+      defendAttack one h
+      (.placement) . toAttrs <$> getEnemy eid `shouldReturn` EngagedWith one
+      getQuestion two `shouldReturn` Nothing
+
+    it "does not trigger from a blank shadow discarded individually before the attack (Caleb, ALeP 3.273)" . twoPlayerTestIn theRuinsOfBelegost testDeck $ \one two -> do
+      _ <- belegostStage one Quests.theBeastOfBelegost
+      eid <- enemyOf Enemies.naurlhug
+      run $ EngageEnemy one eid
+      h <- strongDefender one
+      [card, _] <- setEncounterDeck [Locations.oldForestRoad, Locations.oldForestRoad]
+      run $ DealShadowCard eid
+      run $ RemoveShadowCard eid card.id
+      run $ AddToEncounterDiscard [card]
+      run $ EnemyAttack one eid
+      defendAttack one h
+      (.placement) . toAttrs <$> getEnemy eid `shouldReturn` EngagedWith one
+      getQuestion two `shouldReturn` Nothing
+
+    it "does not trigger from a blank shadow discarded during the attack before shadows resolve" . twoPlayerTestIn theRuinsOfBelegost testDeck $ \one two -> do
+      _ <- belegostStage one Quests.theBeastOfBelegost
+      eid <- enemyOf Enemies.naurlhug
+      run $ EngageEnemy one eid
+      h <- strongDefender one
+      [card, _] <- setEncounterDeck [Locations.oldForestRoad, Locations.oldForestRoad]
+      run $ DealShadowCard eid
+      run $ EnemyAttack one eid
+      run $ RemoveShadowCard eid card.id
+      run $ AddToEncounterDiscard [card]
+      defendAttack one h
+      (.placement) . toAttrs <$> getEnemy eid `shouldReturn` EngagedWith one
+      getQuestion two `shouldReturn` Nothing
+
+    it "does not attack again after being dealt a card with a shadow effect" . twoPlayerTestIn theRuinsOfBelegost testDeck $ \one two -> do
+      _ <- belegostStage one Quests.theBeastOfBelegost
+      eid <- enemyOf Enemies.naurlhug
+      run $ EngageEnemy one eid
+      h <- strongDefender one
+      _ <- setEncounterDeck [Treacheries.coveredPit, Locations.oldForestRoad]
+      run $ DealShadowCard eid
+      run $ EnemyAttack one eid
+      defendAttack one h
+      (.placement) . toAttrs <$> getEnemy eid `shouldReturn` EngagedWith one
+      getQuestion two `shouldReturn` Nothing
+
   describe "exploration quests" do
+    it "removes the six gold-indicator cards in Easy mode and adds one starting resource per hero" . gameTestIn (overAttrs (\a -> a {scenarioMode = EasyMode}) theRuinsOfBelegost) testDeck $ \pid -> do
+      run $ DoStep 1 Setup
+      deck <- getEncounterDeck
+      length deck `shouldBe` 39
+      map toCardCode deck `shouldSatisfy` all (`notElem` map toCardCode [Enemies.oldStoneTroll, Locations.floodedHall, Treacheries.spawnOfThangorodrim])
+      run $ DoStep 4 Setup
+      heroes <- getsGame (toList . (.entities.heroes))
+      map ((.resources) . toAttrs) heroes `shouldBe` [1, 1, 1]
+      run $ DoStep 7 Setup
+      chooseTarget pid =<< getActiveQuest
+      length <$> getEncounterDeck `shouldReturn` 32
+      length . objectiveUnderneath <$> clock `shouldReturn` 1
+
     for_ [1 .. 4] \n ->
       it ("sets up the printed physical cards and one secret Loot for " <> show n <> " players") . belegostScenarioTable n $ \players -> do
-        let lead = fromJustNote "no player" $ headMay players
-        run $ DoStep 1 Setup
-        run $ DoStep 7 Setup
+        run Setup
+        for_ players \_ -> do
+          asked <- getsGame $ fromJustNote "no starting-hand question" . headMay . Map.keys . (.question)
+          chooseLabel "$label.keepHand" asked
+        lead <- getLead
         chooseTarget lead =<< getActiveQuest
         stage <- toAttrs <$> getActiveQuest
         stage.flipped `shouldBe` True
@@ -1111,6 +1494,7 @@ spec = describe "Belegost enemies" do
       defendAttack one h1
       getQuestion one `shouldReturn` Nothing
       defendAttack two h2
+      (.shadowCards) . toAttrs <$> getEnemy eid `shouldReturn` []
       (.placement) . toAttrs <$> getEnemy eid `shouldReturn` StagingArea
       length <$> getEncounterDeck `shouldReturn` 1
       getQuestion one `shouldReturn` Nothing

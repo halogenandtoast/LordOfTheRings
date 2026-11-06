@@ -340,6 +340,7 @@ data WindowMatcher
     LocationBecameActiveWindow Timing LocationMatcher
   | -- | the Discover keyword of the location resolved, as Hidden Staircase reads
     DiscoverResolvedWindow Timing LocationId
+  | DiscoverResolvedWithoutHazardWindow Timing
   | -- | a player card effect placed progress on a matching location, as Haunted Hall reads
     -- "a player places any amount of progress"
     PlayerCardPlacedProgressWindow Timing LocationMatcher
@@ -617,6 +618,7 @@ windowMatches matcher (Window timing wType) = case (matcher, wType) of
   (LocationFlippedWindow {}, _) -> False
   (LocationBecameActiveWindow {}, _) -> False
   (DiscoverResolvedWindow t lid, DiscoverResolved lid' _) -> t == timing && lid == lid'
+  (DiscoverResolvedWithoutHazardWindow t, DiscoverResolved _ False) -> t == timing
   (PlayerCardPlacedProgressWindow {}, _) -> False
   (ThreatRaisedWindow {}, _) -> False
   (FailedHideTestWindow {}, _) -> False

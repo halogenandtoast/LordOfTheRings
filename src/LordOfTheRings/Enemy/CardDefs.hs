@@ -5884,7 +5884,7 @@ namelessCaveDweller = (enemy "the-ruins-of-belegost-017" "Nameless Cave Dweller"
 
 oldStoneTroll :: CardDef
 oldStoneTroll = (enemy "the-ruins-of-belegost-018" "Old Stone Troll" TheRuinsOfBelegost 2 50 3 6 3 8)
-  { cdCardTraits = setFromList [Troll, Hazard] }
+  { cdCardTraits = setFromList [Troll, Hazard], cdEasyModeQuantity = Just 0 }
 
 
 naurlhug :: CardDef

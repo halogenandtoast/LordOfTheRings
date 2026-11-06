@@ -5508,7 +5508,7 @@ naurlhugsLair = (location "the-ruins-of-belegost-021" "Naurlhûg's Lair" TheRuin
 abandonedMineBelegost = (location "the-ruins-of-belegost-022" "Abandoned Mine" TheRuinsOfBelegost 4 2 3)
   { cdCardTraits = setFromList [Underground], cdKeywords = setFromList [Discover 2] }
 floodedHall = (location "the-ruins-of-belegost-023" "Flooded Hall" TheRuinsOfBelegost 2 4 4)
-  { cdCardTraits = setFromList [Underground], cdKeywords = setFromList [Discover 4] }
+  { cdCardTraits = setFromList [Underground], cdKeywords = setFromList [Discover 4], cdEasyModeQuantity = Just 0 }
 darkenedTunnel = (location "the-ruins-of-belegost-024" "Darkened Tunnel" TheRuinsOfBelegost 2 3 3)
   { cdCardTraits = setFromList [Underground], cdKeywords = setFromList [Discover 2] }
 sunkenTreasury = (location "the-ruins-of-belegost-025" "Sunken Treasury" TheRuinsOfBelegost 3 1 4)

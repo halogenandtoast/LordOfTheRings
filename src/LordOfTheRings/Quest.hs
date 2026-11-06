@@ -2,6 +2,7 @@
 
 module LordOfTheRings.Quest (module LordOfTheRings.Quest, module X) where
 
+import LordOfTheRings.Quest.Cards.BelegostDepths (theServantsOfMorgoth, theRootsOfEredLuin, theMinesOfBelegost, theBeastOfBelegost)
 import LordOfTheRings.Quest.Cards.BelegostExploration (ruinsOfTheFirstAge, ancientEvilsDisturbed, deeperIntoThePast)
 import LordOfTheRings.Quest.Cards.FarewellToTheShire (farewellToTheShire)
 import LordOfTheRings.Quest.Cards.TheLivingForest (darkBadPlace, chokedWithBrambles, shiftingTrees, closingInAroundThem)
@@ -492,7 +493,11 @@ allQuests =
   Map.fromList
     [ (toCardCode builder, card)
     | card@(SomeQuestCard builder) <-
-        [ SomeQuestCard ruinsOfTheFirstAge
+        [ SomeQuestCard theServantsOfMorgoth
+        , SomeQuestCard theRootsOfEredLuin
+        , SomeQuestCard theMinesOfBelegost
+        , SomeQuestCard theBeastOfBelegost
+        , SomeQuestCard ruinsOfTheFirstAge
         , SomeQuestCard ancientEvilsDisturbed
         , SomeQuestCard deeperIntoThePast
         , SomeQuestCard farewellToTheShire

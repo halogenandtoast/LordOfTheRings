@@ -258,12 +258,20 @@ data ModifierType
   | -- | on a location: when the players may travel and there is no active location, they
     -- must travel here
     MustBeTraveledTo
+  | -- | On the game: players must travel if any legal destination exists.
+    MustTravel
   | -- | On a staged location: each player raises threat by N when offered travel and choosing elsewhere.
     ThreatPenaltyForNotTravelingTo Int
   | -- | On the game: encounter cards revealed during this effect gain doomed N.
     RevealedEncounterCardsGainDoomed Int
   | -- | On the game: the first matching enemy revealed this round gains these keywords.
     FirstRevealedEnemyWithTraitGainsKeywords Trait [Keyword]
+  | -- | On the game: the first card of any type with this trait gains these keywords.
+    FirstRevealedCardWithTraitGainsKeywords Trait [Keyword]
+  | -- | A card with this trait was revealed this round, even before the granting card entered play.
+    CardWithTraitRevealedThisRound Trait
+  | -- | On the game: the current special encounter attack was dealt a blank shadow.
+    AttackWasDealtBlankShadow
   | -- | On the game: this trait has appeared on an enemy revealed this round, even before a granting card entered play.
     EnemyWithTraitRevealedThisRound Trait
   | LeavesPlayToTopOfEncounterDeck

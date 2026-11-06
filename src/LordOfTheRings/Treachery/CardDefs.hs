@@ -3990,7 +3990,7 @@ echoesInTheDark, spawnOfThangorodrim, concealedSpikes, coveredPit :: CardDef
 echoesInTheDark = (treachery "the-ruins-of-belegost-027" "Echoes in the Dark" TheRuinsOfBelegost 3)
   { cdKeywords = setFromList [Doomed 1], cdShadowEffect = True }
 spawnOfThangorodrim = (treachery "the-ruins-of-belegost-028" "Spawn of Thangorodrim" TheRuinsOfBelegost 2)
-  { cdShadowEffect = True }
+  { cdShadowEffect = True, cdEasyModeQuantity = Just 0 }
 concealedSpikes = (treachery "the-ruins-of-belegost-029" "Concealed Spikes" TheRuinsOfBelegost 2)
   { cdCardTraits = setFromList [Hazard], cdShadowEffect = True }
 coveredPit = (treachery "the-ruins-of-belegost-030" "Covered Pit" TheRuinsOfBelegost 2)

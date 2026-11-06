@@ -868,9 +868,12 @@ import LordOfTheRings.Modifier (
     MayDeclareMultipleDefenders,
     MayDeclareUpToDefenders,
     MustBeTraveledTo,
+    MustTravel,
     ThreatPenaltyForNotTravelingTo,
     RevealedEncounterCardsGainDoomed,
     FirstRevealedEnemyWithTraitGainsKeywords,
+    FirstRevealedCardWithTraitGainsKeywords,
+    CardWithTraitRevealedThisRound,
     EnemyWithTraitRevealedThisRound,
     MustCommitAll,
     MustCommitToQuest,
@@ -1919,6 +1922,7 @@ runGameMessage msg g = case msg of
     lead <- getStageLead
     players <- getPlayerOrder
     forced <- filterM (fmap (elem MustBeTraveledTo) . getModifiers) locations
+    mustTravel <- elem MustTravel <$> getModifiers GameTarget
     staged <- select LocationInStagingArea
     pressure <- fmap concat $ for staged \lid -> do
       mods <- getModifiers lid
@@ -1934,8 +1938,8 @@ runGameMessage msg g = case msg of
     unless (null locations)
       $ push
       $ if null forced
-        then questionLabel (prompt "label.travelToLocation") lead
-          $ map travel locations <> [Label (ikey "label.doNotTravel") (penalties Nothing)]
+        then questionLabel (if mustTravel then ikey "label.mustTravel" else prompt "label.travelToLocation") lead
+          $ map travel locations <> [Label (ikey "label.doNotTravel") (penalties Nothing) | not mustTravel]
         else questionLabel (prompt "label.mustTravel") lead (map travel forced)
     pure g
   -- "when the players travel", as Crypt Key answers, comes before the location is active
@@ -4256,14 +4260,21 @@ runGameMessage msg g = case msg of
           , trait <- toList $ cdCardTraits def
           , EnemyWithTraitRevealedThisRound trait `notElem` gameMods
           ]
+        firstCardKeywords = concat
+          [ keywords
+          | FirstRevealedCardWithTraitGainsKeywords trait keywords <- gameMods
+          , trait `member` cdCardTraits def
+          , CardWithTraitRevealedThisRound trait `notElem` gameMods
+          ]
+        firstCardTraits = [trait | trait <- toList $ cdCardTraits def, CardWithTraitRevealedThisRound trait `notElem` gameMods]
         -- Snapshot gained keywords when this card is revealed. In particular a
         -- Massing at Osgiliath does not give itself the doomed it grants later.
         gainedDoomed = sum [n | RevealedEncounterCardsGainDoomed n <- gameMods]
-        gainedKeywords = firstKeywords <> [Doomed gainedDoomed | gainedDoomed > 0]
+        gainedKeywords = firstKeywords <> firstCardKeywords <> [Doomed gainedDoomed | gainedDoomed > 0]
         doom = sum [n | Doomed n <- toList (cdKeywords def) <> gainedKeywords]
         rememberRevelation t =
           [CreateEffect $ Effect GameSource t (map GainKeyword gainedKeywords) UntilEndOfPhase | notNull gainedKeywords]
-          <> [CreateEffect $ Effect GameSource GameTarget (map EnemyWithTraitRevealedThisRound firstTraits) UntilEndOfRound | notNull firstTraits]
+          <> [CreateEffect $ Effect GameSource GameTarget (map EnemyWithTraitRevealedThisRound firstTraits <> map CardWithTraitRevealedThisRound firstCardTraits) UntilEndOfRound | notNull firstTraits || notNull firstCardTraits]
     let
         -- the players as a group discard the resources from their heroes' pools (The
         -- Drúadan Forest rules)
@@ -4298,7 +4309,7 @@ runGameMessage msg g = case msg of
         revealingWithDoomed t extra = do
           doomed <- doomedMessages (doom + extra)
           inLogBlock (RevealBlock card)
-            $ [CheckWindows [mkWhen $ Revealed t]] <> [WhileInPlay t (rememberRevelation t) | notNull firstTraits || notNull gainedKeywords] <> mischiefDamage t <> [WhileInPlay t prowl | notNull prowl] <> hide <> [whenRevealed t, WhileInPlay t doomed]
+            $ [CheckWindows [mkWhen $ Revealed t]] <> [WhileInPlay t (rememberRevelation t) | notNull firstTraits || notNull firstCardTraits || notNull gainedKeywords] <> mischiefDamage t <> [WhileInPlay t prowl | notNull prowl] <> hide <> [whenRevealed t, WhileInPlay t doomed]
             -- Resolve the card's revelation before its staging-entry triggers. A
             -- canceled card is treated as never revealed (FAQ 1.54), so its entry
             -- Forced effects cannot resolve before the cancellation window.
