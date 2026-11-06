@@ -2775,3 +2775,7 @@ attachEncounterCardFromHand pid card = push . AttachEncounterCardFromHand pid ca
 -- targets; Epic games additionally offer the other groups' public boards.
 chooseEpicTarget :: (ReverseQueue m, HasCardCode source) => source -> PlayerId -> EpicTargetQuery -> EpicEffect -> m ()
 chooseEpicTarget source pid query effect = push $ ChooseEpicTarget pid (toCardCode source) query effect
+
+-- | Resolve the Burn values on all locations (The Battle of Lake-town).
+resolveBurnDamage :: (HasQueue Message m, Sourceable source) => source -> m ()
+resolveBurnDamage = push . ResolveBurnDamage . toSource

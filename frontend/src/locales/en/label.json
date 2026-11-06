@@ -1,4 +1,8 @@
 {
+  "lakeTown": {
+    "assignBurn": "Assign {n} remaining Burn damage: exhaust characters to absorb it, or pass",
+    "takeBurn": "Assign no more Burn damage to my characters"
+  },
   "anduinCrossing": {
     "sacrifice": "Discard a hero or Ranger of Ithilien you control before committing characters"
   },

@@ -2045,11 +2045,13 @@ library
       LordOfTheRings.Location.Cards.GoblinTrail
       LordOfTheRings.Location.Cards.GoblinTunnels
       LordOfTheRings.Location.Cards.GondorianHamlet
+      LordOfTheRings.Location.Cards.GreatBridge
       LordOfTheRings.Location.Cards.GreatCavernRoom
       LordOfTheRings.Location.Cards.GreatCorsairShip
       LordOfTheRings.Location.Cards.GreatEastRoad
       LordOfTheRings.Location.Cards.GreatForestWeb
       LordOfTheRings.Location.Cards.GreatHall
+      LordOfTheRings.Location.Cards.GreatHouse
       LordOfTheRings.Location.Cards.GreatReedThicket
       LordOfTheRings.Location.Cards.GreenHillCountry
       LordOfTheRings.Location.Cards.GreenHillCountryNightmare
@@ -2386,6 +2388,7 @@ library
       LordOfTheRings.Location.Cards.TheLonelyMountain
       LordOfTheRings.Location.Cards.TheLowerGate
       LordOfTheRings.Location.Cards.TheMarish
+      LordOfTheRings.Location.Cards.TheMastersManor
       LordOfTheRings.Location.Cards.TheMereOfDeadFaces
       LordOfTheRings.Location.Cards.TheMountainsRoots
       LordOfTheRings.Location.Cards.TheNorthStair
@@ -2595,6 +2598,7 @@ library
       LordOfTheRings.Objective.Cards.KeyOfTheBoar
       LordOfTheRings.Objective.Cards.KeyOfTheRaven
       LordOfTheRings.Objective.Cards.KeyOfTheWolf
+      LordOfTheRings.Objective.Cards.LakeTown
       LordOfTheRings.Objective.Cards.LastOfTheCompany
       LordOfTheRings.Objective.Cards.LordAlcaron
       LordOfTheRings.Objective.Cards.LordAlcaronTheBloodOfGondor
