@@ -32,6 +32,7 @@ const expanded = ref(false)
 const cardRef = useTemplateRef<HTMLElement>('cardRef')
 
 const source = computed(() => cardImage(card))
+const oversized = computed(() => ['the-hunt-for-the-dreadnaught-013', 'the-hunt-for-the-dreadnaught-013-b'].includes(card.code))
 // the resource token takes the colour of the card's sphere, blending when it has several
 const sphereTint = computed(() => {
   const colours = card.spheres.map((s) => `var(--${s.toLowerCase()})`)
@@ -144,7 +145,7 @@ const toggleUnless = (attached: CardView) => {
       <div
         ref="cardRef"
         class="card"
-        :class="{ rotated, exhausted: card.exhausted, unconscious: card.unconscious, active, playing: card.playing, source: isSource, target: isTarget, drop: isDrop, committed: card.committed, 'out-of-play': card.outOfPlay, prohibited: card.prohibited, flipping }"
+        :class="{ rotated, oversized, exhausted: card.exhausted, unconscious: card.unconscious, active, playing: card.playing, source: isSource, target: isTarget, drop: isDrop, committed: card.committed, 'out-of-play': card.outOfPlay, prohibited: card.prohibited, flipping }"
         :style="{ viewTransitionName: `card-${card.id}` }"
         :aria-label="tr(card.name)"
         :data-card-id="card.id"
@@ -341,6 +342,13 @@ const toggleUnless = (attached: CardView) => {
   width: calc(var(--card-width) / var(--card-aspect));
   aspect-ratio: calc(1 / 0.715);
 }
+/* The Dreadnaught occupies two landscape cards stacked vertically. */
+.card.oversized {
+  width: calc(var(--card-width) / var(--card-aspect));
+  height: calc(var(--card-width) * 2);
+  aspect-ratio: auto;
+}
+.card.oversized > img:first-child { height: 100%; object-fit: contain; }
 .card img { width: 100%; border-radius: 7px; grid-area: 1 / 1; box-shadow: 0 0 0 1px rgb(255 255 255 / 0.14); color: transparent; }
 /* a long press reads the card, not Safari's save-image menu */
 .card { -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; }
