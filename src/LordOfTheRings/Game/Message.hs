@@ -294,6 +294,7 @@ import LordOfTheRings.Hero (
  )
 import LordOfTheRings.I18n (cardVar, ikey, ikeyWith, intVar)
 import LordOfTheRings.Id (
+  CardId,
   PlayerId,
   AllyId (AllyId, unAllyId),
   AttachmentId (AttachmentId),
@@ -735,7 +736,8 @@ import LordOfTheRings.Message (
     WhenRevealed,
     WhenSacked,
     WhileInPlay,
-    WithTarget
+    WithTarget,
+    WithDiscardedRandomCards
   ),
   chooseOrRunOne,
   inLogBlock,
@@ -1195,6 +1197,14 @@ import LordOfTheRings.Game.Query (
   revealedCard,
   takingProgressFirst,
  )
+
+-- A temporary shadow card is rebuilt for its deferred steps and result messages.
+shadowStep :: Message -> Maybe (CardId, EnemyId)
+shadowStep = \case
+  DoStep _ (ResolveShadowEffect cid eid _ _) -> Just (cid, eid)
+  WithTarget _ inner -> shadowStep inner
+  WithDiscardedRandomCards _ _ inner -> shadowStep inner
+  _ -> Nothing
 
 runGameMessage :: Message -> Game -> GameT Game
 runGameMessage msg g = case msg of
@@ -2740,7 +2750,7 @@ runGameMessage msg g = case msg of
   -- as the card was revealed, so it still finishes once the card has been discarded, with
   -- its enemy leaving play after the damage (ALeP 3.043, 3.068); an attack its enemy left
   -- before the damage ended there (FAQ 2.54) and destroyed no one
-  DoStep _ (ResolveShadowEffect cid eid _ _) -> do
+  follow | Just (cid, eid) <- shadowStep follow -> do
     let dealt = maybe [] (.shadowCards) (Map.lookup eid g.entities.enemies)
     for_ (find ((== cid) . ecId) (dealt <> (toAttrs g.scenario).encounterDiscard)) \card -> resolveShadowEffect card msg
     pure g

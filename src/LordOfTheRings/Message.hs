@@ -394,6 +394,8 @@ data Message
   | DiscardRandomFromHand PlayerId Int
   | DiscardRandomFromHandWithResult Source PlayerId Int
   | DiscardedRandomFromHand Source PlayerId [Card]
+  | DiscardRandomFromHandThen PlayerId Int Message
+  | WithDiscardedRandomCards PlayerId [Card] Message
   | ChooseAnyDiscardFromHand Source PlayerId [CardId]
   | DiscardChosenFromHand Source PlayerId [CardId]
   | DiscardedChosenFromHand Source PlayerId [Card]

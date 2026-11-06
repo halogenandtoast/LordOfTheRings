@@ -10,7 +10,7 @@ module LordOfTheRings.Message.Lifted (
 
 import LordOfTheRings.Attachment.CardDefs qualified as Attachments
 import LordOfTheRings.Campaign (CampaignLogUpdate (DiscoverTreasure))
-import LordOfTheRings.Card (Card (..), CardCode, CardCost (StaticCost), AdditionalCost (DiscardCardsFromHand), cdAdditionalCost, CardDef, CardType (ContractType), EncounterCard, HasCardCode (..), IsCard (..), PlayerCard, cdCardTraits, cdCardType, cdCost, cdWhenRevealed, genEncounterCard, genPlayerCard, lookupCardDef, toCardDef)
+import LordOfTheRings.Card (Card (..), CardCode, AdditionalCost (DiscardCardsFromHand), cdAdditionalCost, CardDef, CardType (ContractType), EncounterCard, HasCardCode (..), IsCard (..), PlayerCard, cdCardTraits, cdCardType, cdWhenRevealed, genEncounterCard, genPlayerCard, lookupCardDef, toCardDef)
 import LordOfTheRings.Trait (Trait (Boon, Master))
 import LordOfTheRings.Classes.Entity (Entity (toAttrs, toId))
 import LordOfTheRings.Scenario.Types (ScenarioAttrs (scenarioSetAside))
@@ -987,15 +987,11 @@ discardNonObjectiveAttachmentBy shown source pid = do
 -- as Western Quarter and Raiding the Coasts read.
 discardHighestCostAttachment :: (ReverseQueue m, Targetable source, Sourceable source) => source -> PlayerId -> m ()
 discardHighestCostAttachment source pid = do
-  attachments <- getsGame (filter ((== pid) . (.controller) . toAttrs) . toList . (.attachments) . gameEntities)
-  let cost x = case cdCost (toCardDef x) of
-        Just (StaticCost n) -> n
-        _ -> 0
-      highest = foldr (max . cost) 0 attachments
+  attachments <- highestCostAttachmentsControlledBy pid
   chooseOrRunOneM pid do
     questionLabeled "discardHighestCostAttachment"
     causedBy source
-    targets [toId x | x <- attachments, cost x == highest] (discard source)
+    targets attachments (discard source)
 
 {- | "If this attack destroys a character", of an attack the card has the enemy make now, as
 Vigilant Orc's immediate attack reads: 'DoStep' 1 of the message, once that attack is over,
@@ -1750,6 +1746,11 @@ discardAnyFromHandWithResult source pid = push $ ChooseAnyDiscardFromHand (toSou
 -- discard windows resolve. An empty result also reports a prevented discard.
 discardRandomFromHandWithResult :: (ReverseQueue m, Sourceable source) => source -> PlayerId -> Int -> m ()
 discardRandomFromHandWithResult source pid n = push $ DiscardRandomFromHandWithResult (toSource source) pid n
+
+-- | Report the actual discard to a continuation, also usable by a temporary
+-- shadow card whose source entity is not in play.
+discardRandomFromHandThen :: ReverseQueue m => PlayerId -> Int -> Message -> m ()
+discardRandomFromHandThen pid n follow = push $ DiscardRandomFromHandThen pid n follow
 
 -- | Each hero's resource pool is emptied, as "remove all resources from each hero's
 -- resource pool" reads.

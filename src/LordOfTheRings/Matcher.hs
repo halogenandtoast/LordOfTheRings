@@ -907,6 +907,18 @@ getAttachmentsControlledBy pid = do
     AttachedTo host -> Just host
     _ -> Nothing
 
+-- | All highest-cost controlled attachments, including claimed objectives (FAQ
+-- 1.23), whose printed resource cost is zero.
+highestCostAttachmentsControlledBy :: HasGame m => PlayerId -> m [Target]
+highestCostAttachmentsControlledBy pid = do
+  attachments <- getAttachmentsControlledBy pid
+  costs <- getsGame \g ->
+    [ (t, case t of AttachmentTarget aid -> maybe 0 printedCostOf (Map.lookup aid g.entities.attachments); _ -> 0)
+    | t <- attachments
+    ]
+  let highest = maximumMay (map snd costs)
+  pure [t | (t, n) <- costs, Just n == highest]
+
 {- | The cards attached to the host with the trait: attachments, objectives and encounter
 cards attached as conditions.
 -}

@@ -2,6 +2,7 @@ module LordOfTheRings.Standalone.BelegostSpec (spec) where
 
 import Data.Map.Strict qualified as Map
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
+import LordOfTheRings.Event.CardDefs qualified as Events
 import LordOfTheRings.Ally.CardDefs qualified as Allies
 import LordOfTheRings.Attachment.CardDefs qualified as Attachments
 import LordOfTheRings.Objective.CardDefs qualified as Objectives
@@ -10,8 +11,8 @@ import LordOfTheRings.Helpers.Modifiers (getModifiers)
 import LordOfTheRings.Helpers.Character (getAttack)
 import LordOfTheRings.Helpers.Window (getActionAbilities)
 import LordOfTheRings.Helpers.Attachment (attachmentHosts)
-import LordOfTheRings.Helpers.Staging (getEnemyThreat, getEnemyAttack, getEnemyDefense, getEngagementCost, getLocationThreat)
-import LordOfTheRings.Matcher (getEnemy, getHero, select, getThreat, getDiscoverValue, playerCardsGuardedBy, AttachMatcher (AttachToEnemy), EnemyMatcher (AnyEnemy, EnemyEngagedWith, EnemyWithCardCode), PlayerMatcher (PlayerWithId))
+import LordOfTheRings.Helpers.Staging (getStagingThreat, getEnemyThreat, getEnemyAttack, getEnemyDefense, getEngagementCost, getLocationThreat)
+import LordOfTheRings.Matcher (getAttachmentsControlledBy, getEnemy, getHero, select, getThreat, getDiscoverValue, playerCardsGuardedBy, AttachMatcher (AttachToEnemy), AllyMatcher (AllyControlledBy), EnemyMatcher (AnyEnemy, EnemyEngagedWith, EnemyWithCardCode), PlayerMatcher (PlayerWithId))
 import LordOfTheRings.Decklist (loadPlayer)
 import LordOfTheRings.Modifier (ModifierType (..))
 import LordOfTheRings.Effect (Effect (..), EffectDuration (..))
@@ -119,8 +120,272 @@ setEncounterDiscard defs = do
   g <- getGame
   putGame $ g & scenarioL %~ overAttrs (encounterDiscardL .~ cards)
 
+revealTreachery :: CardDef -> GameT ()
+revealTreachery def = do
+  _ <- setEncounterDeck [def, Locations.oldForestRoad, Locations.oldForestRoad]
+  run RevealEncounterCard
+  resolveRevealed
+
+resolveTreacheryShadow :: PlayerId -> EnemyId -> CardDef -> GameT ()
+resolveTreacheryShadow pid eid def = do
+  [card, _] <- setEncounterDeck [def, Locations.oldForestRoad]
+  run $ DealShadowCard eid
+  run $ ResolveShadowCard card.id eid pid []
+
 spec :: Spec
 spec = describe "Belegost enemies" do
+  describe "Echoes in the Dark" do
+    it "recalculates the first player's characters, stacks, and expires at phase end (FAQ 1.55)" . twoPlayerTest testDeck $ \one two -> do
+      _ <- stageEnemy Enemies.forestSpider
+      revealTreachery Treacheries.echoesInTheDark
+      getStagingThreat `shouldReturn` 5
+      getThreat one `shouldReturn` 1
+      getThreat two `shouldReturn` 1
+      ally <- putAllyIntoPlay one Allies.snowbournScout
+      getStagingThreat `shouldReturn` 6
+      _ <- putAllyIntoPlay two Allies.snowbournScout
+      _ <- putAllyIntoPlay two Allies.guardOfTheCitadel
+      getStagingThreat `shouldReturn` 6
+      revealTreachery Treacheries.echoesInTheDark
+      getStagingThreat `shouldReturn` 10
+      run $ Destroy GameSource ally
+      getStagingThreat `shouldReturn` 8
+      run $ SetFirstPlayer two
+      getStagingThreat `shouldReturn` 12
+      run $ EndEffects UntilEndOfPhase
+      getStagingThreat `shouldReturn` 2
+
+    for_ [(Events.aTestOfWill, True), (Allies.snowbournScout, False)] \(def, event) ->
+      it ("uses the actual randomly discarded card: " <> show event) . gameTest $ \pid -> do
+        _ <- putCardIntoHand pid def
+        eid <- stageEnemy Enemies.forestSpider
+        resolveTreacheryShadow pid eid Treacheries.echoesInTheDark
+        length . (.hand) <$> getPlayer pid `shouldReturn` 0
+        getEnemyAttack eid `shouldReturn` if event then 4 else 2
+        run $ EndEffects (UntilEnemyAttackEnds eid)
+        getEnemyAttack eid `shouldReturn` 2
+
+    it "does not gain attack when discarding from hand is prohibited" . gameTest $ \pid -> do
+      _ <- putCardIntoHand pid Events.aTestOfWill
+      run $ CreateEffect $ Effect GameSource (PlayerTarget pid) [CannotDiscardFromHand] UntilEndOfPhase
+      eid <- stageEnemy Enemies.forestSpider
+      resolveTreacheryShadow pid eid Treacheries.echoesInTheDark
+      length . (.hand) <$> getPlayer pid `shouldReturn` 1
+      getEnemyAttack eid `shouldReturn` 2
+
+    it "has no attack bonus with an empty hand" . gameTest $ \pid -> do
+      eid <- stageEnemy Enemies.forestSpider
+      resolveTreacheryShadow pid eid Treacheries.echoesInTheDark
+      getEnemyAttack eid `shouldReturn` 2
+
+  describe "Spawn of Thangorodrim" do
+    for_ [0, 1, 2] \n ->
+      it ("adds a resource and summons only on reaching three, from " <> show n) . gameTest $ \pid -> do
+        oid <- stageClock
+        run $ PlaceTokens GameSource (ObjectiveTarget oid) Resource n
+        dragon <- genEncounterCard Enemies.naurlhug
+        run $ SetAside dragon
+        revealTreachery Treacheries.spawnOfThangorodrim
+        (.resources) <$> clock `shouldReturn` n + 1
+        dragons <- select $ EnemyWithCardCode (toCardCode Enemies.naurlhug)
+        length dragons `shouldBe` if n == 2 then 1 else 0
+        for_ dragons \eid -> (.cardId) . toAttrs <$> getEnemy eid `shouldReturn` dragon.id
+        getQuestion pid `shouldReturn` Nothing
+
+    it "attacks the first player without moving the dragon or adding a resource" . twoPlayerTest testDeck $ \one two -> do
+      _ <- stageClock
+      eid <- stageEnemy Enemies.naurlhug
+      run $ EngageEnemy two eid
+      h <- strongDefender one
+      revealTreachery Treacheries.spawnOfThangorodrim
+      defendAttack one h
+      (.placement) . toAttrs <$> getEnemy eid `shouldReturn` EngagedWith two
+      (.resources) <$> clock `shouldReturn` 0
+      getDamage h `shouldReturn` 0
+      getQuestion two `shouldReturn` Nothing
+
+    it "makes one additional attack with a fresh shadow card" . gameTest $ \pid -> do
+      eid <- stageEnemy Enemies.forestSpider
+      run $ EngageEnemy pid eid
+      h <- strongDefender pid
+      secondDefender <- heroOf pid "01007"
+      _ <- setEncounterDeck [Treacheries.spawnOfThangorodrim, Locations.oldForestRoad, Locations.oldForestRoad]
+      run $ DealShadowCard eid
+      run $ EnemyAttack pid eid
+      defendAttack pid h
+      defendAttack pid secondDefender
+      length <$> getEncounterDeck `shouldReturn` 1
+      getQuestion pid `shouldReturn` Nothing
+
+  describe "Concealed Spikes" do
+    for_ [False, True] \active ->
+      it ("assigns damage to each player's own characters, active Discover: " <> show active) . twoPlayerTest testDeck $ \one two -> do
+        when active $ void $ activeLocation Locations.abandonedMineBelegost
+        revealTreachery Treacheries.concealedSpikes
+        h1 <- heroOf one "01012"
+        h2 <- heroOf two "01012"
+        let amount = if active then 3 else 1
+        replicateM_ amount $ chooseTarget one h1
+        replicateM_ amount $ chooseTarget two h2
+        getDamage h1 `shouldReturn` amount
+        getDamage h2 `shouldReturn` amount
+
+    it "does nothing as a shadow when the defender controls no attachments" . gameTest $ \pid -> do
+      eid <- stageEnemy Enemies.forestSpider
+      resolveTreacheryShadow pid eid Treacheries.concealedSpikes
+      getQuestion pid `shouldReturn` Nothing
+
+    it "counts claimed Loot and player attachments but only for the defending player" . twoPlayerTest testDeck $ \one two -> do
+      h <- heroOf one "01012"
+      _ <- putAttachmentOn one Attachments.daggerOfWesternesse h
+      claimLoot one Objectives.keysOfBelegost
+      claimLoot two Objectives.mapOfEredLuin
+      eid <- stageEnemy Enemies.forestSpider
+      resolveTreacheryShadow one eid Treacheries.concealedSpikes
+      chooseLabel "$label.belegost.spikesDamage" one
+      replicateM_ 2 $ chooseTarget one h
+      getDamage h `shouldReturn` 2
+      getQuestion two `shouldReturn` Nothing
+
+    it "allows a zero-cost Loot attachment to cancel the shadow" . gameTest $ \pid -> do
+      claimLoot pid Objectives.keysOfBelegost
+      eid <- stageEnemy Enemies.forestSpider
+      resolveTreacheryShadow pid eid Treacheries.concealedSpikes
+      chooseLabel "$label.belegost.spikesDiscard" pid
+      map toCardCode <$> getEncounterDiscard >>= (`shouldSatisfy` elem (toCardCode Objectives.keysOfBelegost))
+      getQuestion pid `shouldReturn` Nothing
+
+    for_ [ShadowCannotBeCanceled, CannotCancelEncounterEffects] \prohibition ->
+      it ("requires damage when cancellation is prohibited: " <> show prohibition) . gameTest $ \pid -> do
+        claimLoot pid Objectives.keysOfBelegost
+        h <- heroOf pid "01012"
+        run $ CreateEffect $ Effect GameSource GameTarget [prohibition] UntilEndOfPhase
+        eid <- stageEnemy Enemies.forestSpider
+        resolveTreacheryShadow pid eid Treacheries.concealedSpikes
+        chooseTarget pid h
+        getDamage h `shouldReturn` 1
+        (.placement) <$> lootOf Objectives.keysOfBelegost `shouldReturn` AttachedTo h
+
+    it "discards the highest-cost attachment, leaving cheaper attachments and avoiding damage" . gameTest $ \pid -> do
+      h <- heroOf pid "01012"
+      expensive <- putAttachmentOn pid Attachments.stewardOfGondor h
+      cheap <- putAttachmentOn pid Attachments.daggerOfWesternesse h
+      claimLoot pid Objectives.keysOfBelegost
+      eid <- stageEnemy Enemies.forestSpider
+      resolveTreacheryShadow pid eid Treacheries.concealedSpikes
+      chooseLabel "$label.belegost.spikesDiscard" pid
+      attachments <- getAttachmentsControlledBy pid
+      attachments `shouldSatisfy` notElem expensive
+      attachments `shouldSatisfy` elem cheap
+      getDamage h `shouldReturn` 0
+      getQuestion pid `shouldReturn` Nothing
+
+    it "offers every attachment tied for highest cost and excludes cheaper Loot" . gameTest $ \pid -> do
+      h <- heroOf pid "01012"
+      steward <- putAttachmentOn pid Attachments.stewardOfGondor h
+      courage <- putAttachmentOn pid Attachments.unexpectedCourage h
+      claimLoot pid Objectives.keysOfBelegost
+      eid <- stageEnemy Enemies.forestSpider
+      resolveTreacheryShadow pid eid Treacheries.concealedSpikes
+      chooseLabel "$label.belegost.spikesDiscard" pid
+      q <- fromJustNote "missing highest-cost choice" <$> getQuestion pid
+      let offered = [t | TargetLabel t _ <- questionChoices q]
+      length offered `shouldBe` 2
+      offered `shouldSatisfy` elem steward
+      offered `shouldSatisfy` elem courage
+      chooseTarget pid courage
+      getAttachmentsControlledBy pid >>= (`shouldSatisfy` elem steward)
+      getDamage h `shouldReturn` 0
+
+    it "does not offer a cheaper discard when the highest-cost attachment cannot leave play" . gameTest $ \pid -> do
+      h <- heroOf pid "01012"
+      expensive <- putAttachmentOn pid Attachments.stewardOfGondor h
+      _ <- putAttachmentOn pid Attachments.daggerOfWesternesse h
+      run $ CreateEffect $ Effect GameSource expensive [CannotLeavePlay] UntilEndOfPhase
+      eid <- stageEnemy Enemies.forestSpider
+      resolveTreacheryShadow pid eid Treacheries.concealedSpikes
+      replicateM_ 2 $ chooseTarget pid h
+      getDamage h `shouldReturn` 2
+      getAttachmentsControlledBy pid >>= (`shouldSatisfy` elem expensive)
+
+  describe "Covered Pit" do
+    it "discards an ally belonging to each player" . twoPlayerTest testDeck $ \one two -> do
+      _ <- putAllyIntoPlay one Allies.guardOfTheCitadel
+      _ <- putAllyIntoPlay two Allies.guardOfTheCitadel
+      revealTreachery Treacheries.coveredPit
+      select (AllyControlledBy (PlayerWithId one)) `shouldReturn` []
+      select (AllyControlledBy (PlayerWithId two)) `shouldReturn` []
+      getQuestion one `shouldReturn` Nothing
+      getQuestion two `shouldReturn` Nothing
+
+    it "does nothing for a player without allies" . gameTest $ \pid -> do
+      revealTreachery Treacheries.coveredPit
+      getQuestion pid `shouldReturn` Nothing
+
+    it "moves only the defender's Loot under a non-unique attacker" . twoPlayerTest testDeck $ \one two -> do
+      claimLoot one Objectives.mapOfEredLuin
+      claimLoot two Objectives.keysOfBelegost
+      eid <- stageEnemy Enemies.forestSpider
+      resolveTreacheryShadow two eid Treacheries.coveredPit
+      cid <- (.cardId) . toAttrs <$> getEnemy eid
+      objectiveGuard <$> lootOf Objectives.keysOfBelegost `shouldReturn` Just cid
+      (.placement) <$> lootOf Objectives.keysOfBelegost `shouldReturn` StagingArea
+      objectiveGuard <$> lootOf Objectives.mapOfEredLuin `shouldReturn` Nothing
+
+    it "releases guarded Loot to the first player when its attacker is defeated" . twoPlayerTest testDeck $ \one two -> do
+      claimLoot two Objectives.keysOfBelegost
+      eid <- stageEnemy Enemies.forestSpider
+      resolveTreacheryShadow two eid Treacheries.coveredPit
+      run $ Destroy GameSource (EnemyTarget eid)
+      h <- heroOf one "01012"
+      chooseTarget one h
+      (.placement) <$> lootOf Objectives.keysOfBelegost `shouldReturn` AttachedTo h
+      objectiveGuard <$> lootOf Objectives.keysOfBelegost `shouldReturn` Nothing
+
+    it "does not take Loot when the attacker is unique" . gameTest $ \pid -> do
+      claimLoot pid Objectives.keysOfBelegost
+      eid <- stageEnemy Enemies.naurlhug
+      resolveTreacheryShadow pid eid Treacheries.coveredPit
+      h <- heroOf pid "01012"
+      (.placement) <$> lootOf Objectives.keysOfBelegost `shouldReturn` AttachedTo h
+
+    it "keeps a surviving attacker's Loot guarded and its engagement unchanged" . gameTest $ \pid -> do
+      claimLoot pid Objectives.keysOfBelegost
+      eid <- stageEnemy Enemies.forestSpider
+      run $ EngageEnemy pid eid
+      h <- strongDefender pid
+      _ <- setEncounterDeck [Treacheries.coveredPit, Locations.oldForestRoad]
+      run $ DealShadowCard eid
+      run $ EnemyAttack pid eid
+      defendAttack pid h
+      (.placement) . toAttrs <$> getEnemy eid `shouldReturn` EngagedWith pid
+      cid <- (.cardId) . toAttrs <$> getEnemy eid
+      objectiveGuard <$> lootOf Objectives.keysOfBelegost `shouldReturn` Just cid
+
+    it "returns a unique attacker after a kill while leaving its defender's Loot attached" . gameTest $ \pid -> do
+      claimLoot pid Objectives.keysOfBelegost
+      eid <- stageEnemy Enemies.naurlhug
+      run $ EngageEnemy pid eid
+      ally <- putAllyIntoPlay pid Allies.snowbournScout
+      _ <- setEncounterDeck [Treacheries.coveredPit, Locations.oldForestRoad]
+      run $ DealShadowCard eid
+      run $ EnemyAttack pid eid
+      defendAttack pid ally
+      (.placement) . toAttrs <$> getEnemy eid `shouldReturn` StagingArea
+      h <- heroOf pid "01012"
+      (.placement) <$> lootOf Objectives.keysOfBelegost `shouldReturn` AttachedTo h
+
+    for_ [Enemies.forestSpider, Enemies.naurlhug] \def ->
+      it ("returns an attacker to staging after a kill even without Loot: " <> show (toCardCode def)) . gameTest $ \pid -> do
+        eid <- stageEnemy def
+        run $ EngageEnemy pid eid
+        ally <- putAllyIntoPlay pid Allies.snowbournScout
+        _ <- setEncounterDeck [Treacheries.coveredPit, Locations.oldForestRoad]
+        run $ DealShadowCard eid
+        run $ EnemyAttack pid eid
+        defendAttack pid ally
+        (.placement) . toAttrs <$> getEnemy eid `shouldReturn` StagingArea
+
   describe "Abandoned Mine" do
     for_ [1 .. 4] \n ->
       it ("examines " <> show (2 + n) <> " cards for " <> show n <> " players without increasing Discover") . belegostTable n $ \players -> do

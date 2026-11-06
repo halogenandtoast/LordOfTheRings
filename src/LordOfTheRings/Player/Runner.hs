@@ -81,10 +81,11 @@ instance RunMessage Player where
 
 -- | A random discard may report the cards actually discarded back to its source,
 -- following Arkham's source-tagged DiscardedCards result messages.
-randomDiscardRequest :: Message -> Maybe (PlayerId, Int, Maybe Source)
+randomDiscardRequest :: Message -> Maybe (PlayerId, Int, Maybe Source, Maybe Message)
 randomDiscardRequest = \case
-  DiscardRandomFromHand pid n -> Just (pid, n, Nothing)
-  DiscardRandomFromHandWithResult source pid n -> Just (pid, n, Just source)
+  DiscardRandomFromHand pid n -> Just (pid, n, Nothing, Nothing)
+  DiscardRandomFromHandWithResult source pid n -> Just (pid, n, Just source, Nothing)
+  DiscardRandomFromHandThen pid n follow -> Just (pid, n, Nothing, Just follow)
   _ -> Nothing
 
 -- Cards held by another player still leave hand for their original owner's
@@ -466,12 +467,13 @@ runPlayer msg player = case msg of
       pushWhen (notNull discarded) $ CheckWindows [mkAfter $ DiscardedFromHand pid c.id | c <- discarded]
       push $ DiscardedChosenFromHand source pid discarded
       pure $ player & handL %~ filter (`notElem` discarded) & discardL %~ (ownDiscard <>)
-    request | Just (pid, n, resultSource) <- randomDiscardRequest request, pid == player.id -> do
+    request | Just (pid, n, resultSource, follow) <- randomDiscardRequest request, pid == player.id -> do
       barred <- elem CannotDiscardFromHand <$> getModifiers (PlayerTarget pid)
       discarded <- if barred then pure [] else take n <$> shuffleM (discardableHand player)
       ownDiscard <- discardToOwners player discarded
       pushWhen (notNull discarded) $ CheckWindows [mkAfter $ DiscardedFromHand pid c.id | c <- discarded]
       for_ resultSource \source -> push $ DiscardedRandomFromHand source pid discarded
+      for_ follow \next -> push $ WithDiscardedRandomCards pid discarded next
       pure $ player & handL %~ filter (`notElem` discarded) & discardL %~ (ownDiscard <>)
     -- An ally may be in another player's hand, as after Groping Horror.
     PutAllyIntoPlayUnder _ card | any ((== card.id) . (.id)) player.hand -> pure $ player & handL %~ filter ((/= card.id) . (.id))

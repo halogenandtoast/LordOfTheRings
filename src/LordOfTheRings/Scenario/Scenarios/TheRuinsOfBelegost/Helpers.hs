@@ -1,5 +1,5 @@
 module LordOfTheRings.Scenario.Scenarios.TheRuinsOfBelegost.Helpers
-  ( playerControlsLoot, stalkingResources, stalkingObjectives, placeStalkingResources, summonNaurlhug ) where
+  ( playerControlsLoot, lootControlledBy, stalkingResources, stalkingObjectives, placeStalkingResources, summonNaurlhug ) where
 
 import LordOfTheRings.Card (toCardCode)
 import LordOfTheRings.Classes.Entity (toAttrs)
@@ -18,9 +18,13 @@ import LordOfTheRings.Source (Sourceable)
 
 playerControlsLoot :: HasGame m => PlayerId -> m Bool
 playerControlsLoot pid = do
+  notNull <$> lootControlledBy pid
+
+lootControlledBy :: HasGame m => PlayerId -> m [ObjectiveAttrs]
+lootControlledBy pid = do
   loot <- lootObjectives
   heroes <- select (HeroControlledBy $ PlayerWithId pid)
-  pure $ any (\o -> any (\h -> o.placement == AttachedTo (toTarget h)) heroes) loot
+  pure $ filter (\o -> any (\h -> o.placement == AttachedTo (toTarget h)) heroes) loot
 
 stalkingResources :: HasGame m => m Int
 stalkingResources = sum . map (.resources) <$> stalkingObjectives

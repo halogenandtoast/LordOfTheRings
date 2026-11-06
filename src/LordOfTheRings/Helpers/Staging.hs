@@ -48,8 +48,12 @@ getStagingThreat = do
   -- each ally in a player's discard pile, as Dread and Despair counts them
   allies <- for [pid | StagingThreatPerAllyInDiscardOf pid <- gameMods] \pid ->
     length . filter ((== AllyType) . cdCardType . toCardDef) . (.discard) <$> getPlayer pid
+  perCharacter <- if StagingThreatPerFirstPlayerCharacter `elem` gameMods
+    then length <$> (charactersControlledBy =<< getLead)
+    else pure 0
+  let characterBonus = length (filter (== StagingThreatPerFirstPlayerCharacter) gameMods) * perCharacter
   -- a reduction, as Followed's, takes it no lower than 0
-  pure $ max 0 (sum (map snd cards) + bonus + orcs + sum allies)
+  pure $ max 0 (sum (map snd cards) + bonus + orcs + sum allies + characterBonus)
 
 -- | What each card in the staging area adds to its threat, modifiers included.
 getStagingThreats :: (HasGame m) => m [(CardId, Int)]

@@ -14,7 +14,7 @@ allTreacheryCards =
   Map.fromList $
     map
       (\def -> (cdCardCode def, def))
-      [swayingWithoutWind, fallingBranches, songOfSleep, lostAndWitless, endingAndFailing, midnightThrong, murmursOfDread, gropingHorror, drivenByFear, theDeadRideBehind, theGloaming, townBaiting, direMagnificence, catchingFire, recklessInHisRage, closeToTheFlame, scorchingBlast, cutOffOsgiliath, darkPursuit, massingAtOsgiliath, ballistaBarrage, boardingPartyDreadnaught, grappledDreadnaught, outOfTheMist, overworked, takingOnWaterDreadnaught, violentTempest,  shinyDistraction
+      [echoesInTheDark, spawnOfThangorodrim, concealedSpikes, coveredPit, swayingWithoutWind, fallingBranches, songOfSleep, lostAndWitless, endingAndFailing, midnightThrong, murmursOfDread, gropingHorror, drivenByFear, theDeadRideBehind, theGloaming, townBaiting, direMagnificence, catchingFire, recklessInHisRage, closeToTheFlame, scorchingBlast, cutOffOsgiliath, darkPursuit, massingAtOsgiliath, ballistaBarrage, boardingPartyDreadnaught, grappledDreadnaught, outOfTheMist, overworked, takingOnWaterDreadnaught, violentTempest,  shinyDistraction
       , guiltyConscience
       , drivenByShadowDarkOfMirkwood
       , surprisingSpeedDarkOfMirkwood
@@ -3984,3 +3984,14 @@ lostAndWitless = (treachery "the-old-forest-020" "Lost and Witless" TheOldForest
 endingAndFailing :: CardDef
 endingAndFailing = (treachery "the-old-forest-021" "Ending and Failing" TheOldForest 2)
   { cdKeywords = setFromList [Doomed 2], cdShadowEffect = True }
+
+
+echoesInTheDark, spawnOfThangorodrim, concealedSpikes, coveredPit :: CardDef
+echoesInTheDark = (treachery "the-ruins-of-belegost-027" "Echoes in the Dark" TheRuinsOfBelegost 3)
+  { cdKeywords = setFromList [Doomed 1], cdShadowEffect = True }
+spawnOfThangorodrim = (treachery "the-ruins-of-belegost-028" "Spawn of Thangorodrim" TheRuinsOfBelegost 2)
+  { cdShadowEffect = True }
+concealedSpikes = (treachery "the-ruins-of-belegost-029" "Concealed Spikes" TheRuinsOfBelegost 2)
+  { cdCardTraits = setFromList [Hazard], cdShadowEffect = True }
+coveredPit = (treachery "the-ruins-of-belegost-030" "Covered Pit" TheRuinsOfBelegost 2)
+  { cdCardTraits = setFromList [Hazard], cdShadowEffect = True }

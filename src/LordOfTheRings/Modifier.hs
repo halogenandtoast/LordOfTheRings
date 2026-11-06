@@ -128,6 +128,9 @@ data ModifierType
   | -- | on the game: the total threat in the staging area is raised by 1 for each ally in
     -- the player's discard pile, as Dread and Despair reads
     StagingThreatPerAllyInDiscardOf PlayerId
+  | -- | One threat per character currently controlled by the first player;
+    -- encounter lasting effects recalculate (FAQ 1.55, Echoes in the Dark).
+    StagingThreatPerFirstPlayerCharacter
   | -- | on the game: the archery total is raised by this much, as Pinned Down reads
     ArcheryBonus Int
   | -- | on the game: archery changes only at the stage containing this player,
