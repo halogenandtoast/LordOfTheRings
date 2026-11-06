@@ -69,6 +69,8 @@ const visibleLabelChoices = computed(() => {
         </template>
       </dl>
       <p v-if="outcome === 'WON' && score" class="hint">{{ $t('game.score.lowerIsBetter') }}</p>
+      <!-- what comes after, as a campaign's next scenario -->
+      <slot />
     </template>
     <p v-else class="prompt idle-text">{{ $t('game.prompt.waiting') }}</p>
   </div>

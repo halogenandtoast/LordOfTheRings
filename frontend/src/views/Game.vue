@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref, useTemplateRef, watch } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { useMediaQuery } from '@vueuse/core'
 import { cardDrag, type CardView, type PlayerView } from '../types'
@@ -25,7 +25,7 @@ import { currentUser } from '../auth'
 import FileBug from '../components/FileBug.vue'
 import StoryModal, { type StoryPart } from '../components/StoryModal.vue'
 import { slug } from '../campaigns'
-import { exportGame } from '../api'
+import { continueCampaign, exportGame, fetchCampaign, type CampaignView } from '../api'
 import { useGame } from '../composables/useGame'
 import { table as tableStyle } from '../table'
 import { provideDebug } from '../composables/useDebug'
@@ -41,6 +41,37 @@ const {
   started, question: asked, scenario, players, table, outcome, answer, reset, surrender, undo, canUndo, debug, join, leave, start,
   campaignId, leavingPublic, confirmLeavingPublic, cancelLeavingPublic,
 } = useGame(route.params.id as string, spectate)
+// once a campaign's scenario is over, the way on to its next one, as the campaign page has
+const router = useRouter()
+const campaign = ref<CampaignView | null>(null)
+watch([campaignId, outcome], async ([cid, over]) => {
+  campaign.value = cid && over && !spectate ? await fetchCampaign(cid).catch(() => null) : null
+}, { immediate: true })
+const campaignNext = computed(() => {
+  const c = campaign.value
+  if (!c?.next || guest.value) return null
+  const name = c.scenarios.find((s) => s.id === c.next)?.name ?? c.next
+  const latest = c.games[0]
+  // already dealt, from here or the campaign page
+  if (latest && latest.id !== route.params.id) return { label: t('campaignMode.backToGame', { scenario: name }), to: `/games/${latest.id}` }
+  if (c.status === 'won') return { label: t('campaignMode.continue', { scenario: name }), to: null }
+  if (c.status === 'lost') return { label: t('campaignMode.replay', { scenario: name }), to: null }
+  return null
+})
+const goingOn = ref(false)
+const campaignError = ref<string | null>(null)
+const goOn = async () => {
+  if (!campaignId.value) return
+  goingOn.value = true
+  campaignError.value = null
+  try {
+    const { id } = await continueCampaign(campaignId.value)
+    await router.push(`/games/${id}`)
+  } catch (e) {
+    campaignError.value = e instanceof Error ? e.message : String(e)
+    goingOn.value = false
+  }
+}
 const leavePublicDialog = useTemplateRef<InstanceType<typeof ConfirmDelete>>('leavePublicDialog')
 // the server held back a debug message or an undo: ask before it takes the deal out
 watch(leavingPublic, (held) => held && leavePublicDialog.value?.open())
@@ -280,6 +311,7 @@ watch(question, (asked) => {
     :spectate="spectate"
     :guest="guest"
     :has-story="hasStoryPart('intro') || hasStoryPart('resolution')"
+    :campaign="!!campaignId"
     :over="outcome !== null"
     @reset="askReset"
     @surrender="askSurrender"
@@ -287,6 +319,7 @@ watch(question, (asked) => {
     @export="exportGame(route.params.id as string)"
     @file-bug="fileBugAbout()"
     @story="openStory"
+    @campaign="router.push(`/campaigns/${campaignId}`)"
     @toggle-sidebar="showSidebar = !showSidebar"
     @toggle-debug="debugging = !debugging"
   />
@@ -445,7 +478,13 @@ watch(question, (asked) => {
 
     <PhaseTracker :phase="game?.phase ?? null" />
     <!-- on a small screen the question sits under the board, always in view -->
-    <QuestionZone v-if="started" class="docked-question" :question="question" :outcome="outcome" :score="game?.score" :victory-points="scenario?.victoryPoints ?? 0" @choose="choose" />
+    <QuestionZone v-if="started" class="docked-question" :question="question" :outcome="outcome" :score="game?.score" :victory-points="scenario?.victoryPoints ?? 0" @choose="choose">
+      <template v-if="campaignNext">
+        <RouterLink v-if="campaignNext.to" class="campaign-next" :to="campaignNext.to">{{ campaignNext.label }}</RouterLink>
+        <button v-else class="campaign-next" type="button" :disabled="goingOn" @click="goOn">{{ campaignNext.label }}</button>
+        <p v-if="campaignError" class="error">{{ tr(campaignError) }}</p>
+      </template>
+    </QuestionZone>
 
     <aside v-if="showSidebar" class="sidebar">
       <p v-if="error" class="error">
@@ -453,8 +492,6 @@ watch(question, (asked) => {
         <button v-if="!spectate" type="button" class="file-bug-link" @click="fileBugAbout(tr(error))">{{ $t('game.bar.fileBug') }}</button>
       </p>
       <p v-if="waitingOn && !spectate" class="announcement">{{ $t('game.waitingOn', { name: waitingOn.name }) }}</p>
-      <!-- in campaign mode, the campaign log, and the way on once the scenario is over -->
-      <RouterLink v-if="campaignId && !spectate" class="announcement campaign-link" :class="{ over: outcome }" :to="`/campaigns/${campaignId}`">{{ $t('campaignMode.log') }}</RouterLink>
       <GameLog
         :entries="log"
         :can-undo="!spectate && canUndo"
@@ -643,8 +680,22 @@ watch(question, (asked) => {
   padding-left: 0.5rem;
   white-space: pre-line;
 }
-.campaign-link { color: var(--accent); font-style: normal; }
-.campaign-link.over { font-weight: 700; opacity: 1; }
+.campaign-next {
+  display: block;
+  margin-top: 0.75rem;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--accent);
+  border-radius: 6px;
+  background: var(--highlight-tint);
+  color: inherit;
+  font: inherit;
+  font-weight: 700;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+}
+.campaign-next:hover:not(:disabled) { background: var(--hover-tint); }
+.campaign-next:disabled { opacity: 0.5; cursor: wait; }
 
 
 </style>
