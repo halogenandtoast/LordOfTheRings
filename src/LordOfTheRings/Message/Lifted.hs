@@ -1756,6 +1756,10 @@ discardRandomFromHandWithResult source pid n = push $ DiscardRandomFromHandWithR
 discardRandomFromHandThen :: ReverseQueue m => PlayerId -> Int -> Message -> m ()
 discardRandomFromHandThen pid n follow = push $ DiscardRandomFromHandThen pid n follow
 
+-- | Discard all resources in play simultaneously and report the discarded pools.
+discardAllResourcesThen :: (ReverseQueue m, Sourceable source) => source -> Message -> m ()
+discardAllResourcesThen source = push . DiscardAllResources (toSource source)
+
 -- | Each hero's resource pool is emptied, as "remove all resources from each hero's
 -- resource pool" reads.
 removeAllResourcesFromEachHero :: (ReverseQueue m, Sourceable source) => source -> m ()

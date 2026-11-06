@@ -48,6 +48,7 @@ import LordOfTheRings.Helpers.HandEntry (handEntryAttempt, handEntrySucceeded)
 import LordOfTheRings.Helpers.Engagement (highestToughnessEngagements)
 import LordOfTheRings.Helpers.Discard (protectDiscardedHeroes)
 import LordOfTheRings.Helpers.Modifiers (getModifiers, immuneToSource, isEncounterCardSource)
+import LordOfTheRings.Helpers.Resources (discardableResources)
 import LordOfTheRings.Helpers.Staging (getLocationQuestPoints)
 import LordOfTheRings.Id (EnemyId, LocationId)
 import LordOfTheRings.Location (
@@ -73,6 +74,8 @@ import LordOfTheRings.Matcher (
  )
 import LordOfTheRings.Message (
   Message (
+    DiscardAllResources,
+    WithDiscardedResources,
     ArrangeIslandMap,
     BeginPhase,
     CheckWindows,
@@ -227,6 +230,13 @@ runGame msg g = do
 
 runGameAllowed :: Message -> Game -> GameT Game
 runGameAllowed msg g = case msg of
+  DiscardAllResources source follow -> do
+    pools <- discardableResources source
+    push $ WithDiscardedResources pools follow
+    -- Commit every removal before processing any resulting windows. Broadcast
+    -- the usual removal to keep resource-discard passives and Baggins windows.
+    foldM (\state (target, _, n) -> runInPlay (RemoveTokens source target Resource n) state) g pools
+
   -- Committing an existing character opens a When window before its commitment.
   -- A card entering play already committed uses CardIdTarget and does not commit
   -- by declaration (Ranger of Ithilien’s printed When Revealed). After windows

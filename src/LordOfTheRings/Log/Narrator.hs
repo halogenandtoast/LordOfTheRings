@@ -24,6 +24,7 @@ import LordOfTheRings.Entities
 import LordOfTheRings.Enemy.Types (EnemyAttrs (enemyShadowRevealed))
 import LordOfTheRings.Game.Base
 import LordOfTheRings.Heading
+import LordOfTheRings.Helpers.Resources (discardableResources)
 import LordOfTheRings.Helpers.Character
 import LordOfTheRings.Helpers.Staging
 import LordOfTheRings.Id
@@ -197,6 +198,10 @@ narrationFor = \case
     if moved <= 0 || target == HeroTarget hid || barred then pure [] else
       whenRef (HeroTarget hid) \giverRef -> whenRef target \receiverRef ->
         one $ mechanic [ikeyPart "log.movesResources" ["from" ~> giverRef, "to" ~> receiverRef, "count" ~> moved]]
+  DiscardAllResources source _ -> Just do
+    pools <- discardableResources source
+    fmap concat $ for pools \(target, _, n) ->
+      whenRef target \t -> one $ notice [ikeyPart "log.resourcesDiscarded" ["target" ~> t, "count" ~> n]]
   RemoveTokens source target token n | n > 0 -> case token of
     Progress -> Just $ whenRef target \t -> do
       -- a location immune to the source keeps its progress, as East-gate against Cave In

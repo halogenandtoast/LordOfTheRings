@@ -391,6 +391,8 @@ data Message
   | -- | as 'DealDamageDivided', among the characters given: the player divides the damage,
     -- the points assigned so far kept
     DealDamageDividedAmong Source PlayerId [Target] Int [Target]
+  | DiscardAllResources Source Message
+  | WithDiscardedResources [(Target, Maybe PlayerId, Int)] Message
   | DiscardRandomFromHand PlayerId Int
   | DiscardRandomFromHandWithResult Source PlayerId Int
   | DiscardedRandomFromHand Source PlayerId [Card]

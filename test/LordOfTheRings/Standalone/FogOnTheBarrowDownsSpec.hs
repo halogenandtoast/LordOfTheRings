@@ -1,12 +1,15 @@
 module LordOfTheRings.Standalone.FogOnTheBarrowDownsSpec (spec) where
 
 import Data.Map.Strict qualified as Map
+import LordOfTheRings.Sphere (Sphere (Baggins))
+import LordOfTheRings.Attachment.CardDefs qualified as Attachments
 import LordOfTheRings.Ally.CardDefs qualified as Allies
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Helpers.Modifiers (getModifiers)
 import LordOfTheRings.Helpers.Character (getWillpower)
 import LordOfTheRings.Helpers.Staging (getStagingThreat, getEnemyAttack)
 import LordOfTheRings.Helpers.Window (getActionAbilities)
+import LordOfTheRings.Location.Types (LocationAttrs (locationTokens))
 import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Treachery.CardDefs qualified as Treacheries
 import LordOfTheRings.Treachery.Types (TreacheryAttrs (..))
@@ -14,7 +17,7 @@ import LordOfTheRings.Event.CardDefs qualified as Events
 import LordOfTheRings.Trait (Trait (Condition, Wight))
 import LordOfTheRings.Objective.CardDefs qualified as Objectives
 import LordOfTheRings.Keyword (Keyword (Sentinel))
-import LordOfTheRings.Matcher (getHero, getThreat, getConditionAttachments, select, LocationMatcher (LocationWithCardCode))
+import LordOfTheRings.Matcher (getHero, getThreat, getConditionAttachments, getAlly, select, LocationMatcher (LocationWithCardCode))
 import LordOfTheRings.Effect (Effect (..), EffectDuration (..))
 import LordOfTheRings.Modifier (ModifierType (..))
 import LordOfTheRings.Phase (Phase (ResourcePhase))
@@ -86,6 +89,158 @@ songs = getsGame $ map toAttrs . filter ((== toCardCode Treacheries.dreadfulSong
 
 spec :: Spec
 spec = describe "Fog on the Barrow-downs Wights" do
+  describe "Chill Fog" do
+    it "empties hero and ally pools and raises each player's threat only for their own resources" . twoPlayerTest testDeck $ \one two -> do
+      firstHero <- heroOf one "01012"
+      secondHero <- heroOf two "01012"
+      run $ PlaceTokens GameSource firstHero Resource 2
+      run $ PlaceTokens GameSource secondHero Resource 5
+      tree <- putAllyIntoPlay one Allies.treebeard
+      run $ PlaceTokens GameSource tree Resource 3
+      revealSpell two Treacheries.chillFog
+      resourcesOf one `shouldReturn` [0, 0, 0]
+      resourcesOf two `shouldReturn` [0, 0, 0]
+      for_ [one, two] \pid -> getThreat pid `shouldReturn` 5
+      case tree of
+        AllyTarget aid -> (.resources) <$> getAlly aid `shouldReturn` 0
+        _ -> error "Treebeard is not an ally"
+      length <$> getEncounterDeck `shouldReturn` 2
+
+    it "also discards resources on controlled attachments" . gameTest $ \pid -> do
+      hero <- heroOf pid "01012"
+      attachment <- putAttachmentOn pid Attachments.stewardOfGondor hero
+      run $ PlaceTokens GameSource attachment Resource 2
+      revealSpell pid Treacheries.chillFog
+      getThreat pid `shouldReturn` 2
+      -- With only the attachment's pool left empty, a second copy surges.
+      revealSpell pid Treacheries.chillFog
+      length <$> getEncounterDeck `shouldReturn` 1
+
+    it "discards uncontrolled encounter resources without charging them to a player" . twoPlayerTest testDeck $ \one two -> do
+      card <- genEncounterCard Locations.oldForestRoad
+      run $ AddToStaging card
+      location <- getsGame $ toTarget . fromJustNote "missing road" . find ((== card.id) . (.cardId) . toAttrs) . toList . (.entities.locations)
+      run $ PlaceTokens GameSource location Resource 4
+      revealSpell one Treacheries.chillFog
+      for_ [one, two] \pid -> getThreat pid `shouldReturn` 0
+      length <$> getEncounterDeck `shouldReturn` 2
+      -- The encounter pool no longer prevents the next Chill Fog from surging.
+      revealSpell one Treacheries.chillFog
+      length <$> getEncounterDeck `shouldReturn` 1
+
+    it "surges with no resources, leaving time counters and villagers untouched" . gameTest $ \pid -> do
+      hero <- heroOf pid "01012"
+      run $ PlaceTokens GameSource hero TimeCounter 2
+      run $ PlaceTokens GameSource hero Villager 3
+      revealSpell pid Treacheries.chillFog
+      resourcesOf pid `shouldReturn` [0, 0, 0]
+      case hero of
+        HeroTarget hid -> do
+          attrs <- toAttrs <$> getHero hid
+          countTokens TimeCounter attrs.heroTokens `shouldBe` 2
+          countTokens Villager attrs.heroTokens `shouldBe` 3
+        _ -> error "not a hero"
+      getThreat pid `shouldReturn` 0
+      length <$> getEncounterDeck `shouldReturn` 1
+
+    it "does not discard immune resources or count them against surge" . gameTest $ \pid -> do
+      hero <- heroOf pid "01012"
+      run $ PlaceTokens GameSource hero Resource 4
+      run $ CreateEffect $ Effect GameSource hero [ImmuneToCardEffects] UntilEndOfRound
+      revealSpell pid Treacheries.chillFog
+      resourcesOf pid `shouldReturn` [4, 0, 0]
+      getThreat pid `shouldReturn` 0
+      length <$> getEncounterDeck `shouldReturn` 1
+
+    it "leaves resources on cards considered out of play" . gameTest $ \pid -> do
+      tree <- putAllyIntoPlay pid Allies.treebeard
+      run $ PlaceTokens GameSource tree Resource 2
+      run $ CreateEffect $ Effect GameSource tree [ConsideredOutOfPlay] UntilEndOfRound
+      revealSpell pid Treacheries.chillFog
+      case tree of
+        AllyTarget aid -> (.resources) <$> getAlly aid `shouldReturn` 2
+        _ -> error "Treebeard is not an ally"
+      getThreat pid `shouldReturn` 0
+      length <$> getEncounterDeck `shouldReturn` 1
+
+    it "charges a hero's current controller after control changes" . twoPlayerTest testDeck $ \one two -> do
+      hero <- heroOf one "01012"
+      run $ PlaceTokens GameSource hero Resource 2
+      case hero of
+        HeroTarget hid -> run $ ChangeHeroController hid two
+        _ -> error "not a hero"
+      revealSpell one Treacheries.chillFog
+      getThreat one `shouldReturn` 0
+      getThreat two `shouldReturn` 2
+
+    it "finishes all removals before resolving resource-discard passives" . gameTest $ \pid -> do
+      card <- genEncounterCard Locations.stonewainValley
+      run $ AddToStaging card
+      location <- getsGame $ toId . fromJustNote "missing valley" . find ((== card.id) . (.cardId) . toAttrs) . toList . (.entities.locations)
+      run $ PlaceTokens GameSource (LocationTarget location) Resource 4
+      hero <- heroOf pid "01012"
+      run $ PlaceTokens GameSource hero Resource 2
+      revealSpell pid Treacheries.chillFog
+      -- Stonewain Valley collects the two newly discarded hero resources after
+      -- losing its original four, rather than losing those new resources too.
+      countTokens Resource . (.locationTokens) . toAttrs <$> getLocation location `shouldReturn` 2
+      getThreat pid `shouldReturn` 2
+
+    it "keeps Baggins-resource discard windows and their Forced effects" . twoPlayerTest testDeck $ \one two -> do
+      run . AddToStaging =<< genEncounterCard Locations.pineSlopes
+      firstHero <- heroOf one "01012"
+      secondHero <- heroOf two "01012"
+      run $ CreateEffect $ Effect GameSource firstHero [GainResourceIcon Baggins] UntilEndOfRound
+      run $ PlaceTokens GameSource firstHero Resource 2
+      run $ PlaceTokens GameSource secondHero Resource 3
+      revealSpell one Treacheries.chillFog
+      -- Pine Slopes raises both players twice, in addition to their own pools.
+      getThreat one `shouldReturn` 4
+      getThreat two `shouldReturn` 5
+      resourcesOf one `shouldReturn` [0, 0, 0]
+      resourcesOf two `shouldReturn` [0, 0, 0]
+
+    for_ [False, True] \prevented ->
+      it ("raises shadow threat for damage actually dealt, with prevention = " <> show prevented) . gameTest $ \pid -> do
+        eid <- stageEnemy Enemies.darkWight
+        run $ EngageEnemy pid eid
+        hero <- heroOf pid "01012"
+        when prevented $ run $ CreateEffect $ Effect GameSource hero [CancelNextDamage 1] UntilEndOfRound
+        _ <- setEncounterDeck [Treacheries.chillFog]
+        run $ DealShadowCard eid
+        run $ EnemyAttack pid eid
+        defendAttack pid hero
+        getDamage hero `shouldReturn` if prevented then 0 else 1
+        getThreat pid `shouldReturn` if prevented then 0 else 1
+
+    it "charges the attacked player for damage to another player's Sentinel, including excess damage" . twoPlayerTest testDeck $ \one two -> do
+      eid <- stageEnemy Enemies.darkWight
+      run $ EngageEnemy one eid
+      defender <- putAllyIntoPlay two Allies.guardOfTheCitadel
+      run $ CreateEffect $ Effect GameSource defender [GainKeyword Sentinel] UntilEndOfRound
+      _ <- setEncounterDeck [Treacheries.chillFog]
+      run $ DealShadowCard eid
+      run $ EnemyAttack one eid
+      passAttackActions
+      chooseLabel "$label.takeAttackUndefended" one
+      chooseTarget two defender
+      passAttackActions
+      getThreat one `shouldReturn` 3
+      getThreat two `shouldReturn` 0
+
+    it "counts partially prevented damage rather than the attack's full strength" . gameTest $ \pid -> do
+      eid <- stageEnemy Enemies.darkWight
+      run $ EngageEnemy pid eid
+      hero <- heroOf pid "01012"
+      run $ CreateEffect $ Effect GameSource (EnemyTarget eid) [AttackModifier 2] UntilEndOfRound
+      run $ CreateEffect $ Effect GameSource hero [CancelNextDamage 1] UntilEndOfRound
+      _ <- setEncounterDeck [Treacheries.chillFog]
+      run $ DealShadowCard eid
+      run $ EnemyAttack pid eid
+      defendAttack pid hero
+      getDamage hero `shouldReturn` 2
+      getThreat pid `shouldReturn` 2
+
   describe "I'm Waiting for You!" do
     it "surges when no engaged Wight can attack, ignoring staged Wights and engaged non-Wights" . gameTest $ \pid -> do
       _ <- stageEnemy Enemies.barrowWight

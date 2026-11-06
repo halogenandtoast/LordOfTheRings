@@ -1667,6 +1667,7 @@ library
       LordOfTheRings.Helpers.QuestCommit
       LordOfTheRings.Helpers.QuestingProgress
       LordOfTheRings.Helpers.Ready
+      LordOfTheRings.Helpers.Resources
       LordOfTheRings.Helpers.Staging
       LordOfTheRings.Helpers.Treasure
       LordOfTheRings.Helpers.Window

@@ -14,7 +14,7 @@ allTreacheryCards =
   Map.fromList $
     map
       (\def -> (cdCardCode def, def))
-      [imWaitingForYou, longGropingArm, frozenByFear, dreadfulSong, echoesInTheDark, spawnOfThangorodrim, concealedSpikes, coveredPit, swayingWithoutWind, fallingBranches, songOfSleep, lostAndWitless, endingAndFailing, midnightThrong, murmursOfDread, gropingHorror, drivenByFear, theDeadRideBehind, theGloaming, townBaiting, direMagnificence, catchingFire, recklessInHisRage, closeToTheFlame, scorchingBlast, cutOffOsgiliath, darkPursuit, massingAtOsgiliath, ballistaBarrage, boardingPartyDreadnaught, grappledDreadnaught, outOfTheMist, overworked, takingOnWaterDreadnaught, violentTempest,  shinyDistraction
+      [chillFog, imWaitingForYou, longGropingArm, frozenByFear, dreadfulSong, echoesInTheDark, spawnOfThangorodrim, concealedSpikes, coveredPit, swayingWithoutWind, fallingBranches, songOfSleep, lostAndWitless, endingAndFailing, midnightThrong, murmursOfDread, gropingHorror, drivenByFear, theDeadRideBehind, theGloaming, townBaiting, direMagnificence, catchingFire, recklessInHisRage, closeToTheFlame, scorchingBlast, cutOffOsgiliath, darkPursuit, massingAtOsgiliath, ballistaBarrage, boardingPartyDreadnaught, grappledDreadnaught, outOfTheMist, overworked, takingOnWaterDreadnaught, violentTempest,  shinyDistraction
       , guiltyConscience
       , drivenByShadowDarkOfMirkwood
       , surprisingSpeedDarkOfMirkwood
@@ -4002,8 +4002,12 @@ longGropingArm = (treachery "fog-on-the-barrow-downs-015" "Long Groping Arm" Fog
 frozenByFear = (treachery "fog-on-the-barrow-downs-017" "Frozen by Fear" FogOnTheBarrowDowns 3)
   { cdKeywords = setFromList [Surge, Doomed 1], cdShadowEffect = True, cdEasyModeQuantity = Just 2 }
 dreadfulSong = (treachery "fog-on-the-barrow-downs-018" "Dreadful Song" FogOnTheBarrowDowns 2)
-  { cdKeywords = setFromList [Peril], cdCardTraits = setFromList [Enchantment] }
+  { cdKeywords = setFromList [Peril], cdCardTraits = setFromList [Enchantment], cdEasyModeQuantity = Just 1 }
 
 imWaitingForYou :: CardDef
 imWaitingForYou = (treachery "fog-on-the-barrow-downs-014" "I’m Waiting for You!" FogOnTheBarrowDowns 2)
+  { cdShadowEffect = True }
+
+chillFog :: CardDef
+chillFog = (treachery "fog-on-the-barrow-downs-016" "Chill Fog" FogOnTheBarrowDowns 2)
   { cdShadowEffect = True }

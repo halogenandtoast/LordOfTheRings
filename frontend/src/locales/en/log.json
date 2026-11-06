@@ -1,4 +1,5 @@
 {
+  "resourcesDiscarded": "{target} discards {count} resources",
   "scenarioBegins": "{scenario}",
   "round": "Round {count}",
   "phase": {

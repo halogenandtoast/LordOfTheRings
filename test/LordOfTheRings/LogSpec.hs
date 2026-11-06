@@ -29,6 +29,19 @@ entries = fmap reverse . readIORef
 
 spec :: Spec
 spec = describe "Game log" do
+  it "logs resources actually discarded without labeling them as spent" . loggedTest $ \logged pid -> do
+    hero <- heroOf pid "01012"
+    run $ PlaceTokens GameSource hero Resource 3
+    _ <- setEncounterDeck [Treacheries.chillFog, Locations.oldForestRoad]
+    writeIORef logged []
+    run RevealEncounterCard
+    resolveRevealed
+    recorded <- entries logged
+    let discarded = [vars | entry <- recorded, LogI18n "log.resourcesDiscarded" vars <- entry.logEntryBody]
+    length discarded `shouldBe` 1
+    map (Map.lookup "count") discarded `shouldBe` [Just $ LogNumber 3]
+    mapMaybe keyOf recorded `shouldSatisfy` notElem "log.spendsResources"
+
   it "opens the scenario, the round and its phases with headings" . loggedTest $ \logged pid -> do
     flipFirstQuest pid
     run BeginRound

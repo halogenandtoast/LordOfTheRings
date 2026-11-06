@@ -1,5 +1,5 @@
 module LordOfTheRings.Treachery.Cards.BarrowDownsSpells
-  ( longGropingArm, frozenByFear, dreadfulSong, imWaitingForYou ) where
+  ( longGropingArm, frozenByFear, dreadfulSong, imWaitingForYou, chillFog ) where
 
 import Data.Aeson.Types (parseMaybe)
 import LordOfTheRings.Keyword (Keyword (Surge))
@@ -14,11 +14,12 @@ newtype BarrowDownsSpells = BarrowDownsSpells TreacheryAttrs
   deriving anyclass IsTreachery
   deriving newtype (Show, Eq, ToJSON, Entity)
 
-longGropingArm, frozenByFear, dreadfulSong, imWaitingForYou :: TreacheryCard BarrowDownsSpells
+longGropingArm, frozenByFear, dreadfulSong, imWaitingForYou, chillFog :: TreacheryCard BarrowDownsSpells
 longGropingArm = treachery BarrowDownsSpells Cards.longGropingArm
 frozenByFear = treachery BarrowDownsSpells Cards.frozenByFear
 dreadfulSong = treachery BarrowDownsSpells Cards.dreadfulSong
 imWaitingForYou = treachery BarrowDownsSpells Cards.imWaitingForYou
+chillFog = treachery BarrowDownsSpells Cards.chillFog
 
 waitingAttacks :: TreacheryAttrs -> Maybe ([EnemyId], Bool)
 waitingAttacks = parseMaybe parseJSON . treacheryMeta
@@ -36,6 +37,21 @@ instance HasAbilities BarrowDownsSpells where
 
 instance RunMessage BarrowDownsSpells where
   runMessage msg t@(BarrowDownsSpells a) = case msg of
+    WhenRevealed (isTarget a -> True) | toCardCode a == toCardCode Cards.chillFog -> do
+      discardAllResourcesThen a (DoStep 1 msg)
+      pure t
+    WithDiscardedResources pools (DoStep 1 (WhenRevealed (isTarget a -> True))) | toCardCode a == toCardCode Cards.chillFog -> do
+      eachPlayer \pid -> encounterRaisesThreat pid $ sum [n | (_, Just controller, n) <- pools, controller == pid]
+      when (null pools) $ phaseModifier a a (GainKeyword Surge)
+      pure t
+    ResolveShadowEffect cid eid _ _ | cid == a.cardId, toCardCode a == toCardCode Cards.chillFog -> do
+      withAttackDamage eid [DoStep 1 msg]
+      pure t
+    DoStep 1 (ResolveShadowEffect cid eid pid _) | cid == a.cardId, toCardCode a == toCardCode Cards.chillFog -> do
+      amount <- sum . map snd <$> attackDamaged eid
+      encounterRaisesThreat pid amount
+      pure t
+
     WhenRevealed (isTarget a -> True) | toCardCode a == toCardCode Cards.imWaitingForYou -> do
       players <- getStagePlayers
       attacks <- fmap concat $ for players \pid -> do
