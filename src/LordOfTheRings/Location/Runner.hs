@@ -6,6 +6,7 @@ import LordOfTheRings.Card (CardDef (..), toCard, toCardDef)
 import LordOfTheRings.Classes.HasQueue
 import LordOfTheRings.Classes.RunMessage
 import LordOfTheRings.Helpers.Modifiers (getModifiers, immuneToSource, modifiedQuestPoints)
+import LordOfTheRings.Helpers.QuestingProgress (recordQuestingProgress)
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Message
 import LordOfTheRings.Placement (Placement (ActiveLocation))
@@ -65,6 +66,7 @@ instance RunMessage LocationAttrs where
             placeTokens source Progress room'
     placeTokens source token n = do
       let attrs' = attrs & tokensL %~ addTokens token n
+      when (token == Progress) $ recordQuestingProgress source n
       questPoints <- modifiedQuestPoints attrs attrs'.questPoints
       gainsVictory <- any (\case GainVictory _ -> True; _ -> False) <$> getModifiers attrs
       -- who placed it, as Haunted Hall reads "a player places any amount of progress"

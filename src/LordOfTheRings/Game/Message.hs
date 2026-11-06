@@ -880,6 +880,8 @@ import LordOfTheRings.Modifier (
     ProgressAsDamageTo,
     ProgressBeyondActiveTo,
     ProgressFromQuestingThisPhase,
+    PlacingQuestingProgress,
+    QuestingProgressWasPlaced,
     ProgressIfQuestUnsuccessful,
     ProgressInsteadOfAttackDamage,
     ProgressLimit,
@@ -2963,7 +2965,9 @@ runGameMessage msg g = case msg of
         lead = fromMaybe g.firstPlayer $ headMay order
         revealers = case instead of
           Just _ -> replicate reveals lead
-          Nothing -> withoutFewer (take reveals (order <> replicate reveals lead)) playerFewer
+          -- Resolve the first player's additional cards in his turn, before the
+          -- next player's card (Old Forest rules insert, p. 2, New Staging Rules).
+          Nothing -> withoutFewer (take reveals (replicate (1 + max 0 (reveals - players)) lead <> drop 1 order)) playerFewer
         revealing
           | revealsIndividually (scenarioId $ toAttrs g.scenario) =
               concat
@@ -2983,6 +2987,10 @@ runGameMessage msg g = case msg of
         )
       <> [CreateEffect $ Effect GameSource GameTarget [AfterStagingStep] UntilEndOfPhase]
     pure g
+  DoStep 1 QuestResolution -> do
+    placed <- elem QuestingProgressWasPlaced <$> getModifiers GameTarget
+    pushWhen placed $ CheckWindows [mkAfter PlacedProgressFromQuesting]
+    pure $ g & effectsL %~ filter (not . any (`elem` [PlacingQuestingProgress, QuestingProgressWasPlaced]) . effectModifiers)
   QuestResolution -> do
     -- a delayed effect waiting on quest resolution, however the quest goes, as A Growing
     -- Threat's "During quest resolution, add a copy of that card to the campaign pool, if
@@ -3016,7 +3024,11 @@ runGameMessage msg g = case msg of
             : delayed
             <> lowered
             <> [CheckWindows [mkAfter QuestedSuccessfully]]
-            <> (if defense then [] else [PlaceProgressOnQuest (willpower - threat), CheckWindows [mkAfter PlacedProgressFromQuesting]])
+            <> (if defense then [] else
+                  [ CreateEffect $ Effect GameSource GameTarget [PlacingQuestingProgress] UntilEndOfPhase
+                  , PlaceProgressOnQuest (willpower - threat)
+                  , DoStep 1 QuestResolution
+                  ])
             <> [CheckWindows [mkAfter QuestResolved]]
       | threat > willpower ->
           -- responses before the threat is raised may stop it, as Ever Onward's: see
@@ -3037,7 +3049,7 @@ runGameMessage msg g = case msg of
               <> take 1 [DealDamage GameSource t (threat - willpower) | t <- damaged, inPlay g t]
               <> [CheckWindows [mkAfter QuestedUnsuccessfully], CheckWindows [mkAfter QuestResolved]]
       | otherwise -> push $ CheckWindows [mkAfter QuestResolved]
-    pure $ g & lastCommittedWillpowerL ?~ willpower & effectsL %~ filter (null . toPool)
+    pure $ g & lastCommittedWillpowerL ?~ willpower & effectsL %~ filter (\e -> null (toPool e) && not (any (`elem` [PlacingQuestingProgress, QuestingProgressWasPlaced]) e.effectModifiers))
   MoveResourcesFromHero source hid target n | Just hero <- Map.lookup hid g.entities.heroes -> do
     barred <- resourcesBarredFrom source target
     let amount = min n hero.resources

@@ -546,6 +546,8 @@ data ModifierType
     -- successfully was placed on it, as The Lower Depths' "after placing progress here
     -- from questing successfully" reads
     ProgressFromQuestingThisPhase
+  | PlacingQuestingProgress
+  | QuestingProgressWasPlaced
   | -- | on the game: the next enemy to enter the staging area takes the modifier instead,
     -- for as long as the effect lasts
     NextEnemyInStaging ModifierType

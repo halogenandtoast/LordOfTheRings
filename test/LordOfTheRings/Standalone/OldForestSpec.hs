@@ -1,5 +1,10 @@
 module LordOfTheRings.Standalone.OldForestSpec (spec) where
 
+import Data.Map.Strict qualified as Map
+import LordOfTheRings.Decklist (loadPlayer)
+import LordOfTheRings.Entities (questsL)
+import LordOfTheRings.Scenario (theOldForest)
+import LordOfTheRings.Scenario.Types (questDeckL, encounterDiscardL, scenarioSetAside)
 import LordOfTheRings.Attachment.CardDefs qualified as Attachments
 import LordOfTheRings.Ally.CardDefs qualified as Allies
 import LordOfTheRings.Ally (Ally)
@@ -8,19 +13,20 @@ import LordOfTheRings.Card (IsCard (toCard), CardType (EventType))
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Event.CardDefs qualified as Events
 import LordOfTheRings.Effect (Effect (..), EffectDuration (UntilEndOfRound))
-import LordOfTheRings.Helpers.Modifiers (getModifiers)
+import LordOfTheRings.Helpers.Modifiers (getModifiers, preloadModifiers)
 import LordOfTheRings.Helpers.Window (getActionAbilities)
 import LordOfTheRings.Helpers.Staging (getLocationThreat)
 import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Matcher (getEnemy, getHero, CardMatcher (AnyCard))
 import LordOfTheRings.Matcher (selectCharacters, HeroMatcher (CommittedHero), AllyMatcher (CommittedAlly))
-import LordOfTheRings.Modifier (ModifierType (AttackModifier, AdditionalStagingReveals, PlayersCannotWin, MustBeTraveledTo, CannotPlay, PlayedCardThisRound, Blank, CannotHaveAttachments, CannotHaveAttachmentsWithoutTrait, CannotLeavePlay, CannotDrawCardsFromCardEffects, CannotReady))
+import LordOfTheRings.Modifier (ModifierType (AttackModifier, AdditionalStagingReveals, PlayersCannotWin, MustBeTraveledTo, CannotPlay, PlayedCardThisRound, Blank, CannotHaveAttachments, CannotHaveAttachmentsWithoutTrait, CannotLeavePlay, CannotDrawCardsFromCardEffects, CannotReady, NoProgressOnQuestCards, ProgressAsDamageTo, WillpowerModifier))
 import LordOfTheRings.Trait (Trait (Condition, Weapon))
 import LordOfTheRings.Phase (Phase (PlanningPhase, QuestPhase, CombatPhase))
 import LordOfTheRings.Treachery.CardDefs qualified as Treacheries
 import LordOfTheRings.Quest.CardDefs qualified as Quests
-import LordOfTheRings.Scenario.Scenarios.TheOldForest.Helpers (victoryLocations, locationVictoryPoints)
-import LordOfTheRings.Window (WindowType (EnemyAttacking, ActiveLocationExplored, OptionallyEngaged), mkWhen, mkAfter)
+import LordOfTheRings.Scenario.Scenarios.TheOldForest.Helpers (victoryLocations, locationVictoryPoints, forestStages)
+import LordOfTheRings.Window (WindowType (EnemyAttacking, ActiveLocationExplored, OptionallyEngaged, PhaseBegins, RoundBegins, RoundEnds), mkWhen, mkAfter)
+import LordOfTheRings.Outcome (Outcome (Won))
 import TestImport
 
 stageEnemy :: CardDef -> GameT EnemyId
@@ -49,8 +55,250 @@ tomAlly = getsGame $ fromJustNote "Tom missing" . find ((== toCardCode Objective
 bogeyAvailable :: PlayerId -> Target -> GameT Bool
 bogeyAvailable pid target = any (\ability -> sourceTarget ability.abilitySource == Just target) <$> getActionAbilities pid
 
+forestStage :: CardDef -> GameT Target
+forestStage def = do
+  target <- putQuestStage def
+  later <- traverse genEncounterCard $ if toCardCode def == toCardCode Quests.theWickedWillow
+    then [] else filter ((/= toCardCode def) . toCardCode) (forestStages <> [Quests.theWickedWillow])
+  g <- getGame
+  let updated = g & phaseL .~ QuestPhase & scenarioL %~ overAttrs (questDeckL .~ later)
+        & entitiesL . questsL %~ Map.map (overAttrs (\a -> a {questFlipped = True}))
+  putGame =<< preloadModifiers updated
+  pure target
+
+finishForestChoices :: Int -> GameT ()
+finishForestChoices n | n <= 0 = error "Old Forest choices did not finish"
+finishForestChoices n = do
+  asked <- getsGame (headMay . Map.keys . (.question))
+  for_ asked \pid -> do
+    chooseOptionMatching "resolve Old Forest choice" pid (const True)
+    finishForestChoices (n - 1)
+
+forestTable :: Int -> ([PlayerId] -> GameT ()) -> IO ()
+forestTable size body = do
+  seats <- for [1 .. size] \n -> either (error . show) id <$> loadPlayer ("Player " <> tshow n) testDeck
+  env <- newGameEnv (newTableIn theOldForest $ fromJustNote "empty table" $ nonEmpty seats) (const $ pure ()) 1
+  runGameT env $ body =<< getsGame (.playerOrder)
+
 spec :: Spec
 spec = describe "Old Forest" do
+  describe "quests and setup" do
+    it "builds forty encounter cards, the opening stage, four alternatives and the final stage" . gameTestIn theOldForest testDeck $ \_ -> do
+      run $ DoStep 1 Setup
+      toCardCode <$> getActiveQuest `shouldReturn` toCardCode Quests.farewellToTheShire
+      scenario <- getsGame (toAttrs . (.scenario))
+      length scenario.encounterDeck `shouldBe` 40
+      map toCardCode scenario.questDeck `shouldBe` map toCardCode (forestStages <> [Quests.theWickedWillow])
+
+    for_ [1 .. 4] \size ->
+      it ("runs the opening setup for " <> show size <> " players with differently named locations") . forestTable size $ \players -> do
+        run Setup
+        for_ players \_ -> do
+          asked <- getsGame $ fromJustNote "no hand question" . headMay . Map.keys . (.question)
+          chooseLabel "$label.keepHand" asked
+        finishForestChoices 100
+        quest <- getActiveQuest
+        toCardCode quest `shouldSatisfy` (`elem` map toCardCode forestStages)
+        questFlipped (toAttrs quest) `shouldBe` True
+        locations <- getsGame (toList . (.entities.locations))
+        length locations `shouldBe` size
+        length (nub $ map toCardCode locations) `shouldBe` size
+        scenario <- getsGame (toAttrs . (.scenario))
+        length scenario.encounterDeck `shouldBe` 38 - size
+        length scenario.questDeck `shouldBe` 4
+        sort (map toCardCode scenario.scenarioSetAside) `shouldBe` sort (map toCardCode [Enemies.oldManWillow, Locations.withywindle])
+        for_ players \pid -> length . (.hand) <$> getPlayer pid `shouldReturn` 7
+
+    it "adds only one location for a stage 2 shortage and searches the discard pile as well" . twoPlayerTest testDeck $ \one _ -> do
+      target <- forestStage Quests.darkBadPlace
+      card <- genEncounterCard Locations.deepGulley
+      g <- getGame
+      putGame $ g & scenarioL %~ overAttrs (encounterDiscardL .~ [card])
+      run $ WhenRevealed target
+      chooseTarget one (CardIdTarget card.id)
+      getsGame (length . (.entities.locations)) `shouldReturn` 1
+      getEncounterDiscard `shouldReturn` []
+
+    it "replaces stage 2 with a different stage, returning the old one and discarding its progress and attachments" . gameTest $ \pid -> do
+      target <- forestStage Quests.darkBadPlace
+      _ <- setEncounterDeck [Treacheries.creepingMarshes, Locations.deepGulley, Enemies.graspingRoot]
+      run RevealEncounterCard
+      resolveRevealed
+      run $ PlaceTokens GameSource target Progress 2
+      case target of
+        QuestTarget qid -> run $ UseCardAbility pid (QuestSource qid) 1 []
+        _ -> error "quest missing"
+      finishForestChoices 20
+      quest <- getActiveQuest
+      toCardCode quest `shouldSatisfy` (/= toCardCode Quests.darkBadPlace)
+      (toAttrs quest).progress `shouldBe` 0
+      getsGame (length . (.entities.treacheries)) `shouldReturn` 0
+      getEncounterDiscard >>= (\cards -> map toCardCode cards `shouldSatisfy` elem (toCardCode Treacheries.creepingMarshes))
+      deck <- getsGame ((.questDeck) . toAttrs . (.scenario))
+      sort (map toCardCode deck <> [toCardCode quest]) `shouldBe` sort (map toCardCode $ forestStages <> [Quests.theWickedWillow])
+
+    it "keeps all four alternatives unique across repeated replacements" . gameTest $ \pid -> do
+      _ <- forestStage Quests.darkBadPlace
+      _ <- stageLocation Locations.deepGulley
+      replicateM_ 8 do
+        previous <- getActiveQuest
+        run $ UseCardAbility pid (toSource previous) 1 []
+        finishForestChoices 10
+        quest <- getActiveQuest
+        toCardCode quest `shouldSatisfy` (/= toCardCode previous)
+        deck <- getsGame ((.questDeck) . toAttrs . (.scenario))
+        sort (map toCardCode deck <> [toCardCode quest]) `shouldBe` sort (map toCardCode $ forestStages <> [Quests.theWickedWillow])
+
+    it "counts only location victory points towards the threshold" . gameTest $ \pid -> do
+      target <- forestStage Quests.darkBadPlace
+      _ <- stageLocation Locations.deepGulley
+      victoryLocation Locations.deepGulley
+      victoryLocation Locations.oppressiveForest
+      troll <- stageEnemy Enemies.hillTroll
+      run $ AddToVictoryDisplay (EnemyTarget troll)
+      boon <- putAttachmentOn pid Attachments.oldBogeyStories =<< heroOf pid "01012"
+      run $ AddToVictoryDisplay boon
+      case target of
+        QuestTarget qid -> run $ UseCardAbility pid (QuestSource qid) 1 []
+        _ -> error "quest missing"
+      finishForestChoices 10
+      toCardCode <$> getActiveQuest >>= (`shouldSatisfy` (`elem` map toCardCode forestStages))
+
+    it "advances at five location points per player and removes the unused alternatives" . twoPlayerTest testDeck $ \one _ -> do
+      target <- forestStage Quests.darkBadPlace
+      replicateM_ 4 $ victoryLocation Locations.deepGulley
+      victoryLocation Locations.oppressiveForest
+      case target of
+        QuestTarget qid -> run $ UseCardAbility one (QuestSource qid) 1 []
+        _ -> error "quest missing"
+      finishForestChoices 20
+      toCardCode <$> getActiveQuest `shouldReturn` toCardCode Quests.theWickedWillow
+      getsGame ((.questDeck) . toAttrs . (.scenario)) `shouldReturn` []
+
+    it "changes stage after successful questing even when only the active location took progress" . gameTest $ \pid -> do
+      _ <- forestStage Quests.darkBadPlace
+      active <- stageLocation Locations.oppressiveForest
+      run $ PlaceLocation active ActiveLocation
+      _ <- stageLocation Locations.deepGulley
+      run . CommitToQuest =<< heroOf pid "01007"
+      run QuestResolution
+      finishForestChoices 20
+      (.progress) . toAttrs <$> getLocation active `shouldReturn` 2
+      toCardCode <$> getActiveQuest >>= (`shouldSatisfy` (/= toCardCode Quests.darkBadPlace))
+
+    for_ [False, True] \redirected ->
+      it ("does not change stage when questing places no progress: redirected=" <> show redirected) . gameTest $ \pid -> do
+        _ <- forestStage Quests.darkBadPlace
+        if redirected then do
+          enemy <- stageEnemy Enemies.armyOfFlies
+          run $ CreateEffect $ Effect GameSource GameTarget [ProgressAsDamageTo (EnemyTarget enemy)] UntilEndOfRound
+        else run $ CreateEffect $ Effect GameSource GameTarget [NoProgressOnQuestCards] UntilEndOfRound
+        run . CommitToQuest =<< heroOf pid "01007"
+        run QuestResolution
+        toCardCode <$> getActiveQuest `shouldReturn` toCardCode Quests.darkBadPlace
+
+    it "does not change stage for progress placed by a card effect" . gameTest $ \pid -> do
+      target <- forestStage Quests.darkBadPlace
+      run $ PlaceTokens (PlayerSource pid) target Progress 3
+      toCardCode <$> getActiveQuest `shouldReturn` toCardCode Quests.darkBadPlace
+
+    it "exhausts one of each player's own ready heroes at the start of planning" . twoPlayerTest testDeck $ \one two -> do
+      _ <- forestStage Quests.darkBadPlace
+      run $ CheckWindows [mkAfter $ PhaseBegins PlanningPhase]
+      heroOne <- heroOf one "01012"
+      heroTwo <- heroOf two "01007"
+      chooseTarget one heroOne
+      chooseTarget two heroTwo
+      heroExhaustedTarget heroOne `shouldReturn` True
+      heroExhaustedTarget heroTwo `shouldReturn` True
+
+    it "removes progress from both staged and active locations at the beginning of the round" . gameTest $ \_ -> do
+      _ <- forestStage Quests.chokedWithBrambles
+      active <- stageLocation Locations.deepGulley
+      staged <- stageLocation Locations.oppressiveForest
+      run $ PlaceLocation active ActiveLocation
+      for_ [active, staged] \lid -> run $ PlaceTokens GameSource (LocationTarget lid) Progress 2
+      run $ CheckWindows [mkWhen RoundBegins]
+      for_ [active, staged] \lid -> (.progress) . toAttrs <$> getLocation lid `shouldReturn` 0
+
+    it "discards a location from victory at round end" . gameTest $ \_ -> do
+      _ <- forestStage Quests.shiftingTrees
+      _ <- setEncounterDeck [Enemies.graspingRoot]
+      victoryLocation Locations.deepGulley
+      run $ CheckWindows [mkWhen RoundEnds]
+      victoryLocations `shouldReturn` []
+      getEncounterDiscard >>= (\cards -> map toCardCode cards `shouldBe` [toCardCode Locations.deepGulley])
+
+    it "assigns Closing in Around Them's additional reveal to the first player" . twoPlayerTestIn theOldForest testDeck $ \one two -> do
+      _ <- forestStage Quests.closingInAroundThem
+      ownHeroes <- traverse (heroOf one) ["01007", "01012"]
+      other <- heroOf two "01012"
+      traverse_ (run . CommitToQuest) (other : ownHeroes)
+      _ <- setEncounterDeck [Treacheries.songOfSleep, Treacheries.songOfSleep, Enemies.graspingRoot]
+      run Staging
+      finishForestChoices 30
+      committed <- selectCharacters CommittedHero CommittedAlly
+      committed `shouldSatisfy` elem other
+      for_ ownHeroes \hero -> committed `shouldSatisfy` notElem hero
+      getEncounterDeck `shouldReturn` []
+
+    for_ [1 .. 4] \size ->
+      it ("reveals exactly players minus one cards at the final stage for " <> show size <> " players") . forestTable size $ \_ -> do
+        target <- forestStage Quests.theWickedWillow
+        for_ [Enemies.oldManWillow, Locations.withywindle] \def -> run . SetAside =<< genEncounterCard def
+        _ <- setEncounterDeck $ replicate 3 Enemies.graspingRoot
+        run $ WhenRevealed target
+        finishForestChoices 20
+        getsGame (length . (.entities.enemies)) `shouldReturn` size
+        getsGame (map toCardCode . toList . (.entities.locations)) `shouldReturn` [toCardCode Locations.withywindle]
+        length <$> getEncounterDeck `shouldReturn` 4 - size
+
+    it "makes Willow attack each player with a separate shadow card while remaining in staging" . twoPlayerTest testDeck $ \one two -> do
+      _ <- forestStage Quests.theWickedWillow
+      willow <- stageEnemy Enemies.oldManWillow
+      shadows <- setEncounterDeck [Locations.deepGulley, Locations.wallOfTrees]
+      run $ BeginPhase CombatPhase
+      replicateM_ 5 $ traverse_ passActions [one, two]
+      defenderOne <- heroOf one "01012"
+      defenderTwo <- heroOf two "01012"
+      chooseTarget one defenderOne
+      replicateM_ 5 $ traverse_ passActions [one, two]
+      chooseTarget two defenderTwo
+      replicateM_ 5 $ traverse_ passActions [one, two]
+      getDamage defenderOne `shouldReturn` 3
+      getDamage defenderTwo `shouldReturn` 3
+      (.placement) <$> getEnemy willow `shouldReturn` StagingArea
+      discarded <- getEncounterDiscard
+      sort (map (.id) discarded) `shouldBe` sort (map (.id) shadows)
+
+    it "keeps the final stage pending until Withywindle leaves play" . gameTest $ \_ -> do
+      target <- forestStage Quests.theWickedWillow
+      river <- stageLocation Locations.withywindle
+      _ <- stageEnemy Enemies.oldManWillow
+      run $ PlaceTokens GameSource target Progress 18
+      getsGame (.outcome) `shouldReturn` Nothing
+      run $ AddToVictoryDisplay (LocationTarget river)
+      getsGame (.outcome) `shouldReturn` Just Won
+
+    it "runs from the opening setup through the victory threshold and exploration of Withywindle to victory" . gameTestIn theOldForest testDeck $ \pid -> do
+      run $ DoStep 1 Setup
+      target <- toTarget <$> getActiveQuest
+      run $ PerformSetup target
+      finishForestChoices 30
+      for_ [Locations.deepGulley, Locations.oppressiveForest, Locations.strangeWoods] victoryLocation
+      eowyn <- heroOf pid "01007"
+      beravor <- heroOf pid "01012"
+      run $ CommitToQuest eowyn
+      run $ CommitToQuest beravor
+      run QuestResolution
+      finishForestChoices 20
+      toCardCode <$> getActiveQuest `shouldReturn` toCardCode Quests.theWickedWillow
+      river <- getsGame $ toId . fromJustNote "Withywindle missing" . find ((== toCardCode Locations.withywindle) . toCardCode) . toList . (.entities.locations)
+      run $ TravelTo river
+      run $ CreateEffect $ Effect GameSource eowyn [WillpowerModifier 30] UntilEndOfRound
+      run QuestResolution
+      getsGame (.outcome) `shouldReturn` Just Won
+
   describe "Tom Bombadil" do
     it "lets the revealer choose who controls him, ready and committed during questing" . twoPlayerTest testDeck $ \one two -> do
       putGame . (phaseL .~ QuestPhase) =<< getGame

@@ -2,6 +2,9 @@
 
 module LordOfTheRings.Quest (module LordOfTheRings.Quest, module X) where
 
+import LordOfTheRings.Quest.Cards.FarewellToTheShire (farewellToTheShire)
+import LordOfTheRings.Quest.Cards.TheLivingForest (darkBadPlace, chokedWithBrambles, shiftingTrees, closingInAroundThem)
+import LordOfTheRings.Quest.Cards.TheWickedWillow (theWickedWillow)
 import LordOfTheRings.Quest.Cards.TheDisappearance (theDisappearance)
 import LordOfTheRings.Quest.Cards.TerrorOfTheDead (terrorOfTheDead)
 import LordOfTheRings.Quest.Cards.TheShadowHost (theShadowHost)
@@ -488,7 +491,13 @@ allQuests =
   Map.fromList
     [ (toCardCode builder, card)
     | card@(SomeQuestCard builder) <-
-        [ SomeQuestCard theDisappearance
+        [ SomeQuestCard farewellToTheShire
+        , SomeQuestCard darkBadPlace
+        , SomeQuestCard chokedWithBrambles
+        , SomeQuestCard shiftingTrees
+        , SomeQuestCard closingInAroundThem
+        , SomeQuestCard theWickedWillow
+        , SomeQuestCard theDisappearance
         , SomeQuestCard terrorOfTheDead
         , SomeQuestCard theShadowHost
         , SomeQuestCard anduinCrossing

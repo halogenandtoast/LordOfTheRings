@@ -1,5 +1,6 @@
 {
   "oldForest": {
+    "exhaustHero": "Exhaust a hero you control",
     "returnLocation": "Return a victory location to the staging area",
     "fallingBranches": "Remove a character from the quest and deal it damage",
     "songOfSleep": "Remove a hero from the quest and attach Song of Sleep"

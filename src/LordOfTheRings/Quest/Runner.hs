@@ -9,6 +9,7 @@ import LordOfTheRings.Entities (entitiesObjectives)
 import LordOfTheRings.Game.Base (gameEntities)
 import LordOfTheRings.GameT (GameT)
 import LordOfTheRings.Helpers.Modifiers (modifiedValue, questPointsOf)
+import LordOfTheRings.Helpers.QuestingProgress (recordQuestingProgress)
 import LordOfTheRings.I18n
 import LordOfTheRings.Matcher
 import LordOfTheRings.Message
@@ -22,8 +23,9 @@ import LordOfTheRings.Token
 
 instance RunMessage QuestAttrs where
   runMessage msg attrs = case msg of
-    PlaceTokens _ (isTarget attrs -> True) token n -> do
+    PlaceTokens source (isTarget attrs -> True) token n -> do
       let attrs' = attrs & tokensL %~ addTokens token n
+      when (token == Progress) $ recordQuestingProgress source n
       done <- hasEnoughProgress attrs'
       when (token == Progress && done) $ push (CompleteQuest attrs.id)
       pure attrs'

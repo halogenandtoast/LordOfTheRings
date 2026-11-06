@@ -59,7 +59,7 @@ lordOfTheRingsScenarios =
 -- resolving it, and any card its surge reveals, before the next player reveals his: "you"
 -- on such a card is the player who revealed it.
 revealsIndividually :: ScenarioId -> Bool
-revealsIndividually = (== Just TheLordOfTheRings) . sagaOf
+revealsIndividually sid = sid == "the-old-forest" || sagaOf sid == Just TheLordOfTheRings
 
 {- | The hero the first player must take control of as the scenario is set up, beyond his
 deck's heroes, one of these if more than one: the Baggins sphere Bilbo Baggins of the

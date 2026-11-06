@@ -90,7 +90,7 @@ allQuestCards =
   Map.fromList $
     map
       (\def -> (cdCardCode def, def))
-      [theDisappearance, terrorOfTheDead, theShadowHost, theDragonsWrath, fireAndWater, terrorFromTheMountain, anduinCrossing, throughTheRuinsOsgiliath, beyondExpectations, raceToMinasTirith, searchingTheHighSeas, destroyTheDreadnaught,  afterTheRaid
+      [farewellToTheShire, darkBadPlace, chokedWithBrambles, shiftingTrees, closingInAroundThem, theWickedWillow, theDisappearance, terrorOfTheDead, theShadowHost, theDragonsWrath, fireAndWater, terrorFromTheMountain, anduinCrossing, throughTheRuinsOsgiliath, beyondExpectations, raceToMinasTirith, searchingTheHighSeas, destroyTheDreadnaught,  afterTheRaid
       , mirkwoodForestTheOath
       , theRearguardTheOath
       , theDarkOfNibinDum
@@ -2286,3 +2286,15 @@ terrorOfTheDead = (quest "the-stone-of-erech-002" "Terror of the Dead" TheStoneO
 
 theShadowHost :: CardDef
 theShadowHost = (quest "the-stone-of-erech-003" "The Shadow Host" TheStoneOfErech 3 14) {cdWhenRevealed = True}
+
+farewellToTheShire :: CardDef
+farewellToTheShire = quest "the-old-forest-001" "Farewell to the Shire" TheOldForest 1 0
+
+darkBadPlace, chokedWithBrambles, shiftingTrees, closingInAroundThem :: CardDef
+darkBadPlace = quest "the-old-forest-002" "The Living Forest" TheOldForest 2 0
+chokedWithBrambles = quest "the-old-forest-003" "The Living Forest" TheOldForest 2 0
+shiftingTrees = quest "the-old-forest-004" "The Living Forest" TheOldForest 2 0
+closingInAroundThem = quest "the-old-forest-005" "The Living Forest" TheOldForest 2 0
+
+theWickedWillow :: CardDef
+theWickedWillow = quest "the-old-forest-006" "The Wicked Willow" TheOldForest 3 18
