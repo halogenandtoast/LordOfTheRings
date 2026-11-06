@@ -59,6 +59,48 @@ endRoundWindow = run $ CheckWindows [mkWhen RoundEnds]
 
 spec :: Spec
 spec = describe "Stone of Erech" do
+  describe "Lord of the Dead and entering allies" do
+    for_ ["paid", "free", "hand", "under"] \way ->
+      it ("blanks Saruman before printed Doomed resolves when entering by " <> way) . twoPlayerTest testDeck $ \one two -> do
+        lord <- stageErechEnemy Enemies.theLordOfTheDeadErech
+        run $ EngageEnemy one lord
+        initial <- traverse getThreat [one, two]
+        card <- putCardIntoHand one Allies.saruman
+        case way of
+          "paid" -> do
+            hero <- heroOf one "01012"
+            run $ PlaceTokens GameSource hero Resource 3
+            run $ PlayCard one card.id
+          "free" -> run $ PlayFromHandAtNoCost one card.id
+          "hand" -> run $ PutAllyIntoPlay one card.id
+          _ -> case card of
+            PlayerCard pc -> run $ PutAllyIntoPlayUnder one pc
+            _ -> error "player card missing"
+        traverse getThreat [one, two] `shouldReturn` initial
+        saruman <- erechAlly Allies.saruman
+        getModifiers saruman >>= (`shouldSatisfy` elem Blank)
+        getQuestion one `shouldReturn` Nothing
+
+    it "checks the player playing a passed Saruman rather than its owner" . twoPlayerTest testDeck $ \one two -> do
+      lord <- stageErechEnemy Enemies.theLordOfTheDeadErech
+      run $ EngageEnemy two lord
+      card <- putCardIntoHand one Allies.saruman
+      run $ GiveFromHand one card.id two
+      initial <- traverse getThreat [one, two]
+      run $ PlayFromHandAtNoCost two card.id
+      traverse getThreat [one, two] `shouldReturn` initial
+      saruman <- erechAlly Allies.saruman
+      saruman.placement `shouldBe` InPlayArea two
+      toCard saruman `shouldBe` card
+
+    it "resolves Saruman's Doomed when the Lord is engaged with another player" . twoPlayerTest testDeck $ \one two -> do
+      lord <- stageErechEnemy Enemies.theLordOfTheDeadErech
+      run $ EngageEnemy two lord
+      initial <- traverse getThreat [one, two]
+      card <- putCardIntoHand one Allies.saruman
+      run $ PlayFromHandAtNoCost one card.id
+      traverse getThreat [one, two] `shouldReturn` map (+ 3) initial
+
   describe "Erech quests and setup" do
     it "builds the complete encounter deck and all three stages in order" . gameTestIn theStoneOfErech testDeck $ \_ -> do
       run $ DoStep 1 Setup

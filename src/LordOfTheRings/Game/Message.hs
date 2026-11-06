@@ -1,5 +1,6 @@
 module LordOfTheRings.Game.Message (module LordOfTheRings.Game.Message) where
 
+import LordOfTheRings.Helpers.Doomed (playerCardDoomed)
 import LordOfTheRings.Helpers.QuestCommit (canPayCommitCost)
 import LordOfTheRings.Epic.Runner (runEpicMessage)
 import LordOfTheRings.Enemy.AttackLocation (attackLocationEnemy)
@@ -24,7 +25,7 @@ import LordOfTheRings.Ability.Types (
   isResponseAbility,
  )
 import LordOfTheRings.ActiveCost (
-  ActiveCost (activeCostCard, activeCostCost, activeCostDoomed),
+  ActiveCost (activeCostCard, activeCostCost, activeCostDoomed, activeCostPlayer),
   staticCost,
  )
 import LordOfTheRings.Ally (
@@ -1176,7 +1177,6 @@ import LordOfTheRings.Game.Query (
   isQuestOrLocation,
   mayTakeQuestingProgress,
   optionalEngagement,
-  printedDoomed,
   progressFirst,
   retargetCharacter,
   revealedCard,
@@ -3163,15 +3163,11 @@ runGameMessage msg g = case msg of
     -- a card with Doomed, printed or gained, raises each player's threat as it is played,
     -- by its X less what lowers it, as Saruman's Staff
     for_ (Map.lookup costId (gameActiveCosts g)) \ac -> do
-      gained <- getModifiers (CardIdTarget ac.activeCostCard.id)
-      runQueueT
-        $ raiseThreatFromDoomed
-        $ printedDoomed ac.activeCostCard
-        + sum [n | GainKeyword (Doomed n) <- gained]
-        + ac.activeCostDoomed
+      doomed <- playerCardDoomed ac.activeCostPlayer ac.activeCostCard
+      runQueueT $ raiseThreatFromDoomed (doomed + ac.activeCostDoomed)
     pure $ g & activeCostsL %~ Map.delete costId
-  PlayAtNoCost _ card -> do
-    runQueueT $ raiseThreatFromDoomed $ printedDoomed card
+  PlayAtNoCost pid card -> do
+    runQueueT . raiseThreatFromDoomed =<< playerCardDoomed pid (PlayerCard card)
     pure g
   CreateEffect effect
     | EnemyTarget eid <- effectTarget effect
@@ -3318,7 +3314,7 @@ runGameMessage msg g = case msg of
     pure $ g & entitiesL . alliesL %~ insertEntity thisAlly
   PutAllyIntoPlayUnder pid card -> do
     thisAlly <- entering =<< newAlly pid card
-    runQueueT $ raiseThreatFromDoomed $ printedDoomed card
+    runQueueT . raiseThreatFromDoomed =<< playerCardDoomed pid (PlayerCard card)
     push $ enteredPlayThisRound thisAlly
     push $ allyEntersPlay pid thisAlly
     pure
@@ -3330,7 +3326,7 @@ runGameMessage msg g = case msg of
   -- with nothing it may attach to, it goes to its owner's discard pile, as an attachment
   -- freed of its guard does
   PutAttachmentIntoPlay pid card -> do
-    runQueueT $ raiseThreatFromDoomed $ printedDoomed card
+    runQueueT . raiseThreatFromDoomed =<< playerCardDoomed pid (PlayerCard card)
     hosts <- cardHosts pid (toCardCode card)
     let unattached = attachMatcherFor pid (toCardCode card) `elem` [PlayIntoStagingArea, PlayIntoPlayArea]
     if null hosts && not unattached && isNothing (guardedTypes card)

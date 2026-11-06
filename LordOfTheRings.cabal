@@ -1645,6 +1645,7 @@ library
       LordOfTheRings.Helpers.Character
       LordOfTheRings.Helpers.ControlledLocation
       LordOfTheRings.Helpers.Discard
+      LordOfTheRings.Helpers.Doomed
       LordOfTheRings.Helpers.Engagement
       LordOfTheRings.Helpers.Fellowship
       LordOfTheRings.Helpers.HandEntry

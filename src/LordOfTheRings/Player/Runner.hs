@@ -23,12 +23,13 @@ import LordOfTheRings.Frontend (FrontendMessage (..), send)
 import LordOfTheRings.Game.Base
 import LordOfTheRings.GameT (GameT)
 import LordOfTheRings.Helpers.Attachment
+import LordOfTheRings.Helpers.Doomed (playerCardDoomed)
 import LordOfTheRings.Helpers.Discard (movableDiscardCards)
 import LordOfTheRings.Helpers.Modifiers (getModifiers, modifiedValue, playProhibitions, threatOf)
 import LordOfTheRings.Helpers.Window (actionsAndResponsesAllowed, exhaustableCharacters, getActionAbilities, limitSource, passesCriteria, passesCriteriaFor, travelableLocations)
 import LordOfTheRings.Hero.Types
 import LordOfTheRings.I18n
-import LordOfTheRings.Keyword (Keyword (Doomed, GuardedBy, Secrecy))
+import LordOfTheRings.Keyword (Keyword (GuardedBy, Secrecy))
 import LordOfTheRings.Id (AllyId (..), PlayerId (..), CardId (..))
 import LordOfTheRings.Log.Block (LogBlockKind (..))
 import LordOfTheRings.Log.Refs (phaseKey)
@@ -233,7 +234,7 @@ runPlayer msg player = case msg of
       takeFromHand cid >>= \case
         PlayerCard card -> do
           -- put into play, a card with Doomed raises each player's threat as one played does
-          raiseThreatFromDoomed $ sum [n | Doomed n <- toList (cdKeywords $ toCardDef card)]
+          raiseThreatFromDoomed =<< playerCardDoomed pid (PlayerCard card)
           push $ PlayAlly pid card
         EncounterCard _ -> error "not an ally"
       pure $ player & handL %~ filter ((/= cid) . (.id))
@@ -277,7 +278,7 @@ runPlayer msg player = case msg of
         if not eligible
           then pure player
           else do
-            raiseThreatFromDoomed $ sum [n | Doomed n <- toList (cdKeywords $ toCardDef pc)]
+            raiseThreatFromDoomed =<< playerCardDoomed pid (PlayerCard pc)
             let attach = maybe (PlayAttachmentOn pid pc host) (ResolveGuardedPlayerCard pid pc) $ headMay [ts | GuardedBy ts <- toList (cdKeywords $ toCardDef pc)]
             pushAll
               =<< inLogBlock
