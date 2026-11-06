@@ -255,6 +255,7 @@ cardsPlayedThisRound = getsGame \g -> [(pid, code, t) | Effect _ (PlayerTarget p
 playProhibitions :: (HasGame m) => PlayerId -> Card -> m [Modifier]
 playProhibitions pid c = do
   mods <- getsGame gameModifiers
+  g <- getGame
   entryBarred <- getsGame (allyEntryBarred pid)
   let on t = Map.findWithDefault [] t mods
   allyPlayed <- any (\(_, _, t) -> t == AllyType) <$> cardsPlayedThisRound
@@ -262,6 +263,8 @@ playProhibitions pid c = do
     [ m
     | m <- on GameTarget <> on (PlayerTarget pid)
     , case m.modifierType of
+        CardsFromHandPerRoundLimit _ -> handEntryLimitReached g pid
+          && maybe False (any ((== c.id) . (.id)) . (.hand)) (Map.lookup pid $ gamePlayers g)
         CannotPlay matcher -> cardMatches matcher c
         OneAllyPerRound -> allyPlayed && c.cardType == AllyType
         OneAllyEntersPlayPerRound -> entryBarred && c.cardType == AllyType

@@ -9,7 +9,7 @@ import LordOfTheRings.Helpers.Modifiers (getModifiers, immuneToSource, modifiedQ
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Message
 import LordOfTheRings.Placement (Placement (ActiveLocation))
-import LordOfTheRings.Modifier (ModifierType (GainTrait, NoProgressFromPlayerCards, PhaseProgressLimitOnTrait, ProgressLimit, ProgressPerRoundLimit, ProgressPlacedOnTraitThisPhase, ProgressPlacedThisRound, ProgressReducedBy, ProgressReducedTo))
+import LordOfTheRings.Modifier (ModifierType (NoProgressFromCardEffects, GainTrait, NoProgressFromPlayerCards, PhaseProgressLimitOnTrait, ProgressLimit, ProgressPerRoundLimit, ProgressPlacedOnTraitThisPhase, ProgressPlacedThisRound, ProgressReducedBy, ProgressReducedTo))
 import LordOfTheRings.Effect (Effect (..), EffectDuration (UntilEndOfPhase, UntilEndOfRound))
 import LordOfTheRings.Prelude
 import LordOfTheRings.Source
@@ -92,7 +92,10 @@ instance RunMessage LocationAttrs where
           noMore = case msg of
             PlaceTokens _ _ Progress _ -> ProgressLimit 0 `elem` mods
             _ -> False
-      immune <- (|| noMore || (isPlayerCardSource source && barred)) <$> immuneToSource source attrs
+      let effectsBarred = case msg of
+            PlaceTokens _ _ Progress _ -> NoProgressFromCardEffects `elem` mods
+            _ -> False
+      immune <- (|| noMore || effectsBarred || (isPlayerCardSource source && barred)) <$> immuneToSource source attrs
       -- the message again, from a source the guard lets by; progress still told as the
       -- source's
       if

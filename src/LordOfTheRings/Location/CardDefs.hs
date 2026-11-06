@@ -5347,6 +5347,7 @@ pelennorFieldsOsgiliath = (location "the-massing-at-osgiliath-010" "Pelennor Fie
   { cdCardTraits = setFromList [WestBank]
   , cdUnique = False
   , cdShadowEffect = False
+  , cdVictoryPoints = Just 1
   }
 
 ruinsOfOsgiliath :: CardDef

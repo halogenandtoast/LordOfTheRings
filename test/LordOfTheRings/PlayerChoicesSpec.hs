@@ -107,6 +107,7 @@ spec = describe "Player choices" do
       run $ CommitToQuest guard'
       isExhausted guard' `shouldReturn` False
       run $ Ready guard'
+      run $ RemoveFromQuest guard'
       run . Discard GameSource . toTarget =<< hero "08112"
       run $ CommitToQuest guard'
       isExhausted guard' `shouldReturn` True

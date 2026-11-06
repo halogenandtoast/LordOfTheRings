@@ -606,9 +606,12 @@ canPlay p c = andM [canAfford p c, passesUnique c, correctPhase c, hasPlayableHo
 
 -- | Whether the card, in the player's hand, gives itself 'CannotBePlayedFromHand'.
 barredFromHand :: HasGame m => Player -> Card -> m Bool
-barredFromHand p c
-  | c.id `elem` map (.id) p.hand = elem CannotBePlayedFromHand <$> getModifiers (CardIdTarget c.id)
-  | otherwise = pure False
+barredFromHand p c = do
+  fromTop <- notNull <$> topOfDeckPlayers p
+  let fromHand = c.id `elem` map (.id) p.hand || (fromTop && Just c.id == fmap (.id) (headMay p.deck))
+  capped <- getsGame (flip handEntryLimitReached p.id)
+  prohibited <- elem CannotBePlayedFromHand <$> getModifiers (CardIdTarget c.id)
+  pure $ fromHand && (capped || prohibited)
 
 -- | Whether the player has what the card costs from hand besides its resources, and may
 -- pay it: one who cannot discard from hand, as Isen River bars, cannot pay a discard.

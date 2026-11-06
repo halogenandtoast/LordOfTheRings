@@ -32,7 +32,8 @@ import LordOfTheRings.Effect (
  )
 import LordOfTheRings.Entities (locationsL)
 import LordOfTheRings.Game.Base (
-  Game (gameModifiers),
+  Game (gameModifiers, gameEffects),
+  handEntryLimitReached,
   activeCostsL,
   allyEntryBarred,
   barredFromPlay,
@@ -42,6 +43,8 @@ import LordOfTheRings.Game.Base (
   scenarioL,
  )
 import LordOfTheRings.GameT (GameT)
+import LordOfTheRings.Helpers.QuestCommit (pendingCommitCost, commitmentSacrifices, canCommitExistingCharacter, characterInPlay)
+import LordOfTheRings.Helpers.HandEntry (handEntryAttempt, handEntrySucceeded)
 import LordOfTheRings.Helpers.Engagement (highestToughnessEngagements)
 import LordOfTheRings.Helpers.Discard (protectDiscardedHeroes)
 import LordOfTheRings.Helpers.Modifiers (getModifiers, immuneToSource, isEncounterCardSource)
@@ -60,6 +63,7 @@ import LordOfTheRings.Matcher (
   ),
   Query (select),
   getLead,
+  characterController,
   getPlayer,
   getLocation,
   progressPlacedThisRound,
@@ -73,6 +77,7 @@ import LordOfTheRings.Message (
     CheckWindows,
     CompleteQuest,
     CommitToQuest,
+    PayQuestCommitmentCost,
     CreateEffect,
     DealDamage,
     Discard,
@@ -110,11 +115,15 @@ import LordOfTheRings.Message (
     TravelTo
   ),
   removedEnemy,
+  questionLabelWith,
  )
 import LordOfTheRings.Modifier (
   Modifier (modifierType),
   ModifierType (
     CannotBeDefeated,
+    CardFromHandThisRound,
+    PaidCommitmentCost,
+    NoProgressFromCardEffects,
     CannotBePlacedUnder,
     TravelRequiresEngagingHighestToughness,
     CannotBeTraveledTo,
@@ -142,13 +151,15 @@ import LordOfTheRings.Modifier (
 import LordOfTheRings.Placement (
   Placement (ActiveLocation, OnIslandMap, OrcsArea, StagingArea),
  )
+import LordOfTheRings.Question (targetLabel)
+import LordOfTheRings.I18n (ikey)
 import LordOfTheRings.Prelude hiding (first, many)
 import LordOfTheRings.Quest (isSideQuest)
 import LordOfTheRings.Scenario (
   ScenarioAttrs (scenarioOutOfPlayResources),
   outOfPlayResourcesL,
  )
-import LordOfTheRings.Source (Source (GameSource, EnemyAttackSource, PlayerAttackSource))
+import LordOfTheRings.Source (Source (QuestSource, GameSource, EnemyAttackSource, PlayerAttackSource))
 import LordOfTheRings.Target (
   Target (
     AllyTarget,
@@ -200,7 +211,16 @@ import LordOfTheRings.Game.Query (
  )
 
 runGame :: Message -> Game -> GameT Game
-runGame msg g = protectDiscardedHeroes g msg >>= maybe (pure g) (\allowed -> runGameAllowed allowed g)
+runGame msg g = do
+  entry <- handEntryAttempt g msg
+  if maybe False (handEntryLimitReached g . fst) entry
+    then pure g
+    else do
+      next <- protectDiscardedHeroes g msg >>= maybe (pure g) (\allowed -> runGameAllowed allowed g)
+      pure $ case entry of
+        Just (pid, cid) | handEntrySucceeded g next (pid, cid) ->
+          next {gameEffects = Effect GameSource (PlayerTarget pid) [CardFromHandThisRound cid] UntilEndOfRound : gameEffects next}
+        _ -> next
 
 runGameAllowed :: Message -> Game -> GameT Game
 runGameAllowed msg g = case msg of
@@ -209,9 +229,29 @@ runGameAllowed msg g = case msg of
   -- by declaration (Ranger of Ithilien’s printed When Revealed). After windows
   -- still wait for the player's completed group, in CommitCharacters.
   CommitToQuest target | isCharacter target -> do
-    pushAll [CheckWindows [mkWhen $ CommittedToQuest target], DoStep 2 msg]
+    controller <- characterController target
+    for_ controller \pid -> do
+      able <- canCommitExistingCharacter pid target
+      when able $ pendingCommitCost pid >>= \case
+        Nothing -> pushAll [CheckWindows [mkWhen $ CommittedToQuest target], DoStep 2 msg]
+        Just (qid, matcher) -> do
+          sacrifices <- commitmentSacrifices pid qid matcher target
+          pushWhen (notNull sacrifices) $ questionLabelWith (ikey "label.anduinCrossing.sacrifice") (Just $ QuestTarget qid) [target] pid
+            [targetLabel sacrifice [PayQuestCommitmentCost pid qid sacrifice target] | sacrifice <- sacrifices]
     pure g
-  DoStep 2 (CommitToQuest target) -> runGame'' (CommitToQuest target) g
+  PayQuestCommitmentCost _ qid sacrifice _ ->
+    g <$ pushAll [Discard (QuestSource qid) sacrifice, DoStep 1 msg]
+  DoStep 1 (PayQuestCommitmentCost pid qid sacrifice target) -> do
+    stillPresent <- characterInPlay sacrifice
+    unless stillPresent $ pushAll
+      [ CreateEffect $ Effect (QuestSource qid) (PlayerTarget pid) [PaidCommitmentCost qid] UntilEndOfPhase
+      , CommitToQuest target
+      ]
+    pure g
+  DoStep 2 (CommitToQuest target) -> do
+    controller <- characterController target
+    able <- maybe (pure False) (`canCommitExistingCharacter` target) controller
+    if able then runGame'' (CommitToQuest target) g else pure g
   LowerThreat pid n -> do
     mods <- getModifiers $ PlayerTarget pid
     player <- getPlayer pid
@@ -306,7 +346,9 @@ runGameAllowed msg g = case msg of
    where
     placeOnQuest = do
         barred <- elem NoProgressOnQuestCards <$> getModifiers GameTarget
-        mods <- (<> [ProgressLimit 0 | barred]) <$> getModifiers target
+        targetMods <- getModifiers target
+        let effectsBarred = source /= GameSource && NoProgressFromCardEffects `elem` targetMods
+            mods = targetMods <> [ProgressLimit 0 | barred || effectsBarred]
         placed <- progressPlacedThisRound target
         let reduced = max 0 (n - sum [k | ProgressReducedBy k <- mods])
             -- and no more than it may take now, as Stranded in Umbar's 15 tokens at most

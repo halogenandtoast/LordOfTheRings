@@ -1,4 +1,7 @@
 {
+  "anduinCrossing": {
+    "sacrifice": "Discard a hero or Ranger of Ithilien you control before committing characters"
+  },
   "rangerOfIthilien": {
     "shadow": "You may exhaust a character you control to take control of Ranger of Ithilien",
     "decline": "Do not take control of Ranger of Ithilien"

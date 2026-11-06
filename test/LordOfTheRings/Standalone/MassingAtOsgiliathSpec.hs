@@ -1,23 +1,24 @@
 module LordOfTheRings.Standalone.MassingAtOsgiliathSpec (spec) where
 
 import Data.Map.Strict qualified as Map
-import LordOfTheRings.Card (toCard, allEncounterCards, CardDef (..), CardType (QuestType))
+import LordOfTheRings.Card (toCard, allEncounterCards, CardDef (..), CardType (QuestType, AllyType))
 import LordOfTheRings.Decklist (loadPlayer)
 import LordOfTheRings.EncounterSet qualified as EncounterSet
 import LordOfTheRings.Objective.CardDefs qualified as Objectives
 import LordOfTheRings.Event.CardDefs qualified as Events
+import LordOfTheRings.Scenario (theMassingAtOsgiliath, lookupScenario)
 import LordOfTheRings.Helpers.Window (travelableLocations)
 import LordOfTheRings.Keyword (Keyword (Doomed))
 import LordOfTheRings.Outcome (Outcome (Won))
 import LordOfTheRings.Quest.CardDefs qualified as Quests
 import LordOfTheRings.Treachery.CardDefs qualified as Treacheries
-import LordOfTheRings.Phase (Phase (TravelPhase))
+import LordOfTheRings.Phase (Phase (TravelPhase, QuestPhase))
 import LordOfTheRings.Attachment.CardDefs qualified as Attachments
 import LordOfTheRings.Helpers.Attachment (cardHosts, playableCardHosts)
 import LordOfTheRings.Ally.CardDefs qualified as Allies
 import LordOfTheRings.Helpers.Modifiers (getModifiers)
-import LordOfTheRings.Matcher (getEnemy, getThreat)
-import LordOfTheRings.Modifier (ModifierType (GainKeyword, Defending, Blank, WillpowerModifier, CannotPlayAttachmentsOn))
+import LordOfTheRings.Matcher (getEnemy, getThreat, CardMatcher (CardWithType))
+import LordOfTheRings.Modifier (ModifierType (MayPlayTopOfDeck, CannotBeDiscardedByEncounterCards, CannotPutIntoPlay, GainKeyword, Defending, Blank, WillpowerModifier, CannotPlayAttachmentsOn))
 import LordOfTheRings.Window (WindowType (EnemyAttacking, CommittedToQuest), mkWhen, mkAfter)
 import LordOfTheRings.Effect (Effect (..), EffectDuration (UntilEndOfPhase, UntilEndOfRound, UntilEndOfAttack))
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
@@ -62,11 +63,23 @@ massingTable size body = do
   seats <- for [1 .. size] \seat ->
     either (error . show) id <$> loadPlayer ("Player " <> tshow seat) testDeck
   let table = fromJustNote "empty test table" $ nonEmpty seats
-  env <- newGameEnv (newTableIn passageThroughMirkwood table) (const $ pure ()) 1
+  env <- newGameEnv (newTableIn theMassingAtOsgiliath table) (const $ pure ()) 1
   runGameT env $ body =<< getsGame (.playerOrder)
 
 controlledRangers :: GameT [AllyAttrs]
 controlledRangers = getsGame $ map toAttrs . filter ((== toCardCode Objectives.rangerOfIthilien) . toCardCode) . toList . (.entities.allies)
+
+throughRuins :: GameT Target
+throughRuins = do
+  quest <- putQuestStage Quests.throughTheRuinsOsgiliath
+  run $ Flip quest
+  pure quest
+
+crossing :: GameT Target
+crossing = do
+  quest <- putQuestStage Quests.anduinCrossing
+  run $ Flip quest
+  pure quest
 
 spec :: Spec
 spec = describe "The Massing at Osgiliath encounter cards" do
@@ -559,3 +572,341 @@ spec = describe "The Massing at Osgiliath encounter cards" do
     resolveRevealed
     controlledRangers `shouldReturn` []
     getEncounterDeck `shouldReturn` [nextCard]
+
+  it "allows only one paid play from each player's hand per round at stage 2" . gameTest $ \pid -> do
+    _ <- throughRuins
+    theodred <- heroOf pid "01002"
+    run $ PlaceTokens GameSource theodred Resource 4
+    firstCard <- putCardIntoHand pid Allies.guardOfTheCitadel
+    secondCard <- putCardIntoHand pid Allies.guardOfTheCitadel
+    run $ PlayCard pid firstCard.id
+    getsGame (length . (.entities.allies)) `shouldReturn` 1
+    player <- getPlayer pid
+    canPlay player secondCard `shouldReturn` False
+    run $ PlayCard pid secondCard.id
+    getsGame (length . (.entities.allies)) `shouldReturn` 1
+    map (.id) . (.hand) <$> getPlayer pid `shouldReturn` [secondCard.id]
+
+  it "shares the stage 2 allowance between putting an ally into play and playing a card" . gameTest $ \pid -> do
+    _ <- throughRuins
+    theodred <- heroOf pid "01002"
+    run $ PlaceTokens GameSource theodred Resource 4
+    firstCard <- putCardIntoHand pid Allies.guardOfTheCitadel
+    secondCard <- putCardIntoHand pid Allies.guardOfTheCitadel
+    run $ PutAllyIntoPlay pid firstCard.id
+    run $ PlayCard pid secondCard.id
+    getsGame (length . (.entities.allies)) `shouldReturn` 1
+    map (.id) . (.hand) <$> getPlayer pid `shouldReturn` [secondCard.id]
+
+  it "tracks cards used earlier in the round before reaching Through the Ruins" . gameTest $ \pid -> do
+    firstCard <- putCardIntoHand pid Allies.guardOfTheCitadel
+    run $ PutAllyIntoPlay pid firstCard.id
+    _ <- throughRuins
+    secondCard <- putCardIntoHand pid Allies.guardOfTheCitadel
+    run $ PutAllyIntoPlay pid secondCard.id
+    getsGame (length . (.entities.allies)) `shouldReturn` 1
+    map (.id) . (.hand) <$> getPlayer pid `shouldReturn` [secondCard.id]
+
+  it "gives each player a separate allowance at stage 2" . twoPlayerTest testDeck $ \one two -> do
+    _ <- throughRuins
+    cardOne <- putCardIntoHand one Allies.guardOfTheCitadel
+    cardTwo <- putCardIntoHand two Allies.guardOfTheCitadel
+    run $ PutAllyIntoPlay one cardOne.id
+    run $ PutAllyIntoPlay two cardTwo.id
+    getsGame (length . (.entities.allies)) `shouldReturn` 2
+
+  it "resets the hand allowance at the end of the round" . gameTest $ \pid -> do
+    _ <- throughRuins
+    firstCard <- putCardIntoHand pid Allies.guardOfTheCitadel
+    secondCard <- putCardIntoHand pid Allies.guardOfTheCitadel
+    run $ PutAllyIntoPlay pid firstCard.id
+    run $ EndEffects UntilEndOfRound
+    run $ PutAllyIntoPlay pid secondCard.id
+    getsGame (length . (.entities.allies)) `shouldReturn` 2
+
+  it "counts an attachment put from hand against subsequent ally entry" . gameTest $ \pid -> do
+    _ <- throughRuins
+    beravor <- heroOf pid "01012"
+    attachment <- putCardIntoHand pid Attachments.stewardOfGondor
+    run $ PutAttachmentIntoPlayFromHand pid attachment.id beravor
+    ally <- putCardIntoHand pid Allies.guardOfTheCitadel
+    run $ PutAllyIntoPlay pid ally.id
+    getsGame (length . (.entities.attachments)) `shouldReturn` 1
+    getsGame (length . (.entities.allies)) `shouldReturn` 0
+    map (.id) . (.hand) <$> getPlayer pid `shouldReturn` [ally.id]
+
+  it "blocks a second attachment put from hand without removing it" . gameTest $ \pid -> do
+    _ <- throughRuins
+    ally <- putCardIntoHand pid Allies.guardOfTheCitadel
+    run $ PutAllyIntoPlay pid ally.id
+    attachment <- putCardIntoHand pid Attachments.stewardOfGondor
+    beravor <- heroOf pid "01012"
+    run $ PutAttachmentIntoPlayFromHand pid attachment.id beravor
+    getsGame (length . (.entities.attachments)) `shouldReturn` 0
+    map (.id) . (.hand) <$> getPlayer pid `shouldReturn` [attachment.id]
+
+  it "counts a card played from hand for no cost exactly once" . gameTest $ \pid -> do
+    _ <- throughRuins
+    firstCard <- putCardIntoHand pid Allies.guardOfTheCitadel
+    secondCard <- putCardIntoHand pid Allies.guardOfTheCitadel
+    run $ PlayFromHandAtNoCost pid firstCard.id
+    run $ PlayFromHandAtNoCost pid secondCard.id
+    getsGame (length . (.entities.allies)) `shouldReturn` 1
+    map (.id) . (.hand) <$> getPlayer pid `shouldReturn` [secondCard.id]
+
+  it "permits out-of-play allies after the hand allowance is used" . gameTest $ \pid -> do
+    _ <- throughRuins
+    firstCard <- putCardIntoHand pid Allies.guardOfTheCitadel
+    run $ PutAllyIntoPlay pid firstCard.id
+    card <- genPlayerCard Allies.guardOfTheCitadel (Just pid)
+    run $ PutAllyIntoPlayUnder pid card
+    getsGame (length . (.entities.allies)) `shouldReturn` 2
+
+  it "does not spend the hand allowance on a prevented ally entry" . gameTest $ \pid -> do
+    _ <- throughRuins
+    run $ CreateEffect $ Effect GameSource (PlayerTarget pid) [CannotPutIntoPlay $ CardWithType AllyType] UntilEndOfPhase
+    card <- putCardIntoHand pid Allies.guardOfTheCitadel
+    run $ PutAllyIntoPlay pid card.id
+    getsGame (length . (.entities.allies)) `shouldReturn` 0
+    run $ EndEffects UntilEndOfPhase
+    run $ PutAllyIntoPlay pid card.id
+    getsGame (length . (.entities.allies)) `shouldReturn` 1
+
+  it "counts Sneak Attack itself before its attempt to put an ally from hand" . gameTest $ \pid -> do
+    _ <- throughRuins
+    theodred <- heroOf pid "01002"
+    run $ PlaceTokens GameSource theodred Resource 1
+    ally <- putCardIntoHand pid Allies.guardOfTheCitadel
+    event <- putCardIntoHand pid Events.sneakAttack
+    run $ PlayCard pid event.id
+    chooseTarget pid (CardIdTarget ally.id)
+    getsGame (length . (.entities.allies)) `shouldReturn` 0
+    map (.id) . (.hand) <$> getPlayer pid `shouldReturn` [ally.id]
+
+  it "keeps the West Bank travel restriction at stage 2" . gameTest $ \_ -> do
+    west <- stageLocation Locations.capturedWatchtower
+    east <- stageLocation Locations.morgulduin
+    _ <- throughRuins
+    travelableLocations >>= (`shouldSatisfy` \ls -> east `elem` ls && west `notElem` ls)
+
+  it "requires a hero discard before the first declaration, once for all that player's characters" . gameTest $ \pid -> do
+    _ <- crossing
+    beravor <- heroOf pid "01012"
+    theodred <- heroOf pid "01002"
+    eowyn <- heroOf pid "01007"
+    run $ CommitToQuest beravor
+    chooseTarget pid theodred
+    getsGame (length . (.entities.heroes)) `shouldReturn` 2
+    (.heroCommitted) . toAttrs <$> getHeroWithCode "01012" `shouldReturn` True
+    run $ CommitToQuest eowyn
+    getQuestion pid `shouldReturn` Nothing
+    (.heroCommitted) . toAttrs <$> getHeroWithCode "01007" `shouldReturn` True
+    getsGame (length . (.entities.heroes)) `shouldReturn` 2
+
+  it "allows an exhausted Ranger of Ithilien to be discarded instead of a hero" . gameTest $ \pid -> do
+    reveal [Objectives.rangerOfIthilien, Locations.capturedWatchtower]
+    [ranger] <- controlledRangers
+    _ <- crossing
+    beravor <- heroOf pid "01012"
+    run $ CommitToQuest beravor
+    chooseTarget pid ranger
+    controlledRangers `shouldReturn` []
+    getsGame (length . (.entities.heroes)) `shouldReturn` 3
+    (.heroCommitted) . toAttrs <$> getHeroWithCode "01012" `shouldReturn` True
+
+  it "does not offer an ordinary ally or the intended committer as the sacrifice" . gameTest $ \pid -> do
+    ally <- putAllyIntoPlay pid Allies.guardOfTheCitadel
+    _ <- crossing
+    beravor <- heroOf pid "01012"
+    theodred <- heroOf pid "01002"
+    run $ CommitToQuest beravor
+    question <- getQuestion pid
+    [t | Just q <- [question], TargetLabel t _ <- questionChoices q] `shouldSatisfy` \ts -> ally `notElem` ts && beravor `notElem` ts
+    chooseTarget pid theodred
+
+  it "requires each player to pay their own commitment cost" . twoPlayerTest testDeck $ \one two -> do
+    _ <- crossing
+    for_ [one, two] \pid -> do
+      beravor <- heroOf pid "01012"
+      theodred <- heroOf pid "01002"
+      run $ CommitToQuest beravor
+      chooseTarget pid theodred
+    getsGame (length . (.entities.heroes)) `shouldReturn` 4
+
+  it "requires a new sacrifice in the next quest phase" . gameTest $ \pid -> do
+    _ <- crossing
+    beravor <- heroOf pid "01012"
+    theodred <- heroOf pid "01002"
+    eowyn <- heroOf pid "01007"
+    run $ CommitToQuest beravor
+    chooseTarget pid theodred
+    run $ EndEffects UntilEndOfPhase
+    run $ RemoveFromQuest beravor
+    run $ Ready beravor
+    run $ CommitToQuest beravor
+    chooseTarget pid eowyn
+    getsGame (length . (.entities.heroes)) `shouldReturn` 1
+
+  it "pays the sacrifice before Morgulduin damages the committing character" . gameTest $ \pid -> do
+    _ <- crossing
+    river <- stageLocation Locations.morgulduin
+    run $ PlaceLocation river ActiveLocation
+    beravor <- heroOf pid "01012"
+    theodred <- heroOf pid "01002"
+    run $ CommitToQuest beravor
+    getDamage beravor `shouldReturn` 0
+    chooseTarget pid theodred
+    getDamage beravor `shouldReturn` 1
+    (.heroCommitted) . toAttrs <$> getHeroWithCode "01012" `shouldReturn` True
+
+  it "does not charge a sacrifice for Ranger entering play already committed" . gameTest $ \_ -> do
+    _ <- crossing
+    reveal [Objectives.rangerOfIthilien, Locations.capturedWatchtower]
+    [ranger] <- controlledRangers
+    ranger.allyCommitted `shouldBe` True
+    getsGame (length . (.entities.heroes)) `shouldReturn` 3
+
+  it "charges the sacrifice for an exhausted character committed by Late Adventurer" . gameTest $ \pid -> do
+    ally <- putAllyIntoPlay pid Allies.guardOfTheCitadel
+    _ <- crossing
+    putGame . (phaseL .~ QuestPhase) =<< getGame
+    event <- putCardIntoHand pid Events.lateAdventurer
+    theodred <- heroOf pid "01002"
+    run $ PlayFromHandAtNoCost pid event.id
+    chooseTarget pid ally
+    chooseTarget pid theodred
+    allies <- getsGame $ toList . (.entities.allies)
+    map ((.allyCommitted) . toAttrs) allies `shouldBe` [True]
+
+  it "does not allow commitments when no other character can be discarded for the cost" . gameTest $ \pid -> do
+    _ <- crossing
+    heroes <- getsGame $ map toTarget . toList . (.entities.heroes)
+    for_ heroes \hero -> run $ CreateEffect $ Effect GameSource hero [CannotBeDiscardedByEncounterCards] UntilEndOfPhase
+    beravor <- heroOf pid "01012"
+    run $ CommitCharacters pid
+    question <- getQuestion pid
+    [t | Just q <- [question], TargetLabel t _ <- questionChoices q] `shouldBe` []
+    chooseOptionMatching "done committing" pid \case
+      Label l _ -> "$label.doneCommitting" `isPrefixOf` l
+      _ -> False
+    run $ CommitToQuest beravor
+    getQuestion pid `shouldReturn` Nothing
+    (.heroCommitted) . toAttrs <$> getHeroWithCode "01012" `shouldReturn` False
+
+  it "blocks card-effect progress on the crossing and active location but not other staged locations" . gameTest $ \pid -> do
+    quest <- crossing
+    active <- stageLocation Locations.capturedWatchtower
+    staged <- stageLocation Locations.ruinsOfOsgiliath
+    run $ PlaceLocation active ActiveLocation
+    beravor <- heroOf pid "01012"
+    let source = case beravor of HeroTarget hid -> HeroSource hid; _ -> GameSource
+    run $ PlaceTokens source quest Progress 1
+    (.progress) . toAttrs <$> getActiveQuest `shouldReturn` 0
+    run $ PlaceTokens source (toTarget active) Progress 1
+    qid <- toId <$> getActiveQuest
+    run $ PlaceTokens (QuestSource qid) (toTarget active) Progress 1
+    (.progress) <$> getLocation active `shouldReturn` 0
+    run $ PlaceTokens source (toTarget staged) Progress 1
+    (.progress) <$> getLocation staged `shouldReturn` 1
+    run $ PlaceTokens GameSource (toTarget active) Progress 1
+    (.progress) <$> getLocation active `shouldReturn` 1
+
+  it "blocks travel to both banks before completing the crossing" . gameTest $ \_ -> do
+    east <- stageLocation Locations.morgulduin
+    west <- stageLocation Locations.capturedWatchtower
+    road <- stageLocation Locations.oldForestRoad
+    _ <- crossing
+    travelableLocations >>= (`shouldSatisfy` \ls -> road `elem` ls && east `notElem` ls && west `notElem` ls)
+    crossedAnduin `shouldReturn` False
+
+  it "is available in the scenario registry and builds all four quest stages" . gameTestIn theMassingAtOsgiliath testDeck $ \pid -> do
+    isJust (lookupScenario "the-massing-at-osgiliath") `shouldBe` True
+    flipFirstQuest pid
+    g <- getGame
+    map toCardCode ((toAttrs g.scenario).questDeck) `shouldBe` map toCardCode [Quests.throughTheRuinsOsgiliath, Quests.anduinCrossing, Quests.raceToMinasTirith]
+    length (toList g.entities.enemies) `shouldBe` 3
+    length ((toAttrs g.scenario).encounterDeck) `shouldBe` 37
+
+  for_ [1 .. 4] \size ->
+    it ("runs the complete Osgiliath setup pipeline for " <> show size <> " players") . massingTable size $ \players -> do
+      run Setup
+      for_ players \_ -> do
+        askedPlayers <- getsGame (Map.keys . (.question))
+        let asked = fromJustNote "no setup question" $ headMay askedPlayers
+        chooseLabel "$label.keepHand" asked
+      lead <- getLead
+      chooseOptionMatching "perform Beyond Expectations setup" lead (const True)
+      g <- getGame
+      length (toList g.entities.enemies) `shouldBe` 3 * size
+      length ((toAttrs g.scenario).encounterDeck) `shouldBe` 40 - 3 * size
+      map toCardCode ((toAttrs g.scenario).questDeck) `shouldBe` map toCardCode [Quests.throughTheRuinsOsgiliath, Quests.anduinCrossing, Quests.raceToMinasTirith]
+
+  it "advances through all four stages and wins after crossing the Anduin" . gameTestIn theMassingAtOsgiliath testDeck $ \pid -> do
+    run $ DoStep 1 Setup
+    opening <- toTarget <$> getActiveQuest
+    run $ PerformSetup opening
+    run $ PlaceTokens GameSource opening Progress 7
+    toCardCode <$> getActiveQuest `shouldReturn` toCardCode Quests.throughTheRuinsOsgiliath
+    ruins <- toTarget <$> getActiveQuest
+    run $ PlaceTokens GameSource ruins Progress 5
+    toCardCode <$> getActiveQuest `shouldReturn` toCardCode Quests.anduinCrossing
+    crossedAnduin `shouldReturn` False
+    putGame . (phaseL .~ QuestPhase) =<< getGame
+    beravor <- heroOf pid "01012"
+    theodred <- heroOf pid "01002"
+    run $ CreateEffect $ Effect GameSource beravor [WillpowerModifier 100] UntilEndOfPhase
+    run $ CommitToQuest beravor
+    chooseTarget pid theodred
+    run QuestResolution
+    resolveRevealed
+    toCardCode <$> getActiveQuest `shouldReturn` toCardCode Quests.raceToMinasTirith
+    crossedAnduin `shouldReturn` True
+    foes <- getsGame $ map toCardCode . toList . (.entities.enemies)
+    foes `shouldSatisfy` elem (toCardCode Enemies.theWitchKingOsgiliath)
+    finalStage <- toTarget <$> getActiveQuest
+    run $ PlaceTokens GameSource finalStage Progress 15
+    getsGame (.outcome) `shouldReturn` Just Won
+
+  it "adds an explored Pelennor Fields to the victory display instead of the encounter discard pile" . gameTest $ \_ -> do
+    fields <- stageLocation Locations.pelennorFieldsOsgiliath
+    run $ PlaceLocation fields ActiveLocation
+    run $ PlaceTokens GameSource (toTarget fields) Progress 7
+    won <- getsGame $ map toCardCode . (.victoryDisplay) . toAttrs . (.scenario)
+    won `shouldBe` [toCardCode Locations.pelennorFieldsOsgiliath]
+    map toCardCode <$> getEncounterDiscard `shouldReturn` []
+
+  it "allows an out-of-play card to be played after the hand allowance is used" . gameTest $ \pid -> do
+    _ <- throughRuins
+    firstCard <- putCardIntoHand pid Allies.guardOfTheCitadel
+    run $ PutAllyIntoPlay pid firstCard.id
+    card <- genPlayerCard Allies.guardOfTheCitadel (Just pid)
+    run $ PlayAtNoCost pid card
+    getsGame (length . (.entities.allies)) `shouldReturn` 2
+
+  it "counts a top-of-deck card played as if in hand against the allowance" . gameTest $ \pid -> do
+    _ <- throughRuins
+    card <- genPlayerCard Allies.guardOfTheCitadel (Just pid)
+    g <- getGame
+    putGame $ g & playersL . ix pid . deckL .~ [PlayerCard card]
+    run $ CreateEffect $ Effect GameSource (PlayerTarget pid) [MayPlayTopOfDeck] UntilEndOfPhase
+    theodred <- heroOf pid "01002"
+    run $ PlaceTokens GameSource theodred Resource 2
+    run $ PlayCard pid card.id
+    handCard <- putCardIntoHand pid Allies.guardOfTheCitadel
+    run $ PutAllyIntoPlay pid handCard.id
+    getsGame (length . (.entities.allies)) `shouldReturn` 1
+    map (.id) . (.hand) <$> getPlayer pid `shouldReturn` [handCard.id]
+
+  it "blocks top-of-deck plays as if in hand once the allowance is used" . gameTest $ \pid -> do
+    _ <- throughRuins
+    handCard <- putCardIntoHand pid Allies.guardOfTheCitadel
+    run $ PutAllyIntoPlay pid handCard.id
+    card <- genPlayerCard Allies.guardOfTheCitadel (Just pid)
+    g <- getGame
+    putGame $ g & playersL . ix pid . deckL .~ [PlayerCard card]
+    run $ CreateEffect $ Effect GameSource (PlayerTarget pid) [MayPlayTopOfDeck] UntilEndOfPhase
+    theodred <- heroOf pid "01002"
+    run $ PlaceTokens GameSource theodred Resource 2
+    run $ PlayCard pid card.id
+    getsGame (length . (.entities.allies)) `shouldReturn` 1
+    map (.id) . (.deck) <$> getPlayer pid `shouldReturn` [card.id]

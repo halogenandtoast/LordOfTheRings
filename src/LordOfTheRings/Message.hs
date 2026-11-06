@@ -683,6 +683,7 @@ data Message
   | Exhaust Target
   | CommitCharacters PlayerId
   | CommitToQuest Target
+  | PayQuestCommitmentCost PlayerId QuestId Target Target
   | Staging
   | QuestResolution
   | PlaceProgressOnQuest Int

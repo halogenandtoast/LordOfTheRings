@@ -1637,8 +1637,10 @@ library
       LordOfTheRings.Helpers.Discard
       LordOfTheRings.Helpers.Engagement
       LordOfTheRings.Helpers.Fellowship
+      LordOfTheRings.Helpers.HandEntry
       LordOfTheRings.Helpers.IslandMap
       LordOfTheRings.Helpers.Modifiers
+      LordOfTheRings.Helpers.QuestCommit
       LordOfTheRings.Helpers.Ready
       LordOfTheRings.Helpers.Staging
       LordOfTheRings.Helpers.Treasure
@@ -2690,6 +2692,7 @@ library
       LordOfTheRings.Quest.Cards.AmbushTheMenOfHarad
       LordOfTheRings.Quest.Cards.AMiserableJourney
       LordOfTheRings.Quest.Cards.AnArduousJourney
+      LordOfTheRings.Quest.Cards.AnduinCrossing
       LordOfTheRings.Quest.Cards.AnduinPassage
       LordOfTheRings.Quest.Cards.AnEvilPlace
       LordOfTheRings.Quest.Cards.ANewTerrorAbroad
@@ -3086,6 +3089,7 @@ library
       LordOfTheRings.Quest.Cards.ThroughTheMarshAnArduousJourney
       LordOfTheRings.Quest.Cards.ThroughTheMarshAWearyPassage
       LordOfTheRings.Quest.Cards.ThroughTheMarshNoEndInSight
+      LordOfTheRings.Quest.Cards.ThroughTheRuinsOsgiliath
       LordOfTheRings.Quest.Cards.ToTheElvenKingsHalls
       LordOfTheRings.Quest.Cards.ToTheRiver
       LordOfTheRings.Quest.Cards.ToTheWestDoor
@@ -3270,6 +3274,7 @@ library
       LordOfTheRings.Scenario.Scenarios.TheLongArmOfMordor.Helpers
       LordOfTheRings.Scenario.Scenarios.TheLongDark
       LordOfTheRings.Scenario.Scenarios.TheLongDark.Helpers
+      LordOfTheRings.Scenario.Scenarios.TheMassingAtOsgiliath
       LordOfTheRings.Scenario.Scenarios.TheMassingAtOsgiliath.Helpers
       LordOfTheRings.Scenario.Scenarios.TheMorgulVale
       LordOfTheRings.Scenario.Scenarios.TheMorgulVale.Helpers

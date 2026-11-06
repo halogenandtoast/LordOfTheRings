@@ -8,7 +8,7 @@ import Data.Aeson.Types (Parser)
 import LordOfTheRings.Campaign (CampaignLogKey)
 import LordOfTheRings.Card.CardType (CardType)
 import LordOfTheRings.Card.Code (CardCode)
-import LordOfTheRings.Id (CardId, EnemyId, PlayerId)
+import LordOfTheRings.Id (QuestId, CardId, EnemyId, PlayerId)
 import LordOfTheRings.Keyword (Keyword)
 import LordOfTheRings.Matcher.Types (CardMatcher, EnemyMatcher, HeroMatcher, LocationMatcher, PlayerMatcher)
 import LordOfTheRings.Outcome (Outcome)
@@ -77,6 +77,7 @@ data ModifierType
   | -- | on a location: player card effects cannot place progress on it, as Retake the City
     -- reads for the staging area
     NoProgressFromPlayerCards
+  | NoProgressFromCardEffects
   | -- | on the game: each racing test requires this many more matching results, as Ravine
     -- Ledge reads while in the staging area
     RacingTestAdditionalResults Int
@@ -748,6 +749,13 @@ data ModifierType
   | -- | on a player: he played the card this round, from wherever, paid for or not; one
     -- per card played. Read them with 'cardsPlayedThisRound'
     PlayedCardThisRound CardCode CardType
+  | -- | On a player: a card played or put into play from that player's hand this round.
+    CardFromHandThisRound CardId
+  | -- | On a player: plays and puts from hand share this maximum each round.
+    CardsFromHandPerRoundLimit Int
+  | -- | Before declaring commitments this phase, discard a hero or matching ally.
+    CommitRequiresDiscard QuestId CardMatcher
+  | PaidCommitmentCost QuestId
   | -- | on a player: he played a card this phase, as "the first card each player plays each
     -- phase" counts (The Long Arm of Mordor)
     PlayedACardThisPhase

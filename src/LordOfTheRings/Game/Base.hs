@@ -375,3 +375,12 @@ allyEntryBarred pid g =
   isAlly = \case
     AllyTarget _ -> True
     _ -> False
+
+-- | Plays and puts into play share the limit, including earlier actions in a round
+-- before a stage imposing it entered play. Replaying the same card counts again.
+handEntryLimitReached :: Game -> PlayerId -> Bool
+handEntryLimitReached g pid = any (used >=) limits
+ where
+  mods = map modifierType $ Map.findWithDefault [] (PlayerTarget pid) (gameModifiers g)
+  limits = [n | CardsFromHandPerRoundLimit n <- mods]
+  used = length [() | Effect _ (PlayerTarget p) ms _ <- gameEffects g, p == pid, CardFromHandThisRound _ <- ms]

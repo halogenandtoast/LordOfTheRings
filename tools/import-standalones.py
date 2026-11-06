@@ -169,6 +169,26 @@ PRODUCTS = [
 ]
 
 
+def ensure_product_assets(pack):
+    # Standalone products become selectable as their scenario scripts are enabled.
+    # The Massing at Osgiliath uses its printed standalone symbol for both icons.
+    if pack != 'the-massing-at-osgiliath':
+        return
+    cover = ROOT / 'images/products/MEC15.jpg'
+    if not cover.exists():
+        cover.parent.mkdir(parents=True, exist_ok=True)
+        cover.write_bytes(fetch('https://hallofbeorn-resources.s3.amazonaws.com/Images/Products/MEC15.jpg'))
+    symbol = 'https://raw.githubusercontent.com/KevBelisle/lotr-lcg-assets/HEAD/' + urllib.parse.quote('icons/expansion symbols/pod/the_massing_at_osgiliath.svg')
+    svg = None
+    for kind in ('expansions', 'scenarios'):
+        target = ROOT / 'images/icons' / kind / (pack + '.svg')
+        if not target.exists():
+            if svg is None:
+                svg = fetch(symbol)
+            target.parent.mkdir(parents=True, exist_ok=True)
+            target.write_bytes(svg)
+
+
 def main():
     global PACK, TITLE
     parser = argparse.ArgumentParser(description=__doc__)
@@ -180,6 +200,7 @@ def main():
         if args.pack and args.pack != pack:
             continue
         PACK, TITLE = pack, title
+        ensure_product_assets(pack)
         local = next(args.local_dir.glob(folder + ' - *'))
         product_cache = CACHE / (product + '.product.html')
         if not product_cache.exists():

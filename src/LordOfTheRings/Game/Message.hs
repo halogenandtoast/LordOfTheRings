@@ -1,5 +1,6 @@
 module LordOfTheRings.Game.Message (module LordOfTheRings.Game.Message) where
 
+import LordOfTheRings.Helpers.QuestCommit (canPayCommitCost)
 import LordOfTheRings.Epic.Runner (runEpicMessage)
 import LordOfTheRings.Enemy.AttackLocation (attackLocationEnemy)
 import Data.List (mapAccumL)
@@ -2874,7 +2875,8 @@ runGameMessage msg g = case msg of
         committable c = do
           mods <- getModifiers c
           free <- doesNotExhaustToCommit c
-          pure $ CannotCommitToQuest `notElem` mods && (free || CannotExhaust `notElem` mods)
+          payable <- canPayCommitCost pid c
+          pure $ payable && CannotCommitToQuest `notElem` mods && (free || CannotExhaust `notElem` mods)
     characters <-
       if barred
         then pure []
