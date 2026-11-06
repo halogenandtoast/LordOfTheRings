@@ -16,7 +16,8 @@ allCampaignCards =
   Map.fromList
     $ map
       (\def -> (cdCardCode def, def))
-      [ passageThroughMirkwoodCampaign
+      [ theOldForestCampaign
+      , passageThroughMirkwoodCampaign
       , theOathCampaign
       , theCavesOfNibinDumCampaign
       , journeyAlongTheAnduinCampaign
@@ -143,6 +144,9 @@ theDreadRealmCampaign = campaignCard "AAC193" "The Dread Realm"
 
 aShadowOfThePastCampaign :: CardDef
 aShadowOfThePastCampaign = campaignCard "141030" "A Shadow of the Past"
+
+theOldForestCampaign :: CardDef
+theOldForestCampaign = campaignCard "the-old-forest-023" "The Old Forest"
 
 aKnifeInTheDarkCampaign :: CardDef
 aKnifeInTheDarkCampaign = campaignCard "141044" "A Knife in the Dark"

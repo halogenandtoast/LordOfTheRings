@@ -383,6 +383,15 @@ theLordOfTheRings =
     , ("mount-doom", Just Cards.mountDoomCampaign)
     ]
 
+theLordOfTheRingsWithOldForest :: CampaignDef
+theLordOfTheRingsWithOldForest = theLordOfTheRings
+  { campaignDefId = "the-lord-of-the-rings-with-the-old-forest"
+  , campaignDefName = "The Lord of the Rings + The Old Forest"
+  , campaignDefScenarios = take 1 stages <> [("the-old-forest", Just Cards.theOldForestCampaign)] <> drop 1 stages
+  }
+ where
+  stages = campaignDefScenarios theLordOfTheRings
+
 {- | The Ered Mithrin Campaign Expansion: the Ered Mithrin cycle's nine scenarios, one
 campaign (MEC115 rules, "Campaign Mode").
 -}
@@ -411,6 +420,7 @@ allCampaigns =
   , dreamChaser
   , theHobbit
   , theLordOfTheRings
+  , theLordOfTheRingsWithOldForest
   , eredMithrin
   ]
 

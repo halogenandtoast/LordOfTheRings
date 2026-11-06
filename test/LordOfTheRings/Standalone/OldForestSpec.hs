@@ -1,7 +1,9 @@
 module LordOfTheRings.Standalone.OldForestSpec (spec) where
 
 import Data.Map.Strict qualified as Map
-import LordOfTheRings.Decklist (loadPlayer)
+import LordOfTheRings.Decklist (loadPlayer, barredHeroes)
+import LordOfTheRings.Campaign qualified as Campaign
+import LordOfTheRings.Saga (sagaBarredTitles)
 import LordOfTheRings.Entities (questsL)
 import LordOfTheRings.Scenario (theOldForest)
 import LordOfTheRings.Scenario.Types (questDeckL, encounterDiscardL, scenarioSetAside)
@@ -80,8 +82,85 @@ forestTable size body = do
   env <- newGameEnv (newTableIn theOldForest $ fromJustNote "empty table" $ nonEmpty seats) (const $ pure ()) 1
   runGameT env $ body =<< getsGame (.playerOrder)
 
+forestCampaign :: Campaign.CampaignLog
+forestCampaign = (Campaign.newCampaignLog "the-lord-of-the-rings-with-the-old-forest")
+  { Campaign.campaignLogCompleted = [Campaign.CompletedScenario "a-shadow-of-the-past" 0] }
+
 spec :: Spec
 spec = describe "Old Forest" do
+  describe "campaign" do
+    it "offers an optional nineteen-scenario route in the printed order" do
+      let stages = Campaign.campaignDefScenarios Campaign.theLordOfTheRingsWithOldForest
+      length stages `shouldBe` 19
+      take 3 (map fst stages) `shouldBe` ["a-shadow-of-the-past", "the-old-forest", "a-knife-in-the-dark"]
+      length (Campaign.campaignDefScenarios Campaign.theLordOfTheRings) `shouldBe` 18
+      Campaign.nextScenario forestCampaign `shouldBe` Just "the-old-forest"
+      Campaign.campaignCardFor forestCampaign "the-old-forest" `shouldBe` Just "the-old-forest-023" :: IO ()
+
+    it "uses Fellowship setup only in campaign mode" . campaignTestIn theOldForest forestCampaign testDeck $ \_ -> do
+      run Setup
+      finishForestChoices 100
+      heroes <- getsGame (toList . (.entities.heroes))
+      length heroes `shouldBe` 4
+      map toCardCode heroes `shouldSatisfy` elem "141001"
+      objectives <- getsGame (toList . (.entities.objectives))
+      map toCardCode objectives `shouldSatisfy` elem "141085"
+      attachments <- getsGame (toList . (.entities.attachments))
+      map toCardCode attachments `shouldBe` [toCardCode Attachments.oldBogeyStories]
+
+    it "needs no Fellowship hero or campaign boon in standalone mode" . gameTestIn theOldForest testDeck $ \_ -> do
+      run $ DoStep 3 Setup
+      run $ DoStep 4 Setup
+      getsGame (length . (.entities.heroes)) `shouldReturn` 3
+      getsGame (length . (.entities.attachments)) `shouldReturn` 0
+
+    it "applies the Black Riders' deck restrictions only in campaign mode" do
+      let deck = deckList ["01012", "01007", "01002"] [(toCardCode Attachments.theOneRing, 1)]
+      barredHeroes "the-old-forest" False [deck] `shouldBe` []
+      barredHeroes "the-old-forest" True [deck] `shouldBe` ["The One Ring"]
+      sagaBarredTitles "the-old-forest" False `shouldBe` []
+      sagaBarredTitles "the-old-forest" True `shouldSatisfy` elem "Frodo Baggins" :: IO ()
+
+    it "lets the first player attach the temporary boon to another player's hero" . twoPlayerCampaignTestIn theOldForest forestCampaign testDeck $ \one two -> do
+      run $ DoStep 4 Setup
+      hero <- heroOf two "01012"
+      chooseTarget one hero
+      attachments <- getsGame (toList . (.entities.attachments))
+      length attachments `shouldBe` 1
+      for_ attachments \boon -> (toAttrs boon).controller `shouldBe` two
+
+    for_ [11, 12, 15] \damage ->
+      it ("earns the boon on victory only when Willow has at least twelve damage: " <> show damage) . campaignTestIn theOldForest forestCampaign testDeck $ \_ -> do
+        target <- forestStage Quests.theWickedWillow
+        willow <- stageEnemy Enemies.oldManWillow
+        run $ DealDamage GameSource (EnemyTarget willow) damage
+        run $ PlaceTokens GameSource target Progress 18
+        getsGame (.outcome) `shouldReturn` Just Won
+        campaign <- getCampaignLog
+        Campaign.seatPoolCards 0 campaign `shouldBe` [toCardCode Attachments.oldBogeyStories | damage >= 12]
+        map Campaign.completedScenario campaign.completed `shouldBe` ["a-shadow-of-the-past", "the-old-forest"]
+        Campaign.nextScenario campaign `shouldBe` Just "a-knife-in-the-dark"
+
+    it "lets the group assign the earned boon to a player's deck" . twoPlayerCampaignTestIn theOldForest forestCampaign testDeck $ \one two -> do
+      willow <- stageEnemy Enemies.oldManWillow
+      run $ DealDamage GameSource (EnemyTarget willow) 12
+      run ResolveCampaign
+      chooseTarget one (PlayerTarget two)
+      campaign <- getCampaignLog
+      Campaign.seatPoolCards 0 campaign `shouldBe` []
+      Campaign.seatPoolCards 1 campaign `shouldBe` [toCardCode Attachments.oldBogeyStories]
+
+    it "does not remove an earned boon from the campaign pool when its action is spent" . campaignTestIn theOldForest
+      (Campaign.updateLog (Campaign.AddToPool $ Campaign.PoolCard (toCardCode Attachments.oldBogeyStories) (Just 0) Nothing) forestCampaign) testDeck $ \pid -> do
+        hero <- heroOf pid "01012"
+        boon <- putAttachmentOn pid Attachments.oldBogeyStories hero
+        replicateM_ 6 $ putCardIntoHand pid Allies.guardOfTheCitadel
+        case boon of
+          AttachmentTarget aid -> run $ UseCardAbility pid (AttachmentSource aid) 1 []
+          _ -> error "attachment missing"
+        campaign <- getCampaignLog
+        Campaign.seatPoolCards 0 campaign `shouldBe` [toCardCode Attachments.oldBogeyStories]
+
   describe "quests and setup" do
     it "builds forty encounter cards, the opening stage, four alternatives and the final stage" . gameTestIn theOldForest testDeck $ \_ -> do
       run $ DoStep 1 Setup

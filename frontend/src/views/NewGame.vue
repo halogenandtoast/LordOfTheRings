@@ -108,19 +108,28 @@ const chooseScenario = (s: Shown) => step(() => (selectedScenario.value = s))
 // Campaign mode: the box's scenarios in order, from its first, as one campaign.
 const asCampaign = ref(false)
 const extendedMirkwoodPaths = ref(false)
+const includeOldForest = ref(false)
 const showCampaignChoices = ref(false)
 watch(selectedCampaign, () => {
   extendedMirkwoodPaths.value = false
+  includeOldForest.value = false
   showCampaignChoices.value = false
 })
 const offersMirkwoodPaths = computed(() => ['core-set', 'dark-of-mirkwood'].includes(selectedCampaign.value?.id ?? ''))
+const offersOldForest = computed(() => selectedCampaign.value?.id === 'the-lord-of-the-rings')
 const campaignMode = computed(() => extendedMirkwoodPaths.value && offersMirkwoodPaths.value
   ? 'mirkwood-paths'
+  : offersOldForest.value && includeOldForest.value ? 'the-lord-of-the-rings-with-the-old-forest'
   : selectedCampaign.value ? campaignModes[selectedCampaign.value.id] ?? null : null)
 const campaignTitle = computed(() => offersMirkwoodPaths.value
   ? t(extendedMirkwoodPaths.value ? 'campaignMode.mirkwoodPaths' : selectedCampaign.value?.id === 'core-set' ? 'campaignMode.coreCampaign' : 'campaignMode.miniCampaign')
   : selectedCampaign.value?.name ?? '')
 const campaignRoute = computed(() => {
+  if (offersOldForest.value && includeOldForest.value) {
+    const saga = selectedCampaign.value?.scenarios ?? []
+    const forest = allCampaigns.find((c) => c.id === 'the-old-forest')?.scenarios ?? []
+    return [...saga.slice(0, 1), ...forest, ...saga.slice(1)]
+  }
   if (!offersMirkwoodPaths.value) return allCampaigns.find((c) => c.id === selectedCampaign.value?.id)?.scenarios ?? []
   const core = allCampaigns.find((c) => c.id === 'core-set')?.scenarios.slice(0, 3) ?? []
   const dark = allCampaigns.find((c) => c.id === 'dark-of-mirkwood')?.scenarios ?? []
@@ -270,6 +279,7 @@ const create = async () => {
                 <span class="route-count">{{ $t('newGame.scenarioCount', 5) }}</span>
               </label>
             </fieldset>
+            <label v-if="offersOldForest" class="reward-choice"><input v-model="includeOldForest" type="checkbox" />{{ $t('campaignMode.includeOldForest') }}</label>
             <div class="route-preview">
               <ScenarioRoutePreview :scenarios="campaignRoute" />
             </div>

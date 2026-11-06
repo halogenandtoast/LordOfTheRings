@@ -12,7 +12,7 @@ import LordOfTheRings.I18n (ikey, ikeyWith, intVar, textVar)
 import LordOfTheRings.Name (Name (..))
 import LordOfTheRings.Id (ScenarioId (..))
 import LordOfTheRings.Prelude
-import LordOfTheRings.Saga (sagaBarredTitles, sagaOf)
+import LordOfTheRings.Saga (sagaBarredTitles, sagaOfMode)
 import LordOfTheRings.Trait (Trait (Master))
 
 data DeckList = DeckList
@@ -130,7 +130,7 @@ barredHeroes scenarioId inCampaign deckLists =
   -- "Cards with the Master trait cannot be used when playing saga expansions" (A Shadow
   -- in the East rules insert, "The One Ring"): The One Ring itself is one
   masterCards =
-    if isJust (sagaOf $ ScenarioId scenarioId)
+    if isJust (sagaOfMode (ScenarioId scenarioId) inCampaign)
       then ordNub [title | dl <- deckLists, (code, _) <- dl.cards, Just d <- [Map.lookup code allPlayerCards], Master `member` cdCardTraits d, let Name title _ = d.cdName]
       else []
   -- a Baggins or Fellowship sphere hero comes from the scenario, never from a deck

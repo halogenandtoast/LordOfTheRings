@@ -22,8 +22,8 @@ import LordOfTheRings.Epic.Types (EpicTargetQuery, EpicEffect)
 import LordOfTheRings.Effect
 import LordOfTheRings.Entities (entitiesLocations, entitiesQuests)
 import LordOfTheRings.Game.Base (gameEffects, gameEntities, gamePhase, gamePlayerOrder, gameRevealer, gameScenario)
-import LordOfTheRings.Saga (FellowshipSetup (..), fellowshipSetup)
-import LordOfTheRings.Scenario.Types (scenarioId)
+import LordOfTheRings.Saga (FellowshipSetup (..), fellowshipSetupForMode)
+import LordOfTheRings.Scenario.Types (scenarioId, scenarioCampaign)
 import LordOfTheRings.Helpers.Modifiers (cardsPlayedThisRound, getModifiers, immuneToSource, onlyMasterCardsAffect)
 import LordOfTheRings.Helpers.Ready (readyableCards)
 import LordOfTheRings.Helpers.Staging (getLocationQuestPoints)
@@ -2732,12 +2732,13 @@ asRevealer pid body = do
 
 {- | A saga's setup: the first player takes control of the scenario's Baggins or
 Fellowship sphere hero, his choice among them if it may be one of several Ring-bearers,
-and attaches The One Ring to it when the scenario has one (see 'fellowshipSetup').
+and attaches The One Ring to it when the scenario has one (see 'fellowshipSetupForMode').
 -}
 setUpFellowship :: ReverseQueue m => PlayerId -> m ()
 setUpFellowship lead = do
   sid <- getsGame (scenarioId . toAttrs . gameScenario)
-  for_ (fellowshipSetup sid) \fs -> do
+  campaign <- getsGame (isJust . scenarioCampaign . toAttrs . gameScenario)
+  for_ (fellowshipSetupForMode sid campaign) \fs -> do
     -- of the Ring-bearers the scenario allows, those the game has cards for
     heroes <- for (filter (isJust . lookupCardDef) fs.fellowshipHeroes) \code -> genPlayerCard (toCardDef code) (Just lead)
     let takeFellowshipHero :: ReverseQueue n => PlayerCard -> n ()

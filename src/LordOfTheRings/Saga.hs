@@ -21,6 +21,18 @@ sagaOf sid
   | sid `elem` lordOfTheRingsScenarios = Just TheLordOfTheRings
   | otherwise = Nothing
 
+-- The Old Forest rules insert, p. 4: only campaign mode uses The Black Riders'
+-- setup and Fellowship rules. Its standalone adventure needs no saga components.
+sagaOfMode :: ScenarioId -> Bool -> Maybe Saga
+sagaOfMode sid inCampaign
+  | sid == "the-old-forest" && inCampaign = Just TheLordOfTheRings
+  | otherwise = sagaOf sid
+
+fellowshipSetupForMode :: ScenarioId -> Bool -> Maybe FellowshipSetup
+fellowshipSetupForMode sid inCampaign
+  | sid == "the-old-forest" && inCampaign = fellowshipSetup "a-shadow-of-the-past"
+  | otherwise = fellowshipSetup sid
+
 -- | Over Hill and Under Hill's, then On the Doorstep's.
 hobbitScenarios :: [ScenarioId]
 hobbitScenarios =
@@ -107,7 +119,7 @@ bars Aragorn from The Tower of Cirith Ungol and Mount Doom, and Frodo Baggins fr
 Black Gate Opens.
 -}
 sagaBarredTitles :: ScenarioId -> Bool -> [Text]
-sagaBarredTitles sid inCampaign = case sagaOf sid of
+sagaBarredTitles sid inCampaign = case sagaOfMode sid inCampaign of
   Nothing -> []
   Just TheHobbit -> ["Bilbo Baggins"]
   Just TheLordOfTheRings ->

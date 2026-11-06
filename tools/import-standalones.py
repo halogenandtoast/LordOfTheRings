@@ -43,6 +43,7 @@ def icon(match):
 
 
 def normalize_text(value):
+    value = value.replace('beginning of the ropund', 'beginning of the round')
     if 'Driven by Fear' in value:
         value = value.replace('first player attached', 'first player attaches').replace("Treat attacked character's", "Treat attached character's")
     value = value.replace('attacks and Oathbreaker that enemy', 'attacks an Oathbreaker, that enemy').replace('insread.', 'instead.')
@@ -178,6 +179,7 @@ def ensure_product_assets(pack):
         'the-massing-at-osgiliath': ('MEC15', 'the_massing_at_osgiliath'),
         'the-battle-of-lake-town': ('MEC35', 'the_battle_of_lake_town'),
         'the-stone-of-erech': ('MEC33', 'the_stone_of_erech'),
+        'the-old-forest': ('MEC37', 'the_old_forest'),
     }
     if pack not in enabled:
         return
