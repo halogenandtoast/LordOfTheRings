@@ -44,7 +44,7 @@ import LordOfTheRings.Placement (
   placementController,
  )
 import LordOfTheRings.Prelude hiding (first, many)
-import LordOfTheRings.Quest (QuestAttrs (questOwner))
+import LordOfTheRings.Quest (QuestAttrs (questOwner, questPlayedBy))
 import LordOfTheRings.Target (
   Target (
     AllyTarget,
@@ -124,7 +124,7 @@ separate groups g
     ContractTarget k -> (.owner) <$> Map.lookup k es.contracts
     -- a Trap in the staging area follows its owner (ALeP 3.382)
     AttachmentTarget k -> Map.lookup k es.attachments <&> \a -> fromMaybe (attachmentOwner $ toAttrs a) (placed a.placement)
-    QuestTarget k -> questOwner . toAttrs =<< Map.lookup k es.quests
+    QuestTarget k -> (\q -> questPlayedBy (toAttrs q) <|> questOwner (toAttrs q)) =<< Map.lookup k es.quests
     _ -> Nothing
   placed = \case
     AttachedTo t -> holderOf t

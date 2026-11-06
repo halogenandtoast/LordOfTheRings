@@ -283,10 +283,12 @@ import LordOfTheRings.Hero (
     heroFacedown,
     heroGuardedBy,
     heroOwner,
+    heroCardOwner,
     heroPoison,
     heroTokens,
     heroUnconscious
   ),
+  createHero,
   lookupHero,
   newHero,
  )
@@ -3342,7 +3344,7 @@ runGameMessage msg g = case msg of
     push $ CheckWindows [mkAfter $ EntersPlay $ toTarget thisHero]
     pure $ g & entitiesL . heroesL %~ insertEntity thisHero
   PutHeroIntoPlayAs hid pid card -> do
-    let thisHero = lookupHero (toCardCode card) card.id hid pid
+    let thisHero = createHero card hid pid
     push $ CheckWindows [mkAfter $ EntersPlay $ toTarget thisHero]
     pure $ g & entitiesL . heroesL %~ insertEntity thisHero
   PutObjectiveHeroIntoPlayUnder pid card -> do
@@ -3511,8 +3513,8 @@ runGameMessage msg g = case msg of
       $ [Discard GameSource (toTarget att) | att <- toList g.entities.attachments, att.placement == AttachedTo target]
       <> [Discard GameSource (toTarget t) | t <- toList g.entities.treacheries, t.placement == AttachedTo target]
       <> [Discard GameSource (toTarget o) | o <- toList g.entities.objectives, o.placement == AttachedTo target]
-    deck <- shuffleM . (toCard h :) . (.deck) =<< getPlayer h.owner
-    pure $ g' & entitiesL . heroesL %~ Map.delete hid & playersL . ix h.owner . deckL .~ deck
+    deck <- shuffleM . (toCard h :) . (.deck) =<< getPlayer h.cardOwner
+    pure $ g' & entitiesL . heroesL %~ Map.delete hid & playersL . ix h.cardOwner . deckL .~ deck
   ReturnToTopOfEncounterDeck target -> returnToEncounterDeck (:) target g
   ReturnToBottomOfEncounterDeck target -> returnToEncounterDeck (\card deck -> deck <> [card]) target g
   RemoveProgressFromQuest source n -> do
@@ -4050,7 +4052,8 @@ runGameMessage msg g = case msg of
           overAttrs
             ( \h ->
                 h
-                  { heroTokens = allyTokens attrs
+                  { heroCardOwner = Just attrs.allyOwner
+                  , heroTokens = allyTokens attrs
                   , heroExhausted = allyExhausted attrs
                   , heroCommitted = allyCommitted attrs
                   , heroAttacking = allyAttacking attrs
@@ -4069,6 +4072,7 @@ runGameMessage msg g = case msg of
             ( \a ->
                 a
                   { allyPlacement = InPlayArea attrs.heroOwner
+                  , allyOwner = attrs.cardOwner
                   , allyTokens = heroTokens attrs
                   , allyExhausted = heroExhausted attrs
                   , allyCommitted = heroCommitted attrs
@@ -4108,7 +4112,7 @@ runGameMessage msg g = case msg of
     let attrs = toAttrs h
         eid = EnemyId (unHeroId hid)
         new =
-          overAttrs (\e -> e {enemyTokens = heroTokens attrs, enemyOwner = Just attrs.heroOwner})
+          overAttrs (\e -> e {enemyTokens = heroTokens attrs, enemyOwner = Just attrs.cardOwner})
             $ lookupEnemy (toCardCode h) attrs.heroCardId eid
     pushAll $ discardAttached g (toTarget h) <> [CheckEliminations]
     pure
@@ -4437,7 +4441,7 @@ runGameMessage msg g = case msg of
         g' <- leftPlay g target
         pushAll $ discardAttached g target
         eid <- getRandom
-        let thisEnemy = overAttrs (\e -> e {enemyPlacement = EngagedWith h.owner, enemyOwner = Just h.owner}) $ lookupEnemy other (toCard h).id eid
+        let thisEnemy = overAttrs (\e -> e {enemyPlacement = EngagedWith h.cardOwner, enemyOwner = Just h.cardOwner}) $ lookupEnemy other (toCard h).id eid
         push $ CheckWindows [mkAfter $ EntersPlay $ toTarget thisEnemy]
         pure $ g' & entitiesL . heroesL %~ Map.delete hid & entitiesL . enemiesL %~ insertEntity thisEnemy
   -- and back: the enemy leaves play, and the hero enters play under its owner's control,

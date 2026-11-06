@@ -43,6 +43,8 @@ data QuestAttrs = QuestAttrs
   , questOwner :: Maybe PlayerId
   -- ^ a player side quest's owner; it waits in the staging area until the players quest
   -- against it
+  , questPlayedBy :: Maybe PlayerId
+  -- ^ whose staging area the side quest was played into, independently of card ownership
   , questUnderneath :: [Card]
   -- ^ the cards facedown underneath it, out of play, as Lost in the Wilderness's
   }
@@ -54,7 +56,7 @@ instance ToJSON QuestAttrs where
   toJSON = genericToJSON (aesonOptions $ Just "quest")
 
 instance FromJSON QuestAttrs where
-  parseJSON = genericParseJSON (aesonOptions $ Just "quest") . withDefaults [("owner", toJSON (Nothing :: Maybe PlayerId)), ("underneath", toJSON ([] :: [Card]))]
+  parseJSON = genericParseJSON (aesonOptions $ Just "quest") . withDefaults [("playedBy", toJSON (Nothing :: Maybe PlayerId)), ("owner", toJSON (Nothing :: Maybe PlayerId)), ("underneath", toJSON ([] :: [Card]))]
 
 quest :: (QuestAttrs -> a) -> CardDef -> QuestCard a
 quest f cardDef =
@@ -69,6 +71,7 @@ quest f cardDef =
             , questTokens = mempty
             , questFlipped = False
             , questOwner = Nothing
+            , questPlayedBy = Nothing
             , questUnderneath = []
             }
     }

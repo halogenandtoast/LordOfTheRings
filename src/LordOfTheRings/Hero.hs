@@ -191,7 +191,8 @@ asGainedText code h = overAttrs (const attrs) $ lookupHero code attrs.heroCardId
   attrs = (toAttrs h) {heroGainedAbilities = []}
 
 createHero :: PlayerCard -> HeroId -> PlayerId -> Hero
-createHero card hid pid = lookupHero (toCardCode card) (pcId card) hid pid
+createHero card hid pid =
+  overAttrs (\a -> a {heroCardOwner = card.owner}) $ lookupHero (toCardCode card) (pcId card) hid pid
 
 lookupHero :: (HasCallStack) => CardCode -> CardId -> HeroId -> PlayerId -> Hero
 lookupHero cardCode cardId hid pid = case Map.lookup cardCode allHeroes of

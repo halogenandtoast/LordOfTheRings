@@ -40,6 +40,7 @@ asAlly h =
     ( \a ->
         a
           { allyPlacement = InPlayArea h.heroOwner
+          , allyOwner = h.cardOwner
           , allyTokens = h.heroTokens
           , allyExhausted = h.heroExhausted
           , allyCommitted = h.heroCommitted

@@ -47,6 +47,9 @@ data HeroAttrs = HeroAttrs
   , heroCardId :: CardId
   , heroCardCode :: CardCode
   , heroOwner :: PlayerId
+  -- ^ the player currently controlling the hero
+  , heroCardOwner :: Maybe PlayerId
+  -- ^ the original card owner, retained when control or card type changes
   , heroTokens :: Tokens
   , heroExhausted :: Bool
   , heroCommitted :: Bool
@@ -77,7 +80,7 @@ instance ToJSON HeroAttrs where
   toJSON = genericToJSON (aesonOptions $ Just "hero")
 
 instance FromJSON HeroAttrs where
-  parseJSON = genericParseJSON (aesonOptions $ Just "hero") . withDefaults [("prisoner", Bool False), ("guardedBy", Null), ("inStagingArea", Bool False), ("facedown", toJSON ([] :: [PlayerCard])), ("poison", toJSON ([] :: [PlayerCard])), ("unconscious", Bool False), ("gainedAbilities", toJSON ([] :: [Ability]))]
+  parseJSON = genericParseJSON (aesonOptions $ Just "hero") . withDefaults [("cardOwner", toJSON (Nothing :: Maybe PlayerId)), ("prisoner", Bool False), ("guardedBy", Null), ("inStagingArea", Bool False), ("facedown", toJSON ([] :: [PlayerCard])), ("poison", toJSON ([] :: [PlayerCard])), ("unconscious", Bool False), ("gainedAbilities", toJSON ([] :: [Ability]))]
 
 hero :: (HeroAttrs -> a) -> CardDef -> HeroCard a
 hero f cardDef =
@@ -90,6 +93,7 @@ hero f cardDef =
             , heroCardId = cardId
             , heroCardCode = cdCardCode cardDef
             , heroOwner = pid
+            , heroCardOwner = Just pid
             , heroTokens = mempty
             , heroExhausted = False
             , heroCommitted = False
@@ -137,7 +141,7 @@ instance ToJSON Hero where
 instance IsCard HeroAttrs where
   toCard a
     | cdCardType (toCardDef a) == ObjectiveHeroType = EncounterCard $ MkEncounterCard {ecId = heroCardId a, ecCardCode = heroCardCode a}
-    | otherwise = PlayerCard $ MkPlayerCard {pcId = heroCardId a, pcCardCode = heroCardCode a, pcOwner = Just (heroOwner a)}
+    | otherwise = PlayerCard $ MkPlayerCard {pcId = heroCardId a, pcCardCode = heroCardCode a, pcOwner = Just a.cardOwner}
 
 instance IsCard Hero where
   toCard = toCard . toAttrs
@@ -175,6 +179,9 @@ instance HasField "id" HeroAttrs HeroId where
 instance HasField "owner" HeroAttrs PlayerId where
   getField = heroOwner
 
+instance HasField "cardOwner" HeroAttrs PlayerId where
+  getField a = fromMaybe a.owner a.heroCardOwner
+
 instance HasField "name" HeroAttrs Name where
   getField = cdName . toCardDef
 
@@ -192,6 +199,9 @@ instance HasField "id" Hero HeroId where
 
 instance HasField "owner" Hero PlayerId where
   getField = (.owner) . toAttrs
+
+instance HasField "cardOwner" Hero PlayerId where
+  getField = (.cardOwner) . toAttrs
 
 instance HasField "name" Hero Name where
   getField = (.name) . toAttrs

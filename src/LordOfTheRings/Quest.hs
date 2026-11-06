@@ -478,10 +478,10 @@ lookupQuest cardCode cardId ident = case Map.lookup cardCode allQuests of
 newQuest :: (MonadRandom m) => EncounterCard -> m Quest
 newQuest card = createQuest card <$> getRandom
 
--- | A player side quest, owned by the player who played it.
+-- | A player side quest keeps its card owner, and records who played it.
 newSideQuest :: (MonadRandom m) => PlayerId -> PlayerCard -> m Quest
 newSideQuest pid card =
-  overAttrs (\a -> a {questOwner = Just pid}) . lookupQuest (toCardCode card) card.id <$> getRandom
+  overAttrs (\a -> a {questOwner = card.owner <|> Just pid, questPlayedBy = Just pid}) . lookupQuest (toCardCode card) card.id <$> getRandom
 
 allQuests :: Map CardCode SomeQuestCard
 allQuests =

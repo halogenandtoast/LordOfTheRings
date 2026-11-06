@@ -59,6 +59,66 @@ endRoundWindow = run $ CheckWindows [mkWhen RoundEnds]
 
 spec :: Spec
 spec = describe "Stone of Erech" do
+  describe "exchanged cards changing type" do
+    it "keeps a passed ally's owner as Sword-thain makes it a hero and then an ally again" . twoPlayerTest testDeck $ \one two -> do
+      (card, hid, sword) <- receivedAllyHero one two
+      hero <- getHero hid
+      hero.owner `shouldBe` two
+      hero.cardOwner `shouldBe` one
+      toCard hero `shouldBe` card
+      run $ Discard GameSource sword
+      ally <- erechAlly Allies.henamarthRiversong
+      ally.placement `shouldBe` InPlayArea two
+      toCard ally `shouldBe` card
+      run $ Discard GameSource (toTarget ally)
+      (.discard) <$> getPlayer one `shouldReturn` [card]
+      (.discard) <$> getPlayer two >>= (`shouldSatisfy` notElem card)
+
+    it "discards a destroyed hero made from a passed ally to its original owner" . twoPlayerTest testDeck $ \one two -> do
+      (card, hid, _) <- receivedAllyHero one two
+      run $ DealDamage GameSource (HeroTarget hid) 10
+      (.discard) <$> getPlayer one `shouldReturn` [card]
+      (.discard) <$> getPlayer two >>= (`shouldSatisfy` notElem card)
+
+    it "shuffles a hero made from a passed ally into its original owner's deck" . twoPlayerTest testDeck $ \one two -> do
+      (card, hid, _) <- receivedAllyHero one two
+      run $ ShuffleIntoOwnersDeck (HeroTarget hid)
+      (.deck) <$> getPlayer one >>= (`shouldSatisfy` elem card)
+      (.deck) <$> getPlayer two >>= (`shouldSatisfy` notElem card)
+
+    it "keeps original ownership when the resulting hero changes control" . twoPlayerTest testDeck $ \one two -> do
+      (card, hid, _) <- receivedAllyHero one two
+      run $ ChangeHeroController hid one
+      (.owner) <$> getHero hid `shouldReturn` one
+      run $ ChangeHeroController hid two
+      (.owner) <$> getHero hid `shouldReturn` two
+      (toCard <$> getHero hid) `shouldReturn` card
+
+    it "loads older heroes without the separate card owner field" . gameTest $ \pid -> do
+      target <- heroOf pid "01012"
+      let hid = case target of HeroTarget ident -> ident; _ -> error "hero missing"
+      hero <- getHero hid
+      let old = case toJSON (toAttrs hero) of
+            Object fields -> Object (KeyMap.delete "cardOwner" fields)
+            value -> value
+      case fromJSON old of
+        Success restored -> do
+          (restored :: HeroAttrs).cardOwner `shouldBe` pid
+          toCard restored `shouldBe` toCard hero
+        Error err -> liftIO $ expectationFailure err
+
+    it "keeps the owner of a passed player side quest while recording who played it" . twoPlayerTest testDeck $ \one two -> do
+      card <- putCardIntoHand one Quests.gatherInformation
+      run $ GiveFromHand one card.id two
+      run $ PlayFromHandAtNoCost two card.id
+      quest <- getsGame (fromJustNote "side quest missing" . find ((== card.id) . questCardId . toAttrs) . toList . (.entities.quests))
+      toCard quest `shouldBe` card
+      (toAttrs quest).questOwner `shouldBe` Just one
+      (toAttrs quest).questPlayedBy `shouldBe` Just two
+      run $ Discard GameSource (toTarget quest)
+      (.discard) <$> getPlayer one `shouldReturn` [card]
+      (.discard) <$> getPlayer two `shouldReturn` []
+
   describe "Lord of the Dead and entering allies" do
     for_ ["paid", "free", "hand", "under"] \way ->
       it ("blanks Saruman before printed Doomed resolves when entering by " <> way) . twoPlayerTest testDeck $ \one two -> do
@@ -1212,3 +1272,15 @@ finishErechChoices remaining = do
   for_ (headMay questions) \pid -> do
     chooseOptionMatching "resolve Erech choice" pid (const True)
     finishErechChoices (remaining - 1)
+
+receivedAllyHero :: PlayerId -> PlayerId -> GameT (Card, HeroId, Target)
+receivedAllyHero one two = do
+  card <- putCardIntoHand one Allies.henamarthRiversong
+  run $ GiveFromHand one card.id two
+  run $ PlayFromHandAtNoCost two card.id
+  ally <- erechAlly Allies.henamarthRiversong
+  swordCard <- putCardIntoHand two Attachments.swordThain
+  run $ PlayFromHandOnAtNoCost two swordCard.id (toTarget ally)
+  hero <- getsGame (fromJustNote "promoted ally missing" . find ((== card.id) . heroCardId . toAttrs) . toList . (.entities.heroes))
+  sword <- getsGame (toTarget . fromJustNote "Sword-thain missing" . find ((== swordCard.id) . (.id) . toCard) . toList . (.entities.attachments))
+  pure (card, toId hero, sword)
