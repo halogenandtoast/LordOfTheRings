@@ -4,7 +4,8 @@ import Data.Char (isUpper)
 import LordOfTheRings.Prelude
 
 data Trait
-  = Basic
+  = Tree
+  | Basic
   | Damaged
   | Pillager
   | Accolade

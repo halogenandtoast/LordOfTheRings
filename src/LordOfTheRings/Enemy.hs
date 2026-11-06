@@ -2,6 +2,10 @@
 
 module LordOfTheRings.Enemy (module LordOfTheRings.Enemy, module X) where
 
+import LordOfTheRings.Enemy.Cards.OldManWillow (oldManWillow)
+import LordOfTheRings.Enemy.Cards.LongTrailer (longTrailer)
+import LordOfTheRings.Enemy.Cards.GraspingRoot (graspingRoot)
+import LordOfTheRings.Enemy.Cards.ArmyOfFlies (armyOfFlies)
 import LordOfTheRings.Enemy.Cards.TheLordOfTheDead (theLordOfTheDeadErech)
 import LordOfTheRings.Enemy.Cards.ShadowMan (shadowMan)
 import LordOfTheRings.Enemy.Cards.RestlessDead (restlessDead)
@@ -713,7 +717,11 @@ allEnemys =
   Map.fromList
     [ (toCardCode builder, card)
     | card@(SomeEnemyCard builder) <-
-        [ SomeEnemyCard theLordOfTheDeadErech
+        [ SomeEnemyCard oldManWillow
+        , SomeEnemyCard longTrailer
+        , SomeEnemyCard graspingRoot
+        , SomeEnemyCard armyOfFlies
+        , SomeEnemyCard theLordOfTheDeadErech
         , SomeEnemyCard shadowMan
         , SomeEnemyCard restlessDead
         , SomeEnemyCard whisperer

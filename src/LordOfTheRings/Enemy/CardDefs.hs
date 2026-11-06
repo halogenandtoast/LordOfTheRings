@@ -14,7 +14,7 @@ allEnemyCards =
   Map.fromList $
     map
       (\def -> (cdCardCode def, def))
-      [theLordOfTheDeadErech, shadowMan, restlessDead, whisperer, regretfulShade, shadowHostCaptain, smaugTheMightyLakeTown, smaugTheTerrible, smaugTheMagnificentLakeTown, snagaScouts, theWitchKingOsgiliath, wolvesFromMordor, wainriders, wainriderCaptain, urukVanguard, dreadnaught, dreadnaughtDamaged, captainOfTheHaven, commanderOfTheDreadnaught, descendantOfCastamir, hydraken, ophidian, varjax, brashCorsairDreadnaught, corsairPlunderer, daringBuccaneer, fierceMarauder, southronSailorDreadnaught, umbarCaptainDreadnaught, blackSailsDreadnaught, corsairSkiffDreadnaught, corsairSkirmisherDreadnaught, corsairWarshipDreadnaught, rammingShipDreadnaught, slaveShipDreadnaught, warGalley, seaMonster,  stalkingGoblin
+      [oldManWillow, longTrailer, graspingRoot, armyOfFlies, theLordOfTheDeadErech, shadowMan, restlessDead, whisperer, regretfulShade, shadowHostCaptain, smaugTheMightyLakeTown, smaugTheTerrible, smaugTheMagnificentLakeTown, snagaScouts, theWitchKingOsgiliath, wolvesFromMordor, wainriders, wainriderCaptain, urukVanguard, dreadnaught, dreadnaughtDamaged, captainOfTheHaven, commanderOfTheDreadnaught, descendantOfCastamir, hydraken, ophidian, varjax, brashCorsairDreadnaught, corsairPlunderer, daringBuccaneer, fierceMarauder, southronSailorDreadnaught, umbarCaptainDreadnaught, blackSailsDreadnaught, corsairSkiffDreadnaught, corsairSkirmisherDreadnaught, corsairWarshipDreadnaught, rammingShipDreadnaught, slaveShipDreadnaught, warGalley, seaMonster,  stalkingGoblin
       , spidersOfMirkwoodDarkOfMirkwood
       , goblinSniperDarkOfMirkwood
       , goblinRunnersDarkOfMirkwood
@@ -5855,3 +5855,20 @@ regretfulShade = (enemy "the-stone-of-erech-016" "Regretful Shade" TheStoneOfEre
   , cdKeywords = setFromList [Spectral, Surge]
   , cdShadowEffect = True
   }
+
+
+oldManWillow :: CardDef
+oldManWillow = (enemy "the-old-forest-007" "Old Man Willow" TheOldForest 1 50 3 5 4 12)
+  { cdUnique = True, cdCardTraits = setFromList [Tree], cdKeywords = setFromList [Indestructible] }
+
+longTrailer :: CardDef
+longTrailer = (enemy "the-old-forest-008" "Long Trailer" TheOldForest 4 40 2 4 2 6)
+  { cdCardTraits = setFromList [Tree] }
+
+graspingRoot :: CardDef
+graspingRoot = (enemy "the-old-forest-009" "Grasping Root" TheOldForest 4 30 3 3 3 5)
+  { cdCardTraits = setFromList [Tree] }
+
+armyOfFlies :: CardDef
+armyOfFlies = (enemy "the-old-forest-010" "Army of Flies" TheOldForest 3 20 1 1 0 2)
+  { cdCardTraits = setFromList [Creature, Insect], cdKeywords = setFromList [Surge], cdShadowEffect = True }

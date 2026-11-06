@@ -690,6 +690,7 @@ library
       LordOfTheRings.Enemy.Cards.AngmarRaider
       LordOfTheRings.Enemy.Cards.AngryHuorn
       LordOfTheRings.Enemy.Cards.ApostateOfAngmar
+      LordOfTheRings.Enemy.Cards.ArmyOfFlies
       LordOfTheRings.Enemy.Cards.ArmyOfTheDead
       LordOfTheRings.Enemy.Cards.AshMountainWerewolf
       LordOfTheRings.Enemy.Cards.ASuspiciousCrow
@@ -901,6 +902,7 @@ library
       LordOfTheRings.Enemy.Cards.Gorbag
       LordOfTheRings.Enemy.Cards.GorgorothHillTroll
       LordOfTheRings.Enemy.Cards.GraspingArm
+      LordOfTheRings.Enemy.Cards.GraspingRoot
       LordOfTheRings.Enemy.Cards.GraspingTentacle
       LordOfTheRings.Enemy.Cards.Graxar
       LordOfTheRings.Enemy.Cards.GreatCaveTroll
@@ -970,6 +972,7 @@ library
       LordOfTheRings.Enemy.Cards.LightCruiser
       LordOfTheRings.Enemy.Cards.LittleSnuffler
       LordOfTheRings.Enemy.Cards.LittleSnufflerMountDoom
+      LordOfTheRings.Enemy.Cards.LongTrailer
       LordOfTheRings.Enemy.Cards.LordAlcaron
       LordOfTheRings.Enemy.Cards.Lorgan
       LordOfTheRings.Enemy.Cards.LossarnachBandit
@@ -1030,6 +1033,7 @@ library
       LordOfTheRings.Enemy.Cards.Neekerbreekers
       LordOfTheRings.Enemy.Cards.NorthernWarg
       LordOfTheRings.Enemy.Cards.NurnSlaver
+      LordOfTheRings.Enemy.Cards.OldManWillow
       LordOfTheRings.Enemy.Cards.OldTomnoddy
       LordOfTheRings.Enemy.Cards.Oliphaunt
       LordOfTheRings.Enemy.Cards.OrcAbductor
@@ -3327,6 +3331,7 @@ library
       LordOfTheRings.Scenario.Scenarios.TheNinInEilph
       LordOfTheRings.Scenario.Scenarios.TheNinInEilph.Helpers
       LordOfTheRings.Scenario.Scenarios.TheOath
+      LordOfTheRings.Scenario.Scenarios.TheOldForest.Helpers
       LordOfTheRings.Scenario.Scenarios.ThePassageOfTheMarshes
       LordOfTheRings.Scenario.Scenarios.ThePassageOfTheMarshes.Helpers
       LordOfTheRings.Scenario.Scenarios.ThePassingOfTheGreyCompany
@@ -4401,6 +4406,7 @@ test-suite LordOfTheRings-test
       LordOfTheRings.ShadowsOfMirkwood.TheHuntForGollumSpec
       LordOfTheRings.Standalone.BattleOfLakeTownSpec
       LordOfTheRings.Standalone.MassingAtOsgiliathSpec
+      LordOfTheRings.Standalone.OldForestSpec
       LordOfTheRings.Standalone.StoneOfErechSpec
       LordOfTheRings.Starter.DefendersOfGondorSpec
       LordOfTheRings.Starter.DwarvesOfDurinSpec
