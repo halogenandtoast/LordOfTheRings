@@ -1,5 +1,8 @@
 {
   "lakeTown": {
+    "smaugDestination": "Choose where the next Smaug enters play",
+    "smaugStaging": "The staging area",
+    "smaugEngaged": "Engaged with the first player",
     "assignBurn": "Assign {n} remaining Burn damage: exhaust characters to absorb it, or pass",
     "takeBurn": "Assign no more Burn damage to my characters"
   },

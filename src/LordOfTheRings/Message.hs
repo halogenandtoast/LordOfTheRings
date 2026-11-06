@@ -272,6 +272,7 @@ data Message
   | -- | the player resolves the staging of a card with the Peril keyword on his own; Nothing
     -- once it has resolved
     SetPeril (Maybe PlayerId)
+  | RevealCardWithDamage (Maybe PlayerId) EncounterCard Int
   | RevealCard EncounterCard
   | -- | the card is revealed, and an enemy put into play engaged with the player, as
     -- Murzag reads; any other card resolves as 'RevealCard'

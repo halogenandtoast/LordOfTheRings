@@ -1,5 +1,10 @@
 module LordOfTheRings.Standalone.BattleOfLakeTownSpec (spec) where
 
+import LordOfTheRings.Scenario (theBattleOfLakeTown)
+import LordOfTheRings.Scenario.Types (scenarioMeta)
+import LordOfTheRings.Scenario.Scenarios.TheBattleOfLakeTown.Meta (Meta (..), metaOf)
+import LordOfTheRings.Window (WindowType (PhaseBegins), mkAfter)
+import LordOfTheRings.Phase (Phase (QuestPhase))
 import LordOfTheRings.Card (CardDef (..), toCardDef)
 import LordOfTheRings.Objective.CardDefs qualified as Objectives
 import LordOfTheRings.Outcome (Outcome (Lost))
@@ -19,7 +24,7 @@ stageLocation def = do
   getsGame $ toId . fromJustNote "location missing" . find ((== toCardCode def) . toCardCode) . toList . (.entities.locations)
 
 spec :: Spec
-spec = describe "Battle of Lake-town locations" do
+spec = describe "Battle of Lake-town" do
   it "adds West Pier's Burn to each location, including itself and the active location" . gameTest $ \_ -> do
     pier <- stageLocation Locations.westPier
     wharf <- stageLocation Locations.esgarothWharf
@@ -257,6 +262,104 @@ spec = describe "Battle of Lake-town locations" do
         passActions pid
         (.hand) <$> getPlayer pid `shouldReturn` if destroys then [] else hand
 
+  describe "Smaug" do
+    it "resolves Burn when Smaug the Terrible is revealed" . gameTest $ \pid -> do
+      town <- stageTown
+      _ <- stageLocation Locations.southPier
+      _ <- setEncounterDeck [Enemies.smaugTheTerrible]
+      run RevealEncounterCard
+      resolveRevealed
+      chooseLabel "$label.lakeTown.takeBurn" pid
+      getDamage town `shouldReturn` 2
+
+    for_ [2, 5] $ \damage ->
+      it ("Smaug the Magnificent moves at most three initial damage to Lake-town: " <> show damage) . gameTest $ \_ -> do
+        town <- stageTown
+        card <- genEncounterCard Enemies.smaugTheMagnificentLakeTown
+        run $ RevealCardWithDamage Nothing card damage
+        resolveRevealed
+        eid <- onlySmaug
+        (.damage) <$> getEnemy eid `shouldReturn` max 0 (damage - 3)
+        getDamage town `shouldReturn` min 3 damage
+
+    for_ [Enemies.smaugTheMightyLakeTown, Enemies.smaugTheTerrible, Enemies.smaugTheMagnificentLakeTown] $ \def ->
+      it ("makes Smaug immune to player effects: " <> show (toCardCode def)) . gameTest $ \pid -> do
+        run . AddToStaging =<< genEncounterCard def
+        eid <- onlySmaug
+        beravor <- heroOf pid "01012"
+        let source = case beravor of HeroTarget hid -> HeroSource hid; _ -> GameSource
+        run $ DealDamage source (toTarget eid) 2
+        (.damage) <$> getEnemy eid `shouldReturn` 0
+
+    it "assigns Smaug the Magnificent's excess attack damage to Lake-town" . gameTest $ \pid -> do
+      town <- stageTown
+      run . AddToStaging =<< genEncounterCard Enemies.smaugTheMagnificentLakeTown
+      eid <- onlySmaug
+      defender <- putAllyIntoPlay pid Allies.guardOfTheCitadel
+      run $ EngageEnemy pid eid
+      run $ EnemyAttack pid eid
+      passActions pid
+      chooseTarget pid defender
+      passActions pid
+      passActions pid
+      getDamage town `shouldReturn` 6
+
+    it "makes Smaug the Mighty attack every player, dealing a separate shadow for each attack" . twoPlayerTest testDeck $ \one two -> do
+      _ <- setEncounterDeck [Enemies.smaugTheMightyLakeTown, Locations.westPier, Locations.northPier]
+      run RevealEncounterCard
+      resolveRevealed
+      for_ [one, two] $ \pid -> do
+        passActions one
+        passActions two
+        chooseTarget pid =<< heroOf pid "01012"
+        passActions one
+        passActions two
+      for_ [one, two] $ \pid -> do
+        defender <- heroOf pid "01012"
+        getDamage defender `shouldReturn` 3
+      discardPile <- getEncounterDiscard
+      map toCardCode discardPile `shouldSatisfy` (\cards -> all (`elem` cards) $ map toCardCode [Locations.westPier, Locations.northPier])
+
+  describe "Smaug deck" do
+    it "offers the destination as the quest phase begins" . gameTestIn theBattleOfLakeTown testDeck $ \pid -> do
+      setSmaugDeck [Enemies.smaugTheTerrible]
+      run $ CheckWindows [mkAfter $ PhaseBegins QuestPhase]
+      question <- getQuestion pid
+      fmap (\case QuestionLabel label _ _ _ -> label; _ -> "") question `shouldBe` Just "$label.lakeTown.smaugDestination"
+
+    for_ [False, True] $ \engaged ->
+      it ("reveals the new Smaug at the chosen destination: " <> show engaged) . gameTestIn theBattleOfLakeTown testDeck $ \pid -> do
+        setSmaugDeck [Enemies.smaugTheTerrible]
+        run $ ScenarioSpecific "lakeTown.drawSmaug" (toJSON $ if engaged then Just pid else Nothing)
+        resolveRevealed
+        eid <- onlySmaug
+        (.placement) <$> getEnemy eid `shouldReturn` if engaged then EngagedWith pid else StagingArea
+
+    it "transfers damage before the new Smaug's When Revealed effect and keeps the old card in its own discard" . gameTestIn theBattleOfLakeTown testDeck $ \_ -> do
+      town <- stageTown
+      setSmaugDeck [Enemies.smaugTheMagnificentLakeTown, Enemies.smaugTheTerrible]
+      run . AddToStaging =<< genEncounterCard Enemies.smaugTheMightyLakeTown
+      old <- onlySmaug
+      run $ DealDamage GameSource (toTarget old) 5
+      run $ ScenarioSpecific "lakeTown.drawSmaug" Null
+      resolveRevealed
+      eid <- onlySmaug
+      (.damage) <$> getEnemy eid `shouldReturn` 2
+      getDamage town `shouldReturn` 3
+      getEncounterDiscard `shouldReturn` []
+      m <- getsGame $ metaOf . toAttrs . (.scenario)
+      map toCardCode (smaugDiscard m) `shouldBe` [toCardCode Enemies.smaugTheMightyLakeTown]
+
+    it "reshuffles the Smaug discard when its deck becomes empty" . gameTestIn theBattleOfLakeTown testDeck $ \_ -> do
+      setSmaugDeck [Enemies.smaugTheTerrible]
+      run . AddToStaging =<< genEncounterCard Enemies.smaugTheMightyLakeTown
+      run $ ScenarioSpecific "lakeTown.drawSmaug" Null
+      resolveRevealed
+      m <- getsGame $ metaOf . toAttrs . (.scenario)
+      map toCardCode (smaugDeck m) `shouldBe` [toCardCode Enemies.smaugTheMightyLakeTown]
+      smaugDiscard m `shouldBe` []
+      getEncounterDiscard `shouldReturn` []
+
 stageTown :: GameT Target
 stageTown = do
   run . AddToStaging =<< genEncounterCard Objectives.lakeTown
@@ -267,3 +370,12 @@ isExhausted = \case
   HeroTarget hid -> heroExhausted . toAttrs <$> getHero hid
   AllyTarget aid -> allyExhausted . toAttrs <$> getAlly aid
   _ -> pure False
+
+onlySmaug :: GameT EnemyId
+onlySmaug = getsGame $ toId . fromJustNote "Smaug missing" . headMay . toList . (.entities.enemies)
+
+setSmaugDeck :: [CardDef] -> GameT ()
+setSmaugDeck defs = do
+  cards <- traverse genEncounterCard defs
+  g <- getGame
+  putGame $ g & scenarioL %~ overAttrs (\a -> a {scenarioMeta = toJSON $ Meta cards []})

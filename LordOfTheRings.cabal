@@ -1155,6 +1155,9 @@ library
       LordOfTheRings.Enemy.Cards.SlitheringArm
       LordOfTheRings.Enemy.Cards.SmaugTheGolden
       LordOfTheRings.Enemy.Cards.SmaugTheMagnificent
+      LordOfTheRings.Enemy.Cards.SmaugTheMagnificentLakeTown
+      LordOfTheRings.Enemy.Cards.SmaugTheMightyLakeTown
+      LordOfTheRings.Enemy.Cards.SmaugTheTerrible
       LordOfTheRings.Enemy.Cards.Snaga
       LordOfTheRings.Enemy.Cards.SnagaArcher
       LordOfTheRings.Enemy.Cards.SnagaScouts
@@ -3232,7 +3235,9 @@ library
       LordOfTheRings.Scenario.Scenarios.TheBattleOfCarnDum.Helpers
       LordOfTheRings.Scenario.Scenarios.TheBattleOfFiveArmies
       LordOfTheRings.Scenario.Scenarios.TheBattleOfFiveArmies.Helpers
+      LordOfTheRings.Scenario.Scenarios.TheBattleOfLakeTown
       LordOfTheRings.Scenario.Scenarios.TheBattleOfLakeTown.Helpers
+      LordOfTheRings.Scenario.Scenarios.TheBattleOfLakeTown.Meta
       LordOfTheRings.Scenario.Scenarios.TheBattleOfThePelennorFields
       LordOfTheRings.Scenario.Scenarios.TheBattleOfThePelennorFields.Helpers
       LordOfTheRings.Scenario.Scenarios.TheBlackGateOpens

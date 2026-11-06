@@ -675,6 +675,7 @@ import LordOfTheRings.Message (
     ReturnToHand,
     ReturnToSackDeck,
     ReturnToTopOfEncounterDeck,
+    RevealCardWithDamage,
     RevealCard,
     RevealEncounterCard,
     RevealShadowCard,
@@ -4139,7 +4140,9 @@ runGameMessage msg g = case msg of
           then g' <$ push (AddToEncounterDiscard [card])
           else runGameMessage msg g'
   (revealedCard -> Just (engaging, card)) -> do
-    let def = toCardDef card
+    let initialDamage = case msg of RevealCardWithDamage _ _ n -> max 0 n; _ -> 0
+        withDamage = overAttrs (\a -> a {enemyTokens = addTokens Damage initialDamage (enemyTokens a)})
+        def = toCardDef card
     players <- getPlayerOrder
     revealer <- maybe getLead pure (engaging <|> gameRevealer g)
     gameMods <- getModifiers GameTarget
@@ -4191,12 +4194,12 @@ runGameMessage msg g = case msg of
     case cdCardType def of
       -- an enemy revealed to be put into play engaged never enters the staging area
       EnemyType | Just pid <- engaging -> do
-        enemy <- newEnemy card
+        enemy <- withDamage <$> newEnemy card
         pushAll . ([EngageEnemy pid (toId enemy), CheckWindows [mkAfter $ EntersPlay $ toTarget enemy]] <>) . (<> [WhileInPlay (toTarget enemy) [ResolveSurge (toTarget enemy) card]])
           =<< revealing (toTarget enemy)
         pure $ g & effectsL %~ filter (`notElem` mischief) & entitiesL . enemiesL %~ insertEntity (overAttrs (\a -> a {enemyPlacement = Unplaced}) enemy)
       EnemyType -> do
-        enemy <- newEnemy card
+        enemy <- withDamage <$> newEnemy card
         let grapples = [ResolveGrapple (toId enemy) | any isGrapple (cdKeywords def)]
         pushAll . (<> grapples <> [WhileInPlay (toTarget enemy) [AmbushEngagementCheck (toId enemy), ResolveSurge (toTarget enemy) card]])
           =<< revealing (toTarget enemy)

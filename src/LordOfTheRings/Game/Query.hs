@@ -46,6 +46,7 @@ import LordOfTheRings.Message (
     GuardLocationBy,
     OptionalEngagement,
     PlaceTokens,
+    RevealCardWithDamage,
     RevealCard,
     RevealCardEngaged,
     Run
@@ -144,6 +145,7 @@ optionalEngagement = \case
 -- | The card a message reveals, with the player it is put into play engaged with, if any.
 revealedCard :: Message -> Maybe (Maybe PlayerId, EncounterCard)
 revealedCard = \case
+  RevealCardWithDamage player card _ -> Just (player, card)
   RevealCard card -> Just (Nothing, card)
   RevealCardEngaged pid card -> Just (Just pid, card)
   _ -> Nothing

@@ -14,7 +14,7 @@ allEnemyCards =
   Map.fromList $
     map
       (\def -> (cdCardCode def, def))
-      [snagaScouts, theWitchKingOsgiliath, wolvesFromMordor, wainriders, wainriderCaptain, urukVanguard, dreadnaught, dreadnaughtDamaged, captainOfTheHaven, commanderOfTheDreadnaught, descendantOfCastamir, hydraken, ophidian, varjax, brashCorsairDreadnaught, corsairPlunderer, daringBuccaneer, fierceMarauder, southronSailorDreadnaught, umbarCaptainDreadnaught, blackSailsDreadnaught, corsairSkiffDreadnaught, corsairSkirmisherDreadnaught, corsairWarshipDreadnaught, rammingShipDreadnaught, slaveShipDreadnaught, warGalley, seaMonster,  stalkingGoblin
+      [smaugTheMightyLakeTown, smaugTheTerrible, smaugTheMagnificentLakeTown, snagaScouts, theWitchKingOsgiliath, wolvesFromMordor, wainriders, wainriderCaptain, urukVanguard, dreadnaught, dreadnaughtDamaged, captainOfTheHaven, commanderOfTheDreadnaught, descendantOfCastamir, hydraken, ophidian, varjax, brashCorsairDreadnaught, corsairPlunderer, daringBuccaneer, fierceMarauder, southronSailorDreadnaught, umbarCaptainDreadnaught, blackSailsDreadnaught, corsairSkiffDreadnaught, corsairSkirmisherDreadnaught, corsairWarshipDreadnaught, rammingShipDreadnaught, slaveShipDreadnaught, warGalley, seaMonster,  stalkingGoblin
       , spidersOfMirkwoodDarkOfMirkwood
       , goblinSniperDarkOfMirkwood
       , goblinRunnersDarkOfMirkwood
@@ -5792,4 +5792,25 @@ snagaScouts = (enemy "the-massing-at-osgiliath-002" "Snaga Scouts" TheMassingAtO
   { cdCardTraits = setFromList [Orc, Scout]
   , cdUnique = False
   , cdShadowEffect = False
+  }
+
+smaugTheMightyLakeTown :: CardDef
+smaugTheMightyLakeTown = (enemy "the-battle-of-lake-town-004" "Smaug the Mighty" TheBattleOfLakeTown 3 40 7 5 9 20)
+  { cdUnique = True
+  , cdCardTraits = setFromList [Dragon]
+  , cdWhenRevealed = True
+  }
+
+smaugTheTerrible :: CardDef
+smaugTheTerrible = (enemy "the-battle-of-lake-town-005" "Smaug the Terrible" TheBattleOfLakeTown 3 35 6 7 7 20)
+  { cdUnique = True
+  , cdCardTraits = setFromList [Dragon]
+  , cdWhenRevealed = True
+  }
+
+smaugTheMagnificentLakeTown :: CardDef
+smaugTheMagnificentLakeTown = (enemy "the-battle-of-lake-town-006" "Smaug the Magnificent" TheBattleOfLakeTown 3 30 5 8 8 20)
+  { cdUnique = True
+  , cdCardTraits = setFromList [Dragon]
+  , cdWhenRevealed = True
   }

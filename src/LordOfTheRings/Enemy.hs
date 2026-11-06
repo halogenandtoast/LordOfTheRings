@@ -2,6 +2,9 @@
 
 module LordOfTheRings.Enemy (module LordOfTheRings.Enemy, module X) where
 
+import LordOfTheRings.Enemy.Cards.SmaugTheMightyLakeTown (smaugTheMightyLakeTown)
+import LordOfTheRings.Enemy.Cards.SmaugTheTerrible (smaugTheTerrible)
+import LordOfTheRings.Enemy.Cards.SmaugTheMagnificentLakeTown (smaugTheMagnificentLakeTown)
 import LordOfTheRings.Enemy.Cards.SnagaScouts (snagaScouts)
 import LordOfTheRings.Enemy.AttackLocation (AttackLocation (..))
 import LordOfTheRings.Enemy.Cards.Dreadnaught
@@ -704,7 +707,10 @@ allEnemys =
   Map.fromList
     [ (toCardCode builder, card)
     | card@(SomeEnemyCard builder) <-
-        [ SomeEnemyCard snagaScouts
+        [ SomeEnemyCard smaugTheMightyLakeTown
+        , SomeEnemyCard smaugTheTerrible
+        , SomeEnemyCard smaugTheMagnificentLakeTown
+        , SomeEnemyCard snagaScouts
         , SomeEnemyCard wolvesFromMordor
         , SomeEnemyCard wainriders
         , SomeEnemyCard theWitchKingOsgiliath

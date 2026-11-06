@@ -20,6 +20,7 @@ import LordOfTheRings.Modifier
 import LordOfTheRings.Objective.CardDefs qualified as Objectives
 import LordOfTheRings.Prelude
 import LordOfTheRings.Queue (QueueT)
+import LordOfTheRings.Scenario.Scenarios.TheBattleOfLakeTown.Meta (isSmaugCard, discardSmaug)
 import LordOfTheRings.Scenario.Types
 import LordOfTheRings.Source
 import LordOfTheRings.Target
@@ -39,6 +40,7 @@ isCorsairDeckCard card = cdCardType def == EnemyType && Ship `notMember` cdCardT
 -- shuffled into it whenever it is empty (Journey Up the Anduin rules).
 discardEncounterCard :: EncounterCard -> ScenarioAttrs -> ScenarioAttrs
 discardEncounterCard card attrs
+  | scenarioId attrs == "the-battle-of-lake-town" && isSmaugCard card = discardSmaug card attrs
   | isJust attrs.corsairDeck && isCorsairDeckCard card = attrs & corsairDiscardL %~ (card :)
   | isEvilCreaturesCard attrs card =
       if attrs.evilCreaturesDeck == Just []
