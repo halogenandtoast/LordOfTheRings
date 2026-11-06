@@ -18,6 +18,8 @@ const { player, choices, flipping, heroes = [] } = defineProps<{
   flipping: ReadonlySet<string>
   question: QuestionView | null
   outcome: 'WON' | 'LOST' | null
+  /** the campaign the game is a scenario of, for the way on once it is over */
+  campaignId?: string | null
   score?: ScoreView
   victoryPoints: number
 }>()
@@ -85,7 +87,7 @@ onClickOutside(useTemplateRef('hand'), () => (handOpen.value = false))
       </div>
     </div>
 
-    <QuestionZone :question="question" :outcome="outcome" :victory-points="victoryPoints" :score="score" @choose="emit('choose', $event)" />
+    <QuestionZone :question="question" :outcome="outcome" :campaign-id="campaignId" :victory-points="victoryPoints" :score="score" @choose="emit('choose', $event)" />
   </section>
 </template>
 

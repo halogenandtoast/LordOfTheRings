@@ -7,9 +7,11 @@ import type { ChoiceView, ScoreView, QuestionView } from '../types'
 const tr = useServerText()
 const overlay = useCardOverlay()
 
-const { question, outcome = null, victoryPoints = 0, score } = defineProps<{
+const { question, outcome = null, victoryPoints = 0, score, campaignId = null } = defineProps<{
   question: QuestionView | null
   outcome?: 'WON' | 'LOST' | null
+  /** in campaign mode, the way on to the campaign page once the scenario is over */
+  campaignId?: string | null
   score?: ScoreView
   victoryPoints?: number
 }>()
@@ -63,20 +65,34 @@ const visibleLabelChoices = computed(() => {
         {{ $t(outcome === 'WON' ? 'game.prompt.playersWin' : 'game.prompt.playersLose') }}
         &middot; {{ $t('game.prompt.victoryPoints', { value: victoryPoints }) }}
       </p>
+      <RouterLink v-if="campaignId" class="campaign-next" :to="`/campaigns/${campaignId}`">{{ $t('campaignMode.goOn') }}</RouterLink>
       <dl v-if="outcome === 'WON' && score" class="score">
         <template v-for="key in (['threat', 'deadHeroes', 'damage', 'rounds', 'victoryPoints', 'total'] as const)" :key="key">
           <dt>{{ $t(`game.score.${key}`) }}</dt><dd>{{ key === 'victoryPoints' ? '−' : '' }}{{ score[key] }}</dd>
         </template>
       </dl>
       <p v-if="outcome === 'WON' && score" class="hint">{{ $t('game.score.lowerIsBetter') }}</p>
-      <!-- what comes after, as a campaign's next scenario -->
-      <slot />
     </template>
     <p v-else class="prompt idle-text">{{ $t('game.prompt.waiting') }}</p>
   </div>
 </template>
 
 <style scoped>
+.campaign-next {
+  display: block;
+  margin-bottom: 0.75rem;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--accent);
+  border-radius: 6px;
+  background: var(--highlight-tint);
+  color: inherit;
+  font: inherit;
+  font-weight: 700;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+}
+.campaign-next:hover { background: var(--hover-tint); }
 .choice-search {
   width: 100%;
   box-sizing: border-box;

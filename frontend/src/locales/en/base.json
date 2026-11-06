@@ -226,6 +226,7 @@
     "lost": "The scenario was lost: play it again to go on.",
     "finished": "The campaign is complete.",
     "backToGame": "Back to {scenario}",
+    "goOn": "Continue the campaign",
     "experience": "Experience",
     "xpLeft": "{xp} XP to spend",
     "spendBetween": "XP may be spent between scenarios, while the next one waits in the lobby.",
