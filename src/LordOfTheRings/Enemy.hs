@@ -2,6 +2,9 @@
 
 module LordOfTheRings.Enemy (module LordOfTheRings.Enemy, module X) where
 
+import LordOfTheRings.Enemy.Cards.Naurlhug (naurlhug)
+import LordOfTheRings.Enemy.Cards.OrcOfEredLuin (orcOfEredLuin)
+import LordOfTheRings.Enemy.Cards.BlueMountainGoblin (blueMountainGoblin)
 import LordOfTheRings.Enemy.Cards.LurkerOfTheDepths (lurkerOfTheDepths)
 import LordOfTheRings.Enemy.Cards.NamelessCaveDweller (namelessCaveDweller)
 import LordOfTheRings.Enemy.Cards.OldStoneTroll (oldStoneTroll)
@@ -720,7 +723,10 @@ allEnemys =
   Map.fromList
     [ (toCardCode builder, card)
     | card@(SomeEnemyCard builder) <-
-        [ SomeEnemyCard lurkerOfTheDepths
+        [ SomeEnemyCard naurlhug
+        , SomeEnemyCard orcOfEredLuin
+        , SomeEnemyCard blueMountainGoblin
+        , SomeEnemyCard lurkerOfTheDepths
         , SomeEnemyCard namelessCaveDweller
         , SomeEnemyCard oldStoneTroll
         , SomeEnemyCard oldManWillow

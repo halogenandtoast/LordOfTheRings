@@ -2,8 +2,7 @@ module LordOfTheRings.Enemy.Cards.NamelessCaveDweller (namelessCaveDweller) wher
 
 import LordOfTheRings.Enemy.CardDefs qualified as Cards
 import LordOfTheRings.Enemy.Import.Lifted
-import LordOfTheRings.Scenario.Scenarios.TheGhostOfFramsburg.Helpers (lootObjectives)
-import LordOfTheRings.Placement (Placement (AttachedTo))
+import LordOfTheRings.Scenario.Scenarios.TheRuinsOfBelegost.Helpers (playerControlsLoot)
 
 newtype NamelessCaveDweller = NamelessCaveDweller EnemyAttrs
   deriving anyclass (IsEnemy, HasAbilities)
@@ -19,9 +18,7 @@ instance HasModifiersFor NamelessCaveDweller where
 instance RunMessage NamelessCaveDweller where
   runMessage msg e@(NamelessCaveDweller a) = case msg of
     ResolveShadowEffect cid eid pid _ | cid == a.cardId -> do
-      loot <- lootObjectives
-      heroes <- select (HeroControlledBy $ PlayerWithId pid)
-      let ownsLoot = any (\o -> any (\h -> o.placement == AttachedTo (toTarget h)) heroes) loot
+      ownsLoot <- playerControlsLoot pid
       enemyAttackModifier a eid $ AttackModifier (if ownsLoot then 2 else 1)
       pure e
     _ -> NamelessCaveDweller <$> runMessage msg a

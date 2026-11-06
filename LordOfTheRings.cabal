@@ -721,6 +721,7 @@ library
       LordOfTheRings.Enemy.Cards.BloodHound
       LordOfTheRings.Enemy.Cards.BloodiedBerserker
       LordOfTheRings.Enemy.Cards.BloodThirstyWarg
+      LordOfTheRings.Enemy.Cards.BlueMountainGoblin
       LordOfTheRings.Enemy.Cards.BoarClanAmbusher
       LordOfTheRings.Enemy.Cards.BoarClanSkirmisher
       LordOfTheRings.Enemy.Cards.BoarClanStalker
@@ -1030,6 +1031,7 @@ library
       LordOfTheRings.Enemy.Cards.NamelessBeast
       LordOfTheRings.Enemy.Cards.NamelessCaveDweller
       LordOfTheRings.Enemy.Cards.NamelessThing
+      LordOfTheRings.Enemy.Cards.Naurlhug
       LordOfTheRings.Enemy.Cards.NazgulOfDolGuldur
       LordOfTheRings.Enemy.Cards.NazgulOfMinasMorgul
       LordOfTheRings.Enemy.Cards.NazgulOfMordor
@@ -1057,6 +1059,7 @@ library
       LordOfTheRings.Enemy.Cards.OrcHunter
       LordOfTheRings.Enemy.Cards.OrcInterceptor
       LordOfTheRings.Enemy.Cards.OrcOfCirithUngol
+      LordOfTheRings.Enemy.Cards.OrcOfEredLuin
       LordOfTheRings.Enemy.Cards.OrcOfMinasMorgul
       LordOfTheRings.Enemy.Cards.OrcOfMordor
       LordOfTheRings.Enemy.Cards.OrcOfThaurdir
@@ -2670,6 +2673,7 @@ library
       LordOfTheRings.Objective.Cards.SeizeThem
       LordOfTheRings.Objective.Cards.ShadowKey
       LordOfTheRings.Objective.Cards.SignsOfGollum
+      LordOfTheRings.Objective.Cards.StalkingTheRuins
       LordOfTheRings.Objective.Cards.SubmitOrDie
       LordOfTheRings.Objective.Cards.SummonsFromMordor
       LordOfTheRings.Objective.Cards.ThaurdirsLegacy
@@ -3360,6 +3364,7 @@ library
       LordOfTheRings.Scenario.Scenarios.TheRiverRunning.Helpers
       LordOfTheRings.Scenario.Scenarios.TheRoadToIsengard
       LordOfTheRings.Scenario.Scenarios.TheRoadToIsengard.Helpers
+      LordOfTheRings.Scenario.Scenarios.TheRuinsOfBelegost.Helpers
       LordOfTheRings.Scenario.Scenarios.TheSeventhLevel
       LordOfTheRings.Scenario.Scenarios.TheSeventhLevel.Helpers
       LordOfTheRings.Scenario.Scenarios.TheSiegeOfCairAndros

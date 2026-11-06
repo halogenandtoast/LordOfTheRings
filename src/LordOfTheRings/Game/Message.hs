@@ -3564,7 +3564,7 @@ runGameMessage msg g = case msg of
     for_ (Map.lookup host g.entities.enemies) \hostEnemy ->
       for_ (find ((== cid) . (.id)) hostEnemy.shadowCards) \card -> do
         enemy <- newEnemy card
-        pushAll [RemoveShadowCard host cid, EngageEnemy pid enemy.id]
+        pushAll [RemoveShadowCard host cid, EngageEnemy pid enemy.id, CheckWindows [mkAfter $ EntersPlay $ toTarget enemy]]
         putGame $ g & entitiesL . enemiesL %~ insertEntity enemy
     getGame
   PutShadowEnemyIntoStaging host cid -> do

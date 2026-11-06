@@ -43,6 +43,7 @@ def icon(match):
 
 
 def normalize_text(value):
+    value = value.replace('place 1 progress token on Stalking the Ruins', 'place 1 resource on Stalking the Ruins')
     value = value.replace('beginning of the ropund', 'beginning of the round')
     if 'Driven by Fear' in value:
         value = value.replace('first player attached', 'first player attaches').replace("Treat attacked character's", "Treat attached character's")

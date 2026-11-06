@@ -14,7 +14,7 @@ allEnemyCards =
   Map.fromList $
     map
       (\def -> (cdCardCode def, def))
-      [lurkerOfTheDepths, namelessCaveDweller, oldStoneTroll, oldManWillow, longTrailer, graspingRoot, armyOfFlies, theLordOfTheDeadErech, shadowMan, restlessDead, whisperer, regretfulShade, shadowHostCaptain, smaugTheMightyLakeTown, smaugTheTerrible, smaugTheMagnificentLakeTown, snagaScouts, theWitchKingOsgiliath, wolvesFromMordor, wainriders, wainriderCaptain, urukVanguard, dreadnaught, dreadnaughtDamaged, captainOfTheHaven, commanderOfTheDreadnaught, descendantOfCastamir, hydraken, ophidian, varjax, brashCorsairDreadnaught, corsairPlunderer, daringBuccaneer, fierceMarauder, southronSailorDreadnaught, umbarCaptainDreadnaught, blackSailsDreadnaught, corsairSkiffDreadnaught, corsairSkirmisherDreadnaught, corsairWarshipDreadnaught, rammingShipDreadnaught, slaveShipDreadnaught, warGalley, seaMonster,  stalkingGoblin
+      [naurlhug, orcOfEredLuin, blueMountainGoblin, lurkerOfTheDepths, namelessCaveDweller, oldStoneTroll, oldManWillow, longTrailer, graspingRoot, armyOfFlies, theLordOfTheDeadErech, shadowMan, restlessDead, whisperer, regretfulShade, shadowHostCaptain, smaugTheMightyLakeTown, smaugTheTerrible, smaugTheMagnificentLakeTown, snagaScouts, theWitchKingOsgiliath, wolvesFromMordor, wainriders, wainriderCaptain, urukVanguard, dreadnaught, dreadnaughtDamaged, captainOfTheHaven, commanderOfTheDreadnaught, descendantOfCastamir, hydraken, ophidian, varjax, brashCorsairDreadnaught, corsairPlunderer, daringBuccaneer, fierceMarauder, southronSailorDreadnaught, umbarCaptainDreadnaught, blackSailsDreadnaught, corsairSkiffDreadnaught, corsairSkirmisherDreadnaught, corsairWarshipDreadnaught, rammingShipDreadnaught, slaveShipDreadnaught, warGalley, seaMonster,  stalkingGoblin
       , spidersOfMirkwoodDarkOfMirkwood
       , goblinSniperDarkOfMirkwood
       , goblinRunnersDarkOfMirkwood
@@ -5885,3 +5885,16 @@ namelessCaveDweller = (enemy "the-ruins-of-belegost-017" "Nameless Cave Dweller"
 oldStoneTroll :: CardDef
 oldStoneTroll = (enemy "the-ruins-of-belegost-018" "Old Stone Troll" TheRuinsOfBelegost 2 50 3 6 3 8)
   { cdCardTraits = setFromList [Troll, Hazard] }
+
+
+naurlhug :: CardDef
+naurlhug = (enemy "the-ruins-of-belegost-015" "Naurlhûg" TheRuinsOfBelegost 1 20 0 7 5 20)
+  { cdUnique = True, cdCardTraits = setFromList [Dragon], cdVictoryPoints = Just 7 }
+
+orcOfEredLuin :: CardDef
+orcOfEredLuin = (enemy "the-ruins-of-belegost-019" "Orc of Ered Luin" TheRuinsOfBelegost 3 30 2 4 2 4)
+  { cdCardTraits = setFromList [Orc], cdWhenRevealed = True, cdShadowEffect = True }
+
+blueMountainGoblin :: CardDef
+blueMountainGoblin = (enemy "the-ruins-of-belegost-020" "Blue Mountain Goblin" TheRuinsOfBelegost 3 25 1 3 2 3)
+  { cdCardTraits = setFromList [Orc, Goblin], cdShadowEffect = True }
