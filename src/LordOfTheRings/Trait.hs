@@ -5,6 +5,7 @@ import LordOfTheRings.Prelude
 
 data Trait
   = Tree
+  | Tale
   | Basic
   | Damaged
   | Pillager

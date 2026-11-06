@@ -2685,6 +2685,17 @@ discoverTreasure card = do
 shuffleIntoDeck :: (ReverseQueue m, IsCard card) => PlayerId -> card -> m ()
 shuffleIntoDeck pid = push . ShuffleCardIntoDeck pid . toCard
 
+shuffleHandIntoDeck :: ReverseQueue m => PlayerId -> m ()
+shuffleHandIntoDeck = push . ShuffleHandIntoDeck
+
+putObjectiveAllyIntoPlayReadyAndCommitted :: ReverseQueue m => ObjectiveId -> PlayerId -> m ()
+putObjectiveAllyIntoPlayReadyAndCommitted oid = push . PutObjectiveAllyIntoPlayReadyAndCommitted oid
+
+-- | Continue after a card has actually entered victory, including when it has
+-- left play and can no longer receive its own deferred messages.
+whenInVictoryDisplay :: ReverseQueue m => CardId -> QueueT Message m () -> m ()
+whenInVictoryDisplay cid action = push . IfCardInVictoryDisplay cid =<< capture action
+
 -- | A player card in the player's hand is shuffled into its owner's deck, as Drinking Song
 -- shuffles a hand.
 shuffleFromHandIntoOwnersDeck :: (ReverseQueue m, HasField "id" card CardId) => PlayerId -> card -> m ()

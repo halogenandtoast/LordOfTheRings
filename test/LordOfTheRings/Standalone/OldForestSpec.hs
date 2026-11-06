@@ -2,18 +2,21 @@ module LordOfTheRings.Standalone.OldForestSpec (spec) where
 
 import LordOfTheRings.Attachment.CardDefs qualified as Attachments
 import LordOfTheRings.Ally.CardDefs qualified as Allies
+import LordOfTheRings.Ally (Ally)
+import LordOfTheRings.Objective.CardDefs qualified as Objectives
 import LordOfTheRings.Card (IsCard (toCard), CardType (EventType))
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Event.CardDefs qualified as Events
 import LordOfTheRings.Effect (Effect (..), EffectDuration (UntilEndOfRound))
 import LordOfTheRings.Helpers.Modifiers (getModifiers)
+import LordOfTheRings.Helpers.Window (getActionAbilities)
 import LordOfTheRings.Helpers.Staging (getLocationThreat)
 import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Matcher (getEnemy, getHero, CardMatcher (AnyCard))
 import LordOfTheRings.Matcher (selectCharacters, HeroMatcher (CommittedHero), AllyMatcher (CommittedAlly))
-import LordOfTheRings.Modifier (ModifierType (AttackModifier, AdditionalStagingReveals, PlayersCannotWin, MustBeTraveledTo, CannotPlay, PlayedCardThisRound, Blank, CannotHaveAttachments, CannotHaveAttachmentsWithoutTrait))
+import LordOfTheRings.Modifier (ModifierType (AttackModifier, AdditionalStagingReveals, PlayersCannotWin, MustBeTraveledTo, CannotPlay, PlayedCardThisRound, Blank, CannotHaveAttachments, CannotHaveAttachmentsWithoutTrait, CannotLeavePlay, CannotDrawCardsFromCardEffects, CannotReady))
 import LordOfTheRings.Trait (Trait (Condition, Weapon))
-import LordOfTheRings.Phase (Phase (PlanningPhase))
+import LordOfTheRings.Phase (Phase (PlanningPhase, QuestPhase, CombatPhase))
 import LordOfTheRings.Treachery.CardDefs qualified as Treacheries
 import LordOfTheRings.Quest.CardDefs qualified as Quests
 import LordOfTheRings.Scenario.Scenarios.TheOldForest.Helpers (victoryLocations, locationVictoryPoints)
@@ -40,8 +43,149 @@ heroExhaustedTarget :: Target -> GameT Bool
 heroExhaustedTarget (HeroTarget hid) = heroExhausted . toAttrs <$> getHero hid
 heroExhaustedTarget _ = error "expected a hero"
 
+tomAlly :: GameT Ally
+tomAlly = getsGame $ fromJustNote "Tom missing" . find ((== toCardCode Objectives.tomBombadilOldForest) . toCardCode) . toList . (.entities.allies)
+
+bogeyAvailable :: PlayerId -> Target -> GameT Bool
+bogeyAvailable pid target = any (\ability -> sourceTarget ability.abilitySource == Just target) <$> getActionAbilities pid
+
 spec :: Spec
 spec = describe "Old Forest" do
+  describe "Tom Bombadil" do
+    it "lets the revealer choose who controls him, ready and committed during questing" . twoPlayerTest testDeck $ \one two -> do
+      putGame . (phaseL .~ QuestPhase) =<< getGame
+      run $ SetRevealer (Just two)
+      _ <- setEncounterDeck [Objectives.tomBombadilOldForest]
+      run RevealEncounterCard
+      resolveRevealed
+      chooseTarget two (PlayerTarget one)
+      tom <- tomAlly
+      tom.controller `shouldBe` one
+      allyCommitted (toAttrs tom) `shouldBe` True
+      allyExhausted (toAttrs tom) `shouldBe` False
+
+    it "cannot have its When Revealed canceled" . gameTest $ \pid -> do
+      hero <- heroOf pid "01007"
+      _ <- putCardIntoHand pid Events.aTestOfWill
+      run $ PlaceTokens GameSource hero Resource 1
+      _ <- setEncounterDeck [Objectives.tomBombadilOldForest]
+      run RevealEncounterCard
+      resolveRevealed
+      tom <- tomAlly
+      allyExhausted (toAttrs tom) `shouldBe` False
+      getQuestion pid `shouldReturn` Nothing
+
+    it "enters ready outside the quest phase without committing to a quest" . gameTest $ \_ -> do
+      putGame . (phaseL .~ CombatPhase) =<< getGame
+      _ <- setEncounterDeck [Objectives.tomBombadilOldForest]
+      run RevealEncounterCard
+      resolveRevealed
+      tom <- tomAlly
+      allyCommitted (toAttrs tom) `shouldBe` False
+      allyExhausted (toAttrs tom) `shouldBe` False
+
+    it "enters ready and committed even while characters cannot ready" . gameTest $ \_ -> do
+      putGame . (phaseL .~ QuestPhase) =<< getGame
+      run $ CreateEffect $ Effect GameSource GameTarget [CannotReady] UntilEndOfRound
+      _ <- setEncounterDeck [Objectives.tomBombadilOldForest]
+      run RevealEncounterCard
+      resolveRevealed
+      tom <- tomAlly
+      allyCommitted (toAttrs tom) `shouldBe` True
+      allyExhausted (toAttrs tom) `shouldBe` False
+
+    it "discards him and shuffles the entire encounter discard into the deck even if he is blanked" . gameTest $ \_ -> do
+      discarded <- stageEnemy Enemies.armyOfFlies
+      run $ Discard GameSource (EnemyTarget discarded)
+      _ <- setEncounterDeck [Objectives.tomBombadilOldForest]
+      run RevealEncounterCard
+      resolveRevealed
+      tom <- tomAlly
+      run $ CreateEffect $ Effect GameSource (toTarget tom) [Blank] UntilEndOfRound
+      run EndRound
+      getsGame (any ((== tom.id) . toId) . toList . (.entities.allies)) `shouldReturn` False
+      getEncounterDiscard `shouldReturn` []
+      cards <- getEncounterDeck
+      sort (map toCardCode cards) `shouldBe` sort (map toCardCode [Objectives.tomBombadilOldForest, Enemies.armyOfFlies])
+
+    it "does not shuffle the discard if he was destroyed before the round ended" . gameTest $ \_ -> do
+      _ <- setEncounterDeck [Objectives.tomBombadilOldForest]
+      run RevealEncounterCard
+      resolveRevealed
+      tom <- tomAlly
+      run $ DealDamage GameSource (toTarget tom) 6
+      run EndRound
+      getEncounterDeck `shouldReturn` []
+      getEncounterDiscard >>= (\cards -> map toCardCode cards `shouldBe` [toCardCode Objectives.tomBombadilOldForest])
+
+  describe "Old Bogey-stories" do
+    it "has the first player choose its setup host even when it belongs to another player's deck" . twoPlayerTest testDeck $ \one two -> do
+      card <- genPlayerCard Attachments.oldBogeyStories (Just two)
+      g <- getGame
+      putGame $ g & playersL . ix two . deckL %~ (PlayerCard card :)
+      run $ DoStep 4 Setup
+      getQuestion two `shouldReturn` Nothing
+      hero <- heroOf one "01012"
+      chooseTarget one hero
+      attachments <- getsGame (toList . (.entities.attachments))
+      let boon = fromJustNote "boon missing" $ find ((== card.id) . (.cardId) . toAttrs) attachments
+      toCard boon `shouldBe` PlayerCard card
+      (toAttrs boon).controller `shouldBe` one
+
+    for_ [5, 6, 8] \n ->
+      it ("requires at least six cards and replaces the controller's entire hand: " <> show n) . gameTest $ \pid -> do
+        hero <- heroOf pid "01012"
+        boon <- putAttachmentOn pid Attachments.oldBogeyStories hero
+        original <- replicateM n $ putCardIntoHand pid Allies.guardOfTheCitadel
+        oldDeck <- (.deck) <$> getPlayer pid
+        bogeyAvailable pid boon `shouldReturn` (n >= 6)
+        case boon of
+          AttachmentTarget aid -> run $ UseCardAbility pid (AttachmentSource aid) 1 []
+          _ -> error "attachment missing"
+        player <- getPlayer pid
+        if n < 6 then player.hand `shouldBe` reverse original else do
+          length player.hand `shouldBe` 6
+          length player.deck `shouldBe` length oldDeck + n - 6
+          sort (map (.id) $ player.hand <> player.deck) `shouldBe` sort (map (.id) $ original <> oldDeck)
+          display <- getsGame ((.victoryDisplay) . toAttrs . (.scenario))
+          map toCardCode display `shouldBe` [toCardCode Attachments.oldBogeyStories]
+
+    it "uses the attached hero's controller's hand while preserving the boon's original owner" . twoPlayerTest testDeck $ \one two -> do
+      hero <- heroOf two "01012"
+      boon <- putAttachmentOn one Attachments.oldBogeyStories hero
+      ownHand <- replicateM 5 $ putCardIntoHand one Allies.guardOfTheCitadel
+      replicateM_ 8 $ putCardIntoHand two Allies.guardOfTheCitadel
+      case boon of
+        AttachmentTarget aid -> do
+          run $ AttachCard aid hero
+          bogeyAvailable one boon `shouldReturn` False
+          bogeyAvailable two boon `shouldReturn` True
+          run $ UseCardAbility two (AttachmentSource aid) 1 []
+        _ -> error "attachment missing"
+      (.hand) <$> getPlayer one `shouldReturn` reverse ownHand
+      length . (.hand) <$> getPlayer two `shouldReturn` 6
+
+    it "cannot be used if it cannot leave play" . gameTest $ \pid -> do
+      hero <- heroOf pid "01012"
+      boon <- putAttachmentOn pid Attachments.oldBogeyStories hero
+      original <- replicateM 6 $ putCardIntoHand pid Allies.guardOfTheCitadel
+      run $ CreateEffect $ Effect GameSource boon [CannotLeavePlay] UntilEndOfRound
+      bogeyAvailable pid boon `shouldReturn` False
+      case boon of
+        AttachmentTarget aid -> run $ UseCardAbility pid (AttachmentSource aid) 1 []
+        _ -> error "attachment missing"
+      (.hand) <$> getPlayer pid `shouldReturn` reverse original
+
+    it "shuffles before attempting to draw when card effects cannot draw cards" . gameTest $ \pid -> do
+      hero <- heroOf pid "01012"
+      boon <- putAttachmentOn pid Attachments.oldBogeyStories hero
+      replicateM_ 6 $ putCardIntoHand pid Allies.guardOfTheCitadel
+      run $ CreateEffect $ Effect GameSource (PlayerTarget pid) [CannotDrawCardsFromCardEffects] UntilEndOfRound
+      case boon of
+        AttachmentTarget aid -> run $ UseCardAbility pid (AttachmentSource aid) 1 []
+        _ -> error "attachment missing"
+      (.hand) <$> getPlayer pid `shouldReturn` []
+
   describe "Swaying Without Wind" do
     it "surges when no victory location can be returned" . gameTest $ \_ -> do
       troll <- stageEnemy Enemies.hillTroll

@@ -124,6 +124,8 @@ data CardDef = CardDef
   -- ^ a player card reading "Setup: Attach to a hero in play", as The Road Darkens' Gift
   -- boons: in its owner's deck as the game is set up, it is attached before the setup hand
   -- is drawn (The Black Riders rules insert, "New Setup Instructions")
+  , cdSetupAttachFirstPlayer :: Bool
+  -- ^ the first player chooses the setup host instead of the card's owner
   , cdSetupToStaging :: Bool
   -- ^ a saga burden reading "Setup: Add this to the staging area", as Wraith on Wings: in
   -- the Campaign Pool, it enters the staging area as the game is set up instead of being
@@ -193,6 +195,7 @@ emptyCardDef cCode name cType =
     , cdSetIcon = Nothing
     , cdTreasure = False
     , cdSetupAttach = False
+    , cdSetupAttachFirstPlayer = False
     , cdSetupToStaging = False
     }
 

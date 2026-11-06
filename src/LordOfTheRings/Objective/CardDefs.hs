@@ -16,7 +16,7 @@ allObjectiveCards =
   Map.fromList $
     map
       (\def -> (cdCardCode def, def))
-      [derufin, relicFromTheDarkYears, eventide, dusk, midnight, theOldThrush, lakeTown, rangerOfIthilien, corsairSkirmisherShipDreadnaught, eithiliant, eithiliantUpgraded, goldenWing, goldenWingUpgraded, prideOfLebennin, prideOfLebenninUpgraded, silentMist, silentMistUpgraded, swanShipOfDolAmroth, swanShipOfDolAmrothUpgraded, twilightsCall, twilightsCallUpgraded, gondorianWarship,  caveTorchDarkOfMirkwood
+      [tomBombadilOldForest, derufin, relicFromTheDarkYears, eventide, dusk, midnight, theOldThrush, lakeTown, rangerOfIthilien, corsairSkirmisherShipDreadnaught, eithiliant, eithiliantUpgraded, goldenWing, goldenWingUpgraded, prideOfLebennin, prideOfLebenninUpgraded, silentMist, silentMistUpgraded, swanShipOfDolAmroth, swanShipOfDolAmrothUpgraded, twilightsCall, twilightsCallUpgraded, gondorianWarship,  caveTorchDarkOfMirkwood
       , gandalfsMap
       , theThreatToWilderland
       , ashenBrazier
@@ -1660,3 +1660,15 @@ derufin = (objective "the-stone-of-erech-004" "Derufin" TheStoneOfErech 1)
 relicFromTheDarkYears :: CardDef
 relicFromTheDarkYears = (objective "the-stone-of-erech-011" "Relic from the Dark Years" TheStoneOfErech 1)
   { cdCardTraits = setFromList [Item, Artifact] }
+
+tomBombadilOldForest :: CardDef
+tomBombadilOldForest = (objective "the-old-forest-022" "Tom Bombadil" TheOldForest 1)
+  { cdCardType = ObjectiveAllyType
+  , cdUnique = True
+  , cdCardTraits = setFromList [Legend]
+  , cdWillpower = Just 3
+  , cdAttack = Just 3
+  , cdDefense = Just 3
+  , cdHitPoints = Just 6
+  , cdWhenRevealed = True
+  }

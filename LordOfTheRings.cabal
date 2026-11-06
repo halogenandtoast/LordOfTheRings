@@ -304,6 +304,7 @@ library
       LordOfTheRings.Ally.Cards.TheRiddermarksFinest
       LordOfTheRings.Ally.Cards.Tiny
       LordOfTheRings.Ally.Cards.TomBombadil
+      LordOfTheRings.Ally.Cards.TomBombadilOldForest
       LordOfTheRings.Ally.Cards.Treebeard
       LordOfTheRings.Ally.Cards.TrollshawScout
       LordOfTheRings.Ally.Cards.Turayn
@@ -508,6 +509,7 @@ library
       LordOfTheRings.Attachment.Cards.Nenya
       LordOfTheRings.Attachment.Cards.NobleHero
       LordOfTheRings.Attachment.Cards.NorAmIAStranger
+      LordOfTheRings.Attachment.Cards.OldBogeyStories
       LordOfTheRings.Attachment.Cards.OLorien
       LordOfTheRings.Attachment.Cards.OrcDisguise
       LordOfTheRings.Attachment.Cards.Orcrist
@@ -2691,6 +2693,7 @@ library
       LordOfTheRings.Objective.Cards.TheTowerOfBaradDurMountDoom
       LordOfTheRings.Objective.Cards.TheWainriders
       LordOfTheRings.Objective.Cards.ToIsengard
+      LordOfTheRings.Objective.Cards.TomBombadilOldForest
       LordOfTheRings.Objective.Cards.ToTheTower
       LordOfTheRings.Objective.Cards.TowerOfTheGull
       LordOfTheRings.Objective.Cards.TowerOfTheHeron

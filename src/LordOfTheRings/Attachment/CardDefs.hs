@@ -16,7 +16,8 @@ allAttachmentCards =
   Map.fromList $
     map
       (\def -> (cdCardCode def, def))
-      [ stewardOfGondor
+      [ oldBogeyStories
+      , stewardOfGondor
       , anvilOfGundabad
       , axeOfTheEdain
       , durinsDagger
@@ -2263,3 +2264,11 @@ thePowerOfSpirit = (attachment "dark-of-mirkwood-046" "The Power of Spirit" Neut
 
 theSecretOfLeadership :: CardDef
 theSecretOfLeadership = (attachment "dark-of-mirkwood-047" "The Secret of Leadership" Neutral (StaticCost 0)) {cdCardTraits = setFromList [Adaptation, Boon]}
+
+oldBogeyStories :: CardDef
+oldBogeyStories = (attachment "the-old-forest-024" "Old Bogey-stories" Neutral (StaticCost 0))
+  { cdCardTraits = setFromList [Boon, Tale]
+  , cdVictoryPoints = Just 1
+  , cdSetupAttach = True
+  , cdSetupAttachFirstPlayer = True
+  }

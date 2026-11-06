@@ -452,6 +452,9 @@ runPlayer msg player = case msg of
     ShufflePlayerDeck pid | pid == player.id -> do
       deck <- shuffleM player.deck
       pure $ player & deckL .~ deck
+    ShuffleHandIntoDeck pid | pid == player.id -> do
+      deck <- shuffleM (player.hand <> player.deck)
+      pure $ player & handL .~ [] & deckL .~ deck
     ShuffleTopOfDiscardIntoDeck pid n | pid == player.id -> do
       moved <- movableDiscardCards (take n player.discard)
       deck <- shuffleM (moved <> player.deck)

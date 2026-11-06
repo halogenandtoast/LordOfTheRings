@@ -2,6 +2,7 @@
 
 module LordOfTheRings.Ally (module LordOfTheRings.Ally, module X) where
 
+import LordOfTheRings.Ally.Cards.TomBombadilOldForest (tomBombadilOldForest)
 import LordOfTheRings.Ally.Cards.DerufinErech (derufinErech)
 import LordOfTheRings.Ally.Cards.RangerOfIthilien (rangerOfIthilien)
 import Data.Map.Strict qualified as Map
@@ -361,7 +362,8 @@ allAllies =
   Map.fromList
     [ (toCardCode builder, card)
     | card@(SomeAllyCard builder) <-
-        [ SomeAllyCard derufinErech
+        [ SomeAllyCard tomBombadilOldForest
+        , SomeAllyCard derufinErech
         , SomeAllyCard rangerOfIthilien
         , SomeAllyCard gondorianWarship
         , SomeAllyCard eithiliant

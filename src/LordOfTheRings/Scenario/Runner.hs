@@ -173,7 +173,8 @@ instance RunMessage ScenarioAttrs where
         player <- getPlayer pid
         for_ [pc | PlayerCard pc <- player.deck, cdSetupAttach (toCardDef pc)] \pc -> do
           removeFromDeck pid pc.id
-          chooseOneM pid do
+          chooser <- if cdSetupAttachFirstPlayer (toCardDef pc) then getLead else pure pid
+          chooseOneM chooser do
             questionLabeled "setupAttach"
             showing [PlayerCard pc]
             targets heroes \hero -> push $ PlayAttachmentOn pid pc (toTarget hero.id)

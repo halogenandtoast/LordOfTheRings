@@ -683,6 +683,8 @@ data ModifierType
   | -- | on the game: at the end of the phase, each player raises threat by the
     -- number of enemies then in staging, once per effect (Ending and Failing).
     RaiseThreatByStagingEnemiesAtEndOfPhase
+  | -- | a resolved revelation's delayed instruction (Tom Bombadil, The Old Forest).
+    DiscardAtEndOfRoundThenShuffleEncounterDiscard CardId
   | -- | on an enemy: as the quest phase ends, it engages the player with the highest threat,
     -- as Guffawing of Giants has its Stone-giant do
     EngagesHighestThreatAtEndOfQuestPhase

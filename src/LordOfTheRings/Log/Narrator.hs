@@ -487,6 +487,7 @@ narrationFor = \case
       | card <- filter ((== cid) . (.id)) player.discard
       ]
   ShuffleDiscardIntoDeck pid -> Just $ withPlayer pid \_ who -> one $ mechanic [ikeyPart "log.shufflesDiscardIntoDeck" ["player" ~> who]]
+  ShuffleHandIntoDeck pid -> Just $ withPlayer pid \_ who -> one $ mechanic [ikeyPart "log.shufflesHandIntoDeck" ["player" ~> who]]
   -- \* Under the threat dial, as Lost in the Dark places cards there
   PlaceUnderThreatDial pid n -> Just $ withPlayer pid \player who ->
     let placed = min n (length player.deck)

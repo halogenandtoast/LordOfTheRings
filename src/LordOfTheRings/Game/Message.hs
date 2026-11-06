@@ -357,6 +357,7 @@ import LordOfTheRings.Log.Block (
  )
 import LordOfTheRings.Log.Refs (cardTitle, sourceCardTitle)
 import LordOfTheRings.Matcher (
+  CardMatcher (AnyCard),
   getRemainingPlayers,
   AllyMatcher (
     AllyControlledBy,
@@ -524,6 +525,8 @@ import LordOfTheRings.Message (
     DefendedByMany,
     Destroy,
     Discard,
+    IfCardInVictoryDisplay,
+    ShuffleEncounterDiscardIntoDeck,
     DiscardForFortitudeTest,
     DiscardForHideTest,
     DiscardFromHand,
@@ -626,6 +629,7 @@ import LordOfTheRings.Message (
     PutIntoPlayAsActiveLocation,
     PutLocationIntoPlay,
     PutObjectiveAllyIntoPlay,
+    PutObjectiveAllyIntoPlayReadyAndCommitted,
     PutObjectiveAllyIntoPlayUnder,
     PutObjectiveHeroIntoPlayUnder,
     PutObjectiveIntoPlay,
@@ -818,6 +822,7 @@ import LordOfTheRings.Modifier (
     Defending,
     DiscardAtEndOfPhase,
     DiscardAtEndOfRound,
+    DiscardAtEndOfRoundThenShuffleEncounterDiscard,
     DiscardNextRevealed,
     DiscardRandomToCommit,
     DoesNotReadyDuringRefresh,
@@ -1267,10 +1272,23 @@ runGameMessage msg g = case msg of
     -- no area has begun the round's first phase, those separated before the first round
     -- too, as at Unexpected Rescue
     pure $ g & roundL +~ 1 & separationL %~ fmap (\s -> s {separationAreas = [a {areaStatus = AreaWaiting} | a <- separationAreas s]})
+  IfCardInVictoryDisplay cid messages -> do
+    when (any ((== cid) . (.id)) (toAttrs g.scenario).victoryDisplay) $ pushAll messages
+    pure g
+  DoStep 8 inner@(Discard GameSource (CardIdTarget cid)) -> do
+    for_ (find ((== cid) . allyCardId . toAttrs) $ toList g.entities.allies) \ally ->
+      pushAll [Discard GameSource (toTarget ally), DoStep 9 inner]
+    pure g
+  DoStep 9 (Discard GameSource (CardIdTarget cid)) -> do
+    when (any ((== cid) . (.id)) (toAttrs g.scenario).encounterDiscard) $
+      push $ ShuffleEncounterDiscardIntoDeck AnyCard
+    pure g
   EndRound -> do
     -- each area ends the round in turn
     let (step, g') = eachAreaThen (const [EndRound]) id BeginRound g
     unless (isJust g.outcome) do
+      delayed <- (\mods -> [cid | DiscardAtEndOfRoundThenShuffleEncounterDiscard cid <- mods]) <$> getModifiers GameTarget
+      pushAll [DoStep 8 (Discard GameSource (CardIdTarget cid)) | cid <- delayed]
       -- a player who played Justice Shall Be Done this round leaves the game
       eliminated <- filterM (fmap (elem EliminatedAtEndOfRound) . getModifiers . PlayerTarget) (Map.keys g.players)
       pushAll $ map EliminatePlayer eliminated
@@ -4559,15 +4577,8 @@ runGameMessage msg g = case msg of
             | otherwise -> OnIslandMap
         )
     pure $ g & entitiesL . locationsL %~ \ls -> foldr (\(lid, p) -> Map.adjust (overAttrs (\a -> a {locationPlacement = p})) lid) ls placements
-  PutObjectiveAllyIntoPlay oid pid | Just o <- Map.lookup oid g.entities.objectives -> do
-    thisAlly <-
-      entering
-        -- the damage it took in the staging area stays on it, as Celador's
-        $ overAttrs (\a -> a {allyPlacement = InPlayArea pid, allyTokens = addTokens Damage (countTokens Damage $ objectiveTokens $ toAttrs o) mempty})
-        $ lookupAlly (toCardCode o) (toCard o).id (AllyId $ unObjectiveId oid) pid
-    push $ enteredPlayThisRound thisAlly
-    push $ CheckWindows [mkAfter $ EntersPlay $ toTarget thisAlly]
-    pure $ g & entitiesL . objectivesL %~ Map.delete oid & entitiesL . alliesL %~ insertEntity thisAlly
+  PutObjectiveAllyIntoPlay oid pid -> objectiveAllyIntoPlay g oid pid False
+  PutObjectiveAllyIntoPlayReadyAndCommitted oid pid -> objectiveAllyIntoPlay g oid pid True
   ShuffleIntoEncounterDeck target@(LocationTarget lid) | Just l <- Map.lookup lid g.entities.locations -> do
     pushAll $ [Discard GameSource (toTarget a) | a <- toList g.entities.attachments, a.placement == AttachedTo target] <> freeGuarded g target
     deck <-
@@ -4674,3 +4685,18 @@ attackRecipient eid = do
     Nothing -> do
       engaged <- placementController . (.placement) <$> getEnemy eid
       maybe getLead pure engaged
+
+objectiveAllyIntoPlay :: Game -> ObjectiveId -> PlayerId -> Bool -> GameT Game
+objectiveAllyIntoPlay g oid pid readyAndCommitted = case Map.lookup oid g.entities.objectives of
+  Nothing -> pure g
+  Just objective -> do
+    thisAlly <- entering $ overAttrs
+      (\a -> a
+        { allyPlacement = InPlayArea pid
+        , allyTokens = addTokens Damage (countTokens Damage $ objectiveTokens $ toAttrs objective) mempty
+        , allyCommitted = readyAndCommitted && g.phase == QuestPhase
+        , allyExhausted = False
+        })
+      $ lookupAlly (toCardCode objective) (toCard objective).id (AllyId $ unObjectiveId oid) pid
+    pushAll [enteredPlayThisRound thisAlly, CheckWindows [mkAfter $ EntersPlay $ toTarget thisAlly]]
+    pure $ g & entitiesL . objectivesL %~ Map.delete oid & entitiesL . alliesL %~ insertEntity thisAlly

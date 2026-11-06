@@ -2,6 +2,7 @@
 
 module LordOfTheRings.Attachment (module LordOfTheRings.Attachment, module X) where
 
+import LordOfTheRings.Attachment.Cards.OldBogeyStories (oldBogeyStories)
 import Data.Map.Strict qualified as Map
 import LordOfTheRings.Card
 import LordOfTheRings.Classes.Entity
@@ -329,7 +330,8 @@ allAttachments =
   Map.fromList
     [ (toCardCode builder, card)
     | card@(SomeAttachmentCard builder) <-
-        [ SomeAttachmentCard stewardOfGondor
+        [ SomeAttachmentCard oldBogeyStories
+        , SomeAttachmentCard stewardOfGondor
         , SomeAttachmentCard celebriansStone
         , SomeAttachmentCard vilya
         , SomeAttachmentCard nenya

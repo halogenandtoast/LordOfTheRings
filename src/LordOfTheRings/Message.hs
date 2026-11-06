@@ -542,6 +542,8 @@ data Message
     -- Revealed effect not resolved, as Broken Rudder's *Forced effect attaches it
     AttachFromEncounterDiscard EncounterCard Target
   | ShufflePlayerDeck PlayerId
+  | ShuffleHandIntoDeck PlayerId
+  | IfCardInVictoryDisplay CardId [Message]
   | {- | the player takes matching cards from those searched in their deck into hand, any
     number of them or only 1 as the flag says, then shuffles their deck
     -}
@@ -596,6 +598,9 @@ data Message
     ShuffleVictoryDisplayIntoEncounterDeck CardMatcher
   | -- | an objective ally in play joins the player as an ally
     PutObjectiveAllyIntoPlay ObjectiveId PlayerId
+  | -- | enters ready and, during questing, already committed; it does not exhaust
+    -- to commit or ready as a separate effect (Tom Bombadil, The Old Forest).
+    PutObjectiveAllyIntoPlayReadyAndCommitted ObjectiveId PlayerId
   | ReduceActiveCost CostId Int
   | AddToVictoryDisplay Target
   | PutShadowLocationIntoPlay EnemyId CardId
