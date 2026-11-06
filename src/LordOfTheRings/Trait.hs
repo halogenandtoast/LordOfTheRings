@@ -69,6 +69,9 @@ data Trait
   | Dunland
   | Dwarf
   | Eagle
+  | EastBank
+  | WestBank
+  | Polluted
   | Easterling
   | Elite
   | EmynMuil

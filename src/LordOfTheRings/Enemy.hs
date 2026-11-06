@@ -2,6 +2,7 @@
 
 module LordOfTheRings.Enemy (module LordOfTheRings.Enemy, module X) where
 
+import LordOfTheRings.Enemy.Cards.SnagaScouts (snagaScouts)
 import LordOfTheRings.Enemy.AttackLocation (AttackLocation (..))
 import LordOfTheRings.Enemy.Cards.Dreadnaught
 import LordOfTheRings.Enemy.Cards.DreadnaughtCaptains
@@ -703,7 +704,8 @@ allEnemys =
   Map.fromList
     [ (toCardCode builder, card)
     | card@(SomeEnemyCard builder) <-
-        [ SomeEnemyCard wolvesFromMordor
+        [ SomeEnemyCard snagaScouts
+        , SomeEnemyCard wolvesFromMordor
         , SomeEnemyCard wainriders
         , SomeEnemyCard theWitchKingOsgiliath
         , SomeEnemyCard wainriderCaptain

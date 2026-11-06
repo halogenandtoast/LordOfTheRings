@@ -2,6 +2,11 @@
 
 module LordOfTheRings.Location (module LordOfTheRings.Location, module X) where
 
+import LordOfTheRings.Location.Cards.CapturedWatchtower (capturedWatchtower)
+import LordOfTheRings.Location.Cards.EmynArnenOverlook (emynArnenOverlook)
+import LordOfTheRings.Location.Cards.Morgulduin (morgulduin)
+import LordOfTheRings.Location.Cards.PelennorFieldsOsgiliath (pelennorFieldsOsgiliath)
+import LordOfTheRings.Location.Cards.RuinsOfOsgiliath (ruinsOfOsgiliath)
 import LordOfTheRings.Location.Cards.BelfalasShipyard
 import LordOfTheRings.Location.Cards.IsleOfFortune
 import LordOfTheRings.Location.Cards.DreadnaughtCoast
@@ -782,7 +787,12 @@ allLocations =
   Map.fromList
     [ (toCardCode builder, card)
     | card@(SomeLocationCard builder) <-
-        [ SomeLocationCard belfalasShipyard
+        [ SomeLocationCard capturedWatchtower
+        , SomeLocationCard emynArnenOverlook
+        , SomeLocationCard morgulduin
+        , SomeLocationCard pelennorFieldsOsgiliath
+        , SomeLocationCard ruinsOfOsgiliath
+        , SomeLocationCard belfalasShipyard
         , SomeLocationCard isleOfFortune
         , SomeLocationCard mouthsOfAnduin
         , SomeLocationCard tolfalasLanding

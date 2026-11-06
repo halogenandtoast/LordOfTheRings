@@ -2,6 +2,7 @@
 
 module LordOfTheRings.Quest (module LordOfTheRings.Quest, module X) where
 
+import LordOfTheRings.Quest.Cards.RaceToMinasTirith (raceToMinasTirith)
 import Data.Map.Strict qualified as Map
 import LordOfTheRings.Card
 import LordOfTheRings.Classes.Entity
@@ -478,7 +479,8 @@ allQuests =
   Map.fromList
     [ (toCardCode builder, card)
     | card@(SomeQuestCard builder) <-
-        [ SomeQuestCard searchingTheHighSeas
+        [ SomeQuestCard raceToMinasTirith
+        , SomeQuestCard searchingTheHighSeas
         , SomeQuestCard destroyTheDreadnaught
         , SomeQuestCard afterTheRaid
         , SomeQuestCard mirkwoodForestTheOath

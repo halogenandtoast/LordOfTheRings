@@ -247,6 +247,14 @@ data ModifierType
   | -- | on a location: when the players may travel and there is no active location, they
     -- must travel here
     MustBeTraveledTo
+  | -- | On a staged location: each player raises threat by N when offered travel and choosing elsewhere.
+    ThreatPenaltyForNotTravelingTo Int
+  | -- | On the game: encounter cards revealed during this effect gain doomed N.
+    RevealedEncounterCardsGainDoomed Int
+  | -- | On the game: the first matching enemy revealed this round gains these keywords.
+    FirstRevealedEnemyWithTraitGainsKeywords Trait [Keyword]
+  | -- | On the game: this trait has appeared on an enemy revealed this round, even before a granting card entered play.
+    EnemyWithTraitRevealedThisRound Trait
   | LeavesPlayToTopOfEncounterDeck
   | -- | on an objective: discarded, it goes to the encounter discard pile, not back to the
     -- staging area, as Wormsbane

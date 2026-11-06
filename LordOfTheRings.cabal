@@ -1156,6 +1156,7 @@ library
       LordOfTheRings.Enemy.Cards.SmaugTheMagnificent
       LordOfTheRings.Enemy.Cards.Snaga
       LordOfTheRings.Enemy.Cards.SnagaArcher
+      LordOfTheRings.Enemy.Cards.SnagaScouts
       LordOfTheRings.Enemy.Cards.SnowGiant
       LordOfTheRings.Enemy.Cards.SnowTroll
       LordOfTheRings.Enemy.Cards.SnowWarg
@@ -1832,6 +1833,7 @@ library
       LordOfTheRings.Location.Cards.CandleLitPool
       LordOfTheRings.Location.Cards.CaptainsQuarters
       LordOfTheRings.Location.Cards.CapturedTower
+      LordOfTheRings.Location.Cards.CapturedWatchtower
       LordOfTheRings.Location.Cards.Caradhras
       LordOfTheRings.Location.Cards.CargoHold
       LordOfTheRings.Location.Cards.Catacombs
@@ -1961,6 +1963,7 @@ library
       LordOfTheRings.Location.Cards.ElvenCaravel
       LordOfTheRings.Location.Cards.ElvenWaveRunner
       LordOfTheRings.Location.Cards.EmbattledValley
+      LordOfTheRings.Location.Cards.EmynArnenOverlook
       LordOfTheRings.Location.Cards.EnchantedLand
       LordOfTheRings.Location.Cards.EnchantedStream
       LordOfTheRings.Location.Cards.EndlessCaverns
@@ -2132,6 +2135,7 @@ library
       LordOfTheRings.Location.Cards.MithrilLode
       LordOfTheRings.Location.Cards.MoonlitPassage
       LordOfTheRings.Location.Cards.MordorRoad
+      LordOfTheRings.Location.Cards.Morgulduin
       LordOfTheRings.Location.Cards.MorgulRoad
       LordOfTheRings.Location.Cards.MorgulVale
       LordOfTheRings.Location.Cards.MorgulValeShelobsLair
@@ -2193,6 +2197,7 @@ library
       LordOfTheRings.Location.Cards.PelargirDocks
       LordOfTheRings.Location.Cards.PelargirQuays
       LordOfTheRings.Location.Cards.PelennorField
+      LordOfTheRings.Location.Cards.PelennorFieldsOsgiliath
       LordOfTheRings.Location.Cards.PerilousSwamp
       LordOfTheRings.Location.Cards.PillagedShip
       LordOfTheRings.Location.Cards.PineSlopes
@@ -2249,6 +2254,7 @@ library
       LordOfTheRings.Location.Cards.RuinedWatchTower
       LordOfTheRings.Location.Cards.RuinsOfArnor
       LordOfTheRings.Location.Cards.RuinsOfDale
+      LordOfTheRings.Location.Cards.RuinsOfOsgiliath
       LordOfTheRings.Location.Cards.RuinsOfTheSecondAge
       LordOfTheRings.Location.Cards.SacredForest
       LordOfTheRings.Location.Cards.SarnGebir
@@ -2883,6 +2889,7 @@ library
       LordOfTheRings.Quest.Cards.PursuedByShadowStage
       LordOfTheRings.Quest.Cards.PursuedByTheEnemy
       LordOfTheRings.Quest.Cards.QuietTheSpirits
+      LordOfTheRings.Quest.Cards.RaceToMinasTirith
       LordOfTheRings.Quest.Cards.RaceToRivendell
       LordOfTheRings.Quest.Cards.RacingNorth
       LordOfTheRings.Quest.Cards.RadagastsRequest
@@ -3426,6 +3433,7 @@ library
       LordOfTheRings.Treachery.Cards.CurseOfTheWildMen
       LordOfTheRings.Treachery.Cards.CurseOfTheYears
       LordOfTheRings.Treachery.Cards.CutOff
+      LordOfTheRings.Treachery.Cards.CutOffOsgiliath
       LordOfTheRings.Treachery.Cards.DaechanarsCurse
       LordOfTheRings.Treachery.Cards.DaechanarsWill
       LordOfTheRings.Treachery.Cards.DangerCloseBehind
@@ -3437,6 +3445,7 @@ library
       LordOfTheRings.Treachery.Cards.DarkInterrogation
       LordOfTheRings.Treachery.Cards.DarknessInTheEast
       LordOfTheRings.Treachery.Cards.DarkPlaces
+      LordOfTheRings.Treachery.Cards.DarkPursuit
       LordOfTheRings.Treachery.Cards.DarkSorcery
       LordOfTheRings.Treachery.Cards.DauntingPower
       LordOfTheRings.Treachery.Cards.DeadlyCold
@@ -3623,6 +3632,7 @@ library
       LordOfTheRings.Treachery.Cards.ManyThongedWhip
       LordOfTheRings.Treachery.Cards.MarchingUpTheRoad
       LordOfTheRings.Treachery.Cards.MassingAtNight
+      LordOfTheRings.Treachery.Cards.MassingAtOsgiliath
       LordOfTheRings.Treachery.Cards.MassingInTheDeep
       LordOfTheRings.Treachery.Cards.MenInTheDark
       LordOfTheRings.Treachery.Cards.MinceThemFine

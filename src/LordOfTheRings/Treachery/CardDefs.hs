@@ -14,7 +14,7 @@ allTreacheryCards =
   Map.fromList $
     map
       (\def -> (cdCardCode def, def))
-      [ballistaBarrage, boardingPartyDreadnaught, grappledDreadnaught, outOfTheMist, overworked, takingOnWaterDreadnaught, violentTempest,  shinyDistraction
+      [cutOffOsgiliath, darkPursuit, massingAtOsgiliath, ballistaBarrage, boardingPartyDreadnaught, grappledDreadnaught, outOfTheMist, overworked, takingOnWaterDreadnaught, violentTempest,  shinyDistraction
       , guiltyConscience
       , drivenByShadowDarkOfMirkwood
       , surprisingSpeedDarkOfMirkwood
@@ -3895,4 +3895,30 @@ violentTempest :: CardDef
 violentTempest = (treachery "the-hunt-for-the-dreadnaught-046" "Violent Tempest" TheHuntForTheDreadnaught 3)
   { cdCardTraits = setFromList [Weather]
   , cdShadowEffect = True
+  }
+
+cutOffOsgiliath :: CardDef
+cutOffOsgiliath = (treachery "the-massing-at-osgiliath-012" "Cut Off" TheMassingAtOsgiliath 4)
+  { cdCardTraits = setFromList []
+  , cdUnique = False
+  , cdShadowEffect = True
+  , cdWhenRevealed = True
+  , cdKeywords = setFromList [Doomed 1]
+  }
+
+darkPursuit :: CardDef
+darkPursuit = (treachery "the-massing-at-osgiliath-013" "Dark Pursuit" TheMassingAtOsgiliath 2)
+  { cdCardTraits = setFromList []
+  , cdUnique = False
+  , cdShadowEffect = False
+  , cdWhenRevealed = True
+  }
+
+massingAtOsgiliath :: CardDef
+massingAtOsgiliath = (treachery "the-massing-at-osgiliath-014" "Massing at Osgiliath" TheMassingAtOsgiliath 3)
+  { cdCardTraits = setFromList []
+  , cdUnique = False
+  , cdShadowEffect = False
+  , cdWhenRevealed = True
+  , cdKeywords = setFromList [Surge]
   }

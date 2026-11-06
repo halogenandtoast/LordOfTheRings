@@ -1,4 +1,14 @@
 {
+  "snagaScouts": {
+    "engage": "Choose the player with the lowest threat for all Snaga Scouts to engage"
+  },
+  "travelWithPenalty": "Choose a location to travel to. Raise each player's threat by {threat}, reduced by the penalty on the location you choose.",
+  "cutOffOsgiliath": {
+    "shadow": "Discard ally cards from your hand or give the attacking enemy +3 attack",
+    "discard": "Discard the required number of ally cards from your hand",
+    "discardAlly": "Choose an ally card to discard",
+    "attack": "Attacking enemy gets +3 attack"
+  },
   "theWitchKingOsgiliath": {
     "choose": "Return The Witch-king to the staging area or raise your threat by 3.",
     "return": "Return The Witch-king to the staging area",

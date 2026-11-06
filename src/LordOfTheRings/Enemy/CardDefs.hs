@@ -14,7 +14,7 @@ allEnemyCards =
   Map.fromList $
     map
       (\def -> (cdCardCode def, def))
-      [theWitchKingOsgiliath, wolvesFromMordor, wainriders, wainriderCaptain, urukVanguard, dreadnaught, dreadnaughtDamaged, captainOfTheHaven, commanderOfTheDreadnaught, descendantOfCastamir, hydraken, ophidian, varjax, brashCorsairDreadnaught, corsairPlunderer, daringBuccaneer, fierceMarauder, southronSailorDreadnaught, umbarCaptainDreadnaught, blackSailsDreadnaught, corsairSkiffDreadnaught, corsairSkirmisherDreadnaught, corsairWarshipDreadnaught, rammingShipDreadnaught, slaveShipDreadnaught, warGalley, seaMonster,  stalkingGoblin
+      [snagaScouts, theWitchKingOsgiliath, wolvesFromMordor, wainriders, wainriderCaptain, urukVanguard, dreadnaught, dreadnaughtDamaged, captainOfTheHaven, commanderOfTheDreadnaught, descendantOfCastamir, hydraken, ophidian, varjax, brashCorsairDreadnaught, corsairPlunderer, daringBuccaneer, fierceMarauder, southronSailorDreadnaught, umbarCaptainDreadnaught, blackSailsDreadnaught, corsairSkiffDreadnaught, corsairSkirmisherDreadnaught, corsairWarshipDreadnaught, rammingShipDreadnaught, slaveShipDreadnaught, warGalley, seaMonster,  stalkingGoblin
       , spidersOfMirkwoodDarkOfMirkwood
       , goblinSniperDarkOfMirkwood
       , goblinRunnersDarkOfMirkwood
@@ -5783,6 +5783,13 @@ wolvesFromMordor = (enemy "the-massing-at-osgiliath-003" "Wolves from Mordor" Th
 wainriders :: CardDef
 wainriders = (enemy "the-massing-at-osgiliath-004" "Wainriders" TheMassingAtOsgiliath 4 35 2 3 1 4)
   { cdCardTraits = setFromList [Easterling, Scout]
+  , cdUnique = False
+  , cdShadowEffect = False
+  }
+
+snagaScouts :: CardDef
+snagaScouts = (enemy "the-massing-at-osgiliath-002" "Snaga Scouts" TheMassingAtOsgiliath 4 1 1 1 0 2)
+  { cdCardTraits = setFromList [Orc, Scout]
   , cdUnique = False
   , cdShadowEffect = False
   }

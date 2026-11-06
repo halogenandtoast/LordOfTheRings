@@ -848,6 +848,10 @@ import LordOfTheRings.Modifier (
     MayDeclareMultipleDefenders,
     MayDeclareUpToDefenders,
     MustBeTraveledTo,
+    ThreatPenaltyForNotTravelingTo,
+    RevealedEncounterCardsGainDoomed,
+    FirstRevealedEnemyWithTraitGainsKeywords,
+    EnemyWithTraitRevealedThisRound,
     MustCommitAll,
     MustCommitToQuest,
     NextEnemyInStaging,
@@ -1869,15 +1873,26 @@ runGameMessage msg g = case msg of
   DoStep 1 (BeginPhase TravelPhase) -> do
     locations <- travelableLocations
     lead <- getStageLead
+    players <- getPlayerOrder
     forced <- filterM (fmap (elem MustBeTraveledTo) . getModifiers) locations
+    staged <- select LocationInStagingArea
+    pressure <- fmap concat $ for staged \lid -> do
+      mods <- getModifiers lid
+      pure [(lid, n) | ThreatPenaltyForNotTravelingTo n <- mods, n > 0]
+    let penalties chosen = concat
+          [ [RaiseThreat p n, CheckWindows [mkAfter $ ThreatRaisedByEncounter p n]]
+          | (lid, n) <- pressure, Just lid /= chosen, p <- players
+          ]
+        prompt ordinary = if null pressure
+          then ikey ordinary
+          else ikeyWith "label.travelWithPenalty" [intVar "threat" $ sum $ map snd pressure]
+        travel lid = targetLabel lid (penalties (Just lid) <> [TravelTo lid])
     unless (null locations)
       $ push
       $ if null forced
-        then
-          questionLabel (ikey "label.travelToLocation") lead
-            $ [targetLabel lid [TravelTo lid] | lid <- locations]
-            <> [Label (ikey "label.doNotTravel") []]
-        else questionLabel (ikey "label.mustTravel") lead [targetLabel lid [TravelTo lid] | lid <- forced]
+        then questionLabel (prompt "label.travelToLocation") lead
+          $ map travel locations <> [Label (ikey "label.doNotTravel") (penalties Nothing)]
+        else questionLabel (prompt "label.mustTravel") lead (map travel forced)
     pure g
   -- "when the players travel", as Crypt Key answers, comes before the location is active
   DoStep 1 (TravelTo lid) -> do
@@ -4125,14 +4140,31 @@ runGameMessage msg g = case msg of
     let def = toCardDef card
     players <- getPlayerOrder
     revealer <- maybe getLead pure (engaging <|> gameRevealer g)
-    doomed <-
-      concat
-        <$> sequence
-          [ inLogBlock (DoomedBlock n)
-            $ concat [[RaiseThreat p n, CheckWindows [mkAfter $ ThreatRaisedByEncounter p n, mkAfter $ ThreatRaisedByDoomed p]] | p <- players]
-          | Doomed n <- toList (cdKeywords def)
-          , n > 0
+    gameMods <- getModifiers GameTarget
+    let firstKeywords = concat
+          [ keywords
+          | cdCardType def == EnemyType
+          , FirstRevealedEnemyWithTraitGainsKeywords trait keywords <- gameMods
+          , trait `member` cdCardTraits def
+          , EnemyWithTraitRevealedThisRound trait `notElem` gameMods
           ]
+        firstTraits =
+          [ trait
+          | cdCardType def == EnemyType
+          , trait <- toList $ cdCardTraits def
+          , EnemyWithTraitRevealedThisRound trait `notElem` gameMods
+          ]
+        -- Snapshot gained keywords when this card is revealed. In particular a
+        -- Massing at Osgiliath does not give itself the doomed it grants later.
+        gainedDoomed = sum [n | RevealedEncounterCardsGainDoomed n <- gameMods]
+        gainedKeywords = firstKeywords <> [Doomed gainedDoomed | gainedDoomed > 0]
+        doom = sum [n | Doomed n <- toList (cdKeywords def) <> gainedKeywords]
+        rememberRevelation t =
+          [CreateEffect $ Effect GameSource t (map GainKeyword gainedKeywords) UntilEndOfPhase | notNull gainedKeywords]
+          <> [CreateEffect $ Effect GameSource GameTarget (map EnemyWithTraitRevealedThisRound firstTraits) UntilEndOfRound | notNull firstTraits]
+    doomed <- if doom <= 0 then pure [] else
+      inLogBlock (DoomedBlock doom)
+        $ concat [[RaiseThreat p doom, CheckWindows [mkAfter $ ThreatRaisedByEncounter p doom, mkAfter $ ThreatRaisedByDoomed p]] | p <- players]
     let
         -- the players as a group discard the resources from their heroes' pools (The
         -- Drúadan Forest rules)
@@ -4148,7 +4180,7 @@ runGameMessage msg g = case msg of
         -- Prowl, a keyword, resolves before the When Revealed effect (ALeP 3.094)
         revealing t =
           inLogBlock (RevealBlock card)
-            $ [CheckWindows [mkWhen $ Revealed t]] <> mischiefDamage t <> [WhileInPlay t prowl | notNull prowl] <> hide <> [whenRevealed t, WhileInPlay t doomed]
+            $ [CheckWindows [mkWhen $ Revealed t]] <> [WhileInPlay t (rememberRevelation t) | notNull firstTraits || notNull gainedKeywords] <> mischiefDamage t <> [WhileInPlay t prowl | notNull prowl] <> hide <> [whenRevealed t, WhileInPlay t doomed]
             -- Resolve the card's revelation before its staging-entry triggers. A
             -- canceled card is treated as never revealed (FAQ 1.54), so its entry
             -- Forced effects cannot resolve before the cancellation window.
@@ -4214,7 +4246,7 @@ runGameMessage msg g = case msg of
       t | t `elem` [ObjectiveType, ObjectiveAllyType] -> do
         -- an objective ally a player gains control of, as Gildor Inglorion, goes to him
         let comesOut = if gainsController def then AddToStaging card else PutObjectiveIntoPlay card
-        pushAll . (<> doomed <> [ResolveSurge (CardIdTarget card.id) card]) =<< inLogBlock (RevealBlock card) [comesOut]
+        pushAll . (<> doomed <> [ResolveSurge (CardIdTarget card.id) card]) =<< inLogBlock (RevealBlock card) (rememberRevelation (CardIdTarget card.id) <> [comesOut])
         pure g
       -- an encounter side quest goes to the staging area, where the players may quest
       -- against it

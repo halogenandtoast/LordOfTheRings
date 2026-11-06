@@ -15,7 +15,7 @@ allLocationCards =
   Map.fromList $
     map
       (\def -> (cdCardCode def, def))
-      [belfalasShipyard, cobasHavenDreadnaught, isleOfFortune, mouthsOfAnduin, tolfalasLanding, wickedCove,  theEavesOfMirkwoodDarkOfMirkwood
+      [capturedWatchtower, emynArnenOverlook, morgulduin, pelennorFieldsOsgiliath, ruinsOfOsgiliath, belfalasShipyard, cobasHavenDreadnaught, isleOfFortune, mouthsOfAnduin, tolfalasLanding, wickedCove,  theEavesOfMirkwoodDarkOfMirkwood
       , forestGateDarkOfMirkwood
       , goblinTunnelsDarkOfMirkwood
       , lightlessPassageDarkOfMirkwood
@@ -5319,4 +5319,39 @@ wickedCove :: CardDef
 wickedCove = (location "the-hunt-for-the-dreadnaught-039" "Wicked Cove" TheHuntForTheDreadnaught 3 2 4)
   { cdCardTraits = setFromList [Coastland, Ocean]
   , cdShadowEffect = True
+  }
+
+capturedWatchtower :: CardDef
+capturedWatchtower = (location "the-massing-at-osgiliath-007" "Captured Watchtower" TheMassingAtOsgiliath 3 1 2)
+  { cdCardTraits = setFromList [WestBank]
+  , cdUnique = False
+  , cdShadowEffect = True
+  }
+
+emynArnenOverlook :: CardDef
+emynArnenOverlook = (location "the-massing-at-osgiliath-008" "Emyn Arnen Overlook" TheMassingAtOsgiliath 1 2 5)
+  { cdCardTraits = setFromList [EastBank, Highlands]
+  , cdUnique = False
+  , cdShadowEffect = False
+  }
+
+morgulduin :: CardDef
+morgulduin = (location "the-massing-at-osgiliath-009" "Morgulduin" TheMassingAtOsgiliath 2 1 3)
+  { cdCardTraits = setFromList [EastBank, Polluted]
+  , cdUnique = False
+  , cdShadowEffect = True
+  }
+
+pelennorFieldsOsgiliath :: CardDef
+pelennorFieldsOsgiliath = (location "the-massing-at-osgiliath-010" "Pelennor Fields" TheMassingAtOsgiliath 2 1 7)
+  { cdCardTraits = setFromList [WestBank]
+  , cdUnique = False
+  , cdShadowEffect = False
+  }
+
+ruinsOfOsgiliath :: CardDef
+ruinsOfOsgiliath = (location "the-massing-at-osgiliath-011" "Ruins of Osgiliath" TheMassingAtOsgiliath 3 1 2)
+  { cdCardTraits = setFromList [EastBank]
+  , cdUnique = False
+  , cdShadowEffect = False
   }

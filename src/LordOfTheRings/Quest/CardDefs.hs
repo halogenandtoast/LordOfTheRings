@@ -90,7 +90,7 @@ allQuestCards =
   Map.fromList $
     map
       (\def -> (cdCardCode def, def))
-      [searchingTheHighSeas, destroyTheDreadnaught,  afterTheRaid
+      [raceToMinasTirith, searchingTheHighSeas, destroyTheDreadnaught,  afterTheRaid
       , mirkwoodForestTheOath
       , theRearguardTheOath
       , theDarkOfNibinDum
@@ -2255,3 +2255,6 @@ searchingTheHighSeas = (quest "the-hunt-for-the-dreadnaught-004" "Searching the 
 
 destroyTheDreadnaught :: CardDef
 destroyTheDreadnaught = (quest "the-hunt-for-the-dreadnaught-005" "Destroy the Dreadnaught" TheHuntForTheDreadnaught 2 0)
+
+raceToMinasTirith :: CardDef
+raceToMinasTirith = quest "the-massing-at-osgiliath-019" "Race to Minas Tirith" TheMassingAtOsgiliath 4 15

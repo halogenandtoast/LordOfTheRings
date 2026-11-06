@@ -2,6 +2,9 @@
 
 module LordOfTheRings.Treachery (module LordOfTheRings.Treachery, module X) where
 
+import LordOfTheRings.Treachery.Cards.CutOffOsgiliath (cutOffOsgiliath)
+import LordOfTheRings.Treachery.Cards.DarkPursuit (darkPursuit)
+import LordOfTheRings.Treachery.Cards.MassingAtOsgiliath (massingAtOsgiliath)
 import LordOfTheRings.Treachery.Cards.OutOfTheMist
 import LordOfTheRings.Treachery.Cards.DreadnaughtWeather
 import LordOfTheRings.Treachery.Cards.ObsidianArrowsDarkOfMirkwood
@@ -623,7 +626,10 @@ allTreacherys =
   Map.fromList
     [ (toCardCode builder, card)
     | card@(SomeTreacheryCard builder) <-
-        [ SomeTreacheryCard outOfTheMist
+        [ SomeTreacheryCard cutOffOsgiliath
+        , SomeTreacheryCard darkPursuit
+        , SomeTreacheryCard massingAtOsgiliath
+        , SomeTreacheryCard outOfTheMist
         , SomeTreacheryCard ballistaBarrage
         , SomeTreacheryCard overworked
         , SomeTreacheryCard violentTempest
