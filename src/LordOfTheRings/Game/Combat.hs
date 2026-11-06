@@ -440,8 +440,11 @@ canFight eid c = do
 canAttack :: EnemyId -> Target -> GameT Bool
 canAttack eid c = do
   barred <- (\ms -> anyM (\m -> selectAny (EnemyWithId eid <> m)) [m | CannotAttackMatching m <- ms]) =<< getModifiers c
+  controller <- characterController c
+  enemyMods <- getModifiers eid
+  let barredController = any (\pid -> CannotBeAttackedByCharactersOf pid `elem` enemyMods) controller
   full <- (<= 0) . fromMaybe 1 <$> attackerRoom eid
-  if barred || full then pure False else canFight eid c
+  if barred || barredController || full then pure False else canFight eid c
 
 -- | How many more characters may attack the enemy this round or in this attack, when it is
 -- limited, as Graxar.

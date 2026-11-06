@@ -17,7 +17,7 @@ import LordOfTheRings.Enemy.Types hiding (enemy)
 import LordOfTheRings.Entities
 import LordOfTheRings.Game.Base
 import LordOfTheRings.Heading as X
-import LordOfTheRings.Helpers.Modifiers (cardsPlayedThisRound, defenseOf, modifiedEngagementCost, getModifiers, hitPointsOf, modifiedValue)
+import LordOfTheRings.Helpers.Modifiers (cardsPlayedThisRound, defenseOf, modifiedEngagementCost, getModifiers, hitPointsOf, modifiedValue, discoverValueWithModifiers)
 import LordOfTheRings.Hero.Types hiding (hero)
 import LordOfTheRings.Id
 import LordOfTheRings.Keyword (Keyword (..))
@@ -568,8 +568,7 @@ modifiers, as Hidden Staircase's X and Crypt Key's 1, and never below 0 (MEC69 r
 discoverValue :: HasGame m => Target -> CardDef -> m (Maybe Int)
 discoverValue target def = do
   mods <- map modifierType . Map.findWithDefault [] target <$> getsGame gameModifiers
-  let values = [n | Blank `notElem` mods, Discover n <- toList (cdKeywords def)] <> [n | GainKeyword (Discover n) <- mods]
-  pure $ if null values then Nothing else Just $ max 0 $ sum values + sum [k | DiscoverValueModifier k <- mods]
+  pure $ discoverValueWithModifiers def mods
 
 -- | The Discover value of the location in play, if it has the keyword.
 getDiscoverValue :: HasGame m => LocationId -> m (Maybe Int)

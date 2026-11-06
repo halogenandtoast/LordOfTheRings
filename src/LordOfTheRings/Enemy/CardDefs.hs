@@ -14,7 +14,7 @@ allEnemyCards =
   Map.fromList $
     map
       (\def -> (cdCardCode def, def))
-      [oldManWillow, longTrailer, graspingRoot, armyOfFlies, theLordOfTheDeadErech, shadowMan, restlessDead, whisperer, regretfulShade, shadowHostCaptain, smaugTheMightyLakeTown, smaugTheTerrible, smaugTheMagnificentLakeTown, snagaScouts, theWitchKingOsgiliath, wolvesFromMordor, wainriders, wainriderCaptain, urukVanguard, dreadnaught, dreadnaughtDamaged, captainOfTheHaven, commanderOfTheDreadnaught, descendantOfCastamir, hydraken, ophidian, varjax, brashCorsairDreadnaught, corsairPlunderer, daringBuccaneer, fierceMarauder, southronSailorDreadnaught, umbarCaptainDreadnaught, blackSailsDreadnaught, corsairSkiffDreadnaught, corsairSkirmisherDreadnaught, corsairWarshipDreadnaught, rammingShipDreadnaught, slaveShipDreadnaught, warGalley, seaMonster,  stalkingGoblin
+      [lurkerOfTheDepths, namelessCaveDweller, oldStoneTroll, oldManWillow, longTrailer, graspingRoot, armyOfFlies, theLordOfTheDeadErech, shadowMan, restlessDead, whisperer, regretfulShade, shadowHostCaptain, smaugTheMightyLakeTown, smaugTheTerrible, smaugTheMagnificentLakeTown, snagaScouts, theWitchKingOsgiliath, wolvesFromMordor, wainriders, wainriderCaptain, urukVanguard, dreadnaught, dreadnaughtDamaged, captainOfTheHaven, commanderOfTheDreadnaught, descendantOfCastamir, hydraken, ophidian, varjax, brashCorsairDreadnaught, corsairPlunderer, daringBuccaneer, fierceMarauder, southronSailorDreadnaught, umbarCaptainDreadnaught, blackSailsDreadnaught, corsairSkiffDreadnaught, corsairSkirmisherDreadnaught, corsairWarshipDreadnaught, rammingShipDreadnaught, slaveShipDreadnaught, warGalley, seaMonster,  stalkingGoblin
       , spidersOfMirkwoodDarkOfMirkwood
       , goblinSniperDarkOfMirkwood
       , goblinRunnersDarkOfMirkwood
@@ -5872,3 +5872,16 @@ graspingRoot = (enemy "the-old-forest-009" "Grasping Root" TheOldForest 4 30 3 3
 armyOfFlies :: CardDef
 armyOfFlies = (enemy "the-old-forest-010" "Army of Flies" TheOldForest 3 20 1 1 0 2)
   { cdCardTraits = setFromList [Creature, Insect], cdKeywords = setFromList [Surge], cdShadowEffect = True }
+
+
+lurkerOfTheDepths :: CardDef
+lurkerOfTheDepths = (enemy "the-ruins-of-belegost-016" "Lurker of the Depths" TheRuinsOfBelegost 1 50 4 5 2 12)
+  { cdUnique = True, cdCardTraits = setFromList [Creature], cdVictoryPoints = Just 5 }
+
+namelessCaveDweller :: CardDef
+namelessCaveDweller = (enemy "the-ruins-of-belegost-017" "Nameless Cave Dweller" TheRuinsOfBelegost 4 35 0 0 0 5)
+  { cdCardTraits = setFromList [Nameless, Hazard], cdShadowEffect = True }
+
+oldStoneTroll :: CardDef
+oldStoneTroll = (enemy "the-ruins-of-belegost-018" "Old Stone Troll" TheRuinsOfBelegost 2 50 3 6 3 8)
+  { cdCardTraits = setFromList [Troll, Hazard] }

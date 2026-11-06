@@ -134,13 +134,10 @@ thaneDef = find (cardMatches $ CardWithTitle "Thane Ulchor") (toList Enemies.all
 withThane :: (CardDef -> PlayerId -> GameT ()) -> IO ()
 withThane body = maybe (pendingWith "no version of Thane Ulchor is defined yet") (gameTest . body) thaneDef
 
--- | A version of Thane Ulchor a player can engage: Wrath and Ruin's cannot leave the
--- staging area.
+-- | Nurn's version can engage without scenario prerequisites. Wrath and Ruin's
+-- cannot leave staging; Temple of Doom's needs four defeated quest stages.
 withEngageableThane :: (CardDef -> PlayerId -> GameT ()) -> IO ()
-withEngageableThane body =
-  maybe (pendingWith "no version of Thane Ulchor that can be engaged is defined yet") (gameTest . body)
-    $ find ((/= toCardCode Enemies.thaneUlchorWrathAndRuin) . toCardCode)
-    $ filter (cardMatches $ CardWithTitle "Thane Ulchor") (toList Enemies.allEnemyCards)
+withEngageableThane body = gameTest $ body Enemies.thaneUlchorTheFortressOfNurn
 
 spec :: Spec
 spec = describe "A Shadow in the East's shared encounter sets" do

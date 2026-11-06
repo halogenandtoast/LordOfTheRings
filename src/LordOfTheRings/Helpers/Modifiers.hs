@@ -21,7 +21,7 @@ import LordOfTheRings.Entities
 import LordOfTheRings.Game.Base
 import LordOfTheRings.Id (PlayerId)
 import LordOfTheRings.Matcher.Types (PlayerMatcher (AnyPlayer), cardMatches)
-import LordOfTheRings.Keyword (Keyword (Massive))
+import LordOfTheRings.Keyword (Keyword (Massive, Discover))
 import LordOfTheRings.Modifier
 import LordOfTheRings.Placement (Placement (..))
 import LordOfTheRings.Prelude
@@ -250,10 +250,26 @@ getModifiers a = do
       blocked = case character of
         Just def -> any (willpowerValue def mods [] <) limits
         Nothing -> False
+      activeDiscover = sum
+        [ fromMaybe 0 $ discoverValueWithModifiers (toCardDef l) locationMods
+        | l <- toList g.entities.locations
+        , l.placement == ActiveLocation
+        , let locationMods = map modifierType $ Map.findWithDefault [] (toTarget l) g.gameModifiers
+        ]
+      fromDiscover = concat
+        [[ThreatModifier x, AttackModifier x, DefenseModifier x] | StatsFromActiveDiscover offset <- mods, let x = activeDiscover + offset]
   -- Keep stat-dependent readying restrictions current even when a lasting effect
   -- has just changed willpower. Constant abilities read the previous cache while
   -- the new cache is built, so materializing CannotReady there would lag a message.
-  pure $ mods <> [CannotReady | notNull limits && blocked]
+  pure $ mods <> fromDiscover <> [CannotReady | notNull limits && blocked]
+
+-- | Discover's printed or gained keyword, with its current modifiers. Shared by
+-- resolving Discover and stats that depend on its value.
+discoverValueWithModifiers :: CardDef -> [ModifierType] -> Maybe Int
+discoverValueWithModifiers def mods =
+  let values = [n | Blank `notElem` mods, Discover n <- toList (cdKeywords def)]
+        <> [n | GainKeyword (Discover n) <- mods]
+   in if null values then Nothing else Just $ max 0 $ sum values + sum [n | DiscoverValueModifier n <- mods]
 
 -- | Modified willpower, including its floor and effects preventing reductions.
 -- Used by both the stat reader and restrictions that depend on that current stat.

@@ -443,6 +443,10 @@ data ModifierType
   | -- | on a location: its Discover value moves by this much, as Hidden Staircase's X and
     -- Crypt Key's 1 read
     DiscoverValueModifier Int
+  | -- | On an enemy: add the active location's current Discover value plus this
+    -- offset to threat, attack and defense. Read after the modifier cache is built,
+    -- so a change to Discover applies immediately (Nameless Cave Dweller).
+    StatsFromActiveDiscover Int
   | -- | on an enemy with no victory points printed: it has this many, and goes to the
     -- victory display as it is defeated, as The Cursed Shade gives Fram's Shade victory 6
     GainVictory Int

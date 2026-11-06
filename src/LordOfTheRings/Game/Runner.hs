@@ -132,6 +132,7 @@ import LordOfTheRings.Modifier (
     CannotEnterStagingArea,
     CannotLeavePlay,
     CannotLeaveStagingArea,
+    CannotEngagePlayer,
     CannotRemoveTimeCounters,
     QuestProgressRemovalBecomes,
     EngagesOnly,
@@ -151,7 +152,7 @@ import LordOfTheRings.Modifier (
   ),
  )
 import LordOfTheRings.Placement (
-  Placement (ActiveLocation, OnIslandMap, OrcsArea, StagingArea),
+  Placement (EngagedWith, ActiveLocation, OnIslandMap, OrcsArea, StagingArea),
  )
 import LordOfTheRings.Question (targetLabel)
 import LordOfTheRings.I18n (ikey)
@@ -479,7 +480,11 @@ runGame'' msg g = case removedEnemy msg of
   -- nor is such an enemy engaged or moved out of it
   Nothing | Just eid <- movedEnemy g msg -> do
     mods <- getModifiers (EnemyTarget eid)
-    if stuckInStaging eid mods then pure g else runGame' msg g
+    let blockedEngagement = case msg of
+          EngageEnemy pid _ -> CannotEngagePlayer pid `elem` mods
+          PlaceEnemy _ (EngagedWith pid) -> CannotEngagePlayer pid `elem` mods
+          _ -> False
+    if stuckInStaging eid mods || blockedEngagement then pure g else runGame' msg g
   Nothing -> case movedLocation g msg of
     -- a location that cannot leave the staging area, as The Crossing at Tharbad, stays
     Just lid | Just l <- Map.lookup lid g.entities.locations, l.placement `elem` [StagingArea, OrcsArea] -> do

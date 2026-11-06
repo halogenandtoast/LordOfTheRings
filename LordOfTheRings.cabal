@@ -983,6 +983,7 @@ library
       LordOfTheRings.Enemy.Cards.LouisNightmare
       LordOfTheRings.Enemy.Cards.LowerGateSentries
       LordOfTheRings.Enemy.Cards.Lugdush
+      LordOfTheRings.Enemy.Cards.LurkerOfTheDepths
       LordOfTheRings.Enemy.Cards.ManOfHarad
       LordOfTheRings.Enemy.Cards.MaraudingOrc
       LordOfTheRings.Enemy.Cards.MarshAdder
@@ -1027,6 +1028,7 @@ library
       LordOfTheRings.Enemy.Cards.Murzag
       LordOfTheRings.Enemy.Cards.Naasiyah
       LordOfTheRings.Enemy.Cards.NamelessBeast
+      LordOfTheRings.Enemy.Cards.NamelessCaveDweller
       LordOfTheRings.Enemy.Cards.NamelessThing
       LordOfTheRings.Enemy.Cards.NazgulOfDolGuldur
       LordOfTheRings.Enemy.Cards.NazgulOfMinasMorgul
@@ -1036,6 +1038,7 @@ library
       LordOfTheRings.Enemy.Cards.NorthernWarg
       LordOfTheRings.Enemy.Cards.NurnSlaver
       LordOfTheRings.Enemy.Cards.OldManWillow
+      LordOfTheRings.Enemy.Cards.OldStoneTroll
       LordOfTheRings.Enemy.Cards.OldTomnoddy
       LordOfTheRings.Enemy.Cards.Oliphaunt
       LordOfTheRings.Enemy.Cards.OrcAbductor
@@ -4424,6 +4427,7 @@ test-suite LordOfTheRings-test
       LordOfTheRings.ShadowsOfMirkwood.TheHillsOfEmynMuilSpec
       LordOfTheRings.ShadowsOfMirkwood.TheHuntForGollumSpec
       LordOfTheRings.Standalone.BattleOfLakeTownSpec
+      LordOfTheRings.Standalone.BelegostSpec
       LordOfTheRings.Standalone.MassingAtOsgiliathSpec
       LordOfTheRings.Standalone.OldForestSpec
       LordOfTheRings.Standalone.StoneOfErechSpec
