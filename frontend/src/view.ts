@@ -388,9 +388,7 @@ export const toView = (data: GameData, defs: Record<string, CardDef>, previous: 
           const departed = sourceEntity ? undefined : departedEntity(sourceCard)
           const seen = Object.values(game.players).some((p) => [...(p.hand ?? []), ...p.discard].some((c) => c.id === cardId))
           if (departed && !seen) return { index, label, targetId: null, action: label, card: card(departed.cardCode, departed.cardId) }
-          // a button too, naming the card in the action box and showing it on hover
-          const shown = sourceEntity && cardId ? card(sourceEntity.cardCode, cardId) : undefined
-          return { index, label, targetId: cardId, action: label, tooltip, card: shown }
+          return { index, label, targetId: cardId, action: label, tooltip }
         }
       }
     })
