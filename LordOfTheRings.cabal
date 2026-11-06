@@ -699,6 +699,7 @@ library
       LordOfTheRings.Enemy.Cards.Attercop
       LordOfTheRings.Enemy.Cards.AttercopAttercop
       LordOfTheRings.Enemy.Cards.BalefulShade
+      LordOfTheRings.Enemy.Cards.BarrowDownsWights
       LordOfTheRings.Enemy.Cards.BatteringRam
       LordOfTheRings.Enemy.Cards.BellachCelebrimborsSecret
       LordOfTheRings.Enemy.Cards.BellachsBodyguard
@@ -4439,6 +4440,7 @@ test-suite LordOfTheRings-test
       LordOfTheRings.ShadowsOfMirkwood.TheHuntForGollumSpec
       LordOfTheRings.Standalone.BattleOfLakeTownSpec
       LordOfTheRings.Standalone.BelegostSpec
+      LordOfTheRings.Standalone.FogOnTheBarrowDownsSpec
       LordOfTheRings.Standalone.MassingAtOsgiliathSpec
       LordOfTheRings.Standalone.OldForestSpec
       LordOfTheRings.Standalone.StoneOfErechSpec

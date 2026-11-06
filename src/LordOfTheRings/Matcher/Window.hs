@@ -127,6 +127,8 @@ data WindowMatcher
   | EnemyAttacksWindow Timing EnemyId
   | -- | after attacking and destroying a character controlled by the attacked player
     EnemyAttacksAndDestroysYourCharacterWindow Timing EnemyId
+  | -- | After an attack destroyed any character, including another player's Sentinel.
+    EnemyAttacksAndDestroysCharacterWindow Timing EnemyId
   | -- | any enemy declared as an attacker
     EnemyDeclaredAsAttackerWindow Timing
   | -- | the enemy's attack dealt excess damage, as The Cursed Sword reads
