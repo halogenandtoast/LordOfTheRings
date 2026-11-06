@@ -157,6 +157,32 @@ spec = describe "Stone of Erech" do
       (.hand) <$> getPlayer pid `shouldReturn` []
       (.discard) <$> getPlayer pid `shouldReturn` [card]
 
+    for_ ["single", "chosen", "random", "events", "elimination"] \kind ->
+      it ("returns passed cards to their owner's discard pile after " <> kind <> " discard") . twoPlayerTest testDeck $ \one two -> do
+        card <- putCardIntoHand one Events.aTestOfWill
+        run $ GiveFromHand one card.id two
+        case kind of
+          "single" -> run $ DiscardFromHand two card.id
+          "chosen" -> run $ DiscardChosenFromHand GameSource two [card.id]
+          "random" -> run $ DiscardRandomFromHand two 1
+          "events" -> run $ DiscardEventsFromHand two
+          _ -> run $ EliminatePlayer two
+        (.hand) <$> getPlayer two `shouldReturn` []
+        (.discard) <$> getPlayer two >>= (`shouldSatisfy` notElem card)
+        (.discard) <$> getPlayer one `shouldReturn` [card]
+
+    it "puts a passed event in its owner's discard while its holder resolves it" . twoPlayerTest testDeck $ \one two -> do
+      run $ RaiseThreat two 20
+      initialThreat <- (.threat) <$> getPlayer two
+      card <- putCardIntoHand one Events.theGaladhrimsGreeting
+      run $ GiveFromHand one card.id two
+      run $ PlayAtNoCost two (case card of PlayerCard pc -> pc; _ -> error "expected player card")
+      chooseLabel "$label.theGaladhrimsGreeting.one" two
+      chooseTarget two (PlayerTarget two)
+      (.threat) <$> getPlayer two `shouldReturn` initialThreat - 6
+      (.discard) <$> getPlayer one `shouldReturn` [card]
+      (.discard) <$> getPlayer two `shouldReturn` []
+
     it "passes original hands left simultaneously and preserves card ownership" . threePlayerErechTest $ \one two three -> do
       a <- putCardIntoHand one Allies.guardOfTheCitadel
       b <- putCardIntoHand two Allies.snowbournScout

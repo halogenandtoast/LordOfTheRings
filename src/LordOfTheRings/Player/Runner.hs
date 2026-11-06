@@ -86,6 +86,14 @@ randomDiscardRequest = \case
   DiscardRandomFromHandWithResult source pid n -> Just (pid, n, Just source)
   _ -> Nothing
 
+-- Cards held by another player still leave hand for their original owner's
+-- discard pile. Keep the holder's discard windows and result messages unchanged.
+discardToOwners :: Player -> [Card] -> QueueT Message GameT [Card]
+discardToOwners player cards = do
+  let foreignOwned = [pc | PlayerCard pc <- cards, Just owner <- [pc.owner], owner /= player.id]
+  pushAll $ map PutInDiscard foreignOwned
+  pure $ filter ((`notElem` map (.id) foreignOwned) . (.id)) cards
+
 runPlayer :: Message -> Player -> QueueT Message GameT Player
 runPlayer msg player = case msg of
     DoStep 1 Setup -> do
@@ -115,7 +123,8 @@ runPlayer msg player = case msg of
       pure $ player & handL <>~ hand & deckL .~ deck
     DiscardEventsFromHand pid | pid == player.id -> do
       let (events, rest) = partition ((== EventType) . (.cardType)) player.hand
-      pure $ player & handL .~ rest & discardL %~ (events <>)
+      ownDiscard <- discardToOwners player events
+      pure $ player & handL .~ rest & discardL %~ (ownDiscard <>)
     Mulligan pid | pid == player.id -> do
       -- only the setup hand, the last cards in hand, goes back
       size <- getStartingHandSizeFor player.id
@@ -142,7 +151,8 @@ runPlayer msg player = case msg of
       pure $ player & threatL %~ max 0 . (+ n)
     EliminatePlayer pid | pid == player.id -> do
       level <- getEliminationLevel pid
-      pure $ player & threatL .~ level & eliminatedL .~ True & discardL %~ (player.hand <>) & handL .~ []
+      ownDiscard <- discardToOwners player player.hand
+      pure $ player & threatL .~ level & eliminatedL .~ True & discardL %~ (ownDiscard <>) & handL .~ []
     DoPhase ResourcePhase -> do
       mods <- getModifiers player
       let n = fromMaybe 1 $ headMay [k | ResourcePhaseDraws k <- mods]
@@ -233,7 +243,9 @@ runPlayer msg player = case msg of
         PlayerCard card -> push $ PlayAttachmentOn pid card host
         EncounterCard _ -> error "not an attachment"
       pure $ player & handL %~ filter ((/= cid) . (.id))
-    PlayEvent pid card _ | pid == player.id -> pure $ player & discardL %~ (PlayerCard card :)
+    PlayEvent pid card _ | pid == player.id -> do
+      ownDiscard <- discardToOwners player [PlayerCard card]
+      pure $ player & discardL %~ (ownDiscard <>)
     -- an event whose cost is X, played for no cost, has X of 0 and so does nothing, as
     -- Men of the West played with Vilya (ruling)
     PlayAtNoCost pid card
@@ -241,7 +253,8 @@ runPlayer msg player = case msg of
       , cdCardType (toCardDef card) == EventType
       , cdCost (toCardDef card) == Just DynamicCost -> do
           pushAll $ markPlayed pid card <> [CheckWindows [mkAfter $ PlayedCard pid card]]
-          pure $ player & discardL %~ (PlayerCard card :)
+          ownDiscard <- discardToOwners player [PlayerCard card]
+          pure $ player & discardL %~ (ownDiscard <>)
     PlayAtNoCost pid card | pid == player.id -> do
       -- played from wherever, it counts as one paid for does, as Silent Guardian reads
       pushAll $ markPlayed pid card <> playCard pid card [] <> [CheckWindows [mkAfter $ PlayedCard pid card]]
@@ -445,15 +458,17 @@ runPlayer msg player = case msg of
     DiscardChosenFromHand source pid selected | pid == player.id -> do
       barred <- elem CannotDiscardFromHand <$> getModifiers (PlayerTarget pid)
       let discarded = [c | not barred, c <- discardableHand player, c.id `elem` selected]
+      ownDiscard <- discardToOwners player discarded
       pushWhen (notNull discarded) $ CheckWindows [mkAfter $ DiscardedFromHand pid c.id | c <- discarded]
       push $ DiscardedChosenFromHand source pid discarded
-      pure $ player & handL %~ filter (`notElem` discarded) & discardL %~ (discarded <>)
+      pure $ player & handL %~ filter (`notElem` discarded) & discardL %~ (ownDiscard <>)
     request | Just (pid, n, resultSource) <- randomDiscardRequest request, pid == player.id -> do
       barred <- elem CannotDiscardFromHand <$> getModifiers (PlayerTarget pid)
       discarded <- if barred then pure [] else take n <$> shuffleM (discardableHand player)
+      ownDiscard <- discardToOwners player discarded
       pushWhen (notNull discarded) $ CheckWindows [mkAfter $ DiscardedFromHand pid c.id | c <- discarded]
       for_ resultSource \source -> push $ DiscardedRandomFromHand source pid discarded
-      pure $ player & handL %~ filter (`notElem` discarded) & discardL %~ (discarded <>)
+      pure $ player & handL %~ filter (`notElem` discarded) & discardL %~ (ownDiscard <>)
     -- an ally put into play from its owner's hand under any player's control, as Emery
     PutAllyIntoPlayUnder _ card | card.owner == Just player.id -> pure $ player & handL %~ filter ((/= card.id) . (.id))
     -- a set-aside card with the Encounter keyword, discarded from the encounter deck, is
@@ -482,8 +497,9 @@ runPlayer msg player = case msg of
     DiscardFromHand pid cid | pid == player.id -> do
       barred <- elem CannotDiscardFromHand <$> getModifiers (PlayerTarget pid)
       let discarded = if barred then [] else filter ((== cid) . (.id)) (discardableHand player)
+      ownDiscard <- discardToOwners player discarded
       pushWhen (notNull discarded) $ CheckWindows [mkAfter $ DiscardedFromHand pid cid]
-      pure $ player & handL %~ filter (`notElem` discarded) & discardL %~ (discarded <>)
+      pure $ player & handL %~ filter (`notElem` discarded) & discardL %~ (ownDiscard <>)
     LowerThreat pid n | pid == player.id -> pure $ player & threatL %~ max 0 . subtract n
     UseAbility pid ab _
       | pid == player.id
