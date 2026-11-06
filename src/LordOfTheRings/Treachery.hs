@@ -2,6 +2,11 @@
 
 module LordOfTheRings.Treachery (module LordOfTheRings.Treachery, module X) where
 
+import LordOfTheRings.Treachery.Cards.SwayingWithoutWind (swayingWithoutWind)
+import LordOfTheRings.Treachery.Cards.FallingBranches (fallingBranches)
+import LordOfTheRings.Treachery.Cards.SongOfSleep (songOfSleep)
+import LordOfTheRings.Treachery.Cards.LostAndWitless (lostAndWitless)
+import LordOfTheRings.Treachery.Cards.EndingAndFailing (endingAndFailing)
 import LordOfTheRings.Treachery.Cards.MidnightThrong (midnightThrong)
 import LordOfTheRings.Treachery.Cards.MurmursOfDread (murmursOfDread)
 import LordOfTheRings.Treachery.Cards.GropingHorror (gropingHorror)
@@ -638,7 +643,12 @@ allTreacherys =
   Map.fromList
     [ (toCardCode builder, card)
     | card@(SomeTreacheryCard builder) <-
-        [ SomeTreacheryCard midnightThrong
+        [ SomeTreacheryCard swayingWithoutWind
+        , SomeTreacheryCard fallingBranches
+        , SomeTreacheryCard songOfSleep
+        , SomeTreacheryCard lostAndWitless
+        , SomeTreacheryCard endingAndFailing
+        , SomeTreacheryCard midnightThrong
         , SomeTreacheryCard murmursOfDread
         , SomeTreacheryCard gropingHorror
         , SomeTreacheryCard drivenByFear

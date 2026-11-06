@@ -14,7 +14,7 @@ allTreacheryCards =
   Map.fromList $
     map
       (\def -> (cdCardCode def, def))
-      [midnightThrong, murmursOfDread, gropingHorror, drivenByFear, theDeadRideBehind, theGloaming, townBaiting, direMagnificence, catchingFire, recklessInHisRage, closeToTheFlame, scorchingBlast, cutOffOsgiliath, darkPursuit, massingAtOsgiliath, ballistaBarrage, boardingPartyDreadnaught, grappledDreadnaught, outOfTheMist, overworked, takingOnWaterDreadnaught, violentTempest,  shinyDistraction
+      [swayingWithoutWind, fallingBranches, songOfSleep, lostAndWitless, endingAndFailing, midnightThrong, murmursOfDread, gropingHorror, drivenByFear, theDeadRideBehind, theGloaming, townBaiting, direMagnificence, catchingFire, recklessInHisRage, closeToTheFlame, scorchingBlast, cutOffOsgiliath, darkPursuit, massingAtOsgiliath, ballistaBarrage, boardingPartyDreadnaught, grappledDreadnaught, outOfTheMist, overworked, takingOnWaterDreadnaught, violentTempest,  shinyDistraction
       , guiltyConscience
       , drivenByShadowDarkOfMirkwood
       , surprisingSpeedDarkOfMirkwood
@@ -3964,3 +3964,23 @@ drivenByFear = (treachery "the-stone-of-erech-025" "Driven by Fear" TheStoneOfEr
 
 theDeadRideBehind :: CardDef
 theDeadRideBehind = (treachery "the-stone-of-erech-026" "The Dead Ride Behind" TheStoneOfErech 2)
+
+swayingWithoutWind :: CardDef
+swayingWithoutWind = (treachery "the-old-forest-017" "Swaying Without Wind" TheOldForest 2)
+  { cdKeywords = setFromList [Peril] }
+
+fallingBranches :: CardDef
+fallingBranches = (treachery "the-old-forest-018" "Falling Branches" TheOldForest 3)
+  { cdShadowEffect = True }
+
+songOfSleep :: CardDef
+songOfSleep = (treachery "the-old-forest-019" "Song of Sleep" TheOldForest 2)
+  { cdKeywords = setFromList [Peril], cdCardTraits = setFromList [Enchantment, Condition] }
+
+lostAndWitless :: CardDef
+lostAndWitless = (treachery "the-old-forest-020" "Lost and Witless" TheOldForest 2)
+  { cdKeywords = setFromList [Surge] }
+
+endingAndFailing :: CardDef
+endingAndFailing = (treachery "the-old-forest-021" "Ending and Failing" TheOldForest 2)
+  { cdKeywords = setFromList [Doomed 2], cdShadowEffect = True }

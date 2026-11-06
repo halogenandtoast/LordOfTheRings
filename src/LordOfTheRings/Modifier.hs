@@ -680,6 +680,9 @@ data ModifierType
   | -- | on an enemy: still in play as the phase ends, it raises the player's threat by this
     -- much, as Crazed Captive's shadow reads
     RaisesThreatAtEndOfPhase PlayerId Int
+  | -- | on the game: at the end of the phase, each player raises threat by the
+    -- number of enemies then in staging, once per effect (Ending and Failing).
+    RaiseThreatByStagingEnemiesAtEndOfPhase
   | -- | on an enemy: as the quest phase ends, it engages the player with the highest threat,
     -- as Guffawing of Giants has its Stone-giant do
     EngagesHighestThreatAtEndOfQuestPhase

@@ -3555,6 +3555,7 @@ library
       LordOfTheRings.Treachery.Cards.DwindlingSupplies
       LordOfTheRings.Treachery.Cards.EasterlingHorse
       LordOfTheRings.Treachery.Cards.EatenAlive
+      LordOfTheRings.Treachery.Cards.EndingAndFailing
       LordOfTheRings.Treachery.Cards.EnemiesCloseBehind
       LordOfTheRings.Treachery.Cards.EnemyPursuit
       LordOfTheRings.Treachery.Cards.Enfeebled
@@ -3567,6 +3568,7 @@ library
       LordOfTheRings.Treachery.Cards.EyesOfTheForest
       LordOfTheRings.Treachery.Cards.FallenIntoEvil
       LordOfTheRings.Treachery.Cards.FallenStones
+      LordOfTheRings.Treachery.Cards.FallingBranches
       LordOfTheRings.Treachery.Cards.FalseAccusations
       LordOfTheRings.Treachery.Cards.FalseLead
       LordOfTheRings.Treachery.Cards.FalseLeadTheStewardsFear
@@ -3681,6 +3683,7 @@ library
       LordOfTheRings.Treachery.Cards.LosingTime
       LordOfTheRings.Treachery.Cards.LostAndAlone
       LordOfTheRings.Treachery.Cards.LostAndHelpless
+      LordOfTheRings.Treachery.Cards.LostAndWitless
       LordOfTheRings.Treachery.Cards.LostCompany
       LordOfTheRings.Treachery.Cards.LostInTheCity
       LordOfTheRings.Treachery.Cards.LostInTheDark
@@ -3854,6 +3857,7 @@ library
       LordOfTheRings.Treachery.Cards.SniffingAndHissing
       LordOfTheRings.Treachery.Cards.Snowdrifts
       LordOfTheRings.Treachery.Cards.Snowstorm
+      LordOfTheRings.Treachery.Cards.SongOfSleep
       LordOfTheRings.Treachery.Cards.SoundTheAlarm
       LordOfTheRings.Treachery.Cards.SouthronSupport
       LordOfTheRings.Treachery.Cards.SpellsOfRuin
@@ -3884,6 +3888,7 @@ library
       LordOfTheRings.Treachery.Cards.SwarmingInsect
       LordOfTheRings.Treachery.Cards.SwarmingMosquitoes
       LordOfTheRings.Treachery.Cards.SwarmOfBats
+      LordOfTheRings.Treachery.Cards.SwayingWithoutWind
       LordOfTheRings.Treachery.Cards.SwishSmackWhipCrack
       LordOfTheRings.Treachery.Cards.SwordOfRhun
       LordOfTheRings.Treachery.Cards.TakeCover

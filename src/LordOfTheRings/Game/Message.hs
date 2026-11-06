@@ -883,6 +883,7 @@ import LordOfTheRings.Modifier (
     QuestedSuccessfullyThisPhase,
     QuestedUnsuccessfullyThisRound,
     RaisesThreatAtEndOfPhase,
+    RaiseThreatByStagingEnemiesAtEndOfPhase,
     ReadiedByRefresh,
     ReadyUndamagedDefenders,
     RefreshAtMost,
@@ -3207,7 +3208,14 @@ runGameMessage msg g = case msg of
         let (skipped, next) = following $ fromMaybe phase (gameResumeAfter g)
         push $ maybe EndRound (\p -> Run [BeginPhase p, EndPhase p]) next
         pure $ g & resumeAfterL .~ Nothing & effectsL %~ consume skipped
+  DoStep 2 (EndPhase _) -> do
+    n <- length <$> select EnemyInStagingArea
+    players <- getPlayerOrder
+    pushAll $ concat [[RaiseThreat pid n, CheckWindows [mkAfter $ ThreatRaisedByEncounter pid n]] | pid <- players, n > 0]
+    pure g
   EndPhase phase -> do
+    delayed <- length . filter (== RaiseThreatByStagingEnemiesAtEndOfPhase) <$> getModifiers GameTarget
+    pushAll $ replicate delayed (DoStep 2 msg)
     -- sharing the game split between staging areas, the cards at each stage see it end
     push $ case stageGroups g of
       Just groups -> Run $ concat [[FocusArea lead, CheckWindows [mkWhen $ PhaseEnds phase]] | (lead, _) <- groups] <> [FocusArea g.firstPlayer]

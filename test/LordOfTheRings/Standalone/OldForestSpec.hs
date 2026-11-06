@@ -9,8 +9,12 @@ import LordOfTheRings.Effect (Effect (..), EffectDuration (UntilEndOfRound))
 import LordOfTheRings.Helpers.Modifiers (getModifiers)
 import LordOfTheRings.Helpers.Staging (getLocationThreat)
 import LordOfTheRings.Location.CardDefs qualified as Locations
-import LordOfTheRings.Matcher (getEnemy, CardMatcher (AnyCard))
-import LordOfTheRings.Modifier (ModifierType (AttackModifier, AdditionalStagingReveals, PlayersCannotWin, MustBeTraveledTo, CannotPlay, PlayedCardThisRound))
+import LordOfTheRings.Matcher (getEnemy, getHero, CardMatcher (AnyCard))
+import LordOfTheRings.Matcher (selectCharacters, HeroMatcher (CommittedHero), AllyMatcher (CommittedAlly))
+import LordOfTheRings.Modifier (ModifierType (AttackModifier, AdditionalStagingReveals, PlayersCannotWin, MustBeTraveledTo, CannotPlay, PlayedCardThisRound, Blank, CannotHaveAttachments, CannotHaveAttachmentsWithoutTrait))
+import LordOfTheRings.Trait (Trait (Condition, Weapon))
+import LordOfTheRings.Phase (Phase (PlanningPhase))
+import LordOfTheRings.Treachery.CardDefs qualified as Treacheries
 import LordOfTheRings.Quest.CardDefs qualified as Quests
 import LordOfTheRings.Scenario.Scenarios.TheOldForest.Helpers (victoryLocations, locationVictoryPoints)
 import LordOfTheRings.Window (WindowType (EnemyAttacking, ActiveLocationExplored, OptionallyEngaged), mkWhen, mkAfter)
@@ -32,8 +36,193 @@ stageLocation def = do
   run $ AddToStaging card
   getsGame $ toId . fromJustNote "location missing" . find ((== card.id) . (.cardId) . toAttrs) . toList . (.entities.locations)
 
+heroExhaustedTarget :: Target -> GameT Bool
+heroExhaustedTarget (HeroTarget hid) = heroExhausted . toAttrs <$> getHero hid
+heroExhaustedTarget _ = error "expected a hero"
+
 spec :: Spec
 spec = describe "Old Forest" do
+  describe "Swaying Without Wind" do
+    it "surges when no victory location can be returned" . gameTest $ \_ -> do
+      troll <- stageEnemy Enemies.hillTroll
+      run $ AddToVictoryDisplay (EnemyTarget troll)
+      _ <- setEncounterDeck [Treacheries.swayingWithoutWind, Enemies.longTrailer]
+      run RevealEncounterCard
+      resolveRevealed
+      getsGame (map toCardCode . toList . (.entities.enemies)) `shouldReturn` [toCardCode Enemies.longTrailer]
+
+    it "lets the revealer choose a victory location and resets its progress without surging" . gameTest $ \pid -> do
+      wall <- stageLocation Locations.wallOfTrees
+      run $ PlaceTokens GameSource (LocationTarget wall) Progress 3
+      run $ AddToVictoryDisplay (LocationTarget wall)
+      victoryLocation Locations.deepGulley
+      cards <- victoryLocations
+      let selected = fromJustNote "wall missing" $ find ((== toCardCode Locations.wallOfTrees) . toCardCode) cards
+      _ <- setEncounterDeck [Treacheries.swayingWithoutWind, Enemies.longTrailer]
+      run RevealEncounterCard
+      resolveRevealed
+      chooseTarget pid (CardIdTarget selected.id)
+      locations <- getsGame (toList . (.entities.locations))
+      map toCardCode locations `shouldBe` [toCardCode Locations.wallOfTrees]
+      map ((.progress) . toAttrs) locations `shouldBe` [0]
+      getEncounterDeck >>= (\xs -> map toCardCode xs `shouldBe` [toCardCode Enemies.longTrailer])
+
+  describe "Falling Branches" do
+    it "removes each player's own quester and deals two damage to a hero or three to an ally" . twoPlayerTest testDeck $ \one two -> do
+      hero <- heroOf one "01012"
+      ally <- putAllyIntoPlay two Allies.beorn
+      run $ CommitToQuest hero
+      run $ CommitToQuest ally
+      _ <- setEncounterDeck [Treacheries.fallingBranches]
+      run RevealEncounterCard
+      resolveRevealed
+      getDamage hero `shouldReturn` 2
+      getDamage ally `shouldReturn` 3
+      selectCharacters CommittedHero CommittedAlly `shouldReturn` []
+
+    it "does nothing to characters that are not questing" . gameTest $ \pid -> do
+      hero <- heroOf pid "01012"
+      _ <- setEncounterDeck [Treacheries.fallingBranches]
+      run RevealEncounterCard
+      resolveRevealed
+      getDamage hero `shouldReturn` 0
+      getQuestion pid `shouldReturn` Nothing
+
+    for_ [False, True] \allyDefends ->
+      it ("increases shadow attack according to the defender's type: " <> show allyDefends) . gameTest $ \pid -> do
+        enemy <- stageEnemy Enemies.longTrailer
+        card <- genEncounterCard Treacheries.fallingBranches
+        run $ AttachShadowCard enemy card
+        defender <- if allyDefends then putAllyIntoPlay pid Allies.beorn else heroOf pid "01012"
+        run $ EnemyAttack pid enemy
+        passActions pid
+        chooseTarget pid defender
+        passActions pid
+        passActions pid
+        getDamage defender `shouldReturn` 3
+
+  describe "Song of Sleep" do
+    it "removes a questing hero, blanks its ability and prevents it from readying until discarded" . gameTest $ \pid -> do
+      hero <- heroOf pid "01012"
+      run $ CommitToQuest hero
+      _ <- setEncounterDeck [Treacheries.songOfSleep]
+      run RevealEncounterCard
+      resolveRevealed
+      selectCharacters CommittedHero CommittedAlly `shouldReturn` []
+      getModifiers hero >>= (`shouldSatisfy` elem Blank)
+      run $ Ready hero
+      heroExhaustedTarget hero `shouldReturn` True
+      treacheries <- getsGame (toList . (.entities.treacheries))
+      length treacheries `shouldBe` 1
+      for_ treacheries \t -> run $ Discard GameSource (toTarget t)
+      run $ Ready hero
+      heroExhaustedTarget hero `shouldReturn` False
+
+    it "makes the player who revealed it choose only among their own questing heroes" . twoPlayerTest testDeck $ \one two -> do
+      other <- heroOf one "01012"
+      selected <- heroOf two "01012"
+      remaining <- heroOf two "01007"
+      traverse_ (run . CommitToQuest) [other, selected, remaining]
+      run $ SetRevealer (Just two)
+      _ <- setEncounterDeck [Treacheries.songOfSleep]
+      run RevealEncounterCard
+      resolveRevealed
+      chooseTarget two selected
+      committed <- selectCharacters CommittedHero CommittedAlly
+      committed `shouldSatisfy` elem other
+      committed `shouldSatisfy` elem remaining
+      committed `shouldSatisfy` notElem selected
+
+    for_ [(CannotHaveAttachments, False), (CannotHaveAttachmentsWithoutTrait Weapon, False), (CannotHaveAttachmentsWithoutTrait Condition, True)] \(restriction, attached) ->
+      it ("respects the hero's encounter-attachment restrictions: " <> show restriction) . gameTest $ \pid -> do
+        hero <- heroOf pid "01012"
+        run $ CommitToQuest hero
+        run $ CreateEffect $ Effect GameSource hero [restriction] UntilEndOfRound
+        _ <- setEncounterDeck [Treacheries.songOfSleep]
+        run RevealEncounterCard
+        resolveRevealed
+        selectCharacters CommittedHero CommittedAlly `shouldReturn` []
+        getsGame (length . (.entities.treacheries)) `shouldReturn` if attached then 1 else 0
+
+    it "does not attach a second copy to the same hero" . gameTest $ \pid -> do
+      hero <- heroOf pid "01012"
+      run $ CommitToQuest hero
+      _ <- setEncounterDeck [Treacheries.songOfSleep, Treacheries.songOfSleep]
+      run RevealEncounterCard
+      resolveRevealed
+      run $ CommitToQuest hero
+      run RevealEncounterCard
+      resolveRevealed
+      getsGame (length . (.entities.treacheries)) `shouldReturn` 1
+
+  describe "Lost and Witless" do
+    it "removes staging progress before swapping a random location, preserving the old active location's progress" . gameTest $ \_ -> do
+      active <- stageLocation Locations.oldForestRoad
+      staged <- stageLocation Locations.deepGulley
+      run $ PlaceLocation active ActiveLocation
+      run $ PlaceTokens GameSource (LocationTarget active) Progress 1
+      run $ PlaceTokens GameSource (LocationTarget staged) Progress 2
+      _ <- setEncounterDeck [Treacheries.lostAndWitless, Enemies.longTrailer]
+      run RevealEncounterCard
+      resolveRevealed
+      (.placement) . toAttrs <$> getLocation active `shouldReturn` StagingArea
+      (.progress) . toAttrs <$> getLocation active `shouldReturn` 1
+      (.placement) . toAttrs <$> getLocation staged `shouldReturn` ActiveLocation
+      (.progress) . toAttrs <$> getLocation staged `shouldReturn` 0
+
+    it "leaves a unique active location in place" . gameTest $ \_ -> do
+      active <- stageLocation Locations.withywindle
+      staged <- stageLocation Locations.deepGulley
+      run $ PlaceLocation active ActiveLocation
+      run $ PlaceTokens GameSource (LocationTarget staged) Progress 2
+      _ <- setEncounterDeck [Treacheries.lostAndWitless, Enemies.longTrailer]
+      run RevealEncounterCard
+      resolveRevealed
+      (.placement) . toAttrs <$> getLocation active `shouldReturn` ActiveLocation
+      (.placement) . toAttrs <$> getLocation staged `shouldReturn` StagingArea
+      (.progress) . toAttrs <$> getLocation staged `shouldReturn` 0
+
+  describe "Ending and Failing" do
+    it "counts enemies at phase end rather than at revelation and raises every player's threat" . twoPlayerTest testDeck $ \one two -> do
+      enemy <- stageEnemy Enemies.longTrailer
+      _ <- setEncounterDeck [Treacheries.endingAndFailing]
+      threats <- traverse (fmap (.threat) . getPlayer) [one, two]
+      run RevealEncounterCard
+      resolveRevealed
+      traverse (fmap (.threat) . getPlayer) [one, two] `shouldReturn` map (+ 2) threats
+      run $ EngageEnemy one enemy
+      _ <- stageEnemy Enemies.graspingRoot
+      _ <- stageEnemy Enemies.armyOfFlies
+      run $ EndPhase PlanningPhase
+      traverse (fmap (.threat) . getPlayer) [one, two] `shouldReturn` map (+ 4) threats
+
+    it "resolves multiple copies separately" . gameTest $ \pid -> do
+      _ <- stageEnemy Enemies.longTrailer
+      _ <- setEncounterDeck [Treacheries.endingAndFailing, Treacheries.endingAndFailing]
+      threat <- (.threat) <$> getPlayer pid
+      run RevealEncounterCard
+      resolveRevealed
+      run RevealEncounterCard
+      resolveRevealed
+      run $ EndPhase PlanningPhase
+      (.threat) <$> getPlayer pid `shouldReturn` threat + 6
+
+    it "returns an attacking enemy to staging only after its shadow attack finishes" . gameTest $ \pid -> do
+      enemy <- stageEnemy Enemies.longTrailer
+      run $ EngageEnemy pid enemy
+      card <- genEncounterCard Treacheries.endingAndFailing
+      run $ AttachShadowCard enemy card
+      defender <- heroOf pid "01012"
+      _ <- putCardIntoHand pid Events.aTestOfWill
+      run $ EnemyAttack pid enemy
+      passActions pid
+      chooseTarget pid defender
+      chooseLabel "$label.pass" pid
+      (.placement) <$> getEnemy enemy `shouldReturn` EngagedWith pid
+      passActions pid
+      getDamage defender `shouldReturn` 2
+      (.placement) <$> getEnemy enemy `shouldReturn` StagingArea
+
   describe "Withywindle" do
     it "prevents victory in either area and reveals an extra card only while active" . gameTest $ \_ -> do
       river <- stageLocation Locations.withywindle
