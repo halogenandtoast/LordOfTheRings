@@ -18,6 +18,8 @@
   "plays": "{player} plays {card}",
   "usesAbility": "{player} uses {card}",
   "forced": "Forced: {card}",
+  "doomed": "Doomed {count}",
+  "surges": "{card} surges",
   "putsIntoPlay": "{player} puts {card} into play",
   "putIntoPlay": "{card} is put into play",
   "playedAtNoCost": "{card} is played at no cost",

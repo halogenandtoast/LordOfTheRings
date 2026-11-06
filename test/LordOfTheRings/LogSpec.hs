@@ -96,3 +96,17 @@ spec = describe "Game log" do
     said <- mapMaybe keyOf <$> entries logged
     said `shouldSatisfy` elem "log.placedUnderneath"
     said `shouldSatisfy` notElem "log.removedFromGame"
+
+  it "files Endless Caverns' threat raise under its Doomed header, and says it surges" . loggedTest $ \logged _ -> do
+    _ <- setEncounterDeck [Locations.endlessCaverns, Locations.forestGate]
+    writeIORef logged []
+    run RevealEncounterCard
+    resolveRevealed
+    said <- entries logged
+    case dropWhile ((/= Just "log.doomed") . keyOf) said of
+      header : raise : _ -> do
+        (.logGroupRole) <$> header.logEntryGroup `shouldBe` Just GroupHeader
+        keyOf raise `shouldBe` Just "log.threatRaised"
+        (.logGroupId) <$> raise.logEntryGroup `shouldBe` (.logGroupId) <$> header.logEntryGroup
+      _ -> liftIO (expectationFailure "no Doomed header")
+    mapMaybe keyOf said `shouldSatisfy` elem "log.surges"

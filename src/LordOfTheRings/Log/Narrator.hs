@@ -27,12 +27,12 @@ import LordOfTheRings.Heading
 import LordOfTheRings.Helpers.Character
 import LordOfTheRings.Helpers.Staging
 import LordOfTheRings.Id
-import LordOfTheRings.Keyword (Keyword (DefenseKeyword))
+import LordOfTheRings.Keyword (Keyword (DefenseKeyword, Surge))
 import LordOfTheRings.Log
 import LordOfTheRings.Log.Block
 import LordOfTheRings.Log.Refs
 import LordOfTheRings.Helpers.Modifiers (getModifiers, immuneToSource, resourcesBarredFrom)
-import LordOfTheRings.Matcher (currentQuestHas, getArcheryTotal, getDamage, getDiscoverValue, getLead, getTimeCounters)
+import LordOfTheRings.Matcher (currentQuestHas, getArcheryTotal, getDamage, getDiscoverValue, getLead, getTimeCounters, hasKeyword)
 import LordOfTheRings.Modifier (ModifierType (CannotRemoveTimeCounters, QuestProgressRemovalBecomes))
 import LordOfTheRings.Message
 import LordOfTheRings.Outcome
@@ -103,6 +103,10 @@ narrationFor = \case
   Mulligan pid -> Just do
     who <- playerRefFor pid
     one $ action [ikeyPart "log.mulligan" ["player" ~> who]]
+  -- \* Surge: read as the runner reads it, before the next card is revealed
+  ResolveSurge t card -> Just do
+    surges <- hasKeyword Surge t (toCardDef card)
+    if surges then one $ mechanic [ikeyPart "log.surges" ["card" ~> EncounterCard card]] else pure []
   -- \* Threat
   RaiseThreat pid n | n > 0 -> Just $ threatChange "log.threatRaised" pid n (+ n)
   LowerThreat pid n | n > 0 -> Just $ threatChange "log.threatLowered" pid n (max 0 . subtract n)
@@ -680,6 +684,7 @@ openBlock block = do
       who <- playerRefFor pid
       header $ action [ikeyPart "log.burgleAttempt" ["player" ~> who]]
     ResolutionBlock -> header $ mechanic [ikeyPart "log.resolution" []]
+    DoomedBlock n -> header $ mechanic [ikeyPart "log.doomed" ["count" ~> n]]
     EnemyAttackBlock pid eid -> whenRef (toTarget eid) \e -> do
       who <- playerRefFor pid
       attack <- getEnemyAttack eid

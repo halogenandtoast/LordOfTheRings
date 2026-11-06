@@ -328,6 +328,7 @@ import LordOfTheRings.Log.Block (
     AbilityBlock,
     EnemyAttackBlock,
     PlayerAttackBlock,
+    DoomedBlock,
     ResolutionBlock,
     RevealBlock,
     WhenRevealedBlock
@@ -4022,13 +4023,15 @@ runGameMessage msg g = case msg of
     let def = toCardDef card
     players <- getPlayerOrder
     revealer <- maybe getLead pure (engaging <|> gameRevealer g)
-    let doomed =
-          concat
-            [ [RaiseThreat p n, CheckWindows [mkAfter $ ThreatRaisedByEncounter p n, mkAfter $ ThreatRaisedByDoomed p]]
-            | Doomed n <- toList (cdKeywords def)
-            , n > 0
-            , p <- players
-            ]
+    doomed <-
+      concat
+        <$> sequence
+          [ inLogBlock (DoomedBlock n)
+            $ concat [[RaiseThreat p n, CheckWindows [mkAfter $ ThreatRaisedByEncounter p n, mkAfter $ ThreatRaisedByDoomed p]] | p <- players]
+          | Doomed n <- toList (cdKeywords def)
+          , n > 0
+          ]
+    let
         -- the players as a group discard the resources from their heroes' pools (The
         -- Drúadan Forest rules)
         prowl = [DiscardGroupResources lead n | Prowl n <- toList (cdKeywords def), n > 0, lead <- take 1 players]

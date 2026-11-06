@@ -31,6 +31,8 @@ data LogBlockKind
     BurgleBlock PlayerId
   | -- | the campaign card's resolution, as the game ends in campaign mode
     ResolutionBlock
+  | -- | each player raises their threat by N from the Doomed keyword
+    DoomedBlock Int
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
@@ -62,6 +64,7 @@ logBlockKey b = kind <> ":" <> UUID.toText b.id
     PlayBlock {} -> "play"
     BurgleBlock {} -> "burgle"
     ResolutionBlock -> "resolution"
+    DoomedBlock {} -> "doomed"
 
 -- | The group id of the innermost of these open blocks, outermost first.
 logBlockPath :: [LogBlock] -> Maybe Text

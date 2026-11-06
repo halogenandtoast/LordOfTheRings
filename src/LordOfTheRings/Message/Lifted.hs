@@ -15,7 +15,7 @@ import LordOfTheRings.Trait (Trait (Boon, Master))
 import LordOfTheRings.Classes.Entity (Entity (toAttrs, toId))
 import LordOfTheRings.Scenario.Types (ScenarioAttrs (scenarioSetAside))
 import LordOfTheRings.Classes.HasGame (HasGame, getsGame)
-import LordOfTheRings.Log.Block (LogBlockKind (PlayBlock))
+import LordOfTheRings.Log.Block (LogBlockKind (DoomedBlock, PlayBlock))
 import LordOfTheRings.Log.Refs (sourceCardCode)
 import LordOfTheRings.Classes.HasQueue
 import LordOfTheRings.Effect
@@ -205,9 +205,9 @@ encounterRaisesThreat pid n = when (n > 0) do
 it, as a player card with Doomed N played does; Close Call reads it with its X.
 -}
 raiseThreatFromDoomed :: ReverseQueue m => Int -> m ()
-raiseThreatFromDoomed n = when (n > 0) $ eachPlayer \pid -> do
-  raiseThreat pid n
-  push $ CheckWindows [Window After $ ThreatRaisedByDoomed pid]
+raiseThreatFromDoomed n = when (n > 0) do
+  players <- getRemainingPlayers
+  pushAll =<< inLogBlock (DoomedBlock n) (concat [[RaiseThreat pid n, CheckWindows [Window After $ ThreatRaisedByDoomed pid]] | pid <- players])
 
 -- | Reduce the player's threat, unless it cannot be, as The Empty Mug forbids, opening
 -- the window for it as 'lowerThreatBy' does: Mail of Earnur answers any reduction.
