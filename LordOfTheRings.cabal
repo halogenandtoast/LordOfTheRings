@@ -2808,6 +2808,7 @@ library
       LordOfTheRings.Quest.Cards.FindShelter
       LordOfTheRings.Quest.Cards.FindTheOthers
       LordOfTheRings.Quest.Cards.FindWater
+      LordOfTheRings.Quest.Cards.FireAndWater
       LordOfTheRings.Quest.Cards.FirstSprint
       LordOfTheRings.Quest.Cards.FleeingFromTharbad
       LordOfTheRings.Quest.Cards.FleeTheCity

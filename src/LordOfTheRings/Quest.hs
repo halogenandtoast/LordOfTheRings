@@ -3,6 +3,7 @@
 module LordOfTheRings.Quest (module LordOfTheRings.Quest, module X) where
 
 import LordOfTheRings.Quest.Cards.AnduinCrossing (anduinCrossing)
+import LordOfTheRings.Quest.Cards.FireAndWater (fireAndWater)
 import LordOfTheRings.Quest.Cards.TerrorFromTheMountain (terrorFromTheMountain)
 import LordOfTheRings.Quest.Cards.ThroughTheRuinsOsgiliath (throughTheRuinsOsgiliath)
 import LordOfTheRings.Quest.Cards.BeyondExpectations (beyondExpectations)
@@ -485,6 +486,7 @@ allQuests =
     | card@(SomeQuestCard builder) <-
         [ SomeQuestCard anduinCrossing
         , SomeQuestCard throughTheRuinsOsgiliath
+        , SomeQuestCard fireAndWater
         , SomeQuestCard terrorFromTheMountain
         , SomeQuestCard beyondExpectations
         , SomeQuestCard raceToMinasTirith

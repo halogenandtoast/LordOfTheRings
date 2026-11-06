@@ -23,7 +23,7 @@ import LordOfTheRings.Helpers.Modifiers (getModifiers)
 import LordOfTheRings.Keyword (Keyword (Burn))
 import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Matcher (getBurn, getEnemy, getHero, getAlly, getObjective)
-import LordOfTheRings.Modifier (ModifierType (CannotBeDiscardedByEncounterCards, Blank, GainKeyword, ImmuneToPlayerCardEffects, WhenRevealedCannotBeCanceled, AlliesCannotBeDeclaredDefenders, DefenseModifier, AttackModifier, DoesNotExhaustToAttack, GainResourceIcon))
+import LordOfTheRings.Modifier (ModifierType (CannotBeDiscardedByEncounterCards, Blank, GainKeyword, ImmuneToPlayerCardEffects, WhenRevealedCannotBeCanceled, AlliesCannotBeDeclaredDefenders, DefenseModifier, AttackModifier, DoesNotExhaustToAttack, GainResourceIcon, ProgressFromQuestingThisPhase))
 import TestImport
 
 stageLocation :: CardDef -> GameT LocationId
@@ -33,6 +33,70 @@ stageLocation def = do
 
 spec :: Spec
 spec = describe "Battle of Lake-town" do
+  describe "Fire and Water" do
+    it "caps damage on Smaug at twelve" . gameTest $ \_ -> do
+      q <- putQuestStage Quests.fireAndWater
+      run $ Flip q
+      run . AddToStaging =<< genEncounterCard Enemies.smaugTheTerrible
+      eid <- onlySmaug
+      run $ PlaceTokens GameSource (toTarget eid) Damage 11
+      run $ PlaceTokens GameSource (toTarget eid) Damage 5
+      getDamage (toTarget eid) `shouldReturn` 12
+
+    it "splits successful questing progress between Lake-town damage and the stage" . gameTest $ \pid -> do
+      town <- stageTown
+      run $ PlaceTokens GameSource town Damage 8
+      q <- putQuestStage Quests.fireAndWater
+      run $ Flip q
+      run $ PlaceProgressOnQuest 7
+      chooseLabel "$label.amount n=i:3" pid
+      getDamage town `shouldReturn` 5
+      (.progress) . toAttrs <$> getActiveQuest `shouldReturn` 4
+      getModifiers q >>= (`shouldSatisfy` elem ProgressFromQuestingThisPhase)
+
+    it "allows keeping all questing progress" . gameTest $ \pid -> do
+      town <- stageTown
+      run $ PlaceTokens GameSource town Damage 8
+      q <- putQuestStage Quests.fireAndWater
+      run $ Flip q
+      run $ PlaceProgressOnQuest 7
+      chooseLabel "$label.amount n=i:0" pid
+      getDamage town `shouldReturn` 8
+      (.progress) . toAttrs <$> getActiveQuest `shouldReturn` 7
+
+    it "allows spending all questing progress" . gameTest $ \pid -> do
+      town <- stageTown
+      run $ PlaceTokens GameSource town Damage 8
+      q <- putQuestStage Quests.fireAndWater
+      run $ Flip q
+      run $ PlaceProgressOnQuest 7
+      chooseLabel "$label.amount n=i:7" pid
+      getDamage town `shouldReturn` 1
+      (.progress) . toAttrs <$> getActiveQuest `shouldReturn` 0
+
+    it "fills an active location before offering to remove damage" . gameTest $ \pid -> do
+      town <- stageTown
+      run $ PlaceTokens GameSource town Damage 8
+      lid <- stageLocation Locations.southPier
+      run $ PlaceLocation lid ActiveLocation
+      q <- putQuestStage Quests.fireAndWater
+      run $ Flip q
+      run $ PlaceProgressOnQuest 7
+      -- South Pier takes four progress, leaving three to spend.
+      chooseLabel "$label.amount n=i:3" pid
+      getDamage town `shouldReturn` 5
+      (.progress) . toAttrs <$> getActiveQuest `shouldReturn` 0
+
+    it "does not replace direct card-effect progress" . gameTest $ \pid -> do
+      town <- stageTown
+      run $ PlaceTokens GameSource town Damage 8
+      q <- putQuestStage Quests.fireAndWater
+      run $ Flip q
+      run $ PlaceTokens GameSource q Progress 3
+      getQuestion pid `shouldReturn` Nothing
+      getDamage town `shouldReturn` 8
+      (.progress) . toAttrs <$> getActiveQuest `shouldReturn` 3
+
   describe "Terror from the Mountain" do
     it "caps Smaug at six damage on side B, including later damage effects" . gameTest $ \pid -> do
       _ <- stageTown
