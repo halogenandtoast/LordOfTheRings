@@ -97,6 +97,8 @@ data Keyword
   | -- | on a quest stage: the first player makes a Sailing test at the start of each quest
     -- phase (Dream-chaser rules)
     Sailing
+  | -- | attackers use willpower instead of attack against this enemy (The Stone of Erech)
+    Spectral
   | Sentinel
   | -- | on a quest: characters quest with their defense instead of their willpower
     Siege

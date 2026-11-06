@@ -10,7 +10,7 @@ import LordOfTheRings.Scenario.Types (scenarioEncounterDeck)
 import LordOfTheRings.Classes.HasGame
 import LordOfTheRings.Helpers.Modifiers
 import LordOfTheRings.Id
-import LordOfTheRings.Keyword (Keyword (Battle, Siege))
+import LordOfTheRings.Keyword (Keyword (Battle, Siege, Spectral))
 import LordOfTheRings.Matcher
 import LordOfTheRings.Modifier
 import LordOfTheRings.Prelude
@@ -82,7 +82,12 @@ getAttackStrength attackers eid enemy = do
   let strength a = do
         blank <- elem DoesNotCountAttack <$> getModifiers a
         if blank then pure 0 else getWillpower a
-  (+ sum bonuses) . sum <$> traverse (if willpower then strength else getAttack) attackers
+  spectral <- hasKeyword Spectral (EnemyTarget eid) enemy
+  -- Spectral replaces the attackers' attack stat, including attack bonuses. The
+  -- rule sheet leaves the enemy's defense and direct damage unchanged.
+  if spectral
+    then sum <$> traverse getWillpower attackers
+    else (+ sum bonuses) . sum <$> traverse (if willpower then strength else getAttack) attackers
 
 -- | The stat characters quest with, by name: attack under battle, defense under siege,
 -- else willpower.

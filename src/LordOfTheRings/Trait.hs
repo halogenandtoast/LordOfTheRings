@@ -235,6 +235,7 @@ data Trait
   | Mearas
   | MinasTirith
   | Morgul
+  | Night
   | Oathbreaker
   | Pelennor
   | PerilTrait

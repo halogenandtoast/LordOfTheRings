@@ -2,6 +2,7 @@
 
 module LordOfTheRings.Treachery (module LordOfTheRings.Treachery, module X) where
 
+import LordOfTheRings.Treachery.Cards.TheGloaming (theGloaming)
 import LordOfTheRings.Treachery.Cards.TownBaiting (townBaiting)
 import LordOfTheRings.Treachery.Cards.DireMagnificence (direMagnificence)
 import LordOfTheRings.Treachery.Cards.CatchingFire (catchingFire)
@@ -632,7 +633,8 @@ allTreacherys =
   Map.fromList
     [ (toCardCode builder, card)
     | card@(SomeTreacheryCard builder) <-
-        [ SomeTreacheryCard townBaiting
+        [ SomeTreacheryCard theGloaming
+        , SomeTreacheryCard townBaiting
         , SomeTreacheryCard direMagnificence
         , SomeTreacheryCard catchingFire
         , SomeTreacheryCard recklessInHisRage

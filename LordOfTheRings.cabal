@@ -1143,6 +1143,7 @@ library
       LordOfTheRings.Enemy.Cards.ServantOfTheDeceiver
       LordOfTheRings.Enemy.Cards.ShadowDweller
       LordOfTheRings.Enemy.Cards.ShadowHost
+      LordOfTheRings.Enemy.Cards.ShadowHostCaptain
       LordOfTheRings.Enemy.Cards.ShadyBreeLander
       LordOfTheRings.Enemy.Cards.Shagrat
       LordOfTheRings.Enemy.Cards.Shelob
@@ -2580,6 +2581,7 @@ library
       LordOfTheRings.Objective.Cards.DurinsKey
       LordOfTheRings.Objective.Cards.EasterlingPursuit
       LordOfTheRings.Objective.Cards.EntOfFangorn
+      LordOfTheRings.Objective.Cards.ErechNight
       LordOfTheRings.Objective.Cards.EvidenceOfTheCult
       LordOfTheRings.Objective.Cards.FaramirObjective
       LordOfTheRings.Objective.Cards.FrodosChoice
@@ -3325,6 +3327,7 @@ library
       LordOfTheRings.Scenario.Scenarios.TheSiegeOfGondor.Helpers
       LordOfTheRings.Scenario.Scenarios.TheStewardsFear
       LordOfTheRings.Scenario.Scenarios.TheStewardsFear.Helpers
+      LordOfTheRings.Scenario.Scenarios.TheStoneOfErech.Helpers
       LordOfTheRings.Scenario.Scenarios.TheTempleOfDoom
       LordOfTheRings.Scenario.Scenarios.TheTempleOfDoom.Helpers
       LordOfTheRings.Scenario.Scenarios.TheThingInTheDepths
@@ -3869,6 +3872,7 @@ library
       LordOfTheRings.Treachery.Cards.TheEnemysTrail
       LordOfTheRings.Treachery.Cards.TheFiresSpread
       LordOfTheRings.Treachery.Cards.TheForestsMalice
+      LordOfTheRings.Treachery.Cards.TheGloaming
       LordOfTheRings.Treachery.Cards.TheGuardiansFury
       LordOfTheRings.Treachery.Cards.TheHourOfDoom
       LordOfTheRings.Treachery.Cards.TheLidlessEye
@@ -4372,6 +4376,7 @@ test-suite LordOfTheRings-test
       LordOfTheRings.ShadowsOfMirkwood.TheHuntForGollumSpec
       LordOfTheRings.Standalone.BattleOfLakeTownSpec
       LordOfTheRings.Standalone.MassingAtOsgiliathSpec
+      LordOfTheRings.Standalone.StoneOfErechSpec
       LordOfTheRings.Starter.DefendersOfGondorSpec
       LordOfTheRings.Starter.DwarvesOfDurinSpec
       LordOfTheRings.Starter.ElvesOfLorienSpec

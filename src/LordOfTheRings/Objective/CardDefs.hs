@@ -16,7 +16,7 @@ allObjectiveCards =
   Map.fromList $
     map
       (\def -> (cdCardCode def, def))
-      [theOldThrush, lakeTown, rangerOfIthilien, corsairSkirmisherShipDreadnaught, eithiliant, eithiliantUpgraded, goldenWing, goldenWingUpgraded, prideOfLebennin, prideOfLebenninUpgraded, silentMist, silentMistUpgraded, swanShipOfDolAmroth, swanShipOfDolAmrothUpgraded, twilightsCall, twilightsCallUpgraded, gondorianWarship,  caveTorchDarkOfMirkwood
+      [eventide, dusk, midnight, theOldThrush, lakeTown, rangerOfIthilien, corsairSkirmisherShipDreadnaught, eithiliant, eithiliantUpgraded, goldenWing, goldenWingUpgraded, prideOfLebennin, prideOfLebenninUpgraded, silentMist, silentMistUpgraded, swanShipOfDolAmroth, swanShipOfDolAmrothUpgraded, twilightsCall, twilightsCallUpgraded, gondorianWarship,  caveTorchDarkOfMirkwood
       , gandalfsMap
       , theThreatToWilderland
       , ashenBrazier
@@ -1639,3 +1639,8 @@ theOldThrush = (objective "the-battle-of-lake-town-008" "The Old Thrush" TheBatt
   , cdCardTraits = setFromList [Creature]
   , cdKeywords = setFromList [Guarded]
   }
+
+eventide, dusk, midnight :: CardDef
+eventide = (objective "the-stone-of-erech-008" "Eventide" TheStoneOfErech 1) {cdCardTraits = setFromList [Night]}
+dusk = (objective "the-stone-of-erech-009" "Dusk" TheStoneOfErech 1) {cdCardTraits = setFromList [Night]}
+midnight = (objective "the-stone-of-erech-010" "Midnight" TheStoneOfErech 1) {cdCardTraits = setFromList [Night]}
