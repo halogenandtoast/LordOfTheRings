@@ -1,6 +1,10 @@
 module LordOfTheRings.Standalone.StoneOfErechSpec (spec) where
 
 import Data.Aeson (Result (..))
+import Data.Map.Strict qualified as Map
+import LordOfTheRings.Scenario (theStoneOfErech)
+import LordOfTheRings.Scenario.Types (scenarioSetAside)
+import LordOfTheRings.Quest.CardDefs qualified as Quests
 import Data.Aeson.KeyMap qualified as KeyMap
 import LordOfTheRings.Decklist (loadPlayer)
 import LordOfTheRings.Ally (Ally)
@@ -9,9 +13,9 @@ import LordOfTheRings.Attachment.CardDefs qualified as Attachments
 import LordOfTheRings.Event.CardDefs qualified as Events
 import LordOfTheRings.Hero.CardDefs qualified as Heroes
 import LordOfTheRings.Location.CardDefs qualified as Locations
-import LordOfTheRings.Outcome (Outcome (Lost))
+import LordOfTheRings.Outcome (Outcome (Lost, Won))
 import LordOfTheRings.Helpers.Window (travelableLocations, getActionAbilities, shadowCardCancelable)
-import LordOfTheRings.Phase (Phase (PlanningPhase, EncounterPhase, RefreshPhase, CombatPhase, QuestPhase, TravelPhase))
+import LordOfTheRings.Phase (Phase (PlanningPhase, EncounterPhase, RefreshPhase, CombatPhase, QuestPhase, TravelPhase, ResourcePhase))
 import LordOfTheRings.Sphere (Sphere (Lore, Spirit, Fellowship, Baggins))
 import LordOfTheRings.Helpers.Attachment (cardHosts)
 import LordOfTheRings.Helpers.Modifiers (getModifiers)
@@ -20,14 +24,14 @@ import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Objective.CardDefs qualified as Objectives
 import LordOfTheRings.Treachery.CardDefs qualified as Treacheries
 import LordOfTheRings.Effect (Effect (..), EffectDuration (UntilEndOfRound))
-import LordOfTheRings.Helpers.Character (getAttackStrength, getWillpower)
+import LordOfTheRings.Helpers.Character (getAttackStrength, getWillpower, getCommittedWillpower)
 import LordOfTheRings.Helpers.Staging (getEnemyAttack, getEnemyDefense, getEnemyThreat, getLocationThreat, getLocationQuestPoints)
-import LordOfTheRings.Keyword (Keyword (Spectral))
+import LordOfTheRings.Keyword (Keyword (Spectral, Battle))
 import LordOfTheRings.Matcher (getObjective, getThreat, getEnemy, getAlly, getHero, heroHasResourceIcon, HeroMatcher (HeroWithSphere), EnemyMatcher (EnemyWithEngagementCostAboveThreatOf), Query (select), CardMatcher (CardWithType, AnyCard))
-import LordOfTheRings.Modifier (ModifierType (AttackModifier, WillpowerModifier, AttackBonusAgainst, LoseKeyword, Blank, CannotPlay, RevealedEncounterCardsGainDoomed, GainResourceIcon, CannotExhaust, GainResourceIconFor, PrintedResourceIconForCard, SkipPhase, AttackBonusAgainstMatching, EnteredPlayThisRound, ReduceCostToAttach, CannotHaveAttachments))
+import LordOfTheRings.Modifier (ModifierType (AttackModifier, WillpowerModifier, AttackBonusAgainst, LoseKeyword, Blank, CannotPlay, RevealedEncounterCardsGainDoomed, GainResourceIcon, CannotExhaust, GainResourceIconFor, PrintedResourceIconForCard, SkipPhase, AttackBonusAgainstMatching, EnteredPlayThisRound, ReduceCostToAttach, CannotHaveAttachments, GainKeyword))
 import LordOfTheRings.Scenario.Scenarios.TheStoneOfErech.Helpers (NightTime (..), currentNight, currentNightObjective)
 import LordOfTheRings.Trait (Trait (Oathbreaker))
-import LordOfTheRings.Window (WindowType (RoundEnds, DeclaredAsAttacker), mkWhen, mkAfter)
+import LordOfTheRings.Window (WindowType (RoundEnds, RoundBegins, DeclaredAsAttacker), mkWhen, mkAfter)
 import TestImport
 
 stageNight :: CardDef -> GameT Target
@@ -55,6 +59,182 @@ endRoundWindow = run $ CheckWindows [mkWhen RoundEnds]
 
 spec :: Spec
 spec = describe "Stone of Erech" do
+  describe "Erech quests and setup" do
+    it "builds the complete encounter deck and all three stages in order" . gameTestIn theStoneOfErech testDeck $ \_ -> do
+      run $ DoStep 1 Setup
+      toCardCode <$> getActiveQuest `shouldReturn` toCardCode Quests.theDisappearance
+      a <- getsGame (toAttrs . (.scenario))
+      length a.encounterDeck `shouldBe` 45
+      map toCardCode a.questDeck `shouldBe` map toCardCode [Quests.terrorOfTheDead, Quests.theShadowHost]
+
+    it "sets up Tarlang's Neck, Eventide, and the five remaining set-aside cards" . gameTestIn theStoneOfErech testDeck $ \_ -> do
+      run $ DoStep 1 Setup
+      q <- toTarget <$> getActiveQuest
+      run $ PerformSetup q
+      locations <- getsGame (toList . (.entities.locations))
+      map toCardCode locations `shouldBe` [toCardCode Locations.tarlangsNeck]
+      map (.placement) locations `shouldBe` [ActiveLocation]
+      currentNight `shouldReturn` Just Eventide
+      a <- getsGame (toAttrs . (.scenario))
+      length a.encounterDeck `shouldBe` 38
+      sort (map toCardCode a.scenarioSetAside) `shouldBe` sort (map toCardCode [Objectives.derufin, Enemies.theLordOfTheDeadErech, Locations.theStoneOfErechStandalone, Objectives.dusk, Objectives.midnight])
+      (.flipped) . toAttrs <$> getActiveQuest `shouldReturn` True
+
+    for_ [1 .. 4] \size ->
+      it ("runs the full Erech setup pipeline for " <> show size <> " players") . erechTable size $ \players -> do
+        run Setup
+        for_ players \_ -> do
+          asked <- getsGame (fromJustNote "no setup question" . headMay . Map.keys . (.question))
+          chooseLabel "$label.keepHand" asked
+        lead <- getLead
+        chooseOptionMatching "perform Erech setup" lead (const True)
+        finishErechChoices 100
+        currentNight `shouldReturn` Just Eventide
+        toCardCode <$> getActiveQuest `shouldReturn` toCardCode Quests.theDisappearance
+        (.flipped) . toAttrs <$> getActiveQuest `shouldReturn` True
+        locations <- getsGame (toList . (.entities.locations))
+        locations `shouldSatisfy` any (\l -> toCardCode l == toCardCode Locations.tarlangsNeck && l.placement == ActiveLocation)
+        for_ players \pid -> getQuestion pid `shouldReturn` Nothing
+
+    it "keeps stage one blocked while Tarlang's Neck is active or staged, then advances automatically" . gameTestIn theStoneOfErech testDeck $ \_ -> do
+      run $ DoStep 1 Setup
+      q <- toTarget <$> getActiveQuest
+      run $ PerformSetup q
+      _ <- setEncounterDeck []
+      resolveRevealed
+      neck <- getsGame (toId . fromJustNote "Neck missing" . headMay . toList . (.entities.locations))
+      run $ PlaceTokens GameSource q Progress 6
+      toCardCode <$> getActiveQuest `shouldReturn` toCardCode Quests.theDisappearance
+      run $ PlaceLocation neck StagingArea
+      toCardCode <$> getActiveQuest `shouldReturn` toCardCode Quests.theDisappearance
+      run $ AddToVictoryDisplay (LocationTarget neck)
+      toCardCode <$> getActiveQuest `shouldReturn` toCardCode Quests.terrorOfTheDead
+
+    it "puts the Stone in staging with Derufin attached when stage two is revealed" . gameTest $ \_ -> do
+      for_ [Locations.theStoneOfErechStandalone, Objectives.derufin] \def -> run . SetAside =<< genEncounterCard def
+      q <- putQuestStage Quests.terrorOfTheDead
+      run $ Flip q
+      resolveRevealed
+      stone <- getsGame (fromJustNote "Stone missing" . headMay . toList . (.entities.locations))
+      stone.placement `shouldBe` StagingArea
+      captive <- getsGame (fromJustNote "Derufin missing" . headMay . toList . (.entities.objectives))
+      (.placement) (toAttrs captive) `shouldBe` AttachedTo (toTarget stone)
+      getsGame (length . scenarioSetAside . toAttrs . (.scenario)) `shouldReturn` 0
+
+    it "blocks every hero's resource-phase collection for this round, while permitting resource effects" . twoPlayerTest testDeck $ \one two -> do
+      q <- putQuestStage Quests.terrorOfTheDead
+      run $ Flip q
+      resolveRevealed
+      hero <- heroOf two "01012"
+      _ <- putAttachmentOn two Attachments.resourceful hero
+      run $ CheckWindows [mkWhen RoundBegins]
+      chooseLabel "$label.erech.noResources" one
+      run $ DoPhase ResourcePhase
+      getsGame (map (.resources) . toList . (.entities.heroes)) >>= (`shouldSatisfy` all (== 0))
+      run $ PlaceTokens GameSource hero Resource 2
+      case hero of HeroTarget hid -> (.resources) <$> getHero hid `shouldReturn` 2; _ -> error "missing hero"
+      run EndRound
+      chooseLabel "$label.erech.skipPlanning" one
+      case hero of HeroTarget hid -> (.resources) <$> getHero hid `shouldReturn` 4; _ -> error "missing hero"
+
+    it "skips the next planning phase for the entire table, then consumes the instruction" . twoPlayerTest testDeck $ \one _ -> do
+      q <- putQuestStage Quests.terrorOfTheDead
+      run $ Flip q
+      resolveRevealed
+      run $ CheckWindows [mkWhen RoundBegins]
+      chooseLabel "$label.erech.skipPlanning" one
+      run $ NextPhase ResourcePhase
+      getsGame (.phase) `shouldReturn` QuestPhase
+      getModifiers GameTarget >>= (`shouldSatisfy` notElem (SkipPhase PlanningPhase))
+
+    it "searches in first-player order and adds the Lord of the Dead after those revelations" . twoPlayerTest testDeck $ \one two -> do
+      run $ SetFirstPlayer two
+      run . SetAside =<< genEncounterCard Enemies.theLordOfTheDeadErech
+      cards <- setEncounterDeck [Enemies.shadowMan, Enemies.whisperer, Enemies.forestSpider]
+      q <- putQuestStage Quests.theShadowHost
+      run $ Flip q
+      resolveRevealed
+      getsGame (map toCardCode . toList . (.entities.enemies)) >>= (`shouldSatisfy` notElem (toCardCode Enemies.theLordOfTheDeadErech))
+      chooseTarget two (CardIdTarget $ (fromJustNote "search card" $ headMay cards).id)
+      resolveRevealed
+      getsGame (map toCardCode . toList . (.entities.enemies)) >>= (`shouldSatisfy` notElem (toCardCode Enemies.theLordOfTheDeadErech))
+      chooseTarget one (CardIdTarget $ (fromJustNote "search card" $ atMay cards 1).id)
+      resolveRevealed
+      foes <- getsGame (map toCardCode . toList . (.entities.enemies))
+      sort foes `shouldBe` sort (map toCardCode [Enemies.shadowMan, Enemies.whisperer, Enemies.theLordOfTheDeadErech])
+      length <$> getEncounterDeck `shouldReturn` 1
+
+    for_ [(Objectives.eventide, 4), (Objectives.dusk, 4), (Objectives.midnight, 1)] \(time, strength) ->
+      it ("uses Battle on stage three only at Midnight: " <> show (toCardCode time)) . gameTest $ \pid -> do
+        _ <- stageNight time
+        q <- putQuestStage Quests.theShadowHost
+        run $ Flip q
+        finishErechChoices 100
+        hero <- heroOf pid "01007"
+        run $ CommitToQuest hero
+        getCommittedWillpower `shouldReturn` strength
+
+    it "updates the final stage to Battle when Dusk becomes Midnight" . gameTest $ \_ -> do
+      dusk <- stageNight Objectives.dusk
+      run . SetAside =<< genEncounterCard Objectives.midnight
+      q <- putQuestStage Quests.theShadowHost
+      run $ Flip q
+      finishErechChoices 100
+      getModifiers q >>= (`shouldSatisfy` notElem (GainKeyword Battle))
+      run $ PlaceTokens GameSource dusk Progress 4
+      getModifiers q >>= (`shouldSatisfy` elem (GainKeyword Battle))
+
+    it "blocks progress while Derufin is unclaimed, then allows it once rescued" . gameTest $ \pid -> do
+      q <- putQuestStage Quests.theShadowHost
+      run $ Flip q
+      finishErechChoices 100
+      captive <- stageNight Objectives.derufin
+      let oid = case captive of ObjectiveTarget ident -> ident; _ -> error "objective missing"
+      run $ PlaceTokens GameSource q Progress 20
+      (.progress) . toAttrs <$> getActiveQuest `shouldReturn` 0
+      run $ PutObjectiveAllyIntoPlay oid pid
+      ally <- erechAlly Objectives.derufin
+      run $ PlaceAlly (toId ally) StagingArea
+      run $ PlaceTokens GameSource q Progress 2
+      (.progress) . toAttrs <$> getActiveQuest `shouldReturn` 0
+      run $ TakeControl (toId ally) pid
+      run $ PlaceTokens GameSource q Progress 3
+      (.progress) . toAttrs <$> getActiveQuest `shouldReturn` 3
+
+    it "wins after fourteen progress with Derufin controlled by any player" . twoPlayerTest testDeck $ \_ two -> do
+      q <- putQuestStage Quests.theShadowHost
+      run $ Flip q
+      finishErechChoices 100
+      _ <- controlDerufin two
+      run $ PlaceTokens GameSource q Progress 14
+      getsGame (.outcome) `shouldReturn` Just Won
+
+    it "runs from the opening setup through Derufin's rescue to the final victory" . gameTestIn theStoneOfErech testDeck $ \pid -> do
+      run $ DoStep 1 Setup
+      openingQuest <- toTarget <$> getActiveQuest
+      run $ PerformSetup openingQuest
+      _ <- setEncounterDeck []
+      finishErechChoices 100
+      run $ PlaceTokens GameSource openingQuest Progress 6
+      neck <- getsGame (toId . fromJustNote "Neck missing" . find ((== toCardCode Locations.tarlangsNeck) . toCardCode) . toList . (.entities.locations))
+      run $ AddToVictoryDisplay (LocationTarget neck)
+      finishErechChoices 100
+      toCardCode <$> getActiveQuest `shouldReturn` toCardCode Quests.terrorOfTheDead
+      stone <- getsGame (toId . fromJustNote "Stone missing" . find ((== toCardCode Locations.theStoneOfErechStandalone) . toCardCode) . toList . (.entities.locations))
+      run $ TravelTo stone
+      ally <- erechAlly Objectives.derufin
+      ally.placement `shouldBe` InPlayArea pid
+      middleQuest <- toTarget <$> getActiveQuest
+      _ <- setEncounterDeck [Enemies.shadowHostCaptain]
+      run $ PlaceTokens GameSource middleQuest Progress 8
+      finishErechChoices 100
+      toCardCode <$> getActiveQuest `shouldReturn` toCardCode Quests.theShadowHost
+      enemies <- getsGame (map toCardCode . toList . (.entities.enemies))
+      sort enemies `shouldBe` sort (map toCardCode [Enemies.shadowHostCaptain, Enemies.theLordOfTheDeadErech])
+      lastQuest <- toTarget <$> getActiveQuest
+      run $ PlaceTokens GameSource lastQuest Progress 14
+      getsGame (.outcome) `shouldReturn` Just Won
+
   describe "Erech objectives" do
     it "rescues Derufin for the first player after traveling to the Stone" . twoPlayerTest testDeck $ \one two -> do
       stone <- stageErechLocation Locations.theStoneOfErechStandalone
@@ -976,3 +1156,17 @@ controlDerufin pid = do
   let oid = case captive of ObjectiveTarget ident -> ident; _ -> error "objective missing"
   run $ PutObjectiveAllyIntoPlay oid pid
   toId <$> erechAlly Objectives.derufin
+
+erechTable :: Int -> ([PlayerId] -> GameT ()) -> IO ()
+erechTable size body = do
+  seats <- for [1 .. size] \seat -> either (error . show) id <$> loadPlayer ("Player " <> tshow seat) testDeck
+  env <- newGameEnv (newTableIn theStoneOfErech $ fromJustNote "empty table" $ nonEmpty seats) (const $ pure ()) 1
+  runGameT env $ body =<< getsGame (.playerOrder)
+
+finishErechChoices :: Int -> GameT ()
+finishErechChoices remaining | remaining <= 0 = error "Erech setup did not finish"
+finishErechChoices remaining = do
+  questions <- getsGame (Map.keys . (.question))
+  for_ (headMay questions) \pid -> do
+    chooseOptionMatching "resolve Erech choice" pid (const True)
+    finishErechChoices (remaining - 1)

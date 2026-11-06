@@ -22,8 +22,9 @@ instance RunMessage HeroAttrs where
   runMessage msg attrs = case msg of
     DoPhase ResourcePhase -> do
       mods <- getModifiers attrs
+      global <- getModifiers GameTarget
       let collected = 1 + sum [n | CollectsAdditionalResources n <- mods]
-      unless (attrs.heroPrisoner || attrs.heroInStagingArea || CannotCollectResources `elem` mods) $ push $ PlaceTokens GameSource (toTarget attrs) Resource collected
+      unless (attrs.heroPrisoner || attrs.heroInStagingArea || CannotCollectResources `elem` (mods <> global)) $ push $ PlaceTokens GameSource (toTarget attrs) Resource collected
       pure attrs
     TakePrisoner hid | hid == attrs.heroId -> pure $ attrs & prisonerL .~ True
     AttachFacedown (isTarget attrs -> True) card -> pure $ attrs & facedownL %~ (card :)

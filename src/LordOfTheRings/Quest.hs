@@ -2,6 +2,9 @@
 
 module LordOfTheRings.Quest (module LordOfTheRings.Quest, module X) where
 
+import LordOfTheRings.Quest.Cards.TheDisappearance (theDisappearance)
+import LordOfTheRings.Quest.Cards.TerrorOfTheDead (terrorOfTheDead)
+import LordOfTheRings.Quest.Cards.TheShadowHost (theShadowHost)
 import LordOfTheRings.Quest.Cards.AnduinCrossing (anduinCrossing)
 import LordOfTheRings.Quest.Cards.TheDragonsWrath (theDragonsWrath)
 import LordOfTheRings.Quest.Cards.FireAndWater (fireAndWater)
@@ -485,7 +488,10 @@ allQuests =
   Map.fromList
     [ (toCardCode builder, card)
     | card@(SomeQuestCard builder) <-
-        [ SomeQuestCard anduinCrossing
+        [ SomeQuestCard theDisappearance
+        , SomeQuestCard terrorOfTheDead
+        , SomeQuestCard theShadowHost
+        , SomeQuestCard anduinCrossing
         , SomeQuestCard throughTheRuinsOsgiliath
         , SomeQuestCard theDragonsWrath
         , SomeQuestCard fireAndWater

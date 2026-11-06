@@ -2997,6 +2997,7 @@ library
       LordOfTheRings.Quest.Cards.SwiftDeparture
       LordOfTheRings.Quest.Cards.TakeTheShip
       LordOfTheRings.Quest.Cards.TerrorFromTheMountain
+      LordOfTheRings.Quest.Cards.TerrorOfTheDead
       LordOfTheRings.Quest.Cards.ThaurdirsPursuit
       LordOfTheRings.Quest.Cards.TheAmbush
       LordOfTheRings.Quest.Cards.TheAngryForest
@@ -3027,6 +3028,7 @@ library
       LordOfTheRings.Quest.Cards.TheDefenseOfRavenhill
       LordOfTheRings.Quest.Cards.TheDesertOfHarad
       LordOfTheRings.Quest.Cards.TheDesertPath
+      LordOfTheRings.Quest.Cards.TheDisappearance
       LordOfTheRings.Quest.Cards.TheDragonsWrath
       LordOfTheRings.Quest.Cards.TheDrippingWalls
       LordOfTheRings.Quest.Cards.TheDungeonsOfDolRhugar
@@ -3092,6 +3094,7 @@ library
       LordOfTheRings.Quest.Cards.TheSeatOfAmonHen
       LordOfTheRings.Quest.Cards.TheSeethingLake
       LordOfTheRings.Quest.Cards.TheShadesOfAngmar
+      LordOfTheRings.Quest.Cards.TheShadowHost
       LordOfTheRings.Quest.Cards.TheShadowOfMordor
       LordOfTheRings.Quest.Cards.TheShadowWorld
       LordOfTheRings.Quest.Cards.TheSideDoor
@@ -3342,6 +3345,7 @@ library
       LordOfTheRings.Scenario.Scenarios.TheSiegeOfGondor.Helpers
       LordOfTheRings.Scenario.Scenarios.TheStewardsFear
       LordOfTheRings.Scenario.Scenarios.TheStewardsFear.Helpers
+      LordOfTheRings.Scenario.Scenarios.TheStoneOfErech
       LordOfTheRings.Scenario.Scenarios.TheStoneOfErech.Helpers
       LordOfTheRings.Scenario.Scenarios.TheTempleOfDoom
       LordOfTheRings.Scenario.Scenarios.TheTempleOfDoom.Helpers

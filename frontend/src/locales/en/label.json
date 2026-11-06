@@ -8,6 +8,9 @@
     "endEncounter": "End the encounter phase",
     "engageAll": "The first player engages all enemies in staging",
     "hauntedHero": "Choose a hero to exhaust",
+    "terrorChoice": "Skip the next planning phase, or have heroes collect no resources during the resource phase this round?",
+    "skipPlanning": "Skip the next planning phase",
+    "noResources": "Heroes do not collect resources in the resource phase",
     "claimRelic": "Choose a hero you control to claim Relic from the Dark Years."
   },
   "lakeTown": {
