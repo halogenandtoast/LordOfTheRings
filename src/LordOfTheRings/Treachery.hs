@@ -6,6 +6,7 @@ import LordOfTheRings.Treachery.Cards.SwayingWithoutWind (swayingWithoutWind)
 import LordOfTheRings.Treachery.Cards.FallingBranches (fallingBranches)
 import LordOfTheRings.Treachery.Cards.SongOfSleep (songOfSleep)
 import LordOfTheRings.Treachery.Cards.LostAndWitless (lostAndWitless)
+import LordOfTheRings.Treachery.Cards.BarrowDownsSpells (longGropingArm, frozenByFear, dreadfulSong)
 import LordOfTheRings.Treachery.Cards.BelegostTreacheries
 import LordOfTheRings.Treachery.Cards.EndingAndFailing (endingAndFailing)
 import LordOfTheRings.Treachery.Cards.MidnightThrong (midnightThrong)
@@ -648,6 +649,9 @@ allTreacherys =
         , SomeTreacheryCard fallingBranches
         , SomeTreacheryCard songOfSleep
         , SomeTreacheryCard lostAndWitless
+        , SomeTreacheryCard longGropingArm
+        , SomeTreacheryCard frozenByFear
+        , SomeTreacheryCard dreadfulSong
         , SomeTreacheryCard echoesInTheDark
         , SomeTreacheryCard spawnOfThangorodrim
         , SomeTreacheryCard concealedSpikes

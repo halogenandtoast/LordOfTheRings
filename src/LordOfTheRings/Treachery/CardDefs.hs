@@ -14,7 +14,7 @@ allTreacheryCards =
   Map.fromList $
     map
       (\def -> (cdCardCode def, def))
-      [echoesInTheDark, spawnOfThangorodrim, concealedSpikes, coveredPit, swayingWithoutWind, fallingBranches, songOfSleep, lostAndWitless, endingAndFailing, midnightThrong, murmursOfDread, gropingHorror, drivenByFear, theDeadRideBehind, theGloaming, townBaiting, direMagnificence, catchingFire, recklessInHisRage, closeToTheFlame, scorchingBlast, cutOffOsgiliath, darkPursuit, massingAtOsgiliath, ballistaBarrage, boardingPartyDreadnaught, grappledDreadnaught, outOfTheMist, overworked, takingOnWaterDreadnaught, violentTempest,  shinyDistraction
+      [longGropingArm, frozenByFear, dreadfulSong, echoesInTheDark, spawnOfThangorodrim, concealedSpikes, coveredPit, swayingWithoutWind, fallingBranches, songOfSleep, lostAndWitless, endingAndFailing, midnightThrong, murmursOfDread, gropingHorror, drivenByFear, theDeadRideBehind, theGloaming, townBaiting, direMagnificence, catchingFire, recklessInHisRage, closeToTheFlame, scorchingBlast, cutOffOsgiliath, darkPursuit, massingAtOsgiliath, ballistaBarrage, boardingPartyDreadnaught, grappledDreadnaught, outOfTheMist, overworked, takingOnWaterDreadnaught, violentTempest,  shinyDistraction
       , guiltyConscience
       , drivenByShadowDarkOfMirkwood
       , surprisingSpeedDarkOfMirkwood
@@ -3995,3 +3995,11 @@ concealedSpikes = (treachery "the-ruins-of-belegost-029" "Concealed Spikes" TheR
   { cdCardTraits = setFromList [Hazard], cdShadowEffect = True }
 coveredPit = (treachery "the-ruins-of-belegost-030" "Covered Pit" TheRuinsOfBelegost 2)
   { cdCardTraits = setFromList [Hazard], cdShadowEffect = True }
+
+longGropingArm, frozenByFear, dreadfulSong :: CardDef
+longGropingArm = (treachery "fog-on-the-barrow-downs-015" "Long Groping Arm" FogOnTheBarrowDowns 3)
+  { cdKeywords = setFromList [Peril] }
+frozenByFear = (treachery "fog-on-the-barrow-downs-017" "Frozen by Fear" FogOnTheBarrowDowns 3)
+  { cdKeywords = setFromList [Surge, Doomed 1], cdShadowEffect = True, cdEasyModeQuantity = Just 2 }
+dreadfulSong = (treachery "fog-on-the-barrow-downs-018" "Dreadful Song" FogOnTheBarrowDowns 2)
+  { cdKeywords = setFromList [Peril], cdCardTraits = setFromList [Enchantment] }
