@@ -1,5 +1,6 @@
 {
   "lakeTown": {
+    "dockHero": "Exhaust a hero to travel to Fisherman’s Dock",
     "returnPier": "Choose a Pier to shuffle into the encounter deck",
     "discardAlly": "Choose an ally to discard",
     "cancelShadow": "Discard one of your heroes to cancel this shadow effect?",

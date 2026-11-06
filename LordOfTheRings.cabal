@@ -1996,6 +1996,7 @@ library
       LordOfTheRings.Location.Cards.FingerOfGlanduin
       LordOfTheRings.Location.Cards.FireFilledTrench
       LordOfTheRings.Location.Cards.FirstHall
+      LordOfTheRings.Location.Cards.FishermansDock
       LordOfTheRings.Location.Cards.FloodedCaverns
       LordOfTheRings.Location.Cards.FloodedRuins
       LordOfTheRings.Location.Cards.FogBank
@@ -2134,6 +2135,7 @@ library
       LordOfTheRings.Location.Cards.MakeshiftPassage
       LordOfTheRings.Location.Cards.ManyPillaredHall
       LordOfTheRings.Location.Cards.MarketSquare
+      LordOfTheRings.Location.Cards.MerchantsDistrict
       LordOfTheRings.Location.Cards.Methedras
       LordOfTheRings.Location.Cards.MethedrasPeak
       LordOfTheRings.Location.Cards.Midgewater

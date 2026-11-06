@@ -5,13 +5,14 @@ import LordOfTheRings.Scenario (theBattleOfLakeTown)
 import LordOfTheRings.Scenario.Types (scenarioMeta)
 import LordOfTheRings.Scenario.Scenarios.TheBattleOfLakeTown.Meta (Meta (..), metaOf)
 import LordOfTheRings.Window (WindowType (PhaseBegins), mkAfter)
-import LordOfTheRings.Phase (Phase (QuestPhase))
+import LordOfTheRings.Phase (Phase (QuestPhase, TravelPhase))
 import LordOfTheRings.Card (CardDef (..), toCardDef)
 import LordOfTheRings.Objective.CardDefs qualified as Objectives
 import LordOfTheRings.Outcome (Outcome (Lost))
 import LordOfTheRings.Ally.CardDefs qualified as Allies
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Effect (Effect (..), EffectDuration (UntilEndOfRound))
+import LordOfTheRings.Helpers.Window (travelableLocations)
 import LordOfTheRings.Helpers.Modifiers (getModifiers)
 import LordOfTheRings.Keyword (Keyword (Burn))
 import LordOfTheRings.Location.CardDefs qualified as Locations
@@ -546,6 +547,68 @@ spec = describe "Battle of Lake-town" do
       passActions pid
       passActions pid
       getDamage defender `shouldReturn` 3
+
+  describe "remaining Lake-town locations" do
+    it "travels to Fisherman's Dock for free when no location is active" . gameTest $ \pid -> do
+      dock <- stageLocation Locations.fishermansDock
+      hero <- heroOf pid "01012"
+      run $ TravelTo dock
+      (.placement) <$> getLocation dock `shouldReturn` ActiveLocation
+      isExhausted hero `shouldReturn` False
+
+    it "pays Fisherman's Dock's hero cost before adding a second active location" . gameTest $ \pid -> do
+      bridge <- stageLocation Locations.greatBridge
+      dock <- stageLocation Locations.fishermansDock
+      run $ PlaceLocation bridge ActiveLocation
+      hero <- heroOf pid "01012"
+      available <- travelableLocations
+      available `shouldSatisfy` elem dock
+      run $ TravelTo dock
+      (.placement) <$> getLocation dock `shouldReturn` StagingArea
+      chooseTarget pid hero
+      isExhausted hero `shouldReturn` True
+      (.placement) <$> getLocation dock `shouldReturn` ActiveLocation
+      (.placement) <$> getLocation bridge `shouldReturn` ActiveLocation
+      travelableLocations `shouldReturn` []
+
+    it "bars travel to the second active location when no hero can exhaust" . gameTest $ \pid -> do
+      bridge <- stageLocation Locations.greatBridge
+      dock <- stageLocation Locations.fishermansDock
+      run $ PlaceLocation bridge ActiveLocation
+      for_ ["01012", "01007", "01002"] $ \code -> run . Exhaust =<< heroOf pid code
+      travelableLocations `shouldReturn` []
+      run $ TravelTo dock
+      (.placement) <$> getLocation dock `shouldReturn` StagingArea
+
+    it "adds Fisherman's Dock to staging when its shadow resolves" . gameTest $ \pid -> do
+      resolveCardShadow pid Locations.fishermansDock
+      locations <- getsGame $ map toCardCode . toList . (.entities.locations)
+      locations `shouldSatisfy` elem (toCardCode Locations.fishermansDock)
+
+    it "buys Merchant's District into victory with two damage per player" . twoPlayerTest testDeck $ \one _ -> do
+      town <- stageTown
+      district <- stageLocation Locations.merchantsDistrict
+      run $ UseCardAbility one (LocationSource district) 1 []
+      getDamage town `shouldReturn` 4
+      victory <- getsGame $ map toCardCode . (.victoryDisplay) . toAttrs . (.scenario)
+      victory `shouldBe` [toCardCode Locations.merchantsDistrict]
+
+    it "offers Merchant's District's action during travel" . gameTest $ \pid -> do
+      _ <- stageTown
+      district <- stageLocation Locations.merchantsDistrict
+      run $ BeginPhase TravelPhase
+      offersAbilityOf pid district `shouldReturn` True
+
+    for_ [True, False] $ \undefended ->
+      it ("Merchant's District's shadow deals the correct damage to Lake-town: " <> show undefended) . gameTest $ \pid -> do
+        town <- stageTown
+        run . AddToStaging =<< genEncounterCard Enemies.forestSpider
+        eid <- onlySmaug
+        [card] <- setEncounterDeck [Locations.merchantsDistrict]
+        run $ DealShadowCard eid
+        defenders <- if undefended then pure [] else pure . pure =<< heroOf pid "01012"
+        run $ ResolveShadowCard card.id eid pid defenders
+        getDamage town `shouldReturn` if undefended then 4 else 1
 
 stageTown :: GameT Target
 stageTown = do

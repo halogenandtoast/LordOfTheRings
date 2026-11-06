@@ -2,6 +2,8 @@
 
 module LordOfTheRings.Location (module LordOfTheRings.Location, module X) where
 
+import LordOfTheRings.Location.Cards.FishermansDock (fishermansDock)
+import LordOfTheRings.Location.Cards.MerchantsDistrict (merchantsDistrict)
 import LordOfTheRings.Location.Cards.GreatBridge (greatBridge)
 import LordOfTheRings.Location.Cards.TheMastersManor (theMastersManor)
 import LordOfTheRings.Location.Cards.GreatHouse (greatHouse)
@@ -795,7 +797,9 @@ allLocations =
   Map.fromList
     [ (toCardCode builder, card)
     | card@(SomeLocationCard builder) <-
-        [ SomeLocationCard greatBridge
+        [ SomeLocationCard fishermansDock
+        , SomeLocationCard merchantsDistrict
+        , SomeLocationCard greatBridge
         , SomeLocationCard theMastersManor
         , SomeLocationCard greatHouse
         , SomeLocationCard northPier
