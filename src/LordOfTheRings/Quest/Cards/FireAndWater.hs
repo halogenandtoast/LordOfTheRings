@@ -19,6 +19,13 @@ instance HasModifiersFor FireAndWater where
 
 instance RunMessage FireAndWater where
   runMessage msg q@(FireAndWater a) = case msg of
+    Flip target | not a.flipped, isTarget a target || target == CardIdTarget a.cardId -> do
+      -- Returning from stage 3 reinstates "cannot have more than 12 damage".
+      enemies <- smaugEnemies
+      for_ enemies \eid -> do
+        damage <- getDamage (EnemyTarget eid)
+        when (damage > 12) $ removeTokens a eid Damage (damage - 12)
+      FireAndWater <$> runMessage msg a
     ProgressCanceled (isSource a -> True) n | a.flipped && n > 0 -> do
       lead <- getLead
       towns <- lakeTownObjectives

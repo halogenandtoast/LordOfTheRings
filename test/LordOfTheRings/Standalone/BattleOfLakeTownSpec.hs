@@ -1,5 +1,7 @@
 module LordOfTheRings.Standalone.BattleOfLakeTownSpec (spec) where
 
+import Data.Map.Strict qualified as Map
+import LordOfTheRings.Decklist (loadPlayer)
 import LordOfTheRings.Quest.CardDefs qualified as Quests
 import LordOfTheRings.Timing (Timing (When))
 import LordOfTheRings.Sphere (Sphere (Tactics))
@@ -9,21 +11,21 @@ import LordOfTheRings.Scenario (theBattleOfLakeTown)
 import LordOfTheRings.Scenario.Types (scenarioMeta)
 import LordOfTheRings.Scenario.Scenarios.TheBattleOfLakeTown.Meta (Meta (..), metaOf)
 import LordOfTheRings.Window (WindowType (PhaseBegins, Revealed), mkWhen, mkAfter)
-import LordOfTheRings.Phase (Phase (QuestPhase, TravelPhase))
+import LordOfTheRings.Phase (Phase (QuestPhase, TravelPhase, RefreshPhase))
 import LordOfTheRings.Card (CardDef (..), toCardDef)
 import LordOfTheRings.Objective.Types (ObjectiveAttrs (objectivePlacement))
 import LordOfTheRings.Objective.CardDefs qualified as Objectives
-import LordOfTheRings.Outcome (Outcome (Lost))
+import LordOfTheRings.Outcome (Outcome (Lost, Won))
 import LordOfTheRings.Ally.CardDefs qualified as Allies
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Effect (Effect (..), EffectDuration (UntilEndOfRound))
-import LordOfTheRings.Helpers.Window (travelableLocations, windowMatchesM)
+import LordOfTheRings.Helpers.Window (travelableLocations, windowMatchesM, getActionAbilities)
 import LordOfTheRings.Ability (WindowMatcher (CardRevealedWindow, CancelableTreacheryRevealedWindow, EncounterCardRevealedWindow))
 import LordOfTheRings.Helpers.Modifiers (getModifiers)
 import LordOfTheRings.Keyword (Keyword (Burn))
 import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Matcher (getBurn, getEnemy, getHero, getAlly, getObjective)
-import LordOfTheRings.Modifier (ModifierType (CannotBeDiscardedByEncounterCards, Blank, GainKeyword, ImmuneToPlayerCardEffects, WhenRevealedCannotBeCanceled, AlliesCannotBeDeclaredDefenders, DefenseModifier, AttackModifier, DoesNotExhaustToAttack, GainResourceIcon, ProgressFromQuestingThisPhase))
+import LordOfTheRings.Modifier (ModifierType (CannotBeDiscardedByEncounterCards, Blank, GainKeyword, ImmuneToPlayerCardEffects, WhenRevealedCannotBeCanceled, AlliesCannotBeDeclaredDefenders, DefenseModifier, AttackModifier, DoesNotExhaustToAttack, GainResourceIcon, ProgressFromQuestingThisPhase, AdditionalStagingReveals))
 import TestImport
 
 stageLocation :: CardDef -> GameT LocationId
@@ -33,6 +35,108 @@ stageLocation def = do
 
 spec :: Spec
 spec = describe "Battle of Lake-town" do
+  describe "The Dragon's Wrath" do
+    it "offers its reset action to either player only during refresh" . twoPlayerTest testDeck $ \one two -> do
+      q <- putQuestStage Quests.theDragonsWrath
+      run $ Flip q
+      let reset ab = sourceTarget ab.abilitySource == Just q && ab.abilityIndex == 1
+      for_ [one, two] \pid -> getActionAbilities pid >>= (`shouldSatisfy` not . any reset)
+      putGame . (phaseL .~ RefreshPhase) =<< getGame
+      for_ [one, two] \pid -> getActionAbilities pid >>= (`shouldSatisfy` any reset)
+
+    it "cannot be defeated merely by placing progress" . gameTest $ \_ -> do
+      q <- putQuestStage Quests.theDragonsWrath
+      run $ Flip q
+      run $ PlaceTokens GameSource q Progress 100
+      getsGame (.outcome) `shouldReturn` Nothing
+      toCardCode <$> getActiveQuest `shouldReturn` toCardCode Quests.theDragonsWrath
+
+    it "adds one encounter reveal during staging" . gameTest $ \pid -> do
+      q <- putQuestStage Quests.theDragonsWrath
+      run $ Flip q
+      _ <- setEncounterDeck [Locations.westPier, Locations.southPier, Locations.northPier]
+      run Staging
+      resolveRevealed
+      passActions pid
+      foes <- getsGame (map toCardCode . toList . (.entities.locations))
+      sort foes `shouldBe` sort (map toCardCode [Locations.westPier, Locations.southPier])
+
+    for_ [(1, Won), (2, Lost), (3, Lost)] \(damage, result) ->
+      it ("compares victory points strictly against town damage: " <> show damage) . gameTest $ \_ -> do
+        town <- stageTown
+        run $ PlaceTokens GameSource town Damage damage
+        pier <- stageLocation Locations.eastPier
+        run $ AddToVictoryDisplay (toTarget pier)
+        q <- putQuestStage Quests.theDragonsWrath
+        run $ Flip q
+        run . AddToStaging =<< genEncounterCard Enemies.smaugTheTerrible
+        eid <- onlySmaug
+        run $ DealDamage GameSource (toTarget eid) 20
+        getsGame (.outcome) `shouldReturn` Just result
+
+    it "does not end the game when an enemy other than Smaug is defeated" . gameTest $ \_ -> do
+      _ <- stageTown
+      q <- putQuestStage Quests.theDragonsWrath
+      run $ Flip q
+      run . AddToStaging =<< genEncounterCard Enemies.forestSpider
+      eid <- getsGame $ toId . fromJustNote "enemy missing" . headMay . toList . (.entities.enemies)
+      run $ DealDamage GameSource (toTarget eid) 4
+      getsGame (.outcome) `shouldReturn` Nothing
+
+    it "returns to stage 2B, restores its damage cap, and allows replaying stage 3" . gameTest $ \pid -> do
+      town <- stageTown
+      run $ PlaceTokens GameSource town Damage 8
+      q <- putQuestStage Quests.theDragonsWrath
+      run $ Flip q
+      run . AddToStaging =<< genEncounterCard Enemies.smaugTheTerrible
+      eid <- onlySmaug
+      run $ PlaceTokens GameSource (toTarget eid) Damage 17
+      putGame . (phaseL .~ RefreshPhase) =<< getGame
+      run $ UseCardAbility pid (case q of QuestTarget qid -> QuestSource qid; _ -> GameSource) 1 []
+      active <- getActiveQuest
+      toCardCode active `shouldBe` toCardCode Quests.fireAndWater
+      (.flipped) (toAttrs active) `shouldBe` True
+      (.progress) (toAttrs active) `shouldBe` 0
+      getDamage (toTarget eid) `shouldReturn` 12
+      getModifiers GameTarget >>= (`shouldSatisfy` notElem (AdditionalStagingReveals 1))
+      run $ PlaceProgressOnQuest 4
+      chooseLabel "$label.amount n=i:4" pid
+      getDamage town `shouldReturn` 4
+      run $ PlaceTokens GameSource (toTarget active) Progress 10
+      toCardCode <$> getActiveQuest `shouldReturn` toCardCode Quests.theDragonsWrath
+      resolveRevealed
+      getModifiers GameTarget >>= (`shouldSatisfy` elem (AdditionalStagingReveals 1))
+
+  for_ [1 .. 4] \size ->
+    it ("runs the complete Lake-town setup pipeline for " <> show size <> " players") . lakeTownTable size $ \players -> do
+      run Setup
+      for_ players \_ -> do
+        asked <- getsGame (fromJustNote "no setup question" . headMay . Map.keys . (.question))
+        chooseLabel "$label.keepHand" asked
+      lead <- getLead
+      chooseOptionMatching "perform Terror from the Mountain setup" lead (const True)
+      finishSetupRevelations 50
+      g <- getGame
+      let a = toAttrs g.scenario
+          m = metaOf a
+      length (smaugDeck m) `shouldBe` 9
+      smaugDiscard m `shouldBe` []
+      length a.encounterDeck `shouldSatisfy` (<= 36 - size)
+      map toCardCode a.questDeck `shouldBe` map toCardCode [Quests.fireAndWater, Quests.theDragonsWrath]
+      g.entities.enemies `shouldSatisfy` null
+      (.flipped) . toAttrs <$> getActiveQuest `shouldReturn` True
+      towns <- getsGame $ filter ((== toCardCode Objectives.lakeTown) . toCardCode) . toList . (.entities.objectives)
+      length towns `shouldBe` 1
+      getDamage (toTarget $ fromJustNote "town missing" $ headMay towns) >>= (`shouldSatisfy` (>= size))
+      for_ players \pid -> getQuestion pid `shouldReturn` Nothing
+
+  it "builds all three stages in order and the full Lake-town encounter deck" . gameTestIn theBattleOfLakeTown testDeck $ \_ -> do
+    run $ DoStep 1 Setup
+    toCardCode <$> getActiveQuest `shouldReturn` toCardCode Quests.terrorFromTheMountain
+    a <- getsGame (toAttrs . (.scenario))
+    map toCardCode a.questDeck `shouldBe` map toCardCode [Quests.fireAndWater, Quests.theDragonsWrath]
+    length a.encounterDeck `shouldBe` 46
+
   describe "Fire and Water" do
     it "caps damage on Smaug at twelve" . gameTest $ \_ -> do
       q <- putQuestStage Quests.fireAndWater
@@ -994,3 +1098,21 @@ stageThrush :: GameT ObjectiveId
 stageThrush = do
   run . AddToStaging =<< genEncounterCard Objectives.theOldThrush
   getsGame $ toId . fromJustNote "Thrush missing" . headMay . toList . (.entities.objectives)
+
+lakeTownTable :: Int -> ([PlayerId] -> GameT ()) -> IO ()
+lakeTownTable size body = do
+  seats <- for [1 .. size] \seat ->
+    either (error . show) id <$> loadPlayer ("Player " <> tshow seat) testDeck
+  env <- newGameEnv (newTableIn theBattleOfLakeTown $ fromJustNote "empty table" $ nonEmpty seats) (const $ pure ()) 1
+  runGameT env $ body =<< getsGame (.playerOrder)
+
+finishSetupRevelations :: Int -> GameT ()
+finishSetupRevelations remaining | remaining <= 0 = error "Lake-town setup did not finish"
+finishSetupRevelations remaining = do
+  resolveRevealed
+  questions <- getsGame (Map.toList . (.question))
+  case [(pid, label) | (pid, QuestionLabel label _ _ _) <- questions, "$label.lakeTown.assignBurn" `isPrefixOf` label] of
+    (pid, _) : _ -> do
+      chooseLabel "$label.lakeTown.takeBurn" pid
+      finishSetupRevelations (remaining - 1)
+    [] -> pure ()

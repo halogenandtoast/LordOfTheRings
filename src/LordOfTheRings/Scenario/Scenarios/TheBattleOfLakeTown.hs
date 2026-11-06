@@ -1,6 +1,8 @@
 module LordOfTheRings.Scenario.Scenarios.TheBattleOfLakeTown (theBattleOfLakeTown) where
 
 import LordOfTheRings.Objective.CardDefs qualified as Objectives
+import LordOfTheRings.EncounterSet qualified as EncounterSet
+import LordOfTheRings.Quest.CardDefs qualified as Quests
 import Data.Aeson.Types (parseMaybe)
 import LordOfTheRings.Ability (WindowMatcher (PhaseBeginsWindow), forced, mkAbility)
 import LordOfTheRings.Matcher (getLead, getDamage, getPlayerOrder, cardMatches, cardIs)
@@ -32,6 +34,11 @@ instance RunMessage TheBattleOfLakeTown where
       else pure oldMeta
     let a = withMeta m original
     case msg of
+      DoStep 1 Setup -> do
+        deck <- gatherEncounterSets a [EncounterSet.TheBattleOfLakeTown]
+        putQuestIntoPlay =<< genEncounterCard Quests.terrorFromTheMountain
+        later <- traverse genEncounterCard [Quests.fireAndWater, Quests.theDragonsWrath]
+        pure $ TheBattleOfLakeTown $ a & encounterDeckL .~ deck & questDeckL .~ later
       ScenarioSpecific "lakeTown.setup" _ -> do
         let dragons = filter isSmaugCard a.encounterDeck
             remaining = filter (not . isSmaugCard) a.encounterDeck

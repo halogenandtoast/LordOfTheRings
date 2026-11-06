@@ -90,7 +90,7 @@ allQuestCards =
   Map.fromList $
     map
       (\def -> (cdCardCode def, def))
-      [fireAndWater, terrorFromTheMountain, anduinCrossing, throughTheRuinsOsgiliath, beyondExpectations, raceToMinasTirith, searchingTheHighSeas, destroyTheDreadnaught,  afterTheRaid
+      [theDragonsWrath, fireAndWater, terrorFromTheMountain, anduinCrossing, throughTheRuinsOsgiliath, beyondExpectations, raceToMinasTirith, searchingTheHighSeas, destroyTheDreadnaught,  afterTheRaid
       , mirkwoodForestTheOath
       , theRearguardTheOath
       , theDarkOfNibinDum
@@ -2273,3 +2273,6 @@ terrorFromTheMountain = (quest "the-battle-of-lake-town-001" "Terror from the Mo
 
 fireAndWater :: CardDef
 fireAndWater = quest "the-battle-of-lake-town-002" "Fire and Water" TheBattleOfLakeTown 2 10
+
+theDragonsWrath :: CardDef
+theDragonsWrath = quest "the-battle-of-lake-town-003" "The Dragon's Wrath" TheBattleOfLakeTown 3 0
