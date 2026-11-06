@@ -16,7 +16,7 @@ import LordOfTheRings.Helpers.Modifiers (getModifiers)
 import LordOfTheRings.Keyword (Keyword (Burn))
 import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Matcher (getBurn, getEnemy, getHero, getAlly)
-import LordOfTheRings.Modifier (ModifierType (CannotBeDiscardedByEncounterCards, Blank, GainKeyword, ImmuneToPlayerCardEffects, WhenRevealedCannotBeCanceled))
+import LordOfTheRings.Modifier (ModifierType (CannotBeDiscardedByEncounterCards, Blank, GainKeyword, ImmuneToPlayerCardEffects, WhenRevealedCannotBeCanceled, AlliesCannotBeDeclaredDefenders, DefenseModifier))
 import TestImport
 
 stageLocation :: CardDef -> GameT LocationId
@@ -423,6 +423,129 @@ spec = describe "Battle of Lake-town" do
       resolveCardShadow pid Treacheries.scorchingBlast
       chooseLabel "$label.lakeTown.takeBurn" pid
       getDamage town `shouldReturn` 2
+
+  describe "additional Lake-town treacheries" do
+    it "discards an ally from each player able to pay, damaging Lake-town for the others" . twoPlayerTest testDeck $ \one two -> do
+      town <- stageTown
+      ally <- putAllyIntoPlay one Allies.guardOfTheCitadel
+      _ <- setEncounterDeck [Treacheries.direMagnificence]
+      run RevealEncounterCard
+      resolveRevealed
+      getsGame (any ((== ally) . toTarget) . toList . (.entities.allies)) `shouldReturn` False
+      getDamage town `shouldReturn` 2
+      getQuestion two `shouldReturn` Nothing
+
+    it "treats an ally protected from encounter discards as unable to pay Dire Magnificence" . gameTest $ \pid -> do
+      town <- stageTown
+      ally <- putAllyIntoPlay pid Allies.guardOfTheCitadel
+      run $ CreateEffect $ Effect GameSource ally [CannotBeDiscardedByEncounterCards] UntilEndOfRound
+      _ <- setEncounterDeck [Treacheries.direMagnificence]
+      run RevealEncounterCard
+      resolveRevealed
+      getDamage town `shouldReturn` 2
+      getsGame (any ((== ally) . toTarget) . toList . (.entities.allies)) `shouldReturn` True
+
+    it "returns a Pier from victory without moving other victory cards" . gameTest $ \_ -> do
+      pier <- stageLocation Locations.westPier
+      bridge <- stageLocation Locations.greatBridge
+      run $ PlaceTokens GameSource (toTarget pier) Progress 2
+      run $ PlaceTokens GameSource (toTarget bridge) Progress 4
+      _ <- setEncounterDeck [Treacheries.catchingFire]
+      run RevealEncounterCard
+      resolveRevealed
+      map toCardCode <$> getEncounterDeck `shouldReturn` [toCardCode Locations.westPier]
+      victory <- getsGame $ map toCardCode . (.victoryDisplay) . toAttrs . (.scenario)
+      victory `shouldBe` [toCardCode Locations.greatBridge]
+
+    it "surges from Catching Fire when there is no Pier to return" . gameTest $ \_ -> do
+      _ <- setEncounterDeck [Treacheries.catchingFire, Locations.northPier]
+      run RevealEncounterCard
+      resolveRevealed
+      locations <- getsGame $ map toCardCode . toList . (.entities.locations)
+      locations `shouldSatisfy` elem (toCardCode Locations.northPier)
+
+    it "prevents allies defending Smaug after Reckless in His Rage" . gameTest $ \pid -> do
+      run . AddToStaging =<< genEncounterCard Enemies.smaugTheTerrible
+      eid <- onlySmaug
+      ally <- putAllyIntoPlay pid Allies.guardOfTheCitadel
+      _ <- setEncounterDeck [Treacheries.recklessInHisRage]
+      run RevealEncounterCard
+      resolveRevealed
+      mods <- getModifiers eid
+      mods `shouldSatisfy` elem AlliesCannotBeDeclaredDefenders
+      run $ EnemyAttack pid eid
+      passActions pid
+      question <- getQuestion pid
+      fmap questionChoices question `shouldSatisfy` maybe False (all (\case TargetLabel target _ -> target /= ally; _ -> True))
+
+    for_ [True, False] $ \destroys ->
+      it ("Reckless in His Rage's shadow resolves Burn only when a character dies: " <> show destroys) . gameTest $ \pid -> do
+        town <- stageTown
+        _ <- stageLocation Locations.southPier
+        run . AddToStaging =<< genEncounterCard Enemies.forestSpider
+        eid <- onlySmaug
+        run $ EngageEnemy pid eid
+        defender <- if destroys then putAllyIntoPlay pid Allies.guardOfTheCitadel else heroOf pid "01012"
+        run . AttachShadowCard eid =<< genEncounterCard Treacheries.recklessInHisRage
+        run $ EnemyAttack pid eid
+        passActions pid
+        chooseTarget pid defender
+        passActions pid
+        passActions pid
+        when destroys $ chooseLabel "$label.lakeTown.takeBurn" pid
+        getDamage town `shouldReturn` if destroys then 2 else 0
+
+    it "bars allies defending other enemies only while the affected Smaug remains in play" . gameTest $ \pid -> do
+      run . AddToStaging =<< genEncounterCard Enemies.smaugTheTerrible
+      smaug <- onlySmaug
+      run . AddToStaging =<< genEncounterCard Enemies.forestSpider
+      spider <- getsGame $ toId . fromJustNote "spider missing" . find ((== toCardCode Enemies.forestSpider) . toCardCode) . toList . (.entities.enemies)
+      ally <- putAllyIntoPlay pid Allies.guardOfTheCitadel
+      canDefend spider ally `shouldReturn` True
+      _ <- setEncounterDeck [Treacheries.recklessInHisRage]
+      run RevealEncounterCard
+      resolveRevealed
+      canDefend spider ally `shouldReturn` False
+      run $ Discard GameSource (toTarget smaug)
+      canDefend spider ally `shouldReturn` True
+
+    it "has Dire Magnificence's shadow move Smaug to the next player and attack after destroying a character" . twoPlayerTest testDeck $ \one two -> do
+      run . AddToStaging =<< genEncounterCard Enemies.smaugTheTerrible
+      smaug <- onlySmaug
+      run . AddToStaging =<< genEncounterCard Enemies.forestSpider
+      spider <- getsGame $ toId . fromJustNote "spider missing" . find ((== toCardCode Enemies.forestSpider) . toCardCode) . toList . (.entities.enemies)
+      run $ EngageEnemy one spider
+      ally <- putAllyIntoPlay one Allies.guardOfTheCitadel
+      defender <- heroOf two "01012"
+      run $ CreateEffect $ Effect GameSource defender [DefenseModifier 5] UntilEndOfRound
+      _ <- setEncounterDeck [Locations.westPier]
+      run . AttachShadowCard spider =<< genEncounterCard Treacheries.direMagnificence
+      run $ EnemyAttack one spider
+      passActions one
+      passActions two
+      chooseTarget one ally
+      replicateM_ 6 do
+        passActions one
+        passActions two
+      chooseTarget two defender
+      replicateM_ 6 do
+        passActions one
+        passActions two
+      (.placement) <$> getEnemy smaug `shouldReturn` EngagedWith two
+      isExhausted defender `shouldReturn` True
+
+    it "reduces the defending character's defense for Catching Fire's attack" . gameTest $ \pid -> do
+      run . AddToStaging =<< genEncounterCard Enemies.forestSpider
+      eid <- onlySmaug
+      run $ EngageEnemy pid eid
+      defender <- heroOf pid "01012"
+      run . AttachShadowCard eid =<< genEncounterCard Treacheries.catchingFire
+      run $ EnemyAttack pid eid
+      passActions pid
+      chooseTarget pid defender
+      passActions pid
+      passActions pid
+      getDamage defender `shouldReturn` 3
 
 stageTown :: GameT Target
 stageTown = do

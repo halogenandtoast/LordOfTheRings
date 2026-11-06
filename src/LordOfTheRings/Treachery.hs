@@ -2,6 +2,9 @@
 
 module LordOfTheRings.Treachery (module LordOfTheRings.Treachery, module X) where
 
+import LordOfTheRings.Treachery.Cards.DireMagnificence (direMagnificence)
+import LordOfTheRings.Treachery.Cards.CatchingFire (catchingFire)
+import LordOfTheRings.Treachery.Cards.RecklessInHisRage (recklessInHisRage)
 import LordOfTheRings.Treachery.Cards.CloseToTheFlame (closeToTheFlame)
 import LordOfTheRings.Treachery.Cards.ScorchingBlast (scorchingBlast)
 import LordOfTheRings.Treachery.Cards.CutOffOsgiliath (cutOffOsgiliath)
@@ -628,7 +631,10 @@ allTreacherys =
   Map.fromList
     [ (toCardCode builder, card)
     | card@(SomeTreacheryCard builder) <-
-        [ SomeTreacheryCard closeToTheFlame
+        [ SomeTreacheryCard direMagnificence
+        , SomeTreacheryCard catchingFire
+        , SomeTreacheryCard recklessInHisRage
+        , SomeTreacheryCard closeToTheFlame
         , SomeTreacheryCard scorchingBlast
         , SomeTreacheryCard cutOffOsgiliath
         , SomeTreacheryCard darkPursuit

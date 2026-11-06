@@ -1,5 +1,7 @@
 {
   "lakeTown": {
+    "returnPier": "Choose a Pier to shuffle into the encounter deck",
+    "discardAlly": "Choose an ally to discard",
     "cancelShadow": "Discard one of your heroes to cancel this shadow effect?",
     "resolveShadow": "Do not discard a hero",
     "smaugDestination": "Choose where the next Smaug enters play",

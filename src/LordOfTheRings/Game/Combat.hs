@@ -44,7 +44,7 @@ import LordOfTheRings.Matcher (
     AttackingAlly,
     ReadyAlly
   ),
-  EnemyMatcher (EnemyEngagedWith, EnemyInStagingArea, EnemyWithId),
+  EnemyMatcher (AnyEnemy, EnemyEngagedWith, EnemyInStagingArea, EnemyWithId),
   HeroMatcher (AttackingHero, HeroControlledBy, ReadyHero),
   LocationMatcher (IsActiveLocation),
   PlayerMatcher (PlayerWithId),
@@ -108,6 +108,7 @@ import LordOfTheRings.Modifier (
     CannotBeAttacked,
     CannotBeAttackedByCharactersOf,
     CannotBeAttackedByKeyword,
+    AlliesCannotBeDeclaredDefenders,
     CannotBeDefendedByAllies,
     CannotDefendAgainst,
     CannotExhaust,
@@ -455,7 +456,8 @@ attackerRoom eid = do
 -- only if it defends without exhausting.
 canDefend :: EnemyId -> Target -> GameT Bool
 canDefend eid c = do
-  noAllies <- elem CannotBeDefendedByAllies <$> getModifiers eid
+  globalNoAllies <- anyM (fmap (elem AlliesCannotBeDeclaredDefenders) . getModifiers) =<< select AnyEnemy
+  noAllies <- (globalNoAllies ||) . elem CannotBeDefendedByAllies <$> getModifiers eid
   stuck <- elem CannotExhaust <$> getModifiers c
   exhausts <- if stuck then exhaustToDefend c eid else pure False
   let isAlly = case c of

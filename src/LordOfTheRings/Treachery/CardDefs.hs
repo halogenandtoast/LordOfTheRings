@@ -14,7 +14,7 @@ allTreacheryCards =
   Map.fromList $
     map
       (\def -> (cdCardCode def, def))
-      [closeToTheFlame, scorchingBlast, cutOffOsgiliath, darkPursuit, massingAtOsgiliath, ballistaBarrage, boardingPartyDreadnaught, grappledDreadnaught, outOfTheMist, overworked, takingOnWaterDreadnaught, violentTempest,  shinyDistraction
+      [direMagnificence, catchingFire, recklessInHisRage, closeToTheFlame, scorchingBlast, cutOffOsgiliath, darkPursuit, massingAtOsgiliath, ballistaBarrage, boardingPartyDreadnaught, grappledDreadnaught, outOfTheMist, overworked, takingOnWaterDreadnaught, violentTempest,  shinyDistraction
       , guiltyConscience
       , drivenByShadowDarkOfMirkwood
       , surprisingSpeedDarkOfMirkwood
@@ -3929,4 +3929,16 @@ closeToTheFlame = (treachery "the-battle-of-lake-town-009" "Close to the Flame" 
 
 scorchingBlast :: CardDef
 scorchingBlast = (treachery "the-battle-of-lake-town-010" "Scorching Blast" TheBattleOfLakeTown 3)
+  { cdWhenRevealed = True, cdShadowEffect = True }
+
+direMagnificence :: CardDef
+direMagnificence = (treachery "the-battle-of-lake-town-012" "Dire Magnificence" TheBattleOfLakeTown 3)
+  { cdWhenRevealed = True, cdShadowEffect = True }
+
+catchingFire :: CardDef
+catchingFire = (treachery "the-battle-of-lake-town-013" "Catching Fire" TheBattleOfLakeTown 2)
+  { cdWhenRevealed = True, cdShadowEffect = True }
+
+recklessInHisRage :: CardDef
+recklessInHisRage = (treachery "the-battle-of-lake-town-014" "Reckless in His Rage" TheBattleOfLakeTown 2)
   { cdWhenRevealed = True, cdShadowEffect = True }

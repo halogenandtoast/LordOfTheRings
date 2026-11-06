@@ -3422,6 +3422,7 @@ library
       LordOfTheRings.Treachery.Cards.CaptivesOfGornakh
       LordOfTheRings.Treachery.Cards.CaradhrasTheCruel
       LordOfTheRings.Treachery.Cards.CatacombInspection
+      LordOfTheRings.Treachery.Cards.CatchingFire
       LordOfTheRings.Treachery.Cards.CaughtInAWeb
       LordOfTheRings.Treachery.Cards.CaughtInWebs
       LordOfTheRings.Treachery.Cards.CaughtOffGuard
@@ -3488,6 +3489,7 @@ library
       LordOfTheRings.Treachery.Cards.DeterminedDefense
       LordOfTheRings.Treachery.Cards.DevilryOfSaruman
       LordOfTheRings.Treachery.Cards.DevilryOfTheDarkLand
+      LordOfTheRings.Treachery.Cards.DireMagnificence
       LordOfTheRings.Treachery.Cards.Disappearances
       LordOfTheRings.Treachery.Cards.DiscordAndDistrust
       LordOfTheRings.Treachery.Cards.Discovered
@@ -3750,6 +3752,7 @@ library
       LordOfTheRings.Treachery.Cards.RansackedSupplies
       LordOfTheRings.Treachery.Cards.RavenTalisman
       LordOfTheRings.Treachery.Cards.RecklessHate
+      LordOfTheRings.Treachery.Cards.RecklessInHisRage
       LordOfTheRings.Treachery.Cards.RecurveBow
       LordOfTheRings.Treachery.Cards.RegimentsOfCrows
       LordOfTheRings.Treachery.Cards.RelentlessAttack

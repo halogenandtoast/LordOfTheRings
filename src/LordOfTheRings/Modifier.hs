@@ -100,6 +100,7 @@ data ModifierType
   | CannotAttackOrDefend
   | -- | on an enemy: allies cannot defend while it attacks, as Snow Warg's
     CannotBeDefendedByAllies
+  | AlliesCannotBeDeclaredDefenders
   | CannotHaveAttachments
   | -- | Attachments cannot be played on this host; putting them into play or moving them is allowed.
     CannotPlayAttachmentsOn
