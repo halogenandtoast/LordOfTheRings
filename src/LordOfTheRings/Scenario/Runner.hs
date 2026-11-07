@@ -518,23 +518,10 @@ instance RunMessage ScenarioAttrs where
     RemoveFromEncounterDeck card -> pure $ attrs & encounterDeckL %~ filter (/= card)
     RemoveFromEncounterDiscard card -> pure $ attrs & encounterDiscardL %~ filter (/= card)
     RemoveFromVictoryDisplay card -> pure $ attrs & victoryDisplayL %~ filter ((/= card.id) . (.id))
-    SearchDifferentEncounterCards [] _ _ _ _ -> do
-      push $ ShuffleDeck EncounterDeck
-      pure attrs
-    SearchDifferentEncounterCards (pid : players) source matcher withDiscard chosen -> do
-      let matches c = cardMatches matcher c && toCardCode c `notElem` chosen
-          cards = filter matches attrs.encounterDeck <> [c | withDiscard, c <- attrs.encounterDiscard, matches c]
-          next codes = SearchDifferentEncounterCards players source matcher withDiscard codes
-          takeCard c = targetLabel c
-            [ RemoveFromEncounterDeck c
-            , RemoveFromEncounterDiscard c
-            , AddToStaging c
-            , next (toCardCode c : chosen)
-            ]
-      push $ Ask pid $ QuestionLabel (ikey "label.searchChoose") (Just source) []
-        $ SearchCards (map EncounterCard cards) $ ChooseOne
-        $ if null cards then [Label (ikey "label.continue") [next chosen]] else map takeCard cards
-      pure attrs
+    SearchDifferentEncounterCards players source matcher withDiscard chosen ->
+      searchDifferent Nothing players source matcher withDiscard chosen
+    SearchDifferentEncounterCardsIncluding required players source matcher withDiscard chosen ->
+      searchDifferent (Just required) players source matcher withDiscard chosen
     SearchEncounterDeckAndDiscard pid source matcher -> search False pid source matcher AddToStaging
     SearchEncounterDeckAndDiscardToEngage pid source matcher -> search False pid source matcher (PutEnemyIntoPlayEngaged pid)
     SearchEncounterDeckAndDiscardToReveal pid source matcher -> search False pid source matcher RevealCard
@@ -652,6 +639,26 @@ instance RunMessage ScenarioAttrs where
     hiddenOf pid = Map.findWithDefault [] pid attrs.hiddenCards
     -- the player searches the encounter deck and discard pile, the card found going where
     -- the message puts it, then the deck is shuffled
+    searchDifferent required players source matcher withDiscard chosen = case players of
+      [] -> attrs <$ push (ShuffleDeck EncounterDeck)
+      pid : remaining -> do
+        let requiredNow = [code | Just code <- [required], code `notElem` chosen, null remaining]
+            matches c = cardMatches matcher c && toCardCode c `notElem` chosen
+              && (null requiredNow || toCardCode c `elem` requiredNow)
+            cards = filter matches attrs.encounterDeck <> [c | withDiscard, c <- attrs.encounterDiscard, matches c]
+            next codes = case required of
+              Nothing -> SearchDifferentEncounterCards remaining source matcher withDiscard codes
+              Just code -> SearchDifferentEncounterCardsIncluding code remaining source matcher withDiscard codes
+            takeCard c = targetLabel c
+              [ RemoveFromEncounterDeck c
+              , RemoveFromEncounterDiscard c
+              , AddToStaging c
+              , next (toCardCode c : chosen)
+              ]
+        push $ Ask pid $ QuestionLabel (ikey "label.searchChoose") (Just source) []
+          $ SearchCards (map EncounterCard cards) $ ChooseOne
+          $ if null cards then [Label (ikey "label.continue") [next chosen]] else map takeCard cards
+        pure attrs
     search withVictory pid source matcher put = do
       let fromDeck = filter (cardMatches matcher) attrs.encounterDeck
           fromDiscard = filter (cardMatches matcher) attrs.encounterDiscard

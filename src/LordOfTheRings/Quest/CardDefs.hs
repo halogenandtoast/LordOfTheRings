@@ -12,7 +12,7 @@ import LordOfTheRings.Trait (Trait (Burden, Castle))
 
 -- | Side quests from players' decks: player cards, built as quests once played.
 allPlayerSideQuestCards :: Map CardCode CardDef
-allPlayerSideQuestCards = Map.fromList $ map (\def -> (cdCardCode def, def)) [investigatingTheCrime, runningOutOfTime, apprehendingTheKiller, gatherInformation, doubleBack, delayTheEnemy, sendForAid, scoutAhead, theStormComes, prepareForBattle, exploreSecretWays, keepWatch, rallyTheWest]
+allPlayerSideQuestCards = Map.fromList $ map (\def -> (cdCardCode def, def)) [gatherInformation, doubleBack, delayTheEnemy, sendForAid, scoutAhead, theStormComes, prepareForBattle, exploreSecretWays, keepWatch, rallyTheWest]
 
 scoutAhead :: CardDef
 scoutAhead =
@@ -90,7 +90,7 @@ allQuestCards =
   Map.fromList $
     map
       (\def -> (cdCardCode def, def))
-      [lostInTheFog, trappedInsideABarrow, theHouseOfTomBombadil, acrossTheDowns, ruinsOfTheFirstAge, ancientEvilsDisturbed, deeperIntoThePast, theServantsOfMorgoth, theRootsOfEredLuin, theMinesOfBelegost, theBeastOfBelegost, farewellToTheShire, darkBadPlace, chokedWithBrambles, shiftingTrees, closingInAroundThem, theWickedWillow, theDisappearance, terrorOfTheDead, theShadowHost, theDragonsWrath, fireAndWater, terrorFromTheMountain, anduinCrossing, throughTheRuinsOsgiliath, beyondExpectations, raceToMinasTirith, searchingTheHighSeas, destroyTheDreadnaught,  afterTheRaid
+      [rebuildTheDefenses, investigatingTheCrime, runningOutOfTime, apprehendingTheKiller, lostInTheFog, trappedInsideABarrow, theHouseOfTomBombadil, acrossTheDowns, ruinsOfTheFirstAge, ancientEvilsDisturbed, deeperIntoThePast, theServantsOfMorgoth, theRootsOfEredLuin, theMinesOfBelegost, theBeastOfBelegost, farewellToTheShire, darkBadPlace, chokedWithBrambles, shiftingTrees, closingInAroundThem, theWickedWillow, theDisappearance, terrorOfTheDead, theShadowHost, theDragonsWrath, fireAndWater, terrorFromTheMountain, anduinCrossing, throughTheRuinsOsgiliath, beyondExpectations, raceToMinasTirith, searchingTheHighSeas, destroyTheDreadnaught,  afterTheRaid
       , mirkwoodForestTheOath
       , theRearguardTheOath
       , theDarkOfNibinDum
@@ -2331,3 +2331,7 @@ runningOutOfTime = (quest "murder-at-the-prancing-pony-002" "Running out of Time
 apprehendingTheKiller :: CardDef
 apprehendingTheKiller = (quest "murder-at-the-prancing-pony-003" "Apprehending the Killer" MurderAtThePrancingPony 3 0)
   { cdWhenRevealed = True, cdQuestPoints = Nothing }
+
+rebuildTheDefenses :: CardDef
+rebuildTheDefenses = (quest "the-siege-of-annuminas-003" "Rebuild the Defenses" TheSiegeOfAnnuminas 1 0)
+  { cdQuestPoints = Nothing }

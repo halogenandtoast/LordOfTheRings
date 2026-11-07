@@ -2987,6 +2987,7 @@ library
       LordOfTheRings.Quest.Cards.RallyTheFighters
       LordOfTheRings.Quest.Cards.RallyTheWest
       LordOfTheRings.Quest.Cards.RallyTheWoodmen
+      LordOfTheRings.Quest.Cards.RebuildTheDefenses
       LordOfTheRings.Quest.Cards.ReinforcingTheBanks
       LordOfTheRings.Quest.Cards.RescueFromTheTrolls
       LordOfTheRings.Quest.Cards.RescueIarion
@@ -4477,6 +4478,7 @@ test-suite LordOfTheRings-test
       LordOfTheRings.Standalone.AnnuminasInvadersSpec
       LordOfTheRings.Standalone.AnnuminasLieutenantSpec
       LordOfTheRings.Standalone.AnnuminasLocationsSpec
+      LordOfTheRings.Standalone.AnnuminasOpeningSpec
       LordOfTheRings.Standalone.AnnuminasStageStateSpec
       LordOfTheRings.Standalone.AnnuminasTreacheriesSpec
       LordOfTheRings.Standalone.AnnuminasTunnelSpec

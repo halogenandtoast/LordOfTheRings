@@ -16,6 +16,7 @@ data AbilityCost
   | ResourceCost Target Int
   | DiscardFromHandCost PlayerId Int
   | RaiseThreatCost Int
+  | QuestProgressCost QuestId Int
   | QuestProgressPerPlayerCost QuestId Int
   | -- | the player advances The Uruk-hai pursuit tracker before resolving the effect
     IncreasePursuitCost Int

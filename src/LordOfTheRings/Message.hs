@@ -313,6 +313,7 @@ data Message
     add to the staging area, then the deck is shuffled
     -}
     SearchDifferentEncounterCards [PlayerId] Target CardMatcher Bool [CardCode]
+  | SearchDifferentEncounterCardsIncluding CardCode [PlayerId] Target CardMatcher Bool [CardCode]
   | SearchEncounterDeckAndDiscard PlayerId Target CardMatcher
   | ShuffleDeck DeckSignifier
   | AddCollectionCardToHand PlayerId CardCode

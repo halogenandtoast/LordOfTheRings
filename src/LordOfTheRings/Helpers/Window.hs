@@ -476,6 +476,8 @@ canPay = \case
   ResourceCost _ _ -> pure False
   DiscardFromHandCost pid n ->
     andM [(>= n) . length . discardableHand <$> getPlayer pid, notElem CannotDiscardFromHand <$> getModifiers (PlayerTarget pid)]
+  QuestProgressCost qid n ->
+    maybe False ((>= n) . (.progress)) . Map.lookup qid . entitiesQuests <$> getsGame gameEntities
   QuestProgressPerPlayerCost qid n -> do
     players <- getsGame (length . gamePlayerOrder)
     maybe False ((>= n * players) . (.progress)) . Map.lookup qid . entitiesQuests <$> getsGame gameEntities
@@ -536,6 +538,7 @@ payCost pid cost rest = case cost of
 costMessages :: Source -> AbilityCost -> [Message]
 costMessages source = \case
   Free -> []
+  QuestProgressCost qid n -> [RemoveTokens source (QuestTarget qid) Progress n]
   QuestProgressPerPlayerCost _ _ -> [] -- counted and paid by payCost
   ExhaustCost target -> [Exhaust target]
   ResourceCost target n -> case source of
