@@ -12,6 +12,7 @@ import LordOfTheRings.Phase (Phase (RefreshPhase, TravelPhase, QuestPhase))
 import LordOfTheRings.Scenario.Types (ScenarioAttrs (scenarioEpic, scenarioVictoryDisplay))
 import LordOfTheRings.Standalone.AnnuminasLocationsSpec (stageLocation)
 import LordOfTheRings.Window (WindowType (RoundEnds), mkWhen)
+import LordOfTheRings.EpicTestHelpers (commandEffect, acknowledgeEpicCommand)
 import TestImport
 
 setReplica :: Int -> [EpicBoard] -> GameT ()
@@ -97,12 +98,15 @@ spec = describe "Annúminas Siege Tunnel" do
     _ <- setEncounterDeck [Enemies.greenwayFootpad, Enemies.lawlessRuffian]
     run $ UseCardAbility pid (LocationSource tunnel) 1 []
     getsGame (length . (.entities.enemies)) `shouldReturn` 1
+    Just initial <- getsGame $ scenarioEpic . toAttrs . (.scenario)
+    map (.epicCommandTo) initial.epicPendingCommands `shouldBe` [GroupOrdinal 1]
+    traverse_ acknowledgeEpicCommand initial.epicPendingCommands
     Just replica <- getsGame $ scenarioEpic . toAttrs . (.scenario)
     let commands = replica.epicPendingCommands
     map (.epicCommandTo) commands `shouldBe` [GroupOrdinal 1, GroupOrdinal 2]
     map (.epicCommandFrom) commands `shouldBe` replicate 2 (GroupOrdinal 0)
     map (.epicCommandTarget) commands `shouldBe` replicate 2 ScenarioTarget
-    map (.epicCommandEffect) commands `shouldBe` replicate 2 EpicDiscardUntilEnemy
+    map commandEffect commands `shouldBe` replicate 2 EpicDiscardUntilEnemy
     map (.epicCommandCard) commands `shouldBe` replicate 2 (toCardCode Locations.siegeTunnel)
     length (nub $ map (.epicCommandId) commands) `shouldBe` 2
 

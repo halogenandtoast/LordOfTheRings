@@ -13,6 +13,7 @@ import LordOfTheRings.Quest.Runner (getQuestPoints)
 import LordOfTheRings.Scenario.Types (scenarioEpic, scenarioSetAside)
 import LordOfTheRings.Standalone.AnnuminasCitySpec qualified as City
 import LordOfTheRings.Window (WindowType (RoundBegins, RoundEnds), mkWhen)
+import LordOfTheRings.EpicTestHelpers (commandEffect, acknowledgeEpicCommand)
 import TestImport
 
 wall :: GameT Target
@@ -172,8 +173,9 @@ spec = describe "Annúminas Man the Walls" do
     chooseAbilityOf pid target
     chooseOptionMatching "choose Other" pid $ \case Label label _ -> "Other" `isInfixOf` label; _ -> False
     sent <- commands
-    map (.epicCommandEffect) sent `shouldBe` [EpicDrawCards]
+    map commandEffect sent `shouldBe` [EpicDrawCards]
     length . (.hand) <$> getPlayer pid `shouldReturn` 0
+    traverse_ acknowledgeEpicCommand sent
     let delivered = EpicCommand UUID.nil (GroupOrdinal 1) (GroupOrdinal 0) (toCardCode Quests.manTheWallsAnnuminas) EpicDrawCards ScenarioTarget
     run $ ApplyEpicCommand delivered
     current <- getGame

@@ -15,6 +15,7 @@ import LordOfTheRings.Scenario.Types (scenarioEpic, questDeckL)
 import LordOfTheRings.Standalone.AnnuminasCitySpec (setReplica)
 import LordOfTheRings.Standalone.PrancingPonySpec (stageEnemy)
 import LordOfTheRings.Window (WindowType (RoundEnds), mkWhen)
+import LordOfTheRings.EpicTestHelpers (commandEffect)
 import TestImport
 
 gate :: GameT Target
@@ -118,7 +119,7 @@ spec = describe "Annúminas Guard the Gate" do
     getsGame (sum . map (.resources) . toList . (.entities.heroes)) `shouldReturn` 0
     Just replica <- getsGame $ scenarioEpic . toAttrs . (.scenario)
     map (.epicCommandTo) replica.epicPendingCommands `shouldBe` [GroupOrdinal 1]
-    map (.epicCommandEffect) replica.epicPendingCommands `shouldBe` [EpicGrantHeroResources]
+    map commandEffect replica.epicPendingCommands `shouldBe` [EpicGrantHeroResources]
 
   it "excludes heroes barred from encounter-card resources while permitting a player-card-only restriction" . gameTest $ \pid -> do
     target <- gate

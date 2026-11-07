@@ -49,6 +49,7 @@ setEpicRoundPhase phase g = g & scenarioL %~ overAttrs (\a -> a
   { scenarioEpic = fmap (\replica -> replica {epicRoundState = Just $ EpicRoundState g.round phase}) a.scenarioEpic })
 
 presentEpicTarget :: Game -> Target -> Bool
+presentEpicTarget g (PlayerTarget pid) = maybe False (not . (.eliminated)) $ Map.lookup pid g.players
 presentEpicTarget g target = target == ScenarioTarget || any ((== target) . epicTarget) board.epicBoardTargets
  where
   own = maybe (GroupOrdinal 0) epicGroup $ scenarioEpic $ toAttrs g.scenario
@@ -192,7 +193,7 @@ runEpicMessage msg g = case msg of
           ]
         resolve board target
           | board.epicBoardGroup == own = push $ ResolveEpicEffect code effect target
-          | otherwise = push $ QueueEpicCommand board.epicBoardGroup code effect target
+          | otherwise = push $ RequestEpicEffect board.epicBoardGroup code effect target
     runQueueT $ chooseOneRebuildingM pid msg do
       questionLabeled "epic.chooseTarget"
       if query `elem` [EpicWarshipGroup, EpicHealingGroup, EpicDrawingGroup]

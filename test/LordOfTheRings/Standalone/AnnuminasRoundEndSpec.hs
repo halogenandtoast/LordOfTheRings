@@ -1,6 +1,7 @@
 module LordOfTheRings.Standalone.AnnuminasRoundEndSpec (spec) where
 
 import Data.Aeson.KeyMap qualified as KeyMap
+import Data.UUID qualified as UUID
 import LordOfTheRings.Ability.Types (AbilityLimitType (PerRound), UsedAbility (..), isForcedAbility)
 import LordOfTheRings.Ally.CardDefs qualified as Allies
 import LordOfTheRings.Effect (Effect (..), EffectDuration (UntilEndOfRound))
@@ -204,3 +205,43 @@ spec = describe "Annúminas synchronized round boundary" do
       Just replica <- getsGame $ scenarioEpic . toAttrs . (.scenario)
       replica.epicPendingCommands `shouldBe` []
       getsGame (length . (.entities.enemies)) `shouldReturn` 1
+
+  it "holds the source's dependent effect until its exact request is acknowledged" . gameTest $ \pid -> do
+    setReplica []
+    beravor <- heroOf pid "01012"
+    run $ Run [RequestEpicEffect (GroupOrdinal 1) (toCardCode Quests.manTheWallsAnnuminas) EpicDrawCards ScenarioTarget, PlaceTokens GameSource beravor Resource 1]
+    case beravor of
+      HeroTarget hid -> getHeroResources hid `shouldReturn` 0
+      _ -> error "Beravor missing"
+    Just replica <- getsGame $ scenarioEpic . toAttrs . (.scenario)
+    let nonce = case replica.epicPendingCommands of
+          [command] -> case command.epicCommandEffect of EpicResolveWithReply _ ident EpicDrawCards -> ident; _ -> error "wrong request"
+          _ -> error "missing request"
+    external $ ResolveEpicEffect (toCardCode Quests.manTheWallsAnnuminas) (EpicAcknowledge UUID.nil) ScenarioTarget
+    case beravor of HeroTarget hid -> getHeroResources hid `shouldReturn` 0; _ -> error "Beravor missing"
+    external $ ResolveEpicEffect (toCardCode Quests.manTheWallsAnnuminas) (EpicAcknowledge nonce) ScenarioTarget
+    case beravor of HeroTarget hid -> getHeroResources hid `shouldReturn` 1; _ -> error "Beravor missing"
+    external $ ResolveEpicEffect (toCardCode Quests.manTheWallsAnnuminas) (EpicAcknowledge nonce) ScenarioTarget
+    case beravor of HeroTarget hid -> getHeroResources hid `shouldReturn` 1; _ -> error "Beravor missing"
+
+  it "acknowledges a vanished target without applying the effect or duplicating its reply" . gameTest $ \_ -> do
+    setReplica []
+    let missing = EnemyTarget $ EnemyId UUID.nil
+        command = EpicCommand UUID.nil (GroupOrdinal 1) (GroupOrdinal 0) (toCardCode Quests.leadTheSortie) (EpicResolveWithReply (GroupOrdinal 1) UUID.nil $ EpicDamage 3) missing
+    run $ ApplyEpicCommand command
+    getsGame (length . (.entities.enemies)) `shouldReturn` 0
+    Just replica <- getsGame $ scenarioEpic . toAttrs . (.scenario)
+    map (.epicCommandEffect) replica.epicPendingCommands `shouldBe` [EpicAcknowledge UUID.nil]
+    run $ ApplyEpicCommand command
+    Just repeated <- getsGame $ scenarioEpic . toAttrs . (.scenario)
+    repeated.epicPendingCommands `shouldBe` replica.epicPendingCommands
+
+  for_ [False, True] $ \eliminatedTarget ->
+    it ("validates a local player target while always replying: " <> show eliminatedTarget) . twoPlayerTest testDeck $ \one two -> do
+      setReplica []
+      when eliminatedTarget $ run $ EliminatePlayer one
+      let command = EpicCommand UUID.nil (GroupOrdinal 1) (GroupOrdinal 0) (toCardCode Quests.manTheWallsAnnuminas) (EpicResolveWithReply (GroupOrdinal 1) UUID.nil EpicDrawCards) (PlayerTarget one)
+      run $ ApplyEpicCommand command
+      length . (.hand) <$> getPlayer two `shouldReturn` (if eliminatedTarget then 0 else 1)
+      Just replica <- getsGame $ scenarioEpic . toAttrs . (.scenario)
+      map (.epicCommandEffect) replica.epicPendingCommands `shouldBe` [EpicAcknowledge UUID.nil]

@@ -4363,6 +4363,7 @@ test-suite LordOfTheRings-test
       LordOfTheRings.Encounter.ScriptedCardsSpec
       LordOfTheRings.EncounterPhaseSpec
       LordOfTheRings.EndGameSpec
+      LordOfTheRings.EpicTestHelpers
       LordOfTheRings.EredMithrin.CampaignBoonsSpec
       LordOfTheRings.EredMithrin.CampaignBurdensSpec
       LordOfTheRings.EredMithrin.CampaignSpec
@@ -4491,6 +4492,7 @@ test-suite LordOfTheRings-test
       LordOfTheRings.Standalone.AnnuminasManWallsSpec
       LordOfTheRings.Standalone.AnnuminasOpeningSpec
       LordOfTheRings.Standalone.AnnuminasRoundEndSpec
+      LordOfTheRings.Standalone.AnnuminasRoundIntegrationSpec
       LordOfTheRings.Standalone.AnnuminasSetupSpec
       LordOfTheRings.Standalone.AnnuminasSortieSpec
       LordOfTheRings.Standalone.AnnuminasStageStateSpec

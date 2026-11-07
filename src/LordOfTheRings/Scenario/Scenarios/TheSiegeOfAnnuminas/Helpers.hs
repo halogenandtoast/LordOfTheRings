@@ -11,7 +11,7 @@ import LordOfTheRings.I18n (textVar)
 import LordOfTheRings.Id (PlayerId)
 import LordOfTheRings.Epic.Types
 import LordOfTheRings.Epic.Board (epicBoardFor, epicVictoryCopies)
-import LordOfTheRings.Message (Message (ContributeShared, ResolveEpicEffect, QueueEpicCommand))
+import LordOfTheRings.Message (Message (ContributeShared, ResolveEpicEffect, RequestEpicEffect))
 import LordOfTheRings.Message.Lifted
 import LordOfTheRings.Objective.CardDefs qualified as Objectives
 import LordOfTheRings.Prelude
@@ -40,7 +40,7 @@ otherAnnuminasTeams code effect = do
   replica <- getsGame $ scenarioEpic . toAttrs . (.scenario)
   for_ replica $ \r ->
     for_ (nub [b.epicBoardGroup | b <- r.epicBoards, b.epicBoardGroup /= r.epicGroup]) $ \destination ->
-      push $ QueueEpicCommand destination code effect ScenarioTarget
+      push $ RequestEpicEffect destination code effect ScenarioTarget
 
 cityStrength :: HasGame m => m Int
 cityStrength = getsGame $ \g ->
@@ -89,4 +89,4 @@ chooseAnnuminasStage rebuild pid source effect = do
       && (effect /= EpicDrawCards || stage.epicStageDrawingAvailable)) $
       if ordinal == own
         then labeled "epic.thisGroup" $ push $ ResolveEpicEffect (toCardCode source) effect ScenarioTarget
-        else labeledWith "epic.group" [textVar "group" name] $ push $ QueueEpicCommand ordinal (toCardCode source) effect ScenarioTarget
+        else labeledWith "epic.group" [textVar "group" name] $ push $ RequestEpicEffect ordinal (toCardCode source) effect ScenarioTarget

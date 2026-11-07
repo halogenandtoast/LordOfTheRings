@@ -17,6 +17,7 @@ import LordOfTheRings.Scenario.Types (scenarioEpic)
 import LordOfTheRings.Standalone.AnnuminasCitySpec (setReplica)
 import LordOfTheRings.Standalone.PrancingPonySpec (stageEnemy, strongDefender, defendAttack)
 import LordOfTheRings.Window (WindowType (AllPlayersCommittedToQuest, RoundEnds), mkAfter, mkWhen)
+import LordOfTheRings.EpicTestHelpers (commandEffect)
 import TestImport
 
 city :: GameT Target
@@ -173,7 +174,7 @@ spec = describe "Annúminas Defend the City" do
     chooseOptionMatching "choose Other" pid $ \case Label label _ -> "Other" `isInfixOf` label; _ -> False
     getDamage own `shouldReturn` 2
     Just replica <- getsGame $ scenarioEpic . toAttrs . (.scenario)
-    map (.epicCommandEffect) replica.epicPendingCommands `shouldBe` [EpicHealControlledCharacter]
+    map commandEffect replica.epicPendingCommands `shouldBe` [EpicHealControlledCharacter]
 
   it "does not offer healing when no stage can benefit, including damage blocked by healing limits" . gameTest $ \pid -> do
     target <- city

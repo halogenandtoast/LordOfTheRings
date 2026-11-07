@@ -15,6 +15,7 @@ import LordOfTheRings.Scenario.Types (scenarioEpic, scenarioSetAside, questDeckL
 import LordOfTheRings.Standalone.AnnuminasCitySpec (setReplica)
 import LordOfTheRings.Treachery.CardDefs qualified as Treacheries
 import LordOfTheRings.Window (WindowType (RoundEnds, RoundBegins), mkWhen)
+import LordOfTheRings.EpicTestHelpers (commandEffect)
 import TestImport
 
 waiting :: [CardDef]
@@ -106,7 +107,7 @@ spec = describe "Annúminas Epic preparation quests" do
     chooseAbilityOf pid target
     getsGame (length . (.entities.allies)) `shouldReturn` 1
     Just replica <- getsGame $ scenarioEpic . toAttrs . (.scenario)
-    map (.epicCommandEffect) replica.epicPendingCommands `shouldBe` [EpicGrantDunedain]
+    map commandEffect replica.epicPendingCommands `shouldBe` [EpicGrantDunedain]
 
   it "delays only other teams and does not grant the benefit after a partial removal" . gameTest $ \pid -> do
     setReplica [EpicBoard (GroupOrdinal 1) "Other" [] False Nothing]
@@ -121,7 +122,7 @@ spec = describe "Annúminas Epic preparation quests" do
     run $ CheckWindows [mkWhen RoundEnds]
     chooseAbilityOf pid target
     Just replica <- getsGame $ scenarioEpic . toAttrs . (.scenario)
-    map (.epicCommandEffect) replica.epicPendingCommands `shouldBe` [EpicDelayStaging]
+    map commandEffect replica.epicPendingCommands `shouldBe` [EpicDelayStaging]
     getModifiers GameTarget >>= (`shouldSatisfy` notElem (FewerStagingReveals 1))
 
   it "persists a received delay across round and combat cleanup, then expires it after the next quest phase" . gameTest $ \_ -> do

@@ -13,6 +13,7 @@ import LordOfTheRings.Quest.CardDefs qualified as Quests
 import LordOfTheRings.Scenario.Types (ScenarioAttrs (scenarioEpic, scenarioVictoryDisplay))
 import LordOfTheRings.Standalone.AnnuminasLocationsSpec (stageLocation)
 import LordOfTheRings.Window (WindowType (RoundEnds), mkWhen)
+import LordOfTheRings.EpicTestHelpers (commandEffect, acknowledgeEpicCommand)
 import TestImport
 
 stageThree :: GameT QuestId
@@ -84,12 +85,13 @@ spec = describe "Annúminas Enemy Camp" do
     camp <- stageLocation Locations.enemyCamp
     run $ CheckWindows [mkWhen RoundEnds]
     Just replica <- getsGame $ scenarioEpic . toAttrs . (.scenario)
-    map (.epicCommandEffect) replica.epicPendingCommands `shouldBe` [EpicDiscardCaptive]
+    map commandEffect replica.epicPendingCommands `shouldBe` [EpicDiscardCaptive]
+    traverse_ acknowledgeEpicCommand replica.epicPendingCommands
     run $ PlaceLocation camp ActiveLocation
     run $ PlaceTokens GameSource (LocationTarget camp) Progress 5
     run $ CheckWindows [mkWhen RoundEnds]
     Just updated <- getsGame $ scenarioEpic . toAttrs . (.scenario)
-    map (.epicCommandEffect) updated.epicPendingCommands `shouldBe` [EpicDiscardCaptive, EpicRescueCaptives]
+    map commandEffect updated.epicPendingCommands `shouldBe` [EpicDiscardCaptive, EpicRescueCaptives]
 
   it "does not eliminate a player whose only hero is captive, but does when that captive is discarded" . gameTestWith (deckList ["01012"] testDeck.cards) $ \pid -> do
     stage <- stageThree

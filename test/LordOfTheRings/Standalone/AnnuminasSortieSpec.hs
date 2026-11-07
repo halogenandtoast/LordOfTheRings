@@ -13,6 +13,7 @@ import LordOfTheRings.Standalone.AnnuminasCitySpec (stageCity, setReplica)
 import LordOfTheRings.Standalone.AnnuminasLocationsSpec (stageLocation)
 import LordOfTheRings.Standalone.PrancingPonySpec (stageEnemy)
 import LordOfTheRings.Window (WindowType (RoundEnds), mkWhen)
+import LordOfTheRings.EpicTestHelpers (commandEffect, acknowledgeEpicCommand)
 import TestImport
 
 sortie :: GameT Target
@@ -129,7 +130,7 @@ spec = describe "Annúminas Lead the Sortie" do
     getsGame (length . (.entities.locations)) `shouldReturn` 1
     chooseOptionMatching "choose remote enemy" one (const True)
     Just replica <- getsGame $ scenarioEpic . toAttrs . (.scenario)
-    map (.epicCommandEffect) replica.epicPendingCommands `shouldBe` [EpicDiscardEnemy]
+    map commandEffect replica.epicPendingCommands `shouldBe` [EpicDiscardEnemy]
     map (.epicCommandTo) replica.epicPendingCommands `shouldBe` [GroupOrdinal 1]
 
   it "discards a remote enemy through the recipient's native leave-play processing" . gameTest $ \_ -> do
@@ -208,7 +209,7 @@ spec = describe "Annúminas Lead the Sortie" do
       getsGame (length . (.entities.locations)) `shouldReturn` 1
       chooseOptionMatching "choose remote enemy" pid (const True)
       Just replica <- getsGame $ scenarioEpic . toAttrs . (.scenario)
-      map (.epicCommandEffect) replica.epicPendingCommands `shouldBe` [EpicDiscardEnemy]
+      map commandEffect replica.epicPendingCommands `shouldBe` [EpicDiscardEnemy]
 
   describe "Rescue the Captives" do
     let rescue = do
@@ -249,8 +250,11 @@ spec = describe "Annúminas Lead the Sortie" do
       hero <- heroOf pid "01012"
       _ <- rescue
       chooseTarget pid hero
+      Just initial <- getsGame $ scenarioEpic . toAttrs . (.scenario)
+      map (.epicCommandTo) initial.epicPendingCommands `shouldBe` [GroupOrdinal 1]
+      traverse_ acknowledgeEpicCommand initial.epicPendingCommands
       Just replica <- getsGame $ scenarioEpic . toAttrs . (.scenario)
-      map (.epicCommandEffect) replica.epicPendingCommands `shouldBe` [EpicCaptureHero, EpicCaptureHero]
+      map commandEffect replica.epicPendingCommands `shouldBe` [EpicCaptureHero, EpicCaptureHero]
       map (.epicCommandTo) replica.epicPendingCommands `shouldBe` [GroupOrdinal 1, GroupOrdinal 2]
 
     it "captures at the recipient's main quest and ignores a duplicate delivery" . gameTest $ \pid -> do
