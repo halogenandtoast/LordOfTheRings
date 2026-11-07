@@ -1,4 +1,12 @@
 {
+  "prancingPony": {
+    "footpad": "Greenway Footpad: choose an effect",
+    "raiseEachThreat2": "Each player raises their threat by 2",
+    "immediateAttack": "Greenway Footpad attacks the first player",
+    "outlawShadow": "Chetwood Outlaw: choose a shadow effect",
+    "raiseThreat2": "Raise your threat by 2",
+    "returnAfterAttack": "Return the attacking enemy to staging after this attack"
+  },
   "fog.discardBarrowAlly": "Choose an ally to discard inside the barrow",
   "fog.removeGreatBarrow": "Choose a Great Barrow to add to the victory display",
   "fog.ancientBarrowAlly": "Choose an ally to place facedown under Ancient Barrow",

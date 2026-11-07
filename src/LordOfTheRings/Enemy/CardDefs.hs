@@ -14,7 +14,7 @@ allEnemyCards =
   Map.fromList $
     map
       (\def -> (cdCardCode def, def))
-      [barrowWight, coldWight, darkWight, naurlhug, orcOfEredLuin, blueMountainGoblin, lurkerOfTheDepths, namelessCaveDweller, oldStoneTroll, oldManWillow, longTrailer, graspingRoot, armyOfFlies, theLordOfTheDeadErech, shadowMan, restlessDead, whisperer, regretfulShade, shadowHostCaptain, smaugTheMightyLakeTown, smaugTheTerrible, smaugTheMagnificentLakeTown, snagaScouts, theWitchKingOsgiliath, wolvesFromMordor, wainriders, wainriderCaptain, urukVanguard, dreadnaught, dreadnaughtDamaged, captainOfTheHaven, commanderOfTheDreadnaught, descendantOfCastamir, hydraken, ophidian, varjax, brashCorsairDreadnaught, corsairPlunderer, daringBuccaneer, fierceMarauder, southronSailorDreadnaught, umbarCaptainDreadnaught, blackSailsDreadnaught, corsairSkiffDreadnaught, corsairSkirmisherDreadnaught, corsairWarshipDreadnaught, rammingShipDreadnaught, slaveShipDreadnaught, warGalley, seaMonster,  stalkingGoblin
+      [lawlessRuffian, greenwayFootpad, chetwoodOutlaw, barrowWight, coldWight, darkWight, naurlhug, orcOfEredLuin, blueMountainGoblin, lurkerOfTheDepths, namelessCaveDweller, oldStoneTroll, oldManWillow, longTrailer, graspingRoot, armyOfFlies, theLordOfTheDeadErech, shadowMan, restlessDead, whisperer, regretfulShade, shadowHostCaptain, smaugTheMightyLakeTown, smaugTheTerrible, smaugTheMagnificentLakeTown, snagaScouts, theWitchKingOsgiliath, wolvesFromMordor, wainriders, wainriderCaptain, urukVanguard, dreadnaught, dreadnaughtDamaged, captainOfTheHaven, commanderOfTheDreadnaught, descendantOfCastamir, hydraken, ophidian, varjax, brashCorsairDreadnaught, corsairPlunderer, daringBuccaneer, fierceMarauder, southronSailorDreadnaught, umbarCaptainDreadnaught, blackSailsDreadnaught, corsairSkiffDreadnaught, corsairSkirmisherDreadnaught, corsairWarshipDreadnaught, rammingShipDreadnaught, slaveShipDreadnaught, warGalley, seaMonster,  stalkingGoblin
       , spidersOfMirkwoodDarkOfMirkwood
       , goblinSniperDarkOfMirkwood
       , goblinRunnersDarkOfMirkwood
@@ -5906,3 +5906,12 @@ coldWight = (enemy "fog-on-the-barrow-downs-012" "Cold-wight" FogOnTheBarrowDown
   { cdCardTraits = setFromList [Wight] }
 darkWight = (enemy "fog-on-the-barrow-downs-013" "Dark-wight" FogOnTheBarrowDowns 3 40 2 3 1 7)
   { cdCardTraits = setFromList [Wight] }
+
+
+lawlessRuffian, greenwayFootpad, chetwoodOutlaw :: CardDef
+lawlessRuffian = (enemy "murder-at-the-prancing-pony-023" "Lawless Ruffian" MurderAtThePrancingPony 3 35 2 3 2 3)
+  { cdCardTraits = setFromList [Brigand], cdShadowEffect = True }
+greenwayFootpad = (enemy "murder-at-the-prancing-pony-024" "Greenway Footpad" MurderAtThePrancingPony 4 25 2 4 2 4)
+  { cdCardTraits = setFromList [Brigand], cdWhenRevealed = True, cdShadowEffect = True }
+chetwoodOutlaw = (enemy "murder-at-the-prancing-pony-025" "Chetwood Outlaw" MurderAtThePrancingPony 3 40 4 4 3 5)
+  { cdCardTraits = setFromList [Brigand], cdShadowEffect = True }

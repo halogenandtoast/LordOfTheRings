@@ -2,6 +2,7 @@
 
 module LordOfTheRings.Enemy (module LordOfTheRings.Enemy, module X) where
 
+import LordOfTheRings.Enemy.Cards.PrancingPonyBrigands (lawlessRuffian, greenwayFootpad, chetwoodOutlaw)
 import LordOfTheRings.Enemy.Cards.BarrowDownsWights (barrowWight, coldWight, darkWight)
 import LordOfTheRings.Enemy.Cards.Naurlhug (naurlhug)
 import LordOfTheRings.Enemy.Cards.OrcOfEredLuin (orcOfEredLuin)
@@ -724,7 +725,10 @@ allEnemys =
   Map.fromList
     [ (toCardCode builder, card)
     | card@(SomeEnemyCard builder) <-
-        [ SomeEnemyCard barrowWight
+        [ SomeEnemyCard lawlessRuffian
+        , SomeEnemyCard greenwayFootpad
+        , SomeEnemyCard chetwoodOutlaw
+        , SomeEnemyCard barrowWight
         , SomeEnemyCard coldWight
         , SomeEnemyCard darkWight
         , SomeEnemyCard naurlhug
