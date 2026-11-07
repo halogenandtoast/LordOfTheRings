@@ -72,8 +72,9 @@ runEpicMessage msg g = case msg of
       _ -> g
   ResumeEpicQuestAdvance phase
     | phase `elem` [EpicRoundResolving, EpicRoundEnded]
-    , epicRoundPhaseOf g == Just EpicRoundRevealed -> do
-        when (phase == EpicRoundEnded) $ push AwaitEpicRound
+    , epicRoundPhaseOf g == Just EpicRoundRevealed ->
+        -- The coordinator appends held-claim acknowledgements in the same
+        -- delivery. A new wait here would park ahead of those acknowledgements.
         pure $ setEpicRoundPhase phase g
   RejectDolStageClaim nonce -> case scenarioEpic (toAttrs g.scenario) of
     Just replica | nonce `Set.member` replica.epicPendingRequests -> do

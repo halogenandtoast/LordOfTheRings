@@ -124,8 +124,16 @@ spec = describe "Dol Guldur durable cross-team effects" do
     it ("restores the old round phase before claim acknowledgements: " <> show resumedPhase) . gameTestIn attackOnDolGuldur testDeck $ \_ -> do
       replicaAt $ GroupOrdinal 0
       current <- getGame
-      putGame $ current & scenarioL %~ overAttrs (\a -> a {scenarioEpic = fmap (\r -> r {epicRoundState = Just $ EpicRoundState current.round EpicRoundRevealed}) a.scenarioEpic})
-      run $ ResumeEpicQuestAdvance resumedPhase
+      putGame $ current & scenarioL %~ overAttrs (\a -> a {scenarioEpic = fmap (\r -> r
+        { epicRoundState = Just $ EpicRoundState current.round EpicRoundRevealed
+        , epicPendingRequests = Set.singleton UUID.nil
+        }) a.scenarioEpic})
+      run $ Run
+        [ ResumeEpicQuestAdvance resumedPhase
+        , ResolveEpicEffect (toCardCode Quests.theSiegeOfDolGuldur) (EpicAcknowledge UUID.nil) ScenarioTarget
+        , AwaitEpicRound
+        ]
+      (.epicPendingRequests) <$> currentReplica `shouldReturn` mempty
       getsGame epicRoundPhaseOf `shouldReturn` Just resumedPhase
       getsGame (.round) `shouldReturn` current.round
       void $ runDebug $ ResumeEpicQuestAdvance EpicRoundIdle
