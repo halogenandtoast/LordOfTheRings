@@ -5,7 +5,7 @@ import LordOfTheRings.Attachment (
   AttachmentAttrs (attachmentPlacement),
  )
 import LordOfTheRings.Card (
-  CardDef (cdKeywords),
+  CardDef (cdKeywords, cdName, cdUnique),
   EncounterCard,
   HasCardDef (..),
  )
@@ -14,6 +14,7 @@ import LordOfTheRings.Classes.HasGame (HasGame, getsGame)
 import LordOfTheRings.Contract (ContractAttrs (contractPlacement))
 import LordOfTheRings.Effect (Effect (effectTarget))
 import LordOfTheRings.Entities (
+  Entities,
   attachmentsL,
   contractsL,
   objectivesL,
@@ -21,6 +22,7 @@ import LordOfTheRings.Entities (
  )
 import LordOfTheRings.Game.Base (
   Game (gameModifiers, gamePlayers),
+  heldEntities,
   effectsL,
   entitiesL,
  )
@@ -213,3 +215,20 @@ progressFirst source n firsts rest = do
 guardLocation :: LocationId -> CardDef -> [Message]
 guardLocation lid def =
   [GuardLocation lid | Guarded `member` cdKeywords def] <> [GuardLocationBy lid ts | GuardedBy ts <- toList (cdKeywords def)]
+
+-- | Unique encounter cards ignore their effects and go to the encounter discard
+-- if another copy is in play (Shadow and Flame rules, "Unique Encounter Cards").
+-- Fog's rules, p. 3, keep the unique limit across separate staging areas.
+duplicateUniqueEncounter :: Game -> EncounterCard -> Bool
+duplicateUniqueEncounter g card = cdUnique def && any (elem (cdName def) . map cdName . definitions) (g.entities : heldEntities g)
+ where
+  def = toCardDef card
+  definitions :: Entities -> [CardDef]
+  definitions es =
+    map toCardDef (toList es.heroes)
+      <> map toCardDef (toList es.allies)
+      <> map toCardDef (toList es.attachments)
+      <> map toCardDef (toList es.objectives)
+      <> map toCardDef (toList es.enemies)
+      <> map toCardDef (toList es.locations)
+      <> map toCardDef (toList es.treacheries)

@@ -362,7 +362,8 @@ allAllies =
   Map.fromList
     [ (toCardCode builder, card)
     | card@(SomeAllyCard builder) <-
-        [ SomeAllyCard tomBombadilOldForest
+        [ SomeAllyCard (reprintAlly Objectives.tomBombadilFog tomBombadilOldForest)
+        , SomeAllyCard tomBombadilOldForest
         , SomeAllyCard derufinErech
         , SomeAllyCard rangerOfIthilien
         , SomeAllyCard gondorianWarship

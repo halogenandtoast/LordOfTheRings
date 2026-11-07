@@ -3,6 +3,7 @@ module LordOfTheRings.Standalone.FogOnTheBarrowDownsSpec (spec) where
 import Data.Map.Strict qualified as Map
 import LordOfTheRings.Sphere (Sphere (Baggins))
 import LordOfTheRings.Attachment.CardDefs qualified as Attachments
+import LordOfTheRings.Ally (Ally)
 import LordOfTheRings.Ally.CardDefs qualified as Allies
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Helpers.Modifiers (getModifiers, preloadModifiers)
@@ -21,7 +22,7 @@ import LordOfTheRings.Keyword (Keyword (Sentinel))
 import LordOfTheRings.Matcher (getHero, getThreat, getConditionAttachments, getAlly, select, LocationMatcher (LocationWithCardCode))
 import LordOfTheRings.Effect (Effect (..), EffectDuration (..))
 import LordOfTheRings.Modifier (ModifierType (..))
-import LordOfTheRings.Phase (Phase (ResourcePhase))
+import LordOfTheRings.Phase (Phase (ResourcePhase, QuestPhase, CombatPhase))
 import LordOfTheRings.Scenario.Types (encounterDiscardL)
 import LordOfTheRings.Window (WindowType (EnemyAttacking, RoundEnds), mkAfter)
 import TestImport
@@ -94,8 +95,93 @@ revealSpell pid def = do
 songs :: GameT [TreacheryAttrs]
 songs = getsGame $ map toAttrs . filter ((== toCardCode Treacheries.dreadfulSong) . toCardCode) . toList . (.entities.treacheries)
 
+fogTom :: GameT Ally
+fogTom = getsGame $ fromJustNote "missing Fog Tom" . find ((== toCardCode Objectives.tomBombadilFog) . toCardCode) . toList . (.entities.allies)
+
 spec :: Spec
 spec = describe "Fog on the Barrow-downs Wights" do
+  describe "Tom Bombadil" do
+    it "lets the revealing player choose control, entering ready and committed" . twoPlayerTest testDeck $ \one two -> do
+      putGame . (phaseL .~ QuestPhase) =<< getGame
+      run $ SetRevealer (Just two)
+      _ <- setEncounterDeck [Objectives.tomBombadilFog]
+      run RevealEncounterCard
+      resolveRevealed
+      chooseTarget two (PlayerTarget one)
+      tom <- fogTom
+      (.controller) tom `shouldBe` one
+      allyCommitted (toAttrs tom) `shouldBe` True
+      allyExhausted (toAttrs tom) `shouldBe` False
+      getWillpower (toTarget tom) `shouldReturn` 3
+
+    it "cannot have its When Revealed canceled" . gameTest $ \pid -> do
+      hero <- heroOf pid "01007"
+      _ <- putCardIntoHand pid Events.aTestOfWill
+      run $ PlaceTokens GameSource hero Resource 1
+      _ <- setEncounterDeck [Objectives.tomBombadilFog]
+      run RevealEncounterCard
+      resolveRevealed
+      _ <- fogTom
+      getQuestion pid `shouldReturn` Nothing
+      length . (.hand) <$> getPlayer pid `shouldReturn` 1
+
+    it "enters ready outside the quest phase without committing" . gameTest $ \_ -> do
+      putGame . (phaseL .~ CombatPhase) =<< getGame
+      _ <- setEncounterDeck [Objectives.tomBombadilFog]
+      run RevealEncounterCard
+      resolveRevealed
+      tom <- fogTom
+      allyCommitted (toAttrs tom) `shouldBe` False
+      allyExhausted (toAttrs tom) `shouldBe` False
+
+    it "discards and shuffles the entire discard at round end even after being blanked" . gameTest $ \_ -> do
+      foe <- stageEnemy Enemies.coldWight
+      run $ Discard GameSource (EnemyTarget foe)
+      _ <- setEncounterDeck [Objectives.tomBombadilFog]
+      run RevealEncounterCard
+      resolveRevealed
+      tom <- fogTom
+      run $ CreateEffect $ Effect GameSource (toTarget tom) [Blank] UntilEndOfRound
+      run EndRound
+      getsGame (any ((== tom.id) . toId) . toList . (.entities.allies)) `shouldReturn` False
+      getEncounterDiscard `shouldReturn` []
+      sort . map toCardCode <$> getEncounterDeck `shouldReturn` sort (map toCardCode [Objectives.tomBombadilFog, Enemies.coldWight])
+
+    it "does not perform the conditional shuffle if destroyed before the round ends" . gameTest $ \_ -> do
+      _ <- setEncounterDeck [Objectives.tomBombadilFog]
+      run RevealEncounterCard
+      resolveRevealed
+      tom <- fogTom
+      run $ DealDamage GameSource (toTarget tom) 6
+      run EndRound
+      getEncounterDeck `shouldReturn` []
+      map toCardCode <$> getEncounterDiscard `shouldReturn` [toCardCode Objectives.tomBombadilFog]
+
+    for_ [("isolated", SeparatePlayers), ("shared", SeparateStagingAreas)] \(label, splitAreas) -> do
+      when (label == "isolated") $ it ("allows control only at the revealing player's stage in " <> label <> " areas") . twoPlayerTest testDeck $ \one two -> do
+        run $ splitAreas [[one], [two]]
+        _ <- setEncounterDeck [Objectives.tomBombadilFog]
+        run RevealEncounterCard
+        resolveRevealed
+        tom <- fogTom
+        (.controller) tom `shouldBe` one
+        getQuestion two `shouldReturn` Nothing
+
+      it ("respects uniqueness across " <> label <> " areas") . twoPlayerTest testDeck $ \one two -> do
+        _ <- setEncounterDeck [Objectives.tomBombadilOldForest]
+        run RevealEncounterCard
+        resolveRevealed
+        chooseTarget one (PlayerTarget two)
+        run $ splitAreas [[one], [two]]
+        [incoming, next] <- setEncounterDeck [Objectives.tomBombadilFog, Locations.oldForestRoad]
+        run RevealEncounterCard
+        resolveRevealed
+        getQuestion one `shouldReturn` Nothing
+        map (.id) <$> getEncounterDeck `shouldReturn` [next.id]
+        map (.id) <$> getEncounterDiscard `shouldReturn` [incoming.id]
+        run $ FocusArea two
+        length <$> getsGame (filter ((== toCardCode Objectives.tomBombadilOldForest) . toCardCode) . toList . (.entities.allies)) `shouldReturn` 1
+
   describe "Hollow Circle" do
     it "has each player choose a different physical Wight, paying the whole cost before travel" . twoPlayerTest testDeck $ \one two -> do
       lid <- stageLocation Locations.hollowCircle

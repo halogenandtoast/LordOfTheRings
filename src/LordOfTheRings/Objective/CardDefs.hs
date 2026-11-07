@@ -16,7 +16,7 @@ allObjectiveCards =
   Map.fromList $
     map
       (\def -> (cdCardCode def, def))
-      [swordOfBelegost, mapOfEredLuin, keysOfBelegost, bookOfAulesChildren, dwarvenTorch, blueMountainGem, stalkingTheRuins, tomBombadilOldForest, derufin, relicFromTheDarkYears, eventide, dusk, midnight, theOldThrush, lakeTown, rangerOfIthilien, corsairSkirmisherShipDreadnaught, eithiliant, eithiliantUpgraded, goldenWing, goldenWingUpgraded, prideOfLebennin, prideOfLebenninUpgraded, silentMist, silentMistUpgraded, swanShipOfDolAmroth, swanShipOfDolAmrothUpgraded, twilightsCall, twilightsCallUpgraded, gondorianWarship,  caveTorchDarkOfMirkwood
+      [tomBombadilFog, swordOfBelegost, mapOfEredLuin, keysOfBelegost, bookOfAulesChildren, dwarvenTorch, blueMountainGem, stalkingTheRuins, tomBombadilOldForest, derufin, relicFromTheDarkYears, eventide, dusk, midnight, theOldThrush, lakeTown, rangerOfIthilien, corsairSkirmisherShipDreadnaught, eithiliant, eithiliantUpgraded, goldenWing, goldenWingUpgraded, prideOfLebennin, prideOfLebenninUpgraded, silentMist, silentMistUpgraded, swanShipOfDolAmroth, swanShipOfDolAmrothUpgraded, twilightsCall, twilightsCallUpgraded, gondorianWarship,  caveTorchDarkOfMirkwood
       , gandalfsMap
       , theThreatToWilderland
       , ashenBrazier
@@ -1692,3 +1692,15 @@ dwarvenTorch = (objective "the-ruins-of-belegost-013" "Dwarven Torch" TheRuinsOf
   { cdUnique = True, cdCardTraits = setFromList [Artifact, Item], cdKeywords = setFromList [Loot] }
 blueMountainGem = (objective "the-ruins-of-belegost-014" "Blue Mountain Gem" TheRuinsOfBelegost 1)
   { cdUnique = True, cdCardTraits = setFromList [Artifact, Item], cdKeywords = setFromList [Loot] }
+
+tomBombadilFog :: CardDef
+tomBombadilFog = (objective "fog-on-the-barrow-downs-019" "Tom Bombadil" FogOnTheBarrowDowns 1)
+  { cdCardType = ObjectiveAllyType
+  , cdUnique = True
+  , cdCardTraits = setFromList [Legend]
+  , cdWillpower = Just 3
+  , cdAttack = Just 3
+  , cdDefense = Just 3
+  , cdHitPoints = Just 6
+  , cdWhenRevealed = True
+  }

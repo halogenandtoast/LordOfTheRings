@@ -1188,6 +1188,7 @@ import LordOfTheRings.Game.Dispatch (runEach)
 import LordOfTheRings.Game.End (gameCannotEndWith)
 import LordOfTheRings.Game.Payment (payFor)
 import LordOfTheRings.Game.Query (
+  duplicateUniqueEncounter,
   discardAttachedToQuest,
   getPlayers,
   guardLocation,
@@ -4253,6 +4254,9 @@ runGameMessage msg g = case msg of
         if cdCardType (toCardDef card) `elem` [t | DiscardNextRevealed t <- effectModifiers e]
           then g' <$ push (AddToEncounterDiscard [card])
           else runGameMessage msg g'
+  (revealedCard -> Just (_, card)) | duplicateUniqueEncounter g card -> do
+    push $ AddToEncounterDiscard [card]
+    pure g
   (revealedCard -> Just (engaging, card)) -> do
     let initialDamage = case msg of RevealCardWithDamage _ _ n -> max 0 n; _ -> 0
         withDamage = overAttrs (\a -> a {enemyTokens = addTokens Damage initialDamage (enemyTokens a)})
