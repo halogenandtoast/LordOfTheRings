@@ -27,14 +27,14 @@ setReplica :: Int -> [EpicBoard] -> GameT ()
 setReplica ordinal boards = do
   let shared = fromJustNote "invalid event" $ newAnnuminasEvent 3
   current <- getGame
-  putGame $ current & scenarioL %~ overAttrs (\a -> a {scenarioEpic = Just $ EpicReplica (GroupOrdinal ordinal) shared [] boards [] mempty})
+  putGame $ current & scenarioL %~ overAttrs (\a -> a {scenarioEpic = Just $ EpicReplica (GroupOrdinal ordinal) shared [] boards [] mempty mempty})
   -- Real Epic games start with independent seeds. Keep independent fixtures
   -- independent too, including their physical encounter-card identities.
   generator <- asks gameRandomGen
   liftIO $ writeIORef generator $ mkStdGen (100 + ordinal)
 
 boardAt :: Int -> Text -> Int -> EpicBoard
-boardAt ordinal name threat = EpicBoard (GroupOrdinal ordinal) name [] False (Just $ EpicStage threat [] [] False)
+boardAt ordinal name threat = EpicBoard (GroupOrdinal ordinal) name [] False (Just $ EpicStage threat [] [] False 0 False)
 
 pendingCommands :: GameT [EpicCommand]
 pendingCommands = getsGame $ maybe [] epicPendingCommands . scenarioEpic . toAttrs . (.scenario)

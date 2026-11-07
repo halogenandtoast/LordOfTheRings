@@ -364,7 +364,7 @@ publicGameFor seesHand g = hideDecks $ toJSON merged
   -- Delivery payloads can contain private state in transit. Clients receive
   -- shared values and public boards, not outboxes or retry bookkeeping.
   hideEpicDelivery = inside "epic" $ \case
-    Object o -> Object $ foldr KeyMap.delete o ["epicPendingDeltas", "epicPendingCommands", "epicAppliedCommands"]
+    Object o -> Object $ foldr KeyMap.delete o ["epicPendingDeltas", "epicPendingCommands", "epicPendingRequests", "epicAppliedCommands"]
     v -> v
   hideMeta = \case
     Object o -> Object $ KeyMap.delete "meta" o

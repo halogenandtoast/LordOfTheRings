@@ -1,4 +1,4 @@
-module LordOfTheRings.Epic.Board (epicBoardFor, matchesEpicTarget) where
+module LordOfTheRings.Epic.Board (epicBoardFor, matchesEpicTarget, matchesEpicGroup) where
 
 import Data.Map.Strict qualified as Map
 import LordOfTheRings.Card
@@ -7,6 +7,9 @@ import LordOfTheRings.Classes.Entity (toAttrs)
 import LordOfTheRings.Classes.HasGame (runReadGame)
 import LordOfTheRings.Epic.Types
 import LordOfTheRings.Game.Base
+import LordOfTheRings.Helpers.Drawing (canDrawCardsFrom)
+import LordOfTheRings.Enemy.CardDefs qualified as Enemies
+import LordOfTheRings.Matcher (getRemainingPlayers)
 import LordOfTheRings.Helpers.Healing (healableCharacters)
 import LordOfTheRings.Source (Source (CardCodeSource))
 import LordOfTheRings.Quest.CardDefs qualified as Quests
@@ -39,6 +42,8 @@ epicBoardFor ordinal name g
     ]
     (map toCardCode $ scenarioVictoryDisplay $ toAttrs g.scenario)
     (runReadGame (notNull <$> healableCharacters (CardCodeSource $ toCardCode Quests.defendTheCityAnnuminas) (HeroControlledBy AnyPlayer) (AllyControlledBy AnyPlayer)) g)
+    (length $ filter ((== toCardCode Enemies.hostOfAngmar) . toCardCode) $ scenarioSetAside $ toAttrs g.scenario)
+    (runReadGame (anyM (canDrawCardsFrom $ CardCodeSource $ toCardCode Quests.manTheWallsAnnuminas) =<< getRemainingPlayers) g)
   asTarget target kind engaged damage exhausted upgradeable card =
     EpicTarget
       target
@@ -88,3 +93,12 @@ matchesEpicTarget EpicShip t =
     == EpicShip
     && (t.epicTargetDamage > 0 || t.epicTargetExhausted || t.epicTargetUpgradeable)
 matchesEpicTarget query t = query == t.epicTargetKind
+
+matchesEpicGroup :: EpicTargetQuery -> EpicBoard -> Bool
+matchesEpicGroup EpicWarshipGroup board = board.epicBoardHasWarship
+matchesEpicGroup query board = maybe False eligible board.epicBoardStage
+ where
+  eligible stage = notNull stage.epicStageQuests && case query of
+    EpicHealingGroup -> stage.epicStageHealingAvailable
+    EpicDrawingGroup -> stage.epicStageDrawingAvailable
+    _ -> False

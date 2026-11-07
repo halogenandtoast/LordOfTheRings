@@ -125,7 +125,7 @@ spec = describe "Dreadnaught" do
     putGame
       $ g
       & scenarioL
-      %~ overAttrs (\a -> a {scenarioEpic = Just $ EpicReplica (GroupOrdinal 0) shared [] [] [] mempty})
+      %~ overAttrs (\a -> a {scenarioEpic = Just $ EpicReplica (GroupOrdinal 0) shared [] [] [] mempty mempty})
     eid <- staged Enemies.dreadnaught
     getEnemyHitPoints eid `shouldReturn` 60
     let (damaged, _) = applySharedDelta (SharedDelta UUID.nil (GroupOrdinal 1) DreadnaughtDamage 40) shared
@@ -165,7 +165,7 @@ spec = describe "Dreadnaught" do
     putGame
       $ g
       & scenarioL
-      %~ overAttrs (\a -> a {scenarioEpic = Just $ EpicReplica (GroupOrdinal 0) damaged [] [] [] mempty})
+      %~ overAttrs (\a -> a {scenarioEpic = Just $ EpicReplica (GroupOrdinal 0) damaged [] [] [] mempty mempty})
     eid <- staged Enemies.dreadnaught
     getDamage (toTarget eid) `shouldReturn` 40
     Just replica <- getsGame (scenarioEpic . toAttrs . (.scenario))
@@ -220,7 +220,7 @@ spec = describe "Dreadnaught" do
     putGame
       $ g
       & scenarioL
-      %~ overAttrs (\a -> a {scenarioEpic = Just $ EpicReplica (GroupOrdinal 0) shared [] [] [] mempty})
+      %~ overAttrs (\a -> a {scenarioEpic = Just $ EpicReplica (GroupOrdinal 0) shared [] [] [] mempty mempty})
     target <- putQuestStage Quests.searchingTheHighSeas
     run $ Flip target
     run $ SyncEpic almost

@@ -317,6 +317,8 @@ data Message
   | SearchEncounterDeckAndDiscard PlayerId Target CardMatcher
   | ShuffleDeck DeckSignifier
   | AddCollectionCardToHand PlayerId CardCode
+  | RequestAnnuminasHost CardCode GroupOrdinal
+  | AwaitEpicReply UUID
   | ChooseEpicTarget PlayerId CardCode EpicTargetQuery EpicEffect
   | ResolveEpicEffect CardCode EpicEffect Target
   | QueueEpicCommand GroupOrdinal CardCode EpicEffect Target

@@ -8,7 +8,7 @@ import LordOfTheRings.Ally.Types (allyTokens)
 import LordOfTheRings.Attachment.Types
 import LordOfTheRings.Card (cdShadowEffect, cdCardTraits, cdHitPoints, cdKeywords, cdName, cdShadowCannotBeCanceled, cdVictoryPoints, cdWhenRevealed, ecId, toCard, toCardCode, toCardDef)
 import LordOfTheRings.Effect (Effect (..))
-import LordOfTheRings.Epic.Board (epicBoardFor, matchesEpicTarget)
+import LordOfTheRings.Epic.Board (epicBoardFor, matchesEpicTarget, matchesEpicGroup)
 import LordOfTheRings.Epic.Types
 import LordOfTheRings.Classes.Entity
 import LordOfTheRings.Classes.HasGame
@@ -404,10 +404,9 @@ passesCriteria = \case
     let replica = scenarioEpic $ toAttrs g.scenario
         own = maybe (GroupOrdinal 0) epicGroup replica
         boards = epicBoardFor own "" g : [b | r <- maybeToList replica, b <- r.epicBoards, b.epicBoardGroup /= own]
-    pure $ case query of
-      EpicWarshipGroup -> any epicBoardHasWarship boards
-      EpicHealingGroup -> any (maybe False (\stage -> stage.epicStageHealingAvailable && notNull stage.epicStageQuests) . epicBoardStage) boards
-      _ -> any (any (matchesEpicTarget query) . epicBoardTargets) boards
+    pure $ if query `elem` [EpicWarshipGroup, EpicHealingGroup, EpicDrawingGroup]
+      then any (matchesEpicGroup query) boards
+      else any (any (matchesEpicTarget query) . epicBoardTargets) boards
   ReadyableCardExists charactersOnly -> notNull <$> readyableCards charactersOnly
   PlayableCardInHand pid matcher reduction -> notNull <$> playableCardsByEffect pid matcher reduction
   PlayableAttachmentInHand pid matcher reduction -> notNull <$> playableAttachmentsInHand pid matcher reduction

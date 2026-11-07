@@ -21,7 +21,7 @@ setReplica ordinal boards = do
   putGame
     $ g
     & scenarioL
-    %~ overAttrs (\a -> a {scenarioEpic = Just $ EpicReplica ordinal shared [] boards [] mempty})
+    %~ overAttrs (\a -> a {scenarioEpic = Just $ EpicReplica ordinal shared [] boards [] mempty mempty})
 
 spec :: Spec
 spec = describe "Dreadnaught Epic effects" do

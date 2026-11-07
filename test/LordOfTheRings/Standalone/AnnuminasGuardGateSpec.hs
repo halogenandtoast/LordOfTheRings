@@ -29,7 +29,7 @@ points = getQuestPoints . toAttrs =<< getActiveQuest
 
 boardWith :: Int -> Text -> [CardCode] -> EpicBoard
 boardWith ordinal name victory = EpicBoard (GroupOrdinal ordinal) name [] False $ Just $
-  EpicStage 0 [EpicQuest (toCardCode Quests.guardTheGateAnnuminas) 2 0 (Just 50) True] victory False
+  EpicStage 0 [EpicQuest (toCardCode Quests.guardTheGateAnnuminas) 2 0 (Just 50) True] victory False 0 False
 
 spec :: Spec
 spec = describe "Annúminas Guard the Gate" do

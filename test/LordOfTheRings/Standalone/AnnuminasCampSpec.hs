@@ -80,7 +80,7 @@ spec = describe "Annúminas Enemy Camp" do
     let shared = fromJustNote "invalid event" $ newAnnuminasEvent 3
         other = EpicBoard (GroupOrdinal 1) "Other" [] False Nothing
     current <- getGame
-    putGame $ current & scenarioL %~ overAttrs (\a -> a {scenarioEpic = Just $ EpicReplica (GroupOrdinal 0) shared [] [other, other] [] mempty})
+    putGame $ current & scenarioL %~ overAttrs (\a -> a {scenarioEpic = Just $ EpicReplica (GroupOrdinal 0) shared [] [other, other] [] mempty mempty})
     camp <- stageLocation Locations.enemyCamp
     run $ CheckWindows [mkWhen RoundEnds]
     Just replica <- getsGame $ scenarioEpic . toAttrs . (.scenario)
@@ -129,7 +129,7 @@ spec = describe "Annúminas Enemy Camp" do
     let shared = fromJustNote "invalid event" $ newAnnuminasEvent 3
         command = EpicCommand UUID.nil (GroupOrdinal 0) (GroupOrdinal 1) (toCardCode Locations.enemyCamp) EpicRescueCaptives ScenarioTarget
     current <- getGame
-    putGame $ current & scenarioL %~ overAttrs (\a -> a {scenarioEpic = Just $ EpicReplica (GroupOrdinal 1) shared [] [] [] mempty})
+    putGame $ current & scenarioL %~ overAttrs (\a -> a {scenarioEpic = Just $ EpicReplica (GroupOrdinal 1) shared [] [] [] mempty mempty})
     run $ ApplyEpicCommand command
     saved <- getGame
     restored <- either error pure $ eitherDecode $ encode saved

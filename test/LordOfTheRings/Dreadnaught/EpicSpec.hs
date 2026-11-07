@@ -53,7 +53,7 @@ spec = describe "Dreadnaught Epic shared state" do
 
   pureIt "uses a fresh contribution ID after undo restores the RNG" do
     let shared = stateFor 4
-        replica = EpicReplica (GroupOrdinal 0) shared [] [] [] mempty
+        replica = EpicReplica (GroupOrdinal 0) shared [] [] [] mempty mempty
         identifier r = evalRand (epicMessageId r) (mkStdGen 42)
         initialId = identifier replica
         (accepted, _) = applySharedDelta (SharedDelta initialId (GroupOrdinal 0) SearchingTheHighSeasProgress 4) shared

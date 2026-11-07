@@ -498,6 +498,8 @@ import LordOfTheRings.Message (
     ResolveEpicEffect,
     ApplyEpicCommand,
     MoveAnnuminasEnemy,
+    RequestAnnuminasHost,
+    AwaitEpicReply,
     SyncEpic,
     ContributeShared,
     ChooseAndDiscard,
@@ -1272,6 +1274,8 @@ runGameMessage msg g = case msg of
   ResolveEpicEffect {} -> runEpicMessage msg g
   ApplyEpicCommand {} -> runEpicMessage msg g
   MoveAnnuminasEnemy {} -> runEpicMessage msg g
+  RequestAnnuminasHost {} -> runEpicMessage msg g
+  AwaitEpicReply {} -> runEpicMessage msg g
   SyncEpic {} -> runEpicMessage msg g
   ContributeShared {} -> runEpicMessage msg g
   -- the rest of an attack does nothing once its enemy has left play

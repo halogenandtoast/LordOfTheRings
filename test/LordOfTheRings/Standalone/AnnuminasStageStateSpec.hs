@@ -69,15 +69,15 @@ spec = describe "Annúminas public Epic stage state" do
 
   it "exposes public boards while keeping command delivery and retry records private" . gameTest $ \_ -> do
     let shared = fromJustNote "invalid event" $ newAnnuminasEvent 3
-        board = EpicBoard (GroupOrdinal 1) "Gate" [] False (Just $ EpicStage 7 [] [] False)
+        board = EpicBoard (GroupOrdinal 1) "Gate" [] False (Just $ EpicStage 7 [] [] False 0 False)
         command = EpicCommand UUID.nil (GroupOrdinal 0) (GroupOrdinal 1) (toCardCode Locations.siegeTunnel) EpicDiscardUntilEnemy ScenarioTarget
         contribution = SharedDelta UUID.nil (GroupOrdinal 0) AnnuminasCityStrength (-1)
-        replica = EpicReplica (GroupOrdinal 0) shared [contribution] [board] [command] (Set.singleton UUID.nil)
+        replica = EpicReplica (GroupOrdinal 0) shared [contribution] [board] [command] (Set.singleton UUID.nil) (Set.singleton UUID.nil)
     current <- getGame
     let updated = current & scenarioL %~ overAttrs (\a -> a {scenarioEpic = Just replica})
         fields = parseMaybe (withObject "game" $ \o -> o .: "scenario" >>= withObject "scenario" (\s -> s .: "epic" >>= withObject "epic" pure)) $ publicGame updated
     publicFields <- maybe (error "missing public Epic replica") pure fields
-    for_ ["epicPendingDeltas", "epicPendingCommands", "epicAppliedCommands"] $ \key ->
+    for_ ["epicPendingDeltas", "epicPendingCommands", "epicPendingRequests", "epicAppliedCommands"] $ \key ->
       KeyMap.lookup key publicFields `shouldBe` Nothing
     KeyMap.lookup "epicBoards" publicFields `shouldBe` Just (toJSON [board])
     KeyMap.lookup "epicShared" publicFields `shouldBe` Just (toJSON shared)
@@ -94,9 +94,9 @@ spec = describe "Annúminas public Epic stage state" do
 
   it "preserves public stage values through command-replica serialization" do
     let shared = fromJustNote "invalid event" $ newAnnuminasEvent 3
-        stage = EpicStage 7 [EpicQuest "01120" 2 40 (Just 40) True] [toCardCode Enemies.hostOfAngmar] False
+        stage = EpicStage 7 [EpicQuest "01120" 2 40 (Just 40) True] [toCardCode Enemies.hostOfAngmar] False 0 False
         board = EpicBoard (GroupOrdinal 1) "Gate" [] False (Just stage)
-        replica = EpicReplica (GroupOrdinal 0) shared [] [board] [] mempty
+        replica = EpicReplica (GroupOrdinal 0) shared [] [board] [] mempty mempty
     eitherDecode (encode replica) `shouldBe` Right replica
     pure () :: IO ()
 
@@ -106,7 +106,7 @@ spec = describe "Annúminas public Epic stage state" do
           , "epicStageQuests" .= ([] :: [EpicQuest])
           , "epicStageVictoryCards" .= ([] :: [CardCode])
           ]
-    eitherDecode (encode legacy) `shouldBe` Right (EpicStage 3 [] [] False)
+    eitherDecode (encode legacy) `shouldBe` Right (EpicStage 3 [] [] False 0 False)
     pure () :: IO ()
 
   it "publishes healing eligibility using the actual character healing limits" . gameTest $ \pid -> do
@@ -118,3 +118,17 @@ spec = describe "Annúminas public Epic stage state" do
     epicStageHealingAvailable <$> stageState `shouldReturn` False
     run $ EndEffects UntilEndOfRound
     epicStageHealingAvailable <$> stageState `shouldReturn` True
+
+  it "publishes only the count of set-aside Hosts and updates it when one enters play" . gameTest $ \_ -> do
+    replicateM_ 3 $ run . SetAside =<< genEncounterCard Enemies.hostOfAngmar
+    epicStageSetAsideHosts <$> stageState `shouldReturn` 3
+    run $ RequestAnnuminasHost (toCardCode Quests.manTheWallsAnnuminas) (GroupOrdinal 0)
+    epicStageSetAsideHosts <$> stageState `shouldReturn` 2
+    getsGame (length . (.entities.enemies)) `shouldReturn` 1
+
+  it "publishes drawing eligibility without exposing a player's deck" . gameTest $ \pid -> do
+    epicStageDrawingAvailable <$> stageState `shouldReturn` True
+    run $ CreateEffect $ Effect GameSource (PlayerTarget pid) [CannotDrawCardsFromCardEffects] UntilEndOfRound
+    epicStageDrawingAvailable <$> stageState `shouldReturn` False
+    run $ EndEffects UntilEndOfRound
+    epicStageDrawingAvailable <$> stageState `shouldReturn` True

@@ -1,5 +1,6 @@
 {
   "annuminas": {
+    "hostStage": "Choose a stage’s set-aside Host of Angmar",
     "healCharacter": "Choose a character you control to heal 1 damage",
     "highestAttack": "Choose a staged enemy with the highest attack",
     "chooseStage": "Choose a stage",
@@ -4420,6 +4421,7 @@
     "seaMonster": "Deal 4 damage to the Ship with the fewest hit points remaining."
   },
   "epic": {
+    "waitingForTeam": "Waiting for another team to finish this effect",
   "chooseTarget": "Choose a target in any group",
   "target": "{card} — {group}",
   "localTarget": "{card}",

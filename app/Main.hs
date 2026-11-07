@@ -2027,7 +2027,7 @@ postEpicStartR eid = do
     let shared = fromJustNote "Epic event has no players" $ EpicTypes.newSharedEvent $ sum [length players | (_, _, players) <- prepared]
     now <- liftIO getCurrentTime
     games <- for prepared \(groupRow, row, players) -> do
-      let replica = EpicTypes.EpicReplica (EpicTypes.GroupOrdinal groupRow.lotrEpicGroupOrdinal) shared [] [] [] mempty
+      let replica = EpicTypes.EpicReplica (EpicTypes.GroupOrdinal groupRow.lotrEpicGroupOrdinal) shared [] [] [] mempty mempty
           base = fromJustNote "Dreadnaught scenario missing" $ lookupScenario "the-hunt-for-the-dreadnaught"
           scenario = overAttrs (\a -> a {scenarioEpic = Just replica}) base
           mode = gameMode row.lotrGameEasyMode False row.lotrGameHardMode
