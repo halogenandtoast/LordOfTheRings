@@ -14,7 +14,8 @@ allEventCards =
   Map.fromList $
     map
       (\def -> (cdCardCode def, def))
-      [ everVigilant
+      [ hoTomBombadil
+      , everVigilant
       , theCannyHuntsman
       , aTaleOfVictories
       , layOfCourage
@@ -1155,3 +1156,7 @@ noTimeToWaste = (event "dark-of-mirkwood-048" "No Time to Waste!" Neutral (Stati
 
 rangerSense :: CardDef
 rangerSense = (event "dark-of-mirkwood-049" "Ranger Sense" Neutral (StaticCost 0)) {cdCardTraits = setFromList [Boon]}
+
+hoTomBombadil :: CardDef
+hoTomBombadil = (event "fog-on-the-barrow-downs-021" "Ho! Tom Bombadil!" Neutral (StaticCost 0))
+  { cdCardTraits = setFromList [Song, Boon], cdVictoryPoints = Just 1, cdDeckLimit = 1 }

@@ -1,8 +1,10 @@
-module LordOfTheRings.Standalone.FogBarrowsSpec (spec) where
+module LordOfTheRings.Standalone.FogBarrowsSpec (spec, homeStage, enterBarrow, returnFromBarrow) where
 
 import LordOfTheRings.Ally.CardDefs qualified as Allies
+import Data.Map.Strict qualified as Map
+import LordOfTheRings.Decklist (loadPlayer)
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
-import LordOfTheRings.Helpers.Modifiers (getModifiers)
+import LordOfTheRings.Helpers.Modifiers (getModifiers, preloadModifiers)
 import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Matcher (getCurrentQuest, getThreat, getHero)
 import LordOfTheRings.Modifier (ModifierType (CannotBeDefeated, CannotBeTraveledTo, ProgressLimit, WillpowerModifier))
@@ -11,7 +13,8 @@ import LordOfTheRings.Outcome (Outcome (Won))
 import LordOfTheRings.Phase (Phase (QuestPhase, TravelPhase))
 import LordOfTheRings.Quest.CardDefs qualified as Quests
 import LordOfTheRings.Scenario (fogOnTheBarrowDowns)
-import LordOfTheRings.Scenario.Types (scenarioSetAside, questDeckL)
+import LordOfTheRings.Scenario.Types (scenarioSetAside, questDeckL, encounterDeckL, scenarioMode, GameMode (..))
+import LordOfTheRings.Window (WindowType (RoundEnds), mkWhen)
 import TestImport
 
 progressOn :: Target -> GameT Int
@@ -65,8 +68,114 @@ returnFromBarrow pid = do
   run JoinAreas
   finishBarrowChoice pid
 
+finishSetup :: Int -> GameT ()
+finishSetup n | n <= 0 = error "Fog setup did not finish"
+finishSetup n = do
+  asked <- getsGame (headMay . Map.keys . (.question))
+  for_ asked $ \pid -> do
+    chooseOptionMatching "finish setup" pid (const True)
+    finishSetup (n - 1)
+
+reload :: GameT ()
+reload = do
+  current <- getGame
+  case eitherDecode (encode current) of
+    Left err -> liftIO $ expectationFailure err
+    Right restored -> putGame =<< preloadModifiers restored
+
+-- Reorder the actual supply rather than generating replacement encounter cards.
+drawNext :: [CardDef] -> GameT ()
+drawNext defs = do
+  deck <- getEncounterDeck
+  let takeNext [] remaining = remaining
+      takeNext (def : rest) remaining =
+        let card = fromJustNote "physical card missing" $ find ((== toCardCode def) . toCardCode) remaining
+         in card : takeNext rest (filter ((/= card.id) . (.id)) remaining)
+  current <- getGame
+  putGame $ current & scenarioL %~ overAttrs (encounterDeckL .~ takeNext defs deck)
+
 spec :: Spec
 spec = describe "Fog barrow sequence" do
+  for_ [NormalMode, EasyMode] $ \mode -> for_ [1 .. 4] $ \size ->
+    it ("completes " <> show size <> "-player setup in " <> show mode) do
+      seats <- for [1 .. size] $ \seat -> either (error . show) id <$> loadPlayer ("Player " <> tshow seat) testDeck
+      let scenario = overAttrs (\a -> a {scenarioMode = mode}) fogOnTheBarrowDowns
+      env <- newGameEnv (newTableIn scenario $ fromJustNote "empty table" $ nonEmpty seats) (const $ pure ()) 1
+      runGameT env do
+        run Setup
+        finishSetup 100
+        toCardCode <$> getActiveQuest `shouldReturn` toCardCode Quests.theHouseOfTomBombadil
+        (.flipped) <$> getActiveQuest `shouldReturn` True
+        length <$> getEncounterDeck `shouldReturn` (if mode == EasyMode then 30 else 34)
+        length <$> asideFours `shouldReturn` 4
+        getsGame (length . scenarioSetAside . toAttrs . (.scenario)) `shouldReturn` 11
+        players <- getsGame (toList . (.players))
+        map (length . (.hand)) players `shouldBe` replicate size 6
+        heroes <- getsGame (toList . (.entities.heroes))
+        map (.resources) heroes `shouldBe` replicate (3 * size) (if mode == EasyMode then 1 else 0)
+
+  it "plays every stage with the original physical supply, reloads in a private area, and wins" . gameTestIn fogOnTheBarrowDowns testDeck $ \pid -> do
+    run Setup
+    finishSetup 100
+    drawNext [Locations.northDownsFog]
+    run $ CheckWindows [mkWhen RoundEnds]
+    resolveRevealed
+    toCardCode <$> getActiveQuest `shouldReturn` toCardCode Quests.acrossTheDowns
+    across <- toTarget <$> getActiveQuest
+    hollow <- locationOf Locations.hollowCircle
+    run $ PlaceTokens GameSource (LocationTarget hollow) Progress 3
+    run $ PlaceTokens GameSource across Progress 14
+    resolveRevealed
+    home <- toTarget <$> getActiveQuest
+    toCardCode <$> getActiveQuest `shouldReturn` toCardCode Quests.lostInTheFog
+    pool <- asideFours
+    drawNext [Locations.greatBarrow, Enemies.coldWight]
+    pushAll [SetRevealer (Just pid), RevealEncounterCard, SetRevealer Nothing]
+    void mainLoop
+    resolveRevealed
+    toCardCode <$> getActiveQuest `shouldReturn` toCardCode Quests.trappedInsideABarrow
+    reload
+    returnFromBarrow pid
+    getCurrentQuest `shouldReturn` Just home
+    sort <$> asideFours `shouldReturn` sort pool
+    stones <- locationOf Locations.standingStones
+    run $ PlaceTokens GameSource (LocationTarget stones) Progress 4
+    run $ PlaceTokens GameSource home Progress 16
+    getsGame (.outcome) `shouldReturn` Just Won
+
+  it "restores a pending Great Barrow retirement choice before completing a return" . twoPlayerTestIn fogOnTheBarrowDowns testDeck $ \one two -> do
+    home <- homeStage
+    enterBarrow two
+    run $ FocusArea one
+    enterBarrow one
+    target <- stageOf Quests.trappedInsideABarrow
+    run $ PlaceTokens GameSource target Progress 9
+    run JoinAreas
+    getQuestion one >>= (`shouldSatisfy` isJust)
+    reload
+    finishBarrowChoice one
+    getCurrentQuest `shouldReturn` Just home
+    run $ FocusArea two
+    returnFromBarrow two
+    getCurrentQuest `shouldReturn` Just home
+    getsGame (isNothing . gameSeparation) `shouldReturn` True
+
+  it "handles elimination while every surviving player is in a private barrow" . twoPlayerTestIn fogOnTheBarrowDowns testDeck $ \one two -> do
+    home <- homeStage
+    enterBarrow two
+    run $ FocusArea one
+    enterBarrow one
+    initial <- getThreat one
+    run $ FocusArea two
+    run $ EliminatePlayer two
+    finishBarrowChoice one
+    run $ FocusArea one
+    getThreat one `shouldReturn` initial
+    getsGame (.outcome) `shouldReturn` Nothing
+    returnFromBarrow one
+    getCurrentQuest `shouldReturn` Just home
+    length <$> asideFours `shouldReturn` 4
+
   it "sets up the full physical encounter deck, three main stages, and four reusable private stages" . gameTestIn fogOnTheBarrowDowns testDeck $ \_ -> do
     run $ DoStep 1 Setup
     length <$> getEncounterDeck `shouldReturn` 41

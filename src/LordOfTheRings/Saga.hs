@@ -21,16 +21,16 @@ sagaOf sid
   | sid `elem` lordOfTheRingsScenarios = Just TheLordOfTheRings
   | otherwise = Nothing
 
--- The Old Forest rules insert, p. 4: only campaign mode uses The Black Riders'
+-- The Old Forest and Fog rules inserts: only campaign mode uses The Black Riders'
 -- setup and Fellowship rules. Its standalone adventure needs no saga components.
 sagaOfMode :: ScenarioId -> Bool -> Maybe Saga
 sagaOfMode sid inCampaign
-  | sid == "the-old-forest" && inCampaign = Just TheLordOfTheRings
+  | sid `elem` ["the-old-forest", "fog-on-the-barrow-downs"] && inCampaign = Just TheLordOfTheRings
   | otherwise = sagaOf sid
 
 fellowshipSetupForMode :: ScenarioId -> Bool -> Maybe FellowshipSetup
 fellowshipSetupForMode sid inCampaign
-  | sid == "the-old-forest" && inCampaign = fellowshipSetup "a-shadow-of-the-past"
+  | sid `elem` ["the-old-forest", "fog-on-the-barrow-downs"] && inCampaign = fellowshipSetup "a-shadow-of-the-past"
   | otherwise = fellowshipSetup sid
 
 -- | Over Hill and Under Hill's, then On the Doorstep's.

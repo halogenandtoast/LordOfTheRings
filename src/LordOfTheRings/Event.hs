@@ -7,6 +7,7 @@ import LordOfTheRings.Event.Cards.GandalfsSearch
 import LordOfTheRings.Event.Cards.WillOfTheWest
 import LordOfTheRings.Event.Cards.DwarvenTomb
 import LordOfTheRings.Event.Cards.FortuneOrFate
+import LordOfTheRings.Event.Cards.HoTomBombadil (hoTomBombadil)
 import LordOfTheRings.Event.Cards.NoTimeToWaste
 import LordOfTheRings.Event.Cards.RangerSense
 import LordOfTheRings.Event.Cards.MendorsSupport
@@ -276,7 +277,8 @@ allEvents =
   Map.fromList
     [ (toCardCode builder, card)
     | card@(SomeEventCard builder) <-
-        [ SomeEventCard everVigilant
+        [ SomeEventCard hoTomBombadil
+        , SomeEventCard everVigilant
         , SomeEventCard commonCause
         , SomeEventCard forGondor
         , SomeEventCard sneakAttack

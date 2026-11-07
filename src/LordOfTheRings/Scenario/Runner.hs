@@ -6,6 +6,7 @@ import Data.ByteString qualified as BS
 import Data.Map.Strict qualified as Map
 import Data.UUID.V5 qualified as UUID
 import LordOfTheRings.Card hiding (hero)
+import LordOfTheRings.Event.CardDefs qualified as Events
 import LordOfTheRings.Classes.HasGame (getsGame)
 import LordOfTheRings.Classes.HasQueue
 import LordOfTheRings.Classes.RunMessage
@@ -135,6 +136,12 @@ instance RunMessage ScenarioAttrs where
         shuffleIntoDeck pid =<< genEncounterCard def
       pure attrs
     DoStep 4 Setup -> do
+      -- This shared boon has no seat: its printed Setup gives it to whichever
+      -- player holds the token now, before the six-card hand and any mulligan.
+      when (any ((== toCardCode Events.hoTomBombadil) . (.code)) $ foldMap (.pool) attrs.campaign) do
+        lead <- getLead
+        card <- genPlayerCard Events.hoTomBombadil (Just lead)
+        push $ PutInHand card
       heroes <- getsGame (toList . entitiesHeroes . gameEntities)
       when attrs.easyMode $ for_ heroes \hero -> placeResources attrs hero.id 1
       -- the Permanent boons and burdens go on the heroes the log records them on

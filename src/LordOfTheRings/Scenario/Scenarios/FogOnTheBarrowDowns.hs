@@ -1,6 +1,8 @@
 module LordOfTheRings.Scenario.Scenarios.FogOnTheBarrowDowns (fogOnTheBarrowDowns) where
 
 import Data.Aeson.Types (parseMaybe)
+import LordOfTheRings.Campaign (CampaignLogUpdate (AddToPool), PoolCard (..))
+import LordOfTheRings.Event.CardDefs qualified as Events
 import LordOfTheRings.Classes.HasGame (getGame, getsGame)
 import LordOfTheRings.EncounterSet qualified as EncounterSet
 import LordOfTheRings.Game.Base (allPlayers, gameSeparation, Separation (separationFirstPlayer), seatsFrom)
@@ -8,10 +10,10 @@ import LordOfTheRings.Helpers.Modifiers (getModifiers)
 import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Id (QuestId, PlayerId)
 import LordOfTheRings.Matcher (getRemainingPlayers, select, LocationMatcher (LocationInStagingArea, LocationWithCardCode))
-import LordOfTheRings.Modifier (ModifierType (Blank, CannotBeDefeated, PreserveStageWhenEmpty))
+import LordOfTheRings.Modifier (ModifierType (Blank, CannotBeDefeated, PreserveStageWhenEmpty, CannotLoseFirstPlayerToken))
 import LordOfTheRings.Quest.CardDefs qualified as Quests
 import LordOfTheRings.Scenario.Import.Lifted
-import LordOfTheRings.Scenario.Scenarios.FogOnTheBarrowDowns.Helpers (homeQuest)
+import LordOfTheRings.Scenario.Scenarios.FogOnTheBarrowDowns.Helpers (homeQuest, allFogQuests)
 
 newtype FogOnTheBarrowDowns = FogOnTheBarrowDowns ScenarioAttrs
   deriving anyclass (IsScenario, HasAbilities)
@@ -38,6 +40,12 @@ instance HasModifiersFor FogOnTheBarrowDowns where
     -- The rules insert's instruction to retain stage 3B applies even if its text is blank.
     when (isJust home && current) $ modified a GameTarget [PreserveStageWhenEmpty]
     for_ (pending a) $ \(qid, _) -> modified a (QuestTarget qid) [CannotBeDefeated]
+    when (isJust a.campaign) do
+      stages <- allFogQuests
+      when (any (\q -> q.flipped && toCardCode q == toCardCode Quests.trappedInsideABarrow) stages) do
+        g <- getGame
+        let token = maybe g.firstPlayer separationFirstPlayer (gameSeparation g)
+        modified a (PlayerTarget token) [CannotLoseFirstPlayerToken]
 
 remainingAnywhere :: ReverseQueue m => m [PlayerId]
 remainingAnywhere = do
@@ -68,6 +76,9 @@ instance RunMessage FogOnTheBarrowDowns where
       later <- traverse genEncounterCard [Quests.acrossTheDowns, Quests.lostInTheFog]
       barrows <- replicateM 4 $ genEncounterCard Quests.trappedInsideABarrow
       pure $ FogOnTheBarrowDowns $ a & encounterDeckL .~ deck & questDeckL .~ later & setAsideL .~ barrows
+    ResolveCampaign | isJust a.campaign -> do
+      updateCampaignLog $ AddToPool $ PoolCard (toCardCode Events.hoTomBombadil) Nothing Nothing
+      FogOnTheBarrowDowns <$> runMessage msg a
     JoinQuestArea _ qid -> do
       current <- getsGame (find ((== toCardCode Quests.trappedInsideABarrow) . toCardCode) . toList . (.entities.quests))
       case current of

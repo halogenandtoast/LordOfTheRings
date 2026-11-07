@@ -1247,7 +1247,7 @@ phaseFollowing phase g =
         | otherwise = s {separationFirstPlayer = fromMaybe s.separationFirstPlayer $ headMay [pid | pid <- drop 1 (seatsFrom s.separationFirstPlayer g.playerOrder) <> [s.separationFirstPlayer], maybe False (not . (.eliminated)) (Map.lookup pid $ allPlayers g)]}
       -- unless he keeps it, as Captured by Spiders has the first player in his own area
       keepsToken s =
-        or
+        CannotLoseFirstPlayerToken `elem` map modifierType (Map.findWithDefault [] (PlayerTarget s.separationFirstPlayer) (gameModifiers g)) || or
           [ CannotLoseFirstPlayerToken `elem` map modifierType (Map.findWithDefault [] (PlayerTarget s.separationFirstPlayer) mods)
           | a <- separationAreas s
           , s.separationFirstPlayer `elem` areaPlayers a
@@ -1435,6 +1435,10 @@ runGameMessage msg g = case msg of
       pure [HealDamage (toSource e) (toTarget e) n | n <- printed <> [n | GainKeyword (Regenerate n) <- mods]]
     pushAll $ concat regenerating
     pure g
+  SetFirstPlayer pid
+    | let token = maybe g.firstPlayer separationFirstPlayer (gameSeparation g)
+    , pid /= token
+    , CannotLoseFirstPlayerToken `elem` map modifierType (Map.findWithDefault [] (PlayerTarget token) (gameModifiers g)) -> pure g
   SetFirstPlayer pid -> do
     -- the first player gains control of Bilbo Baggins, or the Ring-bearer, as the token passes
     following <- filterM (\h -> hasKeyword FirstPlayerGainsControl (toTarget h) (toCardDef h)) (toList g.entities.heroes)

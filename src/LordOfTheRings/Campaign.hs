@@ -392,6 +392,23 @@ theLordOfTheRingsWithOldForest = theLordOfTheRings
  where
   stages = campaignDefScenarios theLordOfTheRings
 
+theLordOfTheRingsWithFog, theLordOfTheRingsWithOldForestAndFog :: CampaignDef
+theLordOfTheRingsWithFog = theLordOfTheRings
+  { campaignDefId = "the-lord-of-the-rings-with-fog-on-the-barrow-downs"
+  , campaignDefName = "The Lord of the Rings + Fog on the Barrow-downs"
+  , campaignDefScenarios = take 1 stages <> [("fog-on-the-barrow-downs", Just Cards.fogOnTheBarrowDownsCampaign)] <> drop 1 stages
+  }
+ where
+  stages = campaignDefScenarios theLordOfTheRings
+
+theLordOfTheRingsWithOldForestAndFog = theLordOfTheRings
+  { campaignDefId = "the-lord-of-the-rings-with-the-old-forest-and-fog-on-the-barrow-downs"
+  , campaignDefName = "The Lord of the Rings + The Old Forest + Fog on the Barrow-downs"
+  , campaignDefScenarios = take 1 stages <> [("the-old-forest", Just Cards.theOldForestCampaign), ("fog-on-the-barrow-downs", Just Cards.fogOnTheBarrowDownsCampaign)] <> drop 1 stages
+  }
+ where
+  stages = campaignDefScenarios theLordOfTheRings
+
 {- | The Ered Mithrin Campaign Expansion: the Ered Mithrin cycle's nine scenarios, one
 campaign (MEC115 rules, "Campaign Mode").
 -}
@@ -421,6 +438,8 @@ allCampaigns =
   , theHobbit
   , theLordOfTheRings
   , theLordOfTheRingsWithOldForest
+  , theLordOfTheRingsWithFog
+  , theLordOfTheRingsWithOldForestAndFog
   , eredMithrin
   ]
 
