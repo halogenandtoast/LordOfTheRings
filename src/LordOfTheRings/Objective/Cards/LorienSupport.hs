@@ -1,6 +1,7 @@
 module LordOfTheRings.Objective.Cards.LorienSupport (powerOfLorien, hostOfLorien) where
 
 import LordOfTheRings.Card (toCardCode)
+import LordOfTheRings.Scenario.Scenarios.AttackOnDolGuldur.Helpers (giveLorienSupport)
 import LordOfTheRings.Objective.CardDefs qualified as Cards
 import LordOfTheRings.Objective.Import.Lifted
 import LordOfTheRings.Placement (Placement (AttachedTo))
@@ -22,10 +23,14 @@ instance HasModifiersFor LorienSupport where
 
 instance HasAbilities LorienSupport where
   getAbilities (LorienSupport a) =
-    [ restricted a 1 EncounterEffectsCancelable
-        $ ResponseAbility (EncounterCardRevealedWindow When) $ AddToVictoryDisplayCost $ toTarget a
-    | toCardCode a == toCardCode Cards.powerOfLorien, AttachedTo (PlayerTarget _) <- [a.placement]
-    ]
+    if toCardCode a == toCardCode Cards.powerOfLorien
+      && (case a.placement of AttachedTo (PlayerTarget _) -> True; _ -> False)
+      then
+        [ restricted a 1 EncounterEffectsCancelable
+            $ ResponseAbility (EncounterCardRevealedWindow When) $ AddToVictoryDisplayCost $ toTarget a
+        , restricted a 2 InEpicMultiplayer $ response RoundEndsWindow
+        ]
+      else []
 
 instance RunMessage LorienSupport where
   runMessage msg o@(LorienSupport a) = case msg of
@@ -33,4 +38,5 @@ instance RunMessage LorienSupport where
       for_ (take 1 [target | Window When (Revealed target) <- windows]) $ \target ->
         cancelEncounterCard pid target $ discard a target
       pure o
+    UseCardAbility pid (isSource a -> True) 2 _ -> o <$ giveLorienSupport msg pid a
     _ -> LorienSupport <$> runMessage msg a

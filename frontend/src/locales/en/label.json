@@ -4456,6 +4456,8 @@
     "resolvePenalty": "Resolve the penalty",
     "stageBenefit": "Choose a stage to receive the benefit",
     "payFive": "Remove 5 progress",
-    "returnToStaging": "Return the attacker to the staging area"
+    "returnToStaging": "Return the attacker to the staging area",
+    "giveSupport": "Choose another player to take control of this support",
+    "localPlayer": "{player} (this stage)"
   }
 }
