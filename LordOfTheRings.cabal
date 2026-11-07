@@ -4521,6 +4521,7 @@ test-suite LordOfTheRings-test
       LordOfTheRings.Standalone.DolGuldurEncountersSpec
       LordOfTheRings.Standalone.DolGuldurEpicSpec
       LordOfTheRings.Standalone.DolGuldurJourneySpec
+      LordOfTheRings.Standalone.DolGuldurPowerChoicesSpec
       LordOfTheRings.Standalone.DolGuldurRuntimeSpec
       LordOfTheRings.Standalone.DolGuldurScenarioSpec
       LordOfTheRings.Standalone.DolGuldurSetupSpec

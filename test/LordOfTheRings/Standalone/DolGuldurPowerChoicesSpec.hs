@@ -1,5 +1,6 @@
 module LordOfTheRings.Standalone.DolGuldurPowerChoicesSpec (spec) where
 
+import LordOfTheRings.Card (toCard)
 import LordOfTheRings.Matcher (getObjective)
 import LordOfTheRings.Objective.CardDefs qualified as Objectives
 import LordOfTheRings.Quest.CardDefs qualified as Quests
@@ -11,7 +12,7 @@ stagePower progress = do
   card <- genEncounterCard Objectives.powerOfLorien
   run $ AddToStaging card
   powers <- getsGame $ toList . (.entities.objectives)
-  let oid = toId $ fromJustNote "Power missing" $ find ((== card.id) . (.cardId)) powers
+  let oid = toId $ fromJustNote "Power missing" $ find ((== card.id) . (.id) . toCard) powers
   run $ PlaceTokens GameSource (ObjectiveTarget oid) Progress progress
   pure oid
 
