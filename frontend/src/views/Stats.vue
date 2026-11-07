@@ -1,10 +1,28 @@
 <script lang="ts" setup>
-import { computed, ref, watch } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { currentUser } from '../auth'
 import { fetchStats, type ScenarioStats, type Spread } from '../api'
+import type { CardDef } from '../server'
+import CardOverlay from '../components/CardOverlay.vue'
+import { useCardOverlay } from '../composables/useCardOverlay'
+import { refPreview } from '../gameLog'
 
 const { t } = useI18n()
+const defs = ref<Record<string, CardDef>>({})
+onMounted(async () => {
+  try {
+    defs.value = await fetch('/api/cards').then((r) => (r.ok ? (r.json() as Promise<Record<string, CardDef>>) : {}))
+  } catch {
+    // names fall back to card codes
+  }
+})
+const name = (code: string) => defs.value[code]?.name ?? code
+const overlay = useCardOverlay()
+const previewCard = (code: string, event: Event) => {
+  const card = refPreview({ kind: 'RefCard', cardCode: code, cardId: null, entityId: null, name: name(code), faceDown: false })
+  if (card) overlay.show(card, event.currentTarget as HTMLElement, false, event instanceof PointerEvent && event.pointerType === 'touch')
+}
 const mine = ref(false)
 const stats = ref<ScenarioStats[] | null>(null)
 const error = ref<string | null>(null)
@@ -95,11 +113,18 @@ const range = (s: Spread | null) => s ? `${s.lowest}–${s.highest}` : '—'
             <template v-if="open.has(key(row))">
               <tr v-for="deck in row.decks" :key="deck.heroes.join()" class="deck">
                 <td colspan="2">
-                  <span
+                  <button
                     v-for="hero in deck.heroes"
                     :key="hero"
+                    type="button"
                     class="hero"
+                    :aria-label="name(hero)"
+                    :title="name(hero)"
                     :style="{ backgroundImage: `url('/images/cards/${hero}.avif')` }"
+                    @pointerenter="(e) => e.pointerType === 'mouse' && previewCard(hero, e)"
+                    @pointerleave="(e) => e.pointerType === 'mouse' && overlay.hide()"
+                    @pointerup="(e) => e.pointerType === 'touch' && previewCard(hero, e)"
+                    @focus="previewCard(hero, $event)" @blur="overlay.hide()" @keydown.esc="overlay.hide()"
                   />
                 </td>
                 <td>{{ deck.stats.started }}</td>
@@ -116,6 +141,7 @@ const range = (s: Spread | null) => s ? `${s.lowest}–${s.highest}` : '—'
       <p v-if="stats?.length" class="note">{{ $t('stats.scoreNote') }}</p>
       <p v-if="stats?.length && !mine" class="note">{{ $t('stats.globalNote') }}</p>
     </div>
+    <CardOverlay />
   </div>
 </template>
 
@@ -135,7 +161,7 @@ tr.scenario:hover { background: var(--box-background); }
 tr.deck td { font-size: 0.9em; }
 td { white-space: nowrap; }
 .note { margin-top: 8px; font-size: 0.85em; opacity: 0.75; }
-.hero { display: inline-block; width: 32px; height: 32px; margin-right: 4px; border-radius: 50%; background-size: 160%; background-position: 50% 20%; }
+.hero { display: inline-block; width: 32px; height: 32px; margin-right: 4px; border-radius: 50%; background-size: 160%; background-position: 50% 20%; border: 0; padding: 0; cursor: pointer; vertical-align: middle; }
 .stats-header { margin-bottom: 20px; }
 .intro { opacity: .75; line-height: 1.6; max-width: 65ch; }
 .summary { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; padding: 24px 0; margin: 8px 0 24px; border-block: 1px solid var(--box-border); }
