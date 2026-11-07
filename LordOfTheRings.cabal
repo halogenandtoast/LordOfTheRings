@@ -2774,6 +2774,7 @@ library
       LordOfTheRings.Quest.Cards.AnEvilPlace
       LordOfTheRings.Quest.Cards.ANewTerrorAbroad
       LordOfTheRings.Quest.Cards.AngmarAwakened
+      LordOfTheRings.Quest.Cards.AnnuminasPreparation
       LordOfTheRings.Quest.Cards.AnUnexpectedParty
       LordOfTheRings.Quest.Cards.AnUntimelyEnd
       LordOfTheRings.Quest.Cards.ApproachingCairAndros
@@ -2987,7 +2988,6 @@ library
       LordOfTheRings.Quest.Cards.RallyTheFighters
       LordOfTheRings.Quest.Cards.RallyTheWest
       LordOfTheRings.Quest.Cards.RallyTheWoodmen
-      LordOfTheRings.Quest.Cards.RebuildTheDefenses
       LordOfTheRings.Quest.Cards.ReinforcingTheBanks
       LordOfTheRings.Quest.Cards.RescueFromTheTrolls
       LordOfTheRings.Quest.Cards.RescueIarion
@@ -4474,6 +4474,7 @@ test-suite LordOfTheRings-test
       LordOfTheRings.Standalone.AnnuminasCitySpec
       LordOfTheRings.Standalone.AnnuminasDefensesSpec
       LordOfTheRings.Standalone.AnnuminasDunedainSpec
+      LordOfTheRings.Standalone.AnnuminasEpicPreparationSpec
       LordOfTheRings.Standalone.AnnuminasEpicSpec
       LordOfTheRings.Standalone.AnnuminasInvadersSpec
       LordOfTheRings.Standalone.AnnuminasLieutenantSpec

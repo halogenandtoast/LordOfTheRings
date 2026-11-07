@@ -7,7 +7,7 @@ import LordOfTheRings.Classes.Entity (overAttrs, toAttrs, insertEntity)
 import LordOfTheRings.Classes.HasQueue (push, runQueueT)
 import LordOfTheRings.Epic.Board
 import LordOfTheRings.Epic.Types
-import LordOfTheRings.Effect (Effect (..))
+import LordOfTheRings.Effect (Effect (..), EffectDuration (UntilEndOfPhaseOf))
 import LordOfTheRings.Enemy (EnemyAttrs (..), createEnemy)
 import LordOfTheRings.Entities (enemiesL)
 import LordOfTheRings.Game.Base
@@ -18,6 +18,8 @@ import LordOfTheRings.Message
 import LordOfTheRings.Message.Lifted
 import LordOfTheRings.Quest (isSideQuest)
 import LordOfTheRings.Quest.Types (questUnderneath)
+import LordOfTheRings.Modifier (ModifierType (FewerStagingReveals))
+import LordOfTheRings.Phase (Phase (QuestPhase))
 import LordOfTheRings.Objective.CardDefs qualified as Objectives
 import LordOfTheRings.Outcome (Outcome (Lost))
 import LordOfTheRings.Prelude
@@ -111,6 +113,11 @@ runEpicMessage msg g = case msg of
             discardCount = maybe (length deck) (+ 1) $ findIndex enemyCard deck
         discardTopOfEncounterDeckFor source ScenarioTarget discardCount
         for_ (find enemyCard deck) addToStagingFromDiscard
+      EpicGrantDunedain -> do
+        lead <- getLead
+        for_ (take 1 $ filter ((== toCardCode Objectives.dunedainOfAnnuminas) . toCardCode) $ scenarioSetAside $ toAttrs g.scenario) $ putObjectiveAllyIntoPlayUnder lead
+      EpicDelayStaging ->
+        push $ CreateEffect $ Effect source GameTarget [FewerStagingReveals 1] (UntilEndOfPhaseOf QuestPhase)
       EpicDiscardCaptive -> do
         for_ (toList g.entities.quests) \stage ->
           when (not (isSideQuest stage) && cdStage (toCardDef stage) == Just 3) do

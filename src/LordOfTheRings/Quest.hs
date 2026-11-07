@@ -2,7 +2,7 @@
 
 module LordOfTheRings.Quest (module LordOfTheRings.Quest, module X) where
 
-import LordOfTheRings.Quest.Cards.RebuildTheDefenses (rebuildTheDefenses)
+import LordOfTheRings.Quest.Cards.AnnuminasPreparation (rebuildTheDefenses, raiseTheLevee, delayTheEnemyAnnuminas)
 import LordOfTheRings.Quest.Cards.PrancingPonyInvestigation (investigatingTheCrime, runningOutOfTime, apprehendingTheKiller)
 import LordOfTheRings.Quest.Cards.BarrowDownsEscape (lostInTheFog, trappedInsideABarrow)
 import LordOfTheRings.Quest.Cards.BarrowDownsApproach (theHouseOfTomBombadil, acrossTheDowns)
@@ -497,7 +497,9 @@ allQuests =
   Map.fromList
     [ (toCardCode builder, card)
     | card@(SomeQuestCard builder) <-
-        [ SomeQuestCard rebuildTheDefenses
+        [ SomeQuestCard raiseTheLevee
+        , SomeQuestCard delayTheEnemyAnnuminas
+        , SomeQuestCard rebuildTheDefenses
         , SomeQuestCard investigatingTheCrime
         , SomeQuestCard runningOutOfTime
         , SomeQuestCard apprehendingTheKiller

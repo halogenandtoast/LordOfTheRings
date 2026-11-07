@@ -1,7 +1,9 @@
 module LordOfTheRings.Scenario.Scenarios.TheSiegeOfAnnuminas.Helpers
-  (cityStrength, damageAnnuminas, repairAnnuminas, eachAnnuminasTeam, annuminasStages) where
+  (cityStrength, damageAnnuminas, repairAnnuminas, eachAnnuminasTeam, otherAnnuminasTeams, setAsideAnnuminasCards, annuminasStages) where
 
 import LordOfTheRings.Card (CardCode, toCardCode)
+import LordOfTheRings.Enemy.CardDefs qualified as Enemies
+import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Classes.Entity (toAttrs)
 import LordOfTheRings.Classes.HasGame
 import LordOfTheRings.Classes.HasQueue (push)
@@ -28,8 +30,12 @@ annuminasStages = getsGame $ \g ->
 -- receives its own durable command; its engine resolves against its own deck.
 eachAnnuminasTeam :: ReverseQueue m => CardCode -> EpicEffect -> m ()
 eachAnnuminasTeam code effect = do
-  replica <- getsGame $ scenarioEpic . toAttrs . (.scenario)
   push $ ResolveEpicEffect code effect ScenarioTarget
+  otherAnnuminasTeams code effect
+
+otherAnnuminasTeams :: ReverseQueue m => CardCode -> EpicEffect -> m ()
+otherAnnuminasTeams code effect = do
+  replica <- getsGame $ scenarioEpic . toAttrs . (.scenario)
   for_ replica $ \r ->
     for_ (nub [b.epicBoardGroup | b <- r.epicBoards, b.epicBoardGroup /= r.epicGroup]) $ \destination ->
       push $ QueueEpicCommand destination code effect ScenarioTarget
@@ -53,3 +59,12 @@ changeCityStrength source amount = do
       cities <- getsGame $ \g -> [toAttrs o | o <- toList g.entities.objectives, toCardCode o == toCardCode Objectives.annuminas]
       for_ cities $ \oid ->
         if amount < 0 then dealDamage source oid (negate amount) else placeResources source oid amount
+
+setAsideAnnuminasCards :: ReverseQueue m => m ()
+setAsideAnnuminasCards = do
+  deck <- getsGame ((.encounterDeck) . toAttrs . (.scenario))
+  let waiting = map toCardCode
+        [ Enemies.lieutenantOfAngmar, Locations.batteringRam, Locations.enemyCamp
+        , Locations.siegeTunnel, Enemies.hostOfAngmar, Objectives.dunedainOfAnnuminas
+        ]
+  traverse_ setAside $ filter ((`elem` waiting) . toCardCode) deck

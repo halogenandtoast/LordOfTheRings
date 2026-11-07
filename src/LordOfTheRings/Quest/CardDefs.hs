@@ -90,7 +90,7 @@ allQuestCards =
   Map.fromList $
     map
       (\def -> (cdCardCode def, def))
-      [rebuildTheDefenses, investigatingTheCrime, runningOutOfTime, apprehendingTheKiller, lostInTheFog, trappedInsideABarrow, theHouseOfTomBombadil, acrossTheDowns, ruinsOfTheFirstAge, ancientEvilsDisturbed, deeperIntoThePast, theServantsOfMorgoth, theRootsOfEredLuin, theMinesOfBelegost, theBeastOfBelegost, farewellToTheShire, darkBadPlace, chokedWithBrambles, shiftingTrees, closingInAroundThem, theWickedWillow, theDisappearance, terrorOfTheDead, theShadowHost, theDragonsWrath, fireAndWater, terrorFromTheMountain, anduinCrossing, throughTheRuinsOsgiliath, beyondExpectations, raceToMinasTirith, searchingTheHighSeas, destroyTheDreadnaught,  afterTheRaid
+      [raiseTheLevee, delayTheEnemyAnnuminas, rebuildTheDefenses, investigatingTheCrime, runningOutOfTime, apprehendingTheKiller, lostInTheFog, trappedInsideABarrow, theHouseOfTomBombadil, acrossTheDowns, ruinsOfTheFirstAge, ancientEvilsDisturbed, deeperIntoThePast, theServantsOfMorgoth, theRootsOfEredLuin, theMinesOfBelegost, theBeastOfBelegost, farewellToTheShire, darkBadPlace, chokedWithBrambles, shiftingTrees, closingInAroundThem, theWickedWillow, theDisappearance, terrorOfTheDead, theShadowHost, theDragonsWrath, fireAndWater, terrorFromTheMountain, anduinCrossing, throughTheRuinsOsgiliath, beyondExpectations, raceToMinasTirith, searchingTheHighSeas, destroyTheDreadnaught,  afterTheRaid
       , mirkwoodForestTheOath
       , theRearguardTheOath
       , theDarkOfNibinDum
@@ -2334,4 +2334,10 @@ apprehendingTheKiller = (quest "murder-at-the-prancing-pony-003" "Apprehending t
 
 rebuildTheDefenses :: CardDef
 rebuildTheDefenses = (quest "the-siege-of-annuminas-003" "Rebuild the Defenses" TheSiegeOfAnnuminas 1 0)
+  { cdQuestPoints = Nothing }
+
+raiseTheLevee, delayTheEnemyAnnuminas :: CardDef
+raiseTheLevee = (quest "the-siege-of-annuminas-006" "Raise the Levee" TheSiegeOfAnnuminas 1 0)
+  { cdQuestPoints = Nothing }
+delayTheEnemyAnnuminas = (quest "the-siege-of-annuminas-009" "Delay the Enemy" TheSiegeOfAnnuminas 1 0)
   { cdQuestPoints = Nothing }
