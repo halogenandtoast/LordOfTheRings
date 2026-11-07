@@ -128,6 +128,9 @@ data Keyword
     -- objective, reveals a random Hazard card among them, and discards the rest (MEC69
     -- rules)
     Discover Int
+  | -- | When this active location is explored, shuffle the Investigation deck
+    -- and let the first player look at its top X cards (Murder at the Prancing Pony).
+    Investigate Int
   | -- | on an objective: one revealed from the encounter deck is discarded and another card
     -- revealed; it enters play only by the Discover keyword (MEC69 rules)
     Loot

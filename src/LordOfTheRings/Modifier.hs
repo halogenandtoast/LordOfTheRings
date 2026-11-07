@@ -189,6 +189,10 @@ data ModifierType
     UsedThisRound CardCode
   | -- | An effect keyed by this card code has triggered during the current attack.
     UsedThisAttack CardCode
+  | IgnoreInvestigate
+  | -- | A continuous victory condition, checked after the game state changes.
+    WinWhenNoMatchingEnemies EnemyMatcher
+  | AdditionalInvestigateCards Int
   | -- | on an ally: it entered play this round
     EnteredPlayThisRound
   | -- | damage an attack deals past the character's remaining hit points raises threat

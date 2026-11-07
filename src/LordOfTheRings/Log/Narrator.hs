@@ -353,6 +353,10 @@ narrationFor = \case
         one $ mechanic [ikeyPart "log.locationFlips" ["location" ~> from, "card" ~> EncounterCard (MkEncounterCard (toCard l).id other)]]
       _ -> pure []
   -- what is seen stays with the player who looked
+  InvestigationLookedAt pid _ cards -> Just do
+    who <- playerRefFor pid
+    one $ mechanic [ikeyPart "log.investigationLook" ["player" ~> who, "count" ~> length cards]]
+  AccusationMade correct -> Just $ one $ mechanic [ikeyPart (if correct then "log.accusationCorrect" else "log.accusationIncorrect") []]
   LookAtFacedownSide pid lid -> Just $ whenRef (toTarget lid) \l -> do
     who <- playerRefFor pid
     one $ mechanic [ikeyPart "log.looksAtFacedownSide" ["player" ~> who, "location" ~> l]]

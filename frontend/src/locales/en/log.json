@@ -1,4 +1,7 @@
 {
+  "investigationLook": "{player} looks at {count} cards from the Investigation deck",
+  "accusationCorrect": "The accusation is correct",
+  "accusationIncorrect": "The accusation is incorrect",
   "resourcesDiscarded": "{target} discards {count} resources",
   "scenarioBegins": "{scenario}",
   "round": "Round {count}",

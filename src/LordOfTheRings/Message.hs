@@ -446,6 +446,13 @@ data Message
     ResolveDeep LocationId
   | -- | the player resolves the Discover keyword of the location, if it has it (MEC69 rules)
     ResolveDiscover PlayerId LocationId
+  | ResolveInvestigate PlayerId LocationId
+  | LookAtInvestigationDeck PlayerId Source Int
+  | LookAtBottomOfInvestigationDeck PlayerId Source
+  | InvestigationLookedAt PlayerId Source [EncounterCard]
+  | MakeAccusation PlayerId (Maybe CardCode) (Maybe CardCode)
+  | AccusationMade Bool
+  | StageInvestigationCard EncounterCard
   | -- | Remaining looked-at cards, extra Hazard reveals, and whether a Hazard
     -- has already been revealed. Discard the remainder after all reveals.
     ResolveDiscoverHazards PlayerId LocationId Int [EncounterCard] Bool

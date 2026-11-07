@@ -66,6 +66,9 @@ data WindowType
   | -- | the player turned 1 or more hidden cards faceup, at once (The Blood of Gondor)
     TurnedHiddenCardsFaceup PlayerId
   | EnemyAttacking EnemyId PlayerId
+  | Investigating LocationId
+  | Investigated LocationId [EncounterCard]
+  | QuestingProgressPlacedOn QuestId
   | -- | the enemy is declared as an attacker against the player, its attack begun, as
     -- Flight to the Ford's campaign card answers
     EnemyDeclaredAsAttacker EnemyId PlayerId

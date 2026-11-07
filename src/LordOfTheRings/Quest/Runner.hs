@@ -10,6 +10,9 @@ import LordOfTheRings.Game.Base (gameEntities)
 import LordOfTheRings.GameT (GameT)
 import LordOfTheRings.Helpers.Modifiers (modifiedValue, questPointsOf)
 import LordOfTheRings.Helpers.QuestingProgress (recordQuestingProgress)
+import LordOfTheRings.Helpers.Modifiers (getModifiers)
+import LordOfTheRings.Modifier (ModifierType (PlacingQuestingProgress))
+import LordOfTheRings.Window (mkAfter, WindowType (QuestingProgressPlacedOn))
 import LordOfTheRings.I18n
 import LordOfTheRings.Matcher
 import LordOfTheRings.Message
@@ -19,6 +22,7 @@ import LordOfTheRings.Prelude
 import LordOfTheRings.Quest.Types as X
 import LordOfTheRings.Queue
 import LordOfTheRings.Target
+import LordOfTheRings.Source (Source (GameSource))
 import LordOfTheRings.Token
 
 instance RunMessage QuestAttrs where
@@ -26,6 +30,9 @@ instance RunMessage QuestAttrs where
     PlaceTokens source (isTarget attrs -> True) token n -> do
       let attrs' = attrs & tokensL %~ addTokens token n
       when (token == Progress) $ recordQuestingProgress source n
+      when (token == Progress && source == GameSource && n > 0) do
+        questing <- elem PlacingQuestingProgress <$> getModifiers GameTarget
+        when questing $ push $ CheckWindows [mkAfter $ QuestingProgressPlacedOn attrs.id]
       done <- hasEnoughProgress attrs'
       when (token == Progress && done) $ push (CompleteQuest attrs.id)
       pure attrs'

@@ -9,6 +9,7 @@ import LordOfTheRings.Helpers.Modifiers (getModifiers, immuneToSource, modifiedQ
 import LordOfTheRings.Helpers.QuestingProgress (recordQuestingProgress)
 import LordOfTheRings.Location.Types as X
 import LordOfTheRings.Message
+import LordOfTheRings.Matcher (getLead)
 import LordOfTheRings.Placement (Placement (ActiveLocation))
 import LordOfTheRings.Modifier (ModifierType (GainVictory, NoProgressFromCardEffects, GainTrait, NoProgressFromPlayerCards, PhaseProgressLimitOnTrait, ProgressLimit, ProgressPerRoundLimit, ProgressPlacedOnTraitThisPhase, ProgressPlacedThisRound, ProgressReducedBy, ProgressReducedTo))
 import LordOfTheRings.Effect (Effect (..), EffectDuration (UntilEndOfPhase, UntilEndOfRound))
@@ -74,9 +75,11 @@ instance RunMessage LocationAttrs where
       when (token == Progress && n > 0) $ push $ CheckWindows [mkAfter $ ProgressPlacedOnLocationBy source attrs.id]
       -- a location with as much progress as its quest points is explored, but one on the
       -- Island Map stays in its place (Temple of the Deceived)
-      when (token == Progress && questPoints > 0 && attrs'.progress >= questPoints && isNothing attrs.position)
-        $ pushAll
-          [ CheckWindows $ map mkWhen explored
+      when (token == Progress && questPoints > 0 && attrs'.progress >= questPoints && isNothing attrs.position) do
+        lead <- getLead
+        pushAll $
+          [ResolveInvestigate lead attrs.id | attrs.placement == ActiveLocation]
+          <> [ CheckWindows $ map mkWhen explored
           , -- a location with victory points goes to the victory display
             if isJust (cdVictoryPoints $ toCardDef attrs) || gainsVictory
               then AddToVictoryDisplay (toTarget attrs)

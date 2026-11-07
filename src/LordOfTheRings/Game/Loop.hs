@@ -45,6 +45,7 @@ import LordOfTheRings.Matcher (
   getLocation,
   getMire,
   select,
+  selectAny,
   selectCharacters,
  )
 import LordOfTheRings.Message (
@@ -60,6 +61,7 @@ import LordOfTheRings.Message (
     DiscardTopOfEncounterDeck,
     DiscardedTopOfEncounterDeck,
     GuardObjective,
+    GameOver,
     LeavePlay,
     SetObjectiveGuard
   ),
@@ -71,6 +73,8 @@ import LordOfTheRings.Modifier (
     DiscardedAtNoWillpower,
     FirstPlayerClaimsWhenFree,
     HandSizeLimit
+    , WinWhenNoMatchingEnemies
+    , PlayersCannotWin
   ),
  )
 import LordOfTheRings.Objective (ObjectiveAttrs (objectiveGuard))
@@ -87,7 +91,7 @@ import LordOfTheRings.Source (
   Source (GameSource, ObjectiveSource, LocationSource),
  )
 import LordOfTheRings.Target (
-  Target (ObjectiveTarget, PlayerTarget, LocationTarget),
+  Target (ObjectiveTarget, PlayerTarget, LocationTarget, GameTarget),
   Targetable (toTarget),
  )
 
@@ -100,6 +104,7 @@ import LordOfTheRings.Game.Modifiers (
   gainedAbilities,
   withHandModifiers,
  )
+import LordOfTheRings.Outcome (Outcome (Won))
 import LordOfTheRings.Game.Query (getPlayers)
 import LordOfTheRings.Game.Runner (runGame)
 
@@ -164,12 +169,22 @@ runNext =
       putGame g
       putGame . gainedAbilities =<< withHandModifiers =<< preloadModifiers g
       checkUnblockedQuests g
+      checkContinuousVictory
       discardAtNoWillpower
       discardAtMireThreshold
       discardDownToHandLimit
       claimFreeObjectives
       endWaitingGame
       pure True
+
+checkContinuousVictory :: GameT ()
+checkContinuousVictory = do
+  ending <- getsGame gameEnding
+  unless ending do
+    mods <- getModifiers GameTarget
+    unless (PlayersCannotWin `elem` mods) $
+      for_ [matcher | WinWhenNoMatchingEnemies matcher <- mods] $ \matcher ->
+        whenM (not <$> selectAny matcher) $ push $ GameOver Won
 
 {- | A player with more cards in hand than he may have, as In Enemy Territory allows him
 5, chooses and discards cards down to it at once.
