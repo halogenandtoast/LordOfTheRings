@@ -69,7 +69,7 @@ spec = describe "Annúminas public Epic stage state" do
 
   it "exposes public boards while keeping command delivery and retry records private" . gameTest $ \_ -> do
     let shared = fromJustNote "invalid event" $ newAnnuminasEvent 3
-        board = EpicBoard (GroupOrdinal 1) "Gate" [] False (Just $ EpicStage 7 [] [])
+        board = EpicBoard (GroupOrdinal 1) "Gate" [] False (Just $ EpicStage 7 [] [] False)
         command = EpicCommand UUID.nil (GroupOrdinal 0) (GroupOrdinal 1) (toCardCode Locations.siegeTunnel) EpicDiscardUntilEnemy ScenarioTarget
         contribution = SharedDelta UUID.nil (GroupOrdinal 0) AnnuminasCityStrength (-1)
         replica = EpicReplica (GroupOrdinal 0) shared [contribution] [board] [command] (Set.singleton UUID.nil)
@@ -94,8 +94,27 @@ spec = describe "Annúminas public Epic stage state" do
 
   it "preserves public stage values through command-replica serialization" do
     let shared = fromJustNote "invalid event" $ newAnnuminasEvent 3
-        stage = EpicStage 7 [EpicQuest "01120" 2 40 (Just 40) True] [toCardCode Enemies.hostOfAngmar]
+        stage = EpicStage 7 [EpicQuest "01120" 2 40 (Just 40) True] [toCardCode Enemies.hostOfAngmar] False
         board = EpicBoard (GroupOrdinal 1) "Gate" [] False (Just stage)
         replica = EpicReplica (GroupOrdinal 0) shared [] [board] [] mempty
     eitherDecode (encode replica) `shouldBe` Right replica
     pure () :: IO ()
+
+  it "reads stage snapshots saved before healing eligibility was published" do
+    let legacy = object
+          [ "epicStageThreat" .= (3 :: Int)
+          , "epicStageQuests" .= ([] :: [EpicQuest])
+          , "epicStageVictoryCards" .= ([] :: [CardCode])
+          ]
+    eitherDecode (encode legacy) `shouldBe` Right (EpicStage 3 [] [] False)
+    pure () :: IO ()
+
+  it "publishes healing eligibility using the actual character healing limits" . gameTest $ \pid -> do
+    epicStageHealingAvailable <$> stageState `shouldReturn` False
+    hero <- heroOf pid "01012"
+    run $ PlaceTokens GameSource hero Damage 1
+    epicStageHealingAvailable <$> stageState `shouldReturn` True
+    run $ CreateEffect $ Effect GameSource hero [HealLimit 0] UntilEndOfRound
+    epicStageHealingAvailable <$> stageState `shouldReturn` False
+    run $ EndEffects UntilEndOfRound
+    epicStageHealingAvailable <$> stageState `shouldReturn` True

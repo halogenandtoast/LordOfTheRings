@@ -404,9 +404,10 @@ passesCriteria = \case
     let replica = scenarioEpic $ toAttrs g.scenario
         own = maybe (GroupOrdinal 0) epicGroup replica
         boards = epicBoardFor own "" g : [b | r <- maybeToList replica, b <- r.epicBoards, b.epicBoardGroup /= own]
-    pure $ if query == EpicWarshipGroup
-      then any epicBoardHasWarship boards
-      else any (any (matchesEpicTarget query) . epicBoardTargets) boards
+    pure $ case query of
+      EpicWarshipGroup -> any epicBoardHasWarship boards
+      EpicHealingGroup -> any (maybe False (\stage -> stage.epicStageHealingAvailable && notNull stage.epicStageQuests) . epicBoardStage) boards
+      _ -> any (any (matchesEpicTarget query) . epicBoardTargets) boards
   ReadyableCardExists charactersOnly -> notNull <$> readyableCards charactersOnly
   PlayableCardInHand pid matcher reduction -> notNull <$> playableCardsByEffect pid matcher reduction
   PlayableAttachmentInHand pid matcher reduction -> notNull <$> playableAttachmentsInHand pid matcher reduction

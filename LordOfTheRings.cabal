@@ -1669,6 +1669,7 @@ library
       LordOfTheRings.Helpers.Engagement
       LordOfTheRings.Helpers.Fellowship
       LordOfTheRings.Helpers.HandEntry
+      LordOfTheRings.Helpers.Healing
       LordOfTheRings.Helpers.IslandMap
       LordOfTheRings.Helpers.Modifiers
       LordOfTheRings.Helpers.QuestCommit
@@ -2774,6 +2775,7 @@ library
       LordOfTheRings.Quest.Cards.AnEvilPlace
       LordOfTheRings.Quest.Cards.ANewTerrorAbroad
       LordOfTheRings.Quest.Cards.AngmarAwakened
+      LordOfTheRings.Quest.Cards.AnnuminasDefense
       LordOfTheRings.Quest.Cards.AnnuminasPreparation
       LordOfTheRings.Quest.Cards.AnUnexpectedParty
       LordOfTheRings.Quest.Cards.AnUntimelyEnd
@@ -2903,7 +2905,6 @@ library
       LordOfTheRings.Quest.Cards.GrimbeornsFolly
       LordOfTheRings.Quest.Cards.GrimbeornsQuest
       LordOfTheRings.Quest.Cards.GuardiansOfTheJungle
-      LordOfTheRings.Quest.Cards.GuardTheGateAnnuminas
       LordOfTheRings.Quest.Cards.GuardTheHobbits
       LordOfTheRings.Quest.Cards.HastyCouncil
       LordOfTheRings.Quest.Cards.HeadingDown
@@ -4473,6 +4474,7 @@ test-suite LordOfTheRings-test
       LordOfTheRings.ShadowsOfMirkwood.TheHuntForGollumSpec
       LordOfTheRings.Standalone.AnnuminasCampSpec
       LordOfTheRings.Standalone.AnnuminasCitySpec
+      LordOfTheRings.Standalone.AnnuminasDefendCitySpec
       LordOfTheRings.Standalone.AnnuminasDefensesSpec
       LordOfTheRings.Standalone.AnnuminasDunedainSpec
       LordOfTheRings.Standalone.AnnuminasEpicPreparationSpec

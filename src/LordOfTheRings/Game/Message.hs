@@ -87,7 +87,6 @@ import LordOfTheRings.Card (
   IsCard (..),
   Sphere (Neutral),
   isAttachmentType,
-  lookupCardDef,
  )
 import LordOfTheRings.Card.Synthetic (orcGuard, reanimatedDead)
 import Control.Monad.Writer.Strict (execWriterT)
@@ -362,7 +361,7 @@ import LordOfTheRings.Log.Block (
     WhenRevealedBlock
   ),
  )
-import LordOfTheRings.Log.Refs (cardTitle, sourceCardTitle)
+import LordOfTheRings.Helpers.Healing (healingAmount)
 import LordOfTheRings.Matcher (
   CardMatcher (AnyCard),
   getRemainingPlayers,
@@ -564,6 +563,7 @@ import LordOfTheRings.Message (
     EndRound,
     EnemyAttack,
     EnemyAttacks,
+    EnemyAttacksPlayers,
     EnemyBecomesHero,
     EnemyEngagementChecks,
     EngageEnemy,
@@ -763,6 +763,7 @@ import LordOfTheRings.Message (
  )
 import LordOfTheRings.Message.Lifted (
   declaredAttacker,
+  immediateAttack,
   drawCards,
   lowerThreatBy,
   raiseThreatFromDoomed,
@@ -805,6 +806,7 @@ import LordOfTheRings.Modifier (
     CanAttackStagingAreaAlone,
     CanCommitWhileExhausted,
     CannotAttack,
+    ConsideredOutOfPlay,
     CannotAttackPlayer,
     CannotBeAttacked,
     CannotBeCurrentQuest,
@@ -866,9 +868,7 @@ import LordOfTheRings.Modifier (
     GainKeyword,
     GainVictory,
     GameEndsWith,
-    HealLimit,
     HealLimitEachRound,
-    HealLimitExceptFrom,
     HealedThisRound,
     IgnoreAmbush,
     IgnoreDeep,
@@ -1077,6 +1077,7 @@ import LordOfTheRings.Window (
     CharacterDestroyedUnder,
     CommittedToEscapeTest,
     CommittedToQuest,
+    AllPlayersCommittedToQuest,
     DamagedByEnemyAttack,
     DealtDamage,
     DeclaredAsAttacker,
@@ -1842,15 +1843,9 @@ runGameMessage msg g = case msg of
       pushAll $ [RemoveFromDeck p.id pc.id | pc <- cards] <> [AttachPoison target cards | notNull cards]
     pure g
   HealDamage source target n | n > 0 -> do
-    damage <- getDamage target
     mods <- getModifiers target
-    -- a card is named by its title (rules reference), so "other than Athelas" spares the
-    -- player attachment Athelas too
-    let from = sourceCardTitle g source
-        title code = cardTitle <$> lookupCardDef code
-        healedThisRound = sum [k | HealedThisRound k <- mods]
-        eachRound = [max 0 (k - healedThisRound) | HealLimitEachRound k <- mods]
-        healed = foldr min (min n damage) $ [k | HealLimit k <- mods] <> [k | HealLimitExceptFrom k code <- mods, from /= title code] <> eachRound
+    healed <- healingAmount source target n
+    let eachRound = [k | HealLimitEachRound k <- mods]
     when (healed > 0 && CannotBeHealed `notElem` mods)
       $ pushAll
       $ [RemoveTokens source target Damage healed, CheckWindows [mkAfter $ Healed target source]]
@@ -2011,7 +2006,7 @@ runGameMessage msg g = case msg of
     -- a stage with the Sailing keyword has the first player make a Sailing test before
     -- characters commit (Dream-chaser rules)
     let sailing = [SailingTest | any (\q -> not (isSideQuest q) && Sailing `member` cdKeywords (toCardDef q)) g.entities.quests]
-    unless skipped $ pushAll $ sailing <> chooseQuest <> map CommitCharacters order <> [Staging] <> map ActionWindow everyone <> [QuestResolution]
+    unless skipped $ pushAll $ sailing <> chooseQuest <> map CommitCharacters order <> [CheckWindows [mkAfter AllPlayersCommittedToQuest], Staging] <> map ActionWindow everyone <> [QuestResolution]
     pure g
   BeginPhase TravelPhase -> do
     -- the players' actions come first, as Thrór's Map's, then the lead may travel
@@ -2355,6 +2350,18 @@ runGameMessage msg g = case msg of
     pure g
   -- players may act at the end of each step of the attack: once its enemy is chosen,
   -- its defenders declared, its shadow resolved and its damage dealt
+  EnemyAttacksPlayers _ [] made fallback -> do
+    unless made $ pushAll fallback
+    pure g
+  EnemyAttacksPlayers eid (pid : rest) made fallback -> do
+    remaining <- getRemainingPlayers
+    mods <- getModifiers (EnemyTarget eid)
+    let permitted = inPlay g (EnemyTarget eid) && pid `elem` remaining
+          && not (any (`elem` mods) [CannotAttack, CannotAttackPlayer pid, ConsideredOutOfPlay])
+    runQueueT do
+      when permitted $ immediateAttack pid eid
+      push $ EnemyAttacksPlayers eid rest (made || permitted) fallback
+    pure g
   EnemyAttack pid eid -> do
     windows <- actionWindows
     pushAll

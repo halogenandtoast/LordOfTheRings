@@ -1,5 +1,7 @@
 {
   "annuminas": {
+    "healCharacter": "Choose a character you control to heal 1 damage",
+    "highestAttack": "Choose a staged enemy with the highest attack",
     "chooseStage": "Choose a stage",
     "resourceHero": "Choose a hero to gain 1 resource",
     "lieutenantStage": "Move Lieutenant of Angmar to a staging area with the lowest total threat",

@@ -734,6 +734,7 @@ data Message
   | DealShadowCards
   | DealShadowCard EnemyId
   | AttachShadowCard EnemyId EncounterCard
+  | EnemyAttacksPlayers EnemyId [PlayerId] Bool [Message]
   | EnemyAttacks PlayerId
   | EnemyAttack PlayerId EnemyId
   | DefendWith PlayerId EnemyId Target

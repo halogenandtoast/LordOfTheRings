@@ -92,7 +92,7 @@ chooseAnnuminasStage rebuild pid source effect = do
   chooseOneRebuildingM pid rebuild do
     questionLabeled "annuminas.chooseStage"
     causedBy source
-    for_ stages $ \(ordinal, name, stage) -> when (notNull stage.epicStageQuests) $
+    for_ stages $ \(ordinal, name, stage) -> when (notNull stage.epicStageQuests && (effect /= EpicHealControlledCharacter || stage.epicStageHealingAvailable)) $
       if ordinal == own
         then labeled "epic.thisGroup" $ push $ ResolveEpicEffect (toCardCode source) effect ScenarioTarget
         else labeledWith "epic.group" [textVar "group" name] $ push $ QueueEpicCommand ordinal (toCardCode source) effect ScenarioTarget

@@ -166,13 +166,13 @@ instance FromJSON EpicReplica where
 
 -- Only explicitly cross-group effects use these public targets. Ordinary cards
 -- and their matchers continue to see only their own group (Dreadnaught rules).
-data EpicTargetQuery = EpicEnemy | EpicLocation | EpicShip | EpicEngagedNonUniqueEnemy | EpicWarshipGroup
+data EpicTargetQuery = EpicEnemy | EpicLocation | EpicShip | EpicEngagedNonUniqueEnemy | EpicWarshipGroup | EpicHealingGroup
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
 data EpicEffect = EpicDamage Int | EpicProgress Int | EpicUpgradeShip | EpicShuffleWarship | EpicDiscardUntilEnemy
   | EpicDiscardCaptive | EpicRescueCaptives
-  | EpicGrantDunedain | EpicDelayStaging | EpicGrantHeroResources
+  | EpicGrantDunedain | EpicDelayStaging | EpicGrantHeroResources | EpicHealControlledCharacter
   | EpicReceiveEnemy EpicEnemyTransfer EpicEnemyArrival
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
@@ -229,9 +229,13 @@ data EpicStage = EpicStage
   { epicStageThreat :: Int
   , epicStageQuests :: [EpicQuest]
   , epicStageVictoryCards :: [CardCode]
+  , epicStageHealingAvailable :: Bool
   }
   deriving stock (Show, Eq, Generic)
-  deriving anyclass (ToJSON, FromJSON)
+  deriving anyclass (ToJSON)
+
+instance FromJSON EpicStage where
+  parseJSON = genericParseJSON defaultOptions . withDefaults [("epicStageHealingAvailable", Bool False)]
 
 data EpicQuest = EpicQuest
   { epicQuestCard :: CardCode

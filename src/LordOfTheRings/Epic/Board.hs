@@ -7,6 +7,10 @@ import LordOfTheRings.Classes.Entity (toAttrs)
 import LordOfTheRings.Classes.HasGame (runReadGame)
 import LordOfTheRings.Epic.Types
 import LordOfTheRings.Game.Base
+import LordOfTheRings.Helpers.Healing (healableCharacters)
+import LordOfTheRings.Source (Source (CardCodeSource))
+import LordOfTheRings.Quest.CardDefs qualified as Quests
+import LordOfTheRings.Matcher.Types (HeroMatcher (HeroControlledBy), AllyMatcher (AllyControlledBy), PlayerMatcher (AnyPlayer))
 import LordOfTheRings.Helpers.Staging (getStagingThreat)
 import LordOfTheRings.Matcher (getMainQuestCards)
 import LordOfTheRings.Matcher.Types (CardMatcher (CardWithTrait), cardMatches)
@@ -34,6 +38,7 @@ epicBoardFor ordinal name g
     | q <- runReadGame getMainQuestCards g
     ]
     (map toCardCode $ scenarioVictoryDisplay $ toAttrs g.scenario)
+    (runReadGame (notNull <$> healableCharacters (CardCodeSource $ toCardCode Quests.defendTheCityAnnuminas) (HeroControlledBy AnyPlayer) (AllyControlledBy AnyPlayer)) g)
   asTarget target kind engaged damage exhausted upgradeable card =
     EpicTarget
       target

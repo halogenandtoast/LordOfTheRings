@@ -25,7 +25,8 @@ import LordOfTheRings.Outcome (Outcome (Lost))
 import LordOfTheRings.Prelude
 import LordOfTheRings.Placement (Placement (StagingArea))
 import LordOfTheRings.Helpers.Modifiers (resourcesBarredFrom)
-import LordOfTheRings.Matcher (getLead, select, HeroMatcher (HeroControlledBy), PlayerMatcher (PlayerWithId))
+import LordOfTheRings.Helpers.Healing (healableCharacters)
+import LordOfTheRings.Matcher (getLead, select, HeroMatcher (HeroControlledBy), AllyMatcher (AllyControlledBy), PlayerMatcher (PlayerWithId))
 import LordOfTheRings.Scenario.Types (ScenarioAttrs (scenarioEpic, scenarioSetAside))
 import LordOfTheRings.Source (Source (CardCodeSource))
 import LordOfTheRings.Target
@@ -91,8 +92,8 @@ runEpicMessage msg g = case msg of
           | otherwise = push $ QueueEpicCommand board.epicBoardGroup code effect target
     runQueueT $ chooseOneRebuildingM pid msg do
       questionLabeled "epic.chooseTarget"
-      if query == EpicWarshipGroup
-        then for_ (filter epicBoardHasWarship boards) \board ->
+      if query `elem` [EpicWarshipGroup, EpicHealingGroup]
+        then for_ (filter (\board -> if query == EpicWarshipGroup then board.epicBoardHasWarship else maybe False (\stage -> stage.epicStageHealingAvailable && notNull stage.epicStageQuests) board.epicBoardStage) boards) \board ->
           if board.epicBoardGroup == own
             then labeled "epic.thisGroup" $ resolve board ScenarioTarget
             else labeledWith "epic.group" [textVar "group" board.epicBoardName] $ resolve board ScenarioTarget
@@ -114,6 +115,11 @@ runEpicMessage msg g = case msg of
             discardCount = maybe (length deck) (+ 1) $ findIndex enemyCard deck
         discardTopOfEncounterDeckFor source ScenarioTarget discardCount
         for_ (find enemyCard deck) addToStagingFromDiscard
+      EpicHealControlledCharacter -> eachPlayer $ \pid -> do
+        characters <- healableCharacters source (HeroControlledBy $ PlayerWithId pid) (AllyControlledBy $ PlayerWithId pid)
+        chooseOrRunOneM pid do
+          questionLabeled "annuminas.healCharacter"
+          targets characters $ \character -> healDamage source character 1
       EpicGrantHeroResources -> eachPlayer $ \pid -> do
         heroes <- filterM (fmap not . resourcesBarredFrom source) =<< select (HeroControlledBy $ PlayerWithId pid)
         chooseOrRunOneM pid do

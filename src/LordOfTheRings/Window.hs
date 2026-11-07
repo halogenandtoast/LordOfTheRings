@@ -23,6 +23,7 @@ data WindowType
   = EntersPlay Target
   | PhaseBegins Phase
   | CommittedToQuest Target
+  | AllPlayersCommittedToQuest
   | EnemyEngaged EnemyId PlayerId
   | -- | the player engaged the enemy in the optional engagement step
     OptionallyEngaged EnemyId PlayerId
