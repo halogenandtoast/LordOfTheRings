@@ -125,7 +125,7 @@ data Area = Area
   -- ^ its quest card defeated, its players join another area at the beginning of the
   -- travel phase
   , areaInFocus :: Bool
-  -- ^ shared, the area whose stage is the game's
+  -- ^ the shared stage in focus, or an empty isolated stage temporarily in focus
   }
   deriving stock (Show, Generic)
 
@@ -175,6 +175,7 @@ instance ToJSON Area where
 isFocusedArea :: Game -> Area -> Bool
 isFocusedArea g a = case gameSeparation g of
   Just s | separationShared s -> areaInFocus a
+  _ | null (areaPlayers a) -> areaInFocus a && null (gamePlayers g)
   _ -> any (`Map.member` gamePlayers g) (areaPlayers a)
 
 -- | Whether the players are separated into areas of their own, apart from each other.
@@ -260,15 +261,38 @@ focusArea pid g = case gameSeparation g of
                   , gameSeparation = Just s {separationAreas = map hold (separationAreas s)}
                   }
           _ -> g
+  _ -> focusIsolatedArea (elem pid . areaPlayers) g
+
+-- | Bring an isolated stage into focus for a rule effect, even with nobody at it.
+focusQuestArea :: QuestId -> Game -> Game
+focusQuestArea qid = focusIsolatedArea (Map.member qid . entitiesQuests . areaHeldEntities)
+
+-- | Select an isolated area by what it holds. Shared staging areas keep their own
+-- focus machinery: their players and player cards never leave the current game.
+focusIsolatedArea :: (Area -> Bool) -> Game -> Game
+focusIsolatedArea matches g = case gameSeparation g of
   Just s
-    | not (Map.member pid (gamePlayers g))
-    , Just t <- find (elem pid . areaPlayers) (separationAreas s) ->
+    | not (separationShared s)
+    , Just (selected, t) <- find (matches . snd) (zip [0 :: Int ..] $ separationAreas s)
+    , not (isFocusedArea g t) ->
         let es = gameEntities g
             -- a quest card in each staging area comes along into focus
             shared = Map.filter inEachStagingArea (entitiesQuests es)
-            hold a
-              | isFocusedArea g a = a {areaHeldPlayers = gamePlayers g, areaHeldEntities = es {entitiesQuests = Map.difference (entitiesQuests es) shared}, areaHeldEffects = gameEffects g, areaHeldModifiers = gameModifiers g}
-              | elem pid (areaPlayers a) = a {areaHeldPlayers = mempty, areaHeldEntities = mempty, areaHeldEffects = [], areaHeldModifiers = mempty}
+            hold index a
+              | isFocusedArea g a = a
+                  { areaHeldPlayers = gamePlayers g
+                  , areaHeldEntities = es {entitiesQuests = Map.difference (entitiesQuests es) shared}
+                  , areaHeldEffects = gameEffects g
+                  , areaHeldModifiers = gameModifiers g
+                  , areaInFocus = False
+                  }
+              | index == selected = a
+                  { areaHeldPlayers = mempty
+                  , areaHeldEntities = mempty
+                  , areaHeldEffects = []
+                  , areaHeldModifiers = mempty
+                  , areaInFocus = True
+                  }
               | otherwise = a
          in g
               { gamePlayers = areaHeldPlayers t
@@ -276,7 +300,7 @@ focusArea pid g = case gameSeparation g of
               , gameEffects = areaHeldEffects t
               , gameModifiers = areaHeldModifiers t
               , gameFirstPlayer = areaLead g s t
-              , gameSeparation = Just s {separationAreas = map hold (separationAreas s)}
+              , gameSeparation = Just s {separationAreas = zipWith hold [0 ..] (separationAreas s)}
               }
   _ -> g
 

@@ -206,6 +206,7 @@ import LordOfTheRings.Game.Base (
   entitiesL,
   firstPlayerL,
   focusArea,
+  focusQuestArea,
   fortitudeTestsL,
   isFocusedArea,
   isolated,
@@ -568,6 +569,7 @@ import LordOfTheRings.Message (
     Flip,
     FlipKeepingProgress,
     FocusArea,
+    FocusQuestArea,
     FinishAttachmentAbility,
     ForgetLeftPlay,
     GameOver,
@@ -1422,6 +1424,7 @@ runGameMessage msg g = case msg of
   SeparatePlayer pid -> pure $ separatePlayer pid g
   SeparateStagingAreas groups -> pure $ separateStages groups g
   FocusArea pid -> pure $ focusArea pid g
+  FocusQuestArea qid -> pure $ focusQuestArea qid g
   -- while the players are separated, a card sent to another area's staging area leaves
   -- its own, what is attached to it going with it; sharing the game, one may come from
   -- any area's stage, or from a player's

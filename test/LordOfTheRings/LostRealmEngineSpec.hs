@@ -203,6 +203,99 @@ spec = describe "The Lost Realm engine" do
       run $ FocusArea one
       getsGame (keys . (.players)) `shouldReturn` [one]
 
+  describe "Resolving rules at an empty quest stage" do
+    it "changes the empty stage without changing the player's private stage" . gameTest $ \pid -> do
+      home@(QuestTarget qid) <- putQuestStage Quests.fliesAndSpiders
+      run $ SeparatePlayer pid
+      away <- putQuestStage Quests.fliesAndSpiders
+      run $ PlaceTokens GameSource away Progress 1
+      run $ FocusQuestArea qid
+      getCurrentQuest `shouldReturn` Just home
+      getsGame (null . (.players)) `shouldReturn` True
+      getsGame (null . (.entities.heroes)) `shouldReturn` True
+      run $ PlaceTokens GameSource home Progress 2
+      run $ FocusArea pid
+      getCurrentQuest `shouldReturn` Just away
+      progressOn away `shouldReturn` 1
+      getsGame (length . (.entities.heroes)) `shouldReturn` 3
+      run $ JoinQuestArea pid qid
+      getCurrentQuest `shouldReturn` Just home
+      progressOn home `shouldReturn` 2
+      getsGame (isNothing . gameSeparation) `shouldReturn` True
+
+    it "moves an empty stage's location to the victory display without eliminating players" . gameTest $ \pid -> do
+      QuestTarget qid <- putQuestStage Quests.fliesAndSpiders
+      run . AddToStaging =<< genEncounterCard Locations.hollowCircle
+      lid <- getsGame (toId . headEx . toList . (.entities.locations))
+      run $ SeparatePlayer pid
+      away <- putQuestStage Quests.fliesAndSpiders
+      run $ FocusQuestArea qid
+      run $ AddToVictoryDisplay (LocationTarget lid)
+      victoryDisplay `shouldReturn` [toCardCode Locations.hollowCircle]
+      getsGame (.outcome) `shouldReturn` Nothing
+      run $ FocusArea pid
+      getCurrentQuest `shouldReturn` Just away
+      getsGame (length . (.players)) `shouldReturn` 1
+
+    it "does not repeat entry effects while focusing an empty stage" . gameTest $ \pid -> do
+      QuestTarget qid <- putQuestStage Quests.fliesAndSpiders
+      run . AddToStaging =<< genEncounterCard Locations.ravenChiefsCamp
+      lid <- getsGame (toId . headEx . toList . (.entities.locations))
+      run $ RemoveTokens GameSource (LocationTarget lid) TimeCounter 1
+      run $ SeparatePlayer pid
+      _ <- putQuestStage Quests.fliesAndSpiders
+      run $ FocusQuestArea qid
+      getTimeCounters (LocationTarget lid) `shouldReturn` 2
+      getsGame (Map.member lid . gameLeftPlayLocations) `shouldReturn` False
+      run $ FocusArea pid
+      run $ FocusQuestArea qid
+      getTimeCounters (LocationTarget lid) `shouldReturn` 2
+
+    it "restores an empty stage in focus from a saved game and can return its player directly" . gameTest $ \pid -> do
+      home@(QuestTarget qid) <- putQuestStage Quests.fliesAndSpiders
+      run $ SeparatePlayer pid
+      _ <- putQuestStage Quests.fliesAndSpiders
+      run $ FocusQuestArea qid
+      current <- getGame
+      case eitherDecode (encode current) of
+        Left err -> liftIO $ expectationFailure err
+        Right restored -> putGame restored
+      restored <- getGame
+      let separation = fromJustNote "no separation" $ gameSeparation restored
+      map areaPlayers (filter (isFocusedArea restored) $ separationAreas separation) `shouldBe` [[]]
+      let publicAreas = parseMaybe (withObject "game" (.: "areas")) (publicGame restored) :: Maybe [Value]
+          readAreas = traverse (withObject "area" $ \o -> (,) <$> o .: "players" <*> o .: "focused")
+          parsedAreas = publicAreas >>= parseMaybe readAreas :: Maybe [([PlayerId], Bool)]
+      parsedAreas `shouldBe` Just [([pid], False), ([], True)]
+      let (following, _) = eachAreaThen (const [Run []]) id (Run []) restored
+      following `shouldBe` Run [FocusArea pid, Run []]
+      getCurrentQuest `shouldReturn` Just home
+      run $ JoinQuestArea pid qid
+      getCurrentQuest `shouldReturn` Just home
+      getsGame (length . (.entities.heroes)) `shouldReturn` 3
+      getsGame (isNothing . gameSeparation) `shouldReturn` True
+
+    it "preserves two other private stages while visiting the empty home stage" . twoPlayerTest testDeck $ \one two -> do
+      home@(QuestTarget qid) <- putQuestStage Quests.fliesAndSpiders
+      run $ SeparatePlayer two
+      awayTwo <- putQuestStage Quests.fliesAndSpiders
+      run $ FocusArea one
+      run $ SeparatePlayer one
+      awayOne <- putQuestStage Quests.fliesAndSpiders
+      run $ FocusQuestArea qid
+      getCurrentQuest `shouldReturn` Just home
+      run $ PlaceTokens GameSource home Progress 3
+      run $ FocusArea two
+      getCurrentQuest `shouldReturn` Just awayTwo
+      run $ FocusArea one
+      getCurrentQuest `shouldReturn` Just awayOne
+      run $ FocusQuestArea qid
+      progressOn home `shouldReturn` 3
+      current <- getGame
+      let separation = fromJustNote "no separation" $ gameSeparation current
+      length (filter (isFocusedArea current) $ separationAreas separation) `shouldBe` 1
+      map areaPlayers (areasInTurnOrder current separation) `shouldBe` [[one], [two]]
+
   describe "Returning to a quest's staging area" do
     it "returns to an empty solo stage and keeps its quest progress" . gameTest $ \pid -> do
       home@(QuestTarget qid) <- putQuestStage Quests.fliesAndSpiders

@@ -90,6 +90,7 @@ import LordOfTheRings.Message (
     EngageEnemy,
     Flip,
     FocusArea,
+    FocusQuestArea,
     JoinArea,
     JoinQuestArea,
     LeavePlay,
@@ -589,6 +590,7 @@ runInPlay msg g =
           enteredSideQuest q = isSideQuest q && not (Map.member (toId q) g.entities.quests)
           movingAreas = case msg of
             FocusArea _ -> True
+            FocusQuestArea _ -> True
             JoinArea {} -> True
             JoinQuestArea {} -> True
             SeparatePlayers _ -> True

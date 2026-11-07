@@ -2361,6 +2361,10 @@ separateStagingAreas = push . SeparateStagingAreas
 focusAreaOf :: ReverseQueue m => PlayerId -> m ()
 focusAreaOf = push . FocusArea
 
+-- | Resolve a rule effect at an isolated quest stage, even if it has no players.
+focusQuestArea :: ReverseQueue m => QuestId -> m ()
+focusQuestArea = push . FocusQuestArea
+
 -- | The players of the area in focus join another area at the beginning of the travel phase.
 joinAnotherPlayer :: ReverseQueue m => m ()
 joinAnotherPlayer = push JoinAtTravel
