@@ -1,4 +1,14 @@
 {
+  "annuminas": {
+    "warg": "Remove progress or exhaust a character you control",
+    "wargRider": "Remove progress or resolve an immediate attack",
+    "orc": "Remove progress or give Orc of Angmar +2 defense",
+    "host": "Remove progress or return Host of Angmar to staging",
+    "removeProgress": "Remove {count} progress from the main quest",
+    "immediateAttack": "Resolve an immediate attack",
+    "defenseTwo": "Orc of Angmar gets +2 defense until the end of the phase",
+    "returnToStaging": "Return Host of Angmar to the staging area"
+  },
   "prancingPony": {
     "footpad": "Greenway Footpad: choose an effect",
     "raiseEachThreat2": "Each player raises their threat by 2",

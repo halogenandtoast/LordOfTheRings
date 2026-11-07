@@ -14,7 +14,7 @@ allEnemyCards =
   Map.fromList $
     map
       (\def -> (cdCardCode def, def))
-      [billFernyMurder, breeLandInformant, toddTheTroll, susieTheSpider, wolfPeltJake, johnnyGoblinFingers, oldOrcEyes, lawlessRuffian, greenwayFootpad, chetwoodOutlaw, barrowWight, coldWight, darkWight, naurlhug, orcOfEredLuin, blueMountainGoblin, lurkerOfTheDepths, namelessCaveDweller, oldStoneTroll, oldManWillow, longTrailer, graspingRoot, armyOfFlies, theLordOfTheDeadErech, shadowMan, restlessDead, whisperer, regretfulShade, shadowHostCaptain, smaugTheMightyLakeTown, smaugTheTerrible, smaugTheMagnificentLakeTown, snagaScouts, theWitchKingOsgiliath, wolvesFromMordor, wainriders, wainriderCaptain, urukVanguard, dreadnaught, dreadnaughtDamaged, captainOfTheHaven, commanderOfTheDreadnaught, descendantOfCastamir, hydraken, ophidian, varjax, brashCorsairDreadnaught, corsairPlunderer, daringBuccaneer, fierceMarauder, southronSailorDreadnaught, umbarCaptainDreadnaught, blackSailsDreadnaught, corsairSkiffDreadnaught, corsairSkirmisherDreadnaught, corsairWarshipDreadnaught, rammingShipDreadnaught, slaveShipDreadnaught, warGalley, seaMonster,  stalkingGoblin
+      [hostOfAngmar, wargOfCarnDum, orcOfAngmar, angmarWargRider, savageWerewolf, vanguardOfCarnDum, billFernyMurder, breeLandInformant, toddTheTroll, susieTheSpider, wolfPeltJake, johnnyGoblinFingers, oldOrcEyes, lawlessRuffian, greenwayFootpad, chetwoodOutlaw, barrowWight, coldWight, darkWight, naurlhug, orcOfEredLuin, blueMountainGoblin, lurkerOfTheDepths, namelessCaveDweller, oldStoneTroll, oldManWillow, longTrailer, graspingRoot, armyOfFlies, theLordOfTheDeadErech, shadowMan, restlessDead, whisperer, regretfulShade, shadowHostCaptain, smaugTheMightyLakeTown, smaugTheTerrible, smaugTheMagnificentLakeTown, snagaScouts, theWitchKingOsgiliath, wolvesFromMordor, wainriders, wainriderCaptain, urukVanguard, dreadnaught, dreadnaughtDamaged, captainOfTheHaven, commanderOfTheDreadnaught, descendantOfCastamir, hydraken, ophidian, varjax, brashCorsairDreadnaught, corsairPlunderer, daringBuccaneer, fierceMarauder, southronSailorDreadnaught, umbarCaptainDreadnaught, blackSailsDreadnaught, corsairSkiffDreadnaught, corsairSkirmisherDreadnaught, corsairWarshipDreadnaught, rammingShipDreadnaught, slaveShipDreadnaught, warGalley, seaMonster,  stalkingGoblin
       , spidersOfMirkwoodDarkOfMirkwood
       , goblinSniperDarkOfMirkwood
       , goblinRunnersDarkOfMirkwood
@@ -5938,3 +5938,18 @@ billFernyMurder = (unique (enemy "murder-at-the-prancing-pony-021" "Bill Ferny" 
 breeLandInformant :: CardDef
 breeLandInformant = (enemy "murder-at-the-prancing-pony-022" "Bree-land Informant" MurderAtThePrancingPony 2 30 3 2 1 3)
   { cdCardTraits = setFromList [Bree] }
+
+
+hostOfAngmar, wargOfCarnDum, orcOfAngmar, angmarWargRider, savageWerewolf, vanguardOfCarnDum :: CardDef
+hostOfAngmar = (enemy "the-siege-of-annuminas-017" "Host of Angmar" TheSiegeOfAnnuminas 3 50 4 9 4 12)
+  { cdCardTraits = setFromList [Orc], cdKeywords = setFromList [Archery 2], cdVictoryPoints = Just 4 }
+wargOfCarnDum = (enemy "the-siege-of-annuminas-024" "Warg of Carn Dûm" TheSiegeOfAnnuminas 3 20 1 2 1 2)
+  { cdCardTraits = setFromList [Creature], cdKeywords = setFromList [Surge] }
+orcOfAngmar = (enemy "the-siege-of-annuminas-025" "Orc of Angmar" TheSiegeOfAnnuminas 3 30 2 4 2 3)
+  { cdCardTraits = setFromList [Orc], cdKeywords = setFromList [Archery 1], cdShadowEffect = True }
+angmarWargRider = (enemy "the-siege-of-annuminas-026" "Angmar Warg-rider" TheSiegeOfAnnuminas 3 35 2 3 2 4)
+  { cdCardTraits = setFromList [Orc], cdKeywords = setFromList [Archery 1], cdShadowEffect = True }
+savageWerewolf = (enemy "the-siege-of-annuminas-027" "Savage Werewolf" TheSiegeOfAnnuminas 2 40 3 5 2 5)
+  { cdCardTraits = setFromList [Creature], cdShadowEffect = True }
+vanguardOfCarnDum = (enemy "the-siege-of-annuminas-028" "Vanguard of Carn Dûm" TheSiegeOfAnnuminas 2 45 3 6 3 8)
+  { cdCardTraits = setFromList [Orc], cdShadowEffect = True }

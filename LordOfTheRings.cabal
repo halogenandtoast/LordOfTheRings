@@ -691,6 +691,7 @@ library
       LordOfTheRings.Enemy.Cards.AngmarOrc
       LordOfTheRings.Enemy.Cards.AngmarRaider
       LordOfTheRings.Enemy.Cards.AngryHuorn
+      LordOfTheRings.Enemy.Cards.AnnuminasInvaders
       LordOfTheRings.Enemy.Cards.ApostateOfAngmar
       LordOfTheRings.Enemy.Cards.ArmyOfFlies
       LordOfTheRings.Enemy.Cards.ArmyOfTheDead
@@ -4458,6 +4459,7 @@ test-suite LordOfTheRings-test
       LordOfTheRings.ShadowsOfMirkwood.TheDeadMarshesSpec
       LordOfTheRings.ShadowsOfMirkwood.TheHillsOfEmynMuilSpec
       LordOfTheRings.ShadowsOfMirkwood.TheHuntForGollumSpec
+      LordOfTheRings.Standalone.AnnuminasInvadersSpec
       LordOfTheRings.Standalone.BattleOfLakeTownSpec
       LordOfTheRings.Standalone.BelegostSpec
       LordOfTheRings.Standalone.FogBarrowsSpec

@@ -43,6 +43,7 @@ def icon(match):
 
 
 def normalize_text(value):
+    value = value.replace('Carn D–m', 'Carn Dûm').replace('Orque', 'Orc')
     value = value.replace('Randomly select 1 of the 5 remaining UNRECOGNIZED TYPE: trait-searchkeyword', 'Randomly select 1 of the 5 remaining Loot objectives and place it facedown under Stalking the Ruins (without looking). Shuffle the others into the encounter deck (without looking at them).')
     value = value.replace('Book of Aul‰', 'Book of Aulë').replace('advace to stage', 'advance to stage')
     value = value.replace('the fist player claims', 'the first player claims')
@@ -68,7 +69,7 @@ def number(value):
 
 def printed_keywords(text):
     keywords = []
-    pattern = r'^(Surge|Doomed \d+|Burn \d+|Spectral|Guarded|Indestructible|Battle|Siege|Archery \d+|Time \d+|Loot|Restricted|Discover \d+)\.\s*'
+    pattern = r'^(Surge|Ranged|Sentinel|Doomed \d+|Burn \d+|Spectral|Guarded|Indestructible|Battle|Siege|Archery \d+|Time \d+|Loot|Restricted|Discover \d+)\.\s*'
     while match := re.match(pattern, text, re.I):
         keywords.append(match[1])
         text = text[match.end():]
