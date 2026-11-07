@@ -53,7 +53,7 @@ setEpicRoundPhase phase g = g & scenarioL %~ overAttrs (\a -> a
 
 isEpicQuestAdvanceAuthorized :: Game -> QuestId -> Bool
 isEpicQuestAdvanceAuthorized g qid = epicRoundPhaseOf g == Just EpicRoundPreparingAdvance
-  && fmap fst g.epicQuestAdvance == Just qid
+  && fmap fst (gameEpicQuestAdvance g) == Just qid
 
 presentEpicTarget :: Game -> Target -> Bool
 presentEpicTarget g (PlayerTarget pid) = maybe False (not . (.eliminated)) $ Map.lookup pid g.players
@@ -131,13 +131,13 @@ runEpicMessage msg g = case msg of
           & resolvingQuestsL %~ Map.insert oldId old
   MarkEpicQuestPrepared
     | epicRoundPhaseOf g == Just EpicRoundPreparingAdvance
-    , Just (_, card) <- g.epicQuestAdvance
+    , Just (_, card) <- (gameEpicQuestAdvance g)
     , any ((== card.id) . (.cardId) . toAttrs) g.entities.quests -> do
         push AwaitEpicRound
         pure $ setEpicRoundPhase EpicRoundPrepared g
   RevealEpicQuestAdvance
     | epicRoundPhaseOf g == Just EpicRoundPrepared
-    , Just (_, card) <- g.epicQuestAdvance -> do
+    , Just (_, card) <- (gameEpicQuestAdvance g) -> do
         runQueueT do
           push $ Flip $ CardIdTarget card.id
           push $ CheckWindows [mkAfter AdvancedToStage]

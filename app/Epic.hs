@@ -184,8 +184,8 @@ coordinateEpicRound games
             let nextQuest snapshot = headMay $ scenarioQuestDeck $ toAttrs snapshot.epicGameState.scenario
             case traverse nextQuest games of
               Nothing -> liftIO $ throwIO $ userError "Annúminas final quest is missing"
-              Just chosen -> Just <$> zipWithM (\snapshot card ->
-                runLocalMessages [PrepareEpicQuestAdvance EpicDefeatQuest card] snapshot) games chosen
+              Just chosen -> Just <$> traverse (\(snapshot, card) ->
+                runLocalMessages [PrepareEpicQuestAdvance EpicDefeatQuest card] snapshot) (zip games chosen)
         | otherwise -> Just <$> traverse (runLocalMessages [ReleaseEpicRoundBeginning]) games
       Nothing -> pure Nothing
  where
