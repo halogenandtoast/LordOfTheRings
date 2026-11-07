@@ -14,7 +14,7 @@ allTreacheryCards =
   Map.fromList $
     map
       (\def -> (cdCardCode def, def))
-      [takenBySurprise, hiredMuscle, smokeAndMirrors, risingBodyCount, deadlyAccusations, chillFog, imWaitingForYou, longGropingArm, frozenByFear, dreadfulSong, echoesInTheDark, spawnOfThangorodrim, concealedSpikes, coveredPit, swayingWithoutWind, fallingBranches, songOfSleep, lostAndWitless, endingAndFailing, midnightThrong, murmursOfDread, gropingHorror, drivenByFear, theDeadRideBehind, theGloaming, townBaiting, direMagnificence, catchingFire, recklessInHisRage, closeToTheFlame, scorchingBlast, cutOffOsgiliath, darkPursuit, massingAtOsgiliath, ballistaBarrage, boardingPartyDreadnaught, grappledDreadnaught, outOfTheMist, overworked, takingOnWaterDreadnaught, violentTempest,  shinyDistraction
+      [theHordesOfAngmar, sorceryOfCarnDum, caughtInThePress, wearyWarriors, takenBySurprise, hiredMuscle, smokeAndMirrors, risingBodyCount, deadlyAccusations, chillFog, imWaitingForYou, longGropingArm, frozenByFear, dreadfulSong, echoesInTheDark, spawnOfThangorodrim, concealedSpikes, coveredPit, swayingWithoutWind, fallingBranches, songOfSleep, lostAndWitless, endingAndFailing, midnightThrong, murmursOfDread, gropingHorror, drivenByFear, theDeadRideBehind, theGloaming, townBaiting, direMagnificence, catchingFire, recklessInHisRage, closeToTheFlame, scorchingBlast, cutOffOsgiliath, darkPursuit, massingAtOsgiliath, ballistaBarrage, boardingPartyDreadnaught, grappledDreadnaught, outOfTheMist, overworked, takingOnWaterDreadnaught, violentTempest,  shinyDistraction
       , guiltyConscience
       , drivenByShadowDarkOfMirkwood
       , surprisingSpeedDarkOfMirkwood
@@ -4036,3 +4036,14 @@ risingBodyCount = (treachery "murder-at-the-prancing-pony-028" "Rising Body Coun
 deadlyAccusations :: CardDef
 deadlyAccusations = (treachery "murder-at-the-prancing-pony-029" "Deadly Accusations" MurderAtThePrancingPony 2)
   { cdWhenRevealed = True, cdShadowEffect = True, cdEasyModeQuantity = Just 1 }
+
+
+theHordesOfAngmar, sorceryOfCarnDum, caughtInThePress, wearyWarriors :: CardDef
+theHordesOfAngmar = (treachery "the-siege-of-annuminas-029" "The Hordes of Angmar" TheSiegeOfAnnuminas 2)
+  { cdWhenRevealed = True, cdShadowEffect = True }
+sorceryOfCarnDum = (treachery "the-siege-of-annuminas-030" "Sorcery of Carn Dûm" TheSiegeOfAnnuminas 2)
+  { cdKeywords = setFromList [Doomed 1], cdWhenRevealed = True, cdShadowEffect = True }
+caughtInThePress = (treachery "the-siege-of-annuminas-031" "Caught in the Press" TheSiegeOfAnnuminas 3)
+  { cdWhenRevealed = True, cdShadowEffect = True }
+wearyWarriors = (treachery "the-siege-of-annuminas-032" "Weary Warriors" TheSiegeOfAnnuminas 3)
+  { cdWhenRevealed = True, cdShadowEffect = True }

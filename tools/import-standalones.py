@@ -125,6 +125,8 @@ def import_page(link, old, local):
         return '\n'.join(clean(p, rich=True) for p in re.findall(r'<p class=[\'"]' + kind + r'[\'"]>(.*?)</p>', block, re.S)) or None
 
     texts = [paragraphs(block, 'main-text') for block in blocks]
+    if code == 'the-siege-of-annuminas-031' and texts and texts[0] and not texts[0].startswith('<b>When Revealed:'):
+        texts[0] = '<b>When Revealed:</b> ' + texts[0]
     shadow = next((paragraphs(block, 'shadow-text') for block in blocks if paragraphs(block, 'shadow-text')), None)
     main_text = ''.join(re.findall(r"<p class=['\"]main-text['\"]>(.*?)</p>", blocks[0], re.S)) if blocks else ''
     # Only unconditional printed keywords belong in this field. A keyword

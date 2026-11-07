@@ -3454,6 +3454,7 @@ library
       LordOfTheRings.Treachery.Cards.AncientDepths
       LordOfTheRings.Treachery.Cards.AnEvilFortune
       LordOfTheRings.Treachery.Cards.ANicePickle
+      LordOfTheRings.Treachery.Cards.AnnuminasTreacheries
       LordOfTheRings.Treachery.Cards.AradorsBane
       LordOfTheRings.Treachery.Cards.ArrowsInTheNight
       LordOfTheRings.Treachery.Cards.ArrowsThickInTheAir
@@ -4460,6 +4461,7 @@ test-suite LordOfTheRings-test
       LordOfTheRings.ShadowsOfMirkwood.TheHillsOfEmynMuilSpec
       LordOfTheRings.ShadowsOfMirkwood.TheHuntForGollumSpec
       LordOfTheRings.Standalone.AnnuminasInvadersSpec
+      LordOfTheRings.Standalone.AnnuminasTreacheriesSpec
       LordOfTheRings.Standalone.BattleOfLakeTownSpec
       LordOfTheRings.Standalone.BelegostSpec
       LordOfTheRings.Standalone.FogBarrowsSpec

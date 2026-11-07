@@ -1,4 +1,4 @@
-module LordOfTheRings.Standalone.AnnuminasInvadersSpec (spec) where
+module LordOfTheRings.Standalone.AnnuminasInvadersSpec (spec, mainStage) where
 
 import LordOfTheRings.Ally.CardDefs qualified as Allies
 import LordOfTheRings.Attachment.CardDefs qualified as Attachments
