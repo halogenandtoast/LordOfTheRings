@@ -4,6 +4,7 @@ module LordOfTheRings.Ally (module LordOfTheRings.Ally, module X) where
 
 import LordOfTheRings.Ally.Cards.TomBombadilOldForest (tomBombadilOldForest)
 import LordOfTheRings.Ally.Cards.DerufinErech (derufinErech)
+import LordOfTheRings.Ally.Cards.DunedainOfAnnuminas (dunedainOfAnnuminas)
 import LordOfTheRings.Ally.Cards.RangerOfIthilien (rangerOfIthilien)
 import Data.Map.Strict qualified as Map
 import LordOfTheRings.Card
@@ -362,7 +363,8 @@ allAllies =
   Map.fromList
     [ (toCardCode builder, card)
     | card@(SomeAllyCard builder) <-
-        [ SomeAllyCard (reprintAlly Objectives.tomBombadilFog tomBombadilOldForest)
+        [ SomeAllyCard dunedainOfAnnuminas
+        , SomeAllyCard (reprintAlly Objectives.tomBombadilFog tomBombadilOldForest)
         , SomeAllyCard tomBombadilOldForest
         , SomeAllyCard derufinErech
         , SomeAllyCard rangerOfIthilien

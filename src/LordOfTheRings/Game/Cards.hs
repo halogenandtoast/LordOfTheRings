@@ -393,7 +393,12 @@ discardFromPlay target g = case target of
       -- FAQ 1.23: a claimed objective is also an attachment. Loot has no
       -- return-to-staging replacement when discarded. Read its printed keyword
       -- here even if its hero just left and its constant modifiers are inactive.
-      Just o | LeavesPlayToEncounterDiscard `elem` mods || Loot `member` cdKeywords (toCardDef o) -> do
+      -- An unattached objective ally discarded before anybody controls it,
+      -- as Dúnedain of Annúminas instructs, goes to the encounter discard pile.
+      -- An attached objective still detaches into staging when its host leaves,
+      -- as Gríma does when The Islet leaves (FAQ 1.17).
+      Just o | LeavesPlayToEncounterDiscard `elem` mods || Loot `member` cdKeywords (toCardDef o)
+        || (cdCardType (toCardDef o) == ObjectiveAllyType && case o.placement of AttachedTo _ -> False; _ -> True) -> do
         push $ AddToEncounterDiscard [MkEncounterCard (objectiveCardId $ toAttrs o) (toCardCode o)]
         pure $ g & entitiesL . objectivesL %~ Map.delete oid
       Just o | LeavesPlayToTopOfSackDeck `elem` mods -> do

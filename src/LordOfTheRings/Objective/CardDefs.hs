@@ -16,7 +16,7 @@ allObjectiveCards =
   Map.fromList $
     map
       (\def -> (cdCardCode def, def))
-      [annuminas, tomBombadilFog, swordOfBelegost, mapOfEredLuin, keysOfBelegost, bookOfAulesChildren, dwarvenTorch, blueMountainGem, stalkingTheRuins, tomBombadilOldForest, derufin, relicFromTheDarkYears, eventide, dusk, midnight, theOldThrush, lakeTown, rangerOfIthilien, corsairSkirmisherShipDreadnaught, eithiliant, eithiliantUpgraded, goldenWing, goldenWingUpgraded, prideOfLebennin, prideOfLebenninUpgraded, silentMist, silentMistUpgraded, swanShipOfDolAmroth, swanShipOfDolAmrothUpgraded, twilightsCall, twilightsCallUpgraded, gondorianWarship,  caveTorchDarkOfMirkwood
+      [dunedainOfAnnuminas, annuminas, tomBombadilFog, swordOfBelegost, mapOfEredLuin, keysOfBelegost, bookOfAulesChildren, dwarvenTorch, blueMountainGem, stalkingTheRuins, tomBombadilOldForest, derufin, relicFromTheDarkYears, eventide, dusk, midnight, theOldThrush, lakeTown, rangerOfIthilien, corsairSkirmisherShipDreadnaught, eithiliant, eithiliantUpgraded, goldenWing, goldenWingUpgraded, prideOfLebennin, prideOfLebenninUpgraded, silentMist, silentMistUpgraded, swanShipOfDolAmroth, swanShipOfDolAmrothUpgraded, twilightsCall, twilightsCallUpgraded, gondorianWarship,  caveTorchDarkOfMirkwood
       , gandalfsMap
       , theThreatToWilderland
       , ashenBrazier
@@ -1708,3 +1708,12 @@ tomBombadilFog = (objective "fog-on-the-barrow-downs-019" "Tom Bombadil" FogOnTh
 annuminas :: CardDef
 annuminas = (objective "the-siege-of-annuminas-012" "Annúminas" TheSiegeOfAnnuminas 1)
   { cdUnique = True, cdCardTraits = setFromList [City] }
+
+dunedainOfAnnuminas :: CardDef
+dunedainOfAnnuminas = (objective "the-siege-of-annuminas-018" "Dúnedain of Annúminas" TheSiegeOfAnnuminas 3)
+  { cdCardType = ObjectiveAllyType
+  , cdCardTraits = setFromList [Dunedain]
+  , cdWillpower = Just 1, cdAttack = Just 2, cdDefense = Just 2, cdHitPoints = Just 3
+  , cdKeywords = setFromList [Surge, Ranged, Sentinel]
+  , cdWhenRevealed = True, cdShadowEffect = True
+  }

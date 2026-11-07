@@ -88,6 +88,7 @@ library
       LordOfTheRings.Ally.Cards.DreamChaser
       LordOfTheRings.Ally.Cards.DunedainHunter
       LordOfTheRings.Ally.Cards.DunedainLookout
+      LordOfTheRings.Ally.Cards.DunedainOfAnnuminas
       LordOfTheRings.Ally.Cards.DunedainPathfinder
       LordOfTheRings.Ally.Cards.DunedainWanderer
       LordOfTheRings.Ally.Cards.DunedainWatcher
@@ -2626,6 +2627,7 @@ library
       LordOfTheRings.Objective.Cards.DocksOfDolAmroth
       LordOfTheRings.Objective.Cards.DoomDoomDoom
       LordOfTheRings.Objective.Cards.DragonSign
+      LordOfTheRings.Objective.Cards.DunedainOfAnnuminas
       LordOfTheRings.Objective.Cards.DungeonTorch
       LordOfTheRings.Objective.Cards.DurinsAxe
       LordOfTheRings.Objective.Cards.DurinsGreaves
@@ -4466,6 +4468,7 @@ test-suite LordOfTheRings-test
       LordOfTheRings.ShadowsOfMirkwood.TheHuntForGollumSpec
       LordOfTheRings.Standalone.AnnuminasCitySpec
       LordOfTheRings.Standalone.AnnuminasDefensesSpec
+      LordOfTheRings.Standalone.AnnuminasDunedainSpec
       LordOfTheRings.Standalone.AnnuminasEpicSpec
       LordOfTheRings.Standalone.AnnuminasInvadersSpec
       LordOfTheRings.Standalone.AnnuminasLocationsSpec
