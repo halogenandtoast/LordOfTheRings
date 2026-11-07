@@ -500,6 +500,14 @@ export const toView = (data: GameData, defs: Record<string, CardDef>, previous: 
       powerOfMordorDeck: game.scenario.powerOfMordorDeckSize ?? 0,
       sackDeck: game.scenario.sackDeckSize ?? 0,
       burdenDeck: game.scenario.burdenDeckSize ?? 0,
+      investigation: game.investigation ? {
+        size: game.investigation.size,
+        clues: Object.entries(game.investigation.known).map(([pid, codes]) => ({
+          playerId: pid,
+          player: game.players[pid]?.name ?? pid,
+          cards: codes.map((code) => card(code, `clue-${pid}-${code}`)),
+        })),
+      } : null,
       evilCreaturesDiscard: (game.scenario.evilCreaturesDiscard ?? []).map((c) => card(c.cardCode, c.id)),
       campaignCard: game.campaignCard ? card(game.campaignCard.code, `campaign-${game.campaignCard.code}`, { flipped: game.campaignCard.flipped, resources: game.campaignCard.resources || null }) : null,
       stormcallerStage: game.stormcallerStage

@@ -1,4 +1,6 @@
 {
+  "investigationClues": "Remembered clues",
+  "investigationDeck": "Investigation",
   "round": "round {round}",
   "threat": "Threat {value}",
   "willpower": "Willpower {value}",

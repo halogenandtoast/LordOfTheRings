@@ -190,6 +190,7 @@ def ensure_product_assets(pack):
         'the-old-forest': ('MEC37', 'the_old_forest'),
         'the-ruins-of-belegost': ('OP014', 'the_ruins_of_belegost'),
         'fog-on-the-barrow-downs': ('MEC36', 'fog_on_the_barrow_downs'),
+        'murder-at-the-prancing-pony': ('OP015', 'murder_at_the_prancing_pony'),
     }
     if pack not in enabled:
         return

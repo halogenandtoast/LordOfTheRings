@@ -1,4 +1,18 @@
 {
+  "murder-at-the-prancing-pony": {
+    "intro": ["A murder at The Prancing Pony sends the heroes searching Bree for a killer and a secret hideout. Gather clues, make an accusation, and apprehend the suspects before the investigation costs you too much time."],
+    "setup": ["One random Suspect and one random Hideout are set aside facedown as the solution. The other four Suspects, four Hideouts, and each Taken by Surprise form the Investigation deck. The Prancing Pony begins as the active location and one Ramshackle Manor begins in staging."],
+    "rules": [
+      { "title": "The Investigation deck", "text": "Look at its cards only when Investigate or a card effect instructs you to. The remembered clues on the board keep track of cards you have seen without revealing another player's private information." },
+      { "title": "Investigate X", "text": "When an active location with Investigate X is explored, the first player shuffles the Investigation deck and looks at its top X cards, then returns them in the same order. At stage 2B, finish Investigate before resolving that stage's progress-triggered Forced effect. Ordinary card effects that look at the Investigation deck do not shuffle it unless instructed." },
+      { "title": "Making the accusation", "text": "To advance from stage 2, the first player names one Suspect and one Hideout. The actual solution is then added to staging. If either name is wrong, also add each named card still in the Investigation deck to staging and raise each player's threat by 3." },
+      { "title": "Suspects", "text": "Todd the Troll; Susie the Spider; Wolf-pelt Jake; Johnny Goblin-fingers; Old Orc-eyes." },
+      { "title": "Hideouts", "text": "Bill Ferny's House; Staddle Hiding Hole; Combe Storehouse; Archet Trading Post; Chetwood Campsite." },
+      { "title": "Immune to player card effects", "text": "Immune cards ignore player card effects and cannot be chosen as their targets. Hideout abilities printed for the victory display continue to apply after those locations are explored." }
+    ],
+    "easy": ["The gold-indicator cards are removed before setup and each hero begins with one additional resource."],
+    "tips": ["Eliminate the suspects and hideouts you find in the Investigation deck from your possible solution. Taken by Surprise triggers whenever you look at it, including through a card effect rather than Investigate."]
+  },
   "passage-through-mirkwood": {
     "intro": [
       "Mirkwood has long been a dangerous place, and recently one of King Thranduil’s patrols has uncovered disconcerting signs of a gathering menace in the vicinity of Dol Guldur. A party of heroes, controlled by the players, has been assembled to carry a message through Mirkwood, down the Anduin, and eventually to Lórien, to warn Lady Galadriel of the imminent danger."

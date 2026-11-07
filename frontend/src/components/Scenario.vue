@@ -47,6 +47,19 @@ const settings = ['sunny', 'cloudy', 'rainy', 'stormy'].map((key) => ({
     <CardBack v-if="scenario.sackDeck > 0" :count="scenario.sackDeck" back="encounter" :title="$t('log.sackDeck', { count: scenario.sackDeck })" data-pile="deck-sack" />
     <!-- the Burden deck beside the quest deck (Flight to the Ford) -->
     <CardBack v-if="scenario.burdenDeck > 0" :count="scenario.burdenDeck" back="encounter" :title="$t('log.burdenDeck', { count: scenario.burdenDeck })" data-pile="deck-burden" />
+    <div v-if="scenario.investigation" class="investigation" data-zone="investigation">
+      <span class="heading-label">{{ $t('game.investigationDeck') }}</span>
+      <CardBack :count="scenario.investigation.size" back="encounter" :title="$t('log.investigationDeck', { count: scenario.investigation.size })" data-pile="deck-investigation" />
+      <details v-if="scenario.investigation.clues.some((entry) => entry.cards.length)">
+        <summary>{{ $t('game.investigationClues') }}</summary>
+        <div v-for="entry in scenario.investigation.clues" :key="entry.playerId" class="clue-notes">
+          <span>{{ entry.player }}</span>
+          <div class="clue-cards">
+            <GameCard v-for="clue in entry.cards" :key="clue.id" :card="clue" :choices="[]" />
+          </div>
+        </div>
+      </details>
+    </div>
     <!-- the side quest deck (Fire in the Night) -->
     <CardBack v-if="scenario.sideQuestDeck > 0" :count="scenario.sideQuestDeck" back="encounter" :title="$t('log.sideQuestDeck', { count: scenario.sideQuestDeck })" data-pile="deck-side-quest" />
     <!-- the Evil Creatures deck, with its own discard pile (Journey Up the Anduin) -->
@@ -190,6 +203,10 @@ const settings = ['sunny', 'cloudy', 'rainy', 'stormy'].map((key) => ({
 <style scoped>
 .scenario { flex: 0 0 auto; }
 .deck { display: flex; flex-direction: column; gap: 4px; }
+.investigation { display: flex; flex-direction: column; gap: 6px; }
+.investigation summary { cursor: pointer; font-size: 0.65rem; }
+.clue-notes { display: flex; flex-direction: column; gap: 4px; font-size: 0.65rem; padding: 6px; }
+.clue-cards { display: flex; flex-wrap: wrap; gap: 4px; max-width: calc(var(--card-width) * 3 + 8px); }
 .heading { display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: 0.6rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); }
 .temperature { font-size: 1.2rem; color: var(--text); }
 .heading-track { display: flex; flex-direction: column; gap: 2px; margin: 0; padding: 0; list-style: none; }
