@@ -925,6 +925,8 @@ data Message
     FocusArea PlayerId
   | -- | an isolated stage comes into focus for a rule effect, including an empty stage
     FocusQuestArea QuestId
+  | -- | end this isolated player's quest phase without resolving his quest
+    EndQuestPhaseFor PlayerId
   | -- | the area in focus is to join another at the beginning of the travel phase
     JoinAtTravel
   | -- | the areas to join another do so, in turn order, at the beginning of the travel phase

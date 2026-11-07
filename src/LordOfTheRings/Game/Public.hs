@@ -121,10 +121,12 @@ publicGameFor :: (PlayerId -> Bool) -> Game -> Value
 publicGameFor seesHand g = hideDecks $ toJSON merged
  where
   merged = g {gamePlayers = allPlayers g, gameEntities = g.entities <> mconcat (heldEntities g)}
+  living pid = maybe False (not . (.eliminated)) $ Map.lookup pid (allPlayers g)
+  occupied = any living . areaPlayers
   -- the game as each area sees it, the area in focus first
   viewArea s a
     | isFocusedArea g a = g
-    | null (areaPlayers a) =
+    | not (occupied a) =
         g { gamePlayers = areaHeldPlayers a
           , gameEntities = areaHeldEntities a
           , gameEffects = areaHeldEffects a
@@ -134,13 +136,13 @@ publicGameFor seesHand g = hideDecks $ toJSON merged
   areaViews = g : [viewArea s a | Just s <- [gameSeparation g], a <- separationAreas s, not (isFocusedArea g a)]
   areas =
     [ object
-        [ "players" .= areaPlayers a
+        [ "players" .= filter living (areaPlayers a)
         , "focused" .= isFocusedArea g a
         , "threat" .= runReadGame getStagingThreat v
         , "cards" .= encounterCards (if separationShared s then fst (splitStage v.entities) else v.entities)
         ]
     | Just s <- [gameSeparation g]
-    , a <- areasInTurnOrder g s <> filter (null . areaPlayers) (separationAreas s)
+    , a <- areasInTurnOrder g s <> filter (not . occupied) (separationAreas s)
     , let v = viewArea s a
     ]
   encounterCards es =

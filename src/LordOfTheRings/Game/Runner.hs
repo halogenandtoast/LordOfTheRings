@@ -33,7 +33,9 @@ import LordOfTheRings.Effect (
  )
 import LordOfTheRings.Entities (locationsL)
 import LordOfTheRings.Game.Base (
-  Game (gameModifiers, gameEffects),
+  areaPhaseEnded,
+  allPlayers,
+  Game (gameModifiers, gameEffects, gameRevealer),
   handEntryLimitReached,
   activeCostsL,
   allyEntryBarred,
@@ -87,6 +89,7 @@ import LordOfTheRings.Message (
     DealDamage,
     Discard,
     DoStep,
+    EndPhase,
     EngageEnemy,
     Flip,
     FocusArea,
@@ -101,6 +104,8 @@ import LordOfTheRings.Message (
     WhileInPlay,
     LowerThreat,
     PlaceTokens,
+    QuestResolution,
+    ActionWindow,
     PutAllyIntoPlay,
     PutAllyIntoPlayUnder,
     PutInDiscard,
@@ -109,6 +114,7 @@ import LordOfTheRings.Message (
     RemoveTokens,
     RemoveProgressFromQuest,
     ResolveDiscover,
+    RevealEncounterCard,
     ResolveTravelEffect,
     PlaceUnderneath,
     ReturnToBottomOfEncounterDeck,
@@ -164,6 +170,7 @@ import LordOfTheRings.Placement (
  )
 import LordOfTheRings.Question (targetLabel)
 import LordOfTheRings.I18n (ikey)
+import LordOfTheRings.Phase (Phase (QuestPhase))
 import LordOfTheRings.Prelude hiding (first, many)
 import LordOfTheRings.Quest (isSideQuest)
 import LordOfTheRings.Scenario (
@@ -193,6 +200,7 @@ import LordOfTheRings.Window (
   Timing (When),
   Window (Window),
   WindowType (
+    StagingStepEnds,
     CommittedToQuest,
     BecameActiveLocation,
     EnemyEnteredPlay,
@@ -235,8 +243,19 @@ runGame msg g = do
           next {gameEffects = Effect GameSource (PlayerTarget pid) [CardFromHandThisRound cid] UntilEndOfRound : gameEffects next}
         _ -> next
 
+questStep :: Message -> Bool
+questStep = \case
+  RevealEncounterCard -> True
+  QuestResolution -> True
+  ActionWindow _ -> True
+  CheckWindows ws -> any (\case Window _ StagingStepEnds -> True; _ -> False) ws
+  _ -> False
+
 runGameAllowed :: Message -> Game -> GameT Game
 runGameAllowed msg g = case msg of
+  EndPhase phase | areaPhaseEnded g -> runGameMessage (DoStep 4 $ EndPhase phase) g
+  RevealEncounterCard | Just pid <- gameRevealer g, maybe False (.eliminated) (Map.lookup pid $ allPlayers g) -> pure g
+  _ | g.phase == QuestPhase, areaPhaseEnded g, questStep msg -> pure g
   DiscardAllResources source follow -> do
     pools <- discardableResources source
     push $ WithDiscardedResources pools follow
@@ -573,12 +592,13 @@ runInHand msg g = case msg of
 
 runInPlay :: Message -> Game -> GameT Game
 runInPlay msg g =
-  announce msg
-    >> traverseOf (playersL . traverse) (runEach msg) g
-    >>= traverseOf (activeCostsL . traverse) (runEach msg)
-    >>= traverseOf entitiesL (runEntities msg)
-    >>= (\g' -> g' <$ runInHand msg g')
-    >>= traverseOf scenarioL (runEach msg)
+  let dispatched = case msg of DoStep 6 (EndPhase phase) -> EndPhase phase; _ -> msg
+   in announce msg
+    >> traverseOf (playersL . traverse) (runEach dispatched) g
+    >>= traverseOf (activeCostsL . traverse) (runEach dispatched)
+    >>= traverseOf entitiesL (runEntities dispatched)
+    >>= (\g' -> g' <$ runInHand dispatched g')
+    >>= traverseOf scenarioL (runEach dispatched)
     >>= runGameMessage msg
     >>= \g' -> do
       -- an enemy, location or side quest entering play, or a stage turning to its B side,

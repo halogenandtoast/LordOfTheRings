@@ -170,7 +170,7 @@ import LordOfTheRings.Game.Base (
     areaPlayers,
     areaStatus
   ),
-  AreaStatus (AreaWaiting),
+  AreaStatus (AreaWaiting, AreaDone),
   AttackDestroyed (
     AttackDestroyed,
     attackDestroyedBy,
@@ -207,6 +207,7 @@ import LordOfTheRings.Game.Base (
   firstPlayerL,
   focusArea,
   focusQuestArea,
+  focusIsolatedArea,
   fortitudeTestsL,
   isFocusedArea,
   isolated,
@@ -554,6 +555,7 @@ import LordOfTheRings.Message (
     EndEffectsFrom,
     EndGame,
     EndPhase,
+    EndQuestPhaseFor,
     EndRound,
     EnemyAttack,
     EnemyAttacks,
@@ -922,6 +924,8 @@ import LordOfTheRings.Modifier (
     ShuffleIntoDeckAtEndOfPhase,
     ShuffleIntoOwnersDeckAtEndOfRound,
     SkipPhase,
+    ReturnToQuestAtTravel,
+    PreserveStageWhenEmpty,
     SkipQuestPhase,
     SkipStagingStep,
     StagingEnemiesEngageFirstPlayerAtEndOfPhase,
@@ -1220,6 +1224,37 @@ shadowStep = \case
   WithDiscardedRandomCards _ _ inner -> shadowStep inner
   _ -> Nothing
 
+phaseToEnd :: Message -> Maybe (Phase, Bool)
+phaseToEnd = \case
+  EndPhase phase -> Just (phase, False)
+  DoStep 6 (EndPhase phase) -> Just (phase, True)
+  _ -> Nothing
+
+phaseFollowing :: Phase -> Game -> (Message, Game)
+phaseFollowing phase g =
+  -- separated, each area resolves the phase in turn before the next phase begins; the
+  -- areas to join another do so at the beginning of the travel phase, and the token
+  -- passes once every area has refreshed
+  let following = NextPhase phase
+      (step, g') =
+        eachAreaThen
+          (\status -> [BeginPhase phase | status == AreaWaiting] <> [EndPhase phase])
+          (if phase == RefreshPhase then passToken else id)
+          (if phase == QuestPhase then Run [JoinAreas, FocusArea (maybe g.firstPlayer separationFirstPlayer $ gameSeparation g), following] else following)
+          g
+      passToken s
+        | keepsToken s = s
+        | otherwise = s {separationFirstPlayer = fromMaybe s.separationFirstPlayer $ headMay [pid | pid <- drop 1 (seatsFrom s.separationFirstPlayer g.playerOrder) <> [s.separationFirstPlayer], maybe False (not . (.eliminated)) (Map.lookup pid $ allPlayers g)]}
+      -- unless he keeps it, as Captured by Spiders has the first player in his own area
+      keepsToken s =
+        or
+          [ CannotLoseFirstPlayerToken `elem` map modifierType (Map.findWithDefault [] (PlayerTarget s.separationFirstPlayer) mods)
+          | a <- separationAreas s
+          , s.separationFirstPlayer `elem` areaPlayers a
+          , let mods = if isFocusedArea g a then gameModifiers g else areaHeldModifiers a
+          ]
+   in (step, g')
+
 runGameMessage :: Message -> Game -> GameT Game
 runGameMessage msg g = case msg of
   ChooseEpicTarget {} -> runEpicMessage msg g
@@ -1405,7 +1440,7 @@ runGameMessage msg g = case msg of
     following <- filterM (\h -> hasKeyword FirstPlayerGainsControl (toTarget h) (toCardDef h)) (toList g.entities.heroes)
     pushAll [ChangeHeroController h.id pid | h <- following, h.owner /= pid]
     pure $ g & firstPlayerL .~ pid & separationL %~ fmap (\s -> s {separationFirstPlayer = pid})
-  SetRevealer revealer -> pure $ g & revealerL .~ revealer
+  SetRevealer revealer -> pure $ maybe g (\pid -> if isolated g then focusArea pid g else g) revealer & revealerL .~ revealer
   SetPeril peril -> pure $ g & perilL .~ peril
   ChangeHeroController hid pid | Just h <- Map.lookup hid g.entities.heroes -> do
     let old = h.owner
@@ -1425,6 +1460,24 @@ runGameMessage msg g = case msg of
   SeparateStagingAreas groups -> pure $ separateStages groups g
   FocusArea pid -> pure $ focusArea pid g
   FocusQuestArea qid -> pure $ focusQuestArea qid g
+  EndQuestPhaseFor pid | g.phase == QuestPhase -> do
+    let home = headMay
+          [ qid
+          | q <- toList g.entities.quests
+          , modifier <- Map.findWithDefault [] (toTarget q) (gameModifiers g)
+          , ReturnToQuestAtTravel qid <- [modifierType modifier]
+          ]
+        finish = [FocusArea pid, DoStep 6 (EndPhase QuestPhase)] <> map FocusQuestArea (toList home)
+        boundary = \case
+          SetRevealer _ -> True
+          QuestResolution -> True
+          EndPhase QuestPhase -> True
+          CheckWindows ws -> any (\case Window _ StagingStepEnds -> True; _ -> False) ws
+          _ -> False
+    -- Finish the active revelation before ending this area's phase. Resume the
+    -- original stage so players still there complete their own staging and quest.
+    withQueue_ $ \queue -> let (earlier, later) = break boundary queue in earlier <> finish <> later
+    pure g
   -- while the players are separated, a card sent to another area's staging area leaves
   -- its own, what is attached to it going with it; sharing the game, one may come from
   -- any area's stage, or from a player's
@@ -1476,12 +1529,22 @@ runGameMessage msg g = case msg of
     let ordered = areasInTurnOrder g s
         lead = areaLead g s
         entitiesOf a = if isFocusedArea g a then g.entities else areaHeldEntities a
+        returnQuest a = headMay
+          [ qid
+          | q <- toList (entitiesOf a).quests
+          , modifier <- Map.findWithDefault [] (toTarget q) (if isFocusedArea g a then gameModifiers g else areaHeldModifiers a)
+          , ReturnToQuestAtTravel qid <- [modifierType modifier]
+          ]
         joinTo j t =
           FocusArea (lead j)
             : [Discard GameSource (toTarget l) | l <- toList (entitiesOf j).locations, l.placement == ActiveLocation]
             <> [JoinArea (lead j) (lead t)]
     case break areaJoining ordered of
       (_, []) -> pure ()
+      (_, j : _) | Just qid <- returnQuest j ->
+        pushAll $ [FocusArea (lead j)]
+          <> [Discard GameSource (toTarget l) | l <- toList (entitiesOf j).locations, l.placement == ActiveLocation]
+          <> [JoinQuestArea (lead j) qid, JoinAreas]
       (before, j : after) -> case filter (not . areaJoining) (before <> after) of
         [] ->
           pushAll
@@ -1536,6 +1599,7 @@ runGameMessage msg g = case msg of
     -- with another player
     let owned = [toId e | e <- toList g.entities.enemies, enemyOwner (toAttrs e) == Just pid]
     engaged <- filter (`notElem` owned) <$> select (EnemyEngagedWith $ PlayerWithId pid)
+    preserve <- elem PreserveStageWhenEmpty <$> getModifiers GameTarget
     let remaining = [p | p <- toList (allPlayers g), p.id /= pid, not p.eliminated]
         -- a separated player alone in his area takes it out of the game with him: the
         -- encounter cards there are discarded (ALeP 3.030), and it joins another area
@@ -1557,7 +1621,7 @@ runGameMessage msg g = case msg of
       <> ( if alone
              then
                map ((Discard GameSource) . toTarget) engaged
-                 <> if isJust (stageGroups g)
+                 <> if preserve then [] else if isJust (stageGroups g)
                    then [FocusArea pid, DoStep 1 (EliminatePlayer pid)]
                    else map (Discard GameSource) encounter <> [JoinArea pid other | other <- take 1 others]
              else [PlaceEnemy eid StagingArea | eid <- engaged]
@@ -1958,8 +2022,9 @@ runGameMessage msg g = case msg of
     pure g
   -- "when the players travel", as Crypt Key answers, comes before the location is active
   DoStep 1 (TravelTo lid) -> do
+    let resumed = focusIsolatedArea (Map.member lid . (.locations) . areaHeldEntities) g
     pushAll [CheckWindows [mkWhen $ Traveled lid], PlaceLocation lid ActiveLocation, CheckWindows [mkAfter $ Traveled lid], ResolveDeep lid]
-    pure g
+    pure resumed
   -- a Deep location, still the active location after the windows of traveling to it, is
   -- replaced by the top card of the Caves deck, unless that deck is empty (MEC65 rules)
   ResolveDeep lid | Just l <- Map.lookup lid g.entities.locations -> do
@@ -3294,9 +3359,9 @@ runGameMessage msg g = case msg of
     players <- getPlayerOrder
     pushAll $ concat [[RaiseThreat pid n, CheckWindows [mkAfter $ ThreatRaisedByEncounter pid n]] | pid <- players, n > 0]
     pure g
-  EndPhase phase -> do
+  (phaseToEnd -> Just (phase, scoped)) -> do
     delayed <- length . filter (== RaiseThreatByStagingEnemiesAtEndOfPhase) <$> getModifiers GameTarget
-    pushAll $ replicate delayed (DoStep 2 msg)
+    pushAll $ replicate delayed (DoStep 2 (EndPhase phase))
     -- sharing the game split between staging areas, the cards at each stage see it end
     push $ case stageGroups g of
       Just groups -> Run $ concat [[FocusArea lead, CheckWindows [mkWhen $ PhaseEnds phase]] | (lead, _) <- groups] <> [FocusArea g.firstPlayer]
@@ -3362,33 +3427,19 @@ runGameMessage msg g = case msg of
              ]
          | t <- both
          ]
-    -- separated, each area resolves the phase in turn before the next phase begins; the
-    -- areas to join another do so at the beginning of the travel phase, and the token
-    -- passes once every area has refreshed
-    let following = NextPhase phase
-        (step, g') =
-          eachAreaThen
-            (\status -> [BeginPhase phase | status == AreaWaiting] <> [EndPhase phase])
-            (if phase == RefreshPhase then passToken else id)
-            (if phase == QuestPhase then Run [JoinAreas, FocusArea (maybe g.firstPlayer separationFirstPlayer $ gameSeparation g), following] else following)
-            g
-        passToken s
-          | keepsToken s = s
-          | otherwise = s {separationFirstPlayer = fromMaybe s.separationFirstPlayer $ headMay $ drop 1 $ seatsFrom s.separationFirstPlayer g.playerOrder}
-        -- unless he keeps it, as Captured by Spiders has the first player in his own area
-        keepsToken s =
-          or
-            [ CannotLoseFirstPlayerToken `elem` map modifierType (Map.findWithDefault [] (PlayerTarget s.separationFirstPlayer) mods)
-            | a <- separationAreas s
-            , s.separationFirstPlayer `elem` areaPlayers a
-            , let mods = if isFocusedArea g a then gameModifiers g else areaHeldModifiers a
-            ]
-    pushEnd step
+    let (step, advanced) = if scoped
+          then (Run [], g & separationL %~ fmap (\separation -> separation {separationAreas = [if isFocusedArea g a then a {areaStatus = AreaDone} else a | a <- separationAreas separation]}))
+          else phaseFollowing phase g
+    unless scoped $ pushEnd step
     pure
-      $ g'
+      $ advanced
       & effectsL %~ filter ((`notElem` [UntilEndOfPhase, UntilEndOfPhaseOf phase]) . effectDuration)
       & leftPlayLocationsL .~ mempty
-      & damageDealtL %~ filter (\(s, _, _) -> case s of EnemyAttackSource _ -> True; _ -> False)
+      & damageDealtL %~ filter (\(source, _, _) -> case source of EnemyAttackSource _ -> True; _ -> False)
+  DoStep 4 (EndPhase phase) -> do
+    let (step, advanced) = phaseFollowing phase g
+    pushEnd step
+    pure advanced
   PlayAlly pid card -> do
     thisAlly <- entering =<< newAlly pid card
     push $ enteredPlayThisRound thisAlly
@@ -3841,6 +3892,11 @@ runGameMessage msg g = case msg of
             <> [Effect GameSource t [CurrentQuest] UntilEndOfRound | t `elem` mainQuests, length mainQuests > 1]
         replaced e = CurrentQuest `elem` effectModifiers e && (not side || effectTarget e `elem` sideQuests)
     pure $ g & effectsL %~ ((chosen <>) . filter (not . replaced))
+  CompleteQuest qid
+    | Just _ <- headMay [home | modifier <- Map.findWithDefault [] (QuestTarget qid) (gameModifiers g), ReturnToQuestAtTravel home <- [modifierType modifier]] -> do
+        let already = any (\a -> isFocusedArea g a && areaJoining a) $ maybe [] separationAreas (gameSeparation g)
+        unless already $ push $ CheckWindows [mkAfter $ QuestDefeated (QuestTarget qid)]
+        pure $ g & separationL %~ fmap (\separation -> separation {separationAreas = [if isFocusedArea g area then area {areaJoining = True} else area | area <- separationAreas separation]})
   CompleteQuest qid | Just q <- Map.lookup qid g.entities.quests, isSideQuest q -> do
     pushAll $ CheckWindows [mkAfter $ QuestDefeated (QuestTarget qid)] : discardAttachedToQuest g qid
     -- "Limit 1 copy in the victory display": a copy defeated while one is there goes to its

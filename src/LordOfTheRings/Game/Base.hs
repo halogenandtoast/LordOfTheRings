@@ -178,6 +178,10 @@ isFocusedArea g a = case gameSeparation g of
   _ | null (areaPlayers a) -> areaInFocus a && null (gamePlayers g)
   _ -> any (`Map.member` gamePlayers g) (areaPlayers a)
 
+-- | This isolated area's phase has already ended, as a barrow ends its player's quest.
+areaPhaseEnded :: Game -> Bool
+areaPhaseEnded g = (isolated g && not (any (not . (.eliminated)) (gamePlayers g))) || maybe False (any (\a -> isFocusedArea g a && areaStatus a == AreaDone) . separationAreas) (gameSeparation g)
+
 -- | Whether the players are separated into areas of their own, apart from each other.
 isolated :: Game -> Bool
 isolated = maybe False (not . separationShared) . gameSeparation
@@ -235,17 +239,25 @@ seatsFrom pid order = let (before, after) = break (== pid) order in after <> bef
 -- | The area's first player: the first of its players in turn order from the token.
 areaLead :: Game -> Separation -> Area -> PlayerId
 areaLead g s a =
-  fromMaybe (fromMaybe (separationFirstPlayer s) $ headMay $ areaPlayers a) $ find (`elem` areaPlayers a) (seatsFrom (separationFirstPlayer s) (gamePlayerOrder g))
+  fromMaybe (separationFirstPlayer s) $ find (\pid -> pid `elem` areaPlayers a && living pid) (seatsFrom (separationFirstPlayer s) (gamePlayerOrder g))
+ where
+  living pid = maybe False (not . (.eliminated)) $ Map.lookup pid (allPlayers g)
 
 -- | Occupied areas in turn order: an empty stage stays in play but skips phases.
 areasInTurnOrder :: Game -> Separation -> [Area]
-areasInTurnOrder g s = sortOn (\a -> elemIndex (areaLead g s a) seats) (filter (not . null . areaPlayers) $ separationAreas s)
+areasInTurnOrder g s = sortOn (\a -> elemIndex (areaLead g s a) seats) (filter (any living . areaPlayers) $ separationAreas s)
  where
   seats = seatsFrom (separationFirstPlayer s) (gamePlayerOrder g)
+  living pid = maybe False (not . (.eliminated)) $ Map.lookup pid (allPlayers g)
 
 -- | Bring the area holding the player into focus, holding back the one in focus.
 focusArea :: PlayerId -> Game -> Game
-focusArea pid g = case gameSeparation g of
+focusArea pid g
+  | maybe False (.eliminated) (Map.lookup pid $ allPlayers g) = g
+  | otherwise = focusLivingArea pid g
+
+focusLivingArea :: PlayerId -> Game -> Game
+focusLivingArea pid g = case gameSeparation g of
   Just s
     | separationShared s ->
         case find (elem pid . areaPlayers) (separationAreas s) of
@@ -278,7 +290,7 @@ focusIsolatedArea matches g = case gameSeparation g of
         let es = gameEntities g
             -- a quest card in each staging area comes along into focus
             shared = Map.filter inEachStagingArea (entitiesQuests es)
-            hold index a
+            hold areaIndex a
               | isFocusedArea g a = a
                   { areaHeldPlayers = gamePlayers g
                   , areaHeldEntities = es {entitiesQuests = Map.difference (entitiesQuests es) shared}
@@ -286,7 +298,7 @@ focusIsolatedArea matches g = case gameSeparation g of
                   , areaHeldModifiers = gameModifiers g
                   , areaInFocus = False
                   }
-              | index == selected = a
+              | areaIndex == selected = a
                   { areaHeldPlayers = mempty
                   , areaHeldEntities = mempty
                   , areaHeldEffects = []

@@ -22,7 +22,11 @@ import LordOfTheRings.Token (Token)
 import LordOfTheRings.Trait
 
 data ModifierType
-  = WillpowerModifier Int
+  = -- | a defeated stage waits until travel, then returns to this existing quest stage
+    ReturnToQuestAtTravel QuestId
+  | -- | the staging area remains in play when its last player is eliminated
+    PreserveStageWhenEmpty
+  | WillpowerModifier Int
   | AttackModifier Int
   | -- | on an enemy: its attack is raised by this much when undefended, as Goblin
     -- Swordsman's
