@@ -334,7 +334,8 @@ import LordOfTheRings.Location (
     locationLookedAt,
     locationPlacement,
     locationPosition,
-    locationTokens
+    locationTokens,
+    locationUnderneath
   ),
   createLocation,
   enterFaceUp,
@@ -545,6 +546,7 @@ import LordOfTheRings.Message (
     EliminatePlayer,
     EncounterCardDrawn,
     EncounterCardEnteredHand,
+    PutInHand,
     EndEffect,
     EndEffects,
     EndEffectsFrom,
@@ -826,6 +828,7 @@ import LordOfTheRings.Modifier (
     DiscardAtEndOfPhase,
     DiscardAtEndOfRound,
     DiscardAtEndOfRoundThenShuffleEncounterDiscard,
+    ReturnUnderneathAlliesWhenExplored,
     DiscardNextRevealed,
     DiscardRandomToCommit,
     DoesNotReadyDuringRefresh,
@@ -1076,6 +1079,7 @@ import LordOfTheRings.Window (
     EngagedEnemyDestroyedByAttack,
     EntersPlay,
     EntersStagingArea,
+    Explored,
     Exhausted,
     FailedFortitudeTest,
     FailedHideTest,
@@ -3438,6 +3442,15 @@ runGameMessage msg g = case msg of
         controller <- fromMaybe lead <$> abilityController ab
         pure [UseAbility controller ab windows]
       abs' -> pure [Ask lead $ ChooseOneAtATime [AbilityLabel lead ab windows [] | ab <- abs']]
+    let explored = [lid | Window After (Explored lid) <- windows]
+        returns = concat
+          [ EndEffect effect : [PutInHand card | PlayerCard card <- (toAttrs location).locationUnderneath, cdCardType (toCardDef card) == AllyType]
+          | effect <- gameEffects g
+          , ReturnUnderneathAlliesWhenExplored `elem` effectModifiers effect
+          , LocationTarget lid <- [effectTarget effect]
+          , lid `elem` explored
+          , Just location <- [Map.lookup lid (gameLeftPlayLocations g)]
+          ]
     -- an enemy to attack again once this attack is over does, the effect spent
     let finished = [(eid, pid) | Window After (EnemyAttacking eid pid) <- windows]
         again e = case effectTarget e of
@@ -3445,7 +3458,7 @@ runGameMessage msg g = case msg of
           _ -> []
         attacksAgain = concatMap again (gameEffects g)
     pushAll
-      $ forcedMsgs
+      $ returns <> forcedMsgs
       <> [ResponseWindow windows order [] 0]
       <> [DoStep 1 (EnemyAttack pid eid) | (eid, pid) <- attacksAgain]
     -- after an enemy's attack has resolved, what lasted for that attack ends

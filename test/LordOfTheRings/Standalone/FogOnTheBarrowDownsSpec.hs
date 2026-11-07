@@ -7,10 +7,11 @@ import LordOfTheRings.Ally.CardDefs qualified as Allies
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Helpers.Modifiers (getModifiers, preloadModifiers)
 import LordOfTheRings.Helpers.Character (getWillpower, getDefenseAgainst)
-import LordOfTheRings.Helpers.Staging (getStagingThreat, getEnemyAttack, getEnemyDefense)
+import LordOfTheRings.Helpers.Staging (getStagingThreat, getEnemyAttack, getEnemyDefense, getLocationThreat)
 import LordOfTheRings.Helpers.Window (getActionAbilities)
-import LordOfTheRings.Location.Types (LocationAttrs (locationTokens))
+import LordOfTheRings.Location.Types (LocationAttrs (locationTokens, locationUnderneath))
 import LordOfTheRings.Location.CardDefs qualified as Locations
+import LordOfTheRings.Card (toCard)
 import LordOfTheRings.Treachery.CardDefs qualified as Treacheries
 import LordOfTheRings.Treachery.Types (TreacheryAttrs (..))
 import LordOfTheRings.Event.CardDefs qualified as Events
@@ -95,6 +96,130 @@ songs = getsGame $ map toAttrs . filter ((== toCardCode Treacheries.dreadfulSong
 
 spec :: Spec
 spec = describe "Fog on the Barrow-downs Wights" do
+  describe "Ancient Barrow" do
+    it "has each player choose their own ally and counts the facedown cards in its threat" . twoPlayerTest testDeck $ \one two -> do
+      chosenOne <- putAllyIntoPlay one Allies.guardOfTheCitadel
+      _ <- putAllyIntoPlay one Allies.veteranAxehand
+      _ <- putAllyIntoPlay two Allies.guardOfTheCitadel
+      chosenTwo <- putAllyIntoPlay two Allies.veteranAxehand
+      lid <- stageLocation Locations.ancientBarrow
+      getLocationThreat lid `shouldReturn` 1
+      chooseTarget one chosenOne
+      chooseTarget two chosenTwo
+      length . locationUnderneath . toAttrs <$> getLocation lid `shouldReturn` 2
+      getLocationThreat lid `shouldReturn` 3
+      length <$> getsGame (toList . (.entities.allies)) `shouldReturn` 2
+      run $ PlaceTokens GameSource (LocationTarget lid) Progress 4
+      for_ [one, two] \pid -> length . (.hand) <$> getPlayer pid `shouldReturn` 1
+
+    it "chooses and captures all players' allies before leaving-play effects resolve" . twoPlayerTest testDeck $ \one two -> do
+      _ <- putAllyIntoPlay one Allies.guardOfTheCitadel
+      _ <- putAllyIntoPlay two Allies.silvanRefugee
+      lid <- stageLocation Locations.ancientBarrow
+      length . locationUnderneath . toAttrs <$> getLocation lid `shouldReturn` 2
+      length . (.discard) <$> getPlayer two `shouldReturn` 0
+      run $ PlaceTokens GameSource (LocationTarget lid) Progress 4
+      for_ [one, two] \pid -> length . (.hand) <$> getPlayer pid `shouldReturn` 1
+
+    it "returns a borrowed ally to its owner rather than its controller" . twoPlayerTest testDeck $ \one two -> do
+      borrowed <- putAllyIntoPlay one Allies.guardOfTheCitadel
+      card <- case borrowed of
+        AllyTarget aid -> do
+          original <- toCard <$> getAlly aid
+          run $ PlaceAlly aid (InPlayArea two)
+          pure original
+        _ -> error "not an ally"
+      lid <- stageLocation Locations.ancientBarrow
+      run $ PlaceTokens GameSource (LocationTarget lid) Progress 4
+      map (.id) . (.hand) <$> getPlayer one `shouldReturn` [card.id]
+      length . (.hand) <$> getPlayer two `shouldReturn` 0
+
+    it "keeps its resolved return instruction when the location is later blanked" . gameTest $ \pid -> do
+      _ <- putAllyIntoPlay pid Allies.guardOfTheCitadel
+      lid <- stageLocation Locations.ancientBarrow
+      run $ CreateEffect $ Effect GameSource (LocationTarget lid) [Blank] UntilEndOfRound
+      getLocationThreat lid `shouldReturn` 0
+      run $ PlaceTokens GameSource (LocationTarget lid) Progress 4
+      length . (.hand) <$> getPlayer pid `shouldReturn` 1
+
+    it "does not return allies when discarded without being explored" . gameTest $ \pid -> do
+      _ <- putAllyIntoPlay pid Allies.guardOfTheCitadel
+      lid <- stageLocation Locations.ancientBarrow
+      run $ Discard GameSource (LocationTarget lid)
+      length . (.hand) <$> getPlayer pid `shouldReturn` 0
+      length <$> getsGame (toList . (.entities.allies)) `shouldReturn` 0
+
+    it "discards the captured ally's attachments and returns the same physical card" . gameTest $ \pid -> do
+      ally <- putAllyIntoPlay pid Allies.guardOfTheCitadel
+      original <- case ally of AllyTarget aid -> toCard <$> getAlly aid; _ -> error "not an ally"
+      attachment <- putAttachmentOn pid Attachments.selfPreservation ally
+      run $ PlaceTokens GameSource ally Damage 1
+      run $ PlaceTokens GameSource ally Resource 2
+      run $ Exhaust ally
+      lid <- stageLocation Locations.ancientBarrow
+      getModifiers attachment `shouldReturn` []
+      length . (.discard) <$> getPlayer pid `shouldReturn` 1
+      run $ PlaceTokens GameSource (LocationTarget lid) Progress 4
+      map (.id) . (.hand) <$> getPlayer pid `shouldReturn` [original.id]
+      run $ PlayFromHandAtNoCost pid original.id
+      returned <- getsGame $ fromJustNote "missing returned ally" . headMay . toList . (.entities.allies)
+      (.resources) returned `shouldBe` 0
+      getDamage (toTarget returned) `shouldReturn` 0
+
+    it "captures only an eligible ally when put directly into the active slot" . gameTest $ \pid -> do
+      immune <- putAllyIntoPlay pid Allies.guardOfTheCitadel
+      veteran <- putAllyIntoPlay pid Allies.veteranAxehand
+      run $ CreateEffect $ Effect GameSource immune [ImmuneToCardEffects] UntilEndOfRound
+      card <- genEncounterCard Locations.ancientBarrow
+      run $ PutIntoPlayAsActiveLocation card
+      length <$> getsGame (toList . (.entities.allies)) `shouldReturn` 1
+      getsGame (any ((== veteran) . toTarget) . toList . (.entities.allies)) `shouldReturn` False
+
+    it "resolves harmlessly with no eligible allies" . gameTest $ \pid -> do
+      ally <- putAllyIntoPlay pid Allies.guardOfTheCitadel
+      run $ CreateEffect $ Effect GameSource ally [ImmuneToCardEffects] UntilEndOfRound
+      lid <- stageLocation Locations.ancientBarrow
+      getLocationThreat lid `shouldReturn` 1
+      getQuestion pid `shouldReturn` Nothing
+
+    it "does not resolve its entry Forced effect when the entire revelation is canceled" . gameTest $ \pid -> do
+      firstBarrow <- stageLocation Locations.ancientBarrow
+      run $ AddToVictoryDisplay (LocationTarget firstBarrow)
+      _ <- putAllyIntoPlay pid Allies.guardOfTheCitadel
+      cancellation <- putCardIntoHand pid Events.theDoorIsClosed
+      hero <- heroOf pid "01012"
+      run $ PlaceTokens GameSource hero Resource 1
+      _ <- setEncounterDeck [Locations.ancientBarrow, Locations.oldForestRoad]
+      run RevealEncounterCard
+      chooseTarget pid (CardIdTarget cancellation.id)
+      length <$> getsGame (toList . (.entities.allies)) `shouldReturn` 1
+      length <$> select (LocationWithCardCode $ toCardCode Locations.ancientBarrow) `shouldReturn` 0
+      getQuestion pid `shouldReturn` Nothing
+
+    it "does not capture again when traveled to or when its staging area comes back into focus" . twoPlayerTest testDeck $ \one two -> do
+      _ <- putAllyIntoPlay one Allies.guardOfTheCitadel
+      lid <- stageLocation Locations.ancientBarrow
+      survivor <- putAllyIntoPlay one Allies.veteranAxehand
+      run $ PlaceLocation lid ActiveLocation
+      run $ PlaceLocation lid StagingArea
+      run $ SeparatePlayers [[one], [two]]
+      run $ FocusArea two
+      run $ FocusArea one
+      length . locationUnderneath . toAttrs <$> getLocation lid `shouldReturn` 1
+      case survivor of
+        AllyTarget aid -> (.resources) <$> getAlly aid `shouldReturn` 0
+        _ -> error "not an ally"
+
+    it "restores its stored allies and delayed effect from a saved game" . gameTest $ \pid -> do
+      _ <- putAllyIntoPlay pid Allies.guardOfTheCitadel
+      lid <- stageLocation Locations.ancientBarrow
+      current <- getGame
+      case eitherDecode (encode current) of
+        Right restored -> putGame =<< preloadModifiers restored
+        Left message -> error message
+      run $ PlaceTokens GameSource (LocationTarget lid) Progress 4
+      length . (.hand) <$> getPlayer pid `shouldReturn` 1
+
   describe "North Downs" do
     it "uses current willpower only against Wights, ignoring defense bonuses" . gameTest $ \pid -> do
       location <- stageLocation Locations.northDownsFog

@@ -142,6 +142,7 @@ data ModifierType
   | -- | on the game, or a character: characters use their willpower instead of defense,
     -- as Against the Shadow reads
     WillpowerForDefense
+  | ReturnUnderneathAlliesWhenExplored
   | WillpowerForDefenseAgainst Trait
   | -- | Constant modifiers granted to actually engaged enemies with this trait.
     EngagedEnemiesWithTraitGain Trait [ModifierType]

@@ -23,6 +23,7 @@ import LordOfTheRings.Classes.HasQueue (
   HasQueue (pushAll),
   insertAfterMatching,
   peekQueue,
+  withQueue_,
   push,
   pushWhen,
  )
@@ -95,6 +96,7 @@ import LordOfTheRings.Message (
     PlaceInStagingAreaOf,
     PlaceLocation,
     PlaceTimeCounters,
+    WhileInPlay,
     LowerThreat,
     PlaceTokens,
     PutAllyIntoPlay,
@@ -191,6 +193,8 @@ import LordOfTheRings.Window (
     CommittedToQuest,
     BecameActiveLocation,
     EnemyEnteredPlay,
+    EntersPlay,
+    EntersStagingArea,
     EnemyLeftPlay,
     Explored,
     LastTimeCounterRemoved,
@@ -599,6 +603,24 @@ runInPlay msg g =
         <> [PlaceTimeCounters (toTarget q) | q <- toList g'.entities.quests, enteredSideQuest q]
         <> [CheckWindows [mkAfter $ LocationLeftPlay lid] | lid <- Map.keys departed]
         <> [CheckWindows [mkAfter $ EnemyLeftPlay eid] | eid <- departedEnemies]
+      -- Locations enter play once, including when put directly into the active
+      -- slot. Share the staging-entry window so entry Forced effects precede
+      -- responses such as Thror's Key, while cancellation still removes the
+      -- whole WhileInPlay revelation step (FAQ 1.54).
+      unless movingAreas $ for_ (entered g.entities.locations g'.entities.locations) \lid -> do
+        let target = LocationTarget lid
+            entry ws = any (\case Window _ (EntersStagingArea t) -> t == target; _ -> False) ws
+            hasEntry = \case
+              CheckWindows ws -> entry ws
+              WhileInPlay _ messages -> any hasEntry messages
+              _ -> False
+            addEntry = \case
+              CheckWindows ws | entry ws -> CheckWindows (ws <> [mkAfter $ EntersPlay target])
+              WhileInPlay host messages -> WhileInPlay host (map addEntry messages)
+              other -> other
+        pending <- peekQueue
+        if any hasEntry pending then withQueue_ (map addEntry)
+        else push $ WhileInPlay target [CheckWindows [mkAfter $ EntersPlay target]]
       -- an enemy entering play, not one turned over from its other side, which stays in play;
       -- the resources placed on its card while it was out of play come with it
       let arrived = if movingAreas || isFlip then [] else entered g.entities.enemies g'.entities.enemies

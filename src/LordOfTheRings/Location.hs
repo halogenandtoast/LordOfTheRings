@@ -2,6 +2,7 @@
 
 module LordOfTheRings.Location (module LordOfTheRings.Location, module X) where
 
+import LordOfTheRings.Location.Cards.AncientBarrow (ancientBarrow)
 import LordOfTheRings.Location.Cards.BarrowDownsLocations (stoneRing, northDownsFog)
 import LordOfTheRings.Location.Cards.BelegostLocations
 import LordOfTheRings.Location.Cards.Withywindle (withywindle)
@@ -812,7 +813,8 @@ allLocations =
   Map.fromList
     [ (toCardCode builder, card)
     | card@(SomeLocationCard builder) <-
-        [ SomeLocationCard stoneRing
+        [ SomeLocationCard ancientBarrow
+        , SomeLocationCard stoneRing
         , SomeLocationCard northDownsFog
         , SomeLocationCard naurlhugsLair
         , SomeLocationCard abandonedMineBelegost
