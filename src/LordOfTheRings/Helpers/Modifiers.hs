@@ -24,6 +24,7 @@ import LordOfTheRings.Matcher.Types (PlayerMatcher (AnyPlayer), cardMatches)
 import LordOfTheRings.Keyword (Keyword (Massive, Discover))
 import LordOfTheRings.Modifier
 import LordOfTheRings.Placement (Placement (..))
+import LordOfTheRings.Phase (Phase (QuestPhase))
 import LordOfTheRings.Prelude
 import LordOfTheRings.Source (Source (..), isPlayerCardSource, isPlayerEventSource, sourceTarget)
 import LordOfTheRings.Target
@@ -299,7 +300,16 @@ getModifiers a = do
       damageBlocked <- if TravelRequiresEachPlayerHeroDamage `elem` mods
         then anyM (fmap null . damageableControlledHeroes (LocationSource lid)) players
         else pure False
-      pure $ engagementBlocked || damageBlocked
+      revealBlocked <- case sum [n | TravelRequiresEncounterReveals n <- mods] of
+        0 -> pure False
+        required -> do
+          gameMods <- getModifiers GameTarget
+          let scenario = toAttrs g.scenario
+              resets = (g.phase == QuestPhase || EncounterDeckResetsWheneverEmpty `elem` gameMods)
+                && EncounterDeckDoesNotReset `notElem` gameMods
+              available = length scenario.encounterDeck + if resets then length scenario.encounterDiscard else 0
+          pure $ available < required
+      pure $ engagementBlocked || damageBlocked || revealBlocked
     _ -> pure False
   pure $ mods <> fromDiscover <> [CannotReady | notNull limits && blocked] <> [CannotBeTraveledTo | travelBlocked]
 

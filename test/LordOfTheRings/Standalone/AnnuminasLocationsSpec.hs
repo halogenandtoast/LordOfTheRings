@@ -1,4 +1,4 @@
-module LordOfTheRings.Standalone.AnnuminasLocationsSpec (spec) where
+module LordOfTheRings.Standalone.AnnuminasLocationsSpec (spec, stageLocation) where
 
 import LordOfTheRings.Effect (Effect (..), EffectDuration (..))
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies

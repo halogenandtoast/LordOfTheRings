@@ -889,6 +889,7 @@ data ModifierType
     TravelRequiresEngagingHighestToughness
   | TravelRequiresEachPlayerEngagement
   | TravelRequiresEachPlayerHeroDamage
+  | TravelRequiresEncounterReveals Int
   | -- | on the game: event cards cannot shuffle cards from a player's discard pile into his
     -- deck, as Passage into Mordor reads
     EventsCannotShuffleDiscardIntoDeck

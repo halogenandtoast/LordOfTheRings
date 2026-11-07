@@ -1,4 +1,4 @@
-module LordOfTheRings.Standalone.AnnuminasCitySpec (spec) where
+module LordOfTheRings.Standalone.AnnuminasCitySpec (spec, stageCity, setReplica) where
 
 import Data.Aeson.KeyMap qualified as KeyMap
 import LordOfTheRings.Effect (Effect (..), EffectDuration (UntilEndOfRound))
