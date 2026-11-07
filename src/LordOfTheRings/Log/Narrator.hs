@@ -420,6 +420,8 @@ narrationFor = \case
   PutObjectiveHeroIntoPlayUnder pid card -> Just do
     who <- playerRefFor pid
     one $ mechanic [ikeyPart "log.takesControlOfHero" ["player" ~> who, "hero" ~> EncounterCard card]]
+  -- an objective coming under a player's control, as Gollum to the player guarding him
+  PlaceObjective oid (InPlayArea pid) -> Just $ whenRef (toTarget oid) (takesControl pid)
   -- an enemy taking an objective, as Alcaron's Scroll goes to the enemy that damaged its hero
   ClaimObjective oid target@(EnemyTarget _) -> Just $ attached (toTarget oid) target
   ClaimObjective oid target -> Just $ whenRef (toTarget oid) \o -> whenRef target \t ->
