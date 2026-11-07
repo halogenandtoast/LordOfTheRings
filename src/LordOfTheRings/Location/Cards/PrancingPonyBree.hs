@@ -1,6 +1,7 @@
 module LordOfTheRings.Location.Cards.PrancingPonyBree
   (thePrancingPonyMurder, ramshackleManor, darkAlleyMurder, marketSquareMurder, oldWarehouse, villageStable) where
 
+import LordOfTheRings.Classes.HasGame (getsGame)
 import LordOfTheRings.Card (toCardCode, CardType (EnemyType))
 import LordOfTheRings.Helpers.Window (playerCardController)
 import LordOfTheRings.Location.CardDefs qualified as Cards
@@ -27,8 +28,11 @@ instance HasModifiersFor PrancingPonyBree where
   getModifiersFor (PrancingPonyBree a) = do
     when (toCardCode a == toCardCode Cards.ramshackleManor) $
       getRemainingPlayers >>= traverse_ (\pid -> modified a (PlayerTarget pid) [PlayerCardThreatReductionLimit 1])
-    when (toCardCode a == toCardCode Cards.darkAlleyMurder) $
+    when (toCardCode a == toCardCode Cards.darkAlleyMurder) do
       select EnemyInStagingArea >>= traverse_ (\eid -> modified a eid [CannotTakeDamage])
+      -- Learn to Play, Travel: the complete travel cost must be payable.
+      available <- getsGame $ \g -> let scenario = toAttrs g.scenario in scenario.encounterDeck <> scenario.encounterDiscard
+      unless (any (cardMatches $ CardWithType EnemyType) available) $ modifySelf a [CannotBeTraveledTo]
     when (toCardCode a == toCardCode Cards.marketSquareMurder) do
       players <- getRemainingPlayers
       pools <- traverse (`getResourcesOfSphere` Neutral) players

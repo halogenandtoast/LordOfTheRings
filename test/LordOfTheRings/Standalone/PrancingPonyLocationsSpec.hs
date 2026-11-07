@@ -2,7 +2,7 @@ module LordOfTheRings.Standalone.PrancingPonyLocationsSpec (spec) where
 
 import Data.Map.Strict qualified as Map
 import LordOfTheRings.Ally.CardDefs qualified as Allies
-import LordOfTheRings.Effect (EffectDuration (..))
+import LordOfTheRings.Effect (Effect (..), EffectDuration (..))
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Event.CardDefs qualified as Events
 import LordOfTheRings.Helpers.Modifiers (getModifiers, immuneToSource)
@@ -211,3 +211,31 @@ spec = describe "Prancing Pony locations" do
     (.investigationDeck) <$> meta `shouldReturn` []
     victory <- getsGame ((.victoryDisplay) . toAttrs . (.scenario))
     length (filter ((== toCardCode Locations.villageStable) . toCardCode) victory) `shouldBe` 1
+
+  it "forbids Dark Alley travel when neither the deck nor discard contains an enemy" . ponyTest $ \_ -> do
+    lid <- stageLocation Locations.darkAlleyMurder
+    _ <- setEncounterDeck [Locations.oldForestRoad]
+    run . AddToEncounterDiscard . pure =<< genEncounterCard Locations.oldForestRoad
+    getModifiers lid >>= (`shouldSatisfy` elem CannotBeTraveledTo)
+    run $ TravelTo lid
+    (.placement) <$> getLocation lid `shouldReturn` StagingArea
+    length <$> getEncounterDeck `shouldReturn` 1
+    length <$> getEncounterDiscard `shouldReturn` 1
+
+  it "can pay Dark Alley's travel cost with an enemy found only in the discard pile" . ponyTest $ \pid -> do
+    lid <- stageLocation Locations.darkAlleyMurder
+    _ <- setEncounterDeck [Locations.oldForestRoad]
+    run . AddToEncounterDiscard . pure =<< genEncounterCard Enemies.greenwayFootpad
+    getModifiers lid >>= (`shouldSatisfy` notElem CannotBeTraveledTo)
+    run $ TravelTo lid
+    (.placement) <$> getLocation lid `shouldReturn` ActiveLocation
+    getsGame (map toCardCode . toList . (.entities.enemies)) `shouldReturn` [toCardCode Enemies.greenwayFootpad]
+    getThreat pid `shouldReturn` 27
+
+  it "can travel to a blank Dark Alley without paying its printed cost" . ponyTest $ \_ -> do
+    lid <- stageLocation Locations.darkAlleyMurder
+    _ <- setEncounterDeck []
+    run $ CreateEffect $ Effect GameSource (LocationTarget lid) [Blank] UntilEndOfRound
+    getModifiers lid >>= (`shouldSatisfy` notElem CannotBeTraveledTo)
+    run $ TravelTo lid
+    (.placement) <$> getLocation lid `shouldReturn` ActiveLocation
