@@ -6,13 +6,12 @@ module LordOfTheRings.Epic.DolGuldur
   ( DolEpochKind (..), DolEpoch (..), DolClaim (..), DolPhase (..)
   , DolTransition (..), DolEligibility (..), DolStep (..), DolAck (..), DolError (..)
   , dolFinalStages, beginDolTransition, validateDolTransition, acceptDolClaim
-  , availableDolStages, nextDolStep, ackDolStep, dolClaimAllowsRoundDrain
+  , availableDolStages, nextDolStep, ackDolStep
   , dolAllStagesRevealed, dolTransitionFinished
   ) where
 
 import LordOfTheRings.Card.Code (CardCode)
 import LordOfTheRings.Prelude
-import Data.Either (isRight)
 
 data DolEpochKind = DolInitialStages | DolRotateStages
   deriving stock (Show, Eq, Generic)
@@ -292,17 +291,6 @@ ackDolStep epoch acknowledgement transition = do
       , transition.dolRevealingTeam == Just team -> pure transition
           {dolRevealedTeams = transition.dolRevealedTeams <> [team], dolRevealingTeam = Nothing}
     _ -> Left DolUnexpectedAcknowledgement
-
--- | Only an accepted INITIAL-stage claim at the explicit inert claim barrier
--- lets a later team's old frozen stage-one end-of-round effects run. This is
--- never permission to expire effects or begin another round.
-dolClaimAllowsRoundDrain :: Eq team => Bool -> team -> DolTransition team -> Bool
-dolClaimAllowsRoundDrain onlyClaimBarrier team transition =
-  isRight (validateDolTransition transition)
-    && onlyClaimBarrier
-    && transition.dolTransitionEpoch.dolEpochKind == DolInitialStages
-    && transition.dolTransitionPhase == DolCollectingClaims
-    && isJust (lookup team transition.dolAcceptedClaims)
 
 dolAllStagesRevealed :: DolTransition team -> Bool
 dolAllStagesRevealed transition = length transition.dolRevealedTeams == 3 && isNothing transition.dolRevealingTeam

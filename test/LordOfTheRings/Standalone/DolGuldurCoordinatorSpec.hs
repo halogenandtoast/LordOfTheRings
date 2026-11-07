@@ -163,13 +163,6 @@ spec = describe "Dol Guldur atomic stage coordinator" do
           earliest = headEx arrival
       fst (step claimed) `shouldBe` PrepareDolTeams [(earliest, choice earliest)]
 
-  it "allows only an accepted inert initial claim to unblock later old-stage forced effects" do
-    let accepted = claim 0 (headEx dolFinalStages) initial
-    dolClaimAllowsRoundDrain True 0 accepted `shouldBe` True
-    dolClaimAllowsRoundDrain False 0 accepted `shouldBe` False
-    dolClaimAllowsRoundDrain True 1 accepted `shouldBe` False
-    dolClaimAllowsRoundDrain True 0 (claim 0 (lastEx dolFinalStages) collectingRotation) `shouldBe` False
-
   it "persists an in-flight native action without replaying it after reload" do
     let (_, cityInFlight) = step rotation
         reloaded = expectRight $ eitherDecode @(DolTransition Int) $ encode cityInFlight
