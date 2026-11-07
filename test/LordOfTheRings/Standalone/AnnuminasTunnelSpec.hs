@@ -8,7 +8,7 @@ import LordOfTheRings.Epic.Types
 import LordOfTheRings.Helpers.Modifiers (getModifiers, preloadModifiers)
 import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Modifier (ModifierType (..))
-import LordOfTheRings.Phase (Phase (RefreshPhase, TravelPhase))
+import LordOfTheRings.Phase (Phase (RefreshPhase, TravelPhase, QuestPhase))
 import LordOfTheRings.Scenario.Types (ScenarioAttrs (scenarioEpic, scenarioVictoryDisplay))
 import LordOfTheRings.Standalone.AnnuminasLocationsSpec (stageLocation)
 import LordOfTheRings.Window (WindowType (RoundEnds), mkWhen)
@@ -82,6 +82,7 @@ spec = describe "Annúminas Siege Tunnel" do
     getsGame (map toCardCode . scenarioVictoryDisplay . toAttrs . (.scenario)) `shouldReturn` [toCardCode Locations.siegeTunnel]
     getsGame ((.victoryPoints) . toAttrs . (.scenario)) `shouldReturn` 5
     _ <- setEncounterDeck [Enemies.greenwayFootpad]
+    run $ DoStep 6 $ EndPhase QuestPhase
     run $ CheckWindows [mkWhen RoundEnds]
     getsGame (length . (.entities.enemies)) `shouldReturn` 0
     Just replica <- getsGame $ scenarioEpic . toAttrs . (.scenario)

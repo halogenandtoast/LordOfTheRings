@@ -7,7 +7,7 @@ import LordOfTheRings.Epic.Types
 import LordOfTheRings.Game.Public (hiddenCards)
 import LordOfTheRings.Helpers.Modifiers (getModifiers, preloadModifiers)
 import LordOfTheRings.Modifier (ModifierType (..))
-import LordOfTheRings.Phase (Phase (TravelPhase))
+import LordOfTheRings.Phase (Phase (TravelPhase, QuestPhase))
 import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Quest.CardDefs qualified as Quests
 import LordOfTheRings.Scenario.Types (ScenarioAttrs (scenarioEpic, scenarioVictoryDisplay))
@@ -169,3 +169,26 @@ spec = describe "Annúminas Enemy Camp" do
     run $ EliminatePlayer pid
     run $ ResolveEpicEffect (toCardCode Locations.enemyCamp) EpicRescueCaptives ScenarioTarget
     getsGame (length . filter ((== cid) . (.id) . toCard) . toList . (.entities.heroes)) `shouldReturn` 0
+
+  it "continues rescuing from the victory display after phase cleanup" . gameTest $ \pid -> do
+    stage <- stageThree
+    _ <- capture stage pid "01012"
+    camp <- stageLocation Locations.enemyCamp
+    run $ PlaceLocation camp ActiveLocation
+    run $ PlaceTokens GameSource (LocationTarget camp) Progress 5
+    run $ DoStep 6 $ EndPhase QuestPhase
+    run $ CheckWindows [mkWhen RoundEnds]
+    getsGame (concatMap (questUnderneath . toAttrs) . (.entities.quests)) `shouldReturn` []
+    getsGame (length . (.entities.heroes)) `shouldReturn` 3
+
+  it "forgets its victory-display ability once the physical Camp leaves the victory display" . gameTest $ \pid -> do
+    stage <- stageThree
+    _ <- capture stage pid "01012"
+    camp <- stageLocation Locations.enemyCamp
+    run $ PlaceLocation camp ActiveLocation
+    run $ PlaceTokens GameSource (LocationTarget camp) Progress 5
+    displayed <- getsGame (fromJustNote "missing victory card" . headMay . scenarioVictoryDisplay . toAttrs . (.scenario))
+    run $ RemoveFromVictoryDisplay displayed
+    run $ DoStep 6 $ EndPhase QuestPhase
+    run $ CheckWindows [mkWhen RoundEnds]
+    getsGame (length . concatMap (questUnderneath . toAttrs) . (.entities.quests)) `shouldReturn` 1

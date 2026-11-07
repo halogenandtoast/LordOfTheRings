@@ -3467,7 +3467,8 @@ runGameMessage msg g = case msg of
     pure
       $ advanced
       & effectsL %~ filter ((`notElem` [UntilEndOfPhase, UntilEndOfPhaseOf phase]) . effectDuration)
-      & leftPlayLocationsL .~ mempty
+      -- Locations with victory-display text must remain available after phase cleanup.
+      & leftPlayLocationsL %~ Map.filter (\l -> (toCard l).id `elem` map (.id) (toAttrs g.scenario).victoryDisplay)
       & damageDealtL %~ filter (\(source, _, _) -> case source of EnemyAttackSource _ -> True; _ -> False)
   DoStep 4 (EndPhase phase) -> do
     let (step, advanced) = phaseFollowing phase g
