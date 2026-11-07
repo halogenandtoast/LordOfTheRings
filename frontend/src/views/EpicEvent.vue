@@ -16,8 +16,10 @@ const seats = ref(1)
 const difficulty = ref<EpicDifficulty>('NormalMode')
 const invite = computed(() => window.location.href)
 const isAnnuminas = computed(() => event.value?.scenario === 'the-siege-of-annuminas')
-const canAddGroup = computed(() => !isAnnuminas.value || (event.value?.groups.length ?? 0) < 3)
-const ready = computed(() => !!event.value?.groups.length && (!isAnnuminas.value || event.value.groups.length === 3) && event.value.groups.every(g => g.joinedSeats === g.seats))
+const isDolGuldur = computed(() => event.value?.scenario === 'attack-on-dol-guldur')
+const threeTeams = computed(() => isAnnuminas.value || isDolGuldur.value)
+const canAddGroup = computed(() => !threeTeams.value || (event.value?.groups.length ?? 0) < 3)
+const ready = computed(() => !!event.value?.groups.length && (!threeTeams.value || event.value.groups.length === 3) && event.value.groups.every(g => g.joinedSeats === g.seats))
 const stageLetter = (ordinal: number) => ['B', 'D', 'F'][ordinal] ?? ''
 const totalSeats = computed(() => event.value?.groups.reduce((n, g) => n + g.seats, 0) ?? 0)
 const difficultyKey = (mode: EpicDifficulty) => `newGame.mode.${mode === 'EasyMode' ? 'easy' : mode === 'HardMode' ? 'hard' : 'normal'}`
@@ -48,7 +50,7 @@ const addGroup = async () => {
   busy.value = true
   error.value = null
   try {
-    const result = await createEpicGroup(event.value.id, { name: name.value.trim(), seats: seats.value, difficulty: isAnnuminas.value ? 'NormalMode' : difficulty.value })
+    const result = await createEpicGroup(event.value.id, { name: name.value.trim(), seats: seats.value, difficulty: threeTeams.value ? 'NormalMode' : difficulty.value })
     await router.push(`/games/${result.gameId}`)
   } catch (e) {
     error.value = e instanceof Error ? e.message : String(e)
@@ -77,13 +79,13 @@ const copy = async () => {
       </header>
       <p v-if="error" class="error" role="alert">{{ tr(error) }}</p>
       <template v-if="event">
-        <p class="intro">{{ $t(isAnnuminas ? 'epic.annuminasDescription' : 'epic.description') }}</p>
+        <p class="intro">{{ $t(isAnnuminas ? 'epic.annuminasDescription' : isDolGuldur ? 'epic.dolGuldurDescription' : 'epic.description') }}</p>
         <section v-if="event.started" class="shared" :aria-label="$t('epic.shared')">
-          <template v-if="!isAnnuminas">
+          <template v-if="!threeTeams">
           <div><span>{{ $t('epic.search') }}</span><strong>{{ event.progress }} / {{ 8 * (event.totalPlayers ?? 0) }}</strong><progress :value="event.progress" :max="8 * (event.totalPlayers ?? 1)" /><small v-if="event.searchComplete">{{ $t('epic.advanceHint') }}</small></div>
           <div><span>{{ $t('epic.damage') }}</span><strong>{{ event.damage }} / {{ 15 * (event.totalPlayers ?? 0) }}</strong><progress :value="event.damage" :max="15 * (event.totalPlayers ?? 1)" /></div>
           </template>
-          <div v-else><span>{{ $t('game.cityStrength') }}</span><strong>{{ event.cityStrength ?? '—' }}</strong><small>{{ $t('epic.annuminasCityHint') }}</small></div>
+          <div v-else><span>{{ $t('game.cityStrength') }}</span><strong>{{ event.cityStrength ?? '—' }}</strong><small>{{ $t(isAnnuminas ? 'epic.annuminasCityHint' : 'epic.dolGuldurCityHint') }}</small></div>
           <p>{{ $t('epic.frozenPlayers', { count: event.totalPlayers ?? 0 }) }}</p>
         </section>
         <section v-else class="invite">
@@ -104,12 +106,12 @@ const copy = async () => {
           <div class="group-fields">
             <label>{{ $t('epic.groupName') }}<input v-model="name" required maxlength="120" autocomplete="off" /></label>
             <label>{{ $t('newGame.numberOfPlayers') }}<select v-model="seats"><option v-for="n in 4" :key="n" :value="n">{{ n }}</option></select></label>
-            <label v-if="!isAnnuminas">{{ $t('newGame.mode.title') }}<select v-model="difficulty"><option v-for="mode in (['EasyMode', 'NormalMode', 'HardMode'] as const)" :key="mode" :value="mode">{{ $t(difficultyKey(mode)) }}</option></select></label>
+            <label v-if="!threeTeams">{{ $t('newGame.mode.title') }}<select v-model="difficulty"><option v-for="mode in (['EasyMode', 'NormalMode', 'HardMode'] as const)" :key="mode" :value="mode">{{ $t(difficultyKey(mode)) }}</option></select></label>
           </div>
           <button type="submit" :disabled="busy || !name.trim()">{{ $t('epic.createGroup') }}</button>
         </form>
         <footer v-if="!event.started" class="start-event">
-          <p>{{ $t(ready ? 'epic.readyHint' : isAnnuminas ? 'epic.annuminasWaitingHint' : 'epic.waitingHint') }}</p>
+          <p>{{ $t(ready ? 'epic.readyHint' : threeTeams ? 'epic.annuminasWaitingHint' : 'epic.waitingHint') }}</p>
           <button v-if="event.canStart" type="button" :disabled="busy || !ready" @click="start">{{ $t('epic.start') }}</button>
           <span v-else>{{ $t('epic.organizerStarts') }}</span>
         </footer>

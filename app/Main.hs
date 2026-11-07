@@ -1925,7 +1925,7 @@ postEpicEventsR = do
   request <- requireCheckJsonBody @_ @NewEpicEvent
   let mode = fromMaybe NormalMode request.difficulty
       scenarioCode = fromMaybe "the-hunt-for-the-dreadnaught" request.scenario
-  unless (scenarioCode `elem` ["the-hunt-for-the-dreadnaught", "the-siege-of-annuminas"]) $ sendResponseStatus status400 (ikey "error.epicScenario")
+  unless (scenarioCode `elem` ["the-hunt-for-the-dreadnaught", "the-siege-of-annuminas", "attack-on-dol-guldur"]) $ sendResponseStatus status400 (ikey "error.epicScenario")
   checkEpicDifficulty scenarioCode mode
   when (T.null $ T.strip request.name) $ sendResponseStatus status400 (ikey "error.epicName")
   now <- liftIO getCurrentTime
@@ -1969,7 +1969,7 @@ epicEventView viewer eid = do
     , "difficulty" .= event.lotrEpicEventMode, "scenario" .= event.lotrEpicEventScenario, "started" .= event.lotrEpicEventStarted
     , "groups" .= groups, "totalPlayers" .= fmap EpicTypes.totalPlayers shared
     , "searchComplete" .= maybe False EpicTypes.stageOneComplete shared
-    , "cityStrength" .= (shared >>= EpicTypes.annuminasCityStrength)
+    , "cityStrength" .= (shared >>= (\state -> EpicTypes.annuminasCityStrength state <|> EpicTypes.dolGuldurCityStrength state))
     , "progress" .= counter EpicTypes.SearchingTheHighSeasProgress, "damage" .= counter EpicTypes.DreadnaughtDamage
     ]
 
@@ -2029,7 +2029,11 @@ postEpicStartR eid = do
         deck <- maybe (pure starterDeck) (Epic.parseStored "Epic deck") seat.lotrSeatDeck
         pure (user.userUsername, deck)
       pure (groupRow, row, fromJustNote "Epic group has no players" $ nonEmpty players)
-    let shared = fromJustNote "Epic event has no players" $ (if event.lotrEpicEventScenario == "the-siege-of-annuminas" then EpicTypes.newAnnuminasEvent else EpicTypes.newSharedEvent) $ sum [length players | (_, _, players) <- prepared]
+    let initializeShared = case event.lotrEpicEventScenario of
+          "the-siege-of-annuminas" -> EpicTypes.newAnnuminasEvent
+          "attack-on-dol-guldur" -> EpicTypes.newDolGuldurEvent
+          _ -> EpicTypes.newSharedEvent
+        shared = fromJustNote "Epic event has no players" $ initializeShared $ sum [length players | (_, _, players) <- prepared]
     now <- liftIO getCurrentTime
     games <- for prepared \(groupRow, row, players) -> do
       let replica = EpicTypes.EpicReplica (EpicTypes.GroupOrdinal groupRow.lotrEpicGroupOrdinal) shared [] [] [] mempty mempty Nothing

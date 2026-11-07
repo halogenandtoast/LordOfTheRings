@@ -22,7 +22,7 @@ watch(() => props.id, (id, _, onCleanup) => {
   <aside class="epic-status" :aria-label="$t('epic.shared')">
     <RouterLink :to="`/epic-events/${id}`">{{ event?.name ?? $t('epic.title') }} ↗</RouterLink>
     <template v-if="event?.started">
-      <span v-if="event.scenario === 'the-siege-of-annuminas'">{{ $t('game.cityStrength') }} <strong>{{ event.cityStrength ?? '—' }}</strong></span>
+      <span v-if="event.scenario === 'the-siege-of-annuminas' || event.scenario === 'attack-on-dol-guldur'">{{ $t('game.cityStrength') }} <strong>{{ event.cityStrength ?? '—' }}</strong></span>
       <template v-else>
       <span>{{ $t('epic.search') }} <strong>{{ event.progress }}/{{ 8 * (event.totalPlayers ?? 0) }}</strong></span>
       <span>{{ $t('epic.damage') }} <strong>{{ event.damage }}/{{ 15 * (event.totalPlayers ?? 0) }}</strong></span>

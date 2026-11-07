@@ -287,6 +287,8 @@
     "playMode": "Play mode",
     "singleGroup": "Single group",
     "description": "Play in independent groups of 1–4 players, sharing quest progress and damage to the Dreadnaught. Each group has its own deck, ships, and turns.",
+    "dolGuldurDescription": "Create exactly three teams of 1–4 players. Each team has its own game and encounter deck. Share Dol Guldur’s City Strength, coordinate your stages, and resolve the end of each round together.",
+    "dolGuldurCityHint": "Reduce City Strength to zero and defeat every Lieutenant to capture Dol Guldur at the end of the round.",
     "annuminasDescription": "Defend Annúminas with exactly three teams of 1–4 players. Each team plays at its own stage with its own encounter deck. Finish each round together, resolving end-of-round effects in stage order B, D, F.",
     "annuminasCityHint": "All teams defend the same city. If its strength reaches zero, or the last player at any stage is eliminated, all teams lose.",
     "annuminasWaitingHint": "Create exactly three groups, one for each stage. Every seat needs a deck before the organizer can start.",

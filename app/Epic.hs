@@ -106,7 +106,7 @@ runExternal shared boards commands snapshot = do
       changed = setReplica replica snapshot
       -- A contributor updates its replica optimistically. Still notify its
       -- entities, which may need to react to the authoritative shared total.
-      sync = [SyncEpic shared | old.epicShared /= shared || not (null old.epicPendingDeltas) || maybe False (\outcome -> snapshot.epicGameState.outcome /= Just outcome) (annuminasOutcome shared)]
+      sync = [SyncEpic shared | old.epicShared /= shared || not (null old.epicPendingDeltas) || maybe False (\outcome -> snapshot.epicGameState.outcome /= Just outcome) (epicOutcome shared)]
       messages = sync <> map ApplyEpicCommand commands
   if isJust snapshot.epicGameState.outcome
     then do
@@ -116,7 +116,7 @@ runExternal shared boards commands snapshot = do
               , epicAppliedCommands = old.epicAppliedCommands <> Set.fromList (map epicCommandId commands)
               }
             snapshot
-      case annuminasOutcome shared of
+      case epicOutcome shared of
         Nothing -> pure terminal
         Just outcome -> liftIO do
           -- Reconcile an optimistic local ending with the event's accepted
@@ -196,7 +196,7 @@ commitGames eid baseline initialGames = do
   when
     ( (stageOneComplete shared && not (stageOneComplete original))
         || (dreadnaughtDestroyed shared && not (dreadnaughtDestroyed original))
-        || (isJust (annuminasOutcome shared) && isNothing (annuminasOutcome original))
+        || (isJust (epicOutcome shared) && isNothing (epicOutcome original))
     )
     $ for_ games \snapshot -> raiseUndoFloor (gameIdOf snapshot) snapshot.epicGameRow.lotrGameStep
   for games \snapshot -> do
