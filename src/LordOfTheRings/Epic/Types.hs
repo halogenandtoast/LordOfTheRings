@@ -14,6 +14,8 @@ module LordOfTheRings.Epic.Types (
   EpicTarget (..),
   EpicTargetQuery (..),
   EpicEffect (..),
+  EpicEnemyArrival (..),
+  EpicEnemyTransfer (..),
   EpicCommand (..),
   newSharedEvent,
   newAnnuminasEvent,
@@ -29,9 +31,13 @@ import Data.Map.Strict qualified as Map
 import Data.Set qualified as Set
 import LordOfTheRings.Card.Code (CardCode)
 import LordOfTheRings.Card.EncounterCard (EncounterCard)
+import LordOfTheRings.Card.PlayerCard (PlayerCard)
+import LordOfTheRings.Effect (Effect)
+import LordOfTheRings.Id (EnemyId, CardId, PlayerId)
 import LordOfTheRings.Json (withDefaults)
 import LordOfTheRings.Prelude
 import LordOfTheRings.Target (Target)
+import LordOfTheRings.Token (Tokens)
 
 newtype GroupOrdinal = GroupOrdinal {unGroupOrdinal :: Int}
   deriving stock (Show, Generic)
@@ -165,6 +171,27 @@ data EpicTargetQuery = EpicEnemy | EpicLocation | EpicShip | EpicEngagedNonUniqu
   deriving anyclass (ToJSON, FromJSON)
 
 data EpicEffect = EpicDamage Int | EpicProgress Int | EpicUpgradeShip | EpicShuffleWarship | EpicDiscardUntilEnemy
+  | EpicReceiveEnemy EpicEnemyTransfer EpicEnemyArrival
+  deriving stock (Show, Eq, Generic)
+  deriving anyclass (ToJSON, FromJSON)
+
+data EpicEnemyArrival = EpicStageEnemy | EpicAttackFirstPlayer
+  deriving stock (Show, Eq, Generic)
+  deriving anyclass (ToJSON, FromJSON)
+
+-- Annúminas's immune enemies move between stages without leaving play. Carry
+-- their state, including private shadow cards, through the durable outbox.
+data EpicEnemyTransfer = EpicEnemyTransfer
+  { epicEnemyId :: EnemyId
+  , epicEnemyCard :: EncounterCard
+  , epicEnemyTokens :: Tokens
+  , epicEnemyShadows :: [EncounterCard]
+  , epicEnemyRevealedShadows :: [CardId]
+  , epicEnemyFaceupShadows :: [CardId]
+  , epicEnemyFacedown :: [PlayerCard]
+  , epicEnemyOwner :: Maybe PlayerId
+  , epicEnemyEffects :: [Effect]
+  }
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

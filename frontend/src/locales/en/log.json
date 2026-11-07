@@ -1,4 +1,7 @@
 {
+  "annuminasEnemyMovesHere": "{card} moves to this staging area",
+  "annuminasEnemyMovesTeam": "{card} moves to team {team}",
+  "annuminasEnemyArrives": "{card} arrives in the staging area",
   "annuminasCityStrength": "Annúminas city strength is now {strength}",
   "shuffledIntoInvestigationDeck": "{card} is shuffled into the Investigation deck",
   "investigationDeck": "Investigation deck: {count} cards",

@@ -22,7 +22,7 @@ import LordOfTheRings.Classes.Entity
 import LordOfTheRings.Classes.HasGame
 import LordOfTheRings.Entities
 import LordOfTheRings.Enemy.Types (EnemyAttrs (enemyShadowRevealed))
-import LordOfTheRings.Epic.Types (SharedKey (AnnuminasCityStrength), EpicReplica (epicShared), annuminasCityStrength)
+import LordOfTheRings.Epic.Types (SharedKey (AnnuminasCityStrength), EpicReplica (epicShared, epicGroup), GroupOrdinal (..), EpicEffect (EpicReceiveEnemy), EpicEnemyTransfer (epicEnemyCard), annuminasCityStrength)
 import LordOfTheRings.Game.Base
 import LordOfTheRings.Heading
 import LordOfTheRings.Helpers.Resources (discardableResources)
@@ -58,6 +58,12 @@ says nothing costs nothing; only a narrating one reads the game.
 -}
 narrationFor :: HasGame m => Message -> Maybe (m [LogEntry])
 narrationFor = \case
+  MoveAnnuminasEnemy eid destination _ -> Just $ whenRef (EnemyTarget eid) $ \card -> do
+    own <- getsGame $ maybe (GroupOrdinal 0) epicGroup . scenarioEpic . toAttrs . (.scenario)
+    one $ mechanic [ikeyPart (if destination == own then "log.annuminasEnemyMovesHere" else "log.annuminasEnemyMovesTeam")
+      ["card" ~> card, "team" ~> (unGroupOrdinal destination + 1)]]
+  ResolveEpicEffect _ (EpicReceiveEnemy transfer _) _ -> Just $
+    one $ mechanic [ikeyPart "log.annuminasEnemyArrives" ["card" ~> EncounterCard transfer.epicEnemyCard]]
   -- \* Structure: the headings a reader finds their way by
   Setup -> Just do
     s <- getsGame (toAttrs . gameScenario)

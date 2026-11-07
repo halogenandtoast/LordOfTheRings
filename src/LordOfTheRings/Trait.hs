@@ -17,6 +17,7 @@ data Trait
   | Attack
   | Armor
   | Arnor
+  | Angmar
   | Artifact
   | Balrog
   | Barrow

@@ -1,5 +1,6 @@
 {
   "annuminas": {
+    "lieutenantStage": "Move Lieutenant of Angmar to a staging area with the lowest total threat",
     "dunedain": "Choose a player to spend 1 resource and take control of Dúnedain of Annúminas",
     "declineDunedain": "Discard Dúnedain of Annúminas",
     "gateEngage": "Engage an enemy to travel to Gate of Annúminas",

@@ -8,7 +8,7 @@ import Data.Aeson.Types (Parser)
 import LordOfTheRings.Ability.Types
 import LordOfTheRings.Campaign (CampaignLogUpdate)
 import LordOfTheRings.Card
-import LordOfTheRings.Epic.Types (SharedEventState, SharedKey, GroupOrdinal, EpicEffect, EpicTargetQuery, EpicCommand)
+import LordOfTheRings.Epic.Types (SharedEventState, SharedKey, GroupOrdinal, EpicEffect, EpicTargetQuery, EpicCommand, EpicEnemyArrival)
 import LordOfTheRings.Effect
 import LordOfTheRings.Heading (HeadingShift)
 import LordOfTheRings.I18n (ikeyWith, intVar)
@@ -320,6 +320,7 @@ data Message
   | ResolveEpicEffect CardCode EpicEffect Target
   | QueueEpicCommand GroupOrdinal CardCode EpicEffect Target
   | ApplyEpicCommand EpicCommand
+  | MoveAnnuminasEnemy EnemyId GroupOrdinal EpicEnemyArrival
   | SyncEpic SharedEventState
   | ContributeShared SharedKey Int
   | CheckWindows [Window]

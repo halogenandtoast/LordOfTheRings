@@ -1,11 +1,12 @@
 module LordOfTheRings.Scenario.Scenarios.TheSiegeOfAnnuminas.Helpers
-  (cityStrength, damageAnnuminas, repairAnnuminas, eachAnnuminasTeam) where
+  (cityStrength, damageAnnuminas, repairAnnuminas, eachAnnuminasTeam, annuminasStages) where
 
 import LordOfTheRings.Card (CardCode, toCardCode)
 import LordOfTheRings.Classes.Entity (toAttrs)
 import LordOfTheRings.Classes.HasGame
 import LordOfTheRings.Classes.HasQueue (push)
 import LordOfTheRings.Epic.Types
+import LordOfTheRings.Epic.Board (epicBoardFor)
 import LordOfTheRings.Message (Message (ContributeShared, ResolveEpicEffect, QueueEpicCommand))
 import LordOfTheRings.Message.Lifted
 import LordOfTheRings.Objective.CardDefs qualified as Objectives
@@ -13,6 +14,15 @@ import LordOfTheRings.Prelude
 import LordOfTheRings.Scenario.Types (scenarioEpic)
 import LordOfTheRings.Source (Sourceable)
 import LordOfTheRings.Target (Target (ScenarioTarget))
+
+annuminasStages :: HasGame m => m [(GroupOrdinal, Text, EpicStage)]
+annuminasStages = getsGame $ \g ->
+  let replica = scenarioEpic $ toAttrs g.scenario
+      own = maybe (GroupOrdinal 0) epicGroup replica
+      boards = maybe [] epicBoards replica
+      name = fromMaybe "" $ epicBoardName <$> find ((== own) . epicBoardGroup) boards
+      current = epicBoardFor own name g
+   in [(b.epicBoardGroup, b.epicBoardName, stage) | b <- current : filter ((/= own) . epicBoardGroup) boards, Just stage <- [b.epicBoardStage]]
 
 -- Only explicitly global scenario effects reach another team. Each destination
 -- receives its own durable command; its engine resolves against its own deck.

@@ -14,7 +14,7 @@ allEnemyCards =
   Map.fromList $
     map
       (\def -> (cdCardCode def, def))
-      [hostOfAngmar, wargOfCarnDum, orcOfAngmar, angmarWargRider, savageWerewolf, vanguardOfCarnDum, billFernyMurder, breeLandInformant, toddTheTroll, susieTheSpider, wolfPeltJake, johnnyGoblinFingers, oldOrcEyes, lawlessRuffian, greenwayFootpad, chetwoodOutlaw, barrowWight, coldWight, darkWight, naurlhug, orcOfEredLuin, blueMountainGoblin, lurkerOfTheDepths, namelessCaveDweller, oldStoneTroll, oldManWillow, longTrailer, graspingRoot, armyOfFlies, theLordOfTheDeadErech, shadowMan, restlessDead, whisperer, regretfulShade, shadowHostCaptain, smaugTheMightyLakeTown, smaugTheTerrible, smaugTheMagnificentLakeTown, snagaScouts, theWitchKingOsgiliath, wolvesFromMordor, wainriders, wainriderCaptain, urukVanguard, dreadnaught, dreadnaughtDamaged, captainOfTheHaven, commanderOfTheDreadnaught, descendantOfCastamir, hydraken, ophidian, varjax, brashCorsairDreadnaught, corsairPlunderer, daringBuccaneer, fierceMarauder, southronSailorDreadnaught, umbarCaptainDreadnaught, blackSailsDreadnaught, corsairSkiffDreadnaught, corsairSkirmisherDreadnaught, corsairWarshipDreadnaught, rammingShipDreadnaught, slaveShipDreadnaught, warGalley, seaMonster,  stalkingGoblin
+      [lieutenantOfAngmar, hostOfAngmar, wargOfCarnDum, orcOfAngmar, angmarWargRider, savageWerewolf, vanguardOfCarnDum, billFernyMurder, breeLandInformant, toddTheTroll, susieTheSpider, wolfPeltJake, johnnyGoblinFingers, oldOrcEyes, lawlessRuffian, greenwayFootpad, chetwoodOutlaw, barrowWight, coldWight, darkWight, naurlhug, orcOfEredLuin, blueMountainGoblin, lurkerOfTheDepths, namelessCaveDweller, oldStoneTroll, oldManWillow, longTrailer, graspingRoot, armyOfFlies, theLordOfTheDeadErech, shadowMan, restlessDead, whisperer, regretfulShade, shadowHostCaptain, smaugTheMightyLakeTown, smaugTheTerrible, smaugTheMagnificentLakeTown, snagaScouts, theWitchKingOsgiliath, wolvesFromMordor, wainriders, wainriderCaptain, urukVanguard, dreadnaught, dreadnaughtDamaged, captainOfTheHaven, commanderOfTheDreadnaught, descendantOfCastamir, hydraken, ophidian, varjax, brashCorsairDreadnaught, corsairPlunderer, daringBuccaneer, fierceMarauder, southronSailorDreadnaught, umbarCaptainDreadnaught, blackSailsDreadnaught, corsairSkiffDreadnaught, corsairSkirmisherDreadnaught, corsairWarshipDreadnaught, rammingShipDreadnaught, slaveShipDreadnaught, warGalley, seaMonster,  stalkingGoblin
       , spidersOfMirkwoodDarkOfMirkwood
       , goblinSniperDarkOfMirkwood
       , goblinRunnersDarkOfMirkwood
@@ -5953,3 +5953,7 @@ savageWerewolf = (enemy "the-siege-of-annuminas-027" "Savage Werewolf" TheSiegeO
   { cdCardTraits = setFromList [Creature], cdShadowEffect = True }
 vanguardOfCarnDum = (enemy "the-siege-of-annuminas-028" "Vanguard of Carn Dûm" TheSiegeOfAnnuminas 2 45 3 6 3 8)
   { cdCardTraits = setFromList [Orc], cdShadowEffect = True }
+
+lieutenantOfAngmar :: CardDef
+lieutenantOfAngmar = (enemy "the-siege-of-annuminas-013" "Lieutenant of Angmar" TheSiegeOfAnnuminas 1 0 4 6 4 9)
+  { cdUnique = True, cdCardTraits = setFromList [Angmar, Sorcerer], cdVictoryPoints = Just 4 }

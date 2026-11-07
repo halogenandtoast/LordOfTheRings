@@ -1,11 +1,15 @@
 module LordOfTheRings.Epic.Runner (runEpicMessage) where
 
 import Data.Set qualified as Set
+import Data.Map.Strict qualified as Map
 import LordOfTheRings.Card
-import LordOfTheRings.Classes.Entity (overAttrs, toAttrs)
+import LordOfTheRings.Classes.Entity (overAttrs, toAttrs, insertEntity)
 import LordOfTheRings.Classes.HasQueue (push, runQueueT)
 import LordOfTheRings.Epic.Board
 import LordOfTheRings.Epic.Types
+import LordOfTheRings.Effect (Effect (..))
+import LordOfTheRings.Enemy (EnemyAttrs (..), createEnemy)
+import LordOfTheRings.Entities (enemiesL)
 import LordOfTheRings.Game.Base
 import LordOfTheRings.GameT (GameT)
 import LordOfTheRings.I18n (cardVar, textVar)
@@ -15,6 +19,8 @@ import LordOfTheRings.Message.Lifted
 import LordOfTheRings.Objective.CardDefs qualified as Objectives
 import LordOfTheRings.Outcome (Outcome (Lost))
 import LordOfTheRings.Prelude
+import LordOfTheRings.Placement (Placement (StagingArea))
+import LordOfTheRings.Matcher (getLead)
 import LordOfTheRings.Scenario.Types (ScenarioAttrs (scenarioEpic, scenarioSetAside))
 import LordOfTheRings.Source (Source (CardCodeSource))
 import LordOfTheRings.Target
@@ -22,6 +28,44 @@ import LordOfTheRings.Trait (Trait (Basic, Upgraded))
 
 runEpicMessage :: Message -> Game -> GameT Game
 runEpicMessage msg g = case msg of
+  MoveAnnuminasEnemy eid destination arrival | Just foe <- Map.lookup eid g.entities.enemies -> do
+    let replica = scenarioEpic $ toAttrs g.scenario
+        own = maybe (GroupOrdinal 0) epicGroup replica
+    if destination == own
+      then do
+        runQueueT do
+          placeEnemy eid StagingArea
+          when (arrival == EpicAttackFirstPlayer) do
+            lead <- getLead
+            immediateAttack lead eid
+        pure g
+      else case replica of
+        Nothing -> pure g
+        Just _ -> do
+          let a = toAttrs foe
+              carried effect = effect.effectTarget `elem` [EnemyTarget eid, CardIdTarget a.cardId]
+              transfer = EpicEnemyTransfer eid (MkEncounterCard a.cardId $ toCardCode foe)
+                a.enemyTokens a.enemyShadowCards a.enemyShadowRevealed a.enemyShadowFaceUp
+                a.enemyFacedown a.enemyOwner (filter carried $ gameEffects g)
+          push $ QueueEpicCommand destination (toCardCode foe) (EpicReceiveEnemy transfer arrival) ScenarioTarget
+          -- Moving between stages is neither leaving nor entering play.
+          pure $ g & entitiesL . enemiesL %~ Map.delete eid & effectsL %~ filter (not . carried)
+  ResolveEpicEffect _ (EpicReceiveEnemy transfer arrival) _ -> do
+    when (Map.member transfer.epicEnemyId g.entities.enemies) $
+      throwIO $ userError "Epic enemy identity already exists at the destination"
+    let foe = overAttrs (\a -> a
+          { enemyPlacement = StagingArea
+          , enemyTokens = transfer.epicEnemyTokens
+          , enemyShadowCards = transfer.epicEnemyShadows
+          , enemyShadowRevealed = transfer.epicEnemyRevealedShadows
+          , enemyShadowFaceUp = transfer.epicEnemyFaceupShadows
+          , enemyFacedown = transfer.epicEnemyFacedown
+          , enemyOwner = transfer.epicEnemyOwner
+          }) $ createEnemy transfer.epicEnemyCard transfer.epicEnemyId
+    when (arrival == EpicAttackFirstPlayer) $ runQueueT do
+      lead <- getLead
+      immediateAttack lead transfer.epicEnemyId
+    pure $ g & entitiesL . enemiesL %~ insertEntity foe & effectsL <>~ transfer.epicEnemyEffects
   SyncEpic shared -> do
     when (annuminasCityDefeated shared) $ runQueueT $ gameOver Lost
     pure g

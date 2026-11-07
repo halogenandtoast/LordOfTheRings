@@ -80,6 +80,8 @@ import LordOfTheRings.Message (
     DiscardAllResources,
     WithDiscardedResources,
     ArrangeIslandMap,
+    MoveAnnuminasEnemy,
+    ResolveEpicEffect,
     BeginPhase,
     CheckWindows,
     CompleteQuest,
@@ -225,6 +227,7 @@ import LordOfTheRings.Game.Cards (
  )
 import LordOfTheRings.Game.Dispatch (runEach, runEntities)
 import LordOfTheRings.Game.Message (runGameMessage)
+import LordOfTheRings.Epic.Types (EpicEffect (EpicReceiveEnemy))
 import LordOfTheRings.Game.Query (
   progressFirst,
   progressRedirect,
@@ -617,6 +620,8 @@ runInPlay msg g =
             SeparatePlayer _ -> True
             SeparateStagingAreas _ -> True
             PlaceInStagingAreaOf {} -> True
+            MoveAnnuminasEnemy {} -> True
+            ResolveEpicEffect _ (EpicReceiveEnemy {}) _ -> True
             _ -> False
           -- a location leaving play is kept aside for its own abilities to answer it
           departed = if movingAreas then mempty else Map.difference g.entities.locations g'.entities.locations
