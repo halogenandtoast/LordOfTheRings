@@ -156,6 +156,48 @@ spec = describe "Dol Guldur durable cross-team effects" do
     placed.flipped `shouldBe` False
     getsGame (map (.id) . scenarioQuestDeck . toAttrs . (.scenario)) `shouldReturn` [prior.cardId]
 
+  it "reports prepared and revealed stages before parking with the original claim still held" . gameTestIn attackOnDolGuldur testDeck $ \pid -> do
+    replicaAt $ GroupOrdinal 0
+    _ <- putQuestStage Quests.crossingTheAnduinDolGuldur
+    replacement <- genEncounterCard Quests.theTowerOfSorcery
+    current <- getGame
+    let epoch = DolEpoch current.round DolInitialStages
+        assignments = [(GroupOrdinal 0, toCardCode Quests.theTowerOfSorcery), (GroupOrdinal 1, toCardCode Quests.theSiegeOfDolGuldur), (GroupOrdinal 2, toCardCode Quests.battleUnderTheTrees)]
+        initial = either (error . show) id $ beginDolTransition epoch (GroupOrdinal 0) [(GroupOrdinal 0, Nothing), (GroupOrdinal 1, Nothing), (GroupOrdinal 2, Nothing)]
+        preparing = initial {dolTransitionPhase = DolPreparingStages, dolAcceptedClaims = assignments}
+    putGame $ current & scenarioL %~ overAttrs (\a -> a
+      { scenarioQuestDeck = [replacement]
+      , scenarioEpic = fmap (\r -> r
+          { epicRoundState = Just $ EpicRoundState current.round EpicRoundResolving
+          , epicPendingRequests = Set.singleton UUID.nil
+          , epicShared = r.epicShared {dolGuldurCoordination = Just $ EpicDolState preparing [(GroupOrdinal 0, UUID.nil)] mempty}
+          }) a.scenarioEpic
+      })
+    run $ PrepareEpicQuestAdvance EpicLeaveQuest replacement
+    getsGame epicRoundPhaseOf `shouldReturn` Just EpicRoundPrepared
+    preparedCommands <- (.epicPendingCommands) <$> currentReplica
+    map (.epicCommandEffect) preparedCommands `shouldBe` [EpicDolStepDone epoch $ DolTeamPrepared $ GroupOrdinal 0]
+    (.epicPendingRequests) <$> currentReplica `shouldReturn` Set.singleton UUID.nil
+    maybe [] questionChoices <$> getQuestion pid `shouldReturn` []
+    void $ runDebug MarkEpicQuestPrepared
+    (.epicPendingCommands) <$> currentReplica `shouldReturn` preparedCommands
+    prepared <- getGame
+    putGame $ prepared & scenarioL %~ overAttrs (\a -> a {scenarioEpic = fmap (\r -> r
+      {epicShared = r.epicShared {dolGuldurCoordination = Just $ EpicDolState
+        (preparing {dolTransitionPhase = DolRevealingStages, dolPreparedTeams = map fst assignments, dolRevealingTeam = Just $ GroupOrdinal 0})
+        [(GroupOrdinal 0, UUID.nil)] mempty}}) a.scenarioEpic})
+    void $ runDebug RevealEpicQuestAdvance
+    resolveRevealed
+    getsGame epicRoundPhaseOf `shouldReturn` Just EpicRoundRevealed
+    revealedCommands <- (.epicPendingCommands) <$> currentReplica
+    map (.epicCommandEffect) revealedCommands `shouldBe`
+      [EpicDolStepDone epoch $ DolTeamPrepared $ GroupOrdinal 0, EpicDolStepDone epoch $ DolTeamRevealed $ GroupOrdinal 0]
+    map (.epicCommandCard) revealedCommands `shouldBe` replicate 2 (toCardCode Quests.theTowerOfSorcery)
+    (.epicPendingRequests) <$> currentReplica `shouldReturn` Set.singleton UUID.nil
+    maybe [] questionChoices <$> getQuestion pid `shouldReturn` []
+    void $ runDebug MarkEpicQuestRevealed
+    (.epicPendingCommands) <$> currentReplica `shouldReturn` revealedCommands
+
   it "loads shared event rows created before Dol coordinator persistence" do
     let shared = fromJustNote "invalid event" $ newDolGuldurEvent 3
         legacy = case toJSON shared of

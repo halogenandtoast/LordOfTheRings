@@ -9,6 +9,7 @@ import LordOfTheRings.Classes.Entity (overAttrs, toAttrs, toId, insertEntity)
 import LordOfTheRings.Classes.HasQueue (push, pushEnd, runQueueT)
 import LordOfTheRings.Epic.Lorien (transferLorienSupport, receiveLorienSupport)
 import LordOfTheRings.Epic.Board
+import LordOfTheRings.Epic.DolGuldur (DolPhase (DolPreparingStages, DolRevealingStages), DolTransition (..), DolAck (..))
 import LordOfTheRings.Epic.Types
 import LordOfTheRings.Effect (Effect (..), EffectDuration (UntilEndOfPhaseOf, UntilEndOfRound))
 import LordOfTheRings.Enemy (EnemyAttrs (..), createEnemy)
@@ -145,7 +146,13 @@ runEpicMessage msg g = case msg of
     | epicRoundPhaseOf g == Just EpicRoundPreparingAdvance
     , Just (_, card) <- (gameEpicQuestAdvance g)
     , any ((== card.id) . (.cardId) . toAttrs) g.entities.quests -> do
-        push AwaitEpicRound
+        runQueueT do
+          for_ (scenarioEpic $ toAttrs g.scenario) $ \replica ->
+            for_ replica.epicShared.dolGuldurCoordination $ \state ->
+              when (state.epicDolTransition.dolTransitionPhase == DolPreparingStages) $
+                push $ QueueEpicCommand (GroupOrdinal 0) (toCardCode card)
+                  (EpicDolStepDone state.epicDolTransition.dolTransitionEpoch $ DolTeamPrepared replica.epicGroup) ScenarioTarget
+          push AwaitEpicRound
         pure $ setEpicRoundPhase EpicRoundPrepared g
   RevealEpicQuestAdvance
     | epicRoundPhaseOf g == Just EpicRoundPrepared
@@ -155,9 +162,17 @@ runEpicMessage msg g = case msg of
           push $ CheckWindows [mkAfter AdvancedToStage]
           push MarkEpicQuestRevealed
         pure $ setEpicRoundPhase EpicRoundRevealing g
-  MarkEpicQuestRevealed | epicRoundPhaseOf g == Just EpicRoundRevealing -> do
-    push AwaitEpicRound
-    pure $ setEpicRoundPhase EpicRoundRevealed g & epicQuestAdvanceL .~ Nothing
+  MarkEpicQuestRevealed
+    | epicRoundPhaseOf g == Just EpicRoundRevealing
+    , Just (_, card) <- gameEpicQuestAdvance g -> do
+        runQueueT do
+          for_ (scenarioEpic $ toAttrs g.scenario) $ \replica ->
+            for_ replica.epicShared.dolGuldurCoordination $ \state ->
+              when (state.epicDolTransition.dolTransitionPhase == DolRevealingStages) $
+                push $ QueueEpicCommand (GroupOrdinal 0) (toCardCode card)
+                  (EpicDolStepDone state.epicDolTransition.dolTransitionEpoch $ DolTeamRevealed replica.epicGroup) ScenarioTarget
+          push AwaitEpicRound
+        pure $ setEpicRoundPhase EpicRoundRevealed g & epicQuestAdvanceL .~ Nothing
   ReleaseEpicRoundBeginning
     | epicRoundPhaseOf g `elem` map Just [EpicRoundBeginReady, EpicRoundRevealed] -> do
         runQueueT do
