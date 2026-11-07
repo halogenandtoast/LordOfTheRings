@@ -4513,6 +4513,7 @@ test-suite LordOfTheRings-test
       LordOfTheRings.Standalone.BelegostSpec
       LordOfTheRings.Standalone.DolGuldurEncountersSpec
       LordOfTheRings.Standalone.DolGuldurEpicSpec
+      LordOfTheRings.Standalone.DolGuldurJourneySpec
       LordOfTheRings.Standalone.DolGuldurScenarioSpec
       LordOfTheRings.Standalone.DolGuldurSetupSpec
       LordOfTheRings.Standalone.DolGuldurSupportTransferSpec
