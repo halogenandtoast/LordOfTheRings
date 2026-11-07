@@ -4509,6 +4509,7 @@ test-suite LordOfTheRings-test
       LordOfTheRings.Standalone.AnnuminasSortieSpec
       LordOfTheRings.Standalone.AnnuminasStageStateSpec
       LordOfTheRings.Standalone.AnnuminasTreacheriesSpec
+      LordOfTheRings.Standalone.AnnuminasTransitionIntegrationSpec
       LordOfTheRings.Standalone.AnnuminasTunnelSpec
       LordOfTheRings.Standalone.BattleOfLakeTownSpec
       LordOfTheRings.Standalone.BelegostSpec

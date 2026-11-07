@@ -1,4 +1,5 @@
-module LordOfTheRings.Standalone.AnnuminasRoundIntegrationSpec (spec) where
+module LordOfTheRings.Standalone.AnnuminasRoundIntegrationSpec
+  (spec, RoundTeam, external, teamAt, teamGames, reloadTeams, roundStep, freezeTeams, flushTeams, finishTeamChoices, makeTeam) where
 
 import LordOfTheRings.Ability.Types (isForcedAbility)
 import LordOfTheRings.Decklist (loadPlayer)
