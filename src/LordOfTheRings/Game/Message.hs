@@ -496,6 +496,8 @@ import LordOfTheRings.Message (
     ChooseEpicTarget,
     ResolveEpicEffect,
     ApplyEpicCommand,
+    SyncEpic,
+    ContributeShared,
     ChooseAndDiscard,
     ChooseAndDiscardFromHand,
     ChooseAnyDiscardFromHand,
@@ -1263,6 +1265,8 @@ runGameMessage msg g = case msg of
   ChooseEpicTarget {} -> runEpicMessage msg g
   ResolveEpicEffect {} -> runEpicMessage msg g
   ApplyEpicCommand {} -> runEpicMessage msg g
+  SyncEpic {} -> runEpicMessage msg g
+  ContributeShared {} -> runEpicMessage msg g
   -- the rest of an attack does nothing once its enemy has left play
   _ | Just eid <- attackingEnemy msg, not (Map.member eid g.entities.enemies) -> pure g
   Run msgs -> do

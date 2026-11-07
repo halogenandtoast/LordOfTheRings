@@ -514,6 +514,7 @@ export const toView = (data: GameData, defs: Record<string, CardDef>, previous: 
         ? card(game.stormcallerStage.cardCode, game.stormcallerStage.id, { flipped: true, image: `${game.stormcallerStage.cardCode}-d`, progress: game.stormcallerProgress ?? 0 })
         : null,
       temperature: game.temperature ?? null,
+      cityStrength: game.cityStrength ?? null,
       ringBearersLife: game.ringBearersLife ?? null,
       pursuit: game.pursuit ?? null,
       stormcallerArea: withAttachments([...placed('enemies', isAt('StormcallerArea')), ...placed('locations', isAt('StormcallerArea'))]),

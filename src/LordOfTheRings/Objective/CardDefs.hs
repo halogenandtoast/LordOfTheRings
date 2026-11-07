@@ -16,7 +16,7 @@ allObjectiveCards =
   Map.fromList $
     map
       (\def -> (cdCardCode def, def))
-      [tomBombadilFog, swordOfBelegost, mapOfEredLuin, keysOfBelegost, bookOfAulesChildren, dwarvenTorch, blueMountainGem, stalkingTheRuins, tomBombadilOldForest, derufin, relicFromTheDarkYears, eventide, dusk, midnight, theOldThrush, lakeTown, rangerOfIthilien, corsairSkirmisherShipDreadnaught, eithiliant, eithiliantUpgraded, goldenWing, goldenWingUpgraded, prideOfLebennin, prideOfLebenninUpgraded, silentMist, silentMistUpgraded, swanShipOfDolAmroth, swanShipOfDolAmrothUpgraded, twilightsCall, twilightsCallUpgraded, gondorianWarship,  caveTorchDarkOfMirkwood
+      [annuminas, tomBombadilFog, swordOfBelegost, mapOfEredLuin, keysOfBelegost, bookOfAulesChildren, dwarvenTorch, blueMountainGem, stalkingTheRuins, tomBombadilOldForest, derufin, relicFromTheDarkYears, eventide, dusk, midnight, theOldThrush, lakeTown, rangerOfIthilien, corsairSkirmisherShipDreadnaught, eithiliant, eithiliantUpgraded, goldenWing, goldenWingUpgraded, prideOfLebennin, prideOfLebenninUpgraded, silentMist, silentMistUpgraded, swanShipOfDolAmroth, swanShipOfDolAmrothUpgraded, twilightsCall, twilightsCallUpgraded, gondorianWarship,  caveTorchDarkOfMirkwood
       , gandalfsMap
       , theThreatToWilderland
       , ashenBrazier
@@ -1704,3 +1704,7 @@ tomBombadilFog = (objective "fog-on-the-barrow-downs-019" "Tom Bombadil" FogOnTh
   , cdHitPoints = Just 6
   , cdWhenRevealed = True
   }
+
+annuminas :: CardDef
+annuminas = (objective "the-siege-of-annuminas-012" "Annúminas" TheSiegeOfAnnuminas 1)
+  { cdUnique = True, cdCardTraits = setFromList [City] }

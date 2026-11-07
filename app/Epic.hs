@@ -153,6 +153,7 @@ commitGames eid baseline initialGames = do
   when
     ( (stageOneComplete shared && not (stageOneComplete original))
         || (dreadnaughtDestroyed shared && not (dreadnaughtDestroyed original))
+        || (annuminasCityDefeated shared && not (annuminasCityDefeated original))
     )
     $ for_ games \snapshot -> raiseUndoFloor (gameIdOf snapshot) snapshot.epicGameRow.lotrGameStep
   for games \snapshot -> do

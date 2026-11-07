@@ -137,6 +137,7 @@ export interface ScenarioView {
   stormcallerArea: CardView[]
   /** The heat tracker's temperature (Desert Crossing). */
   temperature?: number | null
+  cityStrength?: number | null
   /** The Ring-bearer's life on the life tracker (Flight to the Ford). */
   ringBearersLife?: number | null
   /** The pursuit tracker's value (The Uruk-hai). */

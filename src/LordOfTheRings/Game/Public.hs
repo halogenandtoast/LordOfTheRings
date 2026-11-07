@@ -12,6 +12,7 @@ import LordOfTheRings.Campaign (campaignCardFor)
 import LordOfTheRings.Classes.Entity (toAttrs)
 import LordOfTheRings.Classes.HasGame
 import LordOfTheRings.Entities (entitiesContracts, entitiesLocations, entitiesObjectives, entitiesQuests)
+import LordOfTheRings.Epic.Types (EpicReplica (epicShared), annuminasCityStrength)
 import LordOfTheRings.Game.Base
 import LordOfTheRings.Game.SearchZones (searchZones)
 import LordOfTheRings.Card
@@ -30,6 +31,7 @@ import LordOfTheRings.Matcher
 import LordOfTheRings.Modifier (Modifier (..), ModifierType (TopOfDeckFaceup))
 import LordOfTheRings.Contract.Types (ContractAttrs (..))
 import LordOfTheRings.Objective.Types (ObjectiveAttrs (..))
+import LordOfTheRings.Objective.CardDefs qualified as Objectives
 import LordOfTheRings.Quest.Types (QuestAttrs (..))
 import LordOfTheRings.I18n (ikey)
 import LordOfTheRings.Question (Question (QuestionLabel), UI (TargetLabel), questionChoices, searchedCards)
@@ -155,6 +157,9 @@ publicGameFor seesHand g = hideDecks $ toJSON merged
       <> map ((.id) . toCard) (toList es.objectives)
       <> map ((.id) . toCard) (toList es.attachments)
       <> map ((.id) . toCard) (toList es.treacheries)
+  cityStrength =
+    (scenarioEpic (toAttrs g.scenario) >>= annuminasCityStrength . epicShared)
+      <|> ((.resources) <$> find ((== toCardCode Objectives.annuminas) . toCardCode) (toList g.entities.objectives))
   hideDecks = \case
     Object o ->
       Object
@@ -183,6 +188,7 @@ publicGameFor seesHand g = hideDecks $ toJSON merged
         $ KeyMap.insert "nightmareProgress" (metaValue "nightmareProgress")
         -- the heat tracker's temperature (Desert Crossing)
         $ KeyMap.insert "temperature" (metaValue "temperature")
+        $ KeyMap.insert "cityStrength" (toJSON cityStrength)
         -- the Ring-bearer's life on the life tracker (Flight to the Ford)
         $ KeyMap.insert "ringBearersLife" (metaValue "ringBearersLife")
         -- the pursuit tracker's value (The Uruk-hai)

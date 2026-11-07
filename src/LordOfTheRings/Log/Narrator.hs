@@ -22,6 +22,7 @@ import LordOfTheRings.Classes.Entity
 import LordOfTheRings.Classes.HasGame
 import LordOfTheRings.Entities
 import LordOfTheRings.Enemy.Types (EnemyAttrs (enemyShadowRevealed))
+import LordOfTheRings.Epic.Types (SharedKey (AnnuminasCityStrength), EpicReplica (epicShared), annuminasCityStrength)
 import LordOfTheRings.Game.Base
 import LordOfTheRings.Heading
 import LordOfTheRings.Helpers.Resources (discardableResources)
@@ -111,6 +112,12 @@ narrationFor = \case
   -- \* Threat
   RaiseThreat pid n | n > 0 -> Just $ threatChange "log.threatRaised" pid n (+ n)
   LowerThreat pid n | n > 0 -> Just $ threatChange "log.threatLowered" pid n (max 0 . subtract n)
+  ContributeShared AnnuminasCityStrength amount | amount /= 0 -> Just do
+    strength <- getsGame $ \g -> scenarioEpic (toAttrs g.scenario) >>= annuminasCityStrength . epicShared
+    pure
+      [ toned (if amount > 0 then Good else Bad) $ mechanic [ikeyPart "log.annuminasCityStrength" ["strength" ~> max 0 (current + amount)]]
+      | Just current <- [strength], current > 0
+      ]
   AddToStartingThreat pid n | n > 0 -> Just $ threatChange "log.startingThreatRaised" pid n (+ n)
   ScenarioSpecific "tharbad.lowerElimination" v ->
     Just $ one $ toned Bad $ mechanic [ikeyPart "log.eliminationLevelLowered" ["count" ~> fromMaybe (10 :: Int) (parseMaybe parseJSON v)]]

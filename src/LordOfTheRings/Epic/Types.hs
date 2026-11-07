@@ -14,6 +14,9 @@ module LordOfTheRings.Epic.Types (
   EpicEffect (..),
   EpicCommand (..),
   newSharedEvent,
+  newAnnuminasEvent,
+  annuminasCityStrength,
+  annuminasCityDefeated,
   sharedCounter,
   applySharedDelta,
   stageOneComplete,
@@ -32,7 +35,7 @@ newtype GroupOrdinal = GroupOrdinal {unGroupOrdinal :: Int}
   deriving stock (Show, Generic)
   deriving newtype (Eq, Ord, ToJSON, FromJSON)
 
-data SharedKey = SearchingTheHighSeasProgress | DreadnaughtDamage
+data SharedKey = SearchingTheHighSeasProgress | DreadnaughtDamage | AnnuminasCityStrength
   deriving stock (Show, Eq, Ord, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
@@ -63,14 +66,28 @@ newSharedEvent players
   | players > 0 = Just $ SharedEventState players mempty mempty 0
   | otherwise = Nothing
 
+-- The Epic setup card sets one shared city to 50, for three teams of 1–4.
+newAnnuminasEvent :: Int -> Maybe SharedEventState
+newAnnuminasEvent players
+  | players >= 3 && players <= 12 =
+      Just $ SharedEventState players (Map.singleton (counterKey AnnuminasCityStrength) 50) mempty 0
+  | otherwise = Nothing
+
+annuminasCityStrength :: SharedEventState -> Maybe Int
+annuminasCityStrength = Map.lookup (counterKey AnnuminasCityStrength) . (.counters)
+
+annuminasCityDefeated :: SharedEventState -> Bool
+annuminasCityDefeated state = annuminasCityStrength state == Just 0
+
 counterKey :: SharedKey -> Text
 counterKey SearchingTheHighSeasProgress = "searching-the-high-seas-progress"
 counterKey DreadnaughtDamage = "dreadnaught-damage"
+counterKey AnnuminasCityStrength = "annuminas-city-strength"
 
 sharedCounter :: SharedKey -> SharedEventState -> Int
 sharedCounter key state = Map.findWithDefault 0 (counterKey key) state.counters
 
-{- | Return the state and the effective contribution, bounded at zero and the
+{- | Return the state and the effective contribution, bounded at zero and any
 printed global requirement. The effective amount is what the step journal saves
 for undo; using the requested amount would erase another group's contribution.
 -}
@@ -79,11 +96,16 @@ applySharedDelta delta state
   | delta.deltaId `Set.member` state.appliedDeltas = (state, Nothing)
   | otherwise =
       let old = sharedCounter delta.deltaKey state
-          ceiling' =
-            state.totalPlayers * case delta.deltaKey of
-              SearchingTheHighSeasProgress -> 8
-              DreadnaughtDamage -> 15
-          new = max 0 $ min ceiling' (old + delta.deltaAmount)
+          ceiling' = case delta.deltaKey of
+            SearchingTheHighSeasProgress -> state.totalPlayers * 8
+            DreadnaughtDamage -> state.totalPlayers * 15
+            AnnuminasCityStrength -> maxBound
+          -- Annúminas rules, p. 5: reaching zero loses immediately. A repair
+          -- delivered by another team afterwards cannot revive the city. There
+          -- is no printed upper limit on repairing a surviving city.
+          new
+            | delta.deltaKey == AnnuminasCityStrength && annuminasCityDefeated state = 0
+            | otherwise = fromInteger $ max 0 $ min (toInteger ceiling') (toInteger old + toInteger delta.deltaAmount)
           effective = delta {deltaAmount = new - old}
        in ( state
               { counters =

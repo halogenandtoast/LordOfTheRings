@@ -1,5 +1,6 @@
 module LordOfTheRings.Epic.Board (epicBoardFor, matchesEpicTarget) where
 
+import Data.Map.Strict qualified as Map
 import LordOfTheRings.Card
 import LordOfTheRings.Ally.Types (AllyAttrs (allyExhausted))
 import LordOfTheRings.Classes.Entity (toAttrs)
@@ -7,6 +8,7 @@ import LordOfTheRings.Epic.Types
 import LordOfTheRings.Game.Base
 import LordOfTheRings.Matcher.Types (CardMatcher (CardWithTrait), cardMatches)
 import LordOfTheRings.Objective.CardDefs qualified as Objectives
+import LordOfTheRings.Modifier (Modifier (modifierType), ModifierType (ConsideredOutOfPlay))
 import LordOfTheRings.Placement (Placement (EngagedWith))
 import LordOfTheRings.Prelude
 import LordOfTheRings.Scenario.Types (scenarioSetAside)
@@ -40,8 +42,9 @@ epicBoardFor ordinal name g
         False
         e
     | e <- toList g.entities.enemies
+    , present (toTarget e)
     ]
-      <> [asTarget (toTarget l) EpicLocation False 0 False False l | l <- toList g.entities.locations]
+      <> [asTarget (toTarget l) EpicLocation False 0 False False l | l <- toList g.entities.locations, present (toTarget l)]
       <> [ asTarget
              (toTarget a)
              EpicShip
@@ -51,9 +54,11 @@ epicBoardFor ordinal name g
              (Basic `member` cdCardTraits (toCardDef a))
              a
          | a <- toList g.entities.allies
+         , present (toTarget a)
          , cdCardType (toCardDef a) == ObjectiveAllyType
          , cardMatches (CardWithTrait Ship) a
          ]
+  present target = ConsideredOutOfPlay `notElem` map modifierType (Map.findWithDefault [] target g.gameModifiers)
   hasWarship =
     any
       ((== toCardCode Objectives.gondorianWarship) . toCardCode)

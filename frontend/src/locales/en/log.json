@@ -1,4 +1,5 @@
 {
+  "annuminasCityStrength": "Annúminas city strength is now {strength}",
   "shuffledIntoInvestigationDeck": "{card} is shuffled into the Investigation deck",
   "investigationDeck": "Investigation deck: {count} cards",
   "investigationLook": "{player} looks at {count} cards from the Investigation deck",

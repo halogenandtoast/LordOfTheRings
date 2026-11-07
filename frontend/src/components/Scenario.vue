@@ -73,6 +73,10 @@ const settings = ['sunny', 'cloudy', 'rainy', 'stormy'].map((key) => ({
         <li v-for="s in settings" :key="s.key" :class="{ current: s.key === scenario.heading }"><span class="icon" :style="s.icon" /></li>
       </ol>
     </div>
+    <div v-if="scenario.cityStrength != null" class="heading" data-tracker="city-strength">
+      <span class="heading-label">{{ $t('game.cityStrength') }}</span>
+      <span class="temperature">{{ scenario.cityStrength }}</span>
+    </div>
     <div v-if="scenario.temperature != null" class="heading" data-tracker="temperature">
       <span class="heading-label">{{ $t('game.temperature') }}</span>
       <span class="temperature">{{ scenario.temperature }}</span>

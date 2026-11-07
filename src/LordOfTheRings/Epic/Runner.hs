@@ -12,6 +12,7 @@ import LordOfTheRings.I18n (cardVar, textVar)
 import LordOfTheRings.Message
 import LordOfTheRings.Message.Lifted
 import LordOfTheRings.Objective.CardDefs qualified as Objectives
+import LordOfTheRings.Outcome (Outcome (Lost))
 import LordOfTheRings.Prelude
 import LordOfTheRings.Scenario.Types (ScenarioAttrs (scenarioEpic, scenarioSetAside))
 import LordOfTheRings.Source (Source (CardCodeSource))
@@ -20,6 +21,13 @@ import LordOfTheRings.Trait (Trait (Basic, Upgraded))
 
 runEpicMessage :: Message -> Game -> GameT Game
 runEpicMessage msg g = case msg of
+  SyncEpic shared -> do
+    when (annuminasCityDefeated shared) $ runQueueT $ gameOver Lost
+    pure g
+  ContributeShared AnnuminasCityStrength _ -> do
+    when (maybe False (annuminasCityDefeated . epicShared) $ scenarioEpic $ toAttrs g.scenario) $
+      runQueueT $ gameOver Lost
+    pure g
   ChooseEpicTarget pid code query effect -> do
     let replica = scenarioEpic $ toAttrs g.scenario
         own = maybe (GroupOrdinal 0) epicGroup replica

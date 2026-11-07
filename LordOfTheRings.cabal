@@ -2591,6 +2591,7 @@ library
       LordOfTheRings.Objective.Cards.AmarthiulAcrossTheEttenmoors
       LordOfTheRings.Objective.Cards.AmarthiulTheTreacheryOfRhudaur
       LordOfTheRings.Objective.Cards.AnEvilWound
+      LordOfTheRings.Objective.Cards.Annuminas
       LordOfTheRings.Objective.Cards.APrisoner
       LordOfTheRings.Objective.Cards.ArnorRavaged
       LordOfTheRings.Objective.Cards.ArwenUndomielObjective
@@ -3393,6 +3394,7 @@ library
       LordOfTheRings.Scenario.Scenarios.TheRuinsOfBelegost.Helpers
       LordOfTheRings.Scenario.Scenarios.TheSeventhLevel
       LordOfTheRings.Scenario.Scenarios.TheSeventhLevel.Helpers
+      LordOfTheRings.Scenario.Scenarios.TheSiegeOfAnnuminas.Helpers
       LordOfTheRings.Scenario.Scenarios.TheSiegeOfCairAndros
       LordOfTheRings.Scenario.Scenarios.TheSiegeOfCairAndros.Helpers
       LordOfTheRings.Scenario.Scenarios.TheSiegeOfGondor
@@ -4461,6 +4463,8 @@ test-suite LordOfTheRings-test
       LordOfTheRings.ShadowsOfMirkwood.TheDeadMarshesSpec
       LordOfTheRings.ShadowsOfMirkwood.TheHillsOfEmynMuilSpec
       LordOfTheRings.ShadowsOfMirkwood.TheHuntForGollumSpec
+      LordOfTheRings.Standalone.AnnuminasCitySpec
+      LordOfTheRings.Standalone.AnnuminasEpicSpec
       LordOfTheRings.Standalone.AnnuminasInvadersSpec
       LordOfTheRings.Standalone.AnnuminasLocationsSpec
       LordOfTheRings.Standalone.AnnuminasTreacheriesSpec
