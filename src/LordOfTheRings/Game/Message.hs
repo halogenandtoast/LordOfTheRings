@@ -57,6 +57,7 @@ import LordOfTheRings.Attachment (
  )
 import LordOfTheRings.Card (
   Card (EncounterCard, PlayerCard),
+  PlayerCard (MkPlayerCard),
   CardDef (
     cdCardTraits,
     cdCardType,
@@ -76,6 +77,7 @@ import LordOfTheRings.Card (
     HeroType,
     LocationType,
     ObjectiveAllyType,
+    ObjectiveHeroType,
     ObjectiveType,
     TreacheryType
   ),
@@ -710,6 +712,7 @@ import LordOfTheRings.Message (
     SeparatePlayers,
     SeparateStagingAreas,
     SetAsideEnemy,
+    CaptureHeroUnderQuest,
     SetAsideHero,
     SetAsideObjective,
     SetCurrentQuest,
@@ -980,6 +983,7 @@ import LordOfTheRings.Player.Runner (
   setAsideCardsL,
  )
 import LordOfTheRings.Prelude hiding (first, many)
+import LordOfTheRings.Quest.Types (questUnderneath)
 import LordOfTheRings.Quest (isSideQuest, newQuest, newSideQuest)
 import LordOfTheRings.Question (
   Question (
@@ -1596,7 +1600,11 @@ runGameMessage msg g = case msg of
           -- Lose?")
           -- an ally turned enemy, as Secret Cultist's, is not a hero side
           turned = any (\e -> enemyOwner (toAttrs e) == Just player.id && cdCardType (toCardDef e) == EnemyType) g.entities.enemies
-          noHeroes = null heroes && not guarded && not lent && not turned && not (any ((== HeroType) . (.cardType)) player.deck)
+          -- A captive is out of play, but has not been killed (FAQ 1.9).
+          captured = any (\q -> any (\case
+            PlayerCard c -> c.owner == Just player.id && cdCardType (toCardDef c) `elem` [HeroType, ObjectiveHeroType]
+            _ -> False) (questUnderneath $ toAttrs q)) g.entities.quests
+          noHeroes = not captured && null heroes && not guarded && not lent && not turned && not (any ((== HeroType) . (.cardType)) player.deck)
           byThreat = player.threat >= level
           -- Deadmen's Dike eliminates a player whose deck runs out
           byEmptyDeck = emptyDeck && null player.deck
@@ -3831,6 +3839,13 @@ runGameMessage msg g = case msg of
     pure $ g & entitiesL . questsL %~ Map.delete qid
   -- a hero leaves play for good, not for its owner's discard pile, its attachments
   -- discarded as they would be were it discarded
+  CaptureHeroUnderQuest qid hid
+    | Just h <- Map.lookup hid g.entities.heroes
+    , Map.member qid g.entities.quests -> do
+        let card = PlayerCard $ MkPlayerCard (heroCardId $ toAttrs h) (toCardCode h) (Just h.cardOwner)
+        push $ SetAsideHero hid
+        -- Register the captive before leaving-play windows can check eliminations.
+        pure $ g & entitiesL . questsL . ix qid %~ overAttrs (\a -> a {questUnderneath = card : questUnderneath a})
   SetAsideHero hid -> runGameMessage (RemoveFromGame $ HeroTarget hid) g
   -- an enemy set aside leaves play as one removed from the game would, its card kept aside
   SetAsideEnemy eid | Just e <- Map.lookup eid g.entities.enemies -> do

@@ -1,4 +1,5 @@
 {
+  "capturedHero": "{target} is captured.",
   "annuminasEnemyMovesHere": "{card} moves to this staging area",
   "annuminasEnemyMovesTeam": "{card} moves to team {team}",
   "annuminasEnemyArrives": "{card} arrives in the staging area",

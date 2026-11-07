@@ -2013,6 +2013,7 @@ library
       LordOfTheRings.Location.Cards.EnchantedLand
       LordOfTheRings.Location.Cards.EnchantedStream
       LordOfTheRings.Location.Cards.EndlessCaverns
+      LordOfTheRings.Location.Cards.EnemyCamp
       LordOfTheRings.Location.Cards.Entwood
       LordOfTheRings.Location.Cards.EphelDuath
       LordOfTheRings.Location.Cards.Eregion
@@ -4468,6 +4469,7 @@ test-suite LordOfTheRings-test
       LordOfTheRings.ShadowsOfMirkwood.TheDeadMarshesSpec
       LordOfTheRings.ShadowsOfMirkwood.TheHillsOfEmynMuilSpec
       LordOfTheRings.ShadowsOfMirkwood.TheHuntForGollumSpec
+      LordOfTheRings.Standalone.AnnuminasCampSpec
       LordOfTheRings.Standalone.AnnuminasCitySpec
       LordOfTheRings.Standalone.AnnuminasDefensesSpec
       LordOfTheRings.Standalone.AnnuminasDunedainSpec

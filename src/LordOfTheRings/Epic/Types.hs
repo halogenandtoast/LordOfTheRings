@@ -171,6 +171,7 @@ data EpicTargetQuery = EpicEnemy | EpicLocation | EpicShip | EpicEngagedNonUniqu
   deriving anyclass (ToJSON, FromJSON)
 
 data EpicEffect = EpicDamage Int | EpicProgress Int | EpicUpgradeShip | EpicShuffleWarship | EpicDiscardUntilEnemy
+  | EpicDiscardCaptive | EpicRescueCaptives
   | EpicReceiveEnemy EpicEnemyTransfer EpicEnemyArrival
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)

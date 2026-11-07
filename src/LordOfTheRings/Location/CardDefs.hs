@@ -15,7 +15,7 @@ allLocationCards =
   Map.fromList $
     map
       (\def -> (cdCardCode def, def))
-      [siegeTunnel, cityWallAnnuminas, batteringRam, gateOfAnnuminas, arnorBattlefield, hillsOfEvendim, shoresOfLakeNenuial, billFernysHouse, staddleHidingHole, combeStorehouse, archetTradingPost, chetwoodCampsite, thePrancingPonyMurder, ramshackleManor, darkAlleyMurder, marketSquareMurder, oldWarehouse, villageStable, greatBarrow, standingStones, hollowCircle, ancientBarrow, stoneRing, northDownsFog, naurlhugsLair, abandonedMineBelegost, floodedHall, darkenedTunnel, sunkenTreasury, secretChamber, withywindle, misleadingPath, deepGulley, strangeWoods, wallOfTrees, oppressiveForest, theStoneOfErechStandalone, tarlangsNeck, banksOfMorthond, valeOfShadows, blackrootGraves, shadowOfDwimorberg, hauntedValley, westPier, theMastersManor, southPier, northPier, merchantsDistrict, eastPier, greatHouse, greatBridge, fishermansDock, esgarothWharf, capturedWatchtower, emynArnenOverlook, morgulduin, pelennorFieldsOsgiliath, ruinsOfOsgiliath, belfalasShipyard, cobasHavenDreadnaught, isleOfFortune, mouthsOfAnduin, tolfalasLanding, wickedCove,  theEavesOfMirkwoodDarkOfMirkwood
+      [enemyCamp, siegeTunnel, cityWallAnnuminas, batteringRam, gateOfAnnuminas, arnorBattlefield, hillsOfEvendim, shoresOfLakeNenuial, billFernysHouse, staddleHidingHole, combeStorehouse, archetTradingPost, chetwoodCampsite, thePrancingPonyMurder, ramshackleManor, darkAlleyMurder, marketSquareMurder, oldWarehouse, villageStable, greatBarrow, standingStones, hollowCircle, ancientBarrow, stoneRing, northDownsFog, naurlhugsLair, abandonedMineBelegost, floodedHall, darkenedTunnel, sunkenTreasury, secretChamber, withywindle, misleadingPath, deepGulley, strangeWoods, wallOfTrees, oppressiveForest, theStoneOfErechStandalone, tarlangsNeck, banksOfMorthond, valeOfShadows, blackrootGraves, shadowOfDwimorberg, hauntedValley, westPier, theMastersManor, southPier, northPier, merchantsDistrict, eastPier, greatHouse, greatBridge, fishermansDock, esgarothWharf, capturedWatchtower, emynArnenOverlook, morgulduin, pelennorFieldsOsgiliath, ruinsOfOsgiliath, belfalasShipyard, cobasHavenDreadnaught, isleOfFortune, mouthsOfAnduin, tolfalasLanding, wickedCove,  theEavesOfMirkwoodDarkOfMirkwood
       , forestGateDarkOfMirkwood
       , goblinTunnelsDarkOfMirkwood
       , lightlessPassageDarkOfMirkwood
@@ -5611,4 +5611,8 @@ batteringRam = (location "the-siege-of-annuminas-014" "Battering Ram" TheSiegeOf
 
 siegeTunnel :: CardDef
 siegeTunnel = (location "the-siege-of-annuminas-016" "Siege Tunnel" TheSiegeOfAnnuminas 1 5 5)
+  { cdUnique = True, cdCardTraits = setFromList [SiegeTrait], cdVictoryPoints = Just 5 }
+
+enemyCamp :: CardDef
+enemyCamp = (location "the-siege-of-annuminas-015" "Enemy Camp" TheSiegeOfAnnuminas 1 5 5)
   { cdUnique = True, cdCardTraits = setFromList [SiegeTrait], cdVictoryPoints = Just 5 }

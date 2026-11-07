@@ -280,6 +280,7 @@ narrationFor = \case
     one $ mechanic [ikeyPart "log.attachedTo" ["card" ~> EncounterCard card, "target" ~> h]]
   RemoveFromGame target -> Just $ simply "log.removedFromGame" target
   RemoveSetAsideFromGame cards | notNull cards -> Just $ one $ mechanic [ikeyPart "log.setAsideRemovedFromGame" ["cards" ~> map EncounterCard cards]]
+  CaptureHeroUnderQuest _ hid -> Just $ simply "log.capturedHero" (HeroTarget hid)
   SetAsideHero hid -> Just $ simply "log.setAsideOutOfPlay" (HeroTarget hid)
   SetAsideEnemy eid -> Just $ simply "log.setAsideOutOfPlay" (EnemyTarget eid)
   SetAsideObjective oid -> Just $ simply "log.setAsideOutOfPlay" (ObjectiveTarget oid)

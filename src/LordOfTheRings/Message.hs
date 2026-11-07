@@ -944,6 +944,8 @@ data Message
     JoinArea PlayerId PlayerId
   | -- | an isolated area joins the stage holding this quest, including an empty stage
     JoinQuestArea PlayerId QuestId
+  | -- | Capture a hero out of play, retaining its physical identity and owner.
+    CaptureHeroUnderQuest QuestId HeroId
   | -- | a setup instruction sets the hero aside, out of play, as Unexpected Rescue sets
     -- aside the heroes not chosen to start: not leaving play for its "If this leaves play"
     -- (see 'LordOfTheRings.Message.Lifted.leavesPlay')

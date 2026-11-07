@@ -110,6 +110,7 @@ instance HasModifiersFor Location where
 
 instance HasAbilities Location where
   getAbilities (Location a) = getAbilities a
+  getVictoryAbilities (Location a) = getVictoryAbilities a
 
 instance Show Location where
   show (Location a) = show a

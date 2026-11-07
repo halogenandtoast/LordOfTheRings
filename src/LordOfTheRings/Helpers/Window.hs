@@ -90,6 +90,12 @@ getAllAbilities = do
           , -- a nightmare setup card's, as Arkham's scenario gives its tarot cards'
             getAbilities scenario
           , leftPlayAbilities
+          , [ ab
+            | (lid, l) <- Map.toList gone
+            , not (Map.member lid es.locations)
+            , any ((== (toCard l).id) . (.id)) (toAttrs scenario).victoryDisplay
+            , ab <- getVictoryAbilities l
+            ]
           ]
   -- a card a condition has blanked offers none
   allowed <- actionsAndResponsesAllowed

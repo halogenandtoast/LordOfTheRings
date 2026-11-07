@@ -2,6 +2,7 @@
 
 module LordOfTheRings.Location (module LordOfTheRings.Location, module X) where
 
+import LordOfTheRings.Location.Cards.EnemyCamp (enemyCamp)
 import LordOfTheRings.Location.Cards.SiegeTunnel (siegeTunnel)
 import LordOfTheRings.Location.Cards.AnnuminasDefenses
 import LordOfTheRings.Location.Cards.AnnuminasCountryside
@@ -820,7 +821,8 @@ allLocations =
   Map.fromList
     [ (toCardCode builder, card)
     | card@(SomeLocationCard builder) <-
-        [ SomeLocationCard siegeTunnel
+        [ SomeLocationCard enemyCamp
+        , SomeLocationCard siegeTunnel
         , SomeLocationCard cityWallAnnuminas
         , SomeLocationCard batteringRam
         , SomeLocationCard gateOfAnnuminas

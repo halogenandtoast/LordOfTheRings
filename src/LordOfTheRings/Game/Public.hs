@@ -94,6 +94,7 @@ hiddenCards g = Set.fromList hidden `Set.difference` Set.fromList shown
       -- poison: cards attached facedown to characters (The Hobbit: On the Doorstep)
       <> [c.id | h <- map toAttrs (toList merged.entities.heroes), c <- h.heroPoison]
       <> [c.id | a <- map toAttrs (toList merged.entities.allies), c <- a.allyPoison]
+      <> [c.id | q <- map toAttrs (toList merged.entities.quests), c@(PlayerCard _) <- q.questUnderneath]
       -- the loot deck facedown under The Burglar's Turn
       <> [c.id | k <- toList merged.entities.contracts, c <- (toAttrs k).contractUnderneath]
   shown = map (.id) $ concatMap searchedCards (toList g.question)

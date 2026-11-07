@@ -16,6 +16,8 @@ import LordOfTheRings.I18n (cardVar, textVar)
 import LordOfTheRings.Matcher.Types (CardMatcher (CardWithType), cardMatches)
 import LordOfTheRings.Message
 import LordOfTheRings.Message.Lifted
+import LordOfTheRings.Quest (isSideQuest)
+import LordOfTheRings.Quest.Types (questUnderneath)
 import LordOfTheRings.Objective.CardDefs qualified as Objectives
 import LordOfTheRings.Outcome (Outcome (Lost))
 import LordOfTheRings.Prelude
@@ -109,6 +111,22 @@ runEpicMessage msg g = case msg of
             discardCount = maybe (length deck) (+ 1) $ findIndex enemyCard deck
         discardTopOfEncounterDeckFor source ScenarioTarget discardCount
         for_ (find enemyCard deck) addToStagingFromDiscard
+      EpicDiscardCaptive -> do
+        for_ (toList g.entities.quests) \stage ->
+          when (not (isSideQuest stage) && cdStage (toCardDef stage) == Just 3) do
+            captives <- shuffleM [c | PlayerCard c <- questUnderneath (toAttrs stage), cdCardType (toCardDef c) `elem` [HeroType, ObjectiveHeroType]]
+            for_ (take 1 captives) \card -> do
+              takeFromUnderneath stage card.id
+              putInDiscard card
+        push CheckEliminations
+      EpicRescueCaptives ->
+        for_ (toList g.entities.quests) \stage ->
+          when (not (isSideQuest stage) && cdStage (toCardDef stage) == Just 3) do
+            for_ [c | PlayerCard c <- questUnderneath (toAttrs stage), cdCardType (toCardDef c) `elem` [HeroType, ObjectiveHeroType]] \card ->
+              for_ card.owner \pid ->
+                when (maybe False (not . (.eliminated)) $ Map.lookup pid g.players) do
+                  takeFromUnderneath stage card.id
+                  push $ PutHeroIntoPlay pid card
       EpicUpgradeShip -> case target of
         AllyTarget aid | Just shipAlly <- lookup aid $ mapToList g.entities.allies -> do
           healDamage source target 5
