@@ -15,7 +15,7 @@ allLocationCards =
   Map.fromList $
     map
       (\def -> (cdCardCode def, def))
-      [greatBarrow, standingStones, hollowCircle, ancientBarrow, stoneRing, northDownsFog, naurlhugsLair, abandonedMineBelegost, floodedHall, darkenedTunnel, sunkenTreasury, secretChamber, withywindle, misleadingPath, deepGulley, strangeWoods, wallOfTrees, oppressiveForest, theStoneOfErechStandalone, tarlangsNeck, banksOfMorthond, valeOfShadows, blackrootGraves, shadowOfDwimorberg, hauntedValley, westPier, theMastersManor, southPier, northPier, merchantsDistrict, eastPier, greatHouse, greatBridge, fishermansDock, esgarothWharf, capturedWatchtower, emynArnenOverlook, morgulduin, pelennorFieldsOsgiliath, ruinsOfOsgiliath, belfalasShipyard, cobasHavenDreadnaught, isleOfFortune, mouthsOfAnduin, tolfalasLanding, wickedCove,  theEavesOfMirkwoodDarkOfMirkwood
+      [billFernysHouse, staddleHidingHole, combeStorehouse, archetTradingPost, chetwoodCampsite, thePrancingPonyMurder, ramshackleManor, darkAlleyMurder, marketSquareMurder, oldWarehouse, villageStable, greatBarrow, standingStones, hollowCircle, ancientBarrow, stoneRing, northDownsFog, naurlhugsLair, abandonedMineBelegost, floodedHall, darkenedTunnel, sunkenTreasury, secretChamber, withywindle, misleadingPath, deepGulley, strangeWoods, wallOfTrees, oppressiveForest, theStoneOfErechStandalone, tarlangsNeck, banksOfMorthond, valeOfShadows, blackrootGraves, shadowOfDwimorberg, hauntedValley, westPier, theMastersManor, southPier, northPier, merchantsDistrict, eastPier, greatHouse, greatBridge, fishermansDock, esgarothWharf, capturedWatchtower, emynArnenOverlook, morgulduin, pelennorFieldsOsgiliath, ruinsOfOsgiliath, belfalasShipyard, cobasHavenDreadnaught, isleOfFortune, mouthsOfAnduin, tolfalasLanding, wickedCove,  theEavesOfMirkwoodDarkOfMirkwood
       , forestGateDarkOfMirkwood
       , goblinTunnelsDarkOfMirkwood
       , lightlessPassageDarkOfMirkwood
@@ -5536,3 +5536,58 @@ greatBarrow = (location "fog-on-the-barrow-downs-007" "Great Barrow" FogOnTheBar
   { cdCardTraits = setFromList [Ruins, Downs], cdKeywords = setFromList [Peril], cdVictoryPoints = Just 5 }
 standingStones = unique (location "fog-on-the-barrow-downs-006" "Standing Stones" FogOnTheBarrowDowns 1 4 4)
   { cdCardTraits = setFromList [Ruins, Downs], cdVictoryPoints = Just 3 }
+
+
+billFernysHouse :: CardDef
+billFernysHouse = (unique (location "murder-at-the-prancing-pony-004" "Bill Ferny's House" MurderAtThePrancingPony 1 5 5))
+  { cdCardTraits = setFromList [Hideout], cdVictoryPoints = Just 5 }
+
+
+staddleHidingHole :: CardDef
+staddleHidingHole = (unique (location "murder-at-the-prancing-pony-005" "Staddle Hiding Hole" MurderAtThePrancingPony 1 5 5))
+  { cdCardTraits = setFromList [Hideout], cdVictoryPoints = Just 5 }
+
+
+combeStorehouse :: CardDef
+combeStorehouse = (unique (location "murder-at-the-prancing-pony-006" "Combe Storehouse" MurderAtThePrancingPony 1 5 5))
+  { cdCardTraits = setFromList [Hideout], cdVictoryPoints = Just 5 }
+
+
+archetTradingPost :: CardDef
+archetTradingPost = (unique (location "murder-at-the-prancing-pony-007" "Archet Trading Post" MurderAtThePrancingPony 1 5 5))
+  { cdCardTraits = setFromList [Hideout], cdVictoryPoints = Just 5 }
+
+
+chetwoodCampsite :: CardDef
+chetwoodCampsite = (unique (location "murder-at-the-prancing-pony-008" "Chetwood Campsite" MurderAtThePrancingPony 1 5 5))
+  { cdCardTraits = setFromList [Hideout], cdVictoryPoints = Just 5 }
+
+
+thePrancingPonyMurder :: CardDef
+thePrancingPonyMurder = (unique (location "murder-at-the-prancing-pony-015" "The Prancing Pony" MurderAtThePrancingPony 1 2 2))
+  { cdCardTraits = setFromList [Bree], cdVictoryPoints = Just 2 }
+
+
+ramshackleManor :: CardDef
+ramshackleManor = (location "murder-at-the-prancing-pony-016" "Ramshackle Manor" MurderAtThePrancingPony 4 2 3)
+  { cdCardTraits = setFromList [Bree], cdKeywords = setFromList [Investigate 2] }
+
+
+darkAlleyMurder :: CardDef
+darkAlleyMurder = (location "murder-at-the-prancing-pony-017" "Dark Alley" MurderAtThePrancingPony 3 4 3)
+  { cdCardTraits = setFromList [Bree], cdKeywords = setFromList [Investigate 3] }
+
+
+marketSquareMurder :: CardDef
+marketSquareMurder = (location "murder-at-the-prancing-pony-018" "Market Square" MurderAtThePrancingPony 3 2 4)
+  { cdCardTraits = setFromList [Bree], cdKeywords = setFromList [Investigate 2] }
+
+
+oldWarehouse :: CardDef
+oldWarehouse = (location "murder-at-the-prancing-pony-019" "Old Warehouse" MurderAtThePrancingPony 3 3 4)
+  { cdCardTraits = setFromList [Bree], cdKeywords = setFromList [Investigate 1] }
+
+
+villageStable :: CardDef
+villageStable = (location "murder-at-the-prancing-pony-020" "Village Stable" MurderAtThePrancingPony 2 3 3)
+  { cdCardTraits = setFromList [Bree], cdKeywords = setFromList [Investigate 1] }

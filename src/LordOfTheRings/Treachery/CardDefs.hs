@@ -14,7 +14,7 @@ allTreacheryCards =
   Map.fromList $
     map
       (\def -> (cdCardCode def, def))
-      [chillFog, imWaitingForYou, longGropingArm, frozenByFear, dreadfulSong, echoesInTheDark, spawnOfThangorodrim, concealedSpikes, coveredPit, swayingWithoutWind, fallingBranches, songOfSleep, lostAndWitless, endingAndFailing, midnightThrong, murmursOfDread, gropingHorror, drivenByFear, theDeadRideBehind, theGloaming, townBaiting, direMagnificence, catchingFire, recklessInHisRage, closeToTheFlame, scorchingBlast, cutOffOsgiliath, darkPursuit, massingAtOsgiliath, ballistaBarrage, boardingPartyDreadnaught, grappledDreadnaught, outOfTheMist, overworked, takingOnWaterDreadnaught, violentTempest,  shinyDistraction
+      [takenBySurprise, hiredMuscle, smokeAndMirrors, risingBodyCount, deadlyAccusations, chillFog, imWaitingForYou, longGropingArm, frozenByFear, dreadfulSong, echoesInTheDark, spawnOfThangorodrim, concealedSpikes, coveredPit, swayingWithoutWind, fallingBranches, songOfSleep, lostAndWitless, endingAndFailing, midnightThrong, murmursOfDread, gropingHorror, drivenByFear, theDeadRideBehind, theGloaming, townBaiting, direMagnificence, catchingFire, recklessInHisRage, closeToTheFlame, scorchingBlast, cutOffOsgiliath, darkPursuit, massingAtOsgiliath, ballistaBarrage, boardingPartyDreadnaught, grappledDreadnaught, outOfTheMist, overworked, takingOnWaterDreadnaught, violentTempest,  shinyDistraction
       , guiltyConscience
       , drivenByShadowDarkOfMirkwood
       , surprisingSpeedDarkOfMirkwood
@@ -4011,3 +4011,27 @@ imWaitingForYou = (treachery "fog-on-the-barrow-downs-014" "I’m Waiting for Yo
 chillFog :: CardDef
 chillFog = (treachery "fog-on-the-barrow-downs-016" "Chill Fog" FogOnTheBarrowDowns 2)
   { cdShadowEffect = True }
+
+
+takenBySurprise :: CardDef
+takenBySurprise = (treachery "murder-at-the-prancing-pony-014" "Taken by Surprise" MurderAtThePrancingPony 2)
+
+
+hiredMuscle :: CardDef
+hiredMuscle = (treachery "murder-at-the-prancing-pony-026" "Hired Muscle" MurderAtThePrancingPony 2)
+  { cdWhenRevealed = True, cdKeywords = setFromList [Surge] }
+
+
+smokeAndMirrors :: CardDef
+smokeAndMirrors = (treachery "murder-at-the-prancing-pony-027" "Smoke and Mirrors" MurderAtThePrancingPony 3)
+  { cdWhenRevealed = True, cdShadowEffect = True }
+
+
+risingBodyCount :: CardDef
+risingBodyCount = (treachery "murder-at-the-prancing-pony-028" "Rising Body Count" MurderAtThePrancingPony 2)
+  { cdWhenRevealed = True, cdShadowEffect = True }
+
+
+deadlyAccusations :: CardDef
+deadlyAccusations = (treachery "murder-at-the-prancing-pony-029" "Deadly Accusations" MurderAtThePrancingPony 2)
+  { cdWhenRevealed = True, cdShadowEffect = True }

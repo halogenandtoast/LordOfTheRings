@@ -2264,6 +2264,8 @@ library
       LordOfTheRings.Location.Cards.PortOfHarad
       LordOfTheRings.Location.Cards.PortOfPelargir
       LordOfTheRings.Location.Cards.PosternDoor
+      LordOfTheRings.Location.Cards.PrancingPonyBree
+      LordOfTheRings.Location.Cards.PrancingPonyHideouts
       LordOfTheRings.Location.Cards.PrisonCell
       LordOfTheRings.Location.Cards.PrisonCellNightmare
       LordOfTheRings.Location.Cards.QuarterDeck
@@ -2958,6 +2960,7 @@ library
       LordOfTheRings.Quest.Cards.OverwhelmingDarkness
       LordOfTheRings.Quest.Cards.PassageIntoMordor
       LordOfTheRings.Quest.Cards.PassTheTwoWatchers
+      LordOfTheRings.Quest.Cards.PrancingPonyInvestigation
       LordOfTheRings.Quest.Cards.PrepareForBattle
       LordOfTheRings.Quest.Cards.ProtectTheBreeLanders
       LordOfTheRings.Quest.Cards.ProtectTheFlanks
@@ -3277,6 +3280,8 @@ library
       LordOfTheRings.Scenario.Scenarios.MountDoom.Helpers
       LordOfTheRings.Scenario.Scenarios.MountGundabad
       LordOfTheRings.Scenario.Scenarios.MountGundabad.Helpers
+      LordOfTheRings.Scenario.Scenarios.MurderAtThePrancingPony
+      LordOfTheRings.Scenario.Scenarios.MurderAtThePrancingPony.Helpers
       LordOfTheRings.Scenario.Scenarios.OverTheMistyMountainsGrim
       LordOfTheRings.Scenario.Scenarios.OverTheMistyMountainsGrim.Helpers
       LordOfTheRings.Scenario.Scenarios.PassageThroughMirkwood
@@ -4459,6 +4464,7 @@ test-suite LordOfTheRings-test
       LordOfTheRings.Standalone.FogQuestsSpec
       LordOfTheRings.Standalone.MassingAtOsgiliathSpec
       LordOfTheRings.Standalone.OldForestSpec
+      LordOfTheRings.Standalone.PrancingPonyInvestigationSpec
       LordOfTheRings.Standalone.PrancingPonySpec
       LordOfTheRings.Standalone.PrancingPonySuspectsSpec
       LordOfTheRings.Standalone.StoneOfErechSpec

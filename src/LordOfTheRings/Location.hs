@@ -2,6 +2,8 @@
 
 module LordOfTheRings.Location (module LordOfTheRings.Location, module X) where
 
+import LordOfTheRings.Location.Cards.PrancingPonyBree (thePrancingPonyMurder, ramshackleManor, darkAlleyMurder, marketSquareMurder, oldWarehouse, villageStable)
+import LordOfTheRings.Location.Cards.PrancingPonyHideouts (billFernysHouse, staddleHidingHole, combeStorehouse, archetTradingPost, chetwoodCampsite)
 import LordOfTheRings.Location.Cards.BarrowDownsPassages (greatBarrow, standingStones)
 import LordOfTheRings.Location.Cards.HollowCircle (hollowCircle)
 import LordOfTheRings.Location.Cards.AncientBarrow (ancientBarrow)
@@ -815,7 +817,18 @@ allLocations =
   Map.fromList
     [ (toCardCode builder, card)
     | card@(SomeLocationCard builder) <-
-        [ SomeLocationCard greatBarrow
+        [ SomeLocationCard thePrancingPonyMurder
+        , SomeLocationCard ramshackleManor
+        , SomeLocationCard darkAlleyMurder
+        , SomeLocationCard marketSquareMurder
+        , SomeLocationCard oldWarehouse
+        , SomeLocationCard villageStable
+        , SomeLocationCard billFernysHouse
+        , SomeLocationCard staddleHidingHole
+        , SomeLocationCard combeStorehouse
+        , SomeLocationCard archetTradingPost
+        , SomeLocationCard chetwoodCampsite
+        , SomeLocationCard greatBarrow
         , SomeLocationCard standingStones
         , SomeLocationCard hollowCircle
         , SomeLocationCard ancientBarrow

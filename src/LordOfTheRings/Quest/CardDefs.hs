@@ -12,7 +12,7 @@ import LordOfTheRings.Trait (Trait (Burden, Castle))
 
 -- | Side quests from players' decks: player cards, built as quests once played.
 allPlayerSideQuestCards :: Map CardCode CardDef
-allPlayerSideQuestCards = Map.fromList $ map (\def -> (cdCardCode def, def)) [gatherInformation, doubleBack, delayTheEnemy, sendForAid, scoutAhead, theStormComes, prepareForBattle, exploreSecretWays, keepWatch, rallyTheWest]
+allPlayerSideQuestCards = Map.fromList $ map (\def -> (cdCardCode def, def)) [investigatingTheCrime, runningOutOfTime, apprehendingTheKiller, gatherInformation, doubleBack, delayTheEnemy, sendForAid, scoutAhead, theStormComes, prepareForBattle, exploreSecretWays, keepWatch, rallyTheWest]
 
 scoutAhead :: CardDef
 scoutAhead =
@@ -2317,3 +2317,17 @@ acrossTheDowns = (quest "fog-on-the-barrow-downs-002" "Across the Downs" FogOnTh
 lostInTheFog, trappedInsideABarrow :: CardDef
 lostInTheFog = (quest "fog-on-the-barrow-downs-003" "Lost in the Fog" FogOnTheBarrowDowns 3 16) {cdWhenRevealed = True}
 trappedInsideABarrow = (quest "fog-on-the-barrow-downs-004" "Trapped Inside a Barrow" FogOnTheBarrowDowns 4 9) {cdWhenRevealed = True, cdEncounterSetQuantity = Just 4}
+
+
+investigatingTheCrime :: CardDef
+investigatingTheCrime = (quest "murder-at-the-prancing-pony-001" "Investigating the Crime" MurderAtThePrancingPony 1 12)
+
+
+runningOutOfTime :: CardDef
+runningOutOfTime = (quest "murder-at-the-prancing-pony-002" "Running out of Time" MurderAtThePrancingPony 2 0)
+  { cdWhenRevealed = True, cdQuestPoints = Nothing }
+
+
+apprehendingTheKiller :: CardDef
+apprehendingTheKiller = (quest "murder-at-the-prancing-pony-003" "Apprehending the Killer" MurderAtThePrancingPony 3 0)
+  { cdWhenRevealed = True, cdQuestPoints = Nothing }

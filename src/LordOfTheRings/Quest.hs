@@ -2,6 +2,7 @@
 
 module LordOfTheRings.Quest (module LordOfTheRings.Quest, module X) where
 
+import LordOfTheRings.Quest.Cards.PrancingPonyInvestigation (investigatingTheCrime, runningOutOfTime, apprehendingTheKiller)
 import LordOfTheRings.Quest.Cards.BarrowDownsEscape (lostInTheFog, trappedInsideABarrow)
 import LordOfTheRings.Quest.Cards.BarrowDownsApproach (theHouseOfTomBombadil, acrossTheDowns)
 import LordOfTheRings.Quest.Cards.BelegostDepths (theServantsOfMorgoth, theRootsOfEredLuin, theMinesOfBelegost, theBeastOfBelegost)
@@ -495,7 +496,10 @@ allQuests =
   Map.fromList
     [ (toCardCode builder, card)
     | card@(SomeQuestCard builder) <-
-        [ SomeQuestCard lostInTheFog
+        [ SomeQuestCard investigatingTheCrime
+        , SomeQuestCard runningOutOfTime
+        , SomeQuestCard apprehendingTheKiller
+        , SomeQuestCard lostInTheFog
         , SomeQuestCard trappedInsideABarrow
         , SomeQuestCard theHouseOfTomBombadil
         , SomeQuestCard acrossTheDowns
