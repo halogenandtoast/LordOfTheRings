@@ -33,7 +33,7 @@ replicaFor ordinal boards = do
 
 boardAt :: Int -> Text -> Int -> Bool -> EpicBoard
 boardAt ordinal name hosts drawable = EpicBoard (GroupOrdinal ordinal) name [] False $ Just $
-  EpicStage 0 [EpicQuest (toCardCode Quests.manTheWallsAnnuminas) 2 0 (Just 50) True] [] False hosts drawable
+  EpicStage 0 [EpicQuest (toCardCode Quests.manTheWallsAnnuminas) 2 0 (Just 50) True] [] False hosts drawable []
 
 commands :: GameT [EpicCommand]
 commands = getsGame $ maybe [] epicPendingCommands . scenarioEpic . toAttrs . (.scenario)

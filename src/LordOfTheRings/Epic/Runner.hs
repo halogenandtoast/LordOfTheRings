@@ -7,6 +7,7 @@ import LordOfTheRings.Card
 import LordOfTheRings.Classes.RunMessage (runMessage)
 import LordOfTheRings.Classes.Entity (overAttrs, toAttrs, toId, insertEntity)
 import LordOfTheRings.Classes.HasQueue (push, runQueueT)
+import LordOfTheRings.Epic.Lorien (transferLorienSupport, receiveLorienSupport)
 import LordOfTheRings.Epic.Board
 import LordOfTheRings.Epic.Types
 import LordOfTheRings.Effect (Effect (..), EffectDuration (UntilEndOfPhaseOf, UntilEndOfRound))
@@ -15,7 +16,7 @@ import LordOfTheRings.Entities (enemiesL)
 import LordOfTheRings.Game.Base
 import LordOfTheRings.GameT (GameT)
 import LordOfTheRings.I18n (cardVar, textVar)
-import LordOfTheRings.Matcher.Types (CardMatcher (CardWithType), cardMatches)
+import LordOfTheRings.Matcher.Types (CardMatcher (CardWithType, AnyCard), cardMatches)
 import LordOfTheRings.Message
 import LordOfTheRings.Message.Lifted
 import LordOfTheRings.Quest (isSideQuest)
@@ -28,7 +29,7 @@ import LordOfTheRings.Prelude
 import LordOfTheRings.Placement (Placement (StagingArea))
 import LordOfTheRings.Helpers.Modifiers (resourcesBarredFrom)
 import LordOfTheRings.Helpers.Healing (healableCharacters)
-import LordOfTheRings.Matcher (getLead, select, HeroMatcher (HeroControlledBy), AllyMatcher (AllyControlledBy), PlayerMatcher (PlayerWithId))
+import LordOfTheRings.Matcher (getLead, getPlayer, select, HeroMatcher (HeroControlledBy), AllyMatcher (AllyControlledBy), PlayerMatcher (PlayerWithId))
 import LordOfTheRings.Scenario.Runner (epicMessageId)
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Question (Question (PlayerWindow, QuestionLabel, ChooseOne))
@@ -39,7 +40,7 @@ import LordOfTheRings.Target
 import LordOfTheRings.Trait (Trait (Basic, Upgraded))
 
 usesEpicRoundSynchronization :: Game -> Bool
-usesEpicRoundSynchronization g = isJust $ scenarioEpic (toAttrs g.scenario) >>= annuminasCityStrength . epicShared
+usesEpicRoundSynchronization g = maybe False (\replica -> isJust (annuminasCityStrength replica.epicShared) || isJust (dolGuldurCityStrength replica.epicShared)) $ scenarioEpic $ toAttrs g.scenario
 
 epicRoundPhaseOf :: Game -> Maybe EpicRoundPhase
 epicRoundPhaseOf g = epicRoundPhase <$> (scenarioEpic (toAttrs g.scenario) >>= epicRoundState)
@@ -176,11 +177,13 @@ runEpicMessage msg g = case msg of
       lead <- getLead
       immediateAttack lead transfer.epicEnemyId
     pure $ g & entitiesL . enemiesL %~ insertEntity foe & effectsL <>~ transfer.epicEnemyEffects
+  ResolveEpicEffect _ (EpicTransferLorienSupport destination recipient controller) target -> transferLorienSupport destination recipient controller target g
+  ResolveEpicEffect _ (EpicReceiveLorienSupport packet recipient) _ -> receiveLorienSupport packet recipient g
   SyncEpic shared -> do
-    runQueueT $ traverse_ gameOver $ annuminasOutcome shared
+    runQueueT $ traverse_ gameOver $ epicOutcome shared
     pure g
-  ContributeShared key _ | key `elem` [AnnuminasCityStrength, AnnuminasVictory, AnnuminasDefeat] -> do
-    runQueueT $ traverse_ gameOver $ scenarioEpic (toAttrs g.scenario) >>= annuminasOutcome . epicShared
+  ContributeShared key _ | key `elem` [AnnuminasCityStrength, AnnuminasVictory, AnnuminasDefeat, DolGuldurCityStrength, DolGuldurVictory, DolGuldurDefeat] -> do
+    runQueueT $ traverse_ gameOver $ scenarioEpic (toAttrs g.scenario) >>= epicOutcome . epicShared
     pure g
   ChooseEpicTarget pid code query effect -> do
     let replica = scenarioEpic $ toAttrs g.scenario
@@ -216,6 +219,48 @@ runEpicMessage msg g = case msg of
         for_ host $ \card -> push $ RemoveSetAsideFromGame [card]
         push $ QueueEpicCommand destination code (EpicReceiveSetAsideHost nonce host) ScenarioTarget
       EpicDiscardEnemy -> discard source target
+      EpicDestroyEnemy -> destroy source target
+      EpicDolDrawResource -> eachPlayer $ \pid -> do
+        drawCards source pid 1
+        heroes <- filterM (fmap not . resourcesBarredFrom source) =<< select (HeroControlledBy $ PlayerWithId pid)
+        chooseOrRunOneM pid do
+          questionLabeled "annuminas.resourceHero"
+          targets heroes $ \hid -> placeResources source hid 1
+      EpicDolDiscardToOne -> eachPlayer $ \pid -> do
+        handSize <- length . (.hand) <$> getPlayer pid
+        chooseAndDiscardFromHand pid source $ max 0 $ handSize - 1
+      EpicDolDiscardAlly -> eachPlayer $ \pid -> do
+        allies <- select $ AllyControlledBy $ PlayerWithId pid
+        chooseOrRunOneM pid do
+          questionLabeled "dolGuldur.discardAlly"
+          targets allies $ discard source
+      EpicDolSearchCard -> case target of
+        PlayerTarget pid -> searchDeck pid source maxBound AnyCard False
+        _ -> pure ()
+      EpicDolSearchAlly -> case target of
+        PlayerTarget pid -> searchDeckIntoPlay pid source 10 (CardWithType AllyType) 1 []
+        _ -> pure ()
+      EpicDolEngageEnemies -> eachPlayer $ \pid -> push $ ResolveEpicEffect code EpicDolEngageEnemy $ PlayerTarget pid
+      EpicDolEngageEnemy -> case target of
+        PlayerTarget pid -> do
+          let attrs = toAttrs g.scenario
+              deck = attrs.encounterDeck
+              discarded = attrs.encounterDiscard
+              enemyCard = cardMatches $ CardWithType EnemyType
+          case deck of
+            [] -> when (any enemyCard discarded) do
+              shuffleEncounterDiscardIntoDeck AnyCard
+              push msg
+            card : remaining -> do
+              discardTopOfEncounterDeckFor source target 1
+              when (null remaining) $ shuffleEncounterDiscardIntoDeck AnyCard
+              if enemyCard card
+                then do
+                  removeFromEncounterDeck card
+                  removeFromEncounterDiscard card
+                  putEnemyIntoPlayEngaged pid card
+                else when (any enemyCard $ remaining <> discarded) $ push msg
+        _ -> pure ()
       EpicDrawCards -> eachPlayer $ \pid -> drawCards source pid 1
       EpicDamage n -> dealDamage source target n
       EpicProgress n -> placeProgress source target n
@@ -301,10 +346,13 @@ runEpicMessage msg g = case msg of
 finalizeEpicOutcome :: Outcome -> Game -> GameT Game
 finalizeEpicOutcome requested g = do
   updated <- case scenarioEpic $ toAttrs g.scenario of
-    Just replica | isJust (annuminasCityStrength replica.epicShared), isNothing (annuminasOutcome replica.epicShared) -> do
-      let key = if requested == Won then AnnuminasVictory else AnnuminasDefeat
+    Just replica | isJust (annuminasCityStrength replica.epicShared) || isJust (dolGuldurCityStrength replica.epicShared)
+      , isNothing (epicOutcome replica.epicShared) -> do
+      let key
+            | isJust (dolGuldurCityStrength replica.epicShared) = if requested == Won then DolGuldurVictory else DolGuldurDefeat
+            | otherwise = if requested == Won then AnnuminasVictory else AnnuminasDefeat
       attrs <- runQueueT $ runMessage (ContributeShared key 1) (toAttrs g.scenario)
       pure $ g & scenarioL %~ overAttrs (const attrs)
     _ -> pure g
-  let authoritative = scenarioEpic (toAttrs updated.scenario) >>= annuminasOutcome . epicShared
+  let authoritative = scenarioEpic (toAttrs updated.scenario) >>= epicOutcome . epicShared
   pure $ updated & outcomeL ?~ fromMaybe requested authoritative

@@ -3,6 +3,8 @@
 module LordOfTheRings.Quest (module LordOfTheRings.Quest, module X) where
 
 import LordOfTheRings.Quest.Cards.AnnuminasFinale (leadTheSortie, stopTheAttack, rescueTheCaptivesAnnuminas)
+import LordOfTheRings.Quest.Cards.DolGuldurApproach (assaultOnTheGoldenWood, crossingTheAnduinDolGuldur)
+import LordOfTheRings.Quest.Cards.DolGuldurSiege (theSiegeOfDolGuldur, theTowerOfSorcery, battleUnderTheTrees, dungeonsOfTheNecromancer)
 import LordOfTheRings.Quest.Cards.AnnuminasDefense (guardTheGateAnnuminas, defendTheCityAnnuminas, manTheWallsAnnuminas)
 import LordOfTheRings.Quest.Cards.AnnuminasPreparation (rebuildTheDefenses, raiseTheLevee, delayTheEnemyAnnuminas)
 import LordOfTheRings.Quest.Cards.PrancingPonyInvestigation (investigatingTheCrime, runningOutOfTime, apprehendingTheKiller)
@@ -501,6 +503,12 @@ allQuests =
     | card@(SomeQuestCard builder) <-
         [ SomeQuestCard rescueTheCaptivesAnnuminas
         , SomeQuestCard stopTheAttack
+        , SomeQuestCard assaultOnTheGoldenWood
+        , SomeQuestCard crossingTheAnduinDolGuldur
+        , SomeQuestCard theSiegeOfDolGuldur
+        , SomeQuestCard theTowerOfSorcery
+        , SomeQuestCard battleUnderTheTrees
+        , SomeQuestCard dungeonsOfTheNecromancer
         , SomeQuestCard leadTheSortie
         , SomeQuestCard manTheWallsAnnuminas
         , SomeQuestCard defendTheCityAnnuminas

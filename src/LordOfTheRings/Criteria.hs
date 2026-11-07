@@ -47,6 +47,7 @@ data Criterion
     -- could go on, as Anvil of Gundabad's action needs
     PlayableAttachmentInHand PlayerId CardMatcher Int
   | EpicTargetsExist EpicTargetQuery
+  | InEpicMultiplayer
   | PlayableCardInHand PlayerId CardMatcher Int
   | -- True restricts the choice to a character.
     ReadyableCardExists Bool

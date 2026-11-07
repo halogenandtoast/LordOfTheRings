@@ -1,6 +1,6 @@
 cabal-version: 1.12
 
--- This file has been generated from package.yaml by hpack version 0.39.6.
+-- This file has been generated from package.yaml by hpack version 0.37.0.
 --
 -- see: https://github.com/sol/hpack
 
@@ -187,6 +187,7 @@ library
       LordOfTheRings.Ally.Cards.HobbitArcher
       LordOfTheRings.Ally.Cards.HonourGuard
       LordOfTheRings.Ally.Cards.HorsebackArcher
+      LordOfTheRings.Ally.Cards.HostOfLorien
       LordOfTheRings.Ally.Cards.HunterOfLamedon
       LordOfTheRings.Ally.Cards.Iarion
       LordOfTheRings.Ally.Cards.ImladrisCaregiver
@@ -807,6 +808,7 @@ library
       LordOfTheRings.Enemy.Cards.DeepDweller
       LordOfTheRings.Enemy.Cards.DesertWarg
       LordOfTheRings.Enemy.Cards.DolGuldurBeastmaster
+      LordOfTheRings.Enemy.Cards.DolGuldurInvaders
       LordOfTheRings.Enemy.Cards.DolGuldurOrcs
       LordOfTheRings.Enemy.Cards.DragonHatchling
       LordOfTheRings.Enemy.Cards.Dreadnaught
@@ -1375,6 +1377,7 @@ library
       LordOfTheRings.Entities
       LordOfTheRings.Epic.Board
       LordOfTheRings.Epic.Coordinator
+      LordOfTheRings.Epic.Lorien
       LordOfTheRings.Epic.Runner
       LordOfTheRings.Epic.Types
       LordOfTheRings.Event
@@ -1976,6 +1979,7 @@ library
       LordOfTheRings.Location.Cards.DevilsMirk
       LordOfTheRings.Location.Cards.DimValley
       LordOfTheRings.Location.Cards.DocksideStreet
+      LordOfTheRings.Location.Cards.DolGuldurLocations
       LordOfTheRings.Location.Cards.DoorsOfDurin
       LordOfTheRings.Location.Cards.DoorsOfDurinTheRingGoesSouth
       LordOfTheRings.Location.Cards.DragonHoard
@@ -2631,6 +2635,7 @@ library
       LordOfTheRings.Objective.Cards.DeadVillagers
       LordOfTheRings.Objective.Cards.Derufin
       LordOfTheRings.Objective.Cards.DocksOfDolAmroth
+      LordOfTheRings.Objective.Cards.DolGuldurAttack
       LordOfTheRings.Objective.Cards.DoomDoomDoom
       LordOfTheRings.Objective.Cards.DragonSign
       LordOfTheRings.Objective.Cards.DunedainOfAnnuminas
@@ -2669,6 +2674,7 @@ library
       LordOfTheRings.Objective.Cards.LastOfTheCompany
       LordOfTheRings.Objective.Cards.LordAlcaron
       LordOfTheRings.Objective.Cards.LordAlcaronTheBloodOfGondor
+      LordOfTheRings.Objective.Cards.LorienSupport
       LordOfTheRings.Objective.Cards.MinasTirith
       LordOfTheRings.Objective.Cards.MistyMountainEagle
       LordOfTheRings.Objective.Cards.MugashObjective
@@ -2841,7 +2847,9 @@ library
       LordOfTheRings.Quest.Cards.DelayTheEnemy
       LordOfTheRings.Quest.Cards.DepartureFromTheHavens
       LordOfTheRings.Quest.Cards.DestroyTheDreadnaught
+      LordOfTheRings.Quest.Cards.DolGuldurApproach
       LordOfTheRings.Quest.Cards.DolGuldurOrcsStage
+      LordOfTheRings.Quest.Cards.DolGuldurSiege
       LordOfTheRings.Quest.Cards.DontLetThemEscape
       LordOfTheRings.Quest.Cards.DontLookAtTheLights
       LordOfTheRings.Quest.Cards.DoubleBack
@@ -3233,6 +3241,8 @@ library
       LordOfTheRings.Scenario.Scenarios.AssaultOnOsgiliath.Helpers
       LordOfTheRings.Scenario.Scenarios.AStormOnCobasHaven
       LordOfTheRings.Scenario.Scenarios.AStormOnCobasHaven.Helpers
+      LordOfTheRings.Scenario.Scenarios.AttackOnDolGuldur
+      LordOfTheRings.Scenario.Scenarios.AttackOnDolGuldur.Helpers
       LordOfTheRings.Scenario.Scenarios.BeneathTheSands
       LordOfTheRings.Scenario.Scenarios.BeneathTheSands.Helpers
       LordOfTheRings.Scenario.Scenarios.BreakingOfTheFellowship
@@ -3595,6 +3605,7 @@ library
       LordOfTheRings.Treachery.Cards.Discovered
       LordOfTheRings.Treachery.Cards.DismayAndFear
       LordOfTheRings.Treachery.Cards.DisturbedWaters
+      LordOfTheRings.Treachery.Cards.DolGuldurTreacheries
       LordOfTheRings.Treachery.Cards.DownFromTheHills
       LordOfTheRings.Treachery.Cards.DragonBreath
       LordOfTheRings.Treachery.Cards.DragonScales
@@ -4500,6 +4511,11 @@ test-suite LordOfTheRings-test
       LordOfTheRings.Standalone.AnnuminasTunnelSpec
       LordOfTheRings.Standalone.BattleOfLakeTownSpec
       LordOfTheRings.Standalone.BelegostSpec
+      LordOfTheRings.Standalone.DolGuldurEncountersSpec
+      LordOfTheRings.Standalone.DolGuldurEpicSpec
+      LordOfTheRings.Standalone.DolGuldurScenarioSpec
+      LordOfTheRings.Standalone.DolGuldurSetupSpec
+      LordOfTheRings.Standalone.DolGuldurSupportTransferSpec
       LordOfTheRings.Standalone.FogBarrowsSpec
       LordOfTheRings.Standalone.FogCampaignSpec
       LordOfTheRings.Standalone.FogOnTheBarrowDownsSpec

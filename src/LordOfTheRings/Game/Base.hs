@@ -10,6 +10,7 @@ import LordOfTheRings.ActiveCost
 import LordOfTheRings.Ally.Types (Ally)
 import LordOfTheRings.Attachment.Types (Attachment)
 import LordOfTheRings.Location.Types (Location)
+import LordOfTheRings.Objective.Types (Objective)
 import LordOfTheRings.Card (Card)
 import LordOfTheRings.Matcher.Types (cardMatches)
 import LordOfTheRings.Effect
@@ -54,6 +55,8 @@ data Game = Game
   , gameResolvingAttachments :: Map AttachmentId [Attachment]
   -- ^ Snapshots of activated attachments until their costs and effects finish. Nested
   -- uses form a stack; only a resolving ability, never an unrelated leaving, uses them.
+  , gameResolvingObjectives :: Map ObjectiveId [Objective]
+  -- ^ Activated objectives remain available while paying costs removes their source.
   , gameLeftPlay :: Map AllyId Ally
   -- ^ Allies that just left play, kept until the window for their leaving closes so
   -- their own abilities can answer it.

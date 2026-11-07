@@ -2,6 +2,7 @@
 
 module LordOfTheRings.Enemy (module LordOfTheRings.Enemy, module X) where
 
+import LordOfTheRings.Enemy.Cards.DolGuldurInvaders
 import LordOfTheRings.Enemy.Cards.LieutenantOfAngmar (lieutenantOfAngmar)
 import LordOfTheRings.Enemy.Cards.AnnuminasInvaders
 import LordOfTheRings.Enemy.Cards.PrancingPonyBree (billFernyMurder, breeLandInformant)
@@ -729,7 +730,17 @@ allEnemys =
   Map.fromList
     [ (toCardCode builder, card)
     | card@(SomeEnemyCard builder) <-
-        [ SomeEnemyCard lieutenantOfAngmar
+        [ SomeEnemyCard baneOfAmonLanc
+        , SomeEnemyCard sorcererOfDolGuldurAttack
+        , SomeEnemyCard chieftainMorlug
+        , SomeEnemyCard dungeonDweller
+        , SomeEnemyCard hostOfDolGuldur
+        , SomeEnemyCard mirkwoodOlogHai
+        , SomeEnemyCard beastOfTaurNuFuin
+        , SomeEnemyCard amonLancArcher
+        , SomeEnemyCard dolGuldurMarauder
+        , SomeEnemyCard battleWargDolGuldur
+        , SomeEnemyCard lieutenantOfAngmar
         , SomeEnemyCard hostOfAngmar
         , SomeEnemyCard wargOfCarnDum
         , SomeEnemyCard orcOfAngmar

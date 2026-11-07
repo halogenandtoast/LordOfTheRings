@@ -2,6 +2,7 @@
 
 module LordOfTheRings.Ally (module LordOfTheRings.Ally, module X) where
 
+import LordOfTheRings.Ally.Cards.HostOfLorien (hostOfLorien)
 import LordOfTheRings.Ally.Cards.TomBombadilOldForest (tomBombadilOldForest)
 import LordOfTheRings.Ally.Cards.DerufinErech (derufinErech)
 import LordOfTheRings.Ally.Cards.DunedainOfAnnuminas (dunedainOfAnnuminas)
@@ -363,7 +364,8 @@ allAllies =
   Map.fromList
     [ (toCardCode builder, card)
     | card@(SomeAllyCard builder) <-
-        [ SomeAllyCard dunedainOfAnnuminas
+        [ SomeAllyCard hostOfLorien
+        , SomeAllyCard dunedainOfAnnuminas
         , SomeAllyCard (reprintAlly Objectives.tomBombadilFog tomBombadilOldForest)
         , SomeAllyCard tomBombadilOldForest
         , SomeAllyCard derufinErech

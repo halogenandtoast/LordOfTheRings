@@ -90,7 +90,7 @@ allQuestCards =
   Map.fromList $
     map
       (\def -> (cdCardCode def, def))
-      [rescueTheCaptivesAnnuminas, stopTheAttack, leadTheSortie, manTheWallsAnnuminas, defendTheCityAnnuminas, guardTheGateAnnuminas, raiseTheLevee, delayTheEnemyAnnuminas, rebuildTheDefenses, investigatingTheCrime, runningOutOfTime, apprehendingTheKiller, lostInTheFog, trappedInsideABarrow, theHouseOfTomBombadil, acrossTheDowns, ruinsOfTheFirstAge, ancientEvilsDisturbed, deeperIntoThePast, theServantsOfMorgoth, theRootsOfEredLuin, theMinesOfBelegost, theBeastOfBelegost, farewellToTheShire, darkBadPlace, chokedWithBrambles, shiftingTrees, closingInAroundThem, theWickedWillow, theDisappearance, terrorOfTheDead, theShadowHost, theDragonsWrath, fireAndWater, terrorFromTheMountain, anduinCrossing, throughTheRuinsOsgiliath, beyondExpectations, raceToMinasTirith, searchingTheHighSeas, destroyTheDreadnaught,  afterTheRaid
+      [assaultOnTheGoldenWood, crossingTheAnduinDolGuldur, theSiegeOfDolGuldur, theTowerOfSorcery, battleUnderTheTrees, dungeonsOfTheNecromancer, rescueTheCaptivesAnnuminas, stopTheAttack, leadTheSortie, manTheWallsAnnuminas, defendTheCityAnnuminas, guardTheGateAnnuminas, raiseTheLevee, delayTheEnemyAnnuminas, rebuildTheDefenses, investigatingTheCrime, runningOutOfTime, apprehendingTheKiller, lostInTheFog, trappedInsideABarrow, theHouseOfTomBombadil, acrossTheDowns, ruinsOfTheFirstAge, ancientEvilsDisturbed, deeperIntoThePast, theServantsOfMorgoth, theRootsOfEredLuin, theMinesOfBelegost, theBeastOfBelegost, farewellToTheShire, darkBadPlace, chokedWithBrambles, shiftingTrees, closingInAroundThem, theWickedWillow, theDisappearance, terrorOfTheDead, theShadowHost, theDragonsWrath, fireAndWater, terrorFromTheMountain, anduinCrossing, throughTheRuinsOsgiliath, beyondExpectations, raceToMinasTirith, searchingTheHighSeas, destroyTheDreadnaught,  afterTheRaid
       , mirkwoodForestTheOath
       , theRearguardTheOath
       , theDarkOfNibinDum
@@ -2364,4 +2364,28 @@ stopTheAttack = (quest "the-siege-of-annuminas-011" "Stop the Attack" TheSiegeOf
 
 rescueTheCaptivesAnnuminas :: CardDef
 rescueTheCaptivesAnnuminas = (quest "the-siege-of-annuminas-008" "Rescue the Captives" TheSiegeOfAnnuminas 3 0)
+  { cdWhenRevealed = True, cdQuestPoints = Nothing }
+
+assaultOnTheGoldenWood :: CardDef
+assaultOnTheGoldenWood = (quest "attack-on-dol-guldur-001" "Assault on the Golden Wood" AttackOnDolGuldur 1 0)
+  { cdWhenRevealed = False, cdQuestPoints = Nothing }
+
+crossingTheAnduinDolGuldur :: CardDef
+crossingTheAnduinDolGuldur = (quest "attack-on-dol-guldur-002" "Crossing the Anduin" AttackOnDolGuldur 2 0)
+  { cdWhenRevealed = True, cdQuestPoints = Nothing }
+
+theSiegeOfDolGuldur :: CardDef
+theSiegeOfDolGuldur = (quest "attack-on-dol-guldur-003" "The Siege of Dol Guldur" AttackOnDolGuldur 3 0)
+  { cdWhenRevealed = True, cdQuestPoints = Nothing }
+
+theTowerOfSorcery :: CardDef
+theTowerOfSorcery = (quest "attack-on-dol-guldur-004" "The Tower of Sorcery" AttackOnDolGuldur 3 0)
+  { cdWhenRevealed = True, cdQuestPoints = Nothing }
+
+battleUnderTheTrees :: CardDef
+battleUnderTheTrees = (quest "attack-on-dol-guldur-005" "Battle Under the Trees" AttackOnDolGuldur 3 0)
+  { cdWhenRevealed = True, cdQuestPoints = Nothing }
+
+dungeonsOfTheNecromancer :: CardDef
+dungeonsOfTheNecromancer = (quest "attack-on-dol-guldur-006" "Dungeons of the Necromancer" AttackOnDolGuldur 3 0)
   { cdWhenRevealed = True, cdQuestPoints = Nothing }

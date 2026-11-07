@@ -196,6 +196,7 @@ data ModifierType
   | -- | A continuous victory condition, checked after the game state changes.
     WinWhenNoMatchingEnemies EnemyMatcher
   | WinAtRoundEndWithVictoryCard CardCode
+  | WinAtRoundEndWithDolGuldurCaptured
   | AtEndOfRound
   | AdditionalInvestigateCards Int
   | -- | on an ally: it entered play this round
@@ -487,6 +488,8 @@ data ModifierType
     -- offset to threat, attack and defense. Read after the modifier cache is built,
     -- so a change to Discover applies immediately (Nameless Cave Dweller).
     StatsFromActiveDiscover Int
+  | -- | On a character: defense changes per current damage, recalculated as wounds change.
+    DefensePerDamage Int
   | -- | on an enemy with no victory points printed: it has this many, and goes to the
     -- victory display as it is defeated, as The Cursed Shade gives Fram's Shade victory 6
     GainVictory Int
@@ -687,6 +690,7 @@ data ModifierType
   | -- | on a player: a player card reduces their threat by at most this much, as Mines of
     -- Cirith Gurat's "reduce that amount to 1" reads
     PlayerCardThreatReductionLimit Int
+  | PlayerCardThreatReductionPerRoundLimit Int
   | NonContractPlayerCardThreatReductionLimit Int
   | ThreatReductionPerRoundLimit Int
   | -- | on a player: the threat at which they are eliminated, 50, moves by this much, as

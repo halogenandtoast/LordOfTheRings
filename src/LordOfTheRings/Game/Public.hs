@@ -12,7 +12,7 @@ import LordOfTheRings.Campaign (campaignCardFor)
 import LordOfTheRings.Classes.Entity (toAttrs)
 import LordOfTheRings.Classes.HasGame
 import LordOfTheRings.Entities (entitiesContracts, entitiesLocations, entitiesObjectives, entitiesQuests)
-import LordOfTheRings.Epic.Types (EpicReplica (epicShared), annuminasCityStrength)
+import LordOfTheRings.Epic.Types (EpicReplica (epicShared), annuminasCityStrength, dolGuldurCityStrength)
 import LordOfTheRings.Game.Base
 import LordOfTheRings.Game.SearchZones (searchZones)
 import LordOfTheRings.Card
@@ -159,13 +159,14 @@ publicGameFor seesHand g = hideDecks $ toJSON merged
       <> map ((.id) . toCard) (toList es.attachments)
       <> map ((.id) . toCard) (toList es.treacheries)
   cityStrength =
-    (scenarioEpic (toAttrs g.scenario) >>= annuminasCityStrength . epicShared)
-      <|> ((.resources) <$> find ((== toCardCode Objectives.annuminas) . toCardCode) (toList g.entities.objectives))
+    (scenarioEpic (toAttrs g.scenario) >>= \r -> annuminasCityStrength r.epicShared <|> dolGuldurCityStrength r.epicShared)
+      <|> ((.resources) <$> find ((`elem` map toCardCode [Objectives.annuminas, Objectives.dolGuldurAttack]) . toCardCode) (toList g.entities.objectives))
   hideDecks = \case
     Object o ->
       Object
         $ KeyMap.insert "score" (toJSON $ groupScore g)
         $ KeyMap.delete "frozenRoundEndAbilities"
+        $ KeyMap.delete "resolvingObjectives"
         $ KeyMap.delete "separation"
         $ KeyMap.insert "areas" (toJSON areas)
         $ KeyMap.insert "committedWillpower" (toJSON $ runReadGame getCommittedWillpower g)

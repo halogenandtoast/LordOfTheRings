@@ -16,7 +16,7 @@ allObjectiveCards =
   Map.fromList $
     map
       (\def -> (cdCardCode def, def))
-      [dunedainOfAnnuminas, annuminas, tomBombadilFog, swordOfBelegost, mapOfEredLuin, keysOfBelegost, bookOfAulesChildren, dwarvenTorch, blueMountainGem, stalkingTheRuins, tomBombadilOldForest, derufin, relicFromTheDarkYears, eventide, dusk, midnight, theOldThrush, lakeTown, rangerOfIthilien, corsairSkirmisherShipDreadnaught, eithiliant, eithiliantUpgraded, goldenWing, goldenWingUpgraded, prideOfLebennin, prideOfLebenninUpgraded, silentMist, silentMistUpgraded, swanShipOfDolAmroth, swanShipOfDolAmrothUpgraded, twilightsCall, twilightsCallUpgraded, gondorianWarship,  caveTorchDarkOfMirkwood
+      [dolGuldurAttack, powerOfLorien, hostOfLorien, dunedainOfAnnuminas, annuminas, tomBombadilFog, swordOfBelegost, mapOfEredLuin, keysOfBelegost, bookOfAulesChildren, dwarvenTorch, blueMountainGem, stalkingTheRuins, tomBombadilOldForest, derufin, relicFromTheDarkYears, eventide, dusk, midnight, theOldThrush, lakeTown, rangerOfIthilien, corsairSkirmisherShipDreadnaught, eithiliant, eithiliantUpgraded, goldenWing, goldenWingUpgraded, prideOfLebennin, prideOfLebenninUpgraded, silentMist, silentMistUpgraded, swanShipOfDolAmroth, swanShipOfDolAmrothUpgraded, twilightsCall, twilightsCallUpgraded, gondorianWarship,  caveTorchDarkOfMirkwood
       , gandalfsMap
       , theThreatToWilderland
       , ashenBrazier
@@ -1716,4 +1716,15 @@ dunedainOfAnnuminas = (objective "the-siege-of-annuminas-018" "Dúnedain of Ann�
   , cdWillpower = Just 1, cdAttack = Just 2, cdDefense = Just 2, cdHitPoints = Just 3
   , cdKeywords = setFromList [Surge, Ranged, Sentinel]
   , cdWhenRevealed = True, cdShadowEffect = True
+  }
+
+dolGuldurAttack, powerOfLorien, hostOfLorien :: CardDef
+dolGuldurAttack = (objective "attack-on-dol-guldur-007" "Dol Guldur" AttackOnDolGuldur 1)
+  { cdUnique = True, cdCardTraits = setFromList [City, Stronghold] }
+powerOfLorien = (objective "attack-on-dol-guldur-008" "Power of Lórien" AttackOnDolGuldur 1)
+  { cdCardTraits = setFromList [Lorien] }
+hostOfLorien = (objective "attack-on-dol-guldur-009" "Host of Lórien" AttackOnDolGuldur 1)
+  { cdCardType = ObjectiveAllyType, cdCardTraits = setFromList [Silvan]
+  , cdWillpower = Just 3, cdAttack = Just 3, cdDefense = Just 3, cdHitPoints = Just 6
+  , cdKeywords = setFromList [Ranged, Sentinel]
   }

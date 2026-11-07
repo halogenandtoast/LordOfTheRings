@@ -15,7 +15,7 @@ allLocationCards =
   Map.fromList $
     map
       (\def -> (cdCardCode def, def))
-      [enemyCamp, siegeTunnel, cityWallAnnuminas, batteringRam, gateOfAnnuminas, arnorBattlefield, hillsOfEvendim, shoresOfLakeNenuial, billFernysHouse, staddleHidingHole, combeStorehouse, archetTradingPost, chetwoodCampsite, thePrancingPonyMurder, ramshackleManor, darkAlleyMurder, marketSquareMurder, oldWarehouse, villageStable, greatBarrow, standingStones, hollowCircle, ancientBarrow, stoneRing, northDownsFog, naurlhugsLair, abandonedMineBelegost, floodedHall, darkenedTunnel, sunkenTreasury, secretChamber, withywindle, misleadingPath, deepGulley, strangeWoods, wallOfTrees, oppressiveForest, theStoneOfErechStandalone, tarlangsNeck, banksOfMorthond, valeOfShadows, blackrootGraves, shadowOfDwimorberg, hauntedValley, westPier, theMastersManor, southPier, northPier, merchantsDistrict, eastPier, greatHouse, greatBridge, fishermansDock, esgarothWharf, capturedWatchtower, emynArnenOverlook, morgulduin, pelennorFieldsOsgiliath, ruinsOfOsgiliath, belfalasShipyard, cobasHavenDreadnaught, isleOfFortune, mouthsOfAnduin, tolfalasLanding, wickedCove,  theEavesOfMirkwoodDarkOfMirkwood
+      [gateOfDolGuldurAttack, theSorcerersTower, theShadowRoad, dungeonDoor, forestBattleground, blackenedWoods, enemyCamp, siegeTunnel, cityWallAnnuminas, batteringRam, gateOfAnnuminas, arnorBattlefield, hillsOfEvendim, shoresOfLakeNenuial, billFernysHouse, staddleHidingHole, combeStorehouse, archetTradingPost, chetwoodCampsite, thePrancingPonyMurder, ramshackleManor, darkAlleyMurder, marketSquareMurder, oldWarehouse, villageStable, greatBarrow, standingStones, hollowCircle, ancientBarrow, stoneRing, northDownsFog, naurlhugsLair, abandonedMineBelegost, floodedHall, darkenedTunnel, sunkenTreasury, secretChamber, withywindle, misleadingPath, deepGulley, strangeWoods, wallOfTrees, oppressiveForest, theStoneOfErechStandalone, tarlangsNeck, banksOfMorthond, valeOfShadows, blackrootGraves, shadowOfDwimorberg, hauntedValley, westPier, theMastersManor, southPier, northPier, merchantsDistrict, eastPier, greatHouse, greatBridge, fishermansDock, esgarothWharf, capturedWatchtower, emynArnenOverlook, morgulduin, pelennorFieldsOsgiliath, ruinsOfOsgiliath, belfalasShipyard, cobasHavenDreadnaught, isleOfFortune, mouthsOfAnduin, tolfalasLanding, wickedCove,  theEavesOfMirkwoodDarkOfMirkwood
       , forestGateDarkOfMirkwood
       , goblinTunnelsDarkOfMirkwood
       , lightlessPassageDarkOfMirkwood
@@ -5616,3 +5616,17 @@ siegeTunnel = (location "the-siege-of-annuminas-016" "Siege Tunnel" TheSiegeOfAn
 enemyCamp :: CardDef
 enemyCamp = (location "the-siege-of-annuminas-015" "Enemy Camp" TheSiegeOfAnnuminas 1 5 5)
   { cdUnique = True, cdCardTraits = setFromList [SiegeTrait], cdVictoryPoints = Just 5 }
+
+gateOfDolGuldurAttack, theSorcerersTower, theShadowRoad, dungeonDoor, forestBattleground, blackenedWoods :: CardDef
+gateOfDolGuldurAttack = (location "attack-on-dol-guldur-020" "Gate of Dol Guldur" AttackOnDolGuldur 2 2 4)
+  { cdCardTraits = setFromList [DolGuldur], cdShadowEffect = False }
+theSorcerersTower = (location "attack-on-dol-guldur-021" "The Sorcerer’s Tower" AttackOnDolGuldur 2 2 4)
+  { cdCardTraits = setFromList [DolGuldur], cdShadowEffect = False }
+theShadowRoad = (location "attack-on-dol-guldur-022" "The Shadow Road" AttackOnDolGuldur 2 2 4)
+  { cdCardTraits = setFromList [DolGuldur], cdShadowEffect = False }
+dungeonDoor = (location "attack-on-dol-guldur-023" "Dungeon Door" AttackOnDolGuldur 2 2 4)
+  { cdCardTraits = setFromList [DolGuldur], cdShadowEffect = False }
+forestBattleground = (location "attack-on-dol-guldur-024" "Forest Battleground" AttackOnDolGuldur 2 1 5)
+  { cdCardTraits = setFromList [Forest], cdShadowEffect = False }
+blackenedWoods = (location "attack-on-dol-guldur-025" "Blackened Woods" AttackOnDolGuldur 3 3 3)
+  { cdCardTraits = setFromList [Forest], cdShadowEffect = True }

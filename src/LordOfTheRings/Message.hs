@@ -317,6 +317,7 @@ data Message
   | SearchEncounterDeckAndDiscard PlayerId Target CardMatcher
   | ShuffleDeck DeckSignifier
   | AddCollectionCardToHand PlayerId CardCode
+  | RequestEpicEffect GroupOrdinal CardCode EpicEffect Target
   | RequestAnnuminasHost CardCode GroupOrdinal
   | RequestEpicEffect GroupOrdinal CardCode EpicEffect Target
   | AwaitEpicReply UUID
@@ -337,6 +338,7 @@ data Message
   | UseAbility PlayerId Ability [Window]
   | UseCardAbility PlayerId Source Int [Window]
   | FinishAttachmentAbility AttachmentId
+  | FinishObjectiveAbility ObjectiveId
   | CreateEffect Effect
   | -- | the lasting effects of that duration end, as the round's do once the round's end
     -- has resolved

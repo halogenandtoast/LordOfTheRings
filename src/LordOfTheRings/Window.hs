@@ -75,6 +75,8 @@ data WindowType
     EnemyDeclaredAsAttacker EnemyId PlayerId
   | PhaseEnds Phase
   | RoundEnds
+  | DolGuldurStageEffectsResolved
+  | DolGuldurSiegeResolved
   | -- | the round begins, before its resource phase, as Well Preserved reads
     RoundBegins
   | -- | the staging step begins, before its cards are revealed
