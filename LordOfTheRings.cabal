@@ -2772,6 +2772,7 @@ library
       LordOfTheRings.Quest.Cards.AWayUp
       LordOfTheRings.Quest.Cards.AWellLaidTrap
       LordOfTheRings.Quest.Cards.AWrongTurn
+      LordOfTheRings.Quest.Cards.BarrowDownsApproach
       LordOfTheRings.Quest.Cards.BattleAtTheCrossings
       LordOfTheRings.Quest.Cards.BattleForDunland
       LordOfTheRings.Quest.Cards.BattleInTheBay
@@ -4446,6 +4447,7 @@ test-suite LordOfTheRings-test
       LordOfTheRings.Standalone.BattleOfLakeTownSpec
       LordOfTheRings.Standalone.BelegostSpec
       LordOfTheRings.Standalone.FogOnTheBarrowDownsSpec
+      LordOfTheRings.Standalone.FogQuestsSpec
       LordOfTheRings.Standalone.MassingAtOsgiliathSpec
       LordOfTheRings.Standalone.OldForestSpec
       LordOfTheRings.Standalone.StoneOfErechSpec

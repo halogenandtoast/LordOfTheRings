@@ -2,6 +2,7 @@
 
 module LordOfTheRings.Quest (module LordOfTheRings.Quest, module X) where
 
+import LordOfTheRings.Quest.Cards.BarrowDownsApproach (theHouseOfTomBombadil, acrossTheDowns)
 import LordOfTheRings.Quest.Cards.BelegostDepths (theServantsOfMorgoth, theRootsOfEredLuin, theMinesOfBelegost, theBeastOfBelegost)
 import LordOfTheRings.Quest.Cards.BelegostExploration (ruinsOfTheFirstAge, ancientEvilsDisturbed, deeperIntoThePast)
 import LordOfTheRings.Quest.Cards.FarewellToTheShire (farewellToTheShire)
@@ -493,7 +494,9 @@ allQuests =
   Map.fromList
     [ (toCardCode builder, card)
     | card@(SomeQuestCard builder) <-
-        [ SomeQuestCard theServantsOfMorgoth
+        [ SomeQuestCard theHouseOfTomBombadil
+        , SomeQuestCard acrossTheDowns
+        , SomeQuestCard theServantsOfMorgoth
         , SomeQuestCard theRootsOfEredLuin
         , SomeQuestCard theMinesOfBelegost
         , SomeQuestCard theBeastOfBelegost

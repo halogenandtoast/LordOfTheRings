@@ -90,7 +90,7 @@ allQuestCards =
   Map.fromList $
     map
       (\def -> (cdCardCode def, def))
-      [ruinsOfTheFirstAge, ancientEvilsDisturbed, deeperIntoThePast, theServantsOfMorgoth, theRootsOfEredLuin, theMinesOfBelegost, theBeastOfBelegost, farewellToTheShire, darkBadPlace, chokedWithBrambles, shiftingTrees, closingInAroundThem, theWickedWillow, theDisappearance, terrorOfTheDead, theShadowHost, theDragonsWrath, fireAndWater, terrorFromTheMountain, anduinCrossing, throughTheRuinsOsgiliath, beyondExpectations, raceToMinasTirith, searchingTheHighSeas, destroyTheDreadnaught,  afterTheRaid
+      [theHouseOfTomBombadil, acrossTheDowns, ruinsOfTheFirstAge, ancientEvilsDisturbed, deeperIntoThePast, theServantsOfMorgoth, theRootsOfEredLuin, theMinesOfBelegost, theBeastOfBelegost, farewellToTheShire, darkBadPlace, chokedWithBrambles, shiftingTrees, closingInAroundThem, theWickedWillow, theDisappearance, terrorOfTheDead, theShadowHost, theDragonsWrath, fireAndWater, terrorFromTheMountain, anduinCrossing, throughTheRuinsOsgiliath, beyondExpectations, raceToMinasTirith, searchingTheHighSeas, destroyTheDreadnaught,  afterTheRaid
       , mirkwoodForestTheOath
       , theRearguardTheOath
       , theDarkOfNibinDum
@@ -2307,3 +2307,8 @@ theServantsOfMorgoth = (quest "the-ruins-of-belegost-004" "The Servants of Morgo
 theRootsOfEredLuin = (quest "the-ruins-of-belegost-005" "The Roots of Ered Luin" TheRuinsOfBelegost 3 6) {cdWhenRevealed = True}
 theMinesOfBelegost = (quest "the-ruins-of-belegost-006" "The Mines of Belegost" TheRuinsOfBelegost 3 6) {cdWhenRevealed = True}
 theBeastOfBelegost = (quest "the-ruins-of-belegost-007" "The Beast of Belegost" TheRuinsOfBelegost 4 0) {cdWhenRevealed = True}
+
+
+theHouseOfTomBombadil, acrossTheDowns :: CardDef
+theHouseOfTomBombadil = quest "fog-on-the-barrow-downs-001" "The House of Tom Bombadil" FogOnTheBarrowDowns 1 1
+acrossTheDowns = (quest "fog-on-the-barrow-downs-002" "Across the Downs" FogOnTheBarrowDowns 2 14) {cdWhenRevealed = True}
