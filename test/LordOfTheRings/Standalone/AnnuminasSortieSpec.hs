@@ -84,7 +84,7 @@ spec = describe "Annúminas Lead the Sortie" do
     map (.deltaKey) replica.epicPendingDeltas `shouldBe` [AnnuminasVictory]
 
   it "recognizes the Lieutenant in another team's victory display" . gameTest $ \_ -> do
-    let stage = EpicStage 0 [EpicQuest (toCardCode Quests.leadTheSortie) 3 10 Nothing True] [toCardCode Enemies.lieutenantOfAngmar] False 0 False
+    let stage = EpicStage 0 [EpicQuest (toCardCode Quests.leadTheSortie) 3 10 Nothing True] [toCardCode Enemies.lieutenantOfAngmar] False 0 False []
     setReplica [EpicBoard (GroupOrdinal 1) "Other" [] False (Just stage)]
     _ <- sortie
     run $ CheckWindows [mkWhen RoundEnds]

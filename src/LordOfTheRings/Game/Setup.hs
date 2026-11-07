@@ -45,6 +45,7 @@ newTableIn gameScenario seats@((player, _) :| _) =
     , gameLastCommittedWillpower = Nothing
     , gameLogBlocks = []
     , gameResolvingAttachments = mempty
+    , gameResolvingObjectives = mempty
     , gameLeftPlay = mempty
     , gameLeftPlayLocations = mempty
     , gameAttackDestroyed = []

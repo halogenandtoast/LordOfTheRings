@@ -45,6 +45,7 @@ epicBoardFor ordinal name g
     (runReadGame (notNull <$> healableCharacters (CardCodeSource $ toCardCode Quests.defendTheCityAnnuminas) (HeroControlledBy AnyPlayer) (AllyControlledBy AnyPlayer)) g)
     (length $ filter ((== toCardCode Enemies.hostOfAngmar) . toCardCode) $ scenarioSetAside $ toAttrs g.scenario)
     (runReadGame (anyM (canDrawCardsFrom $ CardCodeSource $ toCardCode Quests.manTheWallsAnnuminas) =<< getRemainingPlayers) g)
+    [EpicPlayer pid player.name | pid <- g.playerOrder, Just player <- [Map.lookup pid g.players], not player.eliminated]
   asTarget target kind engaged damage exhausted upgradeable card =
     EpicTarget
       target
@@ -88,6 +89,7 @@ epicBoardFor ordinal name g
       (scenarioSetAside $ toAttrs g.scenario)
 
 matchesEpicTarget :: EpicTargetQuery -> EpicTarget -> Bool
+matchesEpicTarget EpicNonUniqueEnemy t = t.epicTargetKind == EpicEnemy && not t.epicTargetUnique
 matchesEpicTarget EpicOtherNonUniqueNoVictoryEnemy t =
   t.epicTargetKind == EpicEnemy && not t.epicTargetUnique && fromMaybe 0 (cdVictoryPoints $ toCardDef t.epicTargetCard) == 0
 matchesEpicTarget EpicEngagedNonUniqueEnemy t = t.epicTargetKind == EpicEnemy && t.epicTargetEngaged && not t.epicTargetUnique

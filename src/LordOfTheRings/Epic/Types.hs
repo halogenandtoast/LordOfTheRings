@@ -1,3 +1,5 @@
+{-# OPTIONS_GHC -Wno-partial-fields #-}
+
 {- | Engine-visible Epic state, following Arkham.Epic.Types. The event row is the
 authority; individual games read a replica and emit uniquely identified deltas.
 Applying a delta and saving the originating game must share one transaction.
@@ -10,15 +12,21 @@ module LordOfTheRings.Epic.Types (
   EpicReplica (..),
   EpicBoard (..),
   EpicStage (..),
+  EpicPlayer (..),
   EpicQuest (..),
   EpicTarget (..),
   EpicTargetQuery (..),
   EpicEffect (..),
   EpicEnemyArrival (..),
   EpicEnemyTransfer (..),
+  EpicLorienSupportTransfer (..),
   EpicCommand (..),
   newSharedEvent,
   newAnnuminasEvent,
+  newDolGuldurEvent,
+  dolGuldurCityStrength,
+  dolGuldurOutcome,
+  epicOutcome,
   annuminasCityStrength,
   annuminasCityDefeated,
   annuminasOutcome,
@@ -35,7 +43,7 @@ import LordOfTheRings.Card.EncounterCard (EncounterCard)
 import LordOfTheRings.Card.PlayerCard (PlayerCard)
 import LordOfTheRings.Outcome (Outcome (Won, Lost))
 import LordOfTheRings.Effect (Effect)
-import LordOfTheRings.Id (EnemyId, CardId, PlayerId)
+import LordOfTheRings.Id (EnemyId, AllyId, ObjectiveId, CardId, PlayerId)
 import LordOfTheRings.Json (withDefaults)
 import LordOfTheRings.Prelude
 import LordOfTheRings.Target (Target)
@@ -45,7 +53,7 @@ newtype GroupOrdinal = GroupOrdinal {unGroupOrdinal :: Int}
   deriving stock (Show, Generic)
   deriving newtype (Eq, Ord, ToJSON, FromJSON)
 
-data SharedKey = SearchingTheHighSeasProgress | DreadnaughtDamage | AnnuminasCityStrength | AnnuminasVictory | AnnuminasDefeat
+data SharedKey = SearchingTheHighSeasProgress | DreadnaughtDamage | AnnuminasCityStrength | AnnuminasVictory | AnnuminasDefeat | DolGuldurCityStrength | DolGuldurVictory | DolGuldurDefeat | DolGuldurSiegeTracked
   deriving stock (Show, Eq, Ord, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
@@ -83,6 +91,26 @@ newAnnuminasEvent players
       Just $ SharedEventState players (Map.singleton (counterKey AnnuminasCityStrength) 50) mempty 0
   | otherwise = Nothing
 
+-- The mode card sets a single siege tracker to 5 plus 5 per player.
+newDolGuldurEvent :: Int -> Maybe SharedEventState
+newDolGuldurEvent players
+  | players >= 3 && players <= 12 =
+      Just $ SharedEventState players (Map.singleton (counterKey DolGuldurCityStrength) (5 + 5 * players)) mempty 0
+  | otherwise = Nothing
+
+dolGuldurCityStrength :: SharedEventState -> Maybe Int
+dolGuldurCityStrength = Map.lookup (counterKey DolGuldurCityStrength) . (.counters)
+
+dolGuldurOutcome :: SharedEventState -> Maybe Outcome
+dolGuldurOutcome state
+  | isNothing (dolGuldurCityStrength state) = Nothing
+  | sharedCounter DolGuldurDefeat state > 0 = Just Lost
+  | sharedCounter DolGuldurVictory state > 0 = Just Won
+  | otherwise = Nothing
+
+epicOutcome :: SharedEventState -> Maybe Outcome
+epicOutcome state = annuminasOutcome state <|> dolGuldurOutcome state
+
 annuminasCityStrength :: SharedEventState -> Maybe Int
 annuminasCityStrength = Map.lookup (counterKey AnnuminasCityStrength) . (.counters)
 
@@ -103,6 +131,10 @@ counterKey DreadnaughtDamage = "dreadnaught-damage"
 counterKey AnnuminasCityStrength = "annuminas-city-strength"
 counterKey AnnuminasVictory = "annuminas-victory"
 counterKey AnnuminasDefeat = "annuminas-defeat"
+counterKey DolGuldurCityStrength = "dol-guldur-city-strength"
+counterKey DolGuldurVictory = "dol-guldur-victory"
+counterKey DolGuldurDefeat = "dol-guldur-defeat"
+counterKey DolGuldurSiegeTracked = "dol-guldur-siege-tracked"
 
 sharedCounter :: SharedKey -> SharedEventState -> Int
 sharedCounter key state = Map.findWithDefault 0 (counterKey key) state.counters
@@ -122,6 +154,10 @@ applySharedDelta delta state
             AnnuminasCityStrength -> maxBound
             AnnuminasVictory -> 1
             AnnuminasDefeat -> 1
+            DolGuldurCityStrength -> maxBound
+            DolGuldurVictory -> 1
+            DolGuldurDefeat -> 1
+            DolGuldurSiegeTracked -> maxBound
           -- Annúminas rules, p. 5: reaching zero loses immediately. A repair
           -- delivered by another team afterwards cannot revive the city. There
           -- is no printed upper limit on repairing a surviving city.
@@ -130,6 +166,10 @@ applySharedDelta delta state
             , isJust (annuminasOutcome state) = old
             | delta.deltaKey `elem` [AnnuminasVictory, AnnuminasDefeat]
             , isNothing (annuminasCityStrength state) = old
+            | delta.deltaKey `elem` [DolGuldurCityStrength, DolGuldurVictory, DolGuldurDefeat]
+            , isJust (dolGuldurOutcome state) = old
+            | delta.deltaKey `elem` [DolGuldurCityStrength, DolGuldurVictory, DolGuldurDefeat]
+            , isNothing (dolGuldurCityStrength state) = old
             | otherwise = fromInteger $ max 0 $ min (toInteger ceiling') (toInteger old + toInteger delta.deltaAmount)
           effective = delta {deltaAmount = new - old}
        in ( state
@@ -185,17 +225,23 @@ instance FromJSON EpicReplica where
 
 -- Only explicitly cross-group effects use these public targets. Ordinary cards
 -- and their matchers continue to see only their own group (Dreadnaught rules).
-data EpicTargetQuery = EpicEnemy | EpicLocation | EpicShip | EpicEngagedNonUniqueEnemy | EpicWarshipGroup | EpicHealingGroup | EpicDrawingGroup | EpicOtherNonUniqueNoVictoryEnemy
+data EpicTargetQuery = EpicEnemy | EpicLocation | EpicShip | EpicEngagedNonUniqueEnemy | EpicWarshipGroup | EpicHealingGroup | EpicDrawingGroup | EpicOtherNonUniqueNoVictoryEnemy | EpicNonUniqueEnemy
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
 data EpicEffect = EpicDamage Int | EpicProgress Int | EpicUpgradeShip | EpicShuffleWarship | EpicDiscardUntilEnemy
   | EpicDiscardCaptive | EpicRescueCaptives
   | EpicGrantDunedain | EpicDelayStaging | EpicGrantHeroResources | EpicHealControlledCharacter
-  | EpicDrawCards | EpicDiscardEnemy
+  | EpicDrawCards | EpicDiscardEnemy | EpicDestroyEnemy
+  | EpicDolDrawResource | EpicDolDiscardToOne | EpicDolDiscardAlly
+  | EpicDolEngageEnemies | EpicDolEngageEnemy | EpicDolSearchCard | EpicDolSearchAlly
   | EpicSendSetAsideHost GroupOrdinal UUID
   | EpicReceiveSetAsideHost UUID (Maybe EncounterCard)
   | EpicReceiveEnemy EpicEnemyTransfer EpicEnemyArrival
+  | EpicResolveWithReply GroupOrdinal UUID EpicEffect
+  | EpicAcknowledge UUID
+  | EpicTransferLorienSupport GroupOrdinal PlayerId PlayerId
+  | EpicReceiveLorienSupport EpicLorienSupportTransfer PlayerId
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
@@ -216,6 +262,38 @@ data EpicEnemyTransfer = EpicEnemyTransfer
   , epicEnemyOwner :: Maybe PlayerId
   , epicEnemyEffects :: [Effect]
   }
+  deriving stock (Show, Eq, Generic)
+  deriving anyclass (ToJSON, FromJSON)
+
+-- Only the two named encounter supports may be given between Dol Guldur teams.
+-- Their entity and physical identities stay stable: this is a control change,
+-- not entering or leaving play. Basic fields avoid entity/Criteria import cycles.
+data EpicLorienSupportTransfer
+  = EpicLorienHostTransfer
+      { epicLorienAllyId :: AllyId
+      , epicLorienCard :: EncounterCard
+      , epicLorienOrigin :: GroupOrdinal
+      , epicLorienController :: PlayerId
+      , epicLorienOwner :: PlayerId
+      , epicLorienTokens :: Tokens
+      , epicLorienExhausted :: Bool
+      , epicLorienCommitted :: Bool
+      , epicLorienAttacking :: Bool
+      , epicLorienFacedown :: [PlayerCard]
+      , epicLorienPoison :: [PlayerCard]
+      , epicLorienUnconscious :: Bool
+      , epicLorienEffects :: [Effect]
+      }
+  | EpicLorienPowerTransfer
+      { epicLorienObjectiveId :: ObjectiveId
+      , epicLorienCard :: EncounterCard
+      , epicLorienOrigin :: GroupOrdinal
+      , epicLorienController :: PlayerId
+      , epicLorienTokens :: Tokens
+      , epicLorienExhausted :: Bool
+      , epicLorienUnderneath :: [Either PlayerCard EncounterCard]
+      , epicLorienEffects :: [Effect]
+      }
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
@@ -254,12 +332,21 @@ data EpicStage = EpicStage
   , epicStageHealingAvailable :: Bool
   , epicStageSetAsideHosts :: Int
   , epicStageDrawingAvailable :: Bool
+  , epicStagePlayers :: [EpicPlayer]
   }
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON)
 
 instance FromJSON EpicStage where
-  parseJSON = genericParseJSON defaultOptions . withDefaults [("epicStageHealingAvailable", Bool False), ("epicStageSetAsideHosts", toJSON (0 :: Int)), ("epicStageDrawingAvailable", Bool False)]
+  parseJSON = genericParseJSON defaultOptions . withDefaults [("epicStageHealingAvailable", Bool False), ("epicStageSetAsideHosts", toJSON (0 :: Int)), ("epicStageDrawingAvailable", Bool False), ("epicStagePlayers", toJSON ([] :: [EpicPlayer]))]
+
+-- Public identities needed by explicitly cross-team player choices.
+data EpicPlayer = EpicPlayer
+  { epicPlayerId :: PlayerId
+  , epicPlayerName :: Text
+  }
+  deriving stock (Show, Eq, Generic)
+  deriving anyclass (ToJSON, FromJSON)
 
 data EpicQuest = EpicQuest
   { epicQuestCard :: CardCode

@@ -75,6 +75,7 @@ import LordOfTheRings.Modifier (
     HandSizeLimit
     , WinWhenNoMatchingEnemies
     , WinAtRoundEndWithVictoryCard
+    , WinAtRoundEndWithDolGuldurCaptured
     , AtEndOfRound
     , PlayersCannotWin
   ),
@@ -98,6 +99,7 @@ import LordOfTheRings.Target (
  )
 
 import LordOfTheRings.Epic.Board (epicVictoryCopies)
+import LordOfTheRings.Scenario.Scenarios.AttackOnDolGuldur.Helpers (dolGuldurCaptured)
 import LordOfTheRings.Game.End (
   checkUnblockedQuests,
   endWaitingGame,
@@ -188,6 +190,8 @@ checkContinuousVictory = do
     unless (PlayersCannotWin `elem` mods) do
       for_ [matcher | WinWhenNoMatchingEnemies matcher <- mods] $ \matcher ->
         whenM (not <$> selectAny matcher) $ push $ GameOver Won
+      when (AtEndOfRound `elem` mods && WinAtRoundEndWithDolGuldurCaptured `elem` mods) $
+        whenM dolGuldurCaptured $ push $ GameOver Won
       when (AtEndOfRound `elem` mods) $
         for_ [code | WinAtRoundEndWithVictoryCard code <- mods] $ \code ->
           whenM ((> 0) <$> epicVictoryCopies code) $ push $ GameOver Won

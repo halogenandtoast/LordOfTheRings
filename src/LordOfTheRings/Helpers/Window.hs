@@ -31,7 +31,7 @@ import LordOfTheRings.Matcher
 import LordOfTheRings.Message
 import LordOfTheRings.Name (Name (..))
 import LordOfTheRings.Modifier (
-  ModifierType (Blank, BlankAttachments, CannotBeTraveledTo, CannotCancelEncounterEffects, CannotExhaust, CannotTriggerAbilities, Defending, ShadowCannotBeCanceled, WhenRevealedCannotBeCanceled),
+  ModifierType (Blank, BlankAttachments, CannotBeTraveledTo, CannotCancelEncounterEffects, CannotExhaust, CannotTriggerAbilities, Defending, CannotLeavePlay, ShadowCannotBeCanceled, WhenRevealedCannotBeCanceled),
   ModifierType (Blank, BlankAttachments, CannotBeTraveledTo, CannotCancelEncounterEffects, CannotExhaust, CannotTriggerAbilities, StagingStepBegun, TravelRange, TravelableWithActiveLocation),
   ModifierType (ShadowlessCardsGainEffect, CannotTriggerActionsOrResponses, TravelRequiresEngagingHighestToughness, CannotDiscardFromHand, CannotTakeDamage, GainKeyword, TreacheryRevealedThisRound),
   Modifier (..),
@@ -399,6 +399,7 @@ passesCriteria = \case
   AffordableAttachmentInDiscard pid sphere ->
     anyM (\(_, pc, _) -> notNull <$> playableCardHosts pid (toCardCode pc)) =<< affordableDiscardedAttachments pid sphere
   AffordableAllyInHand pid sphere reduction minimumCost -> notNull <$> affordableAlliesInHand pid sphere reduction minimumCost
+  InEpicMultiplayer -> getsGame $ isJust . scenarioEpic . toAttrs . (.scenario)
   EpicTargetsExist query -> do
     g <- getGame
     let replica = scenarioEpic $ toAttrs g.scenario
@@ -483,6 +484,9 @@ canPay = \case
     maybe False ((>= n * players) . (.progress)) . Map.lookup qid . entitiesQuests <$> getsGame gameEntities
   RaiseThreatCost _ -> pure True
   EachPlayerThreatCost _ -> pure True
+  AddToVictoryDisplayCost target -> do
+    mods <- getModifiers target
+    pure $ CannotLeavePlay `notElem` mods
   EncounterRevealCost n -> getsGame ((>= n) . length . (.encounterDeck) . toAttrs . (.scenario))
   IncreasePursuitCost _ -> pure True
   GroupResourcesCost sphere n -> (>= n) . sum <$> (traverse (`getResourcesOfSphere` sphere) =<< getRemainingPlayers)
@@ -533,6 +537,7 @@ payCost pid cost rest = case cost of
   EachPlayerThreatCost n -> do
     players <- getRemainingPlayers
     pure $ concat [[RaiseThreat player n, CheckWindows [mkAfter $ ThreatRaisedByEncounter player n]] | player <- players] <> rest
+  AddToVictoryDisplayCost target -> pure $ AddToVictoryDisplay target : rest
   EncounterRevealCost n -> pure $ replicate n RevealEncounterCard <> rest
   Costs cs -> foldrM (payCost pid) rest cs
   ExhaustTheOneRingCost ->
@@ -547,6 +552,7 @@ costMessages source = \case
   QuestProgressCost qid n -> [RemoveTokens source (QuestTarget qid) Progress n]
   QuestProgressPerPlayerCost _ _ -> [] -- counted and paid by payCost
   EachPlayerThreatCost _ -> [] -- paid for the current player order by payCost
+  AddToVictoryDisplayCost target -> [AddToVictoryDisplay target]
   EncounterRevealCost _ -> [] -- revealed before resolving the effect by payCost
   ExhaustCost target -> [Exhaust target]
   ResourceCost target n -> case source of
@@ -602,6 +608,7 @@ sourceController = go
     -- encounter cards' responses are the first player's to make
     _ -> Just <$> getLead
   attachedTo = \case
+    Just (AttachedTo (PlayerTarget pid)) -> pure $ Just pid
     Just (AttachedTo host@(HeroTarget _)) -> characterController host
     Just (AttachedTo host@(AllyTarget _)) -> characterController host
     _ -> Just <$> getLead

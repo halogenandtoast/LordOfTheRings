@@ -88,6 +88,8 @@ data WindowMatcher
   | PhaseEndsWindow Timing Phase
   | -- | at the end of the round
     RoundEndsWindow
+  | DolGuldurStageEffectsResolvedWindow
+  | DolGuldurSiegeResolvedWindow
   | -- | at the beginning of the round
     RoundBeginsWindow
   | -- | at the beginning of the staging step, as Search for an Exit flips
@@ -486,6 +488,8 @@ windowMatches matcher (Window timing wType) = case (matcher, wType) of
   (PhaseEndsWindow t phase, PhaseEnds phase') -> t == timing && phase == phase'
   (BagginsResourceSpentOrDiscardedWindow t, BagginsResourceSpentOrDiscarded) -> t == timing
   (RoundEndsWindow, RoundEnds) -> True
+  (DolGuldurStageEffectsResolvedWindow, DolGuldurStageEffectsResolved) -> True
+  (DolGuldurSiegeResolvedWindow, DolGuldurSiegeResolved) -> True
   (RoundBeginsWindow, RoundBegins) -> True
   (StagingStepBeginsWindow, StagingStepBegins) -> True
   (StagingStepEndsWindow, StagingStepEnds) -> True

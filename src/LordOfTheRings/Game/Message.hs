@@ -185,6 +185,7 @@ import LordOfTheRings.Game.Base (
     gameEntities,
     gameFortitudeTests,
     gameResolvingAttachments,
+    gameResolvingObjectives,
     gameLeftPlay,
     gameLeftPlayLocations,
     gameModifiers,
@@ -216,6 +217,7 @@ import LordOfTheRings.Game.Base (
   joinQuestArea,
   lastCommittedWillpowerL,
   resolvingAttachmentsL,
+  resolvingObjectivesL,
   leftPlayL,
   leftPlayLocationsL,
   logBlocksL,
@@ -498,6 +500,7 @@ import LordOfTheRings.Message (
     ApplyEpicCommand,
     MoveAnnuminasEnemy,
     RequestAnnuminasHost,
+    RequestEpicEffect,
     AwaitEpicReply,
     SyncEpic,
     ContributeShared,
@@ -579,6 +582,7 @@ import LordOfTheRings.Message (
     FocusArea,
     FocusQuestArea,
     FinishAttachmentAbility,
+    FinishObjectiveAbility,
     ForgetLeftPlay,
     GameOver,
     GiveFromHand,
@@ -817,6 +821,7 @@ import LordOfTheRings.Modifier (
     CannotBeHealed,
     AtEndOfRound,
     WinAtRoundEndWithVictoryCard,
+    WinAtRoundEndWithDolGuldurCaptured,
     CannotBeOptionallyEngagedBy,
     CannotBeOptionallyEngagedWhileOthersInStaging,
     CannotBePoisoned,
@@ -1022,6 +1027,7 @@ import LordOfTheRings.Source (
   Source (
     AllySource,
     AttachmentSource,
+    ObjectiveSource,
     CardIdSource,
     EnemyAttackSource,
     EnemySource,
@@ -1276,6 +1282,7 @@ runGameMessage msg g = case msg of
   ApplyEpicCommand {} -> runEpicMessage msg g
   MoveAnnuminasEnemy {} -> runEpicMessage msg g
   RequestAnnuminasHost {} -> runEpicMessage msg g
+  RequestEpicEffect {} -> runEpicMessage msg g
   AwaitEpicReply {} -> runEpicMessage msg g
   SyncEpic {} -> runEpicMessage msg g
   ContributeShared {} -> runEpicMessage msg g
@@ -1316,6 +1323,18 @@ runGameMessage msg g = case msg of
         pure $ g & resolvingAttachmentsL . ix aid .~ (resolved : rest)
   FinishAttachmentAbility aid ->
     pure $ g & resolvingAttachmentsL %~ Map.update (\case _ : remaining | notNull remaining -> Just remaining; _ -> Nothing) aid
+  UseCardAbility _ (ObjectiveSource oid) _ _
+    | not (Map.member oid g.entities.objectives)
+    , Just (objective : rest) <- Map.lookup oid (gameResolvingObjectives g) -> do
+        resolved <- runEach msg objective
+        pure $ g & resolvingObjectivesL . ix oid .~ (resolved : rest)
+  DoStep _ (UseCardAbility _ (ObjectiveSource oid) _ _)
+    | not (Map.member oid g.entities.objectives)
+    , Just (objective : rest) <- Map.lookup oid (gameResolvingObjectives g) -> do
+        resolved <- runEach msg objective
+        pure $ g & resolvingObjectivesL . ix oid .~ (resolved : rest)
+  FinishObjectiveAbility oid ->
+    pure $ g & resolvingObjectivesL %~ Map.update (\case _ : remaining | notNull remaining -> Just remaining; _ -> Nothing) oid
   -- an ally that has just left play answers its own leaving
   UseCardAbility _ (AllySource aid) _ _ | Just a <- Map.lookup aid (gameLeftPlay g) -> do
     a' <- runEach msg a
@@ -3572,7 +3591,7 @@ runGameMessage msg g = case msg of
       -- keeps passive end-of-round conditions active throughout this window.
       $ [CreateEffect $ Effect GameSource GameTarget [AtEndOfRound] UntilEndOfRound
         | any (\case Window _ RoundEnds -> True; _ -> False) windows
-        , any (\case WinAtRoundEndWithVictoryCard _ -> True; _ -> False)
+        , any (\case WinAtRoundEndWithVictoryCard _ -> True; WinAtRoundEndWithDolGuldurCaptured -> True; _ -> False)
             $ map modifierType $ Map.findWithDefault [] GameTarget (gameModifiers g)]
       <> returns <> forcedMsgs
       <> [ResponseWindow windows order [] 0]
@@ -3630,13 +3649,19 @@ runGameMessage msg g = case msg of
     let saved = case ab.abilitySource of
           AttachmentSource aid -> (aid,) <$> Map.lookup aid g.entities.attachments
           _ -> Nothing
-        finish = [FinishAttachmentAbility aid | Just (aid, _) <- [saved]]
+        savedObjective = case ab.abilitySource of
+          ObjectiveSource oid -> (oid,) <$> Map.lookup oid g.entities.objectives
+          _ -> Nothing
+        finish = [FinishAttachmentAbility aid | Just (aid, _) <- [saved]] <> [FinishObjectiveAbility oid | Just (oid, _) <- [savedObjective]]
     pushAll
       =<< inLogBlock (AbilityBlock pid ab.abilitySource (isForcedAbility ab))
       =<< payCost pid (abilityCost ab) (UseCardAbility pid ab.abilitySource ab.abilityIndex windows : finish)
-    pure $ case saved of
-      Just (aid, attachment) -> g & resolvingAttachmentsL %~ Map.insertWith (<>) aid [attachment]
-      Nothing -> g
+    let rememberingAttachment = case saved of
+          Just (aid, attachment) -> g & resolvingAttachmentsL %~ Map.insertWith (<>) aid [attachment]
+          Nothing -> g
+    pure $ case savedObjective of
+      Just (oid, objective) -> rememberingAttachment & resolvingObjectivesL %~ Map.insertWith (<>) oid [objective]
+      Nothing -> rememberingAttachment
   PlayEvent pid card _ -> do
     for_ (lookupEvent (toCardCode card) card.id pid) $ void . runEach msg
     pure g

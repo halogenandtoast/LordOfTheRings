@@ -231,7 +231,9 @@ lowerThreatBy source pid n' = do
   contractEffect <- getsGame $ \g -> maybe False ((== ContractType) . cdCardType) (lookupCardDef =<< sourceCardCode g (toSource source))
   let barred = CannotReduceThreat `elem` mods
       direLimit = [max 0 (1 - direReduced) | dire, not boon]
-      limited = if isPlayerCardSource (toSource source) then foldr min n' ([k | PlayerCardThreatReductionLimit k <- mods] <> [k | not contractEffect, NonContractPlayerCardThreatReductionLimit k <- mods] <> direLimit) else n'
+      playerReduced = sum [k | ThreatReducedByPlayerCardsThisRound k <- mods]
+      roundLimit = [max 0 (k - playerReduced) | PlayerCardThreatReductionPerRoundLimit k <- mods]
+      limited = if isPlayerCardSource (toSource source) then foldr min n' ([k | PlayerCardThreatReductionLimit k <- mods] <> [k | not contractEffect, NonContractPlayerCardThreatReductionLimit k <- mods] <> direLimit <> roundLimit) else n'
       -- no lower than a floor, as The Paths of the Dead sets
       reduced = sum [k | ThreatReducedThisRound k <- mods]
       n = foldr min limited ([threat - k | CannotReduceThreatBelow k <- mods] <> [max 0 (k - reduced) | ThreatReductionPerRoundLimit k <- mods])

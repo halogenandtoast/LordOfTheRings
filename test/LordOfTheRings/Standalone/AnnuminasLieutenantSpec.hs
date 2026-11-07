@@ -34,7 +34,7 @@ setReplica ordinal boards = do
   liftIO $ writeIORef generator $ mkStdGen (100 + ordinal)
 
 boardAt :: Int -> Text -> Int -> EpicBoard
-boardAt ordinal name threat = EpicBoard (GroupOrdinal ordinal) name [] False (Just $ EpicStage threat [] [] False 0 False)
+boardAt ordinal name threat = EpicBoard (GroupOrdinal ordinal) name [] False (Just $ EpicStage threat [] [] False 0 False [])
 
 pendingCommands :: GameT [EpicCommand]
 pendingCommands = getsGame $ maybe [] epicPendingCommands . scenarioEpic . toAttrs . (.scenario)

@@ -286,6 +286,11 @@ getModifiers a = do
         , l.placement == ActiveLocation
         , let locationMods = map modifierType $ Map.findWithDefault [] (toTarget l) g.gameModifiers
         ]
+      damage = fromMaybe 0 $ case target of
+        HeroTarget hid -> (.damage) <$> Map.lookup hid g.entities.heroes
+        AllyTarget aid -> (.damage) <$> Map.lookup aid g.entities.allies
+        _ -> Nothing
+      fromDamage = [DefenseModifier (damage * factor) | DefensePerDamage factor <- mods]
       fromDiscover = concat
         [[ThreatModifier x, AttackModifier x, DefenseModifier x] | StatsFromActiveDiscover offset <- mods, let x = activeDiscover + offset]
   -- Keep stat-dependent readying restrictions current even when a lasting effect
@@ -311,7 +316,7 @@ getModifiers a = do
           pure $ available < required
       pure $ engagementBlocked || damageBlocked || revealBlocked
     _ -> pure False
-  pure $ mods <> fromDiscover <> [CannotReady | notNull limits && blocked] <> [CannotBeTraveledTo | travelBlocked]
+  pure $ mods <> fromDiscover <> fromDamage <> [CannotReady | notNull limits && blocked] <> [CannotBeTraveledTo | travelBlocked]
 
 -- Derived travel restrictions must read the completed modifier cache, as
 -- stat-dependent readying does above, rather than lagging behind a new effect.

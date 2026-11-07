@@ -40,7 +40,7 @@ targetRefFor target = do
     LocationTarget k -> pure $ ref RefLocation es.locations k
     AttachmentTarget k -> pure $ ref RefAttachment es.attachments k <|> (entityRef RefAttachment k <$> (headMay =<< Map.lookup k (gameResolvingAttachments g)))
     TreacheryTarget k -> pure $ ref RefTreachery es.treacheries k
-    ObjectiveTarget k -> pure $ ref RefObjective es.objectives k
+    ObjectiveTarget k -> pure $ ref RefObjective es.objectives k <|> (entityRef RefObjective k <$> (headMay =<< Map.lookup k (gameResolvingObjectives g)))
     -- drawn on the side it shows
     ContractTarget k -> pure $ (\c -> (entityRef RefContract k c) {logRefFaceDown = c.flipped}) <$> Map.lookup k es.contracts
     QuestTarget k -> pure $ (\q -> (entityRef RefQuest k q) {logRefFaceDown = q.flipped}) <$> Map.lookup k es.quests
@@ -82,7 +82,7 @@ sourceCardCode g = code
     HeroSource i -> toCardCode <$> Map.lookup i es.heroes
     AllySource i -> toCardCode <$> Map.lookup i es.allies
     AttachmentSource i -> toCardCode <$> (Map.lookup i es.attachments <|> (headMay =<< Map.lookup i (gameResolvingAttachments g)))
-    ObjectiveSource i -> toCardCode <$> Map.lookup i es.objectives
+    ObjectiveSource i -> toCardCode <$> (Map.lookup i es.objectives <|> (headMay =<< Map.lookup i (gameResolvingObjectives g)))
     ContractSource i -> toCardCode <$> Map.lookup i es.contracts
     LocationSource i -> toCardCode <$> Map.lookup i es.locations
     TreacherySource i -> toCardCode <$> Map.lookup i es.treacheries

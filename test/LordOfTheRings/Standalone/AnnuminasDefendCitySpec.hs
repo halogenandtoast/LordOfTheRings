@@ -163,7 +163,7 @@ spec = describe "Annúminas Defend the City" do
     getDamage own `shouldReturn` 1
 
   it "queues healing for a selected remote stage without healing local characters" . gameTest $ \pid -> do
-    let stage = EpicStage 0 [EpicQuest (toCardCode Quests.guardTheGateAnnuminas) 2 0 (Just 50) True] [] True 0 False
+    let stage = EpicStage 0 [EpicQuest (toCardCode Quests.guardTheGateAnnuminas) 2 0 (Just 50) True] [] True 0 False []
     setReplica [EpicBoard (GroupOrdinal 1) "Other" [] False (Just stage)]
     target <- city
     own <- heroOf pid "01012"

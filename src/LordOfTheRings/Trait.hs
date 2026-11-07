@@ -48,6 +48,9 @@ data Trait
   | Castle
   | Cave
   | Champion
+  | Lieutenant
+  | Lorien
+  | OlogHai
   | City
   | LakeTown
   | Pier
