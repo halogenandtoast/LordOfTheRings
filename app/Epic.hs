@@ -177,7 +177,7 @@ collectDolCommands initialShared initialGames = collect (0 :: Int) mempty initia
   accept (shared, games) (origin, command) = do
     unless (command.epicCommandFrom == origin) $ liftIO $ throwIO $ userError "Dol command has the wrong originating group"
     (updated, response) <- requireDol $ DolCommands.handleDolCoordinatorCommand
-      (maximum (0 : map ((.round) . epicGameState) games)) (GroupOrdinal 0) (dolPrevious games) command shared
+      (fromMaybe 0 (maximumMay $ map ((.round) . epicGameState) games)) (GroupOrdinal 0) (dolPrevious games) command shared
     resumed <- case response of
       Nothing -> pure games
       Just (DolCommands.RejectDolClaim destination nonce) -> respond updated destination [RejectDolStageClaim nonce] games
@@ -247,7 +247,7 @@ coordinateDolEvent shared games
                 execute step updated synchronized
       _ -> pure Nothing
  where
-  roundNumber = maximum (0 : map ((.round) . epicGameState) games)
+  roundNumber = fromMaybe 0 (maximumMay $ map ((.round) . epicGameState) games)
   ordinaryBlocked = any (\snapshot -> dolOrdinaryBlocked shared (ordinalOf snapshot) snapshot.epicGameState) games
   canRotate = all dolRealEnded games && not ordinaryBlocked
     && all (isJust . snd) (dolPrevious games)

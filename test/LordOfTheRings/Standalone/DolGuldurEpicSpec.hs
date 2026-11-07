@@ -152,9 +152,9 @@ spec = describe "Dol Guldur durable cross-team effects" do
     run $ PrepareEpicQuestAdvance EpicLeaveQuest replacement
     getsGame epicRoundPhaseOf `shouldReturn` Just EpicRoundPrepared
     placed <- getActiveQuest
-    placed.cardId `shouldBe` replacement.id
+    questCardId (toAttrs placed) `shouldBe` replacement.id
     placed.flipped `shouldBe` False
-    getsGame (map (.id) . scenarioQuestDeck . toAttrs . (.scenario)) `shouldReturn` [prior.cardId]
+    getsGame (map (.id) . scenarioQuestDeck . toAttrs . (.scenario)) `shouldReturn` [questCardId (toAttrs prior)]
 
   it "reports prepared and revealed stages before parking with the original claim still held" . gameTestIn attackOnDolGuldur testDeck $ \pid -> do
     replicaAt $ GroupOrdinal 0
@@ -203,4 +203,4 @@ spec = describe "Dol Guldur durable cross-team effects" do
         legacy = case toJSON shared of
           Object fields -> Object $ KeyMap.delete "dolGuldurCoordination" fields
           value -> value
-    eitherDecode (encode legacy) `shouldBe` Right shared
+    (eitherDecode (encode legacy) `shouldBe` Right shared) :: IO ()

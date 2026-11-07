@@ -47,10 +47,10 @@ handleDolCoordinatorCommand currentRound holder previous command shared = do
   case command.epicCommandEffect of
     EpicResolveWithReply origin nonce effect -> do
       unless (origin == command.epicCommandFrom) $ Left "Dol Guldur reply origin differs from command sender"
-      handle effect $ Just (origin, nonce)
-    effect -> handle effect Nothing
+      processEffect effect $ Just (origin, nonce)
+    effect -> processEffect effect Nothing
  where
-  handle effect reply
+  processEffect effect reply
     | maybe False (Set.member command.epicCommandId . epicDolProcessedCommands) shared.dolGuldurCoordination =
         pure (shared, Nothing)
     | otherwise = case effect of
