@@ -2777,6 +2777,7 @@ library
       LordOfTheRings.Quest.Cards.ANewTerrorAbroad
       LordOfTheRings.Quest.Cards.AngmarAwakened
       LordOfTheRings.Quest.Cards.AnnuminasDefense
+      LordOfTheRings.Quest.Cards.AnnuminasFinale
       LordOfTheRings.Quest.Cards.AnnuminasPreparation
       LordOfTheRings.Quest.Cards.AnUnexpectedParty
       LordOfTheRings.Quest.Cards.AnUntimelyEnd
@@ -2937,7 +2938,6 @@ library
       LordOfTheRings.Quest.Cards.LastLordOfMoria
       LordOfTheRings.Quest.Cards.LeaderOfTheCult
       LordOfTheRings.Quest.Cards.LeadTheRevolt
-      LordOfTheRings.Quest.Cards.LeadTheSortie
       LordOfTheRings.Quest.Cards.LieLow
       LordOfTheRings.Quest.Cards.LootTheDungeons
       LordOfTheRings.Quest.Cards.LostAtSea

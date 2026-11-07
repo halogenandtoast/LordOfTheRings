@@ -90,7 +90,7 @@ allQuestCards =
   Map.fromList $
     map
       (\def -> (cdCardCode def, def))
-      [leadTheSortie, manTheWallsAnnuminas, defendTheCityAnnuminas, guardTheGateAnnuminas, raiseTheLevee, delayTheEnemyAnnuminas, rebuildTheDefenses, investigatingTheCrime, runningOutOfTime, apprehendingTheKiller, lostInTheFog, trappedInsideABarrow, theHouseOfTomBombadil, acrossTheDowns, ruinsOfTheFirstAge, ancientEvilsDisturbed, deeperIntoThePast, theServantsOfMorgoth, theRootsOfEredLuin, theMinesOfBelegost, theBeastOfBelegost, farewellToTheShire, darkBadPlace, chokedWithBrambles, shiftingTrees, closingInAroundThem, theWickedWillow, theDisappearance, terrorOfTheDead, theShadowHost, theDragonsWrath, fireAndWater, terrorFromTheMountain, anduinCrossing, throughTheRuinsOsgiliath, beyondExpectations, raceToMinasTirith, searchingTheHighSeas, destroyTheDreadnaught,  afterTheRaid
+      [stopTheAttack, leadTheSortie, manTheWallsAnnuminas, defendTheCityAnnuminas, guardTheGateAnnuminas, raiseTheLevee, delayTheEnemyAnnuminas, rebuildTheDefenses, investigatingTheCrime, runningOutOfTime, apprehendingTheKiller, lostInTheFog, trappedInsideABarrow, theHouseOfTomBombadil, acrossTheDowns, ruinsOfTheFirstAge, ancientEvilsDisturbed, deeperIntoThePast, theServantsOfMorgoth, theRootsOfEredLuin, theMinesOfBelegost, theBeastOfBelegost, farewellToTheShire, darkBadPlace, chokedWithBrambles, shiftingTrees, closingInAroundThem, theWickedWillow, theDisappearance, terrorOfTheDead, theShadowHost, theDragonsWrath, fireAndWater, terrorFromTheMountain, anduinCrossing, throughTheRuinsOsgiliath, beyondExpectations, raceToMinasTirith, searchingTheHighSeas, destroyTheDreadnaught,  afterTheRaid
       , mirkwoodForestTheOath
       , theRearguardTheOath
       , theDarkOfNibinDum
@@ -2356,4 +2356,8 @@ manTheWallsAnnuminas = (quest "the-siege-of-annuminas-010" "Man the Walls" TheSi
 
 leadTheSortie :: CardDef
 leadTheSortie = (quest "the-siege-of-annuminas-005" "Lead the Sortie" TheSiegeOfAnnuminas 3 0)
+  { cdWhenRevealed = True, cdQuestPoints = Nothing }
+
+stopTheAttack :: CardDef
+stopTheAttack = (quest "the-siege-of-annuminas-011" "Stop the Attack" TheSiegeOfAnnuminas 3 0)
   { cdWhenRevealed = True, cdQuestPoints = Nothing }

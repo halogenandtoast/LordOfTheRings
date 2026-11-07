@@ -1,4 +1,4 @@
-module LordOfTheRings.Quest.Cards.LeadTheSortie (leadTheSortie) where
+module LordOfTheRings.Quest.Cards.AnnuminasFinale (leadTheSortie, stopTheAttack) where
 
 import LordOfTheRings.Card (toCardCode)
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
@@ -7,34 +7,41 @@ import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Quest.CardDefs qualified as Cards
 import LordOfTheRings.Quest.Import.Lifted
 
-newtype LeadTheSortie = LeadTheSortie QuestAttrs
+newtype AnnuminasFinale = AnnuminasFinale QuestAttrs
   deriving anyclass IsQuest
   deriving newtype (Show, Eq, ToJSON, Entity)
 
-leadTheSortie :: QuestCard LeadTheSortie
-leadTheSortie = quest LeadTheSortie Cards.leadTheSortie
+leadTheSortie, stopTheAttack :: QuestCard AnnuminasFinale
+leadTheSortie = quest AnnuminasFinale Cards.leadTheSortie
+stopTheAttack = quest AnnuminasFinale Cards.stopTheAttack
 
-instance HasModifiersFor LeadTheSortie where
-  getModifiersFor (LeadTheSortie a) = when a.flipped do
+blockingLocation :: QuestAttrs -> CardDef
+blockingLocation a
+  | toCardCode a == toCardCode Cards.stopTheAttack = Locations.siegeTunnel
+  | otherwise = Locations.batteringRam
+
+instance HasModifiersFor AnnuminasFinale where
+  getModifiersFor (AnnuminasFinale a) = when a.flipped do
     modified a GameTarget [WinAtRoundEndWithVictoryCard $ toCardCode Enemies.lieutenantOfAngmar]
-    whenM (selectAny $ LocationWithCardCode $ toCardCode Locations.batteringRam) $
+    whenM (selectAny $ LocationWithCardCode $ toCardCode $ blockingLocation a) $
       modifySelf a [ProgressLimit 0]
 
-instance HasAbilities LeadTheSortie where
-  getAbilities (LeadTheSortie a) =
+instance HasAbilities AnnuminasFinale where
+  getAbilities (AnnuminasFinale a) =
     [ restricted a 1 (EpicTargetsExist EpicOtherNonUniqueNoVictoryEnemy)
       $ ResponseAbility RoundEndsWindow $ Costs [EachPlayerThreatCost 1, EncounterRevealCost 1]
     | a.flipped]
 
-instance RunMessage LeadTheSortie where
-  runMessage msg q@(LeadTheSortie a) = case msg of
+instance RunMessage AnnuminasFinale where
+  runMessage msg q@(AnnuminasFinale a) = case msg of
     Flip target | not a.flipped, isTarget a target || target == CardIdTarget a.cardId -> do
       askToResolveWhenRevealed a
-      LeadTheSortie <$> runMessage msg a
+      AnnuminasFinale <$> runMessage msg a
     WhenRevealed (isTarget a -> True) -> do
       shuffleEncounterDiscardIntoDeck AnyCard
-      addSetAsideToStaging $ cardIs Locations.batteringRam
-      addSetAsideToStaging $ cardIs Enemies.lieutenantOfAngmar
+      addSetAsideToStaging $ cardIs $ blockingLocation a
+      when (toCardCode a == toCardCode Cards.leadTheSortie) $
+        addSetAsideToStaging $ cardIs Enemies.lieutenantOfAngmar
       lead <- getLead
       eachPlayer $ \pid -> when (pid /= lead) $ revealEncounterCardAs pid
       pure q
@@ -42,4 +49,4 @@ instance RunMessage LeadTheSortie where
       lead <- getLead
       chooseEpicTarget a lead EpicOtherNonUniqueNoVictoryEnemy EpicDiscardEnemy
       pure q
-    _ -> LeadTheSortie <$> runMessage msg a
+    _ -> AnnuminasFinale <$> runMessage msg a

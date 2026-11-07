@@ -156,3 +156,55 @@ spec = describe "Annúminas Lead the Sortie" do
     getsGame (.outcome) `shouldReturn` Just Won
     Just replica <- getsGame $ scenarioEpic . toAttrs . (.scenario)
     replica.epicPendingDeltas `shouldBe` []
+
+  describe "Stop the Attack" do
+    let stopAttack = do
+          target <- putQuestStage Quests.stopTheAttack
+          run $ Flip target
+          resolveRevealed
+          pure target
+    it "adds the physical set-aside Tunnel without adding the Lieutenant" . gameTest $ \_ -> do
+      tunnel <- genEncounterCard Locations.siegeTunnel
+      lieutenant <- genEncounterCard Enemies.lieutenantOfAngmar
+      run $ SetAside tunnel
+      run $ SetAside lieutenant
+      _ <- stopAttack
+      getsGame (map ((.cardId) . toAttrs) . toList . (.entities.locations)) `shouldReturn` [tunnel.id]
+      getsGame (length . (.entities.enemies)) `shouldReturn` 0
+
+    it "reveals only for the other players" . twoPlayerTest testDeck $ \_ _ -> do
+      _ <- setEncounterDeck [Locations.oldForestRoad, Locations.oldForestRoad]
+      _ <- stopAttack
+      getsGame (length . (.entities.locations)) `shouldReturn` 1
+      length <$> getEncounterDeck `shouldReturn` 1
+
+    it "blocks progress for the Tunnel and allows progress once it leaves play" . gameTest $ \_ -> do
+      target <- stopAttack
+      tunnel <- stageLocation Locations.siegeTunnel
+      run $ PlaceTokens GameSource target Progress 10
+      (.progress) <$> getActiveQuest `shouldReturn` 0
+      run $ AddToVictoryDisplay $ LocationTarget tunnel
+      run $ PlaceTokens GameSource target Progress 10
+      (.progress) <$> getActiveQuest `shouldReturn` 10
+      toCardCode <$> getActiveQuest `shouldReturn` toCardCode Quests.stopTheAttack
+
+    it "wins at round end with the Lieutenant in the victory display" . gameTest $ \_ -> do
+      _ <- stopAttack
+      lieutenant <- stageEnemy Enemies.lieutenantOfAngmar
+      run $ AddToVictoryDisplay $ EnemyTarget lieutenant
+      getsGame (.outcome) `shouldReturn` Nothing
+      run $ CheckWindows [mkWhen RoundEnds]
+      getsGame (.outcome) `shouldReturn` Just Won
+
+    it "pays for the response and sends a discard to another stage" . gameTest $ \pid -> do
+      warg <- genEncounterCard Enemies.wargOfCarnDum
+      setReplica [EpicBoard (GroupOrdinal 1) "Other" [remoteEnemy warg (CardIdTarget warg.id)] False Nothing]
+      target <- stopAttack
+      _ <- setEncounterDeck [Locations.oldForestRoad]
+      run $ CheckWindows [mkWhen RoundEnds]
+      chooseAbilityOf pid target
+      getThreat pid `shouldReturn` 1
+      getsGame (length . (.entities.locations)) `shouldReturn` 1
+      chooseOptionMatching "choose remote enemy" pid (const True)
+      Just replica <- getsGame $ scenarioEpic . toAttrs . (.scenario)
+      map (.epicCommandEffect) replica.epicPendingCommands `shouldBe` [EpicDiscardEnemy]
