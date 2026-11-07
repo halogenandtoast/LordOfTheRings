@@ -26,7 +26,7 @@ setReplica :: [EpicBoard] -> GameT ()
 setReplica boards = do
   let shared = fromJustNote "invalid event size" $ newAnnuminasEvent 3
   current <- getGame
-  putGame $ current & scenarioL %~ overAttrs (\a -> a {scenarioEpic = Just $ EpicReplica (GroupOrdinal 0) shared [] boards [] mempty mempty})
+  putGame $ current & scenarioL %~ overAttrs (\a -> a {scenarioEpic = Just $ EpicReplica (GroupOrdinal 0) shared [] boards [] mempty mempty Nothing})
 
 publicStrength :: GameT (Maybe Value)
 publicStrength = getsGame $ \g -> case publicGame g of

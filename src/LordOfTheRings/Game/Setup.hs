@@ -41,6 +41,7 @@ newTableIn gameScenario seats@((player, _) :| _) =
     , gameActiveCosts = mempty
     , gameModifiers = mempty
     , gameEffects = []
+    , gameFrozenRoundEndAbilities = Nothing
     , gameOutcome = Nothing
     , gameLastCommittedWillpower = Nothing
     , gameLogBlocks = []

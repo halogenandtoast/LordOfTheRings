@@ -27,7 +27,7 @@ setReplica :: Int -> [EpicBoard] -> GameT ()
 setReplica ordinal boards = do
   let shared = fromJustNote "invalid event" $ newAnnuminasEvent 3
   current <- getGame
-  putGame $ current & scenarioL %~ overAttrs (\a -> a {scenarioEpic = Just $ EpicReplica (GroupOrdinal ordinal) shared [] boards [] mempty mempty})
+  putGame $ current & scenarioL %~ overAttrs (\a -> a {scenarioEpic = Just $ EpicReplica (GroupOrdinal ordinal) shared [] boards [] mempty mempty Nothing})
   -- Real Epic games start with independent seeds. Keep independent fixtures
   -- independent too, including their physical encounter-card identities.
   generator <- asks gameRandomGen
@@ -62,7 +62,7 @@ departingLieutenant = do
     let command = fromJustNote "missing transfer command" $ headMay commands
     command.epicCommandTo `shouldBe` GroupOrdinal 1
     case command.epicCommandEffect of
-      EpicReceiveEnemy transfer EpicAttackFirstPlayer -> do
+      EpicResolveWithReply _ _ (EpicReceiveEnemy transfer EpicAttackFirstPlayer) -> do
         transfer.epicEnemyId `shouldBe` eid
         transfer.epicEnemyTokens `shouldBe` mapFromList [(Damage, 2), (Resource, 3)]
         transfer.epicEnemyShadows `shouldBe` shadow
@@ -159,7 +159,7 @@ spec = describe "Annúminas Lieutenant of Angmar" do
       gameTest $ \_ -> do
         setReplica 1 []
         _ <- mainStage progress
-        let transfer = case command.epicCommandEffect of EpicReceiveEnemy packet _ -> packet; _ -> error "missing transfer"
+        let transfer = case command.epicCommandEffect of EpicResolveWithReply _ _ (EpicReceiveEnemy packet _) -> packet; _ -> error "missing transfer"
             staged = command {epicCommandEffect = EpicReceiveEnemy transfer EpicStageEnemy}
             received = either error id $ eitherDecode $ encode staged
         run $ ApplyEpicCommand received
@@ -193,7 +193,7 @@ spec = describe "Annúminas Lieutenant of Angmar" do
       getDamage defender `shouldReturn` 0
       length <$> getEncounterDeck `shouldReturn` 1
       length <$> getEncounterDiscard `shouldReturn` 2
-      let eid = case command.epicCommandEffect of EpicReceiveEnemy transfer _ -> transfer.epicEnemyId; _ -> error "missing transfer"
+      let eid = case command.epicCommandEffect of EpicResolveWithReply _ _ (EpicReceiveEnemy transfer _) -> transfer.epicEnemyId; _ -> error "missing transfer"
       (.placement) <$> getEnemy eid `shouldReturn` StagingArea
       run $ ApplyEpicCommand command
       length <$> getEncounterDeck `shouldReturn` 1
@@ -205,7 +205,7 @@ spec = describe "Annúminas Lieutenant of Angmar" do
       _ <- putQuestStage Quests.warriorsOfTheEast
       horse <- genEncounterCard Treacheries.easterlingHorse
       run $ AddToEncounterDiscard [horse]
-      let transfer = case command.epicCommandEffect of EpicReceiveEnemy packet _ -> packet; _ -> error "missing transfer"
+      let transfer = case command.epicCommandEffect of EpicResolveWithReply _ _ (EpicReceiveEnemy packet _) -> packet; _ -> error "missing transfer"
           tagged = transfer {epicEnemyEffects = transfer.epicEnemyEffects <> [Effect GameSource (EnemyTarget transfer.epicEnemyId) [GainTrait Easterling] UntilEndOfRound]}
           staged = command {epicCommandEffect = EpicReceiveEnemy tagged EpicStageEnemy}
       run $ ApplyEpicCommand staged
@@ -222,6 +222,9 @@ spec = describe "Annúminas Lieutenant of Angmar" do
     run $ CreateEffect $ Effect GameSource (EnemyTarget eid) [GainTrait Nazgul] UntilEndOfRound
     run $ Flip stage
     run $ MoveAnnuminasEnemy eid (GroupOrdinal 1) EpicStageEnemy
+    [command] <- pendingCommands
+    let nonce = case command.epicCommandEffect of EpicResolveWithReply _ ident _ -> ident; _ -> error "missing reply nonce"
+    void $ runDebug $ ResolveEpicEffect (toCardCode Enemies.lieutenantOfAngmar) (EpicAcknowledge nonce) ScenarioTarget
     getsGame (.outcome) `shouldReturn` Nothing
     rider <- stageEnemy Enemies.blackRider
     run $ Discard GameSource (EnemyTarget rider)

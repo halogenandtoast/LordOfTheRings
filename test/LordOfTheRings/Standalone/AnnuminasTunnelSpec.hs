@@ -18,7 +18,7 @@ setReplica :: Int -> [EpicBoard] -> GameT ()
 setReplica ordinal boards = do
   let shared = fromJustNote "invalid event" $ newAnnuminasEvent 3
   current <- getGame
-  putGame $ current & scenarioL %~ overAttrs (\a -> a {scenarioEpic = Just $ EpicReplica (GroupOrdinal ordinal) shared [] boards [] mempty mempty})
+  putGame $ current & scenarioL %~ overAttrs (\a -> a {scenarioEpic = Just $ EpicReplica (GroupOrdinal ordinal) shared [] boards [] mempty mempty Nothing})
 
 spec :: Spec
 spec = describe "Annúminas Siege Tunnel" do

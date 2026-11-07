@@ -16,7 +16,7 @@ import TestImport
 installScenario :: Maybe Int -> GameT ()
 installScenario ordinal = do
   let shared = fromJustNote "invalid Annúminas event" $ newAnnuminasEvent 3
-      replica n = EpicReplica (GroupOrdinal n) shared [] [] [] mempty mempty
+      replica n = EpicReplica (GroupOrdinal n) shared [] [] [] mempty mempty Nothing
   current <- getGame
   putGame $ current & scenarioL .~ overAttrs (\a -> a {scenarioEpic = replica <$> ordinal}) theSiegeOfAnnuminas
 

@@ -1374,6 +1374,7 @@ library
       LordOfTheRings.Enemy.Types
       LordOfTheRings.Entities
       LordOfTheRings.Epic.Board
+      LordOfTheRings.Epic.Coordinator
       LordOfTheRings.Epic.Runner
       LordOfTheRings.Epic.Types
       LordOfTheRings.Event
@@ -4477,6 +4478,7 @@ test-suite LordOfTheRings-test
       LordOfTheRings.ShadowsOfMirkwood.TheHuntForGollumSpec
       LordOfTheRings.Standalone.AnnuminasCampSpec
       LordOfTheRings.Standalone.AnnuminasCitySpec
+      LordOfTheRings.Standalone.AnnuminasCoordinatorSpec
       LordOfTheRings.Standalone.AnnuminasDefendCitySpec
       LordOfTheRings.Standalone.AnnuminasDefensesSpec
       LordOfTheRings.Standalone.AnnuminasDunedainSpec
@@ -4488,6 +4490,7 @@ test-suite LordOfTheRings-test
       LordOfTheRings.Standalone.AnnuminasLocationsSpec
       LordOfTheRings.Standalone.AnnuminasManWallsSpec
       LordOfTheRings.Standalone.AnnuminasOpeningSpec
+      LordOfTheRings.Standalone.AnnuminasRoundEndSpec
       LordOfTheRings.Standalone.AnnuminasSetupSpec
       LordOfTheRings.Standalone.AnnuminasSortieSpec
       LordOfTheRings.Standalone.AnnuminasStageStateSpec

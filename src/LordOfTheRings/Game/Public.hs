@@ -165,6 +165,7 @@ publicGameFor seesHand g = hideDecks $ toJSON merged
     Object o ->
       Object
         $ KeyMap.insert "score" (toJSON $ groupScore g)
+        $ KeyMap.delete "frozenRoundEndAbilities"
         $ KeyMap.delete "separation"
         $ KeyMap.insert "areas" (toJSON areas)
         $ KeyMap.insert "committedWillpower" (toJSON $ runReadGame getCommittedWillpower g)

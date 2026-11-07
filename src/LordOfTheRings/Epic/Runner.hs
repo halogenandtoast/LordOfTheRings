@@ -1,14 +1,15 @@
-module LordOfTheRings.Epic.Runner (runEpicMessage, finalizeEpicOutcome) where
+module LordOfTheRings.Epic.Runner (runEpicMessage, finalizeEpicOutcome, usesEpicRoundSynchronization, epicRoundPhaseOf) where
 
 import Data.Set qualified as Set
 import Data.Map.Strict qualified as Map
+import LordOfTheRings.Ability.Types (isForcedAbility)
 import LordOfTheRings.Card
 import LordOfTheRings.Classes.RunMessage (runMessage)
 import LordOfTheRings.Classes.Entity (overAttrs, toAttrs, toId, insertEntity)
 import LordOfTheRings.Classes.HasQueue (push, runQueueT)
 import LordOfTheRings.Epic.Board
 import LordOfTheRings.Epic.Types
-import LordOfTheRings.Effect (Effect (..), EffectDuration (UntilEndOfPhaseOf))
+import LordOfTheRings.Effect (Effect (..), EffectDuration (UntilEndOfPhaseOf, UntilEndOfRound))
 import LordOfTheRings.Enemy (EnemyAttrs (..), createEnemy)
 import LordOfTheRings.Entities (enemiesL)
 import LordOfTheRings.Game.Base
@@ -19,7 +20,7 @@ import LordOfTheRings.Message
 import LordOfTheRings.Message.Lifted
 import LordOfTheRings.Quest (isSideQuest)
 import LordOfTheRings.Quest.Types (questUnderneath)
-import LordOfTheRings.Modifier (ModifierType (FewerStagingReveals))
+import LordOfTheRings.Modifier (ModifierType (FewerStagingReveals, AtEndOfRound))
 import LordOfTheRings.Phase (Phase (QuestPhase))
 import LordOfTheRings.Objective.CardDefs qualified as Objectives
 import LordOfTheRings.Outcome (Outcome (Won))
@@ -33,12 +34,59 @@ import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Question (Question (PlayerWindow, QuestionLabel, ChooseOne))
 import LordOfTheRings.I18n (ikey)
 import LordOfTheRings.Scenario.Types (ScenarioAttrs (scenarioEpic, scenarioSetAside))
-import LordOfTheRings.Source (Source (CardCodeSource))
+import LordOfTheRings.Source (Source (CardCodeSource, GameSource))
 import LordOfTheRings.Target
 import LordOfTheRings.Trait (Trait (Basic, Upgraded))
 
+usesEpicRoundSynchronization :: Game -> Bool
+usesEpicRoundSynchronization g = isJust $ scenarioEpic (toAttrs g.scenario) >>= annuminasCityStrength . epicShared
+
+epicRoundPhaseOf :: Game -> Maybe EpicRoundPhase
+epicRoundPhaseOf g = epicRoundPhase <$> (scenarioEpic (toAttrs g.scenario) >>= epicRoundState)
+
+setEpicRoundPhase :: EpicRoundPhase -> Game -> Game
+setEpicRoundPhase phase g = g & scenarioL %~ overAttrs (\a -> a
+  { scenarioEpic = fmap (\replica -> replica {epicRoundState = Just $ EpicRoundState g.round phase}) a.scenarioEpic })
+
+presentEpicTarget :: Game -> Target -> Bool
+presentEpicTarget g target = target == ScenarioTarget || any ((== target) . epicTarget) board.epicBoardTargets
+ where
+  own = maybe (GroupOrdinal 0) epicGroup $ scenarioEpic $ toAttrs g.scenario
+  board = epicBoardFor own "" g
+
 runEpicMessage :: Message -> Game -> GameT Game
 runEpicMessage msg g = case msg of
+  EndRound | usesEpicRoundSynchronization g -> do
+    push AwaitEpicRound
+    pure $ case epicRoundPhaseOf g of
+      Nothing -> setEpicRoundPhase EpicRoundWaiting g
+      Just EpicRoundIdle -> setEpicRoundPhase EpicRoundWaiting g
+      _ -> g
+  AwaitEpicRound -> do
+    when (epicRoundPhaseOf g `elem` map Just [EpicRoundWaiting, EpicRoundReady, EpicRoundEnded, EpicRoundExpired]) do
+      lead <- getLead
+      push $ Ask lead $ PlayerWindow msg $ QuestionLabel (ikey "label.epic.waitingForRound") Nothing [] $ ChooseOne []
+    pure g
+  FreezeEpicRoundEnd abilities | epicRoundPhaseOf g == Just EpicRoundWaiting -> do
+    -- FAQ 1.37: the end-of-round passive window is active before Forced
+    -- abilities. All teams freeze here before the coordinator releases any.
+    let marker = Effect GameSource GameTarget [AtEndOfRound] UntilEndOfRound
+    pure $ setEpicRoundPhase EpicRoundReady g
+      & frozenRoundEndAbilitiesL ?~ filter isForcedAbility abilities
+      & effectsL %~ (marker :)
+  BeginEpicRoundEnd | epicRoundPhaseOf g == Just EpicRoundReady -> do
+    push EndRound
+    pure $ setEpicRoundPhase EpicRoundResolving g
+  BeginRound | usesEpicRoundSynchronization g -> do
+    push AwaitEpicRound
+    pure $ if epicRoundPhaseOf g == Just EpicRoundResolving
+      then setEpicRoundPhase EpicRoundEnded g
+      else g
+  FinishEpicRoundEffects | epicRoundPhaseOf g == Just EpicRoundEnded ->
+    pure $ setEpicRoundPhase EpicRoundExpired g & effectsL %~ filter ((/= UntilEndOfRound) . effectDuration)
+  BeginEpicNextRound | epicRoundPhaseOf g == Just EpicRoundExpired -> do
+    push BeginRound
+    pure $ setEpicRoundPhase EpicRoundIdle g & frozenRoundEndAbilitiesL .~ Nothing
   RequestAnnuminasHost code destination -> do
     let replica = scenarioEpic $ toAttrs g.scenario
         own = maybe (GroupOrdinal 0) epicGroup replica
@@ -53,6 +101,19 @@ runEpicMessage msg g = case msg of
             push $ QueueEpicCommand destination code (EpicSendSetAsideHost own nonce) ScenarioTarget
             push $ AwaitEpicReply nonce
           pure $ g & scenarioL %~ overAttrs (\a -> a {scenarioEpic = Just $ r {epicPendingRequests = Set.insert nonce r.epicPendingRequests}})
+  RequestEpicEffect destination code effect target -> do
+    let replica = scenarioEpic $ toAttrs g.scenario
+        own = maybe (GroupOrdinal 0) epicGroup replica
+    if destination == own
+      then g <$ when (presentEpicTarget g target) (push $ ResolveEpicEffect code effect target)
+      else case replica of
+        Nothing -> pure g
+        Just r -> do
+          nonce <- epicMessageId r
+          runQueueT do
+            push $ QueueEpicCommand destination code (EpicResolveWithReply own nonce effect) target
+            push $ AwaitEpicReply nonce
+          pure $ g & scenarioL %~ overAttrs (\attrs -> attrs {scenarioEpic = Just r {epicPendingRequests = Set.insert nonce r.epicPendingRequests}})
   AwaitEpicReply nonce -> do
     let pending = maybe False (Set.member nonce . epicPendingRequests) $ scenarioEpic $ toAttrs g.scenario
     when pending do
@@ -84,9 +145,20 @@ runEpicMessage msg g = case msg of
               transfer = EpicEnemyTransfer eid (MkEncounterCard a.cardId $ toCardCode foe)
                 a.enemyTokens a.enemyShadowCards a.enemyShadowRevealed a.enemyShadowFaceUp
                 a.enemyFacedown a.enemyOwner (filter carried $ gameEffects g)
-          push $ QueueEpicCommand destination (toCardCode foe) (EpicReceiveEnemy transfer arrival) ScenarioTarget
-          -- Moving between stages is neither leaving nor entering play.
+          push $ RequestEpicEffect destination (toCardCode foe) (EpicReceiveEnemy transfer arrival) ScenarioTarget
+          -- Moving between stages is neither leaving nor entering play. The
+          -- request waits for the arrival attack before the source continues.
           pure $ g & entitiesL . enemiesL %~ Map.delete eid & effectsL %~ filter (not . carried)
+  ResolveEpicEffect code (EpicResolveWithReply origin nonce effect) target -> do
+    -- Queue the acknowledgement after the complete native effect chain. It
+    -- stays behind any choices in the recipient's persisted local queue.
+    runQueueT do
+      when (presentEpicTarget g target) $ push $ ResolveEpicEffect code effect target
+      push $ QueueEpicCommand origin code (EpicAcknowledge nonce) ScenarioTarget
+    pure g
+  ResolveEpicEffect _ (EpicAcknowledge nonce) _ ->
+    pure $ g & scenarioL %~ overAttrs (\attrs -> attrs
+      {scenarioEpic = fmap (\replica -> replica {epicPendingRequests = Set.delete nonce replica.epicPendingRequests}) attrs.scenarioEpic})
   ResolveEpicEffect _ (EpicReceiveEnemy transfer arrival) _ -> do
     when (Map.member transfer.epicEnemyId g.entities.enemies) $
       throwIO $ userError "Epic enemy identity already exists at the destination"
@@ -215,9 +287,8 @@ runEpicMessage msg g = case msg of
     Just replica
       | replica.epicGroup == command.epicCommandTo
       , command.epicCommandId `Set.notMember` replica.epicAppliedCommands -> do
-          let board = epicBoardFor replica.epicGroup "" g
-              present = command.epicCommandTarget == ScenarioTarget
-                || any ((== command.epicCommandTarget) . epicTarget) board.epicBoardTargets
+          let hasReply = case command.epicCommandEffect of EpicResolveWithReply {} -> True; _ -> False
+              present = hasReply || presentEpicTarget g command.epicCommandTarget
           when present $ push $ ResolveEpicEffect command.epicCommandCard command.epicCommandEffect command.epicCommandTarget
           let updated = replica {epicAppliedCommands = Set.insert command.epicCommandId replica.epicAppliedCommands}
           pure $ g & scenarioL %~ overAttrs (\a -> a {scenarioEpic = Just updated})

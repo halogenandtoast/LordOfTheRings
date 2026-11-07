@@ -69,13 +69,13 @@ spec = describe "Annúminas Epic city strength" do
     let shared = stateFor 3
         (destroyed, _) = applySharedDelta (delta 1 0 (-50)) shared
     current <- getGame
-    putGame $ current & scenarioL %~ overAttrs (\a -> a {scenarioEpic = Just $ EpicReplica (GroupOrdinal 2) shared [] [] [] mempty mempty})
+    putGame $ current & scenarioL %~ overAttrs (\a -> a {scenarioEpic = Just $ EpicReplica (GroupOrdinal 2) shared [] [] [] mempty mempty Nothing})
     run $ SyncEpic destroyed
     getsGame (.outcome) `shouldReturn` Just Lost
 
   it "ends the originating team immediately when its own contribution destroys the city" . gameTest $ \_ -> do
     current <- getGame
-    putGame $ current & scenarioL %~ overAttrs (\a -> a {scenarioEpic = Just $ EpicReplica (GroupOrdinal 0) (stateFor 3) [] [] [] mempty mempty})
+    putGame $ current & scenarioL %~ overAttrs (\a -> a {scenarioEpic = Just $ EpicReplica (GroupOrdinal 0) (stateFor 3) [] [] [] mempty mempty Nothing})
     run $ ContributeShared AnnuminasCityStrength (-50)
     getsGame (.outcome) `shouldReturn` Just Lost
 

@@ -8,6 +8,8 @@ module LordOfTheRings.Epic.Types (
   SharedDelta (..),
   SharedEventState (..),
   EpicReplica (..),
+  EpicRoundPhase (..),
+  EpicRoundState (..),
   EpicBoard (..),
   EpicStage (..),
   EpicQuest (..),
@@ -158,6 +160,19 @@ stageOneComplete state =
 dreadnaughtDestroyed :: SharedEventState -> Bool
 dreadnaughtDestroyed state = sharedCounter DreadnaughtDamage state >= 15 * state.totalPlayers
 
+-- The event coordinator freezes every team's triggers before releasing any
+-- end-of-round effects, then expires lasting effects before the next round.
+data EpicRoundPhase = EpicRoundIdle | EpicRoundWaiting | EpicRoundReady | EpicRoundResolving | EpicRoundEnded | EpicRoundExpired
+  deriving stock (Show, Eq, Generic)
+  deriving anyclass (ToJSON, FromJSON)
+
+data EpicRoundState = EpicRoundState
+  { epicRoundNumber :: Int
+  , epicRoundPhase :: EpicRoundPhase
+  }
+  deriving stock (Show, Eq, Generic)
+  deriving anyclass (ToJSON, FromJSON)
+
 {- | A group's local view and durable outbox. The API drains the outbox under the
 event lock in the same transaction that commits the game's new state.
 -}
@@ -169,6 +184,7 @@ data EpicReplica = EpicReplica
   , epicPendingCommands :: [EpicCommand]
   , epicPendingRequests :: Set UUID
   , epicAppliedCommands :: Set UUID
+  , epicRoundState :: Maybe EpicRoundState
   }
   deriving stock (Show, Eq, Generic)
   deriving anyclass ToJSON
@@ -177,7 +193,8 @@ instance FromJSON EpicReplica where
   parseJSON =
     genericParseJSON defaultOptions
       . withDefaults
-        [ ("epicBoards", toJSON ([] :: [EpicBoard]))
+        [ ("epicRoundState", Null)
+        , ("epicBoards", toJSON ([] :: [EpicBoard]))
         , ("epicPendingCommands", toJSON ([] :: [EpicCommand]))
         , ("epicPendingRequests", toJSON (mempty :: Set UUID))
         , ("epicAppliedCommands", toJSON (mempty :: Set UUID))
@@ -196,6 +213,8 @@ data EpicEffect = EpicDamage Int | EpicProgress Int | EpicUpgradeShip | EpicShuf
   | EpicSendSetAsideHost GroupOrdinal UUID
   | EpicReceiveSetAsideHost UUID (Maybe EncounterCard)
   | EpicReceiveEnemy EpicEnemyTransfer EpicEnemyArrival
+  | EpicResolveWithReply GroupOrdinal UUID EpicEffect
+  | EpicAcknowledge UUID
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

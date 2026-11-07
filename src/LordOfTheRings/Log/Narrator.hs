@@ -22,7 +22,8 @@ import LordOfTheRings.Classes.Entity
 import LordOfTheRings.Classes.HasGame
 import LordOfTheRings.Entities
 import LordOfTheRings.Enemy.Types (EnemyAttrs (enemyShadowRevealed))
-import LordOfTheRings.Epic.Types (SharedKey (AnnuminasCityStrength), EpicReplica (epicShared, epicGroup), GroupOrdinal (..), EpicEffect (EpicReceiveEnemy), EpicEnemyTransfer (epicEnemyCard), annuminasCityStrength)
+import LordOfTheRings.Epic.Runner (usesEpicRoundSynchronization, epicRoundPhaseOf)
+import LordOfTheRings.Epic.Types (EpicRoundPhase (..), SharedKey (AnnuminasCityStrength), EpicReplica (epicShared, epicGroup), GroupOrdinal (..), EpicEffect (EpicReceiveEnemy), EpicEnemyTransfer (epicEnemyCard), annuminasCityStrength)
 import LordOfTheRings.Game.Base
 import LordOfTheRings.Heading
 import LordOfTheRings.Helpers.Resources (discardableResources)
@@ -69,9 +70,12 @@ narrationFor = \case
     s <- getsGame (toAttrs . gameScenario)
     one $ structure [ikeyPart "log.scenarioBegins" ["scenario" ~> logRef RefScenario s.scenarioName]]
   BeginRound -> Just do
-    -- before the round is counted, so the next one
-    n <- getsGame ((+ 1) . gameRound)
-    one $ structure [ikeyPart "log.round" ["count" ~> n]]
+    blocked <- getsGame $ \g -> usesEpicRoundSynchronization g
+      && epicRoundPhaseOf g `elem` map Just [EpicRoundWaiting, EpicRoundReady, EpicRoundResolving, EpicRoundEnded, EpicRoundExpired]
+    if blocked then pure [] else do
+      -- before the round is counted, so the next one
+      n <- getsGame ((+ 1) . gameRound)
+      one $ structure [ikeyPart "log.round" ["count" ~> n]]
   BeginPhase phase -> Just $ one $ structure [ikeyPart ("log.phase." <> phaseKey phase) []]
   GameOver outcome -> Just $ one $ case outcome of
     Won -> toned Good $ structure [ikeyPart "log.gameOver.won" []]

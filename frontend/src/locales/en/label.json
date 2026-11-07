@@ -4422,6 +4422,7 @@
     "seaMonster": "Deal 4 damage to the Ship with the fewest hit points remaining."
   },
   "epic": {
+    "waitingForRound": "Waiting for the other teams to finish the round.",
     "waitingForTeam": "Waiting for another team to finish this effect",
   "chooseTarget": "Choose a target in any group",
   "target": "{card} — {group}",

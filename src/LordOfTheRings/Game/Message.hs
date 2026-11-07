@@ -2,7 +2,8 @@ module LordOfTheRings.Game.Message (module LordOfTheRings.Game.Message) where
 
 import LordOfTheRings.Helpers.Doomed (playerCardDoomed)
 import LordOfTheRings.Helpers.QuestCommit (canPayCommitCost)
-import LordOfTheRings.Epic.Runner (runEpicMessage, finalizeEpicOutcome)
+import LordOfTheRings.Epic.Types (EpicRoundPhase (..))
+import LordOfTheRings.Epic.Runner (runEpicMessage, finalizeEpicOutcome, usesEpicRoundSynchronization, epicRoundPhaseOf)
 import LordOfTheRings.Enemy.AttackLocation (attackLocationEnemy)
 import Data.List (mapAccumL)
 import Data.Map.Strict qualified as Map (
@@ -204,6 +205,7 @@ import LordOfTheRings.Game.Base (
   attackDestroyedL,
   damageDealtL,
   effectsL,
+  gameFrozenRoundEndAbilities,
   entitiesL,
   firstPlayerL,
   focusArea,
@@ -498,7 +500,13 @@ import LordOfTheRings.Message (
     ApplyEpicCommand,
     MoveAnnuminasEnemy,
     RequestAnnuminasHost,
+    RequestEpicEffect,
     AwaitEpicReply,
+    AwaitEpicRound,
+    FreezeEpicRoundEnd,
+    BeginEpicRoundEnd,
+    FinishEpicRoundEffects,
+    BeginEpicNextRound,
     SyncEpic,
     ContributeShared,
     ChooseAndDiscard,
@@ -1276,7 +1284,13 @@ runGameMessage msg g = case msg of
   ApplyEpicCommand {} -> runEpicMessage msg g
   MoveAnnuminasEnemy {} -> runEpicMessage msg g
   RequestAnnuminasHost {} -> runEpicMessage msg g
+  RequestEpicEffect {} -> runEpicMessage msg g
   AwaitEpicReply {} -> runEpicMessage msg g
+  AwaitEpicRound -> runEpicMessage msg g
+  FreezeEpicRoundEnd {} -> runEpicMessage msg g
+  BeginEpicRoundEnd -> runEpicMessage msg g
+  FinishEpicRoundEffects -> runEpicMessage msg g
+  BeginEpicNextRound -> runEpicMessage msg g
   SyncEpic {} -> runEpicMessage msg g
   ContributeShared {} -> runEpicMessage msg g
   -- the rest of an attack does nothing once its enemy has left play
@@ -1350,6 +1364,7 @@ runGameMessage msg g = case msg of
       -- in a saga, the first player takes control of Bilbo Baggins or a Fellowship hero
       setUpFellowship firstPlayer
     pure g
+  BeginRound | usesEpicRoundSynchronization g, epicRoundPhaseOf g `elem` map Just [EpicRoundWaiting, EpicRoundReady, EpicRoundResolving, EpicRoundEnded, EpicRoundExpired] -> runEpicMessage msg g
   BeginRound -> do
     pushAll [CheckWindows [mkWhen RoundBegins], BeginPhase minBound, EndPhase minBound]
     -- no area has begun the round's first phase, those separated before the first round
@@ -1366,6 +1381,7 @@ runGameMessage msg g = case msg of
     when (any ((== cid) . (.id)) (toAttrs g.scenario).encounterDiscard) $
       push $ ShuffleEncounterDiscardIntoDeck AnyCard
     pure g
+  EndRound | usesEpicRoundSynchronization g, epicRoundPhaseOf g /= Just EpicRoundResolving -> runEpicMessage msg g
   EndRound -> do
     -- each area ends the round in turn
     let (step, g') = eachAreaThen (const [EndRound]) id BeginRound g
@@ -3373,6 +3389,7 @@ runGameMessage msg g = case msg of
     , Just lid <- (toAttrs actor).enemyAttackLocation ->
         pure $ g & effectsL %~ (\es -> effect : effect {effectTarget = LocationTarget lid} : es)
   CreateEffect effect -> pure $ g & effectsL %~ (effect :)
+  EndEffects UntilEndOfRound | usesEpicRoundSynchronization g, epicRoundPhaseOf g `elem` map Just [EpicRoundWaiting, EpicRoundReady, EpicRoundResolving, EpicRoundEnded, EpicRoundExpired] -> pure g
   EndEffects duration -> pure $ g & effectsL %~ filter ((/= duration) . effectDuration)
   EndEffectsFrom source -> pure $ g & effectsL %~ filter ((/= source) . effectSource)
   EndEffect e -> pure $ g & effectsL %~ (\es -> let (before, after) = break (== e) es in before <> drop 1 after)
@@ -3542,7 +3559,10 @@ runGameMessage msg g = case msg of
     pure $ g & entitiesL . heroesL %~ insertEntity thisHero
   CheckWindows windows -> do
     abilities <- getWindowAbilities windows
-    let forcedAbilities = filter isForcedAbility abilities
+    let atRoundEnd = any (\case Window _ RoundEnds -> True; _ -> False) windows
+        forcedAbilities = if atRoundEnd
+          then fromMaybe (filter isForcedAbility abilities) (gameFrozenRoundEndAbilities g)
+          else filter isForcedAbility abilities
     lead <- getLead
     -- while a Peril card's staging resolves, its player alone may respond
     order <- maybe getPlayerOrder (pure . pure) (gamePeril g)

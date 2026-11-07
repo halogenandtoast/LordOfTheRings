@@ -28,7 +28,7 @@ replicaFor ordinal boards = do
   liftIO $ writeIORef generator $ mkStdGen (100 + ordinal)
   let shared = fromJustNote "invalid event" $ newAnnuminasEvent 3
   current <- getGame
-  putGame $ current & scenarioL %~ overAttrs (\a -> a {scenarioEpic = Just $ EpicReplica (GroupOrdinal ordinal) shared [] boards [] mempty mempty})
+  putGame $ current & scenarioL %~ overAttrs (\a -> a {scenarioEpic = Just $ EpicReplica (GroupOrdinal ordinal) shared [] boards [] mempty mempty Nothing})
 
 boardAt :: Int -> Text -> Int -> Bool -> EpicBoard
 boardAt ordinal name hosts drawable = EpicBoard (GroupOrdinal ordinal) name [] False $ Just $

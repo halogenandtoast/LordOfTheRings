@@ -2032,7 +2032,7 @@ postEpicStartR eid = do
     let shared = fromJustNote "Epic event has no players" $ (if event.lotrEpicEventScenario == "the-siege-of-annuminas" then EpicTypes.newAnnuminasEvent else EpicTypes.newSharedEvent) $ sum [length players | (_, _, players) <- prepared]
     now <- liftIO getCurrentTime
     games <- for prepared \(groupRow, row, players) -> do
-      let replica = EpicTypes.EpicReplica (EpicTypes.GroupOrdinal groupRow.lotrEpicGroupOrdinal) shared [] [] [] mempty mempty
+      let replica = EpicTypes.EpicReplica (EpicTypes.GroupOrdinal groupRow.lotrEpicGroupOrdinal) shared [] [] [] mempty mempty Nothing
           base = fromJustNote "Epic scenario missing" $ lookupScenario (ScenarioId event.lotrEpicEventScenario)
           scenario = overAttrs (\a -> a {scenarioEpic = Just replica}) base
           mode = gameMode row.lotrGameEasyMode False row.lotrGameHardMode

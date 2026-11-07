@@ -72,7 +72,7 @@ spec = describe "Annúminas public Epic stage state" do
         board = EpicBoard (GroupOrdinal 1) "Gate" [] False (Just $ EpicStage 7 [] [] False 0 False)
         command = EpicCommand UUID.nil (GroupOrdinal 0) (GroupOrdinal 1) (toCardCode Locations.siegeTunnel) EpicDiscardUntilEnemy ScenarioTarget
         contribution = SharedDelta UUID.nil (GroupOrdinal 0) AnnuminasCityStrength (-1)
-        replica = EpicReplica (GroupOrdinal 0) shared [contribution] [board] [command] (Set.singleton UUID.nil) (Set.singleton UUID.nil)
+        replica = EpicReplica (GroupOrdinal 0) shared [contribution] [board] [command] (Set.singleton UUID.nil) (Set.singleton UUID.nil) Nothing
     current <- getGame
     let updated = current & scenarioL %~ overAttrs (\a -> a {scenarioEpic = Just replica})
         fields = parseMaybe (withObject "game" $ \o -> o .: "scenario" >>= withObject "scenario" (\s -> s .: "epic" >>= withObject "epic" pure)) $ publicGame updated
@@ -96,7 +96,7 @@ spec = describe "Annúminas public Epic stage state" do
     let shared = fromJustNote "invalid event" $ newAnnuminasEvent 3
         stage = EpicStage 7 [EpicQuest "01120" 2 40 (Just 40) True] [toCardCode Enemies.hostOfAngmar] False 0 False
         board = EpicBoard (GroupOrdinal 1) "Gate" [] False (Just stage)
-        replica = EpicReplica (GroupOrdinal 0) shared [] [board] [] mempty mempty
+        replica = EpicReplica (GroupOrdinal 0) shared [] [board] [] mempty mempty Nothing
     eitherDecode (encode replica) `shouldBe` Right replica
     pure () :: IO ()
 

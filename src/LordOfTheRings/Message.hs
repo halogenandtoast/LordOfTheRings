@@ -318,7 +318,13 @@ data Message
   | ShuffleDeck DeckSignifier
   | AddCollectionCardToHand PlayerId CardCode
   | RequestAnnuminasHost CardCode GroupOrdinal
+  | RequestEpicEffect GroupOrdinal CardCode EpicEffect Target
   | AwaitEpicReply UUID
+  | AwaitEpicRound
+  | FreezeEpicRoundEnd [Ability]
+  | BeginEpicRoundEnd
+  | FinishEpicRoundEffects
+  | BeginEpicNextRound
   | ChooseEpicTarget PlayerId CardCode EpicTargetQuery EpicEffect
   | ResolveEpicEffect CardCode EpicEffect Target
   | QueueEpicCommand GroupOrdinal CardCode EpicEffect Target

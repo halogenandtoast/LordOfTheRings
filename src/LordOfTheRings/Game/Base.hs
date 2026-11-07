@@ -5,6 +5,7 @@ module LordOfTheRings.Game.Base (module LordOfTheRings.Game.Base) where
 import Data.List (elemIndex)
 import Data.Map.Strict qualified as Map
 import Data.Set qualified as Set
+import LordOfTheRings.Ability.Types (Ability)
 import LordOfTheRings.ActiveCost
 import LordOfTheRings.Ally.Types (Ally)
 import LordOfTheRings.Attachment.Types (Attachment)
@@ -43,6 +44,8 @@ data Game = Game
   , gameActiveCosts :: Map CostId ActiveCost
   , gameModifiers :: Map Target [Modifier]
   , gameEffects :: [Effect]
+  , gameFrozenRoundEndAbilities :: Maybe [Ability]
+  -- ^ Forced triggers captured before any team resolves the global round end.
   , gameOutcome :: Maybe Outcome
   , gameLastCommittedWillpower :: Maybe Int
   -- ^ What was committed at the last quest resolution, for the board's tally

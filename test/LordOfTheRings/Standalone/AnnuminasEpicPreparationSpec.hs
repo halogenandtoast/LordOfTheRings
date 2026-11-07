@@ -150,7 +150,7 @@ spec = describe "Annúminas Epic preparation quests" do
     let shared = fromJustNote "invalid event" $ newAnnuminasEvent 3
         sent = EpicCommand UUID.nil (GroupOrdinal 0) (GroupOrdinal 1) (toCardCode Quests.raiseTheLevee) EpicGrantDunedain ScenarioTarget
     current <- getGame
-    putGame $ current & firstPlayerL .~ other & scenarioL %~ overAttrs (\a -> a {scenarioEpic = Just $ EpicReplica (GroupOrdinal 1) shared [] [] [] mempty mempty})
+    putGame $ current & firstPlayerL .~ other & scenarioL %~ overAttrs (\a -> a {scenarioEpic = Just $ EpicReplica (GroupOrdinal 1) shared [] [] [] mempty mempty Nothing})
     replicateM_ 2 $ run . SetAside =<< genEncounterCard Objectives.dunedainOfAnnuminas
     run $ ApplyEpicCommand sent
     saved <- getGame
