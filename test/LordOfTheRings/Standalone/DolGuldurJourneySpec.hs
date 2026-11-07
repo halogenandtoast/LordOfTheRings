@@ -68,6 +68,8 @@ finishBoundary keepSupport nextStage searchedLocation remaining = do
                 chooseOptionMatching "resolve the newly engaged Archer" pid (const True)
             | prompt == "$label.dolGuldur.battleWarg" ->
                 chooseOptionMatching "resolve the newly engaged Warg" pid (const True)
+            | "$label.turnOverQuest" `isPrefixOf` prompt ->
+                chooseOptionMatching "turn over the next stage" pid (const True)
             | otherwise -> error $ "unexpected native boundary question: " <> show prompt
           finishBoundary keepSupport nextStage searchedLocation $ remaining - 1
 

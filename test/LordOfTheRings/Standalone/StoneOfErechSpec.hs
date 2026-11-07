@@ -216,7 +216,11 @@ spec = describe "Stone of Erech" do
       for_ [Locations.theStoneOfErechStandalone, Objectives.derufin] \def -> run . SetAside =<< genEncounterCard def
       q <- putQuestStage Quests.terrorOfTheDead
       run $ Flip q
+      (.flipped) <$> getActiveQuest `shouldReturn` False
+      getsGame (length . (.entities.locations)) `shouldReturn` 0
+      getsGame (length . (.entities.objectives)) `shouldReturn` 0
       resolveRevealed
+      (.flipped) <$> getActiveQuest `shouldReturn` True
       stone <- getsGame (fromJustNote "Stone missing" . headMay . toList . (.entities.locations))
       stone.placement `shouldBe` StagingArea
       captive <- getsGame (fromJustNote "Derufin missing" . headMay . toList . (.entities.objectives))

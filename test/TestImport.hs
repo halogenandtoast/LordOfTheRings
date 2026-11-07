@@ -63,7 +63,17 @@ testDeck =
 
 -- | Push a message and run the queue until it empties or a question is asked.
 run :: Message -> GameT ()
-run msg = push msg >> void mainLoop
+run msg = runPaused msg >> turnOverQuests
+
+-- | Push a message and run the queue, leaving a stage waiting to be turned over.
+runPaused :: Message -> GameT ()
+runPaused msg = push msg >> void mainLoop
+
+-- | Click each stage waiting for its side A to be read, as a player does, until none is.
+turnOverQuests :: GameT ()
+turnOverQuests = do
+  waiting <- getsGame \g -> [pid | (pid, QuestionLabel l _ _ _) <- Map.toList g.question, "$label.turnOverQuest" `isPrefixOf` l]
+  for_ (headMay waiting) \pid -> answerQuestion pid 0 >> turnOverQuests
 
 getQuestion :: PlayerId -> GameT (Maybe (Question Message))
 getQuestion pid = Map.lookup pid <$> getsGame (.question)
@@ -74,7 +84,7 @@ chooseOptionMatching reason pid f = do
   question <- maybe (error $ "no question when trying to " <> unpack reason) pure =<< getQuestion pid
   case findIndex f (questionChoices question) of
     Nothing -> error $ "could not " <> unpack reason
-    Just n -> void $ answerQuestion pid n
+    Just n -> answerQuestion pid n >> turnOverQuests
 
 chooseLabel :: (HasCallStack) => Text -> PlayerId -> GameT ()
 chooseLabel l pid = chooseOptionMatching ("choose " <> l) pid \case
@@ -137,9 +147,10 @@ resolveWhenRevealed :: (HasCallStack) => PlayerId -> GameT ()
 resolveWhenRevealed pid = chooseTarget pid =<< getActiveQuest
 
 -- | Click each card waiting for the lead to resolve its When Revealed
--- effect, in turn, until none is left waiting.
+-- effect, in turn, until none is left waiting, turning over the stages that wait first.
 resolveRevealed :: GameT ()
 resolveRevealed = do
+  turnOverQuests
   lead <- getLead
   getQuestion lead >>= \case
     Just (QuestionLabel l _ _ _) | "$label.resolveWhenRevealed" `isPrefixOf` l -> do

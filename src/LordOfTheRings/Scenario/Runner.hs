@@ -579,7 +579,10 @@ instance RunMessage ScenarioAttrs where
       pushAll [CheckWindows [mkWhen AdvancedToStage], PutQuestIntoPlay card, MarkEpicQuestPrepared]
       pure attrs
     AdvanceToQuest card -> do
-      pushAll [CheckWindows [mkWhen AdvancedToStage], PutQuestIntoPlay card, Flip (toTarget card), CheckWindows [mkAfter AdvancedToStage]]
+      lead <- getLead
+      let prompt = QuestionLabel (ikeyWith "label.turnOverQuest" (cardVar "card" card)) Nothing []
+            $ ChooseOne [targetLabel card [Flip (toTarget card)]]
+      pushAll [CheckWindows [mkWhen AdvancedToStage], PutQuestIntoPlay card, Ask lead prompt, CheckWindows [mkAfter AdvancedToStage]]
       pure attrs
     TakeHiddenCard pid -> do
       (deck, discard) <-

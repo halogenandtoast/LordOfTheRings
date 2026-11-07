@@ -762,6 +762,7 @@
   "payFromDifferentHero": "Pay 1 from a different hero ({count} more)",
   "performSetup": "Perform setup: flip {card}",
   "revealPath": "Turn over A Chosen Path to see which path it is",
+  "turnOverQuest": "Read side A, then click to continue: {card}",
   "resolveWhenRevealed": "Resolve When Revealed: {card}",
   "xEquals": "X = {x}",
   "ability": {

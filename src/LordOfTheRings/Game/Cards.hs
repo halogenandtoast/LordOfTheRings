@@ -143,6 +143,7 @@ import LordOfTheRings.Message (
     CreateEffect,
     EndEffect,
     Discard,
+    DoStep,
     Flip,
     ForgetLeftPlay,
     PlaceEnemy,
@@ -155,7 +156,8 @@ import LordOfTheRings.Message (
     RespondFromDiscard,
     ReturnToSackDeck,
     ReturnToTopOfEncounterDeck,
-    UseHandAction
+    UseHandAction,
+    WhenRevealed
   ),
   questionLabelWith,
   uiToRun,
@@ -316,12 +318,18 @@ returnToEncounterDeck place target g = do
 -- | Show the players what the board does as it happens: the log is written by the narrator.
 announce :: Message -> GameT ()
 announce = \case
+  -- Terror of the Dead resolves side A before actually turning over.
+  DoStep 2 (WhenRevealed target) -> do
+    quests <- getsGame (toList . entitiesQuests . gameEntities)
+    for_ quests \q ->
+      when (toCardCode q == "the-stone-of-erech-002" && target == toTarget q && not (toAttrs q).questFlipped)
+        $ send $ FlipCard (toAttrs q).questCardId
   -- a stage turning over, as the setup or a click does
   Flip target -> do
     quests <- getsGame (toList . entitiesQuests . gameEntities)
     for_ quests \q -> do
       let attrs = toAttrs q
-      when (not attrs.questFlipped && (target == toTarget q || target == CardIdTarget attrs.questCardId))
+      when (toCardCode q /= "the-stone-of-erech-002" && not attrs.questFlipped && (target == toTarget q || target == CardIdTarget attrs.questCardId))
         $ send
         $ FlipCard attrs.questCardId
   _ -> pure ()

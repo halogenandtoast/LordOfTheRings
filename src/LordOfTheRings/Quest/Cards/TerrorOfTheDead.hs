@@ -21,7 +21,7 @@ instance RunMessage TerrorOfTheDead where
   runMessage msg q@(TerrorOfTheDead a) = case msg of
     Flip (isTarget a -> True) | not a.flipped -> do
       askToResolveWhenRevealed a
-      TerrorOfTheDead <$> runMessage msg a
+      pure q
     WhenRevealed (isTarget a -> True) -> do
       addSetAsideToStaging (cardIs Locations.theStoneOfErechStandalone)
       doStep 1 msg
@@ -31,7 +31,10 @@ instance RunMessage TerrorOfTheDead where
       captive <- getSetAside (cardIs Objectives.derufin)
       for_ (headMay stones) \stone -> for_ (headMay captive) \card ->
         putObjectiveIntoPlayAttached card (LocationTarget stone)
+      doStep 2 (WhenRevealed $ toTarget a)
       pure q
+    DoStep 2 (WhenRevealed (isTarget a -> True)) ->
+      TerrorOfTheDead <$> runMessage (Flip $ toTarget a) a
     UseCardAbility _ (isSource a -> True) 1 _ -> do
       lead <- getLead
       chooseOneM lead do

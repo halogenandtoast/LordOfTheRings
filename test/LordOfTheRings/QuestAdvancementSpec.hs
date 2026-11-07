@@ -11,6 +11,11 @@ completeQuest :: GameT ()
 completeQuest = do
   quest <- getActiveQuest
   run $ PlaceTokens GameSource (toTarget quest) Progress quest.questPoints
+  lead <- getLead
+  getQuestion lead >>= \case
+    Just (QuestionLabel label _ _ _) | "$label.turnOverQuest" `isPrefixOf` label ->
+      revealPath lead
+    _ -> pure ()
 
 spawn :: GameT EnemyId
 spawn = getsGame (fromJustNote "no Ungoliant's Spawn" . headMay . map toId . filter ((== "01076") . toCardCode) . toList . (.entities.enemies))
@@ -37,6 +42,31 @@ setEncounterDiscard defs = do
 
 spec :: Spec
 spec = describe "Quest advancement" do
+  it "waits before flipping a stage with a When Revealed effect" . gameTest $ \pid -> do
+    flipFirstQuest pid
+    card <- genEncounterCard Quests.toTheRiver
+    runPaused $ AdvanceToQuest card
+    quests <- getsGame (toList . (.entities.quests))
+    let next = fromJustNote "no To the River" $ find ((== toCardCode card) . toCardCode) quests
+    next.flipped `shouldBe` False
+    revealPath pid
+    quests' <- getsGame (toList . (.entities.quests))
+    (.flipped) (fromJustNote "no To the River" $ find ((== toId next) . toId) quests') `shouldBe` True
+    Just question <- getQuestion pid
+    case question of
+      QuestionLabel label _ _ _ -> label `shouldSatisfy` isPrefixOf "$label.resolveWhenRevealed"
+      _ -> True `shouldBe` False
+
+  it "waits for the lead to read side A even when the stage has no effect" . gameTest $ \pid -> do
+    flipFirstQuest pid
+    quest <- getActiveQuest
+    runPaused $ PlaceTokens GameSource (toTarget quest) Progress quest.questPoints
+    next <- getActiveQuest
+    toCardCode next `shouldBe` "01120"
+    next.flipped `shouldBe` False
+    revealPath pid
+    (.flipped) <$> getActiveQuest `shouldReturn` True
+
   it "replaces a completed stage with the next one, flipped and without progress" . gameTest $ \pid -> do
     flipFirstQuest pid
     completeQuest
