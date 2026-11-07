@@ -77,11 +77,11 @@ spec = describe "Dol Guldur atomic stage coordinator" do
     validateDolTransition swapped `shouldBe` Right ()
     fst (step swapped) `shouldBe` PrepareDolTeams [(2, stageB), (0, stageD), (1, stageF)]
 
-  it "prepares every physical stage before revealing any stage and drains old queues only after release" do
+  it "prepares every rotating physical stage before revealing any stage and drains old queues only after release" do
     let stageB = headEx dolFinalStages
         stageD = headEx $ drop 1 dolFinalStages
         stageF = headEx $ drop 2 dolFinalStages
-        claimed = claim 0 stageF $ claim 1 stageB $ claim 2 stageD initial
+        claimed = claim 0 stageF $ claim 1 stageB $ claim 2 stageD collectingRotation
         (prepareAction, preparing) = step claimed
     prepareAction `shouldBe` PrepareDolTeams [(1, stageB), (2, stageD), (0, stageF)]
     nextDolStep ready preparing `shouldBe` Right Nothing
@@ -94,8 +94,8 @@ spec = describe "Dol Guldur atomic stage coordinator" do
     let reloadedReveal = expectRight $ eitherDecode @(DolTransition Int) $ encode revealingB
     reloadedReveal `shouldBe` revealingB
     nextDolStep ready reloadedReveal `shouldBe` Right Nothing
-    ackDolStep rotationEpoch (DolTeamRevealed 1) reloadedReveal `shouldBe` Left DolStaleEpoch
-    ackDolStep initialEpoch (DolTeamRevealed 2) revealingB `shouldBe` Left DolUnexpectedAcknowledgement
+    ackDolStep initialEpoch (DolTeamRevealed 1) reloadedReveal `shouldBe` Left DolStaleEpoch
+    ackDolStep rotationEpoch (DolTeamRevealed 2) revealingB `shouldBe` Left DolUnexpectedAcknowledgement
     let afterB = ack (DolTeamRevealed 1) revealingB
     ack (DolTeamRevealed 1) afterB `shouldBe` afterB
     let (revealD, revealingD) = step afterB
@@ -111,7 +111,57 @@ spec = describe "Dol Guldur atomic stage coordinator" do
     finishAction `shouldBe` FinishDolTransition
     dolTransitionFinished finished `shouldBe` True
     nextDolStep ready finished `shouldBe` Right Nothing
-    acceptDolClaim 0 (DolClaim initialEpoch stageF) finished `shouldBe` Right finished
+    acceptDolClaim 0 (DolClaim rotationEpoch stageF) finished `shouldBe` Right finished
+
+  it "completes one initial team's advancement and old queue before starting the next team" do
+    let stageB = headEx dolFinalStages
+        stageD = headEx $ drop 1 dolFinalStages
+        stageF = headEx $ drop 2 dolFinalStages
+        firstClaim = claim 0 stageF initial
+        (prepareFirst, preparingFirst) = step firstClaim
+    prepareFirst `shouldBe` PrepareDolTeams [(0, stageF)]
+    nextDolStep ready preparingFirst `shouldBe` Right Nothing
+    let (revealFirst, revealingFirst) = step $ ack (DolTeamPrepared 0) preparingFirst
+    revealFirst `shouldBe` RevealDolTeam 0 stageF
+    let (releaseFirst, drainingFirst) = step $ ack (DolTeamRevealed 0) revealingFirst
+    releaseFirst `shouldBe` ReleaseDolTeams
+    nextDolStep (ready {dolOldEndRoundQueuesSettled = False}) drainingFirst `shouldBe` Right Nothing
+    nextDolStep (ready {dolConsequencesSettled = False}) drainingFirst `shouldBe` Right Nothing
+    let (continueFirst, collectingSecond) = step drainingFirst
+    continueFirst `shouldBe` ContinueDolInitialStages
+    collectingSecond.dolPreparedTeams `shouldBe` [0]
+    collectingSecond.dolRevealedTeams `shouldBe` [0]
+    nextDolStep ready collectingSecond `shouldBe` Right Nothing
+    availableDolStages 1 collectingSecond `shouldBe` Right (filter (/= stageF) dolFinalStages)
+    let secondClaim = claim 1 stageB collectingSecond
+        (prepareSecond, preparingSecond) = step secondClaim
+    prepareSecond `shouldBe` PrepareDolTeams [(1, stageB)]
+    ackDolStep initialEpoch (DolTeamPrepared 2) preparingSecond `shouldBe` Left DolUnexpectedAcknowledgement
+    let (revealSecond, revealingSecond) = step $ ack (DolTeamPrepared 1) preparingSecond
+    revealSecond `shouldBe` RevealDolTeam 1 stageB
+    let (releaseSecond, drainingSecond) = step $ ack (DolTeamRevealed 1) revealingSecond
+    releaseSecond `shouldBe` ReleaseDolTeams
+    let (continueSecond, collectingThird) = step drainingSecond
+    continueSecond `shouldBe` ContinueDolInitialStages
+    let thirdClaim = claim 2 stageD collectingThird
+        (prepareThird, preparingThird) = step thirdClaim
+    prepareThird `shouldBe` PrepareDolTeams [(2, stageD)]
+    let (revealThird, revealingThird) = step $ ack (DolTeamPrepared 2) preparingThird
+    revealThird `shouldBe` RevealDolTeam 2 stageD
+    let (releaseThird, drainingThird) = step $ ack (DolTeamRevealed 2) revealingThird
+    releaseThird `shouldBe` ReleaseDolTeams
+    nextDolStep (ready {dolOldEndRoundQueuesSettled = False}) drainingThird `shouldBe` Right Nothing
+    let (finishThird, finished) = step drainingThird
+    finishThird `shouldBe` FinishDolTransition
+    dolTransitionFinished finished `shouldBe` True
+
+  it "uses initial claim arrival order rather than the new stage alphabet when several choices are reserved" do
+    for_ (permutations [0, 1, 2]) $ \arrival -> do
+      let assignments = zip [0, 1, 2] $ reverse $ take 3 dolFinalStages
+          choice team = fromMaybe (error "missing initial assignment") $ lookup team assignments
+          claimed = foldl' (\state team -> claim team (choice team) state) initial arrival
+          earliest = headEx arrival
+      fst (step claimed) `shouldBe` PrepareDolTeams [(earliest, choice earliest)]
 
   it "allows only an accepted inert initial claim to unblock later old-stage forced effects" do
     let accepted = claim 0 (headEx dolFinalStages) initial

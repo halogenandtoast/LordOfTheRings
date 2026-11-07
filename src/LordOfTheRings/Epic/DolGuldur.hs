@@ -1,7 +1,7 @@
 -- | Pure decisions for Attack on Dol Guldur's three-team transitions. The
 -- event-row transaction records the returned state and its durable deliveries
--- together. No game advances a physical stage until every claim is accepted,
--- and no stage is revealed until all three replacements are prepared.
+-- together. Initial stage-one advances finish one team at a time; subsequent
+-- rotations prepare every replacement before ordered revelations.
 module LordOfTheRings.Epic.DolGuldur
   ( DolEpochKind (..), DolEpoch (..), DolClaim (..), DolPhase (..)
   , DolTransition (..), DolEligibility (..), DolStep (..), DolAck (..), DolError (..)
@@ -68,6 +68,8 @@ data DolEligibility = DolEligibility
   -- claim nonces and their inert barrier questions may be excluded here.
   , dolOldStageForcesComplete :: Bool
   , dolOldEndRoundQueuesSettled :: Bool
+  -- ^ All queues ended for rotation; for initial advancement, all teams already
+  -- revealed and released in this epoch have finished their original queues.
   }
   deriving stock (Show, Eq)
 
@@ -79,6 +81,9 @@ data DolStep team
   | ReleaseDolTeams
   -- ^ Resume the appropriate old round phase before acknowledging held claim
   -- requests. Initial stage-one queues must finish; rotation queues already did.
+  | ContinueDolInitialStages
+  -- ^ A released initial team finished its original end-of-round queue. Open
+  -- claims again so the next team can finish its complete native advance.
   | FinishDolTransition
   -- ^ Reset shared Siege for the next round before the generic round coordinator
   -- expires every team's round effects and releases their next BeginRound.
@@ -157,14 +162,26 @@ validateDolTransition transition = do
       allClaimed = length claims == 3
       allPrepared = length prepared == 3
       allRevealed = length revealed == 3 && isNothing transition.dolRevealingTeam
+      initial = transition.dolTransitionEpoch.dolEpochKind == DolInitialStages
+      uncompleted = filter (`notElem` revealed) prepared
+      noActiveReveal = isNothing transition.dolRevealingTeam
       beforeClaims = transition.dolTransitionPhase `elem`
         [DolWaitingForForces, DolResolvingCity, DolWaitingForUnusedStage, DolResolvingUnusedStage]
       phaseValid
-        | beforeClaims = null claims && noPreparation && transition.dolTransitionEpoch.dolEpochKind == DolRotateStages
-        | transition.dolTransitionPhase == DolCollectingClaims = noPreparation
-        | transition.dolTransitionPhase == DolPreparingStages = allClaimed && null revealed && isNothing transition.dolRevealingTeam
-        | transition.dolTransitionPhase == DolRevealingStages = allClaimed && allPrepared
+        | beforeClaims = null claims && noPreparation && not initial
+        | transition.dolTransitionPhase == DolCollectingClaims =
+            if initial then null uncompleted && noActiveReveal else noPreparation
+        | transition.dolTransitionPhase == DolPreparingStages =
+            if initial then not (null claims) && length uncompleted <= 1 && noActiveReveal
+            else allClaimed && null revealed && noActiveReveal
+        | transition.dolTransitionPhase == DolRevealingStages =
+            if initial then not (null prepared) && length uncompleted <= 1
+            else allClaimed && allPrepared
+        | transition.dolTransitionPhase == DolDrainingQueues =
+            if initial then not (null revealed) && null uncompleted && noActiveReveal
+            else allClaimed && allPrepared && allRevealed
         | otherwise = allClaimed && allPrepared && allRevealed
+
   unless phaseValid $ Left DolInvalidPhase
 
 -- | Called under the event lock. A replay of the accepted choice is harmless,
@@ -220,19 +237,29 @@ nextDolStep eligibility transition = do
       DolWaitingForUnusedStage -> case filter (`notElem` mapMaybe snd transition.dolPreviousStages) dolFinalStages of
         [unused] -> issue (ResolveUnusedDolStage transition.dolCityHolder unused) $ transition {dolTransitionPhase = DolResolvingUnusedStage}
         _ -> Left DolInvalidPreviousStages
-      DolCollectingClaims | length transition.dolAcceptedClaims == 3 ->
-        issue (PrepareDolTeams $ sortOn snd transition.dolAcceptedClaims) $ transition {dolTransitionPhase = DolPreparingStages}
-      DolPreparingStages | length transition.dolPreparedTeams == 3 -> revealNext
+      DolCollectingClaims
+        | initial, Just choice <- headMay unprepared ->
+            issue (PrepareDolTeams [choice]) $ transition {dolTransitionPhase = DolPreparingStages}
+        | not initial, length transition.dolAcceptedClaims == 3 ->
+            issue (PrepareDolTeams $ sortOn snd transition.dolAcceptedClaims) $ transition {dolTransitionPhase = DolPreparingStages}
+      DolPreparingStages
+        | initial, not (null unrevealedPrepared) -> revealNext
+        | not initial, length transition.dolPreparedTeams == 3 -> revealNext
       DolRevealingStages | isNothing transition.dolRevealingTeam ->
-        if length transition.dolRevealedTeams == 3
+        if initial || length transition.dolRevealedTeams == 3
           then issue ReleaseDolTeams $ transition {dolTransitionPhase = DolDrainingQueues}
           else revealNext
       DolDrainingQueues | eligibility.dolOldEndRoundQueuesSettled ->
-        issue FinishDolTransition $ transition {dolTransitionPhase = DolTransitionDone}
+        if initial && length transition.dolRevealedTeams < 3
+          then issue ContinueDolInitialStages $ transition {dolTransitionPhase = DolCollectingClaims}
+          else issue FinishDolTransition $ transition {dolTransitionPhase = DolTransitionDone}
       _ -> pure Nothing
  where
+  initial = transition.dolTransitionEpoch.dolEpochKind == DolInitialStages
+  unprepared = filter (\(team, _) -> team `notElem` transition.dolPreparedTeams) transition.dolAcceptedClaims
+  unrevealedPrepared = filter (\(team, _) -> team `elem` transition.dolPreparedTeams && team `notElem` transition.dolRevealedTeams) transition.dolAcceptedClaims
   issue step updated = pure $ Just (step, updated)
-  revealNext = case find (\(team, _) -> team `notElem` transition.dolRevealedTeams) $ sortOn snd transition.dolAcceptedClaims of
+  revealNext = case headMay $ if initial then unrevealedPrepared else sortOn snd unrevealedPrepared of
     Nothing -> Left DolInvalidRevelation
     Just (team, stage) ->
       issue (RevealDolTeam team stage) $ transition {dolTransitionPhase = DolRevealingStages, dolRevealingTeam = Just team}
@@ -255,7 +282,10 @@ ackDolStep epoch acknowledgement transition = do
     DolTeamPrepared team
       | team `elem` transition.dolPreparedTeams -> pure transition
       | transition.dolTransitionPhase == DolPreparingStages
-      , isJust (lookup team transition.dolAcceptedClaims) -> pure transition {dolPreparedTeams = transition.dolPreparedTeams <> [team]}
+      , isJust (lookup team transition.dolAcceptedClaims)
+      , epoch.dolEpochKind /= DolInitialStages ||
+          (all (`elem` transition.dolRevealedTeams) transition.dolPreparedTeams
+            && fmap fst (find (\(candidate, _) -> candidate `notElem` transition.dolPreparedTeams) transition.dolAcceptedClaims) == Just team) -> pure transition {dolPreparedTeams = transition.dolPreparedTeams <> [team]}
     DolTeamRevealed team
       | team `elem` transition.dolRevealedTeams -> pure transition
       | transition.dolTransitionPhase == DolRevealingStages
