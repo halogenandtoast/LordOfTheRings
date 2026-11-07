@@ -1377,6 +1377,7 @@ library
       LordOfTheRings.Entities
       LordOfTheRings.Epic.Board
       LordOfTheRings.Epic.Coordinator
+      LordOfTheRings.Epic.DolGuldur
       LordOfTheRings.Epic.Lorien
       LordOfTheRings.Epic.Runner
       LordOfTheRings.Epic.Types
@@ -4513,6 +4514,7 @@ test-suite LordOfTheRings-test
       LordOfTheRings.Standalone.AnnuminasTunnelSpec
       LordOfTheRings.Standalone.BattleOfLakeTownSpec
       LordOfTheRings.Standalone.BelegostSpec
+      LordOfTheRings.Standalone.DolGuldurCoordinatorSpec
       LordOfTheRings.Standalone.DolGuldurEncountersSpec
       LordOfTheRings.Standalone.DolGuldurEpicSpec
       LordOfTheRings.Standalone.DolGuldurJourneySpec
