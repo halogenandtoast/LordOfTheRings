@@ -237,7 +237,7 @@ const create = async () => {
             :key="c.id"
             type="button"
             class="campaign-box"
-            :class="{ unavailable: playableCount(c) === 0, 'scenario-pack': c.category === 'scenario-pack' }"
+            :class="{ unavailable: playableCount(c) === 0, 'scenario-pack': c.category === 'scenario-pack', 'dreadnaught-cover': c.id === 'the-hunt-for-the-dreadnaught', 'mirkwood-cover': c.id === 'dark-of-mirkwood' }"
             @click="chooseCampaign(c)"
           >
             <img :src="c.image" alt="" :style="{ viewTransitionName: `campaign-${c.id}` }" />
@@ -523,6 +523,10 @@ header {
 .campaign-box img { width: 100%; aspect-ratio: 1; object-fit: cover; display: block; }
 .campaign-box.scenario-pack { align-self: start; }
 .campaign-box.scenario-pack img { aspect-ratio: auto; height: auto; object-fit: contain; }
+.campaign-box.dreadnaught-cover img,
+.campaign-box.mirkwood-cover img { aspect-ratio: 1463 / 2090; object-fit: cover; object-position: bottom; }
+.campaign-box.dreadnaught-cover img { object-view-box: inset(2% 21% calc(4% + 4px) 21%); }
+.campaign-box.mirkwood-cover img { object-view-box: inset(0 5% calc(3% + 4px) 5%); }
 .campaign-box:hover { border-color: var(--accent); transform: translateY(-2px); }
 .campaign-box.unavailable img { filter: grayscale(70%); }
 .campaign-name { display: flex; align-items: center; gap: 6px; padding: 8px 8px 0; font-weight: 700; text-align: left; }

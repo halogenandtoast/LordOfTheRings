@@ -193,14 +193,16 @@ export const campaignModes: Record<string, string> = {
 }
 
 export const campaigns: Campaign[] = [
-  campaign('attack-on-dol-guldur', 'Attack on Dol Guldur', 'MEC74', fromBox('MEC74', ['Attack on Dol Guldur']), 'scenario-pack'),
-  campaign('murder-at-the-prancing-pony', 'Murder at the Prancing Pony', 'OP015', fromBox('OP015', ['Murder at the Prancing Pony']), 'scenario-pack'),
+  // Standalones follow their first release, including Gen Con and Fellowship events (2011–2022).
+  campaign('the-massing-at-osgiliath', 'The Massing at Osgiliath', 'MEC15', fromBox('MEC15', ['The Massing at Osgiliath']), 'scenario-pack'),
+  campaign('the-battle-of-lake-town', 'The Battle of Lake-town', 'MEC35', fromBox('MEC35', ['The Battle of Lake-town']), 'scenario-pack'),
+  campaign('the-stone-of-erech', 'The Stone of Erech', 'MEC33', fromBox('MEC33', ['The Stone of Erech']), 'scenario-pack'),
+  campaign('the-old-forest', 'The Old Forest', 'MEC37', fromBox('MEC37', ['The Old Forest']), 'scenario-pack'),
   campaign('fog-on-the-barrow-downs', 'Fog on the Barrow-downs', 'MEC36', fromBox('MEC36', ['Fog on the Barrow-downs']), 'scenario-pack'),
   campaign('the-ruins-of-belegost', 'The Ruins of Belegost', 'OP014', fromBox('OP014', ['The Ruins of Belegost']), 'scenario-pack'),
-  campaign('the-old-forest', 'The Old Forest', 'MEC37', fromBox('MEC37', ['The Old Forest']), 'scenario-pack'),
-  campaign('the-stone-of-erech', 'The Stone of Erech', 'MEC33', fromBox('MEC33', ['The Stone of Erech']), 'scenario-pack'),
-  campaign('the-battle-of-lake-town', 'The Battle of Lake-town', 'MEC35', fromBox('MEC35', ['The Battle of Lake-town']), 'scenario-pack'),
-  campaign('the-massing-at-osgiliath', 'The Massing at Osgiliath', 'MEC15', fromBox('MEC15', ['The Massing at Osgiliath']), 'scenario-pack'),
+  campaign('murder-at-the-prancing-pony', 'Murder at the Prancing Pony', 'OP015', fromBox('OP015', ['Murder at the Prancing Pony']), 'scenario-pack'),
+  campaign('the-siege-of-annuminas', 'The Siege of Annúminas', 'OP016', fromBox('OP016', ['The Siege of Annúminas']), 'scenario-pack'),
+  campaign('attack-on-dol-guldur', 'Attack on Dol Guldur', 'MEC74', fromBox('MEC74', ['Attack on Dol Guldur']), 'scenario-pack'),
   campaign('the-hunt-for-the-dreadnaught', 'The Hunt for the Dreadnaught', 'MEC86', fromBox('MEC86', ['The Hunt for the Dreadnaught']), 'scenario-pack'),
   campaign('dark-of-mirkwood', 'The Dark of Mirkwood', 'MEC102', [
     ...fromBox('MEC102', ['The Oath', 'The Caves of Nibin-dûm']),
