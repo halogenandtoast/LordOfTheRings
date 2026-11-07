@@ -26,7 +26,7 @@ instance RunMessage TheHouseOfTomBombadil where
     PerformSetup (isTarget a -> True) -> do
       deck <- getsGame ((.encounterDeck) . toAttrs . (.scenario))
       -- Each physical copy is set aside: five Great Barrows and the two unique locations.
-      let waiting = ["fog-on-the-barrow-downs-007", "fog-on-the-barrow-downs-006", toCardCode Locations.hollowCircle]
+      let waiting = map toCardCode [Locations.greatBarrow, Locations.standingStones, Locations.hollowCircle]
       traverse_ setAside $ filter ((`elem` waiting) . toCardCode) deck
       shuffleEncounterDeck
       turnOver a

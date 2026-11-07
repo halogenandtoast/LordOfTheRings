@@ -1,4 +1,6 @@
 {
+  "fog.discardBarrowAlly": "Choose an ally to discard inside the barrow",
+  "fog.removeGreatBarrow": "Choose a Great Barrow to add to the victory display",
   "fog.ancientBarrowAlly": "Choose an ally to place facedown under Ancient Barrow",
   "oldForest": {
     "boonHero": "Attach Old Bogey-stories to a hero",

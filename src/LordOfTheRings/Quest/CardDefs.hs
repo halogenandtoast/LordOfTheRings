@@ -90,7 +90,7 @@ allQuestCards =
   Map.fromList $
     map
       (\def -> (cdCardCode def, def))
-      [theHouseOfTomBombadil, acrossTheDowns, ruinsOfTheFirstAge, ancientEvilsDisturbed, deeperIntoThePast, theServantsOfMorgoth, theRootsOfEredLuin, theMinesOfBelegost, theBeastOfBelegost, farewellToTheShire, darkBadPlace, chokedWithBrambles, shiftingTrees, closingInAroundThem, theWickedWillow, theDisappearance, terrorOfTheDead, theShadowHost, theDragonsWrath, fireAndWater, terrorFromTheMountain, anduinCrossing, throughTheRuinsOsgiliath, beyondExpectations, raceToMinasTirith, searchingTheHighSeas, destroyTheDreadnaught,  afterTheRaid
+      [lostInTheFog, trappedInsideABarrow, theHouseOfTomBombadil, acrossTheDowns, ruinsOfTheFirstAge, ancientEvilsDisturbed, deeperIntoThePast, theServantsOfMorgoth, theRootsOfEredLuin, theMinesOfBelegost, theBeastOfBelegost, farewellToTheShire, darkBadPlace, chokedWithBrambles, shiftingTrees, closingInAroundThem, theWickedWillow, theDisappearance, terrorOfTheDead, theShadowHost, theDragonsWrath, fireAndWater, terrorFromTheMountain, anduinCrossing, throughTheRuinsOsgiliath, beyondExpectations, raceToMinasTirith, searchingTheHighSeas, destroyTheDreadnaught,  afterTheRaid
       , mirkwoodForestTheOath
       , theRearguardTheOath
       , theDarkOfNibinDum
@@ -2312,3 +2312,8 @@ theBeastOfBelegost = (quest "the-ruins-of-belegost-007" "The Beast of Belegost" 
 theHouseOfTomBombadil, acrossTheDowns :: CardDef
 theHouseOfTomBombadil = quest "fog-on-the-barrow-downs-001" "The House of Tom Bombadil" FogOnTheBarrowDowns 1 1
 acrossTheDowns = (quest "fog-on-the-barrow-downs-002" "Across the Downs" FogOnTheBarrowDowns 2 14) {cdWhenRevealed = True}
+
+
+lostInTheFog, trappedInsideABarrow :: CardDef
+lostInTheFog = (quest "fog-on-the-barrow-downs-003" "Lost in the Fog" FogOnTheBarrowDowns 3 16) {cdWhenRevealed = True}
+trappedInsideABarrow = (quest "fog-on-the-barrow-downs-004" "Trapped Inside a Barrow" FogOnTheBarrowDowns 4 9) {cdWhenRevealed = True, cdEncounterSetQuantity = Just 4}

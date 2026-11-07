@@ -1834,6 +1834,7 @@ library
       LordOfTheRings.Location.Cards.BarrenHills
       LordOfTheRings.Location.Cards.BarrenMoorland
       LordOfTheRings.Location.Cards.BarrowDownsLocations
+      LordOfTheRings.Location.Cards.BarrowDownsPassages
       LordOfTheRings.Location.Cards.BeePastures
       LordOfTheRings.Location.Cards.BeleagueredHills
       LordOfTheRings.Location.Cards.BelegostLocations
@@ -2773,6 +2774,7 @@ library
       LordOfTheRings.Quest.Cards.AWellLaidTrap
       LordOfTheRings.Quest.Cards.AWrongTurn
       LordOfTheRings.Quest.Cards.BarrowDownsApproach
+      LordOfTheRings.Quest.Cards.BarrowDownsEscape
       LordOfTheRings.Quest.Cards.BattleAtTheCrossings
       LordOfTheRings.Quest.Cards.BattleForDunland
       LordOfTheRings.Quest.Cards.BattleInTheBay
@@ -3245,6 +3247,8 @@ library
       LordOfTheRings.Scenario.Scenarios.FlightOfTheStormcaller.Helpers
       LordOfTheRings.Scenario.Scenarios.FlightToTheFord
       LordOfTheRings.Scenario.Scenarios.FlightToTheFord.Helpers
+      LordOfTheRings.Scenario.Scenarios.FogOnTheBarrowDowns
+      LordOfTheRings.Scenario.Scenarios.FogOnTheBarrowDowns.Helpers
       LordOfTheRings.Scenario.Scenarios.FoundationsOfStone
       LordOfTheRings.Scenario.Scenarios.FoundationsOfStone.Helpers
       LordOfTheRings.Scenario.Scenarios.HelmsDeep
@@ -4446,6 +4450,7 @@ test-suite LordOfTheRings-test
       LordOfTheRings.ShadowsOfMirkwood.TheHuntForGollumSpec
       LordOfTheRings.Standalone.BattleOfLakeTownSpec
       LordOfTheRings.Standalone.BelegostSpec
+      LordOfTheRings.Standalone.FogBarrowsSpec
       LordOfTheRings.Standalone.FogOnTheBarrowDownsSpec
       LordOfTheRings.Standalone.FogQuestsSpec
       LordOfTheRings.Standalone.MassingAtOsgiliathSpec

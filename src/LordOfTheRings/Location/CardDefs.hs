@@ -15,7 +15,7 @@ allLocationCards =
   Map.fromList $
     map
       (\def -> (cdCardCode def, def))
-      [hollowCircle, ancientBarrow, stoneRing, northDownsFog, naurlhugsLair, abandonedMineBelegost, floodedHall, darkenedTunnel, sunkenTreasury, secretChamber, withywindle, misleadingPath, deepGulley, strangeWoods, wallOfTrees, oppressiveForest, theStoneOfErechStandalone, tarlangsNeck, banksOfMorthond, valeOfShadows, blackrootGraves, shadowOfDwimorberg, hauntedValley, westPier, theMastersManor, southPier, northPier, merchantsDistrict, eastPier, greatHouse, greatBridge, fishermansDock, esgarothWharf, capturedWatchtower, emynArnenOverlook, morgulduin, pelennorFieldsOsgiliath, ruinsOfOsgiliath, belfalasShipyard, cobasHavenDreadnaught, isleOfFortune, mouthsOfAnduin, tolfalasLanding, wickedCove,  theEavesOfMirkwoodDarkOfMirkwood
+      [greatBarrow, standingStones, hollowCircle, ancientBarrow, stoneRing, northDownsFog, naurlhugsLair, abandonedMineBelegost, floodedHall, darkenedTunnel, sunkenTreasury, secretChamber, withywindle, misleadingPath, deepGulley, strangeWoods, wallOfTrees, oppressiveForest, theStoneOfErechStandalone, tarlangsNeck, banksOfMorthond, valeOfShadows, blackrootGraves, shadowOfDwimorberg, hauntedValley, westPier, theMastersManor, southPier, northPier, merchantsDistrict, eastPier, greatHouse, greatBridge, fishermansDock, esgarothWharf, capturedWatchtower, emynArnenOverlook, morgulduin, pelennorFieldsOsgiliath, ruinsOfOsgiliath, belfalasShipyard, cobasHavenDreadnaught, isleOfFortune, mouthsOfAnduin, tolfalasLanding, wickedCove,  theEavesOfMirkwoodDarkOfMirkwood
       , forestGateDarkOfMirkwood
       , goblinTunnelsDarkOfMirkwood
       , lightlessPassageDarkOfMirkwood
@@ -5528,4 +5528,11 @@ ancientBarrow = (location "fog-on-the-barrow-downs-008" "Ancient Barrow" FogOnTh
 
 hollowCircle :: CardDef
 hollowCircle = unique (location "fog-on-the-barrow-downs-005" "Hollow Circle" FogOnTheBarrowDowns 1 3 3)
+  { cdCardTraits = setFromList [Ruins, Downs], cdVictoryPoints = Just 3 }
+
+
+greatBarrow, standingStones :: CardDef
+greatBarrow = (location "fog-on-the-barrow-downs-007" "Great Barrow" FogOnTheBarrowDowns 5 1 1)
+  { cdCardTraits = setFromList [Ruins, Downs], cdKeywords = setFromList [Peril], cdVictoryPoints = Just 5 }
+standingStones = unique (location "fog-on-the-barrow-downs-006" "Standing Stones" FogOnTheBarrowDowns 1 4 4)
   { cdCardTraits = setFromList [Ruins, Downs], cdVictoryPoints = Just 3 }
