@@ -27,7 +27,8 @@ instance RunMessage DolGuldurAttack where
   runMessage msg o@(DolGuldurAttack a) = case msg of
     UseCardAbility _ (isSource a -> True) 1 _ -> do
       push $ ScenarioSpecific "dolGuldur.resolveSiege" Null
-      push $ CheckWindows [mkWhen DolGuldurSiegeResolved]
+      replica <- getsGame $ scenarioEpic . toAttrs . (.scenario)
+      when (isNothing replica) $ push $ CheckWindows [mkWhen DolGuldurSiegeResolved]
       pure o
     DoStep 1 (PlaceTokens _ (isTarget a -> True) Resource amount) -> do
       shared <- getsGame $ scenarioEpic . toAttrs . (.scenario)

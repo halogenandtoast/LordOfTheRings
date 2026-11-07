@@ -2,6 +2,8 @@ module LordOfTheRings.Scenario.Scenarios.AttackOnDolGuldur (attackOnDolGuldur) w
 
 import Data.Aeson.Types (parseMaybe)
 import LordOfTheRings.Classes.HasGame (getsGame)
+import LordOfTheRings.Epic.DolGuldur
+import LordOfTheRings.Game.Base (Game (gameRound))
 import LordOfTheRings.Epic.Types
 import LordOfTheRings.EncounterSet qualified as EncounterSet
 import LordOfTheRings.Ability
@@ -104,13 +106,28 @@ instance RunMessage AttackOnDolGuldur where
     ScenarioSpecific "dolGuldur.chooseStage" _ -> do
       lead <- getLead
       current <- getMainQuestCards
-      let candidates = [card | card <- a.questDeck, any ((== toCardCode card) . toCardCode) finalStages, toCardCode card `notElem` map toCardCode current]
+      let coordinated = do
+            replica <- a.scenarioEpic
+            state <- replica.epicShared.dolGuldurCoordination
+            either (const Nothing) Just $ availableDolStages replica.epicGroup state.epicDolTransition
+          candidates = [card | card <- a.questDeck, any ((== toCardCode card) . toCardCode) finalStages
+            , toCardCode card `notElem` map toCardCode current
+            , maybe True (toCardCode card `elem`) coordinated]
       chooseOneM lead do
         questionLabeled "dolGuldur.chooseStage"
         causedBy a
         targets candidates $ \card -> push $ ScenarioSpecific
           (if isJust a.scenarioEpic then "dolGuldur.claimStage" else "dolGuldur.advanceToStage") $ toJSON $ toCardCode card
       pure s
+    ScenarioSpecific "dolGuldur.claimStage" value
+      | Just code <- parseMaybe parseJSON value
+      , Just _ <- a.scenarioEpic -> do
+          current <- getMainQuestCards
+          roundNumber <- getsGame gameRound
+          let kind = if any ((== Just 2) . cdStage . toCardDef) current then DolInitialStages else DolRotateStages
+          push $ RequestEpicEffect (GroupOrdinal 0) code
+            (EpicSubmitDolClaim $ DolClaim (DolEpoch roundNumber kind) code) ScenarioTarget
+          pure s
     ScenarioSpecific "dolGuldur.advanceToStage" value
       | Just code <- parseMaybe parseJSON value -> do
           current <- getMainQuestCards

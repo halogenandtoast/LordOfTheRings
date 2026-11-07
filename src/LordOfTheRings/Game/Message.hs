@@ -506,6 +506,8 @@ import LordOfTheRings.Message (
     MoveAnnuminasEnemy,
     RequestAnnuminasHost,
     RequestEpicEffect,
+    RejectDolStageClaim,
+    ResumeEpicQuestAdvance,
     AwaitEpicReply,
     AwaitEpicRound,
     FreezeEpicRoundEnd,
@@ -1303,6 +1305,8 @@ runGameMessage msg g = case msg of
   MoveAnnuminasEnemy {} -> runEpicMessage msg g
   RequestAnnuminasHost {} -> runEpicMessage msg g
   RequestEpicEffect {} -> runEpicMessage msg g
+  RejectDolStageClaim {} -> runEpicMessage msg g
+  ResumeEpicQuestAdvance {} -> runEpicMessage msg g
   AwaitEpicReply {} -> runEpicMessage msg g
   AwaitEpicRound -> runEpicMessage msg g
   FreezeEpicRoundEnd {} -> runEpicMessage msg g

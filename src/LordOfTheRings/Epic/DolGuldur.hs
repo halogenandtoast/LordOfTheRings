@@ -89,7 +89,8 @@ data DolAck team
   | DolUnusedStageResolved
   | DolTeamPrepared team
   | DolTeamRevealed team
-  deriving stock (Show, Eq)
+  deriving stock (Show, Eq, Generic)
+  deriving anyclass (ToJSON, FromJSON)
 
 data DolError
   = DolInvalidEpoch

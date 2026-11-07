@@ -9,6 +9,7 @@ module LordOfTheRings.Epic.Types (
   SharedKey (..),
   SharedDelta (..),
   SharedEventState (..),
+  EpicDolState (..),
   EpicReplica (..),
   EpicRoundPhase (..),
   EpicRoundState (..),
@@ -45,6 +46,7 @@ import LordOfTheRings.Card.Code (CardCode)
 import LordOfTheRings.Card.EncounterCard (EncounterCard)
 import LordOfTheRings.Card.PlayerCard (PlayerCard)
 import LordOfTheRings.Outcome (Outcome (Won, Lost))
+import LordOfTheRings.Epic.DolGuldur (DolTransition, DolClaim, DolEpoch, DolAck)
 import LordOfTheRings.Effect (Effect)
 import LordOfTheRings.Id (EnemyId, AllyId, ObjectiveId, CardId, PlayerId)
 import LordOfTheRings.Json (withDefaults)
@@ -78,27 +80,39 @@ data SharedEventState = SharedEventState
   , counters :: Map Text Int
   , appliedDeltas :: Set UUID
   , revision :: Int
+  , dolGuldurCoordination :: Maybe EpicDolState
+  }
+  deriving stock (Show, Eq, Generic)
+  deriving anyclass ToJSON
+
+instance FromJSON SharedEventState where
+  parseJSON = genericParseJSON defaultOptions . withDefaults [("dolGuldurCoordination", Null)]
+
+data EpicDolState = EpicDolState
+  { epicDolTransition :: DolTransition GroupOrdinal
+  , epicDolClaimReplies :: [(GroupOrdinal, UUID)]
+  , epicDolProcessedCommands :: Set UUID
   }
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
 newSharedEvent :: Int -> Maybe SharedEventState
 newSharedEvent players
-  | players > 0 = Just $ SharedEventState players mempty mempty 0
+  | players > 0 = Just $ SharedEventState players mempty mempty 0 Nothing
   | otherwise = Nothing
 
 -- The Epic setup card sets one shared city to 50, for three teams of 1–4.
 newAnnuminasEvent :: Int -> Maybe SharedEventState
 newAnnuminasEvent players
   | players >= 3 && players <= 12 =
-      Just $ SharedEventState players (Map.singleton (counterKey AnnuminasCityStrength) 50) mempty 0
+      Just $ SharedEventState players (Map.singleton (counterKey AnnuminasCityStrength) 50) mempty 0 Nothing
   | otherwise = Nothing
 
 -- The mode card sets a single siege tracker to 5 plus 5 per player.
 newDolGuldurEvent :: Int -> Maybe SharedEventState
 newDolGuldurEvent players
   | players >= 3 && players <= 12 =
-      Just $ SharedEventState players (Map.singleton (counterKey DolGuldurCityStrength) (5 + 5 * players)) mempty 0
+      Just $ SharedEventState players (Map.singleton (counterKey DolGuldurCityStrength) (5 + 5 * players)) mempty 0 Nothing
   | otherwise = Nothing
 
 dolGuldurCityStrength :: SharedEventState -> Maybe Int
@@ -261,6 +275,8 @@ data EpicEffect = EpicDamage Int | EpicProgress Int | EpicUpgradeShip | EpicShuf
   | EpicSendSetAsideHost GroupOrdinal UUID
   | EpicReceiveSetAsideHost UUID (Maybe EncounterCard)
   | EpicReceiveEnemy EpicEnemyTransfer EpicEnemyArrival
+  | EpicSubmitDolClaim DolClaim
+  | EpicDolStepDone DolEpoch (DolAck GroupOrdinal)
   | EpicResolveWithReply GroupOrdinal UUID EpicEffect
   | EpicAcknowledge UUID
   | EpicTransferLorienSupport GroupOrdinal PlayerId PlayerId

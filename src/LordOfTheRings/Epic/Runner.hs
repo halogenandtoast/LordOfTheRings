@@ -70,6 +70,17 @@ runEpicMessage msg g = case msg of
       Nothing -> setEpicRoundPhase EpicRoundWaiting g
       Just EpicRoundIdle -> setEpicRoundPhase EpicRoundWaiting g
       _ -> g
+  ResumeEpicQuestAdvance phase
+    | phase `elem` [EpicRoundResolving, EpicRoundEnded]
+    , epicRoundPhaseOf g == Just EpicRoundRevealed -> do
+        when (phase == EpicRoundEnded) $ push AwaitEpicRound
+        pure $ setEpicRoundPhase phase g
+  RejectDolStageClaim nonce -> case scenarioEpic (toAttrs g.scenario) of
+    Just replica | nonce `Set.member` replica.epicPendingRequests -> do
+      push $ ScenarioSpecific "dolGuldur.chooseStage" Null
+      pure $ g & scenarioL %~ overAttrs (\a -> a {scenarioEpic = Just replica
+        {epicPendingRequests = Set.delete nonce replica.epicPendingRequests}})
+    _ -> pure g
   AwaitEpicRound -> do
     when (epicRoundPhaseOf g `elem` map Just [EpicRoundWaiting, EpicRoundReady, EpicRoundEnded, EpicRoundExpired, EpicRoundBeginning, EpicRoundBeginReady, EpicRoundPrepared, EpicRoundRevealed, EpicRoundBegan]) do
       lead <- getLead
@@ -113,7 +124,7 @@ runEpicMessage msg g = case msg of
       & frozenRoundBeginsAbilitiesL ?~ filter isForcedAbility abilities
       & resolvingQuestsL .~ Map.filter (not . isSideQuest) g.entities.quests
   PrepareEpicQuestAdvance mode card
-    | epicRoundPhaseOf g `elem` map Just [EpicRoundBeginReady, EpicRoundResolving]
+    | epicRoundPhaseOf g `elem` map Just [EpicRoundBeginReady, EpicRoundResolving, EpicRoundEnded]
     , [old] <- filter (not . isSideQuest) $ toList g.entities.quests -> do
         let oldId = toId old
         runQueueT $ case mode of
@@ -177,7 +188,11 @@ runEpicMessage msg g = case msg of
   RequestEpicEffect destination code effect target -> do
     let replica = scenarioEpic $ toAttrs g.scenario
         own = maybe (GroupOrdinal 0) epicGroup replica
-    if destination == own
+    let coordinatorEffect = case effect of
+          EpicSubmitDolClaim {} -> True
+          EpicDolStepDone {} -> True
+          _ -> False
+    if destination == own && not coordinatorEffect
       then g <$ when (presentEpicTarget g target) (push $ ResolveEpicEffect code effect target)
       else case replica of
         Nothing -> pure g
@@ -285,6 +300,10 @@ runEpicMessage msg g = case msg of
   ResolveEpicEffect code effect target -> do
     let source = CardCodeSource code
     runQueueT $ case effect of
+      -- Coordinator effects are intercepted under the event lock before
+      -- delivery, including requests originating at coordinator group zero.
+      EpicSubmitDolClaim {} -> pure ()
+      EpicDolStepDone {} -> pure ()
       EpicSendSetAsideHost destination nonce -> do
         let host = headMay $ filter ((== toCardCode Enemies.hostOfAngmar) . toCardCode) $ scenarioSetAside $ toAttrs g.scenario
         for_ host $ \card -> push $ RemoveSetAsideFromGame [card]

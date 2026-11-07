@@ -8,7 +8,7 @@ import Data.Aeson.Types (Parser)
 import LordOfTheRings.Ability.Types
 import LordOfTheRings.Campaign (CampaignLogUpdate)
 import LordOfTheRings.Card
-import LordOfTheRings.Epic.Types (SharedEventState, SharedKey, GroupOrdinal, EpicEffect, EpicTargetQuery, EpicCommand, EpicEnemyArrival, EpicQuestAdvanceMode)
+import LordOfTheRings.Epic.Types (SharedEventState, SharedKey, GroupOrdinal, EpicEffect, EpicTargetQuery, EpicCommand, EpicEnemyArrival, EpicQuestAdvanceMode, EpicRoundPhase)
 import LordOfTheRings.Effect
 import LordOfTheRings.Heading (HeadingShift)
 import LordOfTheRings.I18n (ikeyWith, intVar)
@@ -319,6 +319,8 @@ data Message
   | AddCollectionCardToHand PlayerId CardCode
   | RequestAnnuminasHost CardCode GroupOrdinal
   | RequestEpicEffect GroupOrdinal CardCode EpicEffect Target
+  | RejectDolStageClaim UUID
+  | ResumeEpicQuestAdvance EpicRoundPhase
   | AwaitEpicReply UUID
   | AwaitEpicRound
   | FreezeEpicRoundEnd [Ability]
