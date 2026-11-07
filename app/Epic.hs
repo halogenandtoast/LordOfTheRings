@@ -8,9 +8,13 @@ import Data.Set qualified as Set
 import Database.Persist.Postgresql
 import GameLog (storeLog)
 import LordOfTheRings.Classes.Entity (overAttrs, toAttrs)
-import LordOfTheRings.Classes.HasGame (getGame)
+import LordOfTheRings.Classes.HasGame (getGame, runReadGame)
+import LordOfTheRings.Ability (isForcedAbility)
+import LordOfTheRings.Helpers.Window (getWindowAbilities)
+import LordOfTheRings.Window (WindowType (RoundEnds), mkWhen)
 import LordOfTheRings.Classes.HasQueue (peekQueue, setQueue)
 import LordOfTheRings.Epic.Board (epicBoardFor)
+import LordOfTheRings.Epic.Coordinator
 import LordOfTheRings.Epic.Types
 import LordOfTheRings.Frontend (FrontendMessage)
 import LordOfTheRings.Game
@@ -124,23 +128,54 @@ runExternal shared boards commands snapshot = do
     else
       if null messages && old.epicBoards == boards
         then pure changed
-        else liftIO do
-          said <- newIORef []
-          env <- newGameEnv changed.epicGameState (\message -> modifyIORef' said (message :)) 0
-          runGameT env $ setQueue changed.epicGameQueue
-          writeIORef (gameRandomGen env) changed.epicGameGenerator
-          void $ runGameT env $ runDebug $ Run messages
-          state <- runGameT env getGame
-          queue <- runGameT env peekQueue
-          generator <- readIORef (gameRandomGen env)
-          sent <- reverse <$> readIORef said
-          pure
-            changed
-              { epicGameState = state
-              , epicGameQueue = queue
-              , epicGameGenerator = generator
-              , epicGameSent = changed.epicGameSent <> sent
-              }
+        else runLocalMessages messages changed
+
+-- Keep each team's queue and RNG independent when the event releases a barrier.
+runLocalMessages :: MonadIO m => [Message] -> EpicGame -> m EpicGame
+runLocalMessages messages snapshot = liftIO do
+  said <- newIORef []
+  env <- newGameEnv snapshot.epicGameState (\message -> modifyIORef' said (message :)) 0
+  runGameT env $ setQueue snapshot.epicGameQueue
+  writeIORef (gameRandomGen env) snapshot.epicGameGenerator
+  void $ runGameT env $ runDebug $ Run messages
+  state <- runGameT env getGame
+  queue <- runGameT env peekQueue
+  generator <- readIORef (gameRandomGen env)
+  sent <- reverse <$> readIORef said
+  pure snapshot
+    { epicGameState = state
+    , epicGameQueue = queue
+    , epicGameGenerator = generator
+    , epicGameSent = snapshot.epicGameSent <> sent
+    }
+
+-- Annúminas rules, Epic Multiplayer: all teams finish the refresh phase before
+-- any end-of-round effects resolve, in B,D,F order. The frozen trigger lists and
+-- barrier phases live in the persisted games, so choices and reconnects cannot
+-- recompute a later team's triggers after an enemy has moved there.
+coordinateEpicRound :: MonadIO m => [EpicGame] -> m (Maybe [EpicGame])
+coordinateEpicRound games
+  | length games /= 3 || any (isJust . (.outcome) . epicGameState) games = pure Nothing
+  | otherwise = case nextEpicRoundStep (map teamState games) of
+      Just FreezeEpicTeams -> do
+        let frozen =
+              [ (gameIdOf snapshot, runReadGame (filter isForcedAbility <$> getWindowAbilities [mkWhen RoundEnds]) snapshot.epicGameState)
+              | snapshot <- games
+              ]
+        Just <$> traverse (\snapshot -> runLocalMessages
+          [FreezeEpicRoundEnd $ fromJustNote "Missing Epic trigger snapshot" $ lookup (gameIdOf snapshot) frozen] snapshot) games
+      Just (ResolveEpicTeam ordinal) ->
+        Just <$> traverse (\snapshot -> if ordinalOf snapshot == ordinal
+          then runLocalMessages [BeginEpicRoundEnd] snapshot
+          else pure snapshot) games
+      Just ExpireEpicTeams -> Just <$> traverse (runLocalMessages [FinishEpicRoundEffects]) games
+      Just BeginEpicTeams -> Just <$> traverse (runLocalMessages [BeginEpicNextRound]) games
+      Nothing -> pure Nothing
+ where
+  teamState snapshot =
+    let board = epicBoardFor (ordinalOf snapshot) "" snapshot.epicGameState
+        codes = [q.epicQuestCard | stage <- maybeToList board.epicBoardStage, q <- stage.epicStageQuests]
+     in (ordinalOf snapshot, replicaOf snapshot >>= epicRoundState, codes, epicRoundBlocked snapshot.epicGameState)
 
 {- | Flush every group's outbox until cross-group consequences settle or await
 a player choice. The caller holds the event lock and saves any local undo
@@ -219,7 +254,13 @@ commitGames eid baseline initialGames = do
               ]
         if any outbox games' || boards /= newBoards
           then settle (rounds + 1) shared' games'
-          else pure (shared', games')
+          else coordinateEpicRound games' >>= \case
+            Nothing -> pure (shared', games')
+            Just coordinated -> do
+              -- A barrier changes every group's timing and cannot be undone by
+              -- rewinding one local game independently.
+              for_ games' $ \snapshot -> raiseUndoFloor (gameIdOf snapshot) snapshot.epicGameRow.lotrGameStep
+              settle (rounds + 1) shared' coordinated
   collectDeltas now shared snapshot = foldM apply shared (foldMap epicPendingDeltas $ replicaOf snapshot)
    where
     apply state delta = do
