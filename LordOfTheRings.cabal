@@ -2347,6 +2347,7 @@ library
       LordOfTheRings.Location.Cards.ShroudedWilderness
       LordOfTheRings.Location.Cards.SideStreet
       LordOfTheRings.Location.Cards.SiegeTower
+      LordOfTheRings.Location.Cards.SiegeTunnel
       LordOfTheRings.Location.Cards.SilentCaverns
       LordOfTheRings.Location.Cards.SilverWingLocation
       LordOfTheRings.Location.Cards.SinisterDungeon
@@ -4473,6 +4474,7 @@ test-suite LordOfTheRings-test
       LordOfTheRings.Standalone.AnnuminasInvadersSpec
       LordOfTheRings.Standalone.AnnuminasLocationsSpec
       LordOfTheRings.Standalone.AnnuminasTreacheriesSpec
+      LordOfTheRings.Standalone.AnnuminasTunnelSpec
       LordOfTheRings.Standalone.BattleOfLakeTownSpec
       LordOfTheRings.Standalone.BelegostSpec
       LordOfTheRings.Standalone.FogBarrowsSpec

@@ -1,17 +1,28 @@
 module LordOfTheRings.Scenario.Scenarios.TheSiegeOfAnnuminas.Helpers
-  (cityStrength, damageAnnuminas, repairAnnuminas) where
+  (cityStrength, damageAnnuminas, repairAnnuminas, eachAnnuminasTeam) where
 
-import LordOfTheRings.Card (toCardCode)
+import LordOfTheRings.Card (CardCode, toCardCode)
 import LordOfTheRings.Classes.Entity (toAttrs)
 import LordOfTheRings.Classes.HasGame
 import LordOfTheRings.Classes.HasQueue (push)
 import LordOfTheRings.Epic.Types
-import LordOfTheRings.Message (Message (ContributeShared))
+import LordOfTheRings.Message (Message (ContributeShared, ResolveEpicEffect, QueueEpicCommand))
 import LordOfTheRings.Message.Lifted
 import LordOfTheRings.Objective.CardDefs qualified as Objectives
 import LordOfTheRings.Prelude
 import LordOfTheRings.Scenario.Types (scenarioEpic)
 import LordOfTheRings.Source (Sourceable)
+import LordOfTheRings.Target (Target (ScenarioTarget))
+
+-- Only explicitly global scenario effects reach another team. Each destination
+-- receives its own durable command; its engine resolves against its own deck.
+eachAnnuminasTeam :: ReverseQueue m => CardCode -> EpicEffect -> m ()
+eachAnnuminasTeam code effect = do
+  replica <- getsGame $ scenarioEpic . toAttrs . (.scenario)
+  push $ ResolveEpicEffect code effect ScenarioTarget
+  for_ replica $ \r ->
+    for_ (nub [b.epicBoardGroup | b <- r.epicBoards, b.epicBoardGroup /= r.epicGroup]) $ \destination ->
+      push $ QueueEpicCommand destination code effect ScenarioTarget
 
 cityStrength :: HasGame m => m Int
 cityStrength = getsGame $ \g ->

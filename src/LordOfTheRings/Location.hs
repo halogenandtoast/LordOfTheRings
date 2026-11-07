@@ -2,6 +2,7 @@
 
 module LordOfTheRings.Location (module LordOfTheRings.Location, module X) where
 
+import LordOfTheRings.Location.Cards.SiegeTunnel (siegeTunnel)
 import LordOfTheRings.Location.Cards.AnnuminasDefenses
 import LordOfTheRings.Location.Cards.AnnuminasCountryside
 import LordOfTheRings.Location.Cards.PrancingPonyBree (thePrancingPonyMurder, ramshackleManor, darkAlleyMurder, marketSquareMurder, oldWarehouse, villageStable)
@@ -819,7 +820,8 @@ allLocations =
   Map.fromList
     [ (toCardCode builder, card)
     | card@(SomeLocationCard builder) <-
-        [ SomeLocationCard cityWallAnnuminas
+        [ SomeLocationCard siegeTunnel
+        , SomeLocationCard cityWallAnnuminas
         , SomeLocationCard batteringRam
         , SomeLocationCard gateOfAnnuminas
         , SomeLocationCard arnorBattlefield

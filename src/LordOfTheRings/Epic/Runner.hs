@@ -9,6 +9,7 @@ import LordOfTheRings.Epic.Types
 import LordOfTheRings.Game.Base
 import LordOfTheRings.GameT (GameT)
 import LordOfTheRings.I18n (cardVar, textVar)
+import LordOfTheRings.Matcher.Types (CardMatcher (CardWithType), cardMatches)
 import LordOfTheRings.Message
 import LordOfTheRings.Message.Lifted
 import LordOfTheRings.Objective.CardDefs qualified as Objectives
@@ -58,6 +59,12 @@ runEpicMessage msg g = case msg of
     runQueueT $ case effect of
       EpicDamage n -> dealDamage source target n
       EpicProgress n -> placeProgress source target n
+      EpicDiscardUntilEnemy -> do
+        let deck = (toAttrs g.scenario).encounterDeck
+            enemyCard = cardMatches (CardWithType EnemyType)
+            discardCount = maybe (length deck) (+ 1) $ findIndex enemyCard deck
+        discardTopOfEncounterDeckFor source ScenarioTarget discardCount
+        for_ (find enemyCard deck) addToStagingFromDiscard
       EpicUpgradeShip -> case target of
         AllyTarget aid | Just shipAlly <- lookup aid $ mapToList g.entities.allies -> do
           healDamage source target 5
