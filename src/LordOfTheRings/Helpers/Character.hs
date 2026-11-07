@@ -56,14 +56,18 @@ getHitPoints = characterStat cdHitPoints hitPointsOf
 -- enemy's traits, as Orders from Angmar's against Undead.
 getDefenseAgainst :: (HasGame m) => EnemyId -> Target -> m Int
 getDefenseAgainst eid defender = do
-  defense <- getDefense defender
   mods <- getModifiers defender
+  global <- getModifiers GameTarget
   enemy <- toCardDef <$> getEnemy eid
-  bonus <- sum <$> for [(trait, n) | DefenseBonusAgainst trait n <- mods] \(trait, n) -> bool 0 n <$> hasTrait trait (toTarget eid) enemy
-  byMatcher <- sum <$> for [(m, n) | DefenseBonusAgainstMatching m n <- mods] \(m, n) -> bool 0 n <$> selectAny (EnemyWithId eid <> m)
-  -- none of it counts against an enemy whose defenders do not count their defense
-  uncounted <- elem DefendersDoNotCountDefense <$> getModifiers (EnemyTarget eid)
-  pure $ if uncounted then 0 else defense + bonus + byMatcher
+  useWillpower <- anyM (\trait -> hasTrait trait (toTarget eid) enemy) [trait | WillpowerForDefenseAgainst trait <- mods <> global]
+  if useWillpower then getWillpower defender
+  else do
+    defense <- getDefense defender
+    bonus <- sum <$> for [(trait, n) | DefenseBonusAgainst trait n <- mods] \(trait, n) -> bool 0 n <$> hasTrait trait (toTarget eid) enemy
+    byMatcher <- sum <$> for [(m, n) | DefenseBonusAgainstMatching m n <- mods] \(m, n) -> bool 0 n <$> selectAny (EnemyWithId eid <> m)
+    -- none of the defense counts against an enemy that ignores that stat
+    uncounted <- elem DefendersDoNotCountDefense <$> getModifiers (EnemyTarget eid)
+    pure $ if uncounted then 0 else defense + bonus + byMatcher
 
 -- | The attack the characters given make together against an enemy, with their bonuses
 -- against its traits.

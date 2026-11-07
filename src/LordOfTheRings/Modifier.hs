@@ -142,6 +142,13 @@ data ModifierType
   | -- | on the game, or a character: characters use their willpower instead of defense,
     -- as Against the Shadow reads
     WillpowerForDefense
+  | WillpowerForDefenseAgainst Trait
+  | -- | Constant modifiers granted to actually engaged enemies with this trait.
+    EngagedEnemiesWithTraitGain Trait [ModifierType]
+  | EngagementModifiersApplyToEachPlayer
+  | -- | The enemy's engagement restrictions, expanded after blanking and traits.
+    EngagedPlayerModifier ModifierType
+  | EngagedHeroesModifier ModifierType
   | -- | on the game: characters use their willpower instead of attack when attacking
     -- enemies, as The Passage Out reads
     WillpowerForAttack

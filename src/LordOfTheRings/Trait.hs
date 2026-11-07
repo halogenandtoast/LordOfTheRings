@@ -157,6 +157,7 @@ data Trait
   | Road
   | Rohan
   | Ruins
+  | Downs
   | Scheme
   | Scout
   | Scroll

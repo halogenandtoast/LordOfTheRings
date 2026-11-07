@@ -1,7 +1,6 @@
 module LordOfTheRings.Enemy.Cards.BarrowDownsWights (barrowWight, coldWight, darkWight) where
 
 import LordOfTheRings.Card (toCardCode)
-import LordOfTheRings.Placement (Placement (EngagedWith))
 import LordOfTheRings.Enemy.CardDefs qualified as Cards
 import LordOfTheRings.Enemy.Import.Lifted
 
@@ -15,14 +14,10 @@ coldWight = enemy BarrowDownsWights Cards.coldWight
 darkWight = enemy BarrowDownsWights Cards.darkWight
 
 instance HasModifiersFor BarrowDownsWights where
-  getModifiersFor (BarrowDownsWights a) = case a.placement of
-    EngagedWith pid
-      | toCardCode a == toCardCode Cards.barrowWight -> modified a (PlayerTarget pid) [CannotReduceThreat]
-      | toCardCode a == toCardCode Cards.coldWight -> modified a (PlayerTarget pid) [CannotDrawCardsFromCardEffects]
-      | otherwise -> do
-          heroes <- select $ HeroControlledBy (PlayerWithId pid)
-          for_ heroes \hid -> modified a hid [CannotGainResourcesFromCardEffects]
-    _ -> pure ()
+  getModifiersFor (BarrowDownsWights a) = modifySelf a $
+    if toCardCode a == toCardCode Cards.barrowWight then [EngagedPlayerModifier CannotReduceThreat]
+    else if toCardCode a == toCardCode Cards.coldWight then [EngagedPlayerModifier CannotDrawCardsFromCardEffects]
+    else [EngagedHeroesModifier CannotGainResourcesFromCardEffects]
 
 instance HasAbilities BarrowDownsWights where
   getAbilities (BarrowDownsWights a) =

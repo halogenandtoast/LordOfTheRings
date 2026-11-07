@@ -15,7 +15,7 @@ allLocationCards =
   Map.fromList $
     map
       (\def -> (cdCardCode def, def))
-      [naurlhugsLair, abandonedMineBelegost, floodedHall, darkenedTunnel, sunkenTreasury, secretChamber, withywindle, misleadingPath, deepGulley, strangeWoods, wallOfTrees, oppressiveForest, theStoneOfErechStandalone, tarlangsNeck, banksOfMorthond, valeOfShadows, blackrootGraves, shadowOfDwimorberg, hauntedValley, westPier, theMastersManor, southPier, northPier, merchantsDistrict, eastPier, greatHouse, greatBridge, fishermansDock, esgarothWharf, capturedWatchtower, emynArnenOverlook, morgulduin, pelennorFieldsOsgiliath, ruinsOfOsgiliath, belfalasShipyard, cobasHavenDreadnaught, isleOfFortune, mouthsOfAnduin, tolfalasLanding, wickedCove,  theEavesOfMirkwoodDarkOfMirkwood
+      [stoneRing, northDownsFog, naurlhugsLair, abandonedMineBelegost, floodedHall, darkenedTunnel, sunkenTreasury, secretChamber, withywindle, misleadingPath, deepGulley, strangeWoods, wallOfTrees, oppressiveForest, theStoneOfErechStandalone, tarlangsNeck, banksOfMorthond, valeOfShadows, blackrootGraves, shadowOfDwimorberg, hauntedValley, westPier, theMastersManor, southPier, northPier, merchantsDistrict, eastPier, greatHouse, greatBridge, fishermansDock, esgarothWharf, capturedWatchtower, emynArnenOverlook, morgulduin, pelennorFieldsOsgiliath, ruinsOfOsgiliath, belfalasShipyard, cobasHavenDreadnaught, isleOfFortune, mouthsOfAnduin, tolfalasLanding, wickedCove,  theEavesOfMirkwoodDarkOfMirkwood
       , forestGateDarkOfMirkwood
       , goblinTunnelsDarkOfMirkwood
       , lightlessPassageDarkOfMirkwood
@@ -5515,3 +5515,9 @@ sunkenTreasury = (location "the-ruins-of-belegost-025" "Sunken Treasury" TheRuin
   { cdCardTraits = setFromList [Underground], cdKeywords = setFromList [Discover 3], cdShadowEffect = True }
 secretChamber = (location "the-ruins-of-belegost-026" "Secret Chamber" TheRuinsOfBelegost 3 3 2)
   { cdCardTraits = setFromList [Underground, Hazard], cdKeywords = setFromList [Discover 3] }
+
+stoneRing, northDownsFog :: CardDef
+stoneRing = (location "fog-on-the-barrow-downs-009" "Stone Ring" FogOnTheBarrowDowns 4 3 3)
+  { cdCardTraits = setFromList [Ruins, Downs], cdEasyModeQuantity = Just 3 }
+northDownsFog = (location "fog-on-the-barrow-downs-010" "North Downs" FogOnTheBarrowDowns 4 2 5)
+  { cdCardTraits = setFromList [Downs], cdShadowEffect = True }

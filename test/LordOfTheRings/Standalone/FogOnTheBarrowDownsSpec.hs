@@ -5,9 +5,9 @@ import LordOfTheRings.Sphere (Sphere (Baggins))
 import LordOfTheRings.Attachment.CardDefs qualified as Attachments
 import LordOfTheRings.Ally.CardDefs qualified as Allies
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
-import LordOfTheRings.Helpers.Modifiers (getModifiers)
-import LordOfTheRings.Helpers.Character (getWillpower)
-import LordOfTheRings.Helpers.Staging (getStagingThreat, getEnemyAttack)
+import LordOfTheRings.Helpers.Modifiers (getModifiers, preloadModifiers)
+import LordOfTheRings.Helpers.Character (getWillpower, getDefenseAgainst)
+import LordOfTheRings.Helpers.Staging (getStagingThreat, getEnemyAttack, getEnemyDefense)
 import LordOfTheRings.Helpers.Window (getActionAbilities)
 import LordOfTheRings.Location.Types (LocationAttrs (locationTokens))
 import LordOfTheRings.Location.CardDefs qualified as Locations
@@ -33,6 +33,12 @@ stageEnemy def = do
   card <- genEncounterCard def
   run $ AddToStaging card
   getsGame $ toId . fromJustNote "missing Wight" . find ((== card.id) . (.cardId) . toAttrs) . toList . (.entities.enemies)
+
+stageLocation :: CardDef -> GameT LocationId
+stageLocation def = do
+  card <- genEncounterCard def
+  run $ AddToStaging card
+  getsGame $ toId . fromJustNote "missing location" . find ((== card.id) . (.cardId) . toAttrs) . toList . (.entities.locations)
 
 restriction :: PlayerId -> CardDef -> GameT (Target, ModifierType)
 restriction pid def
@@ -89,6 +95,174 @@ songs = getsGame $ map toAttrs . filter ((== toCardCode Treacheries.dreadfulSong
 
 spec :: Spec
 spec = describe "Fog on the Barrow-downs Wights" do
+  describe "North Downs" do
+    it "uses current willpower only against Wights, ignoring defense bonuses" . gameTest $ \pid -> do
+      location <- stageLocation Locations.northDownsFog
+      wight <- stageEnemy Enemies.darkWight
+      spider <- stageEnemy Enemies.dolGuldurOrcs
+      hero <- heroOf pid "01007"
+      run $ CreateEffect $ Effect GameSource hero [DefenseModifier 10, DefenseBonusAgainst Wight 5, WillpowerModifier 2] UntilEndOfRound
+      getDefenseAgainst wight hero `shouldReturn` 6
+      getDefenseAgainst spider hero `shouldReturn` 11
+      run $ CreateEffect $ Effect GameSource (EnemyTarget spider) [GainTrait Wight] UntilEndOfRound
+      getDefenseAgainst spider hero `shouldReturn` 6
+      run $ PlaceLocation location ActiveLocation
+      getDefenseAgainst wight hero `shouldReturn` 16
+
+    it "stops substituting willpower immediately when blanked and does not stack the stat" . gameTest $ \pid -> do
+      firstLocation <- stageLocation Locations.northDownsFog
+      other <- stageLocation Locations.northDownsFog
+      eid <- stageEnemy Enemies.darkWight
+      hero <- heroOf pid "01007"
+      getDefenseAgainst eid hero `shouldReturn` 4
+      run $ CreateEffect $ Effect GameSource (LocationTarget firstLocation) [Blank] UntilEndOfRound
+      getDefenseAgainst eid hero `shouldReturn` 4
+      run $ CreateEffect $ Effect GameSource (LocationTarget other) [Blank] UntilEndOfRound
+      getDefenseAgainst eid hero `shouldReturn` 1
+
+    it "uses zero willpower from Dreadful Song rather than falling back to defense" . gameTest $ \pid -> do
+      _ <- stageLocation Locations.northDownsFog
+      eid <- stageEnemy Enemies.darkWight
+      hero <- heroOf pid "01007"
+      run $ CommitToQuest hero
+      revealSpell pid Treacheries.dreadfulSong
+      getDefenseAgainst eid hero `shouldReturn` 0
+      attached <- songs
+      for_ attached $ run . Discard GameSource . toTarget
+      getDefenseAgainst eid hero `shouldReturn` 4
+
+    it "uses willpower in the actual attack damage calculation" . gameTest $ \pid -> do
+      _ <- stageLocation Locations.northDownsFog
+      eid <- stageEnemy Enemies.coldWight
+      run $ EngageEnemy pid eid
+      hero <- heroOf pid "01007"
+      run $ EnemyAttack pid eid
+      defendAttack pid hero
+      getDamage hero `shouldReturn` 0
+
+    it "keeps its shadow bonus through the end of a nested player attack" . gameTest $ \pid -> do
+      eid <- stageEnemy Enemies.dolGuldurOrcs
+      [card] <- setEncounterDeck [Locations.northDownsFog]
+      run $ DealShadowCard eid
+      run $ ResolveShadowCard card.id eid pid []
+      run $ EndEffects UntilEndOfAttack
+      getEnemyAttack eid `shouldReturn` 4
+      run $ EndEffects (UntilEnemyAttackEnds eid)
+      getEnemyAttack eid `shouldReturn` 2
+
+    for_ [False, True] \kills ->
+      it ("adds two shadow attack and raises everyone's threat only on a kill = " <> show kills) . twoPlayerTest testDeck $ \one two -> do
+        eid <- stageEnemy Enemies.dolGuldurOrcs
+        run $ EngageEnemy one eid
+        defender <- if kills then putAllyIntoPlay one Allies.guardOfTheCitadel else heroOf one "01012"
+        _ <- setEncounterDeck [Locations.northDownsFog]
+        run $ DealShadowCard eid
+        run $ EnemyAttack one eid
+        defendAttack one defender
+        if kills then pure () else getDamage defender `shouldReturn` 2
+        for_ [one, two] \pid -> getThreat pid `shouldReturn` if kills then 2 else 0
+
+  describe "Stone Ring" do
+    for_ wights \def -> do
+      it ("spreads the first sentence immediately on engagement: " <> show (toCardCode def)) . twoPlayerTest testDeck $ \one two -> do
+        _ <- stageLocation Locations.stoneRing
+        eid <- stageEnemy def
+        (targetOne, blocked) <- restriction one def
+        (targetTwo, _) <- restriction two def
+        getModifiers targetOne >>= (`shouldSatisfy` notElem blocked)
+        getModifiers targetTwo >>= (`shouldSatisfy` notElem blocked)
+        run $ EngageEnemy one eid
+        getModifiers targetOne >>= (`shouldSatisfy` elem blocked)
+        getModifiers targetTwo >>= (`shouldSatisfy` elem blocked)
+        run $ PlaceEnemy eid StagingArea
+        getModifiers targetOne >>= (`shouldSatisfy` notElem blocked)
+        getModifiers targetTwo >>= (`shouldSatisfy` notElem blocked)
+
+      it ("respects blanking of the Wight and Stone Ring independently: " <> show (toCardCode def)) . twoPlayerTest testDeck $ \one two -> do
+        eid <- stageEnemy def
+        run $ EngageEnemy one eid
+        ring <- stageLocation Locations.stoneRing
+        (targetOne, blocked) <- restriction one def
+        (targetTwo, _) <- restriction two def
+        getModifiers targetTwo >>= (`shouldSatisfy` elem blocked)
+        run $ CreateEffect $ Effect GameSource (LocationTarget ring) [Blank] UntilEndOfRound
+        getModifiers targetOne >>= (`shouldSatisfy` elem blocked)
+        getModifiers targetTwo >>= (`shouldSatisfy` notElem blocked)
+        run $ EndEffects UntilEndOfRound
+        getModifiers targetTwo >>= (`shouldSatisfy` elem blocked)
+        run $ CreateEffect $ Effect GameSource (EnemyTarget eid) [Blank] UntilEndOfRound
+        getModifiers targetOne >>= (`shouldSatisfy` notElem blocked)
+        getModifiers targetTwo >>= (`shouldSatisfy` notElem blocked)
+
+    it "stacks attack and defense bonuses only on engaged Wights, even if their text is blank" . gameTest $ \pid -> do
+      ring <- stageLocation Locations.stoneRing
+      _ <- stageLocation Locations.stoneRing
+      eid <- stageEnemy Enemies.darkWight
+      spider <- stageEnemy Enemies.dolGuldurOrcs
+      getEnemyAttack eid `shouldReturn` 3
+      run $ EngageEnemy pid eid
+      run $ EngageEnemy pid spider
+      getEnemyAttack eid `shouldReturn` 5
+      getEnemyDefense eid `shouldReturn` 3
+      getEnemyAttack spider `shouldReturn` 2
+      run $ CreateEffect $ Effect GameSource (EnemyTarget eid) [Blank] UntilEndOfRound
+      getEnemyAttack eid `shouldReturn` 5
+      run $ PlaceLocation ring ActiveLocation
+      getEnemyAttack eid `shouldReturn` 4
+      getEnemyDefense eid `shouldReturn` 2
+
+    it "responds to gained and lost Wight traits without a stale modifier cache" . twoPlayerTest testDeck $ \one two -> do
+      _ <- stageLocation Locations.stoneRing
+      eid <- stageEnemy Enemies.darkWight
+      run $ EngageEnemy one eid
+      (targetTwo, blocked) <- restriction two Enemies.darkWight
+      getModifiers targetTwo >>= (`shouldSatisfy` elem blocked)
+      run $ CreateEffect $ Effect GameSource (EnemyTarget eid) [LoseTrait Wight] UntilEndOfRound
+      getEnemyAttack eid `shouldReturn` 3
+      getModifiers targetTwo >>= (`shouldSatisfy` notElem blocked)
+      run $ EndEffects UntilEndOfRound
+      getModifiers targetTwo >>= (`shouldSatisfy` elem blocked)
+      spider <- stageEnemy Enemies.dolGuldurOrcs
+      run $ EngageEnemy two spider
+      run $ CreateEffect $ Effect GameSource (EnemyTarget spider) [GainTrait Wight] UntilEndOfRound
+      getEnemyAttack spider `shouldReturn` 3
+
+    it "preserves location scripts and engagement restrictions through a saved-game reload" . twoPlayerTest testDeck $ \one two -> do
+      _ <- stageLocation Locations.stoneRing
+      eid <- stageEnemy Enemies.darkWight
+      run $ EngageEnemy one eid
+      current <- getGame
+      case eitherDecode (encode current) of
+        Right restored -> putGame =<< preloadModifiers restored
+        Left message -> error message
+      (targetTwo, blocked) <- restriction two Enemies.darkWight
+      getModifiers targetTwo >>= (`shouldSatisfy` elem blocked)
+      getEnemyAttack eid `shouldReturn` 4
+
+    it "does not share or boost a Wight engaged at another player's separate stage" . twoPlayerTest testDeck $ \one two -> do
+      eid <- stageEnemy Enemies.darkWight
+      run $ EngageEnemy two eid
+      run $ SeparateStagingAreas [[one], [two]]
+      _ <- stageLocation Locations.stoneRing
+      (targetOne, blocked) <- restriction one Enemies.darkWight
+      getModifiers targetOne >>= (`shouldSatisfy` notElem blocked)
+      getEnemyAttack eid `shouldReturn` 3
+      run $ FocusArea two
+      getEnemyAttack eid `shouldReturn` 3
+
+    for_ [("isolated", SeparatePlayers), ("shared", SeparateStagingAreas)] \(label, splitAreas) ->
+      it ("restricts the shared first sentences to players at the same stage in " <> label <> " staging areas") . twoPlayerTest testDeck $ \one two -> do
+        (targetOne, blocked) <- restriction one Enemies.darkWight
+        (targetTwo, _) <- restriction two Enemies.darkWight
+        run $ splitAreas [[one], [two]]
+        _ <- stageLocation Locations.stoneRing
+        eid <- stageEnemy Enemies.darkWight
+        run $ EngageEnemy one eid
+        getModifiers targetOne >>= (`shouldSatisfy` elem blocked)
+        getModifiers targetTwo >>= (`shouldSatisfy` notElem blocked)
+        run $ FocusArea two
+        getModifiers targetTwo >>= (`shouldSatisfy` notElem blocked)
+
   describe "Chill Fog" do
     it "empties hero and ally pools and raises each player's threat only for their own resources" . twoPlayerTest testDeck $ \one two -> do
       firstHero <- heroOf one "01012"

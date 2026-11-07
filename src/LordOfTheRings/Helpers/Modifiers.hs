@@ -9,7 +9,7 @@ import LordOfTheRings.Sphere (Sphere (Fellowship))
 import LordOfTheRings.Classes.HasGame
 import LordOfTheRings.Classes.HasModifiersFor
 import LordOfTheRings.Ally.Types (allyCardId, allyExhausted, allyTokens)
-import LordOfTheRings.Hero.Types (heroCardId, heroExhausted, heroTokens)
+import LordOfTheRings.Hero.Types (heroCardId, heroExhausted, heroTokens, heroPrisoner, heroInStagingArea, heroGuardedBy)
 import LordOfTheRings.Classes.Entity (toAttrs, toId)
 import LordOfTheRings.Effect
 import LordOfTheRings.Enemy.Types (enemyTokens)
@@ -230,7 +230,36 @@ preloadModifiers g = do
       gained m = case m.modifierType of
         WillpowerModifier n -> frozen && n > 0 && isPlayerCardSource m.modifierSource
         _ -> False
-  pure $ g {gameEffects = liveEffects, gameModifiers = Map.mapWithKey (\t -> filter (not . gained) . unaffected t) all'}
+      base = Map.mapWithKey (\t -> filter (not . gained) . unaffected t) all'
+      typesOf target cache = map modifierType $ Map.findWithDefault [] target cache
+      withTrait trait entity =
+        let ms = typesOf (toTarget entity) base
+         in LoseTrait trait `notElem` ms && (trait `member` cdCardTraits (toCardDef entity) || GainTrait trait `elem` ms)
+      -- Materialize these after traits and blanking, so a newly engaged Wight
+      -- applies its first sentence immediately, including through Stone Ring.
+      engagementBonuses = Map.fromListWith (<>)
+        [(toTarget e, map (Modifier source) bonuses)
+        | Modifier source (EngagedEnemiesWithTraitGain trait bonuses) <- Map.findWithDefault [] GameTarget base
+        , e <- toList es.enemies
+        , EngagedWith controller <- [e.placement]
+        , inFocusedArea g controller
+        , withTrait trait e]
+      engaged = Map.mapWithKey unaffected $ Map.unionWith (<>) base engagementBonuses
+      stagePlayers = filter (inFocusedArea g) $ Map.keys g.players
+      restrictions = Map.fromListWith (<>)
+        [(target, [Modifier source restriction])
+        | e <- toList es.enemies
+        , EngagedWith controller <- [e.placement]
+        , let ms = Map.findWithDefault [] (toTarget e) engaged
+        , pid <- if EngagementModifiersApplyToEachPlayer `elem` map modifierType ms then stagePlayers else [controller]
+        , Modifier source descriptor <- ms
+        , (target, restriction) <- case descriptor of
+            EngagedPlayerModifier m -> [(PlayerTarget pid, m)]
+            EngagedHeroesModifier m ->
+              [(toTarget h, m) | h <- toList es.heroes, h.owner == pid, not (toAttrs h).heroPrisoner, not (toAttrs h).heroInStagingArea, isNothing (toAttrs h).heroGuardedBy]
+            _ -> []]
+      final = Map.mapWithKey (\t -> filter (not . gained) . unaffected t) $ Map.unionWith (<>) engaged restrictions
+  pure $ g {gameEffects = liveEffects, gameModifiers = final}
 
 -- | Whether the character commits to the quest without exhausting.
 doesNotExhaustToCommit :: (HasGame m) => Target -> m Bool
