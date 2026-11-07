@@ -96,6 +96,79 @@ songs = getsGame $ map toAttrs . filter ((== toCardCode Treacheries.dreadfulSong
 
 spec :: Spec
 spec = describe "Fog on the Barrow-downs Wights" do
+  describe "Hollow Circle" do
+    it "has each player choose a different physical Wight, paying the whole cost before travel" . twoPlayerTest testDeck $ \one two -> do
+      lid <- stageLocation Locations.hollowCircle
+      [firstWight, secondWight, _] <- setEncounterDeck [Enemies.coldWight, Enemies.darkWight, Locations.oldForestRoad]
+      run $ TravelTo lid
+      (.placement) <$> getLocation lid `shouldReturn` StagingArea
+      chooseTarget one (CardIdTarget firstWight.id)
+      (.placement) <$> getLocation lid `shouldReturn` StagingArea
+      chooseTarget two (CardIdTarget secondWight.id)
+      (.placement) <$> getLocation lid `shouldReturn` ActiveLocation
+      foes <- getsGame $ toList . (.entities.enemies)
+      sort [(toCardCode e, (toAttrs e).placement) | e <- foes] `shouldBe`
+        sort [(toCardCode Enemies.coldWight, EngagedWith one), (toCardCode Enemies.darkWight, EngagedWith two)]
+      map toCardCode <$> getEncounterDeck `shouldReturn` [toCardCode Locations.oldForestRoad]
+
+    it "allows a Wight from the encounter discard pile and preserves its card id" . gameTest $ \pid -> do
+      lid <- stageLocation Locations.hollowCircle
+      card <- genEncounterCard Enemies.barrowWight
+      current <- getGame
+      putGame $ current & scenarioL %~ overAttrs (encounterDiscardL .~ [card])
+      _ <- setEncounterDeck [Locations.oldForestRoad]
+      -- Rebuild the travel restriction after changing the encounter zones.
+      putGame =<< preloadModifiers =<< getGame
+      run $ TravelTo lid
+      chooseTarget pid (CardIdTarget card.id)
+      foes <- getsGame $ toList . (.entities.enemies)
+      map ((.cardId) . toAttrs) foes `shouldBe` [card.id]
+      map ((.placement) . toAttrs) foes `shouldBe` [EngagedWith pid]
+      getEncounterDiscard `shouldReturn` []
+      (.placement) <$> getLocation lid `shouldReturn` ActiveLocation
+
+    it "cannot travel or partially pay when there are fewer Wights than players" . twoPlayerTest testDeck $ \one _ -> do
+      lid <- stageLocation Locations.hollowCircle
+      cards <- setEncounterDeck [Enemies.coldWight, Locations.oldForestRoad]
+      putGame =<< preloadModifiers =<< getGame
+      getModifiers lid >>= (`shouldSatisfy` elem CannotBeTraveledTo)
+      run $ TravelTo lid
+      (.placement) <$> getLocation lid `shouldReturn` StagingArea
+      getEncounterDeck `shouldReturn` cards
+      length <$> getsGame (toList . (.entities.enemies)) `shouldReturn` 0
+      getQuestion one `shouldReturn` Nothing
+
+    it "does not count Wights already in play toward its travel cost" . gameTest $ \pid -> do
+      lid <- stageLocation Locations.hollowCircle
+      _ <- stageEnemy Enemies.coldWight
+      _ <- setEncounterDeck [Locations.oldForestRoad]
+      putGame =<< preloadModifiers =<< getGame
+      run $ TravelTo lid
+      (.placement) <$> getLocation lid `shouldReturn` StagingArea
+      getQuestion pid `shouldReturn` Nothing
+
+    it "is immune to player card progress but is explored by framework progress for victory" . gameTest $ \pid -> do
+      lid <- stageLocation Locations.hollowCircle
+      hero <- heroOf pid "01012"
+      case hero of
+        HeroTarget hid -> run $ PlaceTokens (HeroSource hid) (LocationTarget lid) Progress 3
+        _ -> error "not a hero"
+      (.progress) <$> getLocation lid `shouldReturn` 0
+      run $ PlaceTokens GameSource (LocationTarget lid) Progress 3
+      victory <- getsGame $ (.victoryDisplay) . toAttrs . (.scenario)
+      map toCardCode victory `shouldBe` [toCardCode Locations.hollowCircle]
+
+    for_ [("isolated", SeparatePlayers), ("shared", SeparateStagingAreas)] \(label, splitAreas) ->
+      it ("charges only the players at its stage in " <> label <> " areas") . twoPlayerTest testDeck $ \one two -> do
+        run $ splitAreas [[one], [two]]
+        lid <- stageLocation Locations.hollowCircle
+        [card, _] <- setEncounterDeck [Enemies.coldWight, Locations.oldForestRoad]
+        putGame =<< preloadModifiers =<< getGame
+        run $ TravelTo lid
+        chooseTarget one (CardIdTarget card.id)
+        (.placement) <$> getLocation lid `shouldReturn` ActiveLocation
+        getQuestion two `shouldReturn` Nothing
+
   describe "Ancient Barrow" do
     it "has each player choose their own ally and counts the facedown cards in its threat" . twoPlayerTest testDeck $ \one two -> do
       chosenOne <- putAllyIntoPlay one Allies.guardOfTheCitadel

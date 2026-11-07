@@ -15,7 +15,7 @@ allLocationCards =
   Map.fromList $
     map
       (\def -> (cdCardCode def, def))
-      [ancientBarrow, stoneRing, northDownsFog, naurlhugsLair, abandonedMineBelegost, floodedHall, darkenedTunnel, sunkenTreasury, secretChamber, withywindle, misleadingPath, deepGulley, strangeWoods, wallOfTrees, oppressiveForest, theStoneOfErechStandalone, tarlangsNeck, banksOfMorthond, valeOfShadows, blackrootGraves, shadowOfDwimorberg, hauntedValley, westPier, theMastersManor, southPier, northPier, merchantsDistrict, eastPier, greatHouse, greatBridge, fishermansDock, esgarothWharf, capturedWatchtower, emynArnenOverlook, morgulduin, pelennorFieldsOsgiliath, ruinsOfOsgiliath, belfalasShipyard, cobasHavenDreadnaught, isleOfFortune, mouthsOfAnduin, tolfalasLanding, wickedCove,  theEavesOfMirkwoodDarkOfMirkwood
+      [hollowCircle, ancientBarrow, stoneRing, northDownsFog, naurlhugsLair, abandonedMineBelegost, floodedHall, darkenedTunnel, sunkenTreasury, secretChamber, withywindle, misleadingPath, deepGulley, strangeWoods, wallOfTrees, oppressiveForest, theStoneOfErechStandalone, tarlangsNeck, banksOfMorthond, valeOfShadows, blackrootGraves, shadowOfDwimorberg, hauntedValley, westPier, theMastersManor, southPier, northPier, merchantsDistrict, eastPier, greatHouse, greatBridge, fishermansDock, esgarothWharf, capturedWatchtower, emynArnenOverlook, morgulduin, pelennorFieldsOsgiliath, ruinsOfOsgiliath, belfalasShipyard, cobasHavenDreadnaught, isleOfFortune, mouthsOfAnduin, tolfalasLanding, wickedCove,  theEavesOfMirkwoodDarkOfMirkwood
       , forestGateDarkOfMirkwood
       , goblinTunnelsDarkOfMirkwood
       , lightlessPassageDarkOfMirkwood
@@ -5525,3 +5525,7 @@ northDownsFog = (location "fog-on-the-barrow-downs-010" "North Downs" FogOnTheBa
 ancientBarrow :: CardDef
 ancientBarrow = (location "fog-on-the-barrow-downs-008" "Ancient Barrow" FogOnTheBarrowDowns 3 0 4)
   { cdCardTraits = setFromList [Ruins, Downs], cdEasyModeQuantity = Just 2 }
+
+hollowCircle :: CardDef
+hollowCircle = unique (location "fog-on-the-barrow-downs-005" "Hollow Circle" FogOnTheBarrowDowns 1 3 3)
+  { cdCardTraits = setFromList [Ruins, Downs], cdVictoryPoints = Just 3 }
