@@ -1901,7 +1901,7 @@ postCampaignXpR cid = do
   runDB $ update cid [LotrCampaignLog =. toJSON l', LotrCampaignUpdatedAt =. now]
   pure $ toJSON l'
 
-data NewEpicEvent = NewEpicEvent {name :: Text, difficulty :: Maybe GameMode}
+data NewEpicEvent = NewEpicEvent {name :: Text, difficulty :: Maybe GameMode, scenario :: Maybe Text}
   deriving stock Generic
   deriving anyclass FromJSON
 
@@ -1909,8 +1909,8 @@ data NewEpicGroup = NewEpicGroup {name :: Text, seats :: Maybe Int, difficulty :
   deriving stock Generic
   deriving anyclass FromJSON
 
-checkEpicDifficulty :: GameMode -> Handler ()
-checkEpicDifficulty mode = when (mode == NightmareMode)
+checkEpicDifficulty :: Text -> GameMode -> Handler ()
+checkEpicDifficulty scenarioCode mode = when (mode == NightmareMode || (scenarioCode /= "the-hunt-for-the-dreadnaught" && mode /= NormalMode))
   $ sendResponseStatus status400 (ikey "error.epicDifficulty")
 
 -- An individual group cannot redeal independently after contributing to the event.
@@ -1924,10 +1924,12 @@ postEpicEventsR = do
   userId <- requireUserId
   request <- requireCheckJsonBody @_ @NewEpicEvent
   let mode = fromMaybe NormalMode request.difficulty
-  checkEpicDifficulty mode
+      scenarioCode = fromMaybe "the-hunt-for-the-dreadnaught" request.scenario
+  unless (scenarioCode `elem` ["the-hunt-for-the-dreadnaught", "the-siege-of-annuminas"]) $ sendResponseStatus status400 (ikey "error.epicScenario")
+  checkEpicDifficulty scenarioCode mode
   when (T.null $ T.strip request.name) $ sendResponseStatus status400 (ikey "error.epicName")
   now <- liftIO getCurrentTime
-  eid <- runDB $ insert $ LotrEpicEvent userId (T.strip request.name) (tshow mode) False Null now now
+  eid <- runDB $ insert $ LotrEpicEvent userId (T.strip request.name) (tshow mode) scenarioCode False Null now now
   epicEventView userId eid
 
 getEpicEventsR :: Handler Value
@@ -1964,18 +1966,19 @@ epicEventView viewer eid = do
   pure $ object
     [ "id" .= eid, "name" .= event.lotrEpicEventName, "organizer" .= event.lotrEpicEventUserId
     , "canStart" .= (viewer == event.lotrEpicEventUserId && not event.lotrEpicEventStarted)
-    , "difficulty" .= event.lotrEpicEventMode, "started" .= event.lotrEpicEventStarted
+    , "difficulty" .= event.lotrEpicEventMode, "scenario" .= event.lotrEpicEventScenario, "started" .= event.lotrEpicEventStarted
     , "groups" .= groups, "totalPlayers" .= fmap EpicTypes.totalPlayers shared
     , "searchComplete" .= maybe False EpicTypes.stageOneComplete shared
+    , "cityStrength" .= (shared >>= EpicTypes.annuminasCityStrength)
     , "progress" .= counter EpicTypes.SearchingTheHighSeasProgress, "damage" .= counter EpicTypes.DreadnaughtDamage
     ]
 
-newEpicGame :: UserId -> Text -> Text -> Int -> GameMode -> UTCTime -> LotrGame
-newEpicGame userId username name seats mode now = LotrGame
+newEpicGame :: UserId -> Text -> Text -> Text -> Int -> GameMode -> UTCTime -> LotrGame
+newEpicGame userId username name scenarioCode seats mode now = LotrGame
   { lotrGameUserId = userId, lotrGameName = name, lotrGamePlayerName = username
   , lotrGameCurrentData = Null, lotrGameCurrentQueue = toJSON ([] :: [Message])
   , lotrGameRandomGen = showGen (mkStdGen 0), lotrGameStep = 0, lotrGameRevision = 0
-  , lotrGameScenario = "the-hunt-for-the-dreadnaught", lotrGameDeck = Nothing
+  , lotrGameScenario = scenarioCode, lotrGameDeck = Nothing
   , lotrGameAllowSpectators = False, lotrGameWithFriends = True, lotrGameSeats = seats
   , lotrGameEasyMode = mode == EasyMode, lotrGameNightmare = False, lotrGameHardMode = mode == HardMode
   , lotrGameCampaignId = Nothing, lotrGamePublicScoring = False, lotrGameCountsPublicly = False
@@ -1995,11 +1998,12 @@ postEpicGroupsR eid = do
     event <- Epic.lockEvent eid
     when event.lotrEpicEventStarted $ lift $ sendResponseStatus status409 (ikey "error.epicStarted")
     mode <- maybe (Epic.parseStored "Epic difficulty" $ String event.lotrEpicEventMode) pure request.difficulty
-    lift $ checkEpicDifficulty mode
+    lift $ checkEpicDifficulty event.lotrEpicEventScenario mode
     groups <- selectList [LotrEpicGroupEventId ==. eid] [Desc LotrEpicGroupOrdinal, LimitTo 1]
     now <- liftIO getCurrentTime
     let ordinal = maybe 0 ((+ 1) . lotrEpicGroupOrdinal . entityVal) (headMay groups)
-    gid <- insert $ newEpicGame userId user.userUsername (event.lotrEpicEventName <> " · " <> T.strip request.name) seats mode now
+    when (event.lotrEpicEventScenario /= "the-hunt-for-the-dreadnaught" && ordinal >= 3) $ lift $ sendResponseStatus status409 (ikey "error.epicThreeGroups")
+    gid <- insert $ newEpicGame userId user.userUsername (event.lotrEpicEventName <> " · " <> T.strip request.name) event.lotrEpicEventScenario seats mode now
     insert_ $ LotrEpicGroup eid gid ordinal (T.strip request.name)
     pure gid
   pure $ object ["gameId" .= gid, "eventId" .= eid]
@@ -2014,6 +2018,7 @@ postEpicStartR eid = do
     when event.lotrEpicEventStarted $ lift $ sendResponseStatus status409 (ikey "error.epicStarted")
     groups <- selectList [LotrEpicGroupEventId ==. eid] [Asc LotrEpicGroupOrdinal]
     when (null groups) $ lift $ sendResponseStatus status409 (ikey "error.epicNotReady")
+    when (event.lotrEpicEventScenario /= "the-hunt-for-the-dreadnaught" && length groups /= 3) $ lift $ sendResponseStatus status409 (ikey "error.epicThreeGroups")
     prepared <- for groups \(Entity _ groupRow) -> do
       row <- getJust groupRow.lotrEpicGroupGameId
       seats <- selectList [LotrSeatGameId ==. groupRow.lotrEpicGroupGameId] [Asc LotrSeatPosition]
@@ -2024,11 +2029,11 @@ postEpicStartR eid = do
         deck <- maybe (pure starterDeck) (Epic.parseStored "Epic deck") seat.lotrSeatDeck
         pure (user.userUsername, deck)
       pure (groupRow, row, fromJustNote "Epic group has no players" $ nonEmpty players)
-    let shared = fromJustNote "Epic event has no players" $ EpicTypes.newSharedEvent $ sum [length players | (_, _, players) <- prepared]
+    let shared = fromJustNote "Epic event has no players" $ (if event.lotrEpicEventScenario == "the-siege-of-annuminas" then EpicTypes.newAnnuminasEvent else EpicTypes.newSharedEvent) $ sum [length players | (_, _, players) <- prepared]
     now <- liftIO getCurrentTime
     games <- for prepared \(groupRow, row, players) -> do
       let replica = EpicTypes.EpicReplica (EpicTypes.GroupOrdinal groupRow.lotrEpicGroupOrdinal) shared [] [] [] mempty mempty
-          base = fromJustNote "Dreadnaught scenario missing" $ lookupScenario "the-hunt-for-the-dreadnaught"
+          base = fromJustNote "Epic scenario missing" $ lookupScenario (ScenarioId event.lotrEpicEventScenario)
           scenario = overAttrs (\a -> a {scenarioEpic = Just replica}) base
           mode = gameMode row.lotrGameEasyMode False row.lotrGameHardMode
       ((state, queue, generator), sent) <- liftIO . startGame scenario mode players =<< liftIO randomIO

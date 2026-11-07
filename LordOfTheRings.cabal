@@ -3405,6 +3405,7 @@ library
       LordOfTheRings.Scenario.Scenarios.TheRuinsOfBelegost.Helpers
       LordOfTheRings.Scenario.Scenarios.TheSeventhLevel
       LordOfTheRings.Scenario.Scenarios.TheSeventhLevel.Helpers
+      LordOfTheRings.Scenario.Scenarios.TheSiegeOfAnnuminas
       LordOfTheRings.Scenario.Scenarios.TheSiegeOfAnnuminas.Helpers
       LordOfTheRings.Scenario.Scenarios.TheSiegeOfCairAndros
       LordOfTheRings.Scenario.Scenarios.TheSiegeOfCairAndros.Helpers
@@ -4487,6 +4488,7 @@ test-suite LordOfTheRings-test
       LordOfTheRings.Standalone.AnnuminasLocationsSpec
       LordOfTheRings.Standalone.AnnuminasManWallsSpec
       LordOfTheRings.Standalone.AnnuminasOpeningSpec
+      LordOfTheRings.Standalone.AnnuminasSetupSpec
       LordOfTheRings.Standalone.AnnuminasSortieSpec
       LordOfTheRings.Standalone.AnnuminasStageStateSpec
       LordOfTheRings.Standalone.AnnuminasTreacheriesSpec

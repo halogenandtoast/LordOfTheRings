@@ -90,6 +90,7 @@ LotrEpicEvent sql=lotr_epic_events
   userId UserId OnDeleteCascade
   name Text
   mode Text
+  scenario Text default='the-hunt-for-the-dreadnaught'
   started Bool default=false
   sharedState Value
   createdAt UTCTime

@@ -1,6 +1,8 @@
 {
+  "epicScenario": "Choose a supported Epic multiplayer scenario.",
+  "epicThreeGroups": "This scenario requires exactly three groups, each with 1–4 players.",
   "epicImport": "An Epic group belongs to a shared event and cannot be imported as an independent game.",
-  "epicDifficulty": "Choose Easy, Normal, or Hard for this Epic group.",
+  "epicDifficulty": "Choose a supported difficulty: Easy, Normal, or Hard for Dreadnaught; Normal for this scenario.",
   "epicName": "Enter a name for the event or group.",
   "epicStarted": "This Epic event has already started; its groups and player count are fixed.",
   "epicNotReady": "Create at least one group and fill every group’s seats before starting the event.",
