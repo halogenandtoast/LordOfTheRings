@@ -41,6 +41,11 @@ instance RunMessage DolGuldurSiege where
       askToResolveWhenRevealed a
       DolGuldurSiege <$> runMessage msg a
     WhenRevealed (isTarget a -> True) -> do
+      -- These are separate printed sentences: a passive victory can interrupt
+      -- after setting aside the last Lieutenant, before adding its replacement.
+      -- FAQ 1.37; Caleb 2016-11-29 (3.227) / 2019-07-09 (3.322):
+      -- https://alongextendedparty.com/semi-official-errata-faq-1-10/
+      -- https://ffg-forum-archive.entropicdreams.com/topic/277776-unofficial-official-rulings-thread/page/2/
       lieutenants <- select $ EnemyWithTrait Lieutenant
       traverse_ (push . SetAsideEnemy) lieutenants
       doStep 1 msg

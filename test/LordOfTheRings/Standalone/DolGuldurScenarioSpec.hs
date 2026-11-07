@@ -4,7 +4,8 @@ import Data.UUID qualified as UUID
 import LordOfTheRings.Card (toCardDef)
 import LordOfTheRings.Ally.CardDefs qualified as Allies
 import LordOfTheRings.Helpers.Staging (getEnemyAttack)
-import LordOfTheRings.Effect (EffectDuration (UntilEndOfRound))
+import LordOfTheRings.Effect (Effect (..), EffectDuration (UntilEndOfRound))
+import LordOfTheRings.Modifier (ModifierType (AtEndOfRound))
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Epic.Types
 import LordOfTheRings.Keyword (Keyword (Indestructible))
@@ -225,6 +226,27 @@ spec = describe "Attack on Dol Guldur scenario and quests" do
     getsGame (length . (.entities.allies)) `shouldReturn` 0
     map toCardCode . (.discard) <$> getPlayer pid `shouldReturn` [toCardCode Allies.guardOfTheCitadel]
     case allyTarget of AllyTarget _ -> pure (); _ -> error "expected ally"
+
+  for_ [False, True] $ \atRoundEnd ->
+    it ("checks passive victory between the Lieutenant replacement sentences only at round end: " <> show atRoundEnd) . gameTestIn attackOnDolGuldur testDeck $ \_ -> do
+      _ <- stageDolGuldur 0
+      _ <- stageEnemy Enemies.baneOfAmonLanc
+      incoming <- genEncounterCard Enemies.sorcererOfDolGuldurAttack
+      run $ SetAside incoming
+      target <- putQuestStage Quests.theTowerOfSorcery
+      when atRoundEnd $ run $ CreateEffect $ Effect GameSource GameTarget [AtEndOfRound] UntilEndOfRound
+      getsGame (.outcome) `shouldReturn` Nothing
+      run $ Flip target
+      resolveRevealed
+      if atRoundEnd then do
+        getsGame (.outcome) `shouldReturn` Just Won
+        getsGame (map toCardCode . toList . (.entities.enemies)) `shouldReturn` []
+        getsGame (sort . map toCardCode . scenarioSetAside . toAttrs . (.scenario)) `shouldReturn`
+          sort [toCardCode Enemies.sorcererOfDolGuldurAttack, toCardCode Enemies.baneOfAmonLanc]
+      else do
+        getsGame (.outcome) `shouldReturn` Nothing
+        getsGame (map toCardCode . toList . (.entities.enemies)) `shouldReturn` [toCardCode Enemies.sorcererOfDolGuldurAttack]
+        getsGame (map toCardCode . scenarioSetAside . toAttrs . (.scenario)) `shouldReturn` [toCardCode Enemies.baneOfAmonLanc]
 
   it "holds the first shared terminal result while city zero alone is nonterminal" . gameTest $ \_ -> do
     let initial = fromJustNote "invalid players" $ newDolGuldurEvent 3
