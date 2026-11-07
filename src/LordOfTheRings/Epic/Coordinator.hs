@@ -1,4 +1,4 @@
-module LordOfTheRings.Epic.Coordinator (EpicRoundStep (..), nextEpicRoundStep, epicRoundBlocked) where
+module LordOfTheRings.Epic.Coordinator (EpicRoundStep (..), nextEpicRoundStep, epicRoundBlocked, annuminasStageTwoReady) where
 
 import LordOfTheRings.Card.Code (CardCode)
 import LordOfTheRings.Classes.Entity (toAttrs)
@@ -16,6 +16,10 @@ data EpicRoundStep
   | ResolveEpicTeam GroupOrdinal
   | ExpireEpicTeams
   | BeginEpicTeams
+  | FreezeEpicBeginningTeams
+  | ReleaseEpicBeginningTeams
+  | RevealEpicTeams
+  | ReleaseEpicResources
   deriving stock (Show, Eq)
 
 nextEpicRoundStep
@@ -32,6 +36,11 @@ nextEpicRoundStep teams = do
   if | allPhase EpicRoundWaiting -> Just FreezeEpicTeams
      | allPhase EpicRoundEnded -> Just ExpireEpicTeams
      | allPhase EpicRoundExpired -> Just BeginEpicTeams
+     | allPhase EpicRoundBeginning -> Just FreezeEpicBeginningTeams
+     | allPhase EpicRoundBeginReady -> Just ReleaseEpicBeginningTeams
+     | allPhase EpicRoundPrepared -> Just RevealEpicTeams
+     | allPhase EpicRoundRevealed -> Just ReleaseEpicBeginningTeams
+     | allPhase EpicRoundBegan -> Just ReleaseEpicResources
      | all (`elem` [EpicRoundReady, EpicRoundEnded]) phases -> do
          (ordinal, _, _, _) <- find (\(_, state, _, _) -> fmap epicRoundPhase state == Just EpicRoundReady) ordered
          pure $ ResolveEpicTeam ordinal
@@ -43,3 +52,18 @@ epicRoundBlocked :: Game -> Bool
 epicRoundBlocked g =
   any ((/= Just AwaitEpicRound) . questionRebuild) (toList g.question)
     || maybe False (\replica -> not (null replica.epicPendingRequests && null replica.epicPendingCommands && null replica.epicPendingDeltas)) (scenarioEpic $ toAttrs g.scenario)
+
+-- The Epic setup reverse requires every stage two to be complete at the same
+-- beginning of the round. These are fresh boards, including shared Host VPs.
+annuminasStageTwoReady :: [EpicBoard] -> Bool
+annuminasStageTwoReady boards =
+  length boards == 3
+    && length (nub $ map epicBoardGroup boards) == 3
+    && all ready boards
+ where
+  ready board = case board.epicBoardStage of
+    Just stage -> case stage.epicStageQuests of
+      [q] -> q.epicQuestNumber == 2 && q.epicQuestFlipped
+        && maybe False (q.epicQuestProgress >=) q.epicQuestRequirement
+      _ -> False
+    Nothing -> False

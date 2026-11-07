@@ -21,6 +21,10 @@ manTheWallsAnnuminas = quest AnnuminasDefense Cards.manTheWallsAnnuminas
 
 instance HasModifiersFor AnnuminasDefense where
   getModifiersFor (AnnuminasDefense a) = when a.flipped do
+    -- Epic setup reverse: only the global beginning-of-round controller may
+    -- defeat these quests, after all three stages meet their requirements.
+    whenM (getsGame $ isJust . scenarioEpic . toAttrs . (.scenario)) $
+      modifySelf a [CannotBeDefeated]
     hosts <- annuminasVictoryCopies $ toCardCode Enemies.hostOfAngmar
     modifySelf a [QuestPointModifier $ negate $ 10 * hosts]
     when (toCardCode a == toCardCode Cards.guardTheGateAnnuminas) $

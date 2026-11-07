@@ -11,7 +11,7 @@ import LordOfTheRings.Classes.Entity (overAttrs, toAttrs)
 import LordOfTheRings.Classes.HasGame (getGame, runReadGame)
 import LordOfTheRings.Ability (isForcedAbility)
 import LordOfTheRings.Helpers.Window (getWindowAbilities)
-import LordOfTheRings.Window (WindowType (RoundEnds), mkWhen)
+import LordOfTheRings.Window (WindowType (RoundEnds, RoundBegins), mkWhen)
 import LordOfTheRings.Classes.HasQueue (peekQueue, setQueue)
 import LordOfTheRings.Epic.Board (epicBoardFor)
 import LordOfTheRings.Epic.Coordinator
@@ -21,7 +21,7 @@ import LordOfTheRings.Game
 import LordOfTheRings.GameT
 import LordOfTheRings.Message
 import LordOfTheRings.Prelude hiding (delete)
-import LordOfTheRings.Scenario.Types (ScenarioAttrs (scenarioEpic))
+import LordOfTheRings.Scenario.Types (ScenarioAttrs (scenarioEpic, scenarioQuestDeck))
 import Model
 import System.Random.Internal (StdGen (..))
 import System.Random.SplitMix (seedSMGen', unseedSMGen)
@@ -169,9 +169,29 @@ coordinateEpicRound games
           then runLocalMessages [BeginEpicRoundEnd] snapshot
           else pure snapshot) games
       Just ExpireEpicTeams -> Just <$> traverse (runLocalMessages [FinishEpicRoundEffects]) games
-      Just BeginEpicTeams -> Just <$> traverse (runLocalMessages [BeginEpicNextRound]) games
+      Just BeginEpicTeams -> Just <$> traverse (runLocalMessages [BeginEpicRoundBeginning]) games
+      Just FreezeEpicBeginningTeams -> do
+        let frozen =
+              [ (gameIdOf snapshot, runReadGame (filter isForcedAbility <$> getWindowAbilities [mkWhen RoundBegins]) snapshot.epicGameState)
+              | snapshot <- games
+              ]
+        Just <$> traverse (\snapshot -> runLocalMessages
+          [FreezeEpicRoundBeginning $ fromJustNote "Missing Epic beginning trigger snapshot" $ lookup (gameIdOf snapshot) frozen] snapshot) games
+      Just ReleaseEpicResources -> Just <$> traverse (runLocalMessages [BeginEpicRoundResources]) games
+      Just RevealEpicTeams -> Just <$> traverse (runLocalMessages [RevealEpicQuestAdvance]) games
+      Just ReleaseEpicBeginningTeams
+        | all atBeginReady games, isAnnuminas, annuminasStageTwoReady boards -> do
+            let nextQuest snapshot = headMay $ scenarioQuestDeck $ toAttrs snapshot.epicGameState.scenario
+            case traverse nextQuest games of
+              Nothing -> liftIO $ throwIO $ userError "Annúminas final quest is missing"
+              Just chosen -> Just <$> zipWithM (\snapshot card ->
+                runLocalMessages [PrepareEpicQuestAdvance EpicDefeatQuest card] snapshot) games chosen
+        | otherwise -> Just <$> traverse (runLocalMessages [ReleaseEpicRoundBeginning]) games
       Nothing -> pure Nothing
  where
+  isAnnuminas = any (maybe False (isJust . annuminasCityStrength . epicShared) . replicaOf) games
+  atBeginReady snapshot = maybe False ((== EpicRoundBeginReady) . epicRoundPhase) $ replicaOf snapshot >>= epicRoundState
+  boards = [epicBoardFor (ordinalOf snapshot) "" snapshot.epicGameState | snapshot <- games]
   teamState snapshot =
     let board = epicBoardFor (ordinalOf snapshot) "" snapshot.epicGameState
         codes = [q.epicQuestCard | stage <- maybeToList board.epicBoardStage, q <- stage.epicStageQuests]

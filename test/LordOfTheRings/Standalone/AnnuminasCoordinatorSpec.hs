@@ -48,3 +48,29 @@ spec = describe "Annúminas durable Epic round coordination" do
     nextEpicRoundStep [team 0 EpicRoundWaiting "B", team 1 EpicRoundWaiting "D", (GroupOrdinal 2, Just $ EpicRoundState 4 EpicRoundWaiting, ["F"], True)] `shouldBe` Nothing
     nextEpicRoundStep [team 0 EpicRoundEnded "B", team 1 EpicRoundReady "D", (GroupOrdinal 2, Just $ EpicRoundState 4 EpicRoundReady, ["F"], True)] `shouldBe` Nothing
     nextEpicRoundStep [team 0 EpicRoundEnded "B", team 1 EpicRoundEnded "D", (GroupOrdinal 2, Just $ EpicRoundState 4 EpicRoundEnded, ["F"], True)] `shouldBe` Nothing
+
+  describe "global beginning of the round" do
+    it "waits for every round number before freezing beginning triggers" do
+      nextEpicRoundStep [team 0 EpicRoundBeginning "B", team 1 EpicRoundExpired "D", team 2 EpicRoundExpired "F"] `shouldBe` Nothing
+      nextEpicRoundStep [team 0 EpicRoundBeginning "B", team 1 EpicRoundBeginning "D", team 2 EpicRoundBeginning "F"] `shouldBe` Just FreezeEpicBeginningTeams
+
+    it "reveals no final stage until every old stage has been replaced" do
+      nextEpicRoundStep [team 0 EpicRoundPrepared "B", team 1 EpicRoundPreparingAdvance "D", team 2 EpicRoundPrepared "F"] `shouldBe` Nothing
+      nextEpicRoundStep [team 0 EpicRoundPrepared "B", team 1 EpicRoundPrepared "D", team 2 EpicRoundPrepared "F"] `shouldBe` Just RevealEpicTeams
+      nextEpicRoundStep [team 0 EpicRoundRevealed "B", team 1 EpicRoundRevealing "D", team 2 EpicRoundRevealed "F"] `shouldBe` Nothing
+
+    it "holds the resource phase until all beginning effects finish" do
+      nextEpicRoundStep [team 0 EpicRoundBegan "B", team 1 EpicRoundRevealed "D", team 2 EpicRoundBegan "F"] `shouldBe` Nothing
+      nextEpicRoundStep [team 0 EpicRoundBegan "B", team 1 EpicRoundBegan "D", team 2 EpicRoundBegan "F"] `shouldBe` Just ReleaseEpicResources
+
+    let board ordinal amount needed = EpicBoard (GroupOrdinal ordinal) "Team" [] False $ Just $
+          EpicStage 0 [EpicQuest "stage-two" 2 amount needed True] [] False 0 False []
+    it "requires all three current stage-two progress requirements" do
+      annuminasStageTwoReady [board 0 50 (Just 50), board 1 49 (Just 50), board 2 50 (Just 50)] `shouldBe` False
+      annuminasStageTwoReady [board 0 50 (Just 50), board 1 50 (Just 50), board 2 50 (Just 50)] `shouldBe` True
+      annuminasStageTwoReady [board 0 40 (Just 40), board 1 40 (Just 40), board 2 40 (Just 40)] `shouldBe` True
+
+    it "does not treat a missing stage or a duplicate board as another completed team" do
+      annuminasStageTwoReady [board 0 50 (Just 50), board 0 50 (Just 50), board 2 50 (Just 50)] `shouldBe` False
+      annuminasStageTwoReady [board 0 50 (Just 50), board 1 50 (Just 50), EpicBoard (GroupOrdinal 2) "Missing" [] False Nothing] `shouldBe` False
+      annuminasStageTwoReady [board 0 50 (Just 50), board 1 50 (Just 50), board 2 50 Nothing] `shouldBe` False
