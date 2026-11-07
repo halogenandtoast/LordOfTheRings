@@ -124,7 +124,7 @@ spec = describe "Dreadnaught Epic effects" do
     Just refreshed <- getQuestion pid
     let offered =
           concatMap
-            (\case Label _ messages -> [t | QueueEpicCommand _ _ _ t <- messages]; _ -> [])
+            (\case Label _ messages -> [t | RequestEpicEffect _ _ _ t <- messages]; _ -> [])
             (questionChoices refreshed)
     offered `shouldBe` [EnemyTarget secondId]
 
