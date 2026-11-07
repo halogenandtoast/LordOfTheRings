@@ -2,6 +2,7 @@
 
 module LordOfTheRings.Treachery (module LordOfTheRings.Treachery, module X) where
 
+import LordOfTheRings.Treachery.Cards.DolGuldurTreacheries
 import LordOfTheRings.Treachery.Cards.AnnuminasTreacheries
 import LordOfTheRings.Treachery.Cards.PrancingPonyTreacheries (takenBySurprise, hiredMuscle, smokeAndMirrors, risingBodyCount, deadlyAccusations)
 import LordOfTheRings.Treachery.Cards.SwayingWithoutWind (swayingWithoutWind)
@@ -647,7 +648,12 @@ allTreacherys =
   Map.fromList
     [ (toCardCode builder, card)
     | card@(SomeTreacheryCard builder) <-
-        [ SomeTreacheryCard theHordesOfAngmar
+        [ SomeTreacheryCard servantOfSauronDolGuldur
+        , SomeTreacheryCard powerSevenfold
+        , SomeTreacheryCard theNecromancersRage
+        , SomeTreacheryCard fearAndDespairDolGuldur
+        , SomeTreacheryCard fastnessOfMirkwood
+        , SomeTreacheryCard theHordesOfAngmar
         , SomeTreacheryCard sorceryOfCarnDum
         , SomeTreacheryCard caughtInThePress
         , SomeTreacheryCard wearyWarriors

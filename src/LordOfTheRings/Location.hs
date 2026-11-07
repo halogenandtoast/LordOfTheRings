@@ -2,6 +2,8 @@
 
 module LordOfTheRings.Location (module LordOfTheRings.Location, module X) where
 
+import LordOfTheRings.Location.Cards.DolGuldurLocations
+
 import LordOfTheRings.Location.Cards.EnemyCamp (enemyCamp)
 import LordOfTheRings.Location.Cards.SiegeTunnel (siegeTunnel)
 import LordOfTheRings.Location.Cards.AnnuminasDefenses
@@ -821,7 +823,13 @@ allLocations =
   Map.fromList
     [ (toCardCode builder, card)
     | card@(SomeLocationCard builder) <-
-        [ SomeLocationCard enemyCamp
+        [ SomeLocationCard gateOfDolGuldurAttack
+        , SomeLocationCard theSorcerersTower
+        , SomeLocationCard theShadowRoad
+        , SomeLocationCard dungeonDoor
+        , SomeLocationCard forestBattleground
+        , SomeLocationCard blackenedWoods
+        , SomeLocationCard enemyCamp
         , SomeLocationCard siegeTunnel
         , SomeLocationCard cityWallAnnuminas
         , SomeLocationCard batteringRam

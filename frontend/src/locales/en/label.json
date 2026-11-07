@@ -4422,10 +4422,40 @@
   },
   "epic": {
     "waitingForTeam": "Waiting for another team to finish this effect",
-  "chooseTarget": "Choose a target in any group",
-  "target": "{card} — {group}",
-  "localTarget": "{card}",
-  "group": "Group: {group}",
-  "thisGroup": "This group"
-}
+    "chooseTarget": "Choose a target in any group",
+    "target": "{card} — {group}",
+    "localTarget": "{card}",
+    "group": "Group: {group}",
+    "thisGroup": "This group"
+  },
+  "dolGuldur": {
+    "removeProgress": "Remove {count} progress from the main quest",
+    "discardAlly": "Choose an ally to discard",
+    "beast": "Remove 2 progress or deal an additional shadow card",
+    "additionalShadow": "Deal an additional shadow card",
+    "marauder": "Remove 1 progress or place 1 resource on Dol Guldur Marauder",
+    "addResource": "Place 1 resource on Dol Guldur Marauder",
+    "archer": "Remove 2 progress or deal 2 damage to an ally you control",
+    "battleWarg": "Remove 1 progress or discard an attachment you control",
+    "discardAttachment": "Choose an attachment to discard",
+    "ologShadow": "Remove 2 progress or return the attacker to the staging area",
+    "servant": "Choose the staged enemy with the highest engagement cost",
+    "powerSevenfold": "Search for a Dol Guldur location or an Orc enemy",
+    "searchLocation": "Add a Dol Guldur location to the staging area",
+    "searchOrc": "Put an Orc enemy into play engaged with you",
+    "claimHost": "Spend 10 progress to take control of Host of Lórien?",
+    "takeHost": "Spend 10 progress and take Host of Lórien",
+    "claimPower": "Spend 20 progress to take control of Power of Lórien?",
+    "takePower": "Spend 20 progress and take Power of Lórien",
+    "discardPower": "Discard Power of Lórien",
+    "choosePlayer": "Choose a player",
+    "playerAtStage": "{player} — {group}",
+    "chooseStage": "Choose a stage",
+    "preventPenalty": "Remove progress to prevent the stage’s penalty?",
+    "removeFive": "Remove 5 progress",
+    "resolvePenalty": "Resolve the penalty",
+    "stageBenefit": "Choose a stage to receive the benefit",
+    "payFive": "Remove 5 progress",
+    "returnToStaging": "Return the attacker to the staging area"
+  }
 }

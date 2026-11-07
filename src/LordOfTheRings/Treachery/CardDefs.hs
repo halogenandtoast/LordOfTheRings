@@ -14,7 +14,7 @@ allTreacheryCards =
   Map.fromList $
     map
       (\def -> (cdCardCode def, def))
-      [theHordesOfAngmar, sorceryOfCarnDum, caughtInThePress, wearyWarriors, takenBySurprise, hiredMuscle, smokeAndMirrors, risingBodyCount, deadlyAccusations, chillFog, imWaitingForYou, longGropingArm, frozenByFear, dreadfulSong, echoesInTheDark, spawnOfThangorodrim, concealedSpikes, coveredPit, swayingWithoutWind, fallingBranches, songOfSleep, lostAndWitless, endingAndFailing, midnightThrong, murmursOfDread, gropingHorror, drivenByFear, theDeadRideBehind, theGloaming, townBaiting, direMagnificence, catchingFire, recklessInHisRage, closeToTheFlame, scorchingBlast, cutOffOsgiliath, darkPursuit, massingAtOsgiliath, ballistaBarrage, boardingPartyDreadnaught, grappledDreadnaught, outOfTheMist, overworked, takingOnWaterDreadnaught, violentTempest,  shinyDistraction
+      [servantOfSauronDolGuldur, powerSevenfold, theNecromancersRage, fearAndDespairDolGuldur, fastnessOfMirkwood, theHordesOfAngmar, sorceryOfCarnDum, caughtInThePress, wearyWarriors, takenBySurprise, hiredMuscle, smokeAndMirrors, risingBodyCount, deadlyAccusations, chillFog, imWaitingForYou, longGropingArm, frozenByFear, dreadfulSong, echoesInTheDark, spawnOfThangorodrim, concealedSpikes, coveredPit, swayingWithoutWind, fallingBranches, songOfSleep, lostAndWitless, endingAndFailing, midnightThrong, murmursOfDread, gropingHorror, drivenByFear, theDeadRideBehind, theGloaming, townBaiting, direMagnificence, catchingFire, recklessInHisRage, closeToTheFlame, scorchingBlast, cutOffOsgiliath, darkPursuit, massingAtOsgiliath, ballistaBarrage, boardingPartyDreadnaught, grappledDreadnaught, outOfTheMist, overworked, takingOnWaterDreadnaught, violentTempest,  shinyDistraction
       , guiltyConscience
       , drivenByShadowDarkOfMirkwood
       , surprisingSpeedDarkOfMirkwood
@@ -4047,3 +4047,15 @@ caughtInThePress = (treachery "the-siege-of-annuminas-031" "Caught in the Press"
   { cdWhenRevealed = True, cdShadowEffect = True }
 wearyWarriors = (treachery "the-siege-of-annuminas-032" "Weary Warriors" TheSiegeOfAnnuminas 3)
   { cdWhenRevealed = True, cdShadowEffect = True }
+
+servantOfSauronDolGuldur, powerSevenfold, theNecromancersRage, fearAndDespairDolGuldur, fastnessOfMirkwood :: CardDef
+servantOfSauronDolGuldur = (treachery "attack-on-dol-guldur-026" "Servant of Sauron" AttackOnDolGuldur 3)
+  { cdWhenRevealed = True, cdKeywords = setFromList [Surge], cdShadowEffect = True }
+powerSevenfold = (treachery "attack-on-dol-guldur-027" "Power Sevenfold" AttackOnDolGuldur 2)
+  { cdWhenRevealed = True, cdKeywords = setFromList [Doomed 1], cdShadowEffect = False }
+theNecromancersRage = (treachery "attack-on-dol-guldur-028" "The Necromancer’s Rage" AttackOnDolGuldur 2)
+  { cdWhenRevealed = True, cdKeywords = setFromList [], cdShadowEffect = True }
+fearAndDespairDolGuldur = (treachery "attack-on-dol-guldur-029" "Fear and Despair" AttackOnDolGuldur 2)
+  { cdWhenRevealed = True, cdKeywords = setFromList [Doomed 1], cdShadowEffect = True }
+fastnessOfMirkwood = (treachery "attack-on-dol-guldur-030" "Fastness of Mirkwood" AttackOnDolGuldur 2)
+  { cdWhenRevealed = True, cdKeywords = setFromList [], cdShadowEffect = True }

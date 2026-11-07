@@ -14,7 +14,7 @@ allEnemyCards =
   Map.fromList $
     map
       (\def -> (cdCardCode def, def))
-      [lieutenantOfAngmar, hostOfAngmar, wargOfCarnDum, orcOfAngmar, angmarWargRider, savageWerewolf, vanguardOfCarnDum, billFernyMurder, breeLandInformant, toddTheTroll, susieTheSpider, wolfPeltJake, johnnyGoblinFingers, oldOrcEyes, lawlessRuffian, greenwayFootpad, chetwoodOutlaw, barrowWight, coldWight, darkWight, naurlhug, orcOfEredLuin, blueMountainGoblin, lurkerOfTheDepths, namelessCaveDweller, oldStoneTroll, oldManWillow, longTrailer, graspingRoot, armyOfFlies, theLordOfTheDeadErech, shadowMan, restlessDead, whisperer, regretfulShade, shadowHostCaptain, smaugTheMightyLakeTown, smaugTheTerrible, smaugTheMagnificentLakeTown, snagaScouts, theWitchKingOsgiliath, wolvesFromMordor, wainriders, wainriderCaptain, urukVanguard, dreadnaught, dreadnaughtDamaged, captainOfTheHaven, commanderOfTheDreadnaught, descendantOfCastamir, hydraken, ophidian, varjax, brashCorsairDreadnaught, corsairPlunderer, daringBuccaneer, fierceMarauder, southronSailorDreadnaught, umbarCaptainDreadnaught, blackSailsDreadnaught, corsairSkiffDreadnaught, corsairSkirmisherDreadnaught, corsairWarshipDreadnaught, rammingShipDreadnaught, slaveShipDreadnaught, warGalley, seaMonster,  stalkingGoblin
+      [baneOfAmonLanc, sorcererOfDolGuldurAttack, chieftainMorlug, dungeonDweller, hostOfDolGuldur, mirkwoodOlogHai, beastOfTaurNuFuin, amonLancArcher, dolGuldurMarauder, battleWargDolGuldur, lieutenantOfAngmar, hostOfAngmar, wargOfCarnDum, orcOfAngmar, angmarWargRider, savageWerewolf, vanguardOfCarnDum, billFernyMurder, breeLandInformant, toddTheTroll, susieTheSpider, wolfPeltJake, johnnyGoblinFingers, oldOrcEyes, lawlessRuffian, greenwayFootpad, chetwoodOutlaw, barrowWight, coldWight, darkWight, naurlhug, orcOfEredLuin, blueMountainGoblin, lurkerOfTheDepths, namelessCaveDweller, oldStoneTroll, oldManWillow, longTrailer, graspingRoot, armyOfFlies, theLordOfTheDeadErech, shadowMan, restlessDead, whisperer, regretfulShade, shadowHostCaptain, smaugTheMightyLakeTown, smaugTheTerrible, smaugTheMagnificentLakeTown, snagaScouts, theWitchKingOsgiliath, wolvesFromMordor, wainriders, wainriderCaptain, urukVanguard, dreadnaught, dreadnaughtDamaged, captainOfTheHaven, commanderOfTheDreadnaught, descendantOfCastamir, hydraken, ophidian, varjax, brashCorsairDreadnaught, corsairPlunderer, daringBuccaneer, fierceMarauder, southronSailorDreadnaught, umbarCaptainDreadnaught, blackSailsDreadnaught, corsairSkiffDreadnaught, corsairSkirmisherDreadnaught, corsairWarshipDreadnaught, rammingShipDreadnaught, slaveShipDreadnaught, warGalley, seaMonster,  stalkingGoblin
       , spidersOfMirkwoodDarkOfMirkwood
       , goblinSniperDarkOfMirkwood
       , goblinRunnersDarkOfMirkwood
@@ -5957,3 +5957,25 @@ vanguardOfCarnDum = (enemy "the-siege-of-annuminas-028" "Vanguard of Carn Dûm" 
 lieutenantOfAngmar :: CardDef
 lieutenantOfAngmar = (enemy "the-siege-of-annuminas-013" "Lieutenant of Angmar" TheSiegeOfAnnuminas 1 0 4 6 4 9)
   { cdUnique = True, cdCardTraits = setFromList [Angmar, Sorcerer], cdVictoryPoints = Just 4 }
+
+baneOfAmonLanc, sorcererOfDolGuldurAttack, chieftainMorlug, dungeonDweller, hostOfDolGuldur, mirkwoodOlogHai, beastOfTaurNuFuin, amonLancArcher, dolGuldurMarauder, battleWargDolGuldur :: CardDef
+baneOfAmonLanc = (enemy "attack-on-dol-guldur-010" "Bane of Amon Lanc" AttackOnDolGuldur 1 45 3 5 3 9)
+  { cdCardTraits = setFromList [Lieutenant, Troll, OlogHai], cdKeywords = setFromList [Indestructible], cdUnique = True, cdShadowEffect = False, cdVictoryPoints = Just 5 }
+sorcererOfDolGuldurAttack = (enemy "attack-on-dol-guldur-011" "Sorcerer of Dol Guldur" AttackOnDolGuldur 1 45 3 6 2 9)
+  { cdCardTraits = setFromList [Lieutenant, Sorcerer], cdKeywords = setFromList [Indestructible], cdUnique = True, cdShadowEffect = False, cdVictoryPoints = Just 5 }
+chieftainMorlug = (enemy "attack-on-dol-guldur-012" "Chieftain Morlug" AttackOnDolGuldur 1 45 3 3 4 8)
+  { cdCardTraits = setFromList [Lieutenant, Orc, Uruk], cdKeywords = setFromList [Indestructible], cdUnique = True, cdShadowEffect = False, cdVictoryPoints = Just 5 }
+dungeonDweller = (enemy "attack-on-dol-guldur-013" "Dungeon Dweller" AttackOnDolGuldur 1 45 3 4 3 8)
+  { cdCardTraits = setFromList [Lieutenant, Spider], cdKeywords = setFromList [Indestructible], cdUnique = True, cdShadowEffect = False, cdVictoryPoints = Just 5 }
+hostOfDolGuldur = (enemy "attack-on-dol-guldur-014" "Host of Dol Guldur" AttackOnDolGuldur 2 40 0 8 4 12)
+  { cdCardTraits = setFromList [Orc], cdKeywords = setFromList [], cdUnique = False, cdShadowEffect = False }
+mirkwoodOlogHai = (enemy "attack-on-dol-guldur-015" "Mirkwood Olog-hai" AttackOnDolGuldur 2 34 4 6 4 9)
+  { cdCardTraits = setFromList [Troll, OlogHai], cdKeywords = setFromList [], cdUnique = False, cdShadowEffect = True }
+beastOfTaurNuFuin = (enemy "attack-on-dol-guldur-016" "Beast of Taur-nu-Fuin" AttackOnDolGuldur 2 31 3 5 3 5)
+  { cdCardTraits = setFromList [Creature, Werewolf], cdKeywords = setFromList [], cdUnique = False, cdShadowEffect = False }
+amonLancArcher = (enemy "attack-on-dol-guldur-017" "Amon Lanc Archer" AttackOnDolGuldur 3 36 2 4 1 4)
+  { cdCardTraits = setFromList [Orc], cdKeywords = setFromList [Archery 2], cdUnique = False, cdShadowEffect = True }
+dolGuldurMarauder = (enemy "attack-on-dol-guldur-018" "Dol Guldur Marauder" AttackOnDolGuldur 4 24 2 3 1 3)
+  { cdCardTraits = setFromList [Orc], cdKeywords = setFromList [], cdUnique = False, cdShadowEffect = False }
+battleWargDolGuldur = (enemy "attack-on-dol-guldur-019" "Battle Warg" AttackOnDolGuldur 3 18 1 3 2 2)
+  { cdCardTraits = setFromList [Creature, Warg], cdKeywords = setFromList [Surge], cdUnique = False, cdShadowEffect = True }
