@@ -129,7 +129,6 @@ import LordOfTheRings.Modifier (
     ExcessDamageToOtherCharacters,
     ExcessDamageToShipObjective,
     ExcessDamageToShipOneAtATime,
-    ExcessDamageToThreat,
     NotFoughtByAllies,
     NotFoughtByDamaged,
     NotFoughtByHeroesWithoutResources,
@@ -290,8 +289,7 @@ isPhantom eid = do
 attackDamage' :: PlayerId -> EnemyId -> Target -> Int -> GameT [Message]
 attackDamage' pid eid target n = do
   mods <- getModifiers eid
-  let excessToThreat = ExcessDamageToThreat `elem` mods
-      excessToOthers = ExcessDamageToOtherCharacters `elem` mods
+  let excessToOthers = ExcessDamageToOtherCharacters `elem` mods
       excessToLocation = ExcessDamageToActiveLocation `elem` mods
       excessToQuests = ExcessDamageRemovesQuestProgress `elem` mods
       excessToShip = ExcessDamageToShipObjective `elem` mods
@@ -334,8 +332,7 @@ attackDamage' pid eid target n = do
     _ | AttackDamageToThreatInstead `elem` mods -> [x | n > 0, x <- [RaiseThreat defending n, CheckWindows [mkAfter $ ThreatRaisedByEncounter defending n]]]
     _ ->
       DealDamage (EnemyAttackSource eid) target n
-        : concat [[RaiseThreat pid excess, CheckWindows [mkAfter $ ThreatRaisedByEncounter pid excess]] | excessToThreat, excess > 0]
-        <> replicate (if excessToOthers then excess else 0) (DamageAnotherCharacter (EnemyAttackSource eid) pid target)
+        : replicate (if excessToOthers then excess else 0) (DamageAnotherCharacter (EnemyAttackSource eid) pid target)
         <> concat [[PlaceTokens (EnemyAttackSource eid) (LocationTarget l) Damage excess, CheckDefeated (EnemyAttackSource eid) (LocationTarget l)] | excessToLocation, excess > 0, l <- active]
         <> [RemoveTokens (EnemyAttackSource eid) (toTarget q) Progress (min excess q.progress) | excessToQuests, excess > 0, q <- quests, q.progress > 0]
         <> toShip

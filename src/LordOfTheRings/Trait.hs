@@ -4,7 +4,9 @@ import Data.Char (isUpper)
 import LordOfTheRings.Prelude
 
 data Trait
-  = Tree
+  = Suspect
+  | Hideout
+  | Tree
   | Tale
   | Basic
   | Damaged

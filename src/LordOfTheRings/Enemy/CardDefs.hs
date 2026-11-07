@@ -14,7 +14,7 @@ allEnemyCards =
   Map.fromList $
     map
       (\def -> (cdCardCode def, def))
-      [lawlessRuffian, greenwayFootpad, chetwoodOutlaw, barrowWight, coldWight, darkWight, naurlhug, orcOfEredLuin, blueMountainGoblin, lurkerOfTheDepths, namelessCaveDweller, oldStoneTroll, oldManWillow, longTrailer, graspingRoot, armyOfFlies, theLordOfTheDeadErech, shadowMan, restlessDead, whisperer, regretfulShade, shadowHostCaptain, smaugTheMightyLakeTown, smaugTheTerrible, smaugTheMagnificentLakeTown, snagaScouts, theWitchKingOsgiliath, wolvesFromMordor, wainriders, wainriderCaptain, urukVanguard, dreadnaught, dreadnaughtDamaged, captainOfTheHaven, commanderOfTheDreadnaught, descendantOfCastamir, hydraken, ophidian, varjax, brashCorsairDreadnaught, corsairPlunderer, daringBuccaneer, fierceMarauder, southronSailorDreadnaught, umbarCaptainDreadnaught, blackSailsDreadnaught, corsairSkiffDreadnaught, corsairSkirmisherDreadnaught, corsairWarshipDreadnaught, rammingShipDreadnaught, slaveShipDreadnaught, warGalley, seaMonster,  stalkingGoblin
+      [toddTheTroll, susieTheSpider, wolfPeltJake, johnnyGoblinFingers, oldOrcEyes, lawlessRuffian, greenwayFootpad, chetwoodOutlaw, barrowWight, coldWight, darkWight, naurlhug, orcOfEredLuin, blueMountainGoblin, lurkerOfTheDepths, namelessCaveDweller, oldStoneTroll, oldManWillow, longTrailer, graspingRoot, armyOfFlies, theLordOfTheDeadErech, shadowMan, restlessDead, whisperer, regretfulShade, shadowHostCaptain, smaugTheMightyLakeTown, smaugTheTerrible, smaugTheMagnificentLakeTown, snagaScouts, theWitchKingOsgiliath, wolvesFromMordor, wainriders, wainriderCaptain, urukVanguard, dreadnaught, dreadnaughtDamaged, captainOfTheHaven, commanderOfTheDreadnaught, descendantOfCastamir, hydraken, ophidian, varjax, brashCorsairDreadnaught, corsairPlunderer, daringBuccaneer, fierceMarauder, southronSailorDreadnaught, umbarCaptainDreadnaught, blackSailsDreadnaught, corsairSkiffDreadnaught, corsairSkirmisherDreadnaught, corsairWarshipDreadnaught, rammingShipDreadnaught, slaveShipDreadnaught, warGalley, seaMonster,  stalkingGoblin
       , spidersOfMirkwoodDarkOfMirkwood
       , goblinSniperDarkOfMirkwood
       , goblinRunnersDarkOfMirkwood
@@ -5915,3 +5915,16 @@ greenwayFootpad = (enemy "murder-at-the-prancing-pony-024" "Greenway Footpad" Mu
   { cdCardTraits = setFromList [Brigand], cdWhenRevealed = True, cdShadowEffect = True }
 chetwoodOutlaw = (enemy "murder-at-the-prancing-pony-025" "Chetwood Outlaw" MurderAtThePrancingPony 3 40 4 4 3 5)
   { cdCardTraits = setFromList [Brigand], cdShadowEffect = True }
+
+
+toddTheTroll, susieTheSpider, wolfPeltJake, johnnyGoblinFingers, oldOrcEyes :: CardDef
+toddTheTroll = unique (enemy "murder-at-the-prancing-pony-009" "Todd the Troll" MurderAtThePrancingPony 1 45 2 7 2 10)
+  { cdCardTraits = setFromList [Suspect, Brigand], cdVictoryPoints = Just 5 }
+susieTheSpider = unique (enemy "murder-at-the-prancing-pony-010" "Susie the Spider" MurderAtThePrancingPony 1 45 0 5 3 8)
+  { cdCardTraits = setFromList [Suspect, Brigand], cdVictoryPoints = Just 5 }
+wolfPeltJake = unique (enemy "murder-at-the-prancing-pony-011" "Wolf-pelt Jake" MurderAtThePrancingPony 1 45 4 5 3 7)
+  { cdCardTraits = setFromList [Suspect, Brigand], cdVictoryPoints = Just 5 }
+johnnyGoblinFingers = unique (enemy "murder-at-the-prancing-pony-012" "Johnny Goblin-fingers" MurderAtThePrancingPony 1 45 3 4 4 6)
+  { cdCardTraits = setFromList [Suspect, Brigand], cdVictoryPoints = Just 5 }
+oldOrcEyes = unique (enemy "murder-at-the-prancing-pony-013" "Old Orc-eyes" MurderAtThePrancingPony 1 45 3 4 3 8)
+  { cdCardTraits = setFromList [Suspect, Brigand], cdVictoryPoints = Just 5 }

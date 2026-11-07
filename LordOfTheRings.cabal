@@ -1096,6 +1096,7 @@ library
       LordOfTheRings.Enemy.Cards.PillagingOrc
       LordOfTheRings.Enemy.Cards.PitGoblin
       LordOfTheRings.Enemy.Cards.PrancingPonyBrigands
+      LordOfTheRings.Enemy.Cards.PrancingPonySuspects
       LordOfTheRings.Enemy.Cards.PriestOfSauron
       LordOfTheRings.Enemy.Cards.PrimevalThing
       LordOfTheRings.Enemy.Cards.PrisonGuard
@@ -4459,6 +4460,7 @@ test-suite LordOfTheRings-test
       LordOfTheRings.Standalone.MassingAtOsgiliathSpec
       LordOfTheRings.Standalone.OldForestSpec
       LordOfTheRings.Standalone.PrancingPonySpec
+      LordOfTheRings.Standalone.PrancingPonySuspectsSpec
       LordOfTheRings.Standalone.StoneOfErechSpec
       LordOfTheRings.Starter.DefendersOfGondorSpec
       LordOfTheRings.Starter.DwarvesOfDurinSpec

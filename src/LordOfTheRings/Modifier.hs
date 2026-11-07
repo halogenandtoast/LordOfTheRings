@@ -187,6 +187,8 @@ data ModifierType
   | -- | on the game or a card: a once-per-round effect keyed by the code was used, any
     -- copy counting, as Steward of Orthanc reads. A card played is 'PlayedCardThisRound'
     UsedThisRound CardCode
+  | -- | An effect keyed by this card code has triggered during the current attack.
+    UsedThisAttack CardCode
   | -- | on an ally: it entered play this round
     EnteredPlayThisRound
   | -- | damage an attack deals past the character's remaining hit points raises threat

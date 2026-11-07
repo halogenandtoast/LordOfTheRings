@@ -820,6 +820,7 @@ import LordOfTheRings.Modifier (
     CannotTakeCombatDamage,
     CannotTakeDamage,
     CannotTakeDamageExceptFrom,
+    ExcessDamageToThreat,
     CannotTakeNonCombatDamage,
     CannotTakeNonQuestDamage,
     ControlReturnsAtEndOfPhase,
@@ -1787,7 +1788,14 @@ runGameMessage msg g = case msg of
     excessDamage <- case source of
       EnemyAttackSource eid | character && inPlay g target -> do
         remaining <- max 0 <$> ((-) <$> getHitPoints target <*> getDamage target)
-        pure [CheckWindows [mkAfter $ AttackDealtExcessDamage eid target (n - remaining)] | n > remaining]
+        -- Hill Troll and Todd the Troll count damage actually dealt, after
+        -- prevention, redirection and cancellation, as their printed text reads.
+        increase <- if n > remaining && ExcessDamageToThreat `elem` attackMods
+          then do
+            pid <- attackRecipient eid
+            pure [RaiseThreat pid (n - remaining), CheckWindows [mkAfter $ ThreatRaisedByEncounter pid (n - remaining)]]
+          else pure []
+        pure $ [CheckWindows [mkAfter $ AttackDealtExcessDamage eid target (n - remaining)] | n > remaining] <> increase
       _ -> pure []
     pushAll
       $ [CreateEffect $ Effect GameSource target [DamagedWhileDefending] UntilEndOfAttack | defending]
@@ -2317,12 +2325,17 @@ runGameMessage msg g = case msg of
       CheckWindows windows -> any (\case Window After (EnemyAttacking attacking _) -> attacking == eid; _ -> False) windows
       _ -> False
     pure g
-  DoStep 1 (EnemyAttack pid eid) -> do
+  DoStep 3 (EnemyAttack pid eid) -> do
+    insertAfterMatching [DoStep 4 (EnemyAttack pid eid)] \case
+      CheckWindows windows -> any (\case Window After (EnemyAttacking attacking _) -> attacking == eid; _ -> False) windows
+      _ -> False
+    pure g
+  DoStep step (EnemyAttack pid eid) | step `elem` [1, 4] -> do
     remaining <- getRemainingPlayers
     mods <- getModifiers (EnemyTarget eid)
     when (inPlay g (EnemyTarget eid) && pid `elem` remaining && CannotAttack `notElem` mods && CannotAttackPlayer pid `notElem` mods) do
       combat <- (== CombatPhase) <$> getsGame gamePhase
-      pushAll $ [DealShadowCard eid, EnemyAttack pid eid] <> [DiscardShadowCards eid | not combat]
+      pushAll $ [if step == 4 then DiscardShadowCards eid else DealShadowCard eid, EnemyAttack pid eid] <> [DiscardShadowCards eid | not combat]
     pure g
   -- players may act at the end of each step of the attack: once its enemy is chosen,
   -- its defenders declared, its shadow resolved and its damage dealt

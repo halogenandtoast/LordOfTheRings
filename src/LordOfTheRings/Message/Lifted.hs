@@ -1859,6 +1859,11 @@ additionalAttack pid eid = do
   -- changing the parent queue before the player chooses its option.
   push $ DoStep 2 (EnemyAttack pid eid)
 
+-- | As 'additionalAttack', but discard old shadows and deal none for the new
+-- attack, as Old Orc-eyes reads. Resolve independently of the triggering card.
+additionalAttackWithoutShadow :: HasQueue Message m => PlayerId -> EnemyId -> m ()
+additionalAttackWithoutShadow pid eid = push $ DoStep 3 (EnemyAttack pid eid)
+
 -- | The player divides the damage among the characters given, as "assign X damage among
 -- characters committed to the quest" reads; it is dealt once all is assigned.
 dealDamageDividedAmong

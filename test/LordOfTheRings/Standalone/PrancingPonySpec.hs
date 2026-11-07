@@ -1,4 +1,5 @@
-module LordOfTheRings.Standalone.PrancingPonySpec (spec) where
+module LordOfTheRings.Standalone.PrancingPonySpec
+  (spec, gameTest, twoPlayerTest, stageEnemy, passAttackActions, defendAttack, strongDefender) where
 
 import Data.Map.Strict qualified as Map
 import LordOfTheRings.Effect (Effect (..), EffectDuration (..))
