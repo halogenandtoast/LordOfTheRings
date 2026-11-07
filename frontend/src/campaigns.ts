@@ -57,6 +57,7 @@ const implemented: Record<string, Gateable & { nightmare?: boolean; hard?: boole
   'fog-on-the-barrow-downs': { beta: true },
   'the-ruins-of-belegost': { beta: true },
   'murder-at-the-prancing-pony': { beta: true },
+  'the-siege-of-annuminas': { beta: true },
   'the-hunt-for-the-dreadnaught': { beta: true, hard: true },
   'the-oath': { beta: true },
   'the-caves-of-nibin-dum': { beta: true },
