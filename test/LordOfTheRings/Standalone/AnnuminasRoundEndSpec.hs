@@ -177,7 +177,7 @@ spec = describe "Annúminas synchronized round boundary" do
   it "does not retrigger a physically transported Lieutenant at a team that already froze its triggers" do
     packetRef <- newIORef Nothing
     gameTest $ \_ -> do
-      let remoteStage = EpicStage 0 [EpicQuest (toCardCode Quests.stopTheAttack) 3 0 Nothing True] [] False 0 False
+      let remoteStage = EpicStage 0 [EpicQuest (toCardCode Quests.stopTheAttack) 3 0 Nothing True] [] False 0 False []
       setReplica [EpicBoard (GroupOrdinal 1) "Walls" [] False (Just remoteStage)]
       _ <- stageEnemy Enemies.lieutenantOfAngmar
       run EndRound
