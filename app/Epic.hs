@@ -225,7 +225,7 @@ coordinateDolEvent shared games
       Just state | not (Dol.dolTransitionFinished state.epicDolTransition) -> do
         let transition = state.epicDolTransition
         if Dol.dolTransitionPhase transition == Dol.DolDrainingQueues
-          && not ordinaryBlocked && not (all dolRealEnded games)
+          && not ordinaryBlocked && any revealedTeam games
           then drainOne shared games
           else do
             intent <- requireDol $ either (Left . tshow) Right $ Dol.nextDolStep eligibility transition
@@ -251,7 +251,13 @@ coordinateDolEvent shared games
   ordinaryBlocked = any (\snapshot -> dolOrdinaryBlocked shared (ordinalOf snapshot) snapshot.epicGameState) games
   canRotate = all dolRealEnded games && not ordinaryBlocked
     && all (isJust . snd) (dolPrevious games)
-  eligibility = Dol.DolEligibility True (not ordinaryBlocked) (all dolRealEnded games) (all dolRealEnded games)
+  revealedTeam snapshot = maybe False ((== EpicRoundRevealed) . epicRoundPhase) $ replicaOf snapshot >>= epicRoundState
+  releasedQueuesEnded = case shared.dolGuldurCoordination of
+    Just state | Dol.dolEpochKind (Dol.dolTransitionEpoch state.epicDolTransition) == Dol.DolInitialStages ->
+      let released = Dol.dolRevealedTeams state.epicDolTransition
+       in not (null released) && all dolRealEnded [snapshot | snapshot <- games, ordinalOf snapshot `elem` released]
+    _ -> all dolRealEnded games
+  eligibility = Dol.DolEligibility True (not ordinaryBlocked) (all dolRealEnded games) releasedQueuesEnded
   startRotation = do
     updated <- requireDol $ DolCommands.startDolCoordination
       (Dol.DolEpoch roundNumber Dol.DolRotateStages) (GroupOrdinal 0) (dolPrevious games) shared
@@ -276,11 +282,12 @@ coordinateDolEvent shared games
           [CheckWindows [mkWhen DolGuldurSiegeResolved], done code Dol.DolUnusedStageResolved] snapshots
         pure $ Just (updated, resolved)
       Dol.PrepareDolTeams choices -> do
-        prepared <- for snapshots $ \snapshot -> do
-          code <- maybe (liftIO $ throwIO $ userError "Missing Dol stage reservation") pure $ lookup (ordinalOf snapshot) choices
-          let deck = scenarioQuestDeck $ toAttrs snapshot.epicGameState.scenario
-          card <- maybe (liftIO $ throwIO $ userError "Reserved physical Dol stage is missing") pure $ find ((== code) . toCardCode) deck
-          runLocalMessages [PrepareEpicQuestAdvance EpicLeaveQuest card] snapshot
+        prepared <- for snapshots $ \snapshot -> case lookup (ordinalOf snapshot) choices of
+          Nothing -> pure snapshot
+          Just code -> do
+            let deck = scenarioQuestDeck $ toAttrs snapshot.epicGameState.scenario
+            card <- maybe (liftIO $ throwIO $ userError "Reserved physical Dol stage is missing") pure $ find ((== code) . toCardCode) deck
+            runLocalMessages [PrepareEpicQuestAdvance EpicLeaveQuest card] snapshot
         pure $ Just (updated, prepared)
       Dol.RevealDolTeam destination _ -> do
         revealed <- runAt destination [RevealEpicQuestAdvance] snapshots
@@ -288,6 +295,7 @@ coordinateDolEvent shared games
       Dol.ReleaseDolTeams -> do
         resumed <- drainOne updated snapshots
         pure $ resumed <|> Just (updated, snapshots)
+      Dol.ContinueDolInitialStages -> pure $ Just (updated, snapshots)
       Dol.FinishDolTransition -> pure $ Just (updated, snapshots)
   drainOne updated snapshots = do
     let state = fromJustNote "Missing Dol claim replies" updated.dolGuldurCoordination
@@ -317,7 +325,7 @@ coordinateEpicRound
 coordinateEpicRound shared games
   | length games /= 3 || any (isJust . (.outcome) . epicGameState) games = pure Nothing
   | dolCoordinationActive shared =
-      case nextEpicRoundStep (map virtualTeam games) of
+      case nextEpicRoundStep (map dolTeamState games) of
         Just (ResolveEpicTeam destination)
           | Just state <- shared.dolGuldurCoordination
           , Dol.dolEpochKind (Dol.dolTransitionEpoch state.epicDolTransition) == Dol.DolInitialStages
@@ -334,11 +342,11 @@ coordinateEpicRound shared games
       fmap ((updated,) <$>) $ coordinateEpicRoundNative synchronized
  where
   expired snapshot = maybe False ((== EpicRoundExpired) . epicRoundPhase) $ replicaOf snapshot >>= epicRoundState
-  virtualTeam snapshot =
+  dolTeamState snapshot =
     let own = ordinalOf snapshot
         board = epicBoardFor own "" snapshot.epicGameState
         codes = [q.epicQuestCard | stage <- maybeToList board.epicBoardStage, q <- stage.epicStageQuests]
-     in (own, dolRoundStateForDrain shared own snapshot.epicGameState, codes, dolOrdinaryBlocked shared own snapshot.epicGameState)
+     in (own, replicaOf snapshot >>= epicRoundState, codes, dolOrdinaryBlocked shared own snapshot.epicGameState)
 
 -- This also resets the first two preparation rounds, when no stage-three
 -- rotation exists yet. Reset before ANY team begins the next round.

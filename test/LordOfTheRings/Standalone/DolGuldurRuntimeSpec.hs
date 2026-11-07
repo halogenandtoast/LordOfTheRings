@@ -4,6 +4,7 @@ import Data.UUID qualified as UUID
 import Data.Set qualified as Set
 import Data.Map.Strict qualified as Map
 import LordOfTheRings.Epic.DolGuldur
+import LordOfTheRings.Epic.Coordinator (nextEpicRoundStep)
 import LordOfTheRings.Epic.DolGuldur.Runtime
 import LordOfTheRings.Epic.Types
 import LordOfTheRings.Scenario.Types (scenarioEpic)
@@ -26,26 +27,24 @@ claimGame = do
 
 spec :: Spec
 spec = describe "Dol Guldur runtime claim barriers" do
-  it "lets later frozen effects run while an accepted initial claimant waits" . gameTest $ \_ -> do
+  it "keeps the current forced chain active while its claim is being prepared" . gameTest $ \_ -> do
     (shared, current) <- claimGame
     dolOrdinaryBlocked shared (GroupOrdinal 0) current `shouldBe` False
-    dolClaimDrainable shared (GroupOrdinal 0) current `shouldBe` True
-    fmap epicRoundPhase (dolRoundStateForDrain shared (GroupOrdinal 0) current) `shouldBe` Just EpicRoundEnded
+    nextEpicRoundStep [(GroupOrdinal 0, Just $ EpicRoundState 0 EpicRoundResolving, ["002"], False),
+      (GroupOrdinal 1, Just $ EpicRoundState 0 EpicRoundReady, ["001"], False),
+      (GroupOrdinal 2, Just $ EpicRoundState 0 EpicRoundReady, ["001"], False)] `shouldBe` Nothing
 
   it "never treats an attack or a search as an inert claim barrier" . gameTest $ \pid -> do
     (shared, current) <- claimGame
     let answering = current & questionL .~ Map.singleton pid (ChooseOne [Label "defend" []])
     dolOrdinaryBlocked shared (GroupOrdinal 0) answering `shouldBe` True
-    dolClaimDrainable shared (GroupOrdinal 0) answering `shouldBe` False
 
   it "holds uncommitted consequences even when the claim nonce itself is known" . gameTest $ \_ -> do
     (shared, current) <- claimGame
     let contributed = current & scenarioL %~ overAttrs (\a -> a {scenarioEpic = fmap (\r -> r
           {epicPendingDeltas = [SharedDelta UUID.nil (GroupOrdinal 0) DolGuldurCityStrength 1]}) a.scenarioEpic})
     dolOrdinaryBlocked shared (GroupOrdinal 0) contributed `shouldBe` True
-    dolClaimDrainable shared (GroupOrdinal 0) contributed `shouldBe` False
 
   it "does not exempt an unrelated reply or another team's claim" . gameTest $ \_ -> do
     (shared, current) <- claimGame
     dolOrdinaryBlocked shared (GroupOrdinal 1) current `shouldBe` True
-    dolClaimDrainable shared (GroupOrdinal 1) current `shouldBe` False
