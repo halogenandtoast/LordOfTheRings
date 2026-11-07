@@ -11,7 +11,7 @@ import LordOfTheRings.Ally.Types (Ally)
 import LordOfTheRings.Attachment.Types (Attachment)
 import LordOfTheRings.Location.Types (Location)
 import LordOfTheRings.Objective.Types (Objective)
-import LordOfTheRings.Card (Card)
+import LordOfTheRings.Card (Card, EncounterCard)
 import LordOfTheRings.Matcher.Types (cardMatches)
 import LordOfTheRings.Effect
 import LordOfTheRings.Entities
@@ -25,7 +25,7 @@ import LordOfTheRings.Phase
 import LordOfTheRings.Placement (Placement (..))
 import LordOfTheRings.Player.Types
 import LordOfTheRings.Prelude
-import LordOfTheRings.Quest.Types (inEachStagingArea, isSideQuest)
+import LordOfTheRings.Quest.Types (Quest, inEachStagingArea, isSideQuest)
 import LordOfTheRings.Question
 import LordOfTheRings.Scenario.Types
 import LordOfTheRings.Source (Source (PlayerSource))
@@ -47,6 +47,11 @@ data Game = Game
   , gameEffects :: [Effect]
   , gameFrozenRoundEndAbilities :: Maybe [Ability]
   -- ^ Forced triggers captured before any team resolves the global round end.
+  , gameFrozenRoundBeginsAbilities :: Maybe [Ability]
+  , gameResolvingQuests :: Map QuestId Quest
+  -- ^ Only already-triggered callbacks may read these departed quest snapshots.
+  , gameEpicQuestAdvance :: Maybe (QuestId, EncounterCard)
+  -- ^ The old quest and selected physical replacement during a global advance.
   , gameOutcome :: Maybe Outcome
   , gameLastCommittedWillpower :: Maybe Int
   -- ^ What was committed at the last quest resolution, for the board's tally

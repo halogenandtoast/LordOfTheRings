@@ -8,7 +8,7 @@ import Data.Aeson.Types (Parser)
 import LordOfTheRings.Ability.Types
 import LordOfTheRings.Campaign (CampaignLogUpdate)
 import LordOfTheRings.Card
-import LordOfTheRings.Epic.Types (SharedEventState, SharedKey, GroupOrdinal, EpicEffect, EpicTargetQuery, EpicCommand, EpicEnemyArrival)
+import LordOfTheRings.Epic.Types (SharedEventState, SharedKey, GroupOrdinal, EpicEffect, EpicTargetQuery, EpicCommand, EpicEnemyArrival, EpicQuestAdvanceMode)
 import LordOfTheRings.Effect
 import LordOfTheRings.Heading (HeadingShift)
 import LordOfTheRings.I18n (ikeyWith, intVar)
@@ -325,6 +325,15 @@ data Message
   | BeginEpicRoundEnd
   | FinishEpicRoundEffects
   | BeginEpicNextRound
+  | BeginEpicRoundBeginning
+  | FreezeEpicRoundBeginning [Ability]
+  | PrepareEpicQuestAdvance EpicQuestAdvanceMode EncounterCard
+  | MarkEpicQuestPrepared
+  | RevealEpicQuestAdvance
+  | MarkEpicQuestRevealed
+  | ReleaseEpicRoundBeginning
+  | FinishEpicRoundBeginning
+  | BeginEpicRoundResources
   | ChooseEpicTarget PlayerId CardCode EpicTargetQuery EpicEffect
   | ResolveEpicEffect CardCode EpicEffect Target
   | QueueEpicCommand GroupOrdinal CardCode EpicEffect Target

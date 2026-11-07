@@ -4502,6 +4502,7 @@ test-suite LordOfTheRings-test
       LordOfTheRings.Standalone.AnnuminasLocationsSpec
       LordOfTheRings.Standalone.AnnuminasManWallsSpec
       LordOfTheRings.Standalone.AnnuminasOpeningSpec
+      LordOfTheRings.Standalone.AnnuminasQuestAdvanceSpec
       LordOfTheRings.Standalone.AnnuminasRoundEndSpec
       LordOfTheRings.Standalone.AnnuminasRoundIntegrationSpec
       LordOfTheRings.Standalone.AnnuminasSetupSpec

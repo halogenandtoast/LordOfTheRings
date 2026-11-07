@@ -1,4 +1,4 @@
-module LordOfTheRings.Epic.Runner (runEpicMessage, finalizeEpicOutcome, usesEpicRoundSynchronization, epicRoundPhaseOf) where
+module LordOfTheRings.Epic.Runner (runEpicMessage, finalizeEpicOutcome, usesEpicRoundSynchronization, epicRoundPhaseOf, isEpicQuestAdvanceAuthorized) where
 
 import Data.Set qualified as Set
 import Data.Map.Strict qualified as Map
@@ -6,7 +6,7 @@ import LordOfTheRings.Ability.Types (isForcedAbility)
 import LordOfTheRings.Card
 import LordOfTheRings.Classes.RunMessage (runMessage)
 import LordOfTheRings.Classes.Entity (overAttrs, toAttrs, toId, insertEntity)
-import LordOfTheRings.Classes.HasQueue (push, runQueueT)
+import LordOfTheRings.Classes.HasQueue (push, pushEnd, runQueueT)
 import LordOfTheRings.Epic.Lorien (transferLorienSupport, receiveLorienSupport)
 import LordOfTheRings.Epic.Board
 import LordOfTheRings.Epic.Types
@@ -14,6 +14,7 @@ import LordOfTheRings.Effect (Effect (..), EffectDuration (UntilEndOfPhaseOf, Un
 import LordOfTheRings.Enemy (EnemyAttrs (..), createEnemy)
 import LordOfTheRings.Entities (enemiesL)
 import LordOfTheRings.Game.Base
+import LordOfTheRings.Id (QuestId)
 import LordOfTheRings.GameT (GameT)
 import LordOfTheRings.I18n (cardVar, textVar)
 import LordOfTheRings.Matcher.Types (CardMatcher (CardWithType, AnyCard), cardMatches)
@@ -37,6 +38,7 @@ import LordOfTheRings.I18n (ikey)
 import LordOfTheRings.Scenario.Types (ScenarioAttrs (scenarioEpic, scenarioSetAside))
 import LordOfTheRings.Source (Source (CardCodeSource, GameSource))
 import LordOfTheRings.Target
+import LordOfTheRings.Window (mkWhen, mkAfter, WindowType (RoundBegins, AdvancedToStage))
 import LordOfTheRings.Trait (Trait (Basic, Upgraded))
 
 usesEpicRoundSynchronization :: Game -> Bool
@@ -48,6 +50,10 @@ epicRoundPhaseOf g = epicRoundPhase <$> (scenarioEpic (toAttrs g.scenario) >>= e
 setEpicRoundPhase :: EpicRoundPhase -> Game -> Game
 setEpicRoundPhase phase g = g & scenarioL %~ overAttrs (\a -> a
   { scenarioEpic = fmap (\replica -> replica {epicRoundState = Just $ EpicRoundState g.round phase}) a.scenarioEpic })
+
+isEpicQuestAdvanceAuthorized :: Game -> QuestId -> Bool
+isEpicQuestAdvanceAuthorized g qid = epicRoundPhaseOf g == Just EpicRoundPreparingAdvance
+  && fmap fst g.epicQuestAdvance == Just qid
 
 presentEpicTarget :: Game -> Target -> Bool
 presentEpicTarget g (PlayerTarget pid) = maybe False (not . (.eliminated)) $ Map.lookup pid g.players
@@ -65,7 +71,7 @@ runEpicMessage msg g = case msg of
       Just EpicRoundIdle -> setEpicRoundPhase EpicRoundWaiting g
       _ -> g
   AwaitEpicRound -> do
-    when (epicRoundPhaseOf g `elem` map Just [EpicRoundWaiting, EpicRoundReady, EpicRoundEnded, EpicRoundExpired]) do
+    when (epicRoundPhaseOf g `elem` map Just [EpicRoundWaiting, EpicRoundReady, EpicRoundEnded, EpicRoundExpired, EpicRoundBeginning, EpicRoundBeginReady, EpicRoundPrepared, EpicRoundRevealed, EpicRoundBegan]) do
       lead <- getLead
       push $ Ask lead $ PlayerWindow msg $ QuestionLabel (ikey "label.epic.waitingForRound") Nothing [] $ ChooseOne []
     pure g
@@ -79,16 +85,81 @@ runEpicMessage msg g = case msg of
   BeginEpicRoundEnd | epicRoundPhaseOf g == Just EpicRoundReady -> do
     push EndRound
     pure $ setEpicRoundPhase EpicRoundResolving g
-  BeginRound | usesEpicRoundSynchronization g -> do
-    push AwaitEpicRound
-    pure $ if epicRoundPhaseOf g == Just EpicRoundResolving
-      then setEpicRoundPhase EpicRoundEnded g
-      else g
+  BeginRound | usesEpicRoundSynchronization g -> case epicRoundPhaseOf g of
+    Just EpicRoundBeginning -> do
+      -- Raw BeginRound has reached entities once. Finish their queued resets
+      -- before parking; the global coordinator freezes triggers afterwards.
+      pushEnd AwaitEpicRound
+      let advanced = g & roundL +~ 1
+            & separationL %~ fmap (\s -> s {separationAreas = [a {areaStatus = AreaWaiting} | a <- separationAreas s]})
+      pure $ setEpicRoundPhase EpicRoundBeginning advanced & frozenRoundEndAbilitiesL .~ Nothing
+    _ -> do
+      push AwaitEpicRound
+      pure $ if epicRoundPhaseOf g == Just EpicRoundResolving
+        then setEpicRoundPhase EpicRoundEnded g
+        else g
   FinishEpicRoundEffects | epicRoundPhaseOf g == Just EpicRoundEnded ->
     pure $ setEpicRoundPhase EpicRoundExpired g & effectsL %~ filter ((/= UntilEndOfRound) . effectDuration)
+  -- Compatibility for already-queued releases from before the split protocol.
+  -- New event coordinators use BeginEpicRoundBeginning instead.
   BeginEpicNextRound | epicRoundPhaseOf g == Just EpicRoundExpired -> do
     push BeginRound
     pure $ setEpicRoundPhase EpicRoundIdle g & frozenRoundEndAbilitiesL .~ Nothing
+  BeginEpicRoundBeginning | epicRoundPhaseOf g == Just EpicRoundExpired -> do
+    push BeginRound
+    pure $ setEpicRoundPhase EpicRoundBeginning g
+  FreezeEpicRoundBeginning abilities | epicRoundPhaseOf g == Just EpicRoundBeginning ->
+    pure $ setEpicRoundPhase EpicRoundBeginReady g
+      & frozenRoundBeginsAbilitiesL ?~ filter isForcedAbility abilities
+      & resolvingQuestsL .~ Map.filter (not . isSideQuest) g.entities.quests
+  PrepareEpicQuestAdvance mode card
+    | epicRoundPhaseOf g `elem` map Just [EpicRoundBeginReady, EpicRoundResolving]
+    , [old] <- filter (not . isSideQuest) $ toList g.entities.quests -> do
+        let oldId = toId old
+        runQueueT $ case mode of
+          EpicDefeatQuest -> push $ CompleteQuest oldId
+          EpicLeaveQuest -> do
+            push $ LeaveQuestStage oldId
+            -- Dol Guldur rotates stage-three quests without defeating them;
+            -- return the same physical card to its available quest deck.
+            when (cdStage (toCardDef old) == Just 3) $ case toCard old of
+              EncounterCard prior -> push $ ShuffleIntoQuestDeck prior
+              _ -> pure ()
+            push $ AdvanceToQuest card
+        pure $ setEpicRoundPhase EpicRoundPreparingAdvance g
+          & epicQuestAdvanceL ?~ (oldId, card)
+          & resolvingQuestsL %~ Map.insert oldId old
+  MarkEpicQuestPrepared
+    | epicRoundPhaseOf g == Just EpicRoundPreparingAdvance
+    , Just (_, card) <- g.epicQuestAdvance
+    , any ((== card.id) . (.cardId) . toAttrs) g.entities.quests -> do
+        push AwaitEpicRound
+        pure $ setEpicRoundPhase EpicRoundPrepared g
+  RevealEpicQuestAdvance
+    | epicRoundPhaseOf g == Just EpicRoundPrepared
+    , Just (_, card) <- g.epicQuestAdvance -> do
+        runQueueT do
+          push $ Flip $ CardIdTarget card.id
+          push $ CheckWindows [mkAfter AdvancedToStage]
+          push MarkEpicQuestRevealed
+        pure $ setEpicRoundPhase EpicRoundRevealing g
+  MarkEpicQuestRevealed | epicRoundPhaseOf g == Just EpicRoundRevealing -> do
+    push AwaitEpicRound
+    pure $ setEpicRoundPhase EpicRoundRevealed g & epicQuestAdvanceL .~ Nothing
+  ReleaseEpicRoundBeginning
+    | epicRoundPhaseOf g `elem` map Just [EpicRoundBeginReady, EpicRoundRevealed] -> do
+        runQueueT do
+          push $ CheckWindows [mkWhen RoundBegins]
+          push FinishEpicRoundBeginning
+        pure $ setEpicRoundPhase EpicRoundBeginResolving g
+  FinishEpicRoundBeginning | epicRoundPhaseOf g == Just EpicRoundBeginResolving -> do
+    push AwaitEpicRound
+    pure $ setEpicRoundPhase EpicRoundBegan g & frozenRoundBeginsAbilitiesL .~ Nothing & resolvingQuestsL .~ mempty
+  BeginEpicRoundResources | epicRoundPhaseOf g == Just EpicRoundBegan -> do
+    runQueueT do
+      push $ BeginPhase minBound
+      push $ EndPhase minBound
+    pure $ setEpicRoundPhase EpicRoundIdle g
   RequestAnnuminasHost code destination -> do
     let replica = scenarioEpic $ toAttrs g.scenario
         own = maybe (GroupOrdinal 0) epicGroup replica

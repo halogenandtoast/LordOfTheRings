@@ -230,7 +230,7 @@ import LordOfTheRings.Game.Cards (
  )
 import LordOfTheRings.Game.Dispatch (runEach, runEntities)
 import LordOfTheRings.Game.Message (runGameMessage)
-import LordOfTheRings.Epic.Runner (runEpicMessage, usesEpicRoundSynchronization, epicRoundPhaseOf)
+import LordOfTheRings.Epic.Runner (runEpicMessage, usesEpicRoundSynchronization, epicRoundPhaseOf, isEpicQuestAdvanceAuthorized)
 import LordOfTheRings.Epic.Types (EpicRoundPhase (..))
 import LordOfTheRings.Epic.Types (EpicEffect (EpicReceiveEnemy, EpicTransferLorienSupport, EpicReceiveLorienSupport))
 import LordOfTheRings.Game.Query (
@@ -264,8 +264,8 @@ runGameAllowed msg g = case msg of
   -- Hold the boundary before dispatching to players and cards: raw EndRound
   -- also discards Gandalf and resets per-round uses, independently of windows.
   EndRound | usesEpicRoundSynchronization g, epicRoundPhaseOf g /= Just EpicRoundResolving -> runEpicMessage msg g
-  BeginRound | usesEpicRoundSynchronization g, epicRoundPhaseOf g `elem` map Just [EpicRoundWaiting, EpicRoundReady, EpicRoundResolving, EpicRoundEnded, EpicRoundExpired] -> runEpicMessage msg g
-  EndEffects UntilEndOfRound | usesEpicRoundSynchronization g, epicRoundPhaseOf g `elem` map Just [EpicRoundWaiting, EpicRoundReady, EpicRoundResolving, EpicRoundEnded, EpicRoundExpired] -> pure g
+  BeginRound | usesEpicRoundSynchronization g, epicRoundPhaseOf g `notElem` [Nothing, Just EpicRoundIdle, Just EpicRoundBeginning] -> runEpicMessage msg g
+  EndEffects UntilEndOfRound | usesEpicRoundSynchronization g, epicRoundPhaseOf g `notElem` [Nothing, Just EpicRoundIdle] -> pure g
   EndPhase phase | areaPhaseEnded g -> runGameMessage (DoStep 4 $ EndPhase phase) g
   RevealEncounterCard | Just pid <- gameRevealer g, maybe False (.eliminated) (Map.lookup pid $ allPlayers g) -> pure g
   _ | g.phase == QuestPhase, areaPhaseEnded g, questStep msg -> pure g
@@ -511,6 +511,8 @@ runGameAllowed msg g = case msg of
   ShuffleIntoEncounterDeck (LocationTarget lid) | grottoCard lid -> g <$ push (ShuffleIntoGrottoDeck lid)
   -- a quest card that cannot be defeated now keeps its progress, to be checked again once
   -- it can be (see 'checkUnblockedQuests')
+  CompleteQuest qid | not (Map.member qid g.entities.quests) -> pure g
+  CompleteQuest qid | isEpicQuestAdvanceAuthorized g qid -> runGame'' msg g
   CompleteQuest qid -> do
     blocked <- elem CannotBeDefeated <$> getModifiers (QuestTarget qid)
     if blocked then pure g else runGame'' msg g

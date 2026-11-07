@@ -19,7 +19,7 @@ import LordOfTheRings.Name (Name (..))
 import LordOfTheRings.Message
 import LordOfTheRings.Message.Lifted (chooseOneM, labeled, placeResources, questionLabeled, removeFromDeck, showing, shuffleIntoDeck, targets)
 import LordOfTheRings.Campaign
-import LordOfTheRings.Game.Base (allPlayers, gameEntities, gamePhase, gamePlayerOrder, gamePlayers, gameRound)
+import LordOfTheRings.Game.Base (allPlayers, gameEntities, gamePhase, gamePlayerOrder, gamePlayers, gameRound, gameEpicQuestAdvance)
 import LordOfTheRings.Entities (entitiesHeroes, entitiesObjectives)
 import LordOfTheRings.Helpers.Modifiers (getModifiers)
 import LordOfTheRings.Modifier (ModifierType (EncounterDeckDoesNotReset, EncounterDeckResetsWheneverEmpty, HideValue, RecordedIfWon, ReturnBeforeEncounterDeckResets, ShadowCardsDealt))
@@ -28,7 +28,7 @@ import LordOfTheRings.Phase (Phase (QuestPhase))
 import LordOfTheRings.Placement (GuardRelease (..), Placement (AttachedTo))
 import LordOfTheRings.Prelude
 import LordOfTheRings.Question
-import LordOfTheRings.Epic.Types (EpicReplica (..), SharedDelta (..), SharedEventState (revision), EpicCommand (..), applySharedDelta)
+import LordOfTheRings.Epic.Types (EpicReplica (..), EpicRoundPhase (EpicRoundPreparingAdvance), EpicRoundState (epicRoundPhase), SharedDelta (..), SharedEventState (revision), EpicCommand (..), applySharedDelta)
 import LordOfTheRings.Scenario.Sailing (discardEncounterCard, runSailing)
 import LordOfTheRings.Saga (Saga (..), removedBurdenSets, sagaOf, treasureSetsFor)
 import LordOfTheRings.Scenario.Types as X
@@ -85,6 +85,9 @@ epicMessageId :: MonadRandom m => EpicReplica -> m UUID
 epicMessageId replica = do
   seed <- getRandom
   pure $ UUID.generateNamed seed $ BS.unpack $ encodeUtf8 $ tshow (replica.epicGroup, replica.epicShared.revision)
+
+isEpicPreparing :: ScenarioAttrs -> Bool
+isEpicPreparing attrs = (epicRoundPhase <$> (scenarioEpic attrs >>= epicRoundState)) == Just EpicRoundPreparingAdvance
 
 instance RunMessage ScenarioAttrs where
   runMessage msg attrs = resetEmptyEncounterDeck =<< case msg of
@@ -550,6 +553,13 @@ instance RunMessage ScenarioAttrs where
         $ Label (ikey "label.done") []
         : [targetLabel y [RemoveFromEncounterDeck y, RevealCard y] | y <- attrs.encounterDeck]
       pure attrs
+    AdvanceQuest | isEpicPreparing attrs -> do
+      choice <- getsGame gameEpicQuestAdvance
+      case choice of
+        Just (_, card) -> do
+          push $ AdvanceToQuest card
+          pure $ attrs & questDeckL %~ filter (/= card)
+        Nothing -> pure attrs
     AdvanceQuest -> case attrs.questDeck of
       [] -> do
         push $ GameOver Won
@@ -565,6 +575,9 @@ instance RunMessage ScenarioAttrs where
       pure $ attrs & questDeckL %~ ((<> [card]) . filter (/= card)) & victoryDisplayL %~ filter ((/= card.id) . (.id))
     -- a stage put into play straight from the quest deck, as Hasty Council chooses one, leaves it
     PutQuestIntoPlay card -> pure $ attrs & questDeckL %~ filter (/= card)
+    AdvanceToQuest card | isEpicPreparing attrs -> do
+      pushAll [CheckWindows [mkWhen AdvancedToStage], PutQuestIntoPlay card, MarkEpicQuestPrepared]
+      pure attrs
     AdvanceToQuest card -> do
       pushAll [CheckWindows [mkWhen AdvancedToStage], PutQuestIntoPlay card, Flip (toTarget card), CheckWindows [mkAfter AdvancedToStage]]
       pure attrs

@@ -207,6 +207,9 @@ import LordOfTheRings.Game.Base (
   damageDealtL,
   effectsL,
   gameFrozenRoundEndAbilities,
+  gameFrozenRoundBeginsAbilities,
+  gameResolvingQuests,
+  resolvingQuestsL,
   entitiesL,
   firstPlayerL,
   focusArea,
@@ -509,6 +512,15 @@ import LordOfTheRings.Message (
     BeginEpicRoundEnd,
     FinishEpicRoundEffects,
     BeginEpicNextRound,
+    BeginEpicRoundBeginning,
+    FreezeEpicRoundBeginning,
+    PrepareEpicQuestAdvance,
+    MarkEpicQuestPrepared,
+    RevealEpicQuestAdvance,
+    MarkEpicQuestRevealed,
+    ReleaseEpicRoundBeginning,
+    FinishEpicRoundBeginning,
+    BeginEpicRoundResources,
     SyncEpic,
     ContributeShared,
     ChooseAndDiscard,
@@ -1042,6 +1054,7 @@ import LordOfTheRings.Source (
     LocationSource,
     PlayerAttackSource,
     PlayerSource,
+    QuestSource,
     TreacherySource
   ),
   Sourceable (toSource),
@@ -1296,6 +1309,15 @@ runGameMessage msg g = case msg of
   BeginEpicRoundEnd -> runEpicMessage msg g
   FinishEpicRoundEffects -> runEpicMessage msg g
   BeginEpicNextRound -> runEpicMessage msg g
+  BeginEpicRoundBeginning {} -> runEpicMessage msg g
+  FreezeEpicRoundBeginning {} -> runEpicMessage msg g
+  PrepareEpicQuestAdvance {} -> runEpicMessage msg g
+  MarkEpicQuestPrepared {} -> runEpicMessage msg g
+  RevealEpicQuestAdvance {} -> runEpicMessage msg g
+  MarkEpicQuestRevealed {} -> runEpicMessage msg g
+  ReleaseEpicRoundBeginning {} -> runEpicMessage msg g
+  FinishEpicRoundBeginning {} -> runEpicMessage msg g
+  BeginEpicRoundResources -> runEpicMessage msg g
   SyncEpic {} -> runEpicMessage msg g
   ContributeShared {} -> runEpicMessage msg g
   -- the rest of an attack does nothing once its enemy has left play
@@ -1347,6 +1369,19 @@ runGameMessage msg g = case msg of
         pure $ g & resolvingObjectivesL . ix oid .~ (resolved : rest)
   FinishObjectiveAbility oid ->
     pure $ g & resolvingObjectivesL %~ Map.update (\case _ : remaining | notNull remaining -> Just remaining; _ -> Nothing) oid
+  -- FAQ 1.58: an already-triggered quest ability still resolves when the
+  -- global passive advancement has removed its source. No other messages or
+  -- ordinary ability/modifier queries see these snapshots.
+  UseCardAbility _ (QuestSource qid) _ _
+    | not (Map.member qid g.entities.quests)
+    , Just old <- Map.lookup qid (gameResolvingQuests g) -> do
+        resolved <- runEach msg old
+        pure $ g & resolvingQuestsL . ix qid .~ resolved
+  DoStep _ (UseCardAbility _ (QuestSource qid) _ _)
+    | not (Map.member qid g.entities.quests)
+    , Just old <- Map.lookup qid (gameResolvingQuests g) -> do
+        resolved <- runEach msg old
+        pure $ g & resolvingQuestsL . ix qid .~ resolved
   -- an ally that has just left play answers its own leaving
   UseCardAbility _ (AllySource aid) _ _ | Just a <- Map.lookup aid (gameLeftPlay g) -> do
     a' <- runEach msg a
@@ -1381,7 +1416,7 @@ runGameMessage msg g = case msg of
       -- in a saga, the first player takes control of Bilbo Baggins or a Fellowship hero
       setUpFellowship firstPlayer
     pure g
-  BeginRound | usesEpicRoundSynchronization g, epicRoundPhaseOf g `elem` map Just [EpicRoundWaiting, EpicRoundReady, EpicRoundResolving, EpicRoundEnded, EpicRoundExpired] -> runEpicMessage msg g
+  BeginRound | usesEpicRoundSynchronization g, epicRoundPhaseOf g `notElem` [Nothing, Just EpicRoundIdle] -> runEpicMessage msg g
   BeginRound -> do
     pushAll [CheckWindows [mkWhen RoundBegins], BeginPhase minBound, EndPhase minBound]
     -- no area has begun the round's first phase, those separated before the first round
@@ -3406,7 +3441,7 @@ runGameMessage msg g = case msg of
     , Just lid <- (toAttrs actor).enemyAttackLocation ->
         pure $ g & effectsL %~ (\es -> effect : effect {effectTarget = LocationTarget lid} : es)
   CreateEffect effect -> pure $ g & effectsL %~ (effect :)
-  EndEffects UntilEndOfRound | usesEpicRoundSynchronization g, epicRoundPhaseOf g `elem` map Just [EpicRoundWaiting, EpicRoundReady, EpicRoundResolving, EpicRoundEnded, EpicRoundExpired] -> pure g
+  EndEffects UntilEndOfRound | usesEpicRoundSynchronization g, epicRoundPhaseOf g `notElem` [Nothing, Just EpicRoundIdle] -> pure g
   EndEffects duration -> pure $ g & effectsL %~ filter ((/= duration) . effectDuration)
   EndEffectsFrom source -> pure $ g & effectsL %~ filter ((/= source) . effectSource)
   EndEffect e -> pure $ g & effectsL %~ (\es -> let (before, after) = break (== e) es in before <> drop 1 after)
@@ -3577,9 +3612,12 @@ runGameMessage msg g = case msg of
   CheckWindows windows -> do
     abilities <- getWindowAbilities windows
     let atRoundEnd = any (\case Window _ RoundEnds -> True; _ -> False) windows
-        forcedAbilities = if atRoundEnd
-          then fromMaybe (filter isForcedAbility abilities) (gameFrozenRoundEndAbilities g)
-          else filter isForcedAbility abilities
+        atRoundBeginning = any (\case Window _ RoundBegins -> True; _ -> False) windows
+        snapshot
+          | atRoundEnd = gameFrozenRoundEndAbilities g
+          | atRoundBeginning = gameFrozenRoundBeginsAbilities g
+          | otherwise = Nothing
+        forcedAbilities = fromMaybe (filter isForcedAbility abilities) snapshot
     lead <- getLead
     -- while a Peril card's staging resolves, its player alone may respond
     order <- maybe getPlayerOrder (pure . pure) (gamePeril g)
@@ -3997,6 +4035,7 @@ runGameMessage msg g = case msg of
             <> [Effect GameSource t [CurrentQuest] UntilEndOfRound | t `elem` mainQuests, length mainQuests > 1]
         replaced e = CurrentQuest `elem` effectModifiers e && (not side || effectTarget e `elem` sideQuests)
     pure $ g & effectsL %~ ((chosen <>) . filter (not . replaced))
+  CompleteQuest qid | not (Map.member qid g.entities.quests) -> pure g
   CompleteQuest qid
     | Just _ <- headMay [home | modifier <- Map.findWithDefault [] (QuestTarget qid) (gameModifiers g), ReturnToQuestAtTravel home <- [modifierType modifier]] -> do
         let already = any (\a -> isFocusedArea g a && areaJoining a) $ maybe [] separationAreas (gameSeparation g)

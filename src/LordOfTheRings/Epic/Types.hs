@@ -12,6 +12,7 @@ module LordOfTheRings.Epic.Types (
   EpicReplica (..),
   EpicRoundPhase (..),
   EpicRoundState (..),
+  EpicQuestAdvanceMode (..),
   EpicBoard (..),
   EpicStage (..),
   EpicPlayer (..),
@@ -203,6 +204,11 @@ dreadnaughtDestroyed state = sharedCounter DreadnaughtDamage state >= 15 * state
 -- The event coordinator freezes every team's triggers before releasing any
 -- end-of-round effects, then expires lasting effects before the next round.
 data EpicRoundPhase = EpicRoundIdle | EpicRoundWaiting | EpicRoundReady | EpicRoundResolving | EpicRoundEnded | EpicRoundExpired
+  | EpicRoundBeginning | EpicRoundBeginReady | EpicRoundPreparingAdvance | EpicRoundPrepared | EpicRoundRevealing | EpicRoundRevealed | EpicRoundBeginResolving | EpicRoundBegan
+  deriving stock (Show, Eq, Generic)
+  deriving anyclass (ToJSON, FromJSON)
+
+data EpicQuestAdvanceMode = EpicDefeatQuest | EpicLeaveQuest
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 

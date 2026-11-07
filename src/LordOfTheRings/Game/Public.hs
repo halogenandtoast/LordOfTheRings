@@ -165,6 +165,9 @@ publicGameFor seesHand g = hideDecks $ toJSON merged
     Object o ->
       Object
         $ KeyMap.insert "score" (toJSON $ groupScore g)
+        $ KeyMap.delete "frozenRoundBeginsAbilities"
+        $ KeyMap.delete "resolvingQuests"
+        $ KeyMap.delete "epicQuestAdvance"
         $ KeyMap.delete "frozenRoundEndAbilities"
         $ KeyMap.delete "resolvingObjectives"
         $ KeyMap.delete "separation"

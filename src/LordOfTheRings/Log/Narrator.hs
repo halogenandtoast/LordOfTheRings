@@ -22,7 +22,7 @@ import LordOfTheRings.Classes.Entity
 import LordOfTheRings.Classes.HasGame
 import LordOfTheRings.Entities
 import LordOfTheRings.Enemy.Types (EnemyAttrs (enemyShadowRevealed))
-import LordOfTheRings.Epic.Runner (usesEpicRoundSynchronization, epicRoundPhaseOf)
+import LordOfTheRings.Epic.Runner (usesEpicRoundSynchronization, epicRoundPhaseOf, isEpicQuestAdvanceAuthorized)
 import LordOfTheRings.Epic.Types (EpicRoundPhase (..), SharedKey (AnnuminasCityStrength), EpicReplica (epicShared, epicGroup), GroupOrdinal (..), EpicEffect (EpicReceiveEnemy), EpicEnemyTransfer (epicEnemyCard), annuminasCityStrength)
 import LordOfTheRings.Game.Base
 import LordOfTheRings.Heading
@@ -36,7 +36,7 @@ import LordOfTheRings.Log.Block
 import LordOfTheRings.Log.Refs
 import LordOfTheRings.Helpers.Modifiers (getModifiers, immuneToSource, resourcesBarredFrom)
 import LordOfTheRings.Matcher (currentQuestHas, getArcheryTotal, getDamage, getDiscoverValue, getLead, getTimeCounters, hasKeyword)
-import LordOfTheRings.Modifier (ModifierType (CannotRemoveTimeCounters, QuestProgressRemovalBecomes))
+import LordOfTheRings.Modifier (ModifierType (CannotBeDefeated, CannotRemoveTimeCounters, QuestProgressRemovalBecomes))
 import LordOfTheRings.Message
 import LordOfTheRings.Outcome
 import LordOfTheRings.Phase
@@ -71,7 +71,7 @@ narrationFor = \case
     one $ structure [ikeyPart "log.scenarioBegins" ["scenario" ~> logRef RefScenario s.scenarioName]]
   BeginRound -> Just do
     blocked <- getsGame $ \g -> usesEpicRoundSynchronization g
-      && epicRoundPhaseOf g `elem` map Just [EpicRoundWaiting, EpicRoundReady, EpicRoundResolving, EpicRoundEnded, EpicRoundExpired]
+      && epicRoundPhaseOf g `notElem` [Nothing, Just EpicRoundIdle, Just EpicRoundBeginning]
     if blocked then pure [] else do
       -- before the round is counted, so the next one
       n <- getsGame ((+ 1) . gameRound)
@@ -473,7 +473,12 @@ narrationFor = \case
             then toned Good $ test [ikeyPart "log.fortitudePasses" ["player" ~> who], versus]
             else toned Bad $ test [ikeyPart "log.fortitudeFails" ["player" ~> who], versus]
     [] -> pure []
-  CompleteQuest qid -> Just $ whenRef (toTarget qid) \q -> one $ toned Good $ mechanic [ikeyPart "log.questComplete" ["quest" ~> q]]
+  CompleteQuest qid -> Just do
+    state <- getGame
+    blocked <- elem CannotBeDefeated <$> getModifiers (QuestTarget qid)
+    if not (Map.member qid state.entities.quests) || (blocked && not (isEpicQuestAdvanceAuthorized state qid))
+      then pure []
+      else whenRef (toTarget qid) \q -> one $ toned Good $ mechanic [ikeyPart "log.questComplete" ["quest" ~> q]]
   SetCurrentQuest t -> Just $ whenRef t \q -> one $ mechanic [ikeyPart "log.currentQuest" ["quest" ~> q]]
   ShuffleIntoQuestDeck card -> Just $ one $ mechanic [ikeyPart "log.shuffledIntoQuestDeck" ["card" ~> EncounterCard card]]
   PutOnBottomOfQuestDeck card -> Just $ one $ mechanic [ikeyPart "log.putOnBottomOfQuestDeck" ["card" ~> EncounterCard card]]

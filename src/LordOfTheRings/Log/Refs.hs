@@ -43,7 +43,7 @@ targetRefFor target = do
     ObjectiveTarget k -> pure $ ref RefObjective es.objectives k <|> (entityRef RefObjective k <$> (headMay =<< Map.lookup k (gameResolvingObjectives g)))
     -- drawn on the side it shows
     ContractTarget k -> pure $ (\c -> (entityRef RefContract k c) {logRefFaceDown = c.flipped}) <$> Map.lookup k es.contracts
-    QuestTarget k -> pure $ (\q -> (entityRef RefQuest k q) {logRefFaceDown = q.flipped}) <$> Map.lookup k es.quests
+    QuestTarget k -> pure $ (\q -> (entityRef RefQuest k q) {logRefFaceDown = q.flipped}) <$> (Map.lookup k es.quests <|> Map.lookup k (gameResolvingQuests g))
     PlayerTarget pid -> Just <$> playerRefFor pid
     CardIdTarget cid -> pure $ cardRef <$> findCard cid g
     ScenarioTarget -> pure Nothing
@@ -86,7 +86,7 @@ sourceCardCode g = code
     ContractSource i -> toCardCode <$> Map.lookup i es.contracts
     LocationSource i -> toCardCode <$> Map.lookup i es.locations
     TreacherySource i -> toCardCode <$> Map.lookup i es.treacheries
-    QuestSource i -> toCardCode <$> Map.lookup i es.quests
+    QuestSource i -> toCardCode <$> (Map.lookup i es.quests <|> Map.lookup i (gameResolvingQuests g))
     CardIdSource cid -> toCardCode <$> findCard cid g
     CardCodeSource c -> Just c
     _ -> Nothing
