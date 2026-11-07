@@ -2903,6 +2903,7 @@ library
       LordOfTheRings.Quest.Cards.GrimbeornsFolly
       LordOfTheRings.Quest.Cards.GrimbeornsQuest
       LordOfTheRings.Quest.Cards.GuardiansOfTheJungle
+      LordOfTheRings.Quest.Cards.GuardTheGateAnnuminas
       LordOfTheRings.Quest.Cards.GuardTheHobbits
       LordOfTheRings.Quest.Cards.HastyCouncil
       LordOfTheRings.Quest.Cards.HeadingDown
@@ -4476,6 +4477,7 @@ test-suite LordOfTheRings-test
       LordOfTheRings.Standalone.AnnuminasDunedainSpec
       LordOfTheRings.Standalone.AnnuminasEpicPreparationSpec
       LordOfTheRings.Standalone.AnnuminasEpicSpec
+      LordOfTheRings.Standalone.AnnuminasGuardGateSpec
       LordOfTheRings.Standalone.AnnuminasInvadersSpec
       LordOfTheRings.Standalone.AnnuminasLieutenantSpec
       LordOfTheRings.Standalone.AnnuminasLocationsSpec

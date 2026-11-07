@@ -24,7 +24,8 @@ import LordOfTheRings.Objective.CardDefs qualified as Objectives
 import LordOfTheRings.Outcome (Outcome (Lost))
 import LordOfTheRings.Prelude
 import LordOfTheRings.Placement (Placement (StagingArea))
-import LordOfTheRings.Matcher (getLead)
+import LordOfTheRings.Helpers.Modifiers (resourcesBarredFrom)
+import LordOfTheRings.Matcher (getLead, select, HeroMatcher (HeroControlledBy), PlayerMatcher (PlayerWithId))
 import LordOfTheRings.Scenario.Types (ScenarioAttrs (scenarioEpic, scenarioSetAside))
 import LordOfTheRings.Source (Source (CardCodeSource))
 import LordOfTheRings.Target
@@ -113,6 +114,11 @@ runEpicMessage msg g = case msg of
             discardCount = maybe (length deck) (+ 1) $ findIndex enemyCard deck
         discardTopOfEncounterDeckFor source ScenarioTarget discardCount
         for_ (find enemyCard deck) addToStagingFromDiscard
+      EpicGrantHeroResources -> eachPlayer $ \pid -> do
+        heroes <- filterM (fmap not . resourcesBarredFrom source) =<< select (HeroControlledBy $ PlayerWithId pid)
+        chooseOrRunOneM pid do
+          questionLabeled "annuminas.resourceHero"
+          targets heroes $ \hid -> placeResources source hid 1
       EpicGrantDunedain -> do
         lead <- getLead
         for_ (take 1 $ filter ((== toCardCode Objectives.dunedainOfAnnuminas) . toCardCode) $ scenarioSetAside $ toAttrs g.scenario) $ putObjectiveAllyIntoPlayUnder lead

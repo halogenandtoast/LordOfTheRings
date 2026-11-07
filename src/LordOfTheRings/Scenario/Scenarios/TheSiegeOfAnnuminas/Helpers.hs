@@ -1,12 +1,15 @@
 module LordOfTheRings.Scenario.Scenarios.TheSiegeOfAnnuminas.Helpers
-  (cityStrength, damageAnnuminas, repairAnnuminas, eachAnnuminasTeam, otherAnnuminasTeams, setAsideAnnuminasCards, annuminasStages) where
+  (cityStrength, damageAnnuminas, repairAnnuminas, eachAnnuminasTeam, otherAnnuminasTeams, setAsideAnnuminasCards, annuminasStages, annuminasVictoryCopies, chooseAnnuminasStage) where
 
-import LordOfTheRings.Card (CardCode, toCardCode)
+import Data.List (nubBy)
+import LordOfTheRings.Card (CardCode, HasCardCode, toCardCode)
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Classes.Entity (toAttrs)
 import LordOfTheRings.Classes.HasGame
 import LordOfTheRings.Classes.HasQueue (push)
+import LordOfTheRings.I18n (textVar)
+import LordOfTheRings.Id (PlayerId)
 import LordOfTheRings.Epic.Types
 import LordOfTheRings.Epic.Board (epicBoardFor)
 import LordOfTheRings.Message (Message (ContributeShared, ResolveEpicEffect, QueueEpicCommand))
@@ -15,7 +18,7 @@ import LordOfTheRings.Objective.CardDefs qualified as Objectives
 import LordOfTheRings.Prelude
 import LordOfTheRings.Scenario.Types (scenarioEpic)
 import LordOfTheRings.Source (Sourceable)
-import LordOfTheRings.Target (Target (ScenarioTarget))
+import LordOfTheRings.Target (Target (ScenarioTarget), Targetable)
 
 annuminasStages :: HasGame m => m [(GroupOrdinal, Text, EpicStage)]
 annuminasStages = getsGame $ \g ->
@@ -68,3 +71,28 @@ setAsideAnnuminasCards = do
         , Locations.siegeTunnel, Enemies.hostOfAngmar, Objectives.dunedainOfAnnuminas
         ]
   traverse_ setAside $ filter ((`elem` waiting) . toCardCode) deck
+
+-- Count physical copies across victory displays, retaining duplicate card codes.
+annuminasVictoryCopies :: HasGame m => CardCode -> m Int
+annuminasVictoryCopies code = getsGame $ \g ->
+  let replica = scenarioEpic $ toAttrs g.scenario
+      own = maybe (GroupOrdinal 0) epicGroup replica
+      boards = nubBy (\a b -> a.epicBoardGroup == b.epicBoardGroup)
+        [b | r <- maybeToList replica, b <- r.epicBoards, b.epicBoardGroup /= own]
+      localCards = map toCardCode (toAttrs g.scenario).victoryDisplay
+      remoteCards = [c | b <- boards, stage <- maybeToList b.epicBoardStage, c <- stage.epicStageVictoryCards]
+   in length $ filter (== code) $ localCards <> remoteCards
+
+chooseAnnuminasStage
+  :: (ReverseQueue m, Targetable source, HasCardCode source)
+  => Message -> PlayerId -> source -> EpicEffect -> m ()
+chooseAnnuminasStage rebuild pid source effect = do
+  stages <- annuminasStages
+  own <- getsGame $ maybe (GroupOrdinal 0) epicGroup . scenarioEpic . toAttrs . (.scenario)
+  chooseOneRebuildingM pid rebuild do
+    questionLabeled "annuminas.chooseStage"
+    causedBy source
+    for_ stages $ \(ordinal, name, stage) -> when (notNull stage.epicStageQuests) $
+      if ordinal == own
+        then labeled "epic.thisGroup" $ push $ ResolveEpicEffect (toCardCode source) effect ScenarioTarget
+        else labeledWith "epic.group" [textVar "group" name] $ push $ QueueEpicCommand ordinal (toCardCode source) effect ScenarioTarget
