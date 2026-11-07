@@ -1,6 +1,7 @@
 module LordOfTheRings.Standalone.AnnuminasSortieSpec (spec) where
 
 import Data.UUID qualified as UUID
+import LordOfTheRings.Card (toCard)
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Epic.Types
 import LordOfTheRings.Location.CardDefs qualified as Locations
@@ -208,3 +209,72 @@ spec = describe "Annúminas Lead the Sortie" do
       chooseOptionMatching "choose remote enemy" pid (const True)
       Just replica <- getsGame $ scenarioEpic . toAttrs . (.scenario)
       map (.epicCommandEffect) replica.epicPendingCommands `shouldBe` [EpicDiscardEnemy]
+
+  describe "Rescue the Captives" do
+    let rescue = do
+          target <- putQuestStage Quests.rescueTheCaptivesAnnuminas
+          run $ Flip target
+          resolveRevealed
+          pure target
+    it "adds Enemy Camp and captures the chosen physical hero under the main quest" . gameTest $ \pid -> do
+      camp <- genEncounterCard Locations.enemyCamp
+      run $ SetAside camp
+      hero <- getHeroWithCode "01012"
+      run $ PlaceTokens GameSource (HeroTarget hero.id) Resource 3
+      run $ PlaceTokens GameSource (HeroTarget hero.id) Damage 1
+      _ <- rescue
+      chooseTarget pid hero
+      getsGame (map ((.cardId) . toAttrs) . toList . (.entities.locations)) `shouldReturn` [camp.id]
+      current <- getGame
+      let captives = concatMap (questUnderneath . toAttrs) current.entities.quests
+      map (.id) captives `shouldBe` [(toCard hero).id]
+      [c.owner | PlayerCard c <- captives] `shouldBe` [Just pid]
+      getsGame (length . (.entities.heroes)) `shouldReturn` 2
+
+    it "asks each player to capture one of their own heroes after the extra reveal" . twoPlayerTest testDeck $ \one two -> do
+      own <- heroOf one "01012"
+      other <- heroOf two "01007"
+      _ <- setEncounterDeck [Locations.oldForestRoad]
+      _ <- rescue
+      getsGame (length . (.entities.locations)) `shouldReturn` 1
+      chooseTarget one own
+      chooseTarget two other
+      getsGame (length . (.entities.heroes)) `shouldReturn` 4
+      captives <- getsGame $ concatMap (questUnderneath . toAttrs) . (.entities.quests)
+      [c.owner | PlayerCard c <- captives] `shouldSatisfy` (\owners -> length owners == 2 && Just one `elem` owners && Just two `elem` owners)
+
+    it "sends a durable capture command to each other stage exactly once" . gameTest $ \pid -> do
+      let remote = EpicBoard (GroupOrdinal 1) "Other" [] False Nothing
+      setReplica [remote, remote, EpicBoard (GroupOrdinal 2) "Third" [] False Nothing]
+      hero <- heroOf pid "01012"
+      _ <- rescue
+      chooseTarget pid hero
+      Just replica <- getsGame $ scenarioEpic . toAttrs . (.scenario)
+      map (.epicCommandEffect) replica.epicPendingCommands `shouldBe` [EpicCaptureHero, EpicCaptureHero]
+      map (.epicCommandTo) replica.epicPendingCommands `shouldBe` [GroupOrdinal 1, GroupOrdinal 2]
+
+    it "captures at the recipient's main quest and ignores a duplicate delivery" . gameTest $ \pid -> do
+      setReplica []
+      _ <- putQuestStage Quests.stopTheAttack
+      hero <- heroOf pid "01012"
+      let command = EpicCommand UUID.nil (GroupOrdinal 1) (GroupOrdinal 0) (toCardCode Quests.rescueTheCaptivesAnnuminas) EpicCaptureHero ScenarioTarget
+      run $ ApplyEpicCommand command
+      chooseTarget pid hero
+      run $ ApplyEpicCommand command
+      getsGame (length . (.entities.heroes)) `shouldReturn` 2
+      length <$> getsGame (concatMap (questUnderneath . toAttrs) . (.entities.quests)) `shouldReturn` 1
+
+    it "blocks progress while Enemy Camp is in play and shares the round-end victory" . gameTest $ \pid -> do
+      hero <- heroOf pid "01012"
+      target <- rescue
+      chooseTarget pid hero
+      camp <- stageLocation Locations.enemyCamp
+      run $ PlaceTokens GameSource target Progress 10
+      (.progress) <$> getActiveQuest `shouldReturn` 0
+      run $ AddToVictoryDisplay $ LocationTarget camp
+      run $ PlaceTokens GameSource target Progress 10
+      (.progress) <$> getActiveQuest `shouldReturn` 10
+      lieutenant <- stageEnemy Enemies.lieutenantOfAngmar
+      run $ AddToVictoryDisplay $ EnemyTarget lieutenant
+      run $ CheckWindows [mkWhen RoundEnds]
+      getsGame (.outcome) `shouldReturn` Just Won

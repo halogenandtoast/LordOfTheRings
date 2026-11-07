@@ -190,7 +190,7 @@ data EpicTargetQuery = EpicEnemy | EpicLocation | EpicShip | EpicEngagedNonUniqu
   deriving anyclass (ToJSON, FromJSON)
 
 data EpicEffect = EpicDamage Int | EpicProgress Int | EpicUpgradeShip | EpicShuffleWarship | EpicDiscardUntilEnemy
-  | EpicDiscardCaptive | EpicRescueCaptives
+  | EpicDiscardCaptive | EpicRescueCaptives | EpicCaptureHero
   | EpicGrantDunedain | EpicDelayStaging | EpicGrantHeroResources | EpicHealControlledCharacter
   | EpicDrawCards | EpicDiscardEnemy
   | EpicSendSetAsideHost GroupOrdinal UUID

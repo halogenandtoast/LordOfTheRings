@@ -2,7 +2,7 @@
 
 module LordOfTheRings.Quest (module LordOfTheRings.Quest, module X) where
 
-import LordOfTheRings.Quest.Cards.AnnuminasFinale (leadTheSortie, stopTheAttack)
+import LordOfTheRings.Quest.Cards.AnnuminasFinale (leadTheSortie, stopTheAttack, rescueTheCaptivesAnnuminas)
 import LordOfTheRings.Quest.Cards.AnnuminasDefense (guardTheGateAnnuminas, defendTheCityAnnuminas, manTheWallsAnnuminas)
 import LordOfTheRings.Quest.Cards.AnnuminasPreparation (rebuildTheDefenses, raiseTheLevee, delayTheEnemyAnnuminas)
 import LordOfTheRings.Quest.Cards.PrancingPonyInvestigation (investigatingTheCrime, runningOutOfTime, apprehendingTheKiller)
@@ -499,7 +499,8 @@ allQuests =
   Map.fromList
     [ (toCardCode builder, card)
     | card@(SomeQuestCard builder) <-
-        [ SomeQuestCard stopTheAttack
+        [ SomeQuestCard rescueTheCaptivesAnnuminas
+        , SomeQuestCard stopTheAttack
         , SomeQuestCard leadTheSortie
         , SomeQuestCard manTheWallsAnnuminas
         , SomeQuestCard defendTheCityAnnuminas

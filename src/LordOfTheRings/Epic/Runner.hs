@@ -4,7 +4,7 @@ import Data.Set qualified as Set
 import Data.Map.Strict qualified as Map
 import LordOfTheRings.Card
 import LordOfTheRings.Classes.RunMessage (runMessage)
-import LordOfTheRings.Classes.Entity (overAttrs, toAttrs, insertEntity)
+import LordOfTheRings.Classes.Entity (overAttrs, toAttrs, toId, insertEntity)
 import LordOfTheRings.Classes.HasQueue (push, runQueueT)
 import LordOfTheRings.Epic.Board
 import LordOfTheRings.Epic.Types
@@ -167,6 +167,14 @@ runEpicMessage msg g = case msg of
         for_ (take 1 $ filter ((== toCardCode Objectives.dunedainOfAnnuminas) . toCardCode) $ scenarioSetAside $ toAttrs g.scenario) $ putObjectiveAllyIntoPlayUnder lead
       EpicDelayStaging ->
         push $ CreateEffect $ Effect source GameTarget [FewerStagingReveals 1] (UntilEndOfPhaseOf QuestPhase)
+      EpicCaptureHero ->
+        for_ (toList g.entities.quests) \stage ->
+          when (not (isSideQuest stage) && cdStage (toCardDef stage) == Just 3) $
+            eachPlayer $ \pid -> do
+              heroes <- select (HeroControlledBy $ PlayerWithId pid)
+              chooseOrRunOneM pid do
+                questionLabeled "annuminas.captureHero"
+                targets heroes $ \hid -> push $ CaptureHeroUnderQuest (toId stage) hid
       EpicDiscardCaptive -> do
         for_ (toList g.entities.quests) \stage ->
           when (not (isSideQuest stage) && cdStage (toCardDef stage) == Just 3) do

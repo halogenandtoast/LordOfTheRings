@@ -1,23 +1,26 @@
-module LordOfTheRings.Quest.Cards.AnnuminasFinale (leadTheSortie, stopTheAttack) where
+module LordOfTheRings.Quest.Cards.AnnuminasFinale (leadTheSortie, stopTheAttack, rescueTheCaptivesAnnuminas) where
 
 import LordOfTheRings.Card (toCardCode)
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
-import LordOfTheRings.Epic.Types (EpicEffect (EpicDiscardEnemy), EpicTargetQuery (EpicOtherNonUniqueNoVictoryEnemy))
+import LordOfTheRings.Epic.Types (EpicEffect (EpicDiscardEnemy, EpicCaptureHero), EpicTargetQuery (EpicOtherNonUniqueNoVictoryEnemy))
 import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Quest.CardDefs qualified as Cards
+import LordOfTheRings.Scenario.Scenarios.TheSiegeOfAnnuminas.Helpers (eachAnnuminasTeam)
 import LordOfTheRings.Quest.Import.Lifted
 
 newtype AnnuminasFinale = AnnuminasFinale QuestAttrs
   deriving anyclass IsQuest
   deriving newtype (Show, Eq, ToJSON, Entity)
 
-leadTheSortie, stopTheAttack :: QuestCard AnnuminasFinale
+leadTheSortie, stopTheAttack, rescueTheCaptivesAnnuminas :: QuestCard AnnuminasFinale
 leadTheSortie = quest AnnuminasFinale Cards.leadTheSortie
 stopTheAttack = quest AnnuminasFinale Cards.stopTheAttack
+rescueTheCaptivesAnnuminas = quest AnnuminasFinale Cards.rescueTheCaptivesAnnuminas
 
 blockingLocation :: QuestAttrs -> CardDef
 blockingLocation a
   | toCardCode a == toCardCode Cards.stopTheAttack = Locations.siegeTunnel
+  | toCardCode a == toCardCode Cards.rescueTheCaptivesAnnuminas = Locations.enemyCamp
   | otherwise = Locations.batteringRam
 
 instance HasModifiersFor AnnuminasFinale where
@@ -44,6 +47,8 @@ instance RunMessage AnnuminasFinale where
         addSetAsideToStaging $ cardIs Enemies.lieutenantOfAngmar
       lead <- getLead
       eachPlayer $ \pid -> when (pid /= lead) $ revealEncounterCardAs pid
+      when (toCardCode a == toCardCode Cards.rescueTheCaptivesAnnuminas) $
+        eachAnnuminasTeam (toCardCode a) EpicCaptureHero
       pure q
     UseCardAbility _ (isSource a -> True) 1 _ -> do
       lead <- getLead

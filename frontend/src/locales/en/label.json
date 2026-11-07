@@ -1,5 +1,6 @@
 {
   "annuminas": {
+    "captureHero": "Choose a hero you control to place facedown under your main quest",
     "hostStage": "Choose a stage’s set-aside Host of Angmar",
     "healCharacter": "Choose a character you control to heal 1 damage",
     "highestAttack": "Choose a staged enemy with the highest attack",
