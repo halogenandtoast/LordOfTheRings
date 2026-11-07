@@ -290,21 +290,24 @@ publicGameFor seesHand g = hideDecks $ toJSON merged
   underneath :: Map CardId Int
   underneath =
     Map.filter (> 0)
-      $ Map.unionWith
-        (+)
-        (under \c -> length [() | EncounterCard _ <- c])
-        (maybe mempty (fmap length) (parseMaybe (withObject "meta" (.: "underneath")) (scenarioMeta $ toAttrs g.scenario) :: Maybe (Map CardId [Value])))
+      $ fmap Set.size $ Map.unionWith
+        Set.union
+        (under \cards -> Set.fromList [c.id | EncounterCard c <- cards])
+        -- Underworld cards are mirrored under their location and in scenario meta.
+        -- Count physical identities once, including any other cards under the host.
+        (maybe mempty (fmap $ Set.fromList . map (.id)) (parseMaybe (withObject "meta" (.: "underneath")) (scenarioMeta $ toAttrs g.scenario) :: Maybe (Map CardId [EncounterCard])))
   -- and the player cards, shown with a player card back, as the hands Truly Lost places
   -- under locations
   underneathPlayer :: Map CardId Int
-  underneathPlayer = Map.filter (> 0) $ under players <> mapFromList [(l.locationCardId, players l.locationUnderneath) | l <- map toAttrs (toList $ entitiesLocations merged.entities)]
+  underneathPlayer = Map.filter (> 0) $ under players
   players c = length [() | PlayerCard _ <- c]
-  -- what lies under objectives and quests (the encounter cards under a location are
-  -- counted from the meta, where The Steward's Fear keeps them)
-  under :: ([Card] -> Int) -> Map CardId Int
+  -- Cards kept by their host, including encounter allies captured under locations.
+  -- Legacy underworld cards in scenario meta are combined with these above.
+  under :: ([Card] -> a) -> Map CardId a
   under n =
     mapFromList
       $ [(o.objectiveCardId, n o.objectiveUnderneath) | o <- map toAttrs (toList $ entitiesObjectives merged.entities)]
+      <> [(l.locationCardId, n l.locationUnderneath) | l <- map toAttrs (toList $ entitiesLocations merged.entities)]
       <> [(q.questCardId, n [c | c@(PlayerCard _) <- q.questUnderneath]) | q <- map toAttrs (toList $ entitiesQuests merged.entities)]
       -- and contracts, as The Burglar's Turn's loot deck
       <> [(c.contractCardId, n c.contractUnderneath) | c <- map toAttrs (toList $ entitiesContracts merged.entities)]

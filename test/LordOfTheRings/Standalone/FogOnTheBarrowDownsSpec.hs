@@ -1,5 +1,7 @@
 module LordOfTheRings.Standalone.FogOnTheBarrowDownsSpec (spec) where
 
+import Data.Aeson.Types (parseMaybe)
+import LordOfTheRings.Game.Public (publicGame)
 import Data.Map.Strict qualified as Map
 import LordOfTheRings.Sphere (Sphere (Baggins))
 import LordOfTheRings.Attachment.CardDefs qualified as Attachments
@@ -256,6 +258,19 @@ spec = describe "Fog on the Barrow-downs Wights" do
         getQuestion two `shouldReturn` Nothing
 
   describe "Ancient Barrow" do
+    it "shows an encounter-card back for captured Tom without exposing the card underneath" . gameTest $ \_ -> do
+      _ <- setEncounterDeck [Objectives.tomBombadilFog, Locations.oldForestRoad]
+      run RevealEncounterCard
+      resolveRevealed
+      lid <- stageLocation Locations.ancientBarrow
+      host <- toCard <$> getLocation lid
+      publicView <- getsGame publicGame
+      let counts = parseMaybe (withObject "game" (.: "underneath")) publicView :: Maybe (Map CardId Int)
+          locations = parseMaybe (withObject "game" $ \o -> o .: "entities" >>= withObject "entities" (.: "locations")) publicView :: Maybe (Map LocationId Value)
+          underneath = locations >>= Map.lookup lid >>= parseMaybe (withObject "location" (.: "underneath")) :: Maybe [Value]
+      (Map.lookup host.id =<< counts) `shouldBe` Just 1
+      underneath `shouldBe` Just []
+
     it "has each player choose their own ally and counts the facedown cards in its threat" . twoPlayerTest testDeck $ \one two -> do
       chosenOne <- putAllyIntoPlay one Allies.guardOfTheCitadel
       _ <- putAllyIntoPlay one Allies.veteranAxehand
