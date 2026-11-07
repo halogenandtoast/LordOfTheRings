@@ -311,6 +311,50 @@ joinArea joining target g0 = case gameSeparation g of
  where
   g = focusArea target g0
 
+{- | An isolated area returns to the stage identified by its quest card, even if no
+players remain there. Its characters, engaged enemies and staging cards come along;
+its main quest leaves play, while the destination keeps its quest and progress
+(Fog on the Barrow-downs rules sheet, page 4, "Combining Staging Areas").
+-}
+joinQuestArea :: PlayerId -> QuestId -> Game -> Game
+joinQuestArea joining qid g0 = case gameSeparation g of
+  Just s
+    | not (separationShared s)
+    , Just destination <- find holdsQuest (separationAreas s)
+    , not (isFocusedArea g destination)
+    , Just departing <- find (elem joining . areaPlayers) (separationAreas s)
+    , isFocusedArea g departing ->
+        let players = filter (`elem` (areaPlayers destination <> areaPlayers departing)) (gamePlayerOrder g)
+            destination' = destination
+              { areaPlayers = players
+              , areaHeldPlayers = mempty
+              , areaHeldEntities = mempty
+              , areaHeldEffects = []
+              , areaHeldModifiers = mempty
+              }
+            areas =
+              [ if holdsQuest a then destination' else a
+              | a <- separationAreas s
+              , joining `notElem` areaPlayers a
+              ]
+            es = gameEntities g
+            joined = g
+              { gamePlayers = areaHeldPlayers destination <> gamePlayers g
+              , gameEntities = areaHeldEntities destination <> es {entitiesQuests = Map.filter isSideQuest (entitiesQuests es)}
+              , gameEffects = areaHeldEffects destination <> gameEffects g
+              , gameModifiers = Map.unionWith (<>) (areaHeldModifiers destination) (gameModifiers g)
+              }
+         in case areas of
+              [_] -> joined {gameSeparation = Nothing, gameFirstPlayer = separationFirstPlayer s}
+              _ -> joined
+                { gameSeparation = Just s {separationAreas = areas}
+                , gameFirstPlayer = areaLead joined s destination'
+                }
+  _ -> g0
+ where
+  g = focusArea joining g0
+  holdsQuest = Map.member qid . entitiesQuests . areaHeldEntities
+
 -- | Every player, those in areas not in focus too.
 allPlayers :: Game -> Map PlayerId Player
 allPlayers g = gamePlayers g <> foldMap (foldMap areaHeldPlayers . separationAreas) (gameSeparation g)

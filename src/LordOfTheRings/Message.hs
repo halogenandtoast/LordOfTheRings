@@ -929,6 +929,8 @@ data Message
     JoinAreas
   | -- | the first player's area joins the second's
     JoinArea PlayerId PlayerId
+  | -- | an isolated area joins the stage holding this quest, including an empty stage
+    JoinQuestArea PlayerId QuestId
   | -- | a setup instruction sets the hero aside, out of play, as Unexpected Rescue sets
     -- aside the heroes not chosen to start: not leaving play for its "If this leaves play"
     -- (see 'LordOfTheRings.Message.Lifted.leavesPlay')

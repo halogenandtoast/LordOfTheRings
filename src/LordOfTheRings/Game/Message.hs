@@ -210,6 +210,7 @@ import LordOfTheRings.Game.Base (
   isFocusedArea,
   isolated,
   joinArea,
+  joinQuestArea,
   lastCommittedWillpowerL,
   resolvingAttachmentsL,
   leftPlayL,
@@ -584,6 +585,7 @@ import LordOfTheRings.Message (
     IfAttackDestroyed,
     IgnoreFortitudeEyeIcons,
     JoinArea,
+    JoinQuestArea,
     JoinAreas,
     JoinAtTravel,
     LeaveQuestStage,
@@ -1464,6 +1466,7 @@ runGameMessage msg g = case msg of
   JoinAtTravel ->
     pure $ g & separationL %~ fmap (\s -> s {separationAreas = [if isFocusedArea g a then a {areaJoining = True} else a | a <- separationAreas s]})
   JoinArea joining target -> pure $ joinArea joining target g
+  JoinQuestArea joining qid -> pure $ joinQuestArea joining qid g
   -- in turn order each area whose quest card is defeated joins another, its active location
   -- discarded; with no other to join, all the players continue to the next stage together
   JoinAreas | Just s <- gameSeparation g -> do

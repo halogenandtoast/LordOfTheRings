@@ -2365,6 +2365,10 @@ focusAreaOf = push . FocusArea
 joinAnotherPlayer :: ReverseQueue m => m ()
 joinAnotherPlayer = push JoinAtTravel
 
+-- | Return an isolated area to the stage holding the given quest, even if empty.
+joinQuestArea :: ReverseQueue m => PlayerId -> QuestId -> m ()
+joinQuestArea pid = push . JoinQuestArea pid
+
 -- | The card leaves the player's deck for their discard pile, as "search your deck for a copy
 -- and discard it" reads.
 discardFromDeck :: ReverseQueue m => PlayerId -> PlayerCard -> m ()

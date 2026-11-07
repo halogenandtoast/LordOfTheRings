@@ -91,6 +91,7 @@ import LordOfTheRings.Message (
     Flip,
     FocusArea,
     JoinArea,
+    JoinQuestArea,
     LeavePlay,
     PlaceEnemy,
     PlaceInStagingAreaOf,
@@ -112,6 +113,7 @@ import LordOfTheRings.Message (
     ReturnToBottomOfEncounterDeck,
     ReturnToHand,
     ReturnToTopOfEncounterDeck,
+    SeparatePlayer,
     SeparatePlayers,
     SeparateStagingAreas,
     ShuffleIntoEncounterDeck,
@@ -588,7 +590,9 @@ runInPlay msg g =
           movingAreas = case msg of
             FocusArea _ -> True
             JoinArea {} -> True
+            JoinQuestArea {} -> True
             SeparatePlayers _ -> True
+            SeparatePlayer _ -> True
             SeparateStagingAreas _ -> True
             PlaceInStagingAreaOf {} -> True
             _ -> False

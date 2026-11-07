@@ -1,6 +1,7 @@
 module LordOfTheRings.LostRealmEngineSpec (spec) where
 
 import Data.Aeson.Types (parseMaybe)
+import Data.Map.Strict qualified as Map
 import LordOfTheRings.Game.Public (publicGame)
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Criteria (Criterion (FewerInVictoryDisplay))
@@ -201,6 +202,92 @@ spec = describe "The Lost Realm engine" do
       getsGame (keys . (.players)) `shouldReturn` [two]
       run $ FocusArea one
       getsGame (keys . (.players)) `shouldReturn` [one]
+
+  describe "Returning to a quest's staging area" do
+    it "returns to an empty solo stage and keeps its quest progress" . gameTest $ \pid -> do
+      home@(QuestTarget qid) <- putQuestStage Quests.fliesAndSpiders
+      run $ PlaceTokens GameSource home Progress 2
+      run $ SeparatePlayer pid
+      _ <- putQuestStage Quests.fliesAndSpiders
+      run $ JoinQuestArea pid qid
+      getCurrentQuest `shouldReturn` Just home
+      progressOn home `shouldReturn` 2
+      getsGame (isNothing . gameSeparation) `shouldReturn` True
+      getsGame (length . (.entities.quests)) `shouldReturn` 1
+      getLead `shouldReturn` pid
+
+    it "moves locations without leaving-play or re-entry effects" . gameTest $ \pid -> do
+      QuestTarget qid <- putQuestStage Quests.fliesAndSpiders
+      run . AddToStaging =<< genEncounterCard Locations.ravenChiefsCamp
+      lid <- getsGame (toId . headEx . toList . (.entities.locations))
+      run $ RemoveTokens GameSource (LocationTarget lid) TimeCounter 1
+      getTimeCounters (LocationTarget lid) `shouldReturn` 2
+      run $ SeparatePlayer pid
+      getsGame (Map.member lid . gameLeftPlayLocations) `shouldReturn` False
+      _ <- putQuestStage Quests.fliesAndSpiders
+      run $ JoinQuestArea pid qid
+      getTimeCounters (LocationTarget lid) `shouldReturn` 2
+      getsGame (Map.member lid . gameLeftPlayLocations) `shouldReturn` False
+
+    it "joins an occupied stage with its characters and both sets of staging cards" . twoPlayerTest testDeck $ \one two -> do
+      home@(QuestTarget qid) <- putQuestStage Quests.fliesAndSpiders
+      run . AddToStaging =<< genEncounterCard Locations.oldForestRoad
+      run $ SeparatePlayer two
+      _ <- putQuestStage Quests.fliesAndSpiders
+      run . AddToStaging =<< genEncounterCard Locations.oldForestRoad
+      run . AddToStaging =<< genEncounterCard Enemies.forestSpider
+      eid <- getsGame (toId . headEx . toList . (.entities.enemies))
+      run $ PlaceEnemy eid (EngagedWith two)
+      run . AddToStaging =<< genEncounterCard Enemies.forestSpider
+      run $ FocusArea one
+      run $ JoinQuestArea two qid
+      getCurrentQuest `shouldReturn` Just home
+      getsGame (length . (.players)) `shouldReturn` 2
+      getsGame (length . (.entities.heroes)) `shouldReturn` 6
+      getsGame (length . (.entities.locations)) `shouldReturn` 2
+      placements <- getsGame (map (.placement) . toList . (.entities.enemies))
+      placements `shouldSatisfy` (\ps -> length ps == 2 && all (`elem` ps) [EngagedWith two, StagingArea])
+      getsGame (isNothing . gameSeparation) `shouldReturn` True
+      getLead `shouldReturn` one
+
+    it "returns separately after saving while preserving the other private stage" . twoPlayerTest testDeck $ \one two -> do
+      home@(QuestTarget qid) <- putQuestStage Quests.fliesAndSpiders
+      run $ SeparatePlayer two
+      away <- putQuestStage Quests.fliesAndSpiders
+      run $ FocusArea one
+      run $ SeparatePlayer one
+      _ <- putQuestStage Quests.fliesAndSpiders
+      current <- getGame
+      case eitherDecode (encode current) of
+        Left err -> liftIO $ expectationFailure err
+        Right restored -> putGame restored
+      run $ JoinQuestArea one qid
+      getCurrentQuest `shouldReturn` Just home
+      getsGame (length . (.players)) `shouldReturn` 1
+      getsGame (isJust . gameSeparation) `shouldReturn` True
+      run $ FocusArea two
+      getCurrentQuest `shouldReturn` Just away
+      run $ JoinQuestArea two qid
+      getCurrentQuest `shouldReturn` Just home
+      getsGame (length . (.players)) `shouldReturn` 2
+      getsGame (isNothing . gameSeparation) `shouldReturn` True
+      getLead `shouldReturn` one
+
+    it "keeps side quests from the returning area" . gameTest $ \pid -> do
+      home@(QuestTarget qid) <- putQuestStage Quests.fliesAndSpiders
+      run $ SeparatePlayer pid
+      (_, side) <- withSideQuest
+      run $ JoinQuestArea pid qid
+      getSideQuests `shouldReturn` [side]
+      getCurrentQuest `shouldReturn` Just home
+      getsGame (length . (.entities.quests)) `shouldReturn` 2
+
+    it "leaves the game unchanged if the quest is already in the player's area" . gameTest $ \pid -> do
+      _ <- putQuestStage Quests.fliesAndSpiders
+      run $ SeparatePlayer pid
+      QuestTarget qid <- putQuestStage Quests.fliesAndSpiders
+      current <- getGame
+      toJSON (joinQuestArea pid qid current) `shouldBe` toJSON current
 
   describe "Time counters" do
     it "are not placed again as a separated area comes back into focus" . twoPlayerTest testDeck $ \one two -> do
