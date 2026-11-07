@@ -258,6 +258,8 @@ export const toView = (data: GameData, defs: Record<string, CardDef>, previous: 
       ...placed('locations', isAt('InPlayArea', pid)),
       // and an attachment waiting there unattached, as Followed
       ...placed('attachments', isAt('InPlayArea', pid)),
+      // and an objective they control, as Gollum with the player guarding him (Return to Mirkwood)
+      ...placed('objectives', isAt('InPlayArea', pid)),
     ]
     return {
       playerId: pid,
