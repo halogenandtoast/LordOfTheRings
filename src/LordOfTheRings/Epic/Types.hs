@@ -9,6 +9,8 @@ module LordOfTheRings.Epic.Types (
   SharedEventState (..),
   EpicReplica (..),
   EpicBoard (..),
+  EpicStage (..),
+  EpicQuest (..),
   EpicTarget (..),
   EpicTargetQuery (..),
   EpicEffect (..),
@@ -184,6 +186,30 @@ data EpicBoard = EpicBoard
   , epicBoardName :: Text
   , epicBoardTargets :: [EpicTarget]
   , epicBoardHasWarship :: Bool
+  , epicBoardStage :: Maybe EpicStage
+  }
+  deriving stock (Show, Eq, Generic)
+  deriving anyclass ToJSON
+
+instance FromJSON EpicBoard where
+  parseJSON = genericParseJSON defaultOptions . withDefaults [("epicBoardStage", Null)]
+
+-- These are public values, not another team's game state. In particular no
+-- cards beneath a quest, encounter-deck order, or players' hands are included.
+data EpicStage = EpicStage
+  { epicStageThreat :: Int
+  , epicStageQuests :: [EpicQuest]
+  , epicStageVictoryCards :: [CardCode]
+  }
+  deriving stock (Show, Eq, Generic)
+  deriving anyclass (ToJSON, FromJSON)
+
+data EpicQuest = EpicQuest
+  { epicQuestCard :: CardCode
+  , epicQuestNumber :: Int
+  , epicQuestProgress :: Int
+  , epicQuestRequirement :: Maybe Int
+  , epicQuestFlipped :: Bool
   }
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)

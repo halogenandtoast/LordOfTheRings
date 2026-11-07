@@ -115,8 +115,8 @@ spec = describe "Annúminas city objective" do
     card <- genEncounterCard Enemies.lawlessRuffian
     eid <- getRandom
     let enemyTarget = EpicTarget (EnemyTarget eid) card EpicEnemy False 0 False False True
-        own = EpicBoard (GroupOrdinal 0) "Own" [enemyTarget] False
-        remote = EpicBoard (GroupOrdinal 1) "Other" [enemyTarget, enemyTarget] False
+        own = EpicBoard (GroupOrdinal 0) "Own" [enemyTarget] False Nothing
+        remote = EpicBoard (GroupOrdinal 1) "Other" [enemyTarget, enemyTarget] False Nothing
     setReplica [own, remote]
     oid <- stageCity 50
     _ <- stageEnemy Enemies.lawlessRuffian

@@ -75,7 +75,7 @@ spec = describe "Annúminas Siege Tunnel" do
     (.placement) <$> getLocation tunnel `shouldReturn` ActiveLocation
 
   it "stops its forced effect after exploration and contributes five victory points" . gameTest $ \_ -> do
-    setReplica 0 [EpicBoard (GroupOrdinal 1) "Other" [] False]
+    setReplica 0 [EpicBoard (GroupOrdinal 1) "Other" [] False Nothing]
     tunnel <- stageLocation Locations.siegeTunnel
     run $ PlaceLocation tunnel ActiveLocation
     run $ PlaceTokens GameSource (LocationTarget tunnel) Progress 5
@@ -88,9 +88,9 @@ spec = describe "Annúminas Siege Tunnel" do
     replica.epicPendingCommands `shouldBe` []
 
   it "resolves locally once and queues one durable command for each other team" . gameTest $ \pid -> do
-    let own = EpicBoard (GroupOrdinal 0) "Own" [] False
-        other = EpicBoard (GroupOrdinal 1) "Other" [] False
-        lastTeam = EpicBoard (GroupOrdinal 2) "Last" [] False
+    let own = EpicBoard (GroupOrdinal 0) "Own" [] False Nothing
+        other = EpicBoard (GroupOrdinal 1) "Other" [] False Nothing
+        lastTeam = EpicBoard (GroupOrdinal 2) "Last" [] False Nothing
     setReplica 0 [own, other, other, lastTeam]
     tunnel <- stageLocation Locations.siegeTunnel
     _ <- setEncounterDeck [Enemies.greenwayFootpad, Enemies.lawlessRuffian]

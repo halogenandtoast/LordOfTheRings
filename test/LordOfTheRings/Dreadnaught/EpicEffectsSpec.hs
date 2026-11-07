@@ -29,7 +29,7 @@ spec = describe "Dreadnaught Epic effects" do
     card <- genEncounterCard Enemies.fierceMarauder
     eid <- getRandom
     let target = EpicTarget (EnemyTarget eid) card EpicEnemy False 0 False False True
-        board = EpicBoard (GroupOrdinal 1) "The second group" [target] False
+        board = EpicBoard (GroupOrdinal 1) "The second group" [target] False Nothing
     setReplica (GroupOrdinal 0) [board]
     select AnyEnemy `shouldReturn` []
     run $ ChooseEpicTarget pid (toCardCode Objectives.goldenWingUpgraded) EpicEnemy (EpicDamage 6)
@@ -88,7 +88,7 @@ spec = describe "Dreadnaught Epic effects" do
     card <- genEncounterCard Objectives.goldenWing
     aid <- getRandom
     let target = EpicTarget (AllyTarget aid) card EpicShip True 0 False True False
-        board = EpicBoard (GroupOrdinal 1) "The second group" [target] False
+        board = EpicBoard (GroupOrdinal 1) "The second group" [target] False Nothing
     setReplica (GroupOrdinal 0) [board]
     passesCriteria (EpicTargetsExist EpicShip) `shouldReturn` True
     setReplica (GroupOrdinal 0) [board {epicBoardTargets = [target {epicTargetUpgradeable = False}]}]
@@ -113,7 +113,7 @@ spec = describe "Dreadnaught Epic effects" do
     firstId <- getRandom
     secondId <- getRandom
     let target eid = EpicTarget (EnemyTarget eid) card EpicEnemy False 0 False False True
-        board eid = EpicBoard (GroupOrdinal 1) "The second group" [target eid] False
+        board eid = EpicBoard (GroupOrdinal 1) "The second group" [target eid] False Nothing
         choose = ChooseEpicTarget pid (toCardCode Objectives.goldenWingUpgraded) EpicEnemy (EpicDamage 6)
     setReplica (GroupOrdinal 0) [board firstId]
     run choose

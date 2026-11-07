@@ -4473,6 +4473,7 @@ test-suite LordOfTheRings-test
       LordOfTheRings.Standalone.AnnuminasEpicSpec
       LordOfTheRings.Standalone.AnnuminasInvadersSpec
       LordOfTheRings.Standalone.AnnuminasLocationsSpec
+      LordOfTheRings.Standalone.AnnuminasStageStateSpec
       LordOfTheRings.Standalone.AnnuminasTreacheriesSpec
       LordOfTheRings.Standalone.AnnuminasTunnelSpec
       LordOfTheRings.Standalone.BattleOfLakeTownSpec

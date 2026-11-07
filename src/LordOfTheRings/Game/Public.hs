@@ -359,7 +359,12 @@ publicGameFor seesHand g = hideDecks $ toJSON merged
   campaignCard =
     let a = toAttrs g.scenario
      in (\code -> object ["code" .= code, "flipped" .= scenarioCampaignCardFlipped a, "resources" .= maybe 0 (.cardResources) (scenarioCampaign a)]) <$> (flip campaignCardFor (scenarioId a) =<< scenarioCampaign a)
-  hideScenario = hideMeta . hideHidden . withSize "corsairDeck" "corsairDeckSize" . withSize "unchartedDeck" "unchartedDeckSize" . withSize "grottoDeck" "grottoDeckSize" . withSize "cavesDeck" "cavesDeckSize" . withSize "powerOfMordorDeck" "powerOfMordorDeckSize" . withSize "sackDeck" "sackDeckSize" . withSize "burdenDeck" "burdenDeckSize" . withSize "evilCreaturesDeck" "evilCreaturesDeckSize" . withSize "questDeck" "questDeckSize" . withSize "encounterDeck" "encounterDeckSize"
+  hideScenario = hideEpicDelivery . hideMeta . hideHidden . withSize "corsairDeck" "corsairDeckSize" . withSize "unchartedDeck" "unchartedDeckSize" . withSize "grottoDeck" "grottoDeckSize" . withSize "cavesDeck" "cavesDeckSize" . withSize "powerOfMordorDeck" "powerOfMordorDeckSize" . withSize "sackDeck" "sackDeckSize" . withSize "burdenDeck" "burdenDeckSize" . withSize "evilCreaturesDeck" "evilCreaturesDeckSize" . withSize "questDeck" "questDeckSize" . withSize "encounterDeck" "encounterDeckSize"
+  -- Delivery payloads can contain private state in transit. Clients receive
+  -- shared values and public boards, not outboxes or retry bookkeeping.
+  hideEpicDelivery = inside "epic" $ \case
+    Object o -> Object $ foldr KeyMap.delete o ["epicPendingDeltas", "epicPendingCommands", "epicAppliedCommands"]
+    v -> v
   hideMeta = \case
     Object o -> Object $ KeyMap.delete "meta" o
     v -> v

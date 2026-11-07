@@ -4,14 +4,18 @@ import Data.Map.Strict qualified as Map
 import LordOfTheRings.Card
 import LordOfTheRings.Ally.Types (AllyAttrs (allyExhausted))
 import LordOfTheRings.Classes.Entity (toAttrs)
+import LordOfTheRings.Classes.HasGame (runReadGame)
 import LordOfTheRings.Epic.Types
 import LordOfTheRings.Game.Base
+import LordOfTheRings.Helpers.Staging (getStagingThreat)
+import LordOfTheRings.Matcher (getMainQuestCards)
 import LordOfTheRings.Matcher.Types (CardMatcher (CardWithTrait), cardMatches)
 import LordOfTheRings.Objective.CardDefs qualified as Objectives
 import LordOfTheRings.Modifier (Modifier (modifierType), ModifierType (ConsideredOutOfPlay))
 import LordOfTheRings.Placement (Placement (EngagedWith))
 import LordOfTheRings.Prelude
-import LordOfTheRings.Scenario.Types (scenarioSetAside)
+import LordOfTheRings.Quest.Runner (getQuestPoints)
+import LordOfTheRings.Scenario.Types (scenarioSetAside, scenarioVictoryDisplay)
 import LordOfTheRings.Target
 import LordOfTheRings.Trait (Trait (Basic, Ship))
 
@@ -19,9 +23,17 @@ import LordOfTheRings.Trait (Trait (Basic, Ship))
 -- deck, hidden cards or encounter-deck order crosses a group boundary.
 epicBoardFor :: GroupOrdinal -> Text -> Game -> EpicBoard
 epicBoardFor ordinal name g
-  | isJust g.outcome = EpicBoard ordinal name [] False
-  | otherwise = EpicBoard ordinal name targets hasWarship
+  | isJust g.outcome = EpicBoard ordinal name [] False Nothing
+  | otherwise = EpicBoard ordinal name targets hasWarship (Just stage)
  where
+  stage = EpicStage
+    (runReadGame getStagingThreat g)
+    [ EpicQuest (toCardCode q) q.stage q.progress
+        (cdQuestPoints (toCardDef q) $> runReadGame (getQuestPoints $ toAttrs q) g)
+        q.flipped
+    | q <- runReadGame getMainQuestCards g
+    ]
+    (map toCardCode $ scenarioVictoryDisplay $ toAttrs g.scenario)
   asTarget target kind engaged damage exhausted upgradeable card =
     EpicTarget
       target
