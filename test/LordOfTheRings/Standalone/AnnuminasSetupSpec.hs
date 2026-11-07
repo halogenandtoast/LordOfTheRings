@@ -1,5 +1,8 @@
 module LordOfTheRings.Standalone.AnnuminasSetupSpec (spec) where
 
+import LordOfTheRings.Card (CardType (QuestType, SetupType), EncounterCard (..), IsCard (toCard), cdCardType, toCardDef)
+import LordOfTheRings.Decklist (loadPlayer)
+import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Epic.Types
 import LordOfTheRings.Objective.CardDefs qualified as Objectives
@@ -21,6 +24,28 @@ setStageTwo :: GameT ()
 setStageTwo = do
   current <- getGame
   putGame $ current & scenarioL %~ overAttrs (\a -> a {scenarioMeta = toJSON (2 :: Int)})
+
+-- Complete the actual setup queue, including every starting-hand question and
+-- the opening quest's Setup choice, without replacing the encounter deck.
+finishSetupChoices :: Int -> GameT ()
+finishSetupChoices remaining = do
+  questions <- getsGame (.question)
+  case headMay (mapToList questions) of
+    Nothing -> pure ()
+    Just (pid, _) | remaining > 0 -> do
+      chooseOptionMatching "complete native Annúminas setup" pid (const True)
+      finishSetupChoices (remaining - 1)
+    _ -> error "Annúminas setup did not settle"
+
+nativeSetupTable :: Int -> Maybe Int -> GameT () -> IO ()
+nativeSetupTable size ordinal body = do
+  seats <- for [1 .. size] $ \seat -> either (error . show) id <$> loadPlayer ("Defender " <> tshow seat) testDeck
+  env <- newGameEnv (newTableIn theSiegeOfAnnuminas $ fromJustNote "empty Annúminas table" $ nonEmpty seats) (const $ pure ()) 1
+  runGameT env do
+    installScenario ordinal
+    run Setup
+    finishSetupChoices 100
+    body
 
 spec :: Spec
 spec = describe "Annúminas scenario setup" do
@@ -102,3 +127,32 @@ spec = describe "Annúminas scenario setup" do
       Just replica <- getsGame $ scenarioEpic . toAttrs . (.scenario)
       map (.epicCommandTo) replica.epicPendingCommands `shouldBe` [GroupOrdinal $ ordinal - 1]
       cityStrength `shouldReturn` 50
+
+  for_ (Nothing : map Just [0, 1, 2]) $ \ordinal ->
+    for_ [1 .. 4] $ \size ->
+      it ("runs the complete printed opening setup with " <> show size <> " players at " <> show ordinal) . nativeSetupTable size ordinal $ do
+        currentQuest <- getActiveQuest
+        (.flipped) currentQuest `shouldBe` True
+        let expected = case ordinal of
+              Just 1 -> Quests.raiseTheLevee
+              Just 2 -> Quests.delayTheEnemyAnnuminas
+              _ -> Quests.rebuildTheDefenses
+        toCardCode currentQuest `shouldBe` toCardCode expected
+        cityStrength `shouldReturn` (if isJust ordinal then 50 else 20)
+        attrs <- getsGame $ toAttrs . (.scenario)
+        length attrs.scenarioSetAside `shouldBe` 10
+        entities <- getsGame (.entities)
+        let stagedCards = map toCardCode (toList entities.enemies) <> map toCardCode (toList entities.locations)
+            supply = attrs.encounterDeck <> attrs.encounterDiscard <> attrs.scenarioSetAside
+              <> [MkEncounterCard (toCard e).id (toCardCode e) | e <- toList entities.enemies]
+              <> [MkEncounterCard (toCard l).id (toCardCode l) | l <- toList entities.locations]
+              <> [MkEncounterCard (toCard o).id (toCardCode o) | o <- toList entities.objectives]
+        length stagedCards `shouldBe` size
+        when (ordinal /= Just 1) $ length (nub stagedCards) `shouldBe` size
+        when (ordinal `elem` [Nothing, Just 0]) $ stagedCards `shouldSatisfy` elem (toCardCode Locations.gateOfAnnuminas)
+        when (ordinal == Just 2) $ stagedCards `shouldSatisfy` elem (toCardCode Enemies.vanguardOfCarnDum)
+        -- The other Epic teams remove their physical City during setup.
+        length supply `shouldBe` (if ordinal `elem` [Just 1, Just 2] then 45 else 46)
+        length (nub $ map (.id) supply) `shouldBe` length supply
+        supply `shouldSatisfy` all (\card -> cdCardType (toCardDef card) `notElem` [QuestType, SetupType])
+        getsGame (.outcome) `shouldReturn` Nothing
