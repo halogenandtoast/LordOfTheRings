@@ -32,7 +32,8 @@ const selectedCampaign = ref<(typeof campaigns)[number] | null>(null)
 type Shown = ScenarioOption & { playable: boolean }
 const selectedScenario = ref<Shown | null>(null)
 const epic = ref(false)
-const offersEpic = computed(() => selectedScenario.value?.id === 'the-hunt-for-the-dreadnaught')
+const isAnnuminas = computed(() => selectedScenario.value?.id === 'the-siege-of-annuminas')
+const offersEpic = computed(() => isAnnuminas.value || selectedScenario.value?.id === 'the-hunt-for-the-dreadnaught')
 watch(selectedScenario, () => { epic.value = false })
 const gameName = ref('')
 const creating = ref(false)
@@ -53,11 +54,11 @@ type Mode = 'normal' | 'easy' | 'nightmare' | 'hard'
 const mode = ref<Mode>('normal')
 const modes = computed(() =>
   (['easy', 'normal', 'hard', 'nightmare'] as const)
-    .filter((m) => (m !== 'nightmare' || selectedScenario.value?.nightmare) && (m !== 'hard' || selectedScenario.value?.hard))
+    .filter((m) => (!isAnnuminas.value || m === 'normal') && (m !== 'nightmare' || selectedScenario.value?.nightmare) && (m !== 'hard' || selectedScenario.value?.hard))
     .map((value) => ({ value, label: t(`newGame.mode.${value}`) })),
 )
 watch(selectedScenario, (s) => {
-  if ((mode.value === 'nightmare' && !s?.nightmare) || (mode.value === 'hard' && !s?.hard)) mode.value = 'normal'
+  if (isAnnuminas.value || (mode.value === 'nightmare' && !s?.nightmare) || (mode.value === 'hard' && !s?.hard)) mode.value = 'normal'
 })
 const error = ref<string | null>(null)
 const rewardSource = ref<CampaignView | null>(null)
@@ -172,6 +173,7 @@ const create = async () => {
     if (offersEpic.value && epic.value) {
       const event = await createEpicEvent({
         name: gameName.value.trim() || defaultName.value,
+        scenario: selectedScenario.value?.id,
         difficulty: mode.value === 'easy' ? 'EasyMode' : mode.value === 'hard' ? 'HardMode' : 'NormalMode',
       })
       await router.push(`/epic-events/${event.id}`)
@@ -332,7 +334,7 @@ const create = async () => {
                 <button type="button" role="radio" :aria-checked="!epic" :class="{ selected: !epic }" @click="epic = false">{{ $t('epic.singleGroup') }}</button>
                 <button type="button" role="radio" :aria-checked="epic" :class="{ selected: epic }" @click="epic = true">{{ $t('epic.title') }}</button>
               </div>
-              <p v-if="epic" class="hint">{{ $t('epic.description') }}</p>
+              <p v-if="epic" class="hint">{{ $t(isAnnuminas ? 'epic.annuminasDescription' : 'epic.description') }}</p>
             </div>
             <div v-if="asCampaign && selectedCampaign" class="campaign-summary">
               <span class="card-title">{{ $t('campaignMode.playCampaign') }}</span>

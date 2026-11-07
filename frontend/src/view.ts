@@ -491,7 +491,9 @@ export const toView = (data: GameData, defs: Record<string, CardDef>, previous: 
           ? card(game.scenario.nightmareDeck.setupCard, 'nightmare-setup', { progress: game.nightmareProgress ?? 0 })
           : game.scenario.id === 'the-hunt-for-the-dreadnaught'
             ? card(`the-hunt-for-the-dreadnaught-${game.scenario.mode === 'EasyMode' ? '001' : game.scenario.mode === 'HardMode' ? '003' : '002'}`, 'scenario-setup', { flipped: game.round > 0 })
-            : null,
+            : game.scenario.id === 'the-siege-of-annuminas'
+              ? card(`the-siege-of-annuminas-${data.table.epicEventId ? '002' : '001'}`, 'scenario-setup', { flipped: game.round > 0 })
+              : null,
       corsairDeck: game.scenario.corsairDeckSize ?? null,
       corsairDiscard: (game.scenario.corsairDiscard ?? []).map((c) => card(c.cardCode, c.id)),
       cavesDeck: game.scenario.cavesDeckSize ?? 0,

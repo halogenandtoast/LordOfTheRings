@@ -25,6 +25,8 @@ export interface EpicEvent {
   id: string
   name: string
   organizer: number
+  scenario: string
+  cityStrength: number | null
   canStart: boolean
   difficulty: EpicDifficulty
   started: boolean
@@ -36,7 +38,7 @@ export interface EpicEvent {
 }
 export const fetchEpicEvents = () => apiFetch('/api/epic-events').then(r => json<EpicEvent[]>(r))
 export const fetchEpicEvent = (id: string) => apiFetch(`/api/epic-events/${id}`).then(r => json<EpicEvent>(r))
-export const createEpicEvent = (event: { name: string; difficulty: EpicDifficulty }) =>
+export const createEpicEvent = (event: { name: string; difficulty: EpicDifficulty; scenario?: string }) =>
   apiFetch('/api/epic-events', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(event) }).then(r => json<EpicEvent>(r))
 export const createEpicGroup = (id: string, group: { name: string; seats: number; difficulty: EpicDifficulty }) =>
   apiFetch(`/api/epic-events/${id}/groups`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(group) }).then(r => json<{ gameId: string }>(r))

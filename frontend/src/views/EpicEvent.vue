@@ -15,7 +15,10 @@ const name = ref('')
 const seats = ref(1)
 const difficulty = ref<EpicDifficulty>('NormalMode')
 const invite = computed(() => window.location.href)
-const ready = computed(() => !!event.value?.groups.length && event.value.groups.every(g => g.joinedSeats === g.seats))
+const isAnnuminas = computed(() => event.value?.scenario === 'the-siege-of-annuminas')
+const canAddGroup = computed(() => !isAnnuminas.value || (event.value?.groups.length ?? 0) < 3)
+const ready = computed(() => !!event.value?.groups.length && (!isAnnuminas.value || event.value.groups.length === 3) && event.value.groups.every(g => g.joinedSeats === g.seats))
+const stageLetter = (ordinal: number) => ['B', 'D', 'F'][ordinal] ?? ''
 const totalSeats = computed(() => event.value?.groups.reduce((n, g) => n + g.seats, 0) ?? 0)
 const difficultyKey = (mode: EpicDifficulty) => `newGame.mode.${mode === 'EasyMode' ? 'easy' : mode === 'HardMode' ? 'hard' : 'normal'}`
 watch(() => String(route.params.id), (id, _, onCleanup) => {
@@ -41,11 +44,11 @@ watch(() => String(route.params.id), (id, _, onCleanup) => {
   onCleanup(() => { active = false; clearTimeout(timer) })
 }, { immediate: true })
 const addGroup = async () => {
-  if (!event.value || busy.value || !name.value.trim()) return
+  if (!event.value || busy.value || !name.value.trim() || !canAddGroup.value) return
   busy.value = true
   error.value = null
   try {
-    const result = await createEpicGroup(event.value.id, { name: name.value.trim(), seats: seats.value, difficulty: difficulty.value })
+    const result = await createEpicGroup(event.value.id, { name: name.value.trim(), seats: seats.value, difficulty: isAnnuminas.value ? 'NormalMode' : difficulty.value })
     await router.push(`/games/${result.gameId}`)
   } catch (e) {
     error.value = e instanceof Error ? e.message : String(e)
@@ -74,10 +77,13 @@ const copy = async () => {
       </header>
       <p v-if="error" class="error" role="alert">{{ tr(error) }}</p>
       <template v-if="event">
-        <p class="intro">{{ $t('epic.description') }}</p>
+        <p class="intro">{{ $t(isAnnuminas ? 'epic.annuminasDescription' : 'epic.description') }}</p>
         <section v-if="event.started" class="shared" :aria-label="$t('epic.shared')">
+          <template v-if="!isAnnuminas">
           <div><span>{{ $t('epic.search') }}</span><strong>{{ event.progress }} / {{ 8 * (event.totalPlayers ?? 0) }}</strong><progress :value="event.progress" :max="8 * (event.totalPlayers ?? 1)" /><small v-if="event.searchComplete">{{ $t('epic.advanceHint') }}</small></div>
           <div><span>{{ $t('epic.damage') }}</span><strong>{{ event.damage }} / {{ 15 * (event.totalPlayers ?? 0) }}</strong><progress :value="event.damage" :max="15 * (event.totalPlayers ?? 1)" /></div>
+          </template>
+          <div v-else><span>{{ $t('game.cityStrength') }}</span><strong>{{ event.cityStrength ?? '—' }}</strong><small>{{ $t('epic.annuminasCityHint') }}</small></div>
           <p>{{ $t('epic.frozenPlayers', { count: event.totalPlayers ?? 0 }) }}</p>
         </section>
         <section v-else class="invite">
@@ -88,22 +94,22 @@ const copy = async () => {
           <div class="section-heading"><h3 id="epic-groups">{{ $t('epic.groups') }}</h3><span>{{ $t('epic.groupSummary', { groups: event.groups.length, players: event.totalPlayers ?? totalSeats }) }}</span></div>
           <div class="groups">
             <component :is="g.canOpen ? RouterLink : 'article'" v-for="g in event.groups" :key="g.id" :to="g.canOpen ? `/games/${g.gameId}` : undefined" class="group-box">
-              <span class="group-number">{{ g.ordinal + 1 }}</span><div><h4>{{ g.name }}</h4><p>{{ $t(difficultyKey(g.difficulty)) }} · {{ $t('epic.seatsFilled', { joined: g.joinedSeats, seats: g.seats }) }}</p></div><span class="group-action">{{ $t(!g.canOpen ? 'epic.otherGroup' : event.started ? 'epic.openGame' : g.joinedSeats === g.seats ? 'epic.ready' : 'epic.chooseDeck') }}<template v-if="g.canOpen"> →</template></span>
+              <span class="group-number">{{ isAnnuminas ? stageLetter(g.ordinal) : g.ordinal + 1 }}</span><div><h4>{{ g.name }}</h4><p><template v-if="isAnnuminas">{{ $t('epic.stage', { stage: stageLetter(g.ordinal) }) }}</template><template v-else>{{ $t(difficultyKey(g.difficulty)) }}</template> · {{ $t('epic.seatsFilled', { joined: g.joinedSeats, seats: g.seats }) }}</p></div><span class="group-action">{{ $t(!g.canOpen ? 'epic.otherGroup' : event.started ? 'epic.openGame' : g.joinedSeats === g.seats ? 'epic.ready' : 'epic.chooseDeck') }}<template v-if="g.canOpen"> →</template></span>
             </component>
             <p v-if="!event.groups.length" class="hint">{{ $t('epic.noGroups') }}</p>
           </div>
         </section>
-        <form v-if="!event.started" class="add-group" @submit.prevent="addGroup">
+        <form v-if="!event.started && canAddGroup" class="add-group" @submit.prevent="addGroup">
           <h3>{{ $t('epic.addGroup') }}</h3>
           <div class="group-fields">
             <label>{{ $t('epic.groupName') }}<input v-model="name" required maxlength="120" autocomplete="off" /></label>
             <label>{{ $t('newGame.numberOfPlayers') }}<select v-model="seats"><option v-for="n in 4" :key="n" :value="n">{{ n }}</option></select></label>
-            <label>{{ $t('newGame.mode.title') }}<select v-model="difficulty"><option v-for="mode in (['EasyMode', 'NormalMode', 'HardMode'] as const)" :key="mode" :value="mode">{{ $t(difficultyKey(mode)) }}</option></select></label>
+            <label v-if="!isAnnuminas">{{ $t('newGame.mode.title') }}<select v-model="difficulty"><option v-for="mode in (['EasyMode', 'NormalMode', 'HardMode'] as const)" :key="mode" :value="mode">{{ $t(difficultyKey(mode)) }}</option></select></label>
           </div>
           <button type="submit" :disabled="busy || !name.trim()">{{ $t('epic.createGroup') }}</button>
         </form>
         <footer v-if="!event.started" class="start-event">
-          <p>{{ $t(ready ? 'epic.readyHint' : 'epic.waitingHint') }}</p>
+          <p>{{ $t(ready ? 'epic.readyHint' : isAnnuminas ? 'epic.annuminasWaitingHint' : 'epic.waitingHint') }}</p>
           <button v-if="event.canStart" type="button" :disabled="busy || !ready" @click="start">{{ $t('epic.start') }}</button>
           <span v-else>{{ $t('epic.organizerStarts') }}</span>
         </footer>
