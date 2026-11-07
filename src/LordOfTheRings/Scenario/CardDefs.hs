@@ -315,7 +315,7 @@ thePassageOfTheMarshesNightmare = nightmareSetup "the-land-of-shadow-nightmare-t
 -- * The Hunt for the Dreadnaught difficulty setup cards
 
 allSetupCards :: Map CardCode CardDef
-allSetupCards = Map.fromList [(cdCardCode def, def) | def <- [dreadnaughtEasySetup, dreadnaughtStandardSetup, dreadnaughtHardSetup]]
+allSetupCards = Map.fromList [(cdCardCode def, def) | def <- [dreadnaughtEasySetup, dreadnaughtStandardSetup, dreadnaughtHardSetup, annuminasStandardSetup, annuminasEpicSetup, dolGuldurStandardSetup, dolGuldurEpicSetup]]
 
 -- * The Hunt for the Dreadnaught
 
@@ -336,3 +336,15 @@ dreadnaughtHardSetup = (emptyCardDef "the-hunt-for-the-dreadnaught-003" "Hard Mo
   { cdDoubleSided = True
   , cdSetIcon = Just TheHuntForTheDreadnaught
   }
+
+-- Mode cards are scenario references, outside the encounter deck. As with the
+-- Dreadnaught setup cards, their icon does not assign an encounter set.
+annuminasStandardSetup, annuminasEpicSetup, dolGuldurStandardSetup, dolGuldurEpicSetup :: CardDef
+annuminasStandardSetup = (emptyCardDef "the-siege-of-annuminas-001" "Standard Game Mode" SetupType)
+  { cdDoubleSided = True, cdSetIcon = Just TheSiegeOfAnnuminas }
+annuminasEpicSetup = (emptyCardDef "the-siege-of-annuminas-002" "Epic Multiplayer Mode" SetupType)
+  { cdDoubleSided = True, cdSetIcon = Just TheSiegeOfAnnuminas }
+dolGuldurStandardSetup = (emptyCardDef "attack-on-dol-guldur-031" "Standard Game Mode" SetupType)
+  { cdDoubleSided = True, cdSetIcon = Just AttackOnDolGuldur }
+dolGuldurEpicSetup = (emptyCardDef "attack-on-dol-guldur-032" "Epic Multiplayer Mode" SetupType)
+  { cdDoubleSided = True, cdSetIcon = Just AttackOnDolGuldur }
