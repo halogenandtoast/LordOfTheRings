@@ -46,10 +46,15 @@ instance RunMessage DolGuldurApproach where
       DolGuldurApproach <$> runMessage msg a
     UseCardAbility _ (isSource a -> True) 1 _ -> do
       placeResources a a 1
-      removeTokens a a Progress a.progress
       power <- getsGame $ map toAttrs . filter ((== toCardCode Objectives.powerOfLorien) . toCardCode) . toList . (.entities.objectives)
-      for_ power $ \oid -> placeProgress a oid a.progress
-      doStep 1 msg
+      lead <- getLead
+      if null power then doStep 1 msg else chooseOrRunOneM lead do
+        causedBy a
+        targets power $ \oid -> do
+          -- Apply FAQ 1.34's singular-target precedent when several copies match.
+          removeTokens a a Progress a.progress
+          placeProgress a oid a.progress
+          doStep 1 msg
       pure q
     DoStep 1 (UseCardAbility _ (isSource a -> True) 1 _) -> do
       when (countTokens Resource a.questTokens >= 3) advanceQuest
@@ -61,11 +66,18 @@ instance RunMessage DolGuldurApproach where
     WhenRevealed (isTarget a -> True) -> do
       lead <- getLead
       power <- getsGame $ map toAttrs . filter ((== toCardCode Objectives.powerOfLorien) . toCardCode) . toList . (.entities.objectives)
+      if null power then doStep 2 msg else chooseOrRunOneM lead do
+        causedBy a
+        targets power $ \oid -> push $ WithTarget (toTarget oid) $ DoStep 3 msg
+      pure q
+    WithTarget (ObjectiveTarget oid) (DoStep 3 (WhenRevealed (isTarget a -> True))) -> do
+      lead <- getLead
       aside <- getsGame $ scenarioSetAside . toAttrs . (.scenario)
-      case headMay power of
-        Nothing -> doStep 2 msg
-        Just oid -> do
-          let progress = countTokens Progress oid.objectiveTokens
+      power <- getsGame $ map toAttrs . filter ((== oid) . toId) . toList . (.entities.objectives)
+      case power of
+        [] -> doStep 2 $ WhenRevealed $ toTarget a
+        chosen : _ -> do
+          let progress = countTokens Progress chosen.objectiveTokens
               host = find ((== toCardCode Objectives.hostOfLorien) . toCardCode) aside
           if progress >= 10 && isJust host then chooseOneM lead do
             questionLabeled "dolGuldur.claimHost"
@@ -74,18 +86,18 @@ instance RunMessage DolGuldurApproach where
               removeTokens a oid Progress 10
               traverse_ (putObjectiveAllyIntoPlayUnder lead) host
               -- FAQ 1.15: taking the Host must resolve before the "Then".
-              push $ DoStep 1 $ WhenRevealed $ toTarget a
+              push $ WithTarget (ObjectiveTarget oid) $ DoStep 1 $ WhenRevealed $ toTarget a
             labeled "skip" do
               discard a oid
               push $ DoStep 2 $ WhenRevealed $ toTarget a
           else do
             discard a oid
-            doStep 2 msg
+            doStep 2 $ WhenRevealed $ toTarget a
       pure q
-    DoStep 1 (WhenRevealed (isTarget a -> True)) -> do
+    WithTarget (ObjectiveTarget selected) (DoStep 1 (WhenRevealed (isTarget a -> True))) -> do
       lead <- getLead
       power <- getsGame $ map toAttrs . filter ((== toCardCode Objectives.powerOfLorien) . toCardCode) . toList . (.entities.objectives)
-      for_ (headMay power) $ \oid -> do
+      for_ (find ((== selected) . toId) power) $ \oid -> do
         let progress = countTokens Progress oid.objectiveTokens
         if progress >= 20 then chooseOneM lead do
           questionLabeled "dolGuldur.claimPower"
