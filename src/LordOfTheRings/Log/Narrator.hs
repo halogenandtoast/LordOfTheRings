@@ -357,6 +357,7 @@ narrationFor = \case
     who <- playerRefFor pid
     one $ mechanic [ikeyPart "log.investigationLook" ["player" ~> who, "count" ~> length cards]]
   AccusationMade correct -> Just $ one $ mechanic [ikeyPart (if correct then "log.accusationCorrect" else "log.accusationIncorrect") []]
+  ShuffleIntoInvestigationDeck card -> Just $ one $ mechanic [ikeyPart "log.shuffledIntoInvestigationDeck" ["card" ~> EncounterCard card]]
   LookAtFacedownSide pid lid -> Just $ whenRef (toTarget lid) \l -> do
     who <- playerRefFor pid
     one $ mechanic [ikeyPart "log.looksAtFacedownSide" ["player" ~> who, "location" ~> l]]

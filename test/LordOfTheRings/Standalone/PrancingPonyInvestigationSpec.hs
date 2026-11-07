@@ -1,4 +1,5 @@
-module LordOfTheRings.Standalone.PrancingPonyInvestigationSpec (spec) where
+module LordOfTheRings.Standalone.PrancingPonyInvestigationSpec
+  (spec, initialize, meta, setClues, safeClues, acceptLook, shown, stageTwo, stageThree) where
 
 import Data.Map.Strict qualified as Map
 import Data.List qualified as List
@@ -6,7 +7,7 @@ import Data.Aeson.Types (parseMaybe)
 import LordOfTheRings.Card (CardType (EnemyType, LocationType), cdCardType, toCardDef)
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Effect (Effect (..), EffectDuration (..))
-import LordOfTheRings.Game.Public (publicGameFor)
+import LordOfTheRings.Game.Public (publicGameFor, hiddenCards, revealsInformation)
 import LordOfTheRings.Helpers.Modifiers (preloadModifiers)
 import LordOfTheRings.Location.CardDefs qualified as Locations
 import LordOfTheRings.Modifier (ModifierType (IgnoreInvestigate))
@@ -142,6 +143,27 @@ spec = describe "Prancing Pony investigation" do
     sort (map (.id) shuffled) `shouldBe` sort (map (.id) cards)
     map (.id) <$> shown pid `shouldReturn` map (.id) (take 2 shuffled)
     acceptLook pid
+
+  it "publishes the deck count and only the viewer's remembered clues" . twoPlayerTestIn murderAtThePrancingPony testDeck $ \one two -> do
+    initialize
+    cards <- safeClues
+    setClues cards
+    run $ LookAtInvestigationDeck one GameSource 2
+    acceptLook one
+    current <- getGame
+    let published pid = parseMaybe (withObject "game" (.: "investigation")) $ publicGameFor (== pid) current :: Maybe Value
+    published one `shouldBe` Just (object ["size" .= length cards, "known" .= Map.singleton one (map toCardCode $ take 2 cards)])
+    published two `shouldBe` Just (object ["size" .= length cards, "known" .= (mempty :: Map PlayerId [CardCode])])
+
+  it "establishes an undo boundary when a private clue is first shown" . gameTestIn murderAtThePrancingPony testDeck $ \pid -> do
+    initialize
+    cards <- safeClues
+    setClues cards
+    prior <- getGame
+    for_ cards $ \card -> hiddenCards prior `shouldSatisfy` member card.id
+    run $ LookAtInvestigationDeck pid GameSource 1
+    current <- getGame
+    revealsInformation prior current `shouldBe` True
 
   it "ignores Investigate when the game says to, while ordinary card-effect looks still work" . gameTestIn murderAtThePrancingPony testDeck $ \pid -> do
     initialize

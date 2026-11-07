@@ -1095,6 +1095,7 @@ library
       LordOfTheRings.Enemy.Cards.Pickpocket
       LordOfTheRings.Enemy.Cards.PillagingOrc
       LordOfTheRings.Enemy.Cards.PitGoblin
+      LordOfTheRings.Enemy.Cards.PrancingPonyBree
       LordOfTheRings.Enemy.Cards.PrancingPonyBrigands
       LordOfTheRings.Enemy.Cards.PrancingPonySuspects
       LordOfTheRings.Enemy.Cards.PriestOfSauron
@@ -3816,6 +3817,7 @@ library
       LordOfTheRings.Treachery.Cards.PowerfulInWrath
       LordOfTheRings.Treachery.Cards.PowerfulUndertow
       LordOfTheRings.Treachery.Cards.PowerInTheirTerror
+      LordOfTheRings.Treachery.Cards.PrancingPonyTreacheries
       LordOfTheRings.Treachery.Cards.PredatoryWolves
       LordOfTheRings.Treachery.Cards.PressedOnAllSides
       LordOfTheRings.Treachery.Cards.PressingNeeds
@@ -4464,7 +4466,10 @@ test-suite LordOfTheRings-test
       LordOfTheRings.Standalone.FogQuestsSpec
       LordOfTheRings.Standalone.MassingAtOsgiliathSpec
       LordOfTheRings.Standalone.OldForestSpec
+      LordOfTheRings.Standalone.PrancingPonyEncountersSpec
       LordOfTheRings.Standalone.PrancingPonyInvestigationSpec
+      LordOfTheRings.Standalone.PrancingPonyLocationsSpec
+      LordOfTheRings.Standalone.PrancingPonyScenarioSpec
       LordOfTheRings.Standalone.PrancingPonySpec
       LordOfTheRings.Standalone.PrancingPonySuspectsSpec
       LordOfTheRings.Standalone.StoneOfErechSpec

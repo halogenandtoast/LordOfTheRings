@@ -1,4 +1,6 @@
 {
+  "shuffledIntoInvestigationDeck": "{card} is shuffled into the Investigation deck",
+  "investigationDeck": "Investigation deck: {count} cards",
   "investigationLook": "{player} looks at {count} cards from the Investigation deck",
   "accusationCorrect": "The accusation is correct",
   "accusationIncorrect": "The accusation is incorrect",

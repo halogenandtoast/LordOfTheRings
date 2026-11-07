@@ -4015,6 +4015,7 @@ chillFog = (treachery "fog-on-the-barrow-downs-016" "Chill Fog" FogOnTheBarrowDo
 
 takenBySurprise :: CardDef
 takenBySurprise = (treachery "murder-at-the-prancing-pony-014" "Taken by Surprise" MurderAtThePrancingPony 2)
+  { cdEasyModeQuantity = Just 1 }
 
 
 hiredMuscle :: CardDef
@@ -4024,7 +4025,7 @@ hiredMuscle = (treachery "murder-at-the-prancing-pony-026" "Hired Muscle" Murder
 
 smokeAndMirrors :: CardDef
 smokeAndMirrors = (treachery "murder-at-the-prancing-pony-027" "Smoke and Mirrors" MurderAtThePrancingPony 3)
-  { cdWhenRevealed = True, cdShadowEffect = True }
+  { cdWhenRevealed = True, cdShadowEffect = True, cdEasyModeQuantity = Just 1 }
 
 
 risingBodyCount :: CardDef
@@ -4034,4 +4035,4 @@ risingBodyCount = (treachery "murder-at-the-prancing-pony-028" "Rising Body Coun
 
 deadlyAccusations :: CardDef
 deadlyAccusations = (treachery "murder-at-the-prancing-pony-029" "Deadly Accusations" MurderAtThePrancingPony 2)
-  { cdWhenRevealed = True, cdShadowEffect = True }
+  { cdWhenRevealed = True, cdShadowEffect = True, cdEasyModeQuantity = Just 1 }

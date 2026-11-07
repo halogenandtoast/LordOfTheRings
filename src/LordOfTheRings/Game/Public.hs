@@ -86,6 +86,9 @@ hiddenCards g = Set.fromList hidden `Set.difference` Set.fromList shown
         | a <- map toAttrs (toList merged.entities.enemies)
         ]
       <> [(toCard l).id | l <- toList merged.entities.locations, isUncharted l]
+      -- The solution and Investigation deck are private too; looking at a clue
+      -- must establish an undo boundary just as looking at an encounter card does.
+      <> [c.id | scenarioId s == "murder-at-the-prancing-pony", key <- ["hidden", "investigationDeck"], c <- fromMaybe [] (parseMaybe (withObject "meta" (.: key)) s.meta :: Maybe [EncounterCard])]
       -- poison: cards attached facedown to characters (The Hobbit: On the Doorstep)
       <> [c.id | h <- map toAttrs (toList merged.entities.heroes), c <- h.heroPoison]
       <> [c.id | a <- map toAttrs (toList merged.entities.allies), c <- a.allyPoison]
@@ -190,6 +193,7 @@ publicGameFor seesHand g = hideDecks $ toJSON merged
         -- the circuit, where The Challengers and The Wainriders are on it, and the damage on
         -- The Wainriders' stage (Challenge of the Wainriders)
         $ KeyMap.insert "circuit" circuit
+        $ KeyMap.insert "investigation" investigation
         -- the side quest deck's size, its cards kept hidden (Fire in the Night)
         $ KeyMap.insert "sideQuestDeck" (toJSON $ length (fromMeta "sideQuestDeck" :: [Value]))
         -- the damage a set-aside card keeps, as Cold-Drake's (The Withered Heath)
@@ -318,6 +322,12 @@ publicGameFor seesHand g = hideDecks $ toJSON merged
   circuit = case metaValue "circuit" of
     Null -> Null
     stages -> object ["stages" .= stages, "challengers" .= metaValue "challengers", "wainriders" .= metaValue "wainriders", "damage" .= metaValue "wainridersDamage"]
+  investigation
+    | scenarioId (toAttrs g.scenario) == "murder-at-the-prancing-pony" = object
+        [ "size" .= length (fromMeta "investigationDeck" :: [Value])
+        , "known" .= Map.filterWithKey (\pid _ -> seesHand pid) (fromMeta "known" :: Map PlayerId [CardCode])
+        ]
+    | otherwise = Null
   metaValue :: Key.Key -> Value
   metaValue k = fromMaybe Null $ parseMaybe (withObject "meta" (.: k)) (scenarioMeta $ toAttrs g.scenario)
   -- a location's facedown side is sent only to those who have looked at it

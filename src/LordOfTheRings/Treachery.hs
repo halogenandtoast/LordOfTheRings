@@ -2,6 +2,7 @@
 
 module LordOfTheRings.Treachery (module LordOfTheRings.Treachery, module X) where
 
+import LordOfTheRings.Treachery.Cards.PrancingPonyTreacheries (takenBySurprise, hiredMuscle, smokeAndMirrors, risingBodyCount, deadlyAccusations)
 import LordOfTheRings.Treachery.Cards.SwayingWithoutWind (swayingWithoutWind)
 import LordOfTheRings.Treachery.Cards.FallingBranches (fallingBranches)
 import LordOfTheRings.Treachery.Cards.SongOfSleep (songOfSleep)
@@ -645,7 +646,12 @@ allTreacherys =
   Map.fromList
     [ (toCardCode builder, card)
     | card@(SomeTreacheryCard builder) <-
-        [ SomeTreacheryCard swayingWithoutWind
+        [ SomeTreacheryCard takenBySurprise
+        , SomeTreacheryCard hiredMuscle
+        , SomeTreacheryCard smokeAndMirrors
+        , SomeTreacheryCard risingBodyCount
+        , SomeTreacheryCard deadlyAccusations
+        , SomeTreacheryCard swayingWithoutWind
         , SomeTreacheryCard fallingBranches
         , SomeTreacheryCard songOfSleep
         , SomeTreacheryCard lostAndWitless

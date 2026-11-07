@@ -25,7 +25,8 @@ villageStable = location PrancingPonyBree Cards.villageStable
 
 instance HasModifiersFor PrancingPonyBree where
   getModifiersFor (PrancingPonyBree a) = do
-    when (toCardCode a == toCardCode Cards.ramshackleManor) $ modified a GameTarget [PlayerCardThreatReductionLimit 1]
+    when (toCardCode a == toCardCode Cards.ramshackleManor) $
+      getRemainingPlayers >>= traverse_ (\pid -> modified a (PlayerTarget pid) [PlayerCardThreatReductionLimit 1])
     when (toCardCode a == toCardCode Cards.darkAlleyMurder) $
       select EnemyInStagingArea >>= traverse_ (\eid -> modified a eid [CannotTakeDamage])
     when (toCardCode a == toCardCode Cards.marketSquareMurder) do

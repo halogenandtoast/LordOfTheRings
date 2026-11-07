@@ -5912,9 +5912,9 @@ lawlessRuffian, greenwayFootpad, chetwoodOutlaw :: CardDef
 lawlessRuffian = (enemy "murder-at-the-prancing-pony-023" "Lawless Ruffian" MurderAtThePrancingPony 3 35 2 3 2 3)
   { cdCardTraits = setFromList [Brigand], cdShadowEffect = True }
 greenwayFootpad = (enemy "murder-at-the-prancing-pony-024" "Greenway Footpad" MurderAtThePrancingPony 4 25 2 4 2 4)
-  { cdCardTraits = setFromList [Brigand], cdWhenRevealed = True, cdShadowEffect = True }
+  { cdCardTraits = setFromList [Brigand], cdWhenRevealed = True, cdShadowEffect = True, cdEasyModeQuantity = Just 2 }
 chetwoodOutlaw = (enemy "murder-at-the-prancing-pony-025" "Chetwood Outlaw" MurderAtThePrancingPony 3 40 4 4 3 5)
-  { cdCardTraits = setFromList [Brigand], cdShadowEffect = True }
+  { cdCardTraits = setFromList [Brigand], cdShadowEffect = True, cdEasyModeQuantity = Just 2 }
 
 
 toddTheTroll, susieTheSpider, wolfPeltJake, johnnyGoblinFingers, oldOrcEyes :: CardDef

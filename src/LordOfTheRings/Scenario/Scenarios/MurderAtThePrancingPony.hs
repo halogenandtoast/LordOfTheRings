@@ -32,20 +32,23 @@ withMeta meta a = a & metaL .~ toJSON meta
 
 instance HasModifiersFor MurderAtThePrancingPony where
   getModifiersFor (MurderAtThePrancingPony a) = do
+    when (notNull $ (getMeta a).investigationDeck) $ modified a GameTarget [InvestigationDeckHasCards]
     enemies <- select $ EnemyWithTrait Suspect
     players <- getRemainingPlayers
     for_ a.victoryDisplay $ \card -> do
+      -- These locations keep encounter-card effects in victory. A bare card-id
+      -- source is otherwise treated as a player event after its entity leaves play.
       let code = toCardCode card
       for_ enemies $ \eid -> do
         when (code == toCardCode Locations.billFernysHouse) do
-          modified (CardIdSource card.id) eid [ImmuneToPlayerCardEffects]
+          modified (CardCodeSource code) eid [ImmuneToPlayerCardEffects]
           suspectEnemy <- getEnemy eid
-          for_ (toAttrs suspectEnemy).shadowCards $ \shadow -> modified (CardIdSource card.id) (CardIdTarget shadow.id) [ImmuneToPlayerCardEffects]
+          for_ (toAttrs suspectEnemy).shadowCards $ \shadow -> modified (CardCodeSource code) (CardIdTarget shadow.id) [ImmuneToPlayerCardEffects]
         when (code == toCardCode Locations.staddleHidingHole) $
           for_ players $ \pid -> unlessM (selectAny $ EnemyWithId eid <> EnemyEngagedWith (PlayerWithId pid)) $
-            modified (CardIdSource card.id) eid [CannotBeAttackedByCharactersOf pid]
-        when (code == toCardCode Locations.archetTradingPost) $ modified (CardIdSource card.id) eid [DamageLimitEachRound 5]
-        when (code == toCardCode Locations.chetwoodCampsite) $ modified (CardIdSource card.id) eid [ThreatModifier 1, AttackModifier 1, DefenseModifier 1]
+            modified (CardCodeSource code) eid [CannotBeAttackedByCharactersOf pid]
+        when (code == toCardCode Locations.archetTradingPost) $ modified (CardCodeSource code) eid [DamageLimitEachRound 5]
+        when (code == toCardCode Locations.chetwoodCampsite) $ modified (CardCodeSource code) eid [ThreatModifier 1, AttackModifier 1, DefenseModifier 1]
 
 instance HasAbilities MurderAtThePrancingPony where
   getAbilities (MurderAtThePrancingPony a) =
@@ -75,6 +78,10 @@ instance RunMessage MurderAtThePrancingPony where
     StageInvestigationCard card | card `elem` meta.investigationDeck -> do
       addToStaging card
       pure $ MurderAtThePrancingPony $ withMeta (meta {investigationDeck = filter (/= card) meta.investigationDeck}) a
+    ShuffleIntoInvestigationDeck card -> do
+      removeFromEncounterDiscard card
+      shuffled <- shuffleM $ card : filter (/= card) meta.investigationDeck
+      pure $ MurderAtThePrancingPony $ withMeta (meta {investigationDeck = shuffled}) a
     ScenarioSpecific "pony.loseClue" _ ->
       if null meta.investigationDeck then pure s else do
         card <- uniform meta.investigationDeck

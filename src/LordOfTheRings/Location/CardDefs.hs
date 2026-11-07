@@ -5575,12 +5575,12 @@ ramshackleManor = (location "murder-at-the-prancing-pony-016" "Ramshackle Manor"
 
 darkAlleyMurder :: CardDef
 darkAlleyMurder = (location "murder-at-the-prancing-pony-017" "Dark Alley" MurderAtThePrancingPony 3 4 3)
-  { cdCardTraits = setFromList [Bree], cdKeywords = setFromList [Investigate 3] }
+  { cdCardTraits = setFromList [Bree], cdKeywords = setFromList [Investigate 3], cdEasyModeQuantity = Just 1 }
 
 
 marketSquareMurder :: CardDef
 marketSquareMurder = (location "murder-at-the-prancing-pony-018" "Market Square" MurderAtThePrancingPony 3 2 4)
-  { cdCardTraits = setFromList [Bree], cdKeywords = setFromList [Investigate 2] }
+  { cdCardTraits = setFromList [Bree], cdKeywords = setFromList [Investigate 2], cdEasyModeQuantity = Just 2 }
 
 
 oldWarehouse :: CardDef

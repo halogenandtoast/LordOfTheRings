@@ -1,5 +1,5 @@
 module LordOfTheRings.Scenario.Scenarios.MurderAtThePrancingPony.Helpers
-  (Meta (..), emptyMeta, getMeta, investigateValue, lookAtInvestigation, lookAtBottom, suspects, hideouts) where
+  (Meta (..), emptyMeta, getMeta, investigateValue, activeInvestigateValue, lookAtInvestigation, lookAtBottom, suspects, hideouts) where
 
 import Data.Aeson.Types (parseMaybe)
 import LordOfTheRings.Card (CardCode, CardDef, EncounterCard, toCardDef)
@@ -9,7 +9,7 @@ import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Id
 import LordOfTheRings.Keyword (Keyword (Investigate))
 import LordOfTheRings.Location.CardDefs qualified as Locations
-import LordOfTheRings.Matcher (getLocation, keywordValue)
+import LordOfTheRings.Matcher (getLocation, keywordValue, select, LocationMatcher (IsActiveLocation))
 import LordOfTheRings.Message
 import LordOfTheRings.Message.Lifted
 import LordOfTheRings.Prelude
@@ -42,6 +42,9 @@ investigateValue :: HasGame m => LocationId -> m Int
 investigateValue lid = do
   location <- getLocation lid
   keywordValue (\case Investigate n -> Just n; _ -> Nothing) (toTarget lid) (toCardDef location)
+
+activeInvestigateValue :: HasGame m => m Int
+activeInvestigateValue = maybe (pure 0) investigateValue . headMay =<< select IsActiveLocation
 
 lookAtInvestigation :: (ReverseQueue m, Sourceable source) => PlayerId -> source -> Int -> m ()
 lookAtInvestigation pid source n = push $ LookAtInvestigationDeck pid (toSource source) n

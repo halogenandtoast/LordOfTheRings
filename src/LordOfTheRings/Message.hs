@@ -453,6 +453,7 @@ data Message
   | MakeAccusation PlayerId (Maybe CardCode) (Maybe CardCode)
   | AccusationMade Bool
   | StageInvestigationCard EncounterCard
+  | ShuffleIntoInvestigationDeck EncounterCard
   | -- | Remaining looked-at cards, extra Hazard reveals, and whether a Hazard
     -- has already been revealed. Discard the remainder after all reveals.
     ResolveDiscoverHazards PlayerId LocationId Int [EncounterCard] Bool

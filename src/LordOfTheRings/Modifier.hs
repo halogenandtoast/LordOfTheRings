@@ -8,7 +8,7 @@ import Data.Aeson.Types (Parser)
 import LordOfTheRings.Campaign (CampaignLogKey)
 import LordOfTheRings.Card.CardType (CardType)
 import LordOfTheRings.Card.Code (CardCode)
-import LordOfTheRings.Id (QuestId, CardId, EnemyId, PlayerId)
+import LordOfTheRings.Id (QuestId, CardId, EnemyId, PlayerId, TreacheryId)
 import LordOfTheRings.Keyword (Keyword)
 import LordOfTheRings.Matcher.Types (CardMatcher, EnemyMatcher, HeroMatcher, LocationMatcher, PlayerMatcher)
 import LordOfTheRings.Outcome (Outcome)
@@ -190,6 +190,9 @@ data ModifierType
   | -- | An effect keyed by this card code has triggered during the current attack.
     UsedThisAttack CardCode
   | IgnoreInvestigate
+  | InvestigationDeckHasCards
+  | FirstTreacheryEachRoundGainsDoomed Int
+  | RevealingTreachery TreacheryId
   | -- | A continuous victory condition, checked after the game state changes.
     WinWhenNoMatchingEnemies EnemyMatcher
   | AdditionalInvestigateCards Int

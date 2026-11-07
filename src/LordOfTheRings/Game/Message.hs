@@ -936,6 +936,8 @@ import LordOfTheRings.Modifier (
     TakesProgressAfterOtherActiveLocations,
     TreacheryRevealedThisPhase,
     TreacheryRevealedThisRound,
+    FirstTreacheryEachRoundGainsDoomed,
+    RevealingTreachery,
     UndefendedDamageMayGoTo,
     UndefendedDamageTo
   ),
@@ -4369,6 +4371,7 @@ runGameMessage msg g = case msg of
         -- Snapshot gained keywords when this card is revealed. In particular a
         -- Massing at Osgiliath does not give itself the doomed it grants later.
         gainedDoomed = sum [n | RevealedEncounterCardsGainDoomed n <- gameMods]
+          + sum [n | cdCardType def == TreacheryType, not $ any (elem TreacheryRevealedThisRound . effectModifiers) (gameEffects g), FirstTreacheryEachRoundGainsDoomed n <- gameMods]
         gainedKeywords = firstKeywords <> firstCardKeywords <> [Doomed gainedDoomed | gainedDoomed > 0]
         doom = sum [n | Doomed n <- toList (cdKeywords def) <> gainedKeywords]
         rememberRevelation t =
@@ -4449,7 +4452,8 @@ runGameMessage msg g = case msg of
         -- and for the phase, as "the first treachery revealed each quest phase"
         let counted = CreateEffect $ Effect (TreacherySource $ toId treachery) GameTarget [TreacheryRevealedThisRound] UntilEndOfRound
             countedForPhase = CreateEffect $ Effect (TreacherySource $ toId treachery) GameTarget [TreacheryRevealedThisPhase] UntilEndOfPhase
-        pushAll . ([counted, countedForPhase] <>) . (<> [FinishRevelation (toId treachery), ResolveSurge (toTarget treachery) card])
+            revealingNow = CreateEffect $ Effect GameSource GameTarget [RevealingTreachery $ toId treachery] UntilEndOfRound
+        pushAll . ([counted, countedForPhase, revealingNow] <>) . (<> [FinishRevelation (toId treachery), ResolveSurge (toTarget treachery) card])
           =<< revealingTreachery treachery
         pure $ g & entitiesL . treacheriesL %~ insertEntity treachery
       -- a player card with the Encounter keyword, as Ranger of the North: it enters play
@@ -4542,6 +4546,7 @@ runGameMessage msg g = case msg of
         push RevealEncounterCard
         pure $ g & surgeChainL .~ chain
   FinishRevelation tid -> do
+    for_ [e | e <- gameEffects g, RevealingTreachery tid `elem` effectModifiers e] $ push . EndEffect
     -- a treachery that did not attach itself to something is discarded once it resolves
     for_ (Map.lookup tid g.entities.treacheries) \treachery ->
       when (treachery.placement == Unplaced) $ push (Discard GameSource $ toTarget treachery)
