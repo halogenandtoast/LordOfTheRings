@@ -57,6 +57,7 @@ const implemented: Record<string, Gateable & { nightmare?: boolean; hard?: boole
   'fog-on-the-barrow-downs': { beta: true },
   'the-ruins-of-belegost': { beta: true },
   'murder-at-the-prancing-pony': { beta: true },
+  'attack-on-dol-guldur': { beta: true },
   'the-hunt-for-the-dreadnaught': { beta: true, hard: true },
   'the-oath': { beta: true },
   'the-caves-of-nibin-dum': { beta: true },
@@ -191,6 +192,7 @@ export const campaignModes: Record<string, string> = {
 }
 
 export const campaigns: Campaign[] = [
+  campaign('attack-on-dol-guldur', 'Attack on Dol Guldur', 'MEC74', fromBox('MEC74', ['Attack on Dol Guldur']), 'scenario-pack'),
   campaign('murder-at-the-prancing-pony', 'Murder at the Prancing Pony', 'OP015', fromBox('OP015', ['Murder at the Prancing Pony']), 'scenario-pack'),
   campaign('fog-on-the-barrow-downs', 'Fog on the Barrow-downs', 'MEC36', fromBox('MEC36', ['Fog on the Barrow-downs']), 'scenario-pack'),
   campaign('the-ruins-of-belegost', 'The Ruins of Belegost', 'OP014', fromBox('OP014', ['The Ruins of Belegost']), 'scenario-pack'),
