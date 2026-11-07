@@ -2,6 +2,8 @@
 
 module LordOfTheRings.Quest (module LordOfTheRings.Quest, module X) where
 
+import LordOfTheRings.Quest.Cards.DolGuldurApproach (assaultOnTheGoldenWood, crossingTheAnduinDolGuldur)
+import LordOfTheRings.Quest.Cards.DolGuldurSiege (theSiegeOfDolGuldur, theTowerOfSorcery, battleUnderTheTrees, dungeonsOfTheNecromancer)
 import LordOfTheRings.Quest.Cards.LeadTheSortie (leadTheSortie)
 import LordOfTheRings.Quest.Cards.AnnuminasDefense (guardTheGateAnnuminas, defendTheCityAnnuminas, manTheWallsAnnuminas)
 import LordOfTheRings.Quest.Cards.AnnuminasPreparation (rebuildTheDefenses, raiseTheLevee, delayTheEnemyAnnuminas)
@@ -499,7 +501,13 @@ allQuests =
   Map.fromList
     [ (toCardCode builder, card)
     | card@(SomeQuestCard builder) <-
-        [ SomeQuestCard leadTheSortie
+        [ SomeQuestCard assaultOnTheGoldenWood
+        , SomeQuestCard crossingTheAnduinDolGuldur
+        , SomeQuestCard theSiegeOfDolGuldur
+        , SomeQuestCard theTowerOfSorcery
+        , SomeQuestCard battleUnderTheTrees
+        , SomeQuestCard dungeonsOfTheNecromancer
+        , SomeQuestCard leadTheSortie
         , SomeQuestCard manTheWallsAnnuminas
         , SomeQuestCard defendTheCityAnnuminas
         , SomeQuestCard guardTheGateAnnuminas
