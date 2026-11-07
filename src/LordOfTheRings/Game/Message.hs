@@ -697,6 +697,7 @@ import LordOfTheRings.Message (
     RevealShadowCard,
     Run,
     SailingTest,
+    SeparatePlayer,
     SeparatePlayers,
     SeparateStagingAreas,
     SetAsideEnemy,
@@ -1120,6 +1121,7 @@ import LordOfTheRings.Window (
 import LordOfTheRings.Game.Areas (
   eachAreaThen,
   separate,
+  separatePlayer,
   separateStages,
   stageGroups,
  )
@@ -1415,6 +1417,7 @@ runGameMessage msg g = case msg of
       & entitiesL . heroesL . ix hid %~ overAttrs (\a -> a {heroOwner = pid})
       & entitiesL . attachmentsL . traverse %~ (\a -> if onHero a then overAttrs (\x -> x {attachmentController = Just pid}) a else a)
   SeparatePlayers groups -> pure $ separate groups g
+  SeparatePlayer pid -> pure $ separatePlayer pid g
   SeparateStagingAreas groups -> pure $ separateStages groups g
   FocusArea pid -> pure $ focusArea pid g
   -- while the players are separated, a card sent to another area's staging area leaves

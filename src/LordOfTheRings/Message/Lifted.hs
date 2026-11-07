@@ -2347,6 +2347,10 @@ each group, the first player's first. See 'LordOfTheRings.Game.Base.Separation'.
 separatePlayers :: ReverseQueue m => [[PlayerId]] -> m ()
 separatePlayers = push . SeparatePlayers
 
+-- | Create your own isolated staging area, leaving the current stage behind.
+separatePlayer :: ReverseQueue m => PlayerId -> m ()
+separatePlayer = push . SeparatePlayer
+
 {- | Each group creates its own staging area, its players still interacting with the
 others (Breaking of the Fellowship): see 'LordOfTheRings.Game.Base.Separation'.
 -}

@@ -190,5 +190,6 @@
     "cardData": "could not load card data"
   },
   "areaStaging": "staging: {players} ({threat} threat)",
+  "unoccupiedAreaStaging": "unoccupied staging area ({threat} threat)",
   "pursuit": "Pursuit"
 }

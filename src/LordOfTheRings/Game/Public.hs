@@ -122,7 +122,16 @@ publicGameFor seesHand g = hideDecks $ toJSON merged
  where
   merged = g {gamePlayers = allPlayers g, gameEntities = g.entities <> mconcat (heldEntities g)}
   -- the game as each area sees it, the area in focus first
-  areaViews = g : [focusArea (areaLead g s a) g | Just s <- [gameSeparation g], a <- separationAreas s, not (isFocusedArea g a)]
+  viewArea s a
+    | isFocusedArea g a = g
+    | null (areaPlayers a) =
+        g { gamePlayers = areaHeldPlayers a
+          , gameEntities = areaHeldEntities a
+          , gameEffects = areaHeldEffects a
+          , gameModifiers = areaHeldModifiers a
+          }
+    | otherwise = focusArea (areaLead g s a) g
+  areaViews = g : [viewArea s a | Just s <- [gameSeparation g], a <- separationAreas s, not (isFocusedArea g a)]
   areas =
     [ object
         [ "players" .= areaPlayers a
@@ -131,8 +140,8 @@ publicGameFor seesHand g = hideDecks $ toJSON merged
         , "cards" .= encounterCards (if separationShared s then fst (splitStage v.entities) else v.entities)
         ]
     | Just s <- [gameSeparation g]
-    , a <- areasInTurnOrder g s
-    , v <- take 1 [v | v <- areaViews, isFocusedArea v a]
+    , a <- areasInTurnOrder g s <> filter (null . areaPlayers) (separationAreas s)
+    , let v = viewArea s a
     ]
   encounterCards es =
     map ((.id) . toCard) (toList es.enemies)

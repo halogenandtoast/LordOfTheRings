@@ -1,5 +1,8 @@
 module LordOfTheRings.LostRealmEngineSpec (spec) where
 
+import Data.Aeson.Types (parseMaybe)
+import LordOfTheRings.Game.Public (publicGame)
+import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Criteria (Criterion (FewerInVictoryDisplay))
 import LordOfTheRings.Effect (Effect (..), EffectDuration (..))
 import LordOfTheRings.Entities (treacheriesL)
@@ -137,6 +140,67 @@ spec = describe "The Lost Realm engine" do
       void mainLoop
       progressOn main `shouldReturn` 0
       progressOn side `shouldReturn` 1
+
+  describe "Creating an individual staging area" do
+    it "retains an empty home stage in a solo game" . gameTest $ \pid -> do
+      home <- putQuestStage Quests.fliesAndSpiders
+      run $ SeparatePlayer pid
+      getCurrentQuest `shouldReturn` Nothing
+      g <- getGame
+      let separation = fromJustNote "no separation" $ gameSeparation g
+      map areaPlayers (separationAreas separation) `shouldBe` [[], [pid]]
+      map toTarget (concatMap (toList . (.quests) . areaHeldEntities) $ separationAreas separation) `shouldBe` [home]
+      map areaPlayers (areasInTurnOrder g separation) `shouldBe` [[pid]]
+      areaLead g separation (headEx $ separationAreas separation) `shouldBe` pid
+      let publicAreas = parseMaybe (withObject "game" (.: "areas")) (publicGame g) :: Maybe [Value]
+          areaPlayersAndCards = traverse (withObject "area" $ \o -> (,) <$> o .: "players" <*> o .: "cards")
+          parsedAreas = publicAreas >>= parseMaybe areaPlayersAndCards :: Maybe [([PlayerId], [CardId])]
+      fmap (map (\(players, cards) -> (players, length cards))) parsedAreas `shouldBe` Just [([pid], 0), ([], 1)]
+      let (following, _) = eachAreaThen (const [Run []]) id (Run []) g
+      following `shouldBe` Run [FocusArea pid, Run []]
+      case eitherDecode (encode g) :: Either String Game of
+        Left err -> liftIO $ expectationFailure err
+        Right restored -> do
+          toJSON (gameSeparation restored) `shouldBe` toJSON (gameSeparation g)
+          map areaPlayers (areasInTurnOrder restored separation) `shouldBe` [[pid]]
+
+    it "takes characters and engaged enemies while leaving staging cards at home" . twoPlayerTest testDeck $ \one two -> do
+      home <- putQuestStage Quests.fliesAndSpiders
+      road <- genEncounterCard Locations.oldForestRoad
+      foe <- genEncounterCard Enemies.forestSpider
+      run $ AddToStaging road
+      run $ AddToStaging foe
+      eid <- getsGame (toId . headEx . toList . (.entities.enemies))
+      run $ PlaceEnemy eid (EngagedWith two)
+      heroes <- getsGame (filter ((== two) . (.owner)) . toList . (.entities.heroes))
+      run $ SeparatePlayer two
+      getsGame (map toId . toList . (.entities.heroes)) `shouldReturn` map toId heroes
+      getsGame (map toId . toList . (.entities.enemies)) `shouldReturn` [eid]
+      getsGame (null . (.entities.locations)) `shouldReturn` True
+      run $ FocusArea one
+      getCurrentQuest `shouldReturn` Just home
+      getsGame (null . (.entities.enemies)) `shouldReturn` True
+      getsGame (length . (.entities.locations)) `shouldReturn` 1
+
+    it "splits players successively without losing the original stage or an existing area" . twoPlayerTest testDeck $ \one two -> do
+      home <- putQuestStage Quests.fliesAndSpiders
+      run $ SeparatePlayer two
+      away <- putQuestStage Quests.fliesAndSpiders
+      run $ FocusArea one
+      getCurrentQuest `shouldReturn` Just home
+      run $ SeparatePlayer one
+      getCurrentQuest `shouldReturn` Nothing
+      g <- getGame
+      let separation = fromJustNote "no separation" $ gameSeparation g
+      map areaPlayers (separationAreas separation) `shouldBe` [[], [one], [two]]
+      separationFirstPlayer separation `shouldBe` one
+      map toTarget (concatMap (toList . (.quests) . areaHeldEntities) $ separationAreas separation) `shouldBe` [home, away]
+      map areaPlayers (areasInTurnOrder g separation) `shouldBe` [[one], [two]]
+      run $ FocusArea two
+      getCurrentQuest `shouldReturn` Just away
+      getsGame (keys . (.players)) `shouldReturn` [two]
+      run $ FocusArea one
+      getsGame (keys . (.players)) `shouldReturn` [one]
 
   describe "Time counters" do
     it "are not placed again as a separated area comes back into focus" . twoPlayerTest testDeck $ \one two -> do

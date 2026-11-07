@@ -916,6 +916,8 @@ data Message
     player holds stay with the first group.
     -}
     SeparatePlayers [[PlayerId]]
+  | -- | one player leaves the current isolated area, whose stage remains in play
+    SeparatePlayer PlayerId
   | -- | as 'SeparatePlayers', the players still interacting: each group has a stage of its
     -- own, the first player's taking the one in play (Breaking of the Fellowship)
     SeparateStagingAreas [[PlayerId]]

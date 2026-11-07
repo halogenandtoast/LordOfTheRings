@@ -234,11 +234,11 @@ seatsFrom pid order = let (before, after) = break (== pid) order in after <> bef
 -- | The area's first player: the first of its players in turn order from the token.
 areaLead :: Game -> Separation -> Area -> PlayerId
 areaLead g s a =
-  fromMaybe (headEx $ areaPlayers a) $ find (`elem` areaPlayers a) (seatsFrom (separationFirstPlayer s) (gamePlayerOrder g))
+  fromMaybe (fromMaybe (separationFirstPlayer s) $ headMay $ areaPlayers a) $ find (`elem` areaPlayers a) (seatsFrom (separationFirstPlayer s) (gamePlayerOrder g))
 
--- | The areas in turn order, the first player's first.
+-- | Occupied areas in turn order: an empty stage stays in play but skips phases.
 areasInTurnOrder :: Game -> Separation -> [Area]
-areasInTurnOrder g s = sortOn (\a -> elemIndex (areaLead g s a) seats) (separationAreas s)
+areasInTurnOrder g s = sortOn (\a -> elemIndex (areaLead g s a) seats) (filter (not . null . areaPlayers) $ separationAreas s)
  where
   seats = seatsFrom (separationFirstPlayer s) (gamePlayerOrder g)
 

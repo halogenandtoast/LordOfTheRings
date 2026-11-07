@@ -1,6 +1,6 @@
 module LordOfTheRings.Game.Areas (module LordOfTheRings.Game.Areas) where
 
-import Data.Map.Strict qualified as Map (filterWithKey, lookup)
+import Data.Map.Strict qualified as Map (filterWithKey, lookup, member)
 import LordOfTheRings.Attachment (
   AttachmentAttrs (attachmentOwner),
  )
@@ -129,6 +129,30 @@ separate groups g
   placed = \case
     AttachedTo t -> holderOf t
     p -> placementController p
+
+{- | Split one player from the current isolated area, retaining its stage even when
+no players remain there (Fog on the Barrow-downs). Existing areas keep their state;
+the departing player takes only the cards held by him and starts with no stage.
+-}
+separatePlayer :: PlayerId -> Game -> Game
+separatePlayer pid g
+  | not (Map.member pid g.players) = g
+  | maybe False separationShared (gameSeparation g) = g
+  | otherwise = case gameSeparation divided of
+      Nothing -> g
+      Just fresh -> divided {gameSeparation = Just $ case gameSeparation g of
+        Nothing -> fresh
+        Just old -> old {separationAreas = concatMap replace (separationAreas old)}
+          where
+            replace a
+              | isFocusedArea g a = case separationAreas fresh of
+                  home : away -> home {areaStatus = areaStatus a, areaJoining = areaJoining a} : away
+                  [] -> []
+              | otherwise = [a]
+        }
+ where
+  others = [p | p <- g.playerOrder, p /= pid, Map.member p g.players]
+  divided = focusArea pid $ separate [others, [pid]] g {gameSeparation = Nothing}
 
 {- | The players split into areas sharing the game, one for each group: the first player's
 group takes the stage in play, each other group's starts empty. See 'Separation'.
