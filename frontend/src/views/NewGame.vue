@@ -109,26 +109,31 @@ const chooseScenario = (s: Shown) => step(() => (selectedScenario.value = s))
 const asCampaign = ref(false)
 const extendedMirkwoodPaths = ref(false)
 const includeOldForest = ref(false)
+const includeFog = ref(false)
 const showCampaignChoices = ref(false)
 watch(selectedCampaign, () => {
   extendedMirkwoodPaths.value = false
   includeOldForest.value = false
+  includeFog.value = false
   showCampaignChoices.value = false
 })
 const offersMirkwoodPaths = computed(() => ['core-set', 'dark-of-mirkwood'].includes(selectedCampaign.value?.id ?? ''))
 const offersOldForest = computed(() => selectedCampaign.value?.id === 'the-lord-of-the-rings')
 const campaignMode = computed(() => extendedMirkwoodPaths.value && offersMirkwoodPaths.value
   ? 'mirkwood-paths'
+  : offersOldForest.value && includeOldForest.value && includeFog.value ? 'the-lord-of-the-rings-with-the-old-forest-and-fog-on-the-barrow-downs'
+  : offersOldForest.value && includeFog.value ? 'the-lord-of-the-rings-with-fog-on-the-barrow-downs'
   : offersOldForest.value && includeOldForest.value ? 'the-lord-of-the-rings-with-the-old-forest'
   : selectedCampaign.value ? campaignModes[selectedCampaign.value.id] ?? null : null)
 const campaignTitle = computed(() => offersMirkwoodPaths.value
   ? t(extendedMirkwoodPaths.value ? 'campaignMode.mirkwoodPaths' : selectedCampaign.value?.id === 'core-set' ? 'campaignMode.coreCampaign' : 'campaignMode.miniCampaign')
   : selectedCampaign.value?.name ?? '')
 const campaignRoute = computed(() => {
-  if (offersOldForest.value && includeOldForest.value) {
+  if (offersOldForest.value && (includeOldForest.value || includeFog.value)) {
     const saga = selectedCampaign.value?.scenarios ?? []
-    const forest = allCampaigns.find((c) => c.id === 'the-old-forest')?.scenarios ?? []
-    return [...saga.slice(0, 1), ...forest, ...saga.slice(1)]
+    const forest = includeOldForest.value ? allCampaigns.find((c) => c.id === 'the-old-forest')?.scenarios ?? [] : []
+    const fog = includeFog.value ? allCampaigns.find((c) => c.id === 'fog-on-the-barrow-downs')?.scenarios ?? [] : []
+    return [...saga.slice(0, 1), ...forest, ...fog, ...saga.slice(1)]
   }
   if (!offersMirkwoodPaths.value) return allCampaigns.find((c) => c.id === selectedCampaign.value?.id)?.scenarios ?? []
   const core = allCampaigns.find((c) => c.id === 'core-set')?.scenarios.slice(0, 3) ?? []
@@ -280,6 +285,7 @@ const create = async () => {
               </label>
             </fieldset>
             <label v-if="offersOldForest" class="reward-choice"><input v-model="includeOldForest" type="checkbox" />{{ $t('campaignMode.includeOldForest') }}</label>
+            <label v-if="offersOldForest" class="reward-choice"><input v-model="includeFog" type="checkbox" />{{ $t('campaignMode.includeFog') }}</label>
             <div class="route-preview">
               <ScenarioRoutePreview :scenarios="campaignRoute" />
             </div>
