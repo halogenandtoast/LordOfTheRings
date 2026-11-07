@@ -19,7 +19,7 @@ import LordOfTheRings.Quest.Types (questTokens)
 import LordOfTheRings.Token (Token (Damage), countTokens)
 import LordOfTheRings.Entities
 import LordOfTheRings.Game.Base
-import LordOfTheRings.Id (PlayerId)
+import LordOfTheRings.Id (PlayerId, EnemyId, HeroId)
 import LordOfTheRings.Matcher.Types (PlayerMatcher (AnyPlayer), cardMatches)
 import LordOfTheRings.Keyword (Keyword (Massive, Discover))
 import LordOfTheRings.Modifier
@@ -290,7 +290,42 @@ getModifiers a = do
   -- Keep stat-dependent readying restrictions current even when a lasting effect
   -- has just changed willpower. Constant abilities read the previous cache while
   -- the new cache is built, so materializing CannotReady there would lag a message.
-  pure $ mods <> fromDiscover <> [CannotReady | notNull limits && blocked]
+  travelBlocked <- case target of
+    LocationTarget lid -> do
+      let players = [pid | (pid, p) <- Map.toList g.players, not p.eliminated, inFocusedArea g pid]
+      engagementBlocked <- if TravelRequiresEachPlayerEngagement `elem` mods
+        then not . canAssignDistinct . map snd <$> stagedEnemyEngagements players
+        else pure False
+      damageBlocked <- if TravelRequiresEachPlayerHeroDamage `elem` mods
+        then anyM (fmap null . damageableControlledHeroes (LocationSource lid)) players
+        else pure False
+      pure $ engagementBlocked || damageBlocked
+    _ -> pure False
+  pure $ mods <> fromDiscover <> [CannotReady | notNull limits && blocked] <> [CannotBeTraveledTo | travelBlocked]
+
+-- Derived travel restrictions must read the completed modifier cache, as
+-- stat-dependent readying does above, rather than lagging behind a new effect.
+stagedEnemyEngagements :: HasGame m => [PlayerId] -> m [(PlayerId, [EnemyId])]
+stagedEnemyEngagements players = do
+  enemies <- getsGame $ map toId . filter ((== StagingArea) . (.placement)) . toList . (.entities.enemies)
+  for players $ \pid -> do
+    eligible <- filterM (\eid -> do
+      ms <- getModifiers eid
+      pure $ ConsideredOutOfPlay `notElem` ms && CannotLeaveStagingArea `notElem` ms && CannotEngagePlayer pid `notElem` ms
+        && all (== pid) [owner | EngagesOnly owner <- ms]) enemies
+    pure (pid, eligible)
+
+canAssignDistinct :: Eq a => [[a]] -> Bool
+canAssignDistinct [] = True
+canAssignDistinct (candidates : rest) = any (\candidate -> canAssignDistinct $ map (filter (/= candidate)) rest) candidates
+
+damageableControlledHeroes :: HasGame m => Source -> PlayerId -> m [HeroId]
+damageableControlledHeroes source pid = do
+  heroes <- getsGame $ map toId . filter (\h -> h.owner == pid && not (heroPrisoner $ toAttrs h) && not (heroInStagingArea $ toAttrs h) && isNothing (heroGuardedBy $ toAttrs h)) . toList . (.entities.heroes)
+  filterM (\hid -> do
+    ms <- getModifiers (HeroTarget hid)
+    immune <- immuneToSource source (HeroTarget hid)
+    pure $ not immune && CannotTakeDamage `notElem` ms && ConsideredOutOfPlay `notElem` ms) heroes
 
 -- | Discover's printed or gained keyword, with its current modifiers. Shared by
 -- resolving Discover and stats that depend on its value.

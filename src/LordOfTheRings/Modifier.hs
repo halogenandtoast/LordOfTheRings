@@ -887,6 +887,8 @@ data ModifierType
   | -- | on a location: travel requires a player at its stage to engage a staged
     -- enemy tied for the highest current Toughness, as Western Emyn Muil reads
     TravelRequiresEngagingHighestToughness
+  | TravelRequiresEachPlayerEngagement
+  | TravelRequiresEachPlayerHeroDamage
   | -- | on the game: event cards cannot shuffle cards from a player's discard pile into his
     -- deck, as Passage into Mordor reads
     EventsCannotShuffleDiscardIntoDeck

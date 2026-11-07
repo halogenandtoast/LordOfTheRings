@@ -1827,6 +1827,7 @@ library
       LordOfTheRings.Location.Cards.AncientHarbor
       LordOfTheRings.Location.Cards.AncientTreasury
       LordOfTheRings.Location.Cards.AnduinWharf
+      LordOfTheRings.Location.Cards.AnnuminasCountryside
       LordOfTheRings.Location.Cards.ArchedTunnel
       LordOfTheRings.Location.Cards.BagEnd
       LordOfTheRings.Location.Cards.Bamfurlong
@@ -4461,6 +4462,7 @@ test-suite LordOfTheRings-test
       LordOfTheRings.ShadowsOfMirkwood.TheHillsOfEmynMuilSpec
       LordOfTheRings.ShadowsOfMirkwood.TheHuntForGollumSpec
       LordOfTheRings.Standalone.AnnuminasInvadersSpec
+      LordOfTheRings.Standalone.AnnuminasLocationsSpec
       LordOfTheRings.Standalone.AnnuminasTreacheriesSpec
       LordOfTheRings.Standalone.BattleOfLakeTownSpec
       LordOfTheRings.Standalone.BelegostSpec

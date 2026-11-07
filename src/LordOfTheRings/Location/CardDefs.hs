@@ -15,7 +15,7 @@ allLocationCards =
   Map.fromList $
     map
       (\def -> (cdCardCode def, def))
-      [billFernysHouse, staddleHidingHole, combeStorehouse, archetTradingPost, chetwoodCampsite, thePrancingPonyMurder, ramshackleManor, darkAlleyMurder, marketSquareMurder, oldWarehouse, villageStable, greatBarrow, standingStones, hollowCircle, ancientBarrow, stoneRing, northDownsFog, naurlhugsLair, abandonedMineBelegost, floodedHall, darkenedTunnel, sunkenTreasury, secretChamber, withywindle, misleadingPath, deepGulley, strangeWoods, wallOfTrees, oppressiveForest, theStoneOfErechStandalone, tarlangsNeck, banksOfMorthond, valeOfShadows, blackrootGraves, shadowOfDwimorberg, hauntedValley, westPier, theMastersManor, southPier, northPier, merchantsDistrict, eastPier, greatHouse, greatBridge, fishermansDock, esgarothWharf, capturedWatchtower, emynArnenOverlook, morgulduin, pelennorFieldsOsgiliath, ruinsOfOsgiliath, belfalasShipyard, cobasHavenDreadnaught, isleOfFortune, mouthsOfAnduin, tolfalasLanding, wickedCove,  theEavesOfMirkwoodDarkOfMirkwood
+      [gateOfAnnuminas, arnorBattlefield, hillsOfEvendim, shoresOfLakeNenuial, billFernysHouse, staddleHidingHole, combeStorehouse, archetTradingPost, chetwoodCampsite, thePrancingPonyMurder, ramshackleManor, darkAlleyMurder, marketSquareMurder, oldWarehouse, villageStable, greatBarrow, standingStones, hollowCircle, ancientBarrow, stoneRing, northDownsFog, naurlhugsLair, abandonedMineBelegost, floodedHall, darkenedTunnel, sunkenTreasury, secretChamber, withywindle, misleadingPath, deepGulley, strangeWoods, wallOfTrees, oppressiveForest, theStoneOfErechStandalone, tarlangsNeck, banksOfMorthond, valeOfShadows, blackrootGraves, shadowOfDwimorberg, hauntedValley, westPier, theMastersManor, southPier, northPier, merchantsDistrict, eastPier, greatHouse, greatBridge, fishermansDock, esgarothWharf, capturedWatchtower, emynArnenOverlook, morgulduin, pelennorFieldsOsgiliath, ruinsOfOsgiliath, belfalasShipyard, cobasHavenDreadnaught, isleOfFortune, mouthsOfAnduin, tolfalasLanding, wickedCove,  theEavesOfMirkwoodDarkOfMirkwood
       , forestGateDarkOfMirkwood
       , goblinTunnelsDarkOfMirkwood
       , lightlessPassageDarkOfMirkwood
@@ -5591,3 +5591,14 @@ oldWarehouse = (location "murder-at-the-prancing-pony-019" "Old Warehouse" Murde
 villageStable :: CardDef
 villageStable = (location "murder-at-the-prancing-pony-020" "Village Stable" MurderAtThePrancingPony 2 3 3)
   { cdCardTraits = setFromList [Bree], cdKeywords = setFromList [Investigate 1] }
+
+
+gateOfAnnuminas, arnorBattlefield, hillsOfEvendim, shoresOfLakeNenuial :: CardDef
+gateOfAnnuminas = (location "the-siege-of-annuminas-019" "Gate of Annúminas" TheSiegeOfAnnuminas 2 0 5)
+  { cdCardTraits = setFromList [Arnor, City] }
+arnorBattlefield = (location "the-siege-of-annuminas-021" "Arnor Battlefield" TheSiegeOfAnnuminas 3 3 3)
+  { cdCardTraits = setFromList [Arnor] }
+hillsOfEvendim = (location "the-siege-of-annuminas-022" "Hills of Evendim" TheSiegeOfAnnuminas 2 4 4)
+  { cdCardTraits = setFromList [Arnor] }
+shoresOfLakeNenuial = (location "the-siege-of-annuminas-023" "Shores of Lake Nenuial" TheSiegeOfAnnuminas 2 2 6)
+  { cdCardTraits = setFromList [Arnor] }

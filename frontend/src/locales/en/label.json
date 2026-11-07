@@ -1,5 +1,7 @@
 {
   "annuminas": {
+    "gateEngage": "Engage an enemy to travel to Gate of Annúminas",
+    "battlefieldHero": "Deal 1 damage to a hero you control to travel",
     "hordes": "Return your highest-threat enemy or find another enemy",
     "returnHighest": "Return your highest-threat engaged enemy to staging",
     "highestEnemy": "Choose a highest-threat enemy engaged with you",
