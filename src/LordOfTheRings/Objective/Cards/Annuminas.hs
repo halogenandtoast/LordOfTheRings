@@ -48,7 +48,7 @@ instance RunMessage Annuminas where
       let strength = do
             shared <- epicShared <$> replica
             current <- annuminasCityStrength shared
-            pure $ if annuminasCityDefeated shared then 0 else max 0 (current + amount)
+            pure $ if isJust (annuminasOutcome shared) then current else max 0 (current + amount)
       pure $ maybe o (Annuminas . (`setStrength` a)) strength
     _ -> Annuminas <$> runMessage msg a
    where

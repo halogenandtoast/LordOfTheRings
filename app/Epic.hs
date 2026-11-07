@@ -102,17 +102,25 @@ runExternal shared boards commands snapshot = do
       changed = setReplica replica snapshot
       -- A contributor updates its replica optimistically. Still notify its
       -- entities, which may need to react to the authoritative shared total.
-      sync = [SyncEpic shared | old.epicShared /= shared || not (null old.epicPendingDeltas)]
+      sync = [SyncEpic shared | old.epicShared /= shared || not (null old.epicPendingDeltas) || maybe False (\outcome -> snapshot.epicGameState.outcome /= Just outcome) (annuminasOutcome shared)]
       messages = sync <> map ApplyEpicCommand commands
   if isJust snapshot.epicGameState.outcome
-    then
-      pure
-        $ setReplica
-          replica
-            { epicShared = shared
-            , epicAppliedCommands = old.epicAppliedCommands <> Set.fromList (map epicCommandId commands)
-            }
-          snapshot
+    then do
+      let terminal = setReplica
+            replica
+              { epicShared = shared
+              , epicAppliedCommands = old.epicAppliedCommands <> Set.fromList (map epicCommandId commands)
+              }
+            snapshot
+      case annuminasOutcome shared of
+        Nothing -> pure terminal
+        Just outcome -> liftIO do
+          -- Reconcile an optimistic local ending with the event's accepted
+          -- outcome, including the city's mirrored tokens. Do not run old queues.
+          let state = terminal.epicGameState & outcomeL ?~ outcome & questionL .~ mempty
+          env <- newGameEnv state (const $ pure ()) 0
+          synchronized <- runGameT env $ runGame (SyncEpic shared) state
+          pure terminal {epicGameState = synchronized & outcomeL ?~ outcome & questionL .~ mempty}
     else
       if null messages && old.epicBoards == boards
         then pure changed
@@ -153,7 +161,7 @@ commitGames eid baseline initialGames = do
   when
     ( (stageOneComplete shared && not (stageOneComplete original))
         || (dreadnaughtDestroyed shared && not (dreadnaughtDestroyed original))
-        || (annuminasCityDefeated shared && not (annuminasCityDefeated original))
+        || (isJust (annuminasOutcome shared) && isNothing (annuminasOutcome original))
     )
     $ for_ games \snapshot -> raiseUndoFloor (gameIdOf snapshot) snapshot.epicGameRow.lotrGameStep
   for games \snapshot -> do

@@ -74,6 +74,8 @@ import LordOfTheRings.Modifier (
     FirstPlayerClaimsWhenFree,
     HandSizeLimit
     , WinWhenNoMatchingEnemies
+    , WinAtRoundEndWithVictoryCard
+    , AtEndOfRound
     , PlayersCannotWin
   ),
  )
@@ -95,6 +97,7 @@ import LordOfTheRings.Target (
   Targetable (toTarget),
  )
 
+import LordOfTheRings.Epic.Board (epicVictoryCopies)
 import LordOfTheRings.Game.End (
   checkUnblockedQuests,
   endWaitingGame,
@@ -182,9 +185,12 @@ checkContinuousVictory = do
   ending <- getsGame gameEnding
   unless ending do
     mods <- getModifiers GameTarget
-    unless (PlayersCannotWin `elem` mods) $
+    unless (PlayersCannotWin `elem` mods) do
       for_ [matcher | WinWhenNoMatchingEnemies matcher <- mods] $ \matcher ->
         whenM (not <$> selectAny matcher) $ push $ GameOver Won
+      when (AtEndOfRound `elem` mods) $
+        for_ [code | WinAtRoundEndWithVictoryCard code <- mods] $ \code ->
+          whenM ((> 0) <$> epicVictoryCopies code) $ push $ GameOver Won
 
 {- | A player with more cards in hand than he may have, as In Enemy Territory allows him
 5, chooses and discards cards down to it at once.

@@ -2937,6 +2937,7 @@ library
       LordOfTheRings.Quest.Cards.LastLordOfMoria
       LordOfTheRings.Quest.Cards.LeaderOfTheCult
       LordOfTheRings.Quest.Cards.LeadTheRevolt
+      LordOfTheRings.Quest.Cards.LeadTheSortie
       LordOfTheRings.Quest.Cards.LieLow
       LordOfTheRings.Quest.Cards.LootTheDungeons
       LordOfTheRings.Quest.Cards.LostAtSea
@@ -4486,6 +4487,7 @@ test-suite LordOfTheRings-test
       LordOfTheRings.Standalone.AnnuminasLocationsSpec
       LordOfTheRings.Standalone.AnnuminasManWallsSpec
       LordOfTheRings.Standalone.AnnuminasOpeningSpec
+      LordOfTheRings.Standalone.AnnuminasSortieSpec
       LordOfTheRings.Standalone.AnnuminasStageStateSpec
       LordOfTheRings.Standalone.AnnuminasTreacheriesSpec
       LordOfTheRings.Standalone.AnnuminasTunnelSpec

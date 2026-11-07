@@ -2,7 +2,7 @@ module LordOfTheRings.Game.Message (module LordOfTheRings.Game.Message) where
 
 import LordOfTheRings.Helpers.Doomed (playerCardDoomed)
 import LordOfTheRings.Helpers.QuestCommit (canPayCommitCost)
-import LordOfTheRings.Epic.Runner (runEpicMessage)
+import LordOfTheRings.Epic.Runner (runEpicMessage, finalizeEpicOutcome)
 import LordOfTheRings.Enemy.AttackLocation (attackLocationEnemy)
 import Data.List (mapAccumL)
 import Data.Map.Strict qualified as Map (
@@ -219,7 +219,6 @@ import LordOfTheRings.Game.Base (
   leftPlayL,
   leftPlayLocationsL,
   logBlocksL,
-  outcomeL,
   perilL,
   phaseL,
   playersL,
@@ -816,6 +815,8 @@ import LordOfTheRings.Modifier (
     CannotBeDamagedByPlayerCardEffects,
     CannotBeDefended,
     CannotBeHealed,
+    AtEndOfRound,
+    WinAtRoundEndWithVictoryCard,
     CannotBeOptionallyEngagedBy,
     CannotBeOptionallyEngagedWhileOthersInStaging,
     CannotBePoisoned,
@@ -1683,15 +1684,18 @@ runGameMessage msg g = case msg of
           pushAll $ resolution <> [EndGame outcome]
           pure $ g & scenarioL %~ overAttrs (inResolutionL .~ True)
       | otherwise -> do
+          finished <- finalizeEpicOutcome outcome g
           clearQueue
-          pure $ g & outcomeL ?~ outcome
+          pure finished
   EndGame outcome -> do
+    finished <- finalizeEpicOutcome outcome g
     clearQueue
-    pure $ g & outcomeL ?~ outcome
+    pure finished
   -- conceding is not a loss by the rules, so nothing that stops the game ending stops it
   Surrender -> do
+    finished <- finalizeEpicOutcome Lost $ g & questionL .~ mempty
     clearQueue
-    pure $ g & questionL .~ mempty & outcomeL ?~ Lost
+    pure finished
   -- an ally put into play by its card, as Emery is, discarded by its card
   Discard source (CardIdTarget cid)
     | Just a <- find ((== cid) . allyCardId . toAttrs) (toList g.entities.allies) ->
@@ -3564,7 +3568,13 @@ runGameMessage msg g = case msg of
           _ -> []
         attacksAgain = concatMap again (gameEffects g)
     pushAll
-      $ returns <> forcedMsgs
+      -- FAQ 1.37: passive effects resolve before Forced effects. The marker
+      -- keeps passive end-of-round conditions active throughout this window.
+      $ [CreateEffect $ Effect GameSource GameTarget [AtEndOfRound] UntilEndOfRound
+        | any (\case Window _ RoundEnds -> True; _ -> False) windows
+        , any (\case WinAtRoundEndWithVictoryCard _ -> True; _ -> False)
+            $ map modifierType $ Map.findWithDefault [] GameTarget (gameModifiers g)]
+      <> returns <> forcedMsgs
       <> [ResponseWindow windows order [] 0]
       <> [DoStep 1 (EnemyAttack pid eid) | (eid, pid) <- attacksAgain]
     -- after an enemy's attack has resolved, what lasted for that attack ends

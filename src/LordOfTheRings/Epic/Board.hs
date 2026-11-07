@@ -1,10 +1,11 @@
-module LordOfTheRings.Epic.Board (epicBoardFor, matchesEpicTarget, matchesEpicGroup) where
+module LordOfTheRings.Epic.Board (epicBoardFor, matchesEpicTarget, matchesEpicGroup, epicVictoryCopies) where
 
 import Data.Map.Strict qualified as Map
+import Data.List (nubBy)
 import LordOfTheRings.Card
 import LordOfTheRings.Ally.Types (AllyAttrs (allyExhausted))
 import LordOfTheRings.Classes.Entity (toAttrs)
-import LordOfTheRings.Classes.HasGame (runReadGame)
+import LordOfTheRings.Classes.HasGame (HasGame, getsGame, runReadGame)
 import LordOfTheRings.Epic.Types
 import LordOfTheRings.Game.Base
 import LordOfTheRings.Helpers.Drawing (canDrawCardsFrom)
@@ -22,7 +23,7 @@ import LordOfTheRings.Modifier (Modifier (modifierType), ModifierType (Considere
 import LordOfTheRings.Placement (Placement (EngagedWith))
 import LordOfTheRings.Prelude
 import LordOfTheRings.Quest.Runner (getQuestPoints)
-import LordOfTheRings.Scenario.Types (scenarioSetAside, scenarioVictoryDisplay)
+import LordOfTheRings.Scenario.Types (scenarioEpic, scenarioSetAside, scenarioVictoryDisplay)
 import LordOfTheRings.Target
 import LordOfTheRings.Trait (Trait (Basic, Ship))
 
@@ -87,6 +88,8 @@ epicBoardFor ordinal name g
       (scenarioSetAside $ toAttrs g.scenario)
 
 matchesEpicTarget :: EpicTargetQuery -> EpicTarget -> Bool
+matchesEpicTarget EpicOtherNonUniqueNoVictoryEnemy t =
+  t.epicTargetKind == EpicEnemy && not t.epicTargetUnique && fromMaybe 0 (cdVictoryPoints $ toCardDef t.epicTargetCard) == 0
 matchesEpicTarget EpicEngagedNonUniqueEnemy t = t.epicTargetKind == EpicEnemy && t.epicTargetEngaged && not t.epicTargetUnique
 matchesEpicTarget EpicShip t =
   t.epicTargetKind
@@ -102,3 +105,14 @@ matchesEpicGroup query board = maybe False eligible board.epicBoardStage
     EpicHealingGroup -> stage.epicStageHealingAvailable
     EpicDrawingGroup -> stage.epicStageDrawingAvailable
     _ -> False
+
+-- A local victory display is read directly, rather than through its old public snapshot.
+epicVictoryCopies :: HasGame m => CardCode -> m Int
+epicVictoryCopies code = getsGame $ \g ->
+  let replica = scenarioEpic $ toAttrs g.scenario
+      own = maybe (GroupOrdinal 0) epicGroup replica
+      boards = nubBy (\a b -> a.epicBoardGroup == b.epicBoardGroup)
+        [b | r <- maybeToList replica, b <- r.epicBoards, b.epicBoardGroup /= own]
+      localCards = map toCardCode (toAttrs g.scenario).victoryDisplay
+      remoteCards = [c | b <- boards, stage <- maybeToList b.epicBoardStage, c <- stage.epicStageVictoryCards]
+   in length $ filter (== code) $ localCards <> remoteCards

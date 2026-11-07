@@ -21,6 +21,7 @@ module LordOfTheRings.Epic.Types (
   newAnnuminasEvent,
   annuminasCityStrength,
   annuminasCityDefeated,
+  annuminasOutcome,
   sharedCounter,
   applySharedDelta,
   stageOneComplete,
@@ -32,6 +33,7 @@ import Data.Set qualified as Set
 import LordOfTheRings.Card.Code (CardCode)
 import LordOfTheRings.Card.EncounterCard (EncounterCard)
 import LordOfTheRings.Card.PlayerCard (PlayerCard)
+import LordOfTheRings.Outcome (Outcome (Won, Lost))
 import LordOfTheRings.Effect (Effect)
 import LordOfTheRings.Id (EnemyId, CardId, PlayerId)
 import LordOfTheRings.Json (withDefaults)
@@ -43,7 +45,7 @@ newtype GroupOrdinal = GroupOrdinal {unGroupOrdinal :: Int}
   deriving stock (Show, Generic)
   deriving newtype (Eq, Ord, ToJSON, FromJSON)
 
-data SharedKey = SearchingTheHighSeasProgress | DreadnaughtDamage | AnnuminasCityStrength
+data SharedKey = SearchingTheHighSeasProgress | DreadnaughtDamage | AnnuminasCityStrength | AnnuminasVictory | AnnuminasDefeat
   deriving stock (Show, Eq, Ord, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
@@ -87,10 +89,20 @@ annuminasCityStrength = Map.lookup (counterKey AnnuminasCityStrength) . (.counte
 annuminasCityDefeated :: SharedEventState -> Bool
 annuminasCityDefeated state = annuminasCityStrength state == Just 0
 
+-- The first authoritative terminal condition ends the whole event.
+annuminasOutcome :: SharedEventState -> Maybe Outcome
+annuminasOutcome state
+  | isNothing (annuminasCityStrength state) = Nothing
+  | annuminasCityDefeated state || sharedCounter AnnuminasDefeat state > 0 = Just Lost
+  | sharedCounter AnnuminasVictory state > 0 = Just Won
+  | otherwise = Nothing
+
 counterKey :: SharedKey -> Text
 counterKey SearchingTheHighSeasProgress = "searching-the-high-seas-progress"
 counterKey DreadnaughtDamage = "dreadnaught-damage"
 counterKey AnnuminasCityStrength = "annuminas-city-strength"
+counterKey AnnuminasVictory = "annuminas-victory"
+counterKey AnnuminasDefeat = "annuminas-defeat"
 
 sharedCounter :: SharedKey -> SharedEventState -> Int
 sharedCounter key state = Map.findWithDefault 0 (counterKey key) state.counters
@@ -108,11 +120,16 @@ applySharedDelta delta state
             SearchingTheHighSeasProgress -> state.totalPlayers * 8
             DreadnaughtDamage -> state.totalPlayers * 15
             AnnuminasCityStrength -> maxBound
+            AnnuminasVictory -> 1
+            AnnuminasDefeat -> 1
           -- Annúminas rules, p. 5: reaching zero loses immediately. A repair
           -- delivered by another team afterwards cannot revive the city. There
           -- is no printed upper limit on repairing a surviving city.
           new
-            | delta.deltaKey == AnnuminasCityStrength && annuminasCityDefeated state = 0
+            | delta.deltaKey `elem` [AnnuminasCityStrength, AnnuminasVictory, AnnuminasDefeat]
+            , isJust (annuminasOutcome state) = old
+            | delta.deltaKey `elem` [AnnuminasVictory, AnnuminasDefeat]
+            , isNothing (annuminasCityStrength state) = old
             | otherwise = fromInteger $ max 0 $ min (toInteger ceiling') (toInteger old + toInteger delta.deltaAmount)
           effective = delta {deltaAmount = new - old}
        in ( state
@@ -168,14 +185,14 @@ instance FromJSON EpicReplica where
 
 -- Only explicitly cross-group effects use these public targets. Ordinary cards
 -- and their matchers continue to see only their own group (Dreadnaught rules).
-data EpicTargetQuery = EpicEnemy | EpicLocation | EpicShip | EpicEngagedNonUniqueEnemy | EpicWarshipGroup | EpicHealingGroup | EpicDrawingGroup
+data EpicTargetQuery = EpicEnemy | EpicLocation | EpicShip | EpicEngagedNonUniqueEnemy | EpicWarshipGroup | EpicHealingGroup | EpicDrawingGroup | EpicOtherNonUniqueNoVictoryEnemy
   deriving stock (Show, Eq, Generic)
   deriving anyclass (ToJSON, FromJSON)
 
 data EpicEffect = EpicDamage Int | EpicProgress Int | EpicUpgradeShip | EpicShuffleWarship | EpicDiscardUntilEnemy
   | EpicDiscardCaptive | EpicRescueCaptives
   | EpicGrantDunedain | EpicDelayStaging | EpicGrantHeroResources | EpicHealControlledCharacter
-  | EpicDrawCards
+  | EpicDrawCards | EpicDiscardEnemy
   | EpicSendSetAsideHost GroupOrdinal UUID
   | EpicReceiveSetAsideHost UUID (Maybe EncounterCard)
   | EpicReceiveEnemy EpicEnemyTransfer EpicEnemyArrival

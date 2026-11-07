@@ -1,7 +1,6 @@
 module LordOfTheRings.Scenario.Scenarios.TheSiegeOfAnnuminas.Helpers
   (cityStrength, damageAnnuminas, repairAnnuminas, eachAnnuminasTeam, otherAnnuminasTeams, setAsideAnnuminasCards, annuminasStages, annuminasVictoryCopies, chooseAnnuminasStage) where
 
-import Data.List (nubBy)
 import LordOfTheRings.Card (CardCode, HasCardCode, toCardCode)
 import LordOfTheRings.Enemy.CardDefs qualified as Enemies
 import LordOfTheRings.Location.CardDefs qualified as Locations
@@ -11,7 +10,7 @@ import LordOfTheRings.Classes.HasQueue (push)
 import LordOfTheRings.I18n (textVar)
 import LordOfTheRings.Id (PlayerId)
 import LordOfTheRings.Epic.Types
-import LordOfTheRings.Epic.Board (epicBoardFor)
+import LordOfTheRings.Epic.Board (epicBoardFor, epicVictoryCopies)
 import LordOfTheRings.Message (Message (ContributeShared, ResolveEpicEffect, QueueEpicCommand))
 import LordOfTheRings.Message.Lifted
 import LordOfTheRings.Objective.CardDefs qualified as Objectives
@@ -74,14 +73,7 @@ setAsideAnnuminasCards = do
 
 -- Count physical copies across victory displays, retaining duplicate card codes.
 annuminasVictoryCopies :: HasGame m => CardCode -> m Int
-annuminasVictoryCopies code = getsGame $ \g ->
-  let replica = scenarioEpic $ toAttrs g.scenario
-      own = maybe (GroupOrdinal 0) epicGroup replica
-      boards = nubBy (\a b -> a.epicBoardGroup == b.epicBoardGroup)
-        [b | r <- maybeToList replica, b <- r.epicBoards, b.epicBoardGroup /= own]
-      localCards = map toCardCode (toAttrs g.scenario).victoryDisplay
-      remoteCards = [c | b <- boards, stage <- maybeToList b.epicBoardStage, c <- stage.epicStageVictoryCards]
-   in length $ filter (== code) $ localCards <> remoteCards
+annuminasVictoryCopies = epicVictoryCopies
 
 chooseAnnuminasStage
   :: (ReverseQueue m, Targetable source, HasCardCode source)

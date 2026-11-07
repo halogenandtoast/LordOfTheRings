@@ -1,8 +1,9 @@
-module LordOfTheRings.Epic.Runner (runEpicMessage) where
+module LordOfTheRings.Epic.Runner (runEpicMessage, finalizeEpicOutcome) where
 
 import Data.Set qualified as Set
 import Data.Map.Strict qualified as Map
 import LordOfTheRings.Card
+import LordOfTheRings.Classes.RunMessage (runMessage)
 import LordOfTheRings.Classes.Entity (overAttrs, toAttrs, insertEntity)
 import LordOfTheRings.Classes.HasQueue (push, runQueueT)
 import LordOfTheRings.Epic.Board
@@ -21,7 +22,7 @@ import LordOfTheRings.Quest.Types (questUnderneath)
 import LordOfTheRings.Modifier (ModifierType (FewerStagingReveals))
 import LordOfTheRings.Phase (Phase (QuestPhase))
 import LordOfTheRings.Objective.CardDefs qualified as Objectives
-import LordOfTheRings.Outcome (Outcome (Lost))
+import LordOfTheRings.Outcome (Outcome (Won))
 import LordOfTheRings.Prelude
 import LordOfTheRings.Placement (Placement (StagingArea))
 import LordOfTheRings.Helpers.Modifiers (resourcesBarredFrom)
@@ -103,19 +104,19 @@ runEpicMessage msg g = case msg of
       immediateAttack lead transfer.epicEnemyId
     pure $ g & entitiesL . enemiesL %~ insertEntity foe & effectsL <>~ transfer.epicEnemyEffects
   SyncEpic shared -> do
-    when (annuminasCityDefeated shared) $ runQueueT $ gameOver Lost
+    runQueueT $ traverse_ gameOver $ annuminasOutcome shared
     pure g
-  ContributeShared AnnuminasCityStrength _ -> do
-    when (maybe False (annuminasCityDefeated . epicShared) $ scenarioEpic $ toAttrs g.scenario) $
-      runQueueT $ gameOver Lost
+  ContributeShared key _ | key `elem` [AnnuminasCityStrength, AnnuminasVictory, AnnuminasDefeat] -> do
+    runQueueT $ traverse_ gameOver $ scenarioEpic (toAttrs g.scenario) >>= annuminasOutcome . epicShared
     pure g
   ChooseEpicTarget pid code query effect -> do
     let replica = scenarioEpic $ toAttrs g.scenario
         own = maybe (GroupOrdinal 0) epicGroup replica
         boards =
           epicBoardFor own "" g : [b | r <- maybeToList replica, b <- r.epicBoards, b.epicBoardGroup /= own]
+        eligibleBoards = [b | b <- boards, query /= EpicOtherNonUniqueNoVictoryEnemy || b.epicBoardGroup /= own]
         candidates =
-          [ (board, target) | board <- boards, target <- board.epicBoardTargets, matchesEpicTarget query target
+          [ (board, target) | board <- eligibleBoards, target <- board.epicBoardTargets, matchesEpicTarget query target
           ]
         resolve board target
           | board.epicBoardGroup == own = push $ ResolveEpicEffect code effect target
@@ -141,6 +142,7 @@ runEpicMessage msg g = case msg of
         let host = headMay $ filter ((== toCardCode Enemies.hostOfAngmar) . toCardCode) $ scenarioSetAside $ toAttrs g.scenario
         for_ host $ \card -> push $ RemoveSetAsideFromGame [card]
         push $ QueueEpicCommand destination code (EpicReceiveSetAsideHost nonce host) ScenarioTarget
+      EpicDiscardEnemy -> discard source target
       EpicDrawCards -> eachPlayer $ \pid -> drawCards source pid 1
       EpicDamage n -> dealDamage source target n
       EpicProgress n -> placeProgress source target n
@@ -213,3 +215,16 @@ runEpicMessage msg g = case msg of
           pure $ g & scenarioL %~ overAttrs (\a -> a {scenarioEpic = Just updated})
     _ -> pure g
   _ -> pure g
+
+-- Record the shared terminal event before clearing the local queue. A queued
+-- contribution after GameOver would never execute.
+finalizeEpicOutcome :: Outcome -> Game -> GameT Game
+finalizeEpicOutcome requested g = do
+  updated <- case scenarioEpic $ toAttrs g.scenario of
+    Just replica | isJust (annuminasCityStrength replica.epicShared), isNothing (annuminasOutcome replica.epicShared) -> do
+      let key = if requested == Won then AnnuminasVictory else AnnuminasDefeat
+      attrs <- runQueueT $ runMessage (ContributeShared key 1) (toAttrs g.scenario)
+      pure $ g & scenarioL %~ overAttrs (const attrs)
+    _ -> pure g
+  let authoritative = scenarioEpic (toAttrs updated.scenario) >>= annuminasOutcome . epicShared
+  pure $ updated & outcomeL ?~ fromMaybe requested authoritative

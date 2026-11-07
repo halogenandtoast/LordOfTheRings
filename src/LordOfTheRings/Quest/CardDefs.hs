@@ -90,7 +90,7 @@ allQuestCards =
   Map.fromList $
     map
       (\def -> (cdCardCode def, def))
-      [manTheWallsAnnuminas, defendTheCityAnnuminas, guardTheGateAnnuminas, raiseTheLevee, delayTheEnemyAnnuminas, rebuildTheDefenses, investigatingTheCrime, runningOutOfTime, apprehendingTheKiller, lostInTheFog, trappedInsideABarrow, theHouseOfTomBombadil, acrossTheDowns, ruinsOfTheFirstAge, ancientEvilsDisturbed, deeperIntoThePast, theServantsOfMorgoth, theRootsOfEredLuin, theMinesOfBelegost, theBeastOfBelegost, farewellToTheShire, darkBadPlace, chokedWithBrambles, shiftingTrees, closingInAroundThem, theWickedWillow, theDisappearance, terrorOfTheDead, theShadowHost, theDragonsWrath, fireAndWater, terrorFromTheMountain, anduinCrossing, throughTheRuinsOsgiliath, beyondExpectations, raceToMinasTirith, searchingTheHighSeas, destroyTheDreadnaught,  afterTheRaid
+      [leadTheSortie, manTheWallsAnnuminas, defendTheCityAnnuminas, guardTheGateAnnuminas, raiseTheLevee, delayTheEnemyAnnuminas, rebuildTheDefenses, investigatingTheCrime, runningOutOfTime, apprehendingTheKiller, lostInTheFog, trappedInsideABarrow, theHouseOfTomBombadil, acrossTheDowns, ruinsOfTheFirstAge, ancientEvilsDisturbed, deeperIntoThePast, theServantsOfMorgoth, theRootsOfEredLuin, theMinesOfBelegost, theBeastOfBelegost, farewellToTheShire, darkBadPlace, chokedWithBrambles, shiftingTrees, closingInAroundThem, theWickedWillow, theDisappearance, terrorOfTheDead, theShadowHost, theDragonsWrath, fireAndWater, terrorFromTheMountain, anduinCrossing, throughTheRuinsOsgiliath, beyondExpectations, raceToMinasTirith, searchingTheHighSeas, destroyTheDreadnaught,  afterTheRaid
       , mirkwoodForestTheOath
       , theRearguardTheOath
       , theDarkOfNibinDum
@@ -2353,3 +2353,7 @@ defendTheCityAnnuminas = (quest "the-siege-of-annuminas-004" "Defend the City" T
 manTheWallsAnnuminas :: CardDef
 manTheWallsAnnuminas = (quest "the-siege-of-annuminas-010" "Man the Walls" TheSiegeOfAnnuminas 2 50)
   { cdWhenRevealed = True }
+
+leadTheSortie :: CardDef
+leadTheSortie = (quest "the-siege-of-annuminas-005" "Lead the Sortie" TheSiegeOfAnnuminas 3 0)
+  { cdWhenRevealed = True, cdQuestPoints = Nothing }

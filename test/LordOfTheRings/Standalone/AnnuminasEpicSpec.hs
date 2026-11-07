@@ -2,7 +2,7 @@ module LordOfTheRings.Standalone.AnnuminasEpicSpec (spec) where
 
 import Data.UUID qualified as UUID
 import LordOfTheRings.Epic.Types
-import LordOfTheRings.Outcome (Outcome (Lost))
+import LordOfTheRings.Outcome (Outcome (Won, Lost))
 import LordOfTheRings.Scenario.Types (ScenarioAttrs (scenarioEpic))
 import TestImport
 
@@ -78,3 +78,25 @@ spec = describe "Annúminas Epic city strength" do
     putGame $ current & scenarioL %~ overAttrs (\a -> a {scenarioEpic = Just $ EpicReplica (GroupOrdinal 0) (stateFor 3) [] [] [] mempty mempty})
     run $ ContributeShared AnnuminasCityStrength (-50)
     getsGame (.outcome) `shouldReturn` Just Lost
+
+  for_ [(AnnuminasVictory, Won), (AnnuminasDefeat, Lost)] $ \(key, outcome) ->
+    it ("latches a shared terminal outcome and ignores later city changes: " <> show key) do
+      let initial = stateFor 3
+          terminalDelta = SharedDelta (UUID.fromWords 0 0 0 101) (GroupOrdinal 0) key 1
+          (terminal, _) = applySharedDelta terminalDelta initial
+          (lateDamage, damage) = applySharedDelta (delta 102 1 (-100)) terminal
+          otherKey = if key == AnnuminasVictory then AnnuminasDefeat else AnnuminasVictory
+          (lateEnding, ending) = applySharedDelta (SharedDelta (UUID.fromWords 0 0 0 103) (GroupOrdinal 2) otherKey 1) lateDamage
+      annuminasOutcome terminal `shouldBe` Just outcome
+      annuminasCityStrength lateDamage `shouldBe` Just 50
+      fmap (.deltaAmount) damage `shouldBe` Just 0
+      fmap (.deltaAmount) ending `shouldBe` Just 0
+      annuminasOutcome lateEnding `shouldBe` Just outcome
+      pure () :: IO ()
+
+  it "cannot turn a destroyed city into a victory" do
+    let (destroyed, _) = applySharedDelta (delta 104 0 (-50)) (stateFor 3)
+        (lateWin, applied) = applySharedDelta (SharedDelta (UUID.fromWords 0 0 0 105) (GroupOrdinal 1) AnnuminasVictory 1) destroyed
+    annuminasOutcome lateWin `shouldBe` Just Lost
+    fmap (.deltaAmount) applied `shouldBe` Just 0
+    pure () :: IO ()

@@ -403,7 +403,7 @@ passesCriteria = \case
     g <- getGame
     let replica = scenarioEpic $ toAttrs g.scenario
         own = maybe (GroupOrdinal 0) epicGroup replica
-        boards = epicBoardFor own "" g : [b | r <- maybeToList replica, b <- r.epicBoards, b.epicBoardGroup /= own]
+        boards = [b | b <- epicBoardFor own "" g : [b | r <- maybeToList replica, b <- r.epicBoards, b.epicBoardGroup /= own], query /= EpicOtherNonUniqueNoVictoryEnemy || b.epicBoardGroup /= own]
     pure $ if query `elem` [EpicWarshipGroup, EpicHealingGroup, EpicDrawingGroup]
       then any (matchesEpicGroup query) boards
       else any (any (matchesEpicTarget query) . epicBoardTargets) boards
@@ -482,6 +482,8 @@ canPay = \case
     players <- getsGame (length . gamePlayerOrder)
     maybe False ((>= n * players) . (.progress)) . Map.lookup qid . entitiesQuests <$> getsGame gameEntities
   RaiseThreatCost _ -> pure True
+  EachPlayerThreatCost _ -> pure True
+  EncounterRevealCost n -> getsGame ((>= n) . length . (.encounterDeck) . toAttrs . (.scenario))
   IncreasePursuitCost _ -> pure True
   GroupResourcesCost sphere n -> (>= n) . sum <$> (traverse (`getResourcesOfSphere` sphere) =<< getRemainingPlayers)
   SphereResourceCost pid sphere n -> (>= n) <$> getResourcesOfSphere pid sphere
@@ -528,6 +530,10 @@ payCost pid cost rest = case cost of
   QuestProgressPerPlayerCost qid n -> do
     players <- getsGame (length . gamePlayerOrder)
     pure $ RemoveTokens (PlayerSource pid) (QuestTarget qid) Progress (n * players) : rest
+  EachPlayerThreatCost n -> do
+    players <- getRemainingPlayers
+    pure $ concat [[RaiseThreat player n, CheckWindows [mkAfter $ ThreatRaisedByEncounter player n]] | player <- players] <> rest
+  EncounterRevealCost n -> pure $ replicate n RevealEncounterCard <> rest
   Costs cs -> foldrM (payCost pid) rest cs
   ExhaustTheOneRingCost ->
     getTheOneRing >>= \case
@@ -540,6 +546,8 @@ costMessages source = \case
   Free -> []
   QuestProgressCost qid n -> [RemoveTokens source (QuestTarget qid) Progress n]
   QuestProgressPerPlayerCost _ _ -> [] -- counted and paid by payCost
+  EachPlayerThreatCost _ -> [] -- paid for the current player order by payCost
+  EncounterRevealCost _ -> [] -- revealed before resolving the effect by payCost
   ExhaustCost target -> [Exhaust target]
   ResourceCost target n -> case source of
     PlayerSource pid -> [SpendResourcesFrom pid [(target, n)]]

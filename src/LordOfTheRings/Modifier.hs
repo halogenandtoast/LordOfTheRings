@@ -195,6 +195,8 @@ data ModifierType
   | RevealingTreachery TreacheryId
   | -- | A continuous victory condition, checked after the game state changes.
     WinWhenNoMatchingEnemies EnemyMatcher
+  | WinAtRoundEndWithVictoryCard CardCode
+  | AtEndOfRound
   | AdditionalInvestigateCards Int
   | -- | on an ally: it entered play this round
     EnteredPlayThisRound
