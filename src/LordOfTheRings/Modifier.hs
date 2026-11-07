@@ -5,10 +5,11 @@ module LordOfTheRings.Modifier (module LordOfTheRings.Modifier) where
 import Data.Aeson.KeyMap qualified as KeyMap
 import Data.Aeson.TH (deriveJSON, deriveToJSON, mkParseJSON)
 import Data.Aeson.Types (Parser)
+import Data.UUID qualified as UUID
 import LordOfTheRings.Campaign (CampaignLogKey)
 import LordOfTheRings.Card.CardType (CardType)
 import LordOfTheRings.Card.Code (CardCode)
-import LordOfTheRings.Id (QuestId, CardId, EnemyId, PlayerId, TreacheryId)
+import LordOfTheRings.Id (QuestId, CardId (..), EnemyId, PlayerId, TreacheryId)
 import LordOfTheRings.Keyword (Keyword)
 import LordOfTheRings.Matcher.Types (CardMatcher, EnemyMatcher, HeroMatcher, LocationMatcher, PlayerMatcher)
 import LordOfTheRings.Outcome (Outcome)
@@ -625,9 +626,9 @@ data ModifierType
     -- modifier's source then given 'PlayedTopOfDeckThisPhase', as Gandalf (The Road Darkens)
     -- lets him once per phase
     MayPlayTopOfDeck
-  | -- | on a card: a card was played from the top of a deck by the 'MayPlayTopOfDeck' it
-    -- gives, this phase
-    PlayedTopOfDeckThisPhase
+  | -- | on a card: the card with this id was played from the top of a deck by the
+    -- 'MayPlayTopOfDeck' it gives, this phase
+    PlayedTopOfDeckThisPhase CardId
   | -- | on a hero: it is considered to have the sphere's printed resource icon while paying
     -- for this card, as Gandalf (The Road Darkens) for the top card of the deck
     PrintedResourceIconForCard CardId Sphere
@@ -1218,6 +1219,8 @@ parseLegacyModifierType generated v = case v of
   Object o -> case (KeyMap.lookup "tag" o, KeyMap.lookup "contents" o) of
     (Just (String "PlayedThisRound"), Just contents) -> UsedThisRound <$> parseJSON contents
     (Just (String "PlayedCardTypeThisRound"), Just contents) -> PlayedCardThisRound "" <$> parseJSON contents
+    -- saved before it named the card played: loads as no card's, which nothing pays for
+    (Just (String "PlayedTopOfDeckThisPhase"), Nothing) -> pure $ PlayedTopOfDeckThisPhase (CardId UUID.nil)
     (Just (String tag), _)
       | tag `elem` ["PlayedACardThisRound", "PlayedEventThisRound", "PlayedAnAllyThisRound", "AllyPlayedThisRound" :: Text] ->
           pure $ UsedThisRound ""

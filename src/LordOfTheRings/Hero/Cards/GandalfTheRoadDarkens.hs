@@ -1,7 +1,8 @@
 module LordOfTheRings.Hero.Cards.GandalfTheRoadDarkens (gandalfTheRoadDarkens) where
 
+import LordOfTheRings.ActiveCost (ActiveCost (activeCostCard))
 import LordOfTheRings.Classes.HasGame (getsGame)
-import LordOfTheRings.Game.Base (gameEffects)
+import LordOfTheRings.Game.Base (gameActiveCosts, gameEffects)
 import LordOfTheRings.Hero.CardDefs qualified as Cards
 import LordOfTheRings.Hero.Import.Lifted
 import LordOfTheRings.Sphere (Sphere (..))
@@ -18,13 +19,18 @@ of your deck as if it was in your hand. When playing a card this way, Gandalf is
 to have the printed [leadership], [lore], [tactics], and [spirit] icons.
 
 The card played from the top of the deck marks Gandalf 'PlayedTopOfDeckThisPhase' (see
-'MayPlayTopOfDeck'), which ends the play for the phase.
+'MayPlayTopOfDeck'), which ends the play for the phase. The card has left the deck by the
+time it is paid for, so the icons follow that card while its cost is active.
 -}
 instance HasModifiersFor GandalfTheRoadDarkens where
   getModifiersFor (GandalfTheRoadDarkens a) = do
     modified a (PlayerTarget a.owner) [TopOfDeckFaceup]
-    used <- getsGame \g -> or [PlayedTopOfDeckThisPhase `elem` effectModifiers e | e <- gameEffects g, effectTarget e == HeroTarget a.id]
-    unless used do
-      modified a (PlayerTarget a.owner) [MayPlayTopOfDeck]
-      top <- take 1 . (.deck) <$> getPlayer a.owner
-      for_ top \c -> modifySelf a [PrintedResourceIconForCard c.id s | s <- [Leadership, Lore, Tactics, Spirit]]
+    used <- getsGame \g -> [cid | e <- gameEffects g, effectTarget e == HeroTarget a.id, PlayedTopOfDeckThisPhase cid <- effectModifiers e]
+    paying <- getsGame (map ((.id) . activeCostCard) . toList . gameActiveCosts)
+    cards <-
+      if null used
+        then do
+          modified a (PlayerTarget a.owner) [MayPlayTopOfDeck]
+          map (.id) . take 1 . (.deck) <$> getPlayer a.owner
+        else pure $ filter (`elem` paying) used
+    modifySelf a [PrintedResourceIconForCard cid s | cid <- cards, s <- [Leadership, Lore, Tactics, Spirit]]

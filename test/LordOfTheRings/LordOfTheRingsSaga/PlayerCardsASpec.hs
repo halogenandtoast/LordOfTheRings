@@ -211,6 +211,28 @@ spec = describe "The Black Riders, The Road Darkens and The Treason of Saruman p
       question <- getQuestion pid
       [t | Just q <- [question], TargetLabel t _ <- questionChoices q] `shouldSatisfy` notElem (CardIdTarget next.id)
 
+    -- issue #47: his icons last while the card he played is paid for, after it left the deck
+    it "pays for the top card of the deck with his resources too" . gameTestWith gandalfDeck $ \pid -> do
+      gandalf <- hero gandalfCode
+      eowyn <- hero eowynCode
+      run $ PlaceTokens GameSource gandalf Resource 2
+      run $ PlaceTokens GameSource eowyn Resource 2
+      top <- putOnTopOfDeck pid Events.theGaladhrimsGreeting
+      run $ BeginPhase PlanningPhase
+      chooseTarget pid (CardIdTarget top.id)
+      chooseTarget pid gandalf
+      chooseTarget pid gandalf
+      (.resources) <$> getHeroWithCode gandalfCode `shouldReturn` 0
+      (.resources) <$> getHeroWithCode eowynCode `shouldReturn` 1
+
+    it "cannot play a top card his and the other heroes' resources cannot afford" . gameTestWith gandalfDeck $ \pid -> do
+      eowyn <- hero eowynCode
+      run $ PlaceTokens GameSource eowyn Resource 2
+      top <- putOnTopOfDeck pid Events.theGaladhrimsGreeting
+      run $ BeginPhase PlanningPhase
+      question <- getQuestion pid
+      [t | Just q <- [question], TargetLabel t _ <- questionChoices q] `shouldSatisfy` notElem (CardIdTarget top.id)
+
   describe "Fellowship of the Ring" do
     it "gives each hero +1 willpower, and is discarded after a character is destroyed" . gameTestWith frodoDeck $ \pid -> do
       frodo <- hero frodoCode

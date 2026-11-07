@@ -219,7 +219,7 @@ runPlayer msg player = case msg of
           fromHand = cid `elem` map (.id) player.hand || fromDeck
           ownDiscard = cdPlayableFrom (toCardDef card) `elem` [FromHandOrDiscard, FromDiscardOnly]
       -- the card that let it be played has been used for the phase
-      pushAll [CreateEffect $ Effect source t [PlayedTopOfDeckThisPhase] UntilEndOfPhase | fromDeck, source <- fromTop, Just t <- [sourceTarget source]]
+      pushAll [CreateEffect $ Effect source t [PlayedTopOfDeckThisPhase cid] UntilEndOfPhase | fromDeck, source <- fromTop, Just t <- [sourceTarget source]]
       -- a card in the discard pile a Record lets be played: the Record is discarded for it,
       -- and the card goes to the bottom of the deck after
       records <- if fromHand || ownDiscard then pure [] else discardPlayers pid card
