@@ -108,6 +108,23 @@ const turnedUp = async (page: Page, ids: string[]) => {
 }
 const handIds = (page: Page) => page.locator('.hand [data-card-id]').evaluateAll((cards) => cards.map((c) => (c as HTMLElement).dataset.cardId!))
 
+test("Elrond's Counsel animates from hand into discard while choosing its target", async ({ page, game }) => {
+  await page.getByRole('dialog').getByRole('button', { name: 'Continue', exact: true }).click()
+  const eventId = crypto.randomUUID()
+  const heroId = crypto.randomUUID()
+  await game.debug({ tag: 'PutHeroIntoPlay', contents: [game.playerId, { id: heroId, cardCode: '04128', owner: game.playerId }] })
+  await game.debug({ tag: 'PutInHand', contents: { id: eventId, cardCode: '04059', owner: game.playerId } })
+  await expect(page.locator(`.hand [data-card-id="${eventId}"]`)).toBeVisible()
+  await page.evaluate(async () => { await Promise.all(document.getAnimations().map(animation => animation.finished.catch(() => undefined))) })
+  const seen = (await transitions(page)).length
+  await game.debug({ tag: 'PlayCard', contents: [game.playerId, eventId] })
+  await expect.poll(async () => (await game.state()).game.question[game.playerId]?.label).toContain('elrondsCounsel.give')
+  await expect.poll(async () => (await transitions(page)).slice(seen).some(transition =>
+    transition.some(animation => animation.startsWith(`::view-transition-old(card-${eventId})`)) &&
+    transition.some(animation => animation.startsWith(`::view-transition-new(card-${eventId})`)),
+  )).toBe(true)
+})
+
 test('reorders unplayable hand cards and preserves the order across draws and reloads', async ({ page, game }) => {
   const before = await handIds(page)
   expect(before.length).toBeGreaterThan(1)

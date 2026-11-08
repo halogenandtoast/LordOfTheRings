@@ -49,6 +49,11 @@ export const dealFrom = (before: GameView | null, after: GameView, shuffledBack:
   const pileAt = (pile: string) =>
     document.querySelector<HTMLElement>(`[data-pile="${pile}"] ${pile.startsWith('deck') ? '.pile' : '.discard'}`)
 
+  // Preserve the surface underneath incoming cards. The new top is extracted into its
+  // moving snapshot; rendering it in the pile as well would make it appear there early.
+  const coveredPiles: { pile: string; surface: HTMLElement }[] = []
+  const coveredNames: { element: HTMLElement; name: string }[] = []
+
   const lay = ({ pile, ghost }: Move) => {
     const at = pileAt(pile)
     if (!at) return
@@ -137,6 +142,26 @@ export const dealFrom = (before: GameView | null, after: GameView, shuffledBack:
   }
   if (!leaving.length && !arriving.length) return null
 
+  for (const pile of new Set(arriving.filter(m => !m.faceDown).map(m => m.pile))) {
+    const at = pileAt(pile)
+    if (!at) continue
+    const surface = at.cloneNode(true) as HTMLElement
+    surface.dataset.pileSurface = pile
+    for (const element of [surface, ...surface.querySelectorAll<HTMLElement>('*')]) {
+      element.style.setProperty('view-transition-name', 'none')
+      element.removeAttribute('data-card-id')
+    }
+    surface.style.pointerEvents = 'none'
+    coveredPiles.push({ pile, surface })
+    // A top that stays underneath the arrival belongs to the stationary background,
+    // rather than a separate snapshot that would fade away during the flight.
+    for (const element of at.querySelectorAll<HTMLElement>('[data-card-id]')) {
+      if (leaving.some(m => m.card.id === element.dataset.cardId)) continue
+      coveredNames.push({ element, name: element.style.getPropertyValue('view-transition-name') })
+      element.style.setProperty('view-transition-name', 'none')
+    }
+  }
+
   // the timeline: cards going back, then any shuffle, then cards coming out
   const rules: string[] = []
   const animate = ({ name, faceDown }: Move, delay: number, vanish: boolean) => {
@@ -165,16 +190,25 @@ export const dealFrom = (before: GameView | null, after: GameView, shuffledBack:
   return {
     lift: () => {
       leaving.forEach((m) => m.ghost.remove())
+      coveredNames.forEach(({ element, name }) => element.style.setProperty('view-transition-name', name))
       renamed.forEach((shown) => shown.style.setProperty('view-transition-name', `card-${shown.dataset.cardId}`))
     },
     // a card that went somewhere drawn on screen, as the top of the discard, needs no stand-in:
     // it is its own end of the move
     land: () => {
+      for (const { pile, surface } of coveredPiles) {
+        const at = pileAt(pile)
+        if (!at) continue
+        const { left, top, width, height } = at.getBoundingClientRect()
+        Object.assign(surface.style, { position: 'fixed', left: `${left}px`, top: `${top}px`, width: `${width}px`, height: `${height}px`, margin: '0' })
+        document.body.append(surface)
+      }
       arriving.filter((m) => m.name.startsWith('back-') || !onScreen(m.card.id)).forEach(lay)
       const riffling = () => shuffling.flatMap((pid) => pileAt(`deck-${pid}`) ?? []).forEach(riffle)
       if (shuffling.length) window.setTimeout(riffling, shuffleAt)
     },
     done: () => {
+      coveredPiles.forEach(({ surface }) => surface.remove())
       arriving.forEach((m) => m.ghost.remove())
       style.remove()
     },

@@ -28,6 +28,17 @@ const visibleLabelChoices = computed(() => {
   const query = choiceSearch.value.trim().toLocaleLowerCase()
   return query ? labelChoices.value.filter((choice) => tr(choice.label).toLocaleLowerCase().includes(query)) : labelChoices.value
 })
+
+// Use the server's stable translation key, so sphere styling works in every language.
+const sphereOf = (label: string) =>
+  /^\$label\.[\w.]+\.(leadership|lore|spirit|tactics|baggins|fellowship)(?: |$)/.exec(label)?.[1]
+const sphereStyle = (label: string) => {
+  const sphere = sphereOf(label)
+  return sphere ? {
+    '--sphere-color': `var(--${sphere}, var(--accent))`,
+    '--icon': `url('/images/icons/game/${sphere}.svg')`,
+  } : undefined
+}
 </script>
 
 <template>
@@ -47,10 +58,13 @@ const visibleLabelChoices = computed(() => {
           v-for="choice in visibleLabelChoices"
           :key="choice.index"
           type="button"
+          :class="{ 'sphere-choice': sphereOf(choice.label) }"
+          :style="sphereStyle(choice.label)"
           @click="choice.card && overlay.hide(); emit('choose', choice.index)"
           @pointerenter="(e: PointerEvent) => choice.card && e.pointerType === 'mouse' && overlay.show(choice.card, e.currentTarget as HTMLElement)"
           @pointerleave="(e: PointerEvent) => choice.card && e.pointerType === 'mouse' && overlay.hide()"
         >
+          <span v-if="sphereOf(choice.label)" class="icon sphere-icon" aria-hidden="true" />
           {{ tr(choice.label) }}
         </button>
       </div>
@@ -160,6 +174,18 @@ const visibleLabelChoices = computed(() => {
   cursor: pointer;
 }
 .options button:hover { border-color: var(--accent); background: var(--highlight-tint); }
+.options button.sphere-choice {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  border-color: color-mix(in srgb, var(--sphere-color) 65%, var(--line));
+  background: color-mix(in srgb, var(--sphere-color) 22%, var(--panel));
+}
+.options button.sphere-choice:hover {
+  border-color: var(--sphere-color);
+  background: color-mix(in srgb, var(--sphere-color) 35%, var(--panel));
+}
+.sphere-icon { width: 1.2em; height: 1.2em; color: color-mix(in srgb, var(--sphere-color) 70%, var(--text)); }
 /* finger-sized answers */
 @media (pointer: coarse) {
   .options button { min-height: 44px; font-size: 0.9rem; }

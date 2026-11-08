@@ -113,7 +113,9 @@ onClickOutside(useTemplateRef('hand'), () => (handOpen.value = false))
 
     <div ref="hand" class="hand" :class="{ open: handOpen, reordering: dragged !== null }" :style="{ '--count': player.hand.length }" :title="$t('game.reorderHand')" @click="handOpen = true"
       @dragstart="handDragStart" @dragover="handDragOver" @drop="handDrop" @dragend="dragged = null">
-      <TransitionGroup name="hand">
+      <!-- Only animate reordering. A departing card must leave immediately so its
+           view-transition name can move to another zone without being duplicated. -->
+      <TransitionGroup name="hand" :css="false">
       <GameCard
         v-for="card in handCards"
         :key="card.id"
