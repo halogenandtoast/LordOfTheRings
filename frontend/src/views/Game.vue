@@ -229,6 +229,7 @@ const onDragStart = (event: DragEvent) => {
   const cardId = cardIdAt(event)
   const card = you.value?.hand.find((c) => c.id === cardId)
   if (!card || !event.dataTransfer?.types.includes(cardDrag)) return
+  if (!choices.value.some(option => option.targetId === card.id)) return
   dragging.value = {
     cardId: card.id,
     hosts: ['Attachment', 'Treasure'].includes(card.type) ? game.value?.attachmentHosts[card.id] ?? [] : null,
@@ -428,6 +429,8 @@ watch(question, (asked) => {
           <span class="band-label">{{ $t('game.bands.player') }}</span>
           <PlayerArea
             v-if="you"
+            :key="you.playerId"
+            :game-id="route.params.id as string"
             :player="you"
             :heroes="phone ? heroes(you) : []"
             :choices="boardChoices"

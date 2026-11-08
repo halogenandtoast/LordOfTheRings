@@ -11,7 +11,7 @@ import { refPreview } from '../gameLog'
 import { cardDrag, cardImage, type CardView, type ChoiceView } from '../types'
 import ChoiceMenu from './ChoiceMenu.vue'
 
-const { card, choices = [], attachments = [], rotated = false, flipping = false, draggable = false, banner = false } = defineProps<{
+const { card, choices = [], attachments = [], rotated = false, flipping = false, draggable = false, reorderable = false, banner = false } = defineProps<{
   card: CardView
   choices?: ChoiceView[]
   attachments?: CardView[]
@@ -19,6 +19,8 @@ const { card, choices = [], attachments = [], rotated = false, flipping = false,
   flipping?: boolean
   /** Playable cards can also be dragged onto the board. */
   draggable?: boolean
+  /** Hand cards can be rearranged even when they cannot currently be played. */
+  reorderable?: boolean
   /** Name the card on its top strip, for an attachment peeking out of its host's stack. */
   banner?: boolean
 }>()
@@ -79,6 +81,7 @@ const choose = () => {
 
 const dragStart = (event: DragEvent) => {
   overlay.hide()
+  if (event.dataTransfer) event.dataTransfer.effectAllowed = 'move'
   event.dataTransfer?.setData(cardDrag, card.id)
 }
 
@@ -149,7 +152,7 @@ const toggleUnless = (attached: CardView) => {
         :style="{ viewTransitionName: `card-${card.id}` }"
         :aria-label="tr(card.name)"
         :data-card-id="card.id"
-        :draggable="draggable && active && overlay.canHover.value"
+        :draggable="(reorderable || (draggable && active)) && overlay.canHover.value"
         @dragstart="dragStart"
         @pointerenter="$event.pointerType === 'mouse' && (showOverlay(), hoveredId = card.id)"
         @pointerleave="$event.pointerType === 'mouse' && (overlay.hide(), hoveredId === card.id && (hoveredId = null))"

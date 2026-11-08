@@ -11,6 +11,7 @@
   "outOfPlay": "Out of play",
   "facedownSide": "Its facedown side, which you have looked at",
   "cannotPlay": "An effect is preventing you from playing this card",
+  "reorderHand": "Drag cards to reorder your hand, or focus a card and use Alt + Left/Right",
   "cannotPlayBecause": "{source} is preventing you from playing this card",
   "combat": {
     "damage": "Takes {value} damage",

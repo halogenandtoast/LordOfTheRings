@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { ref, useTemplateRef } from 'vue'
-import { onClickOutside } from '@vueuse/core'
+import { computed, ref, useTemplateRef, watch } from 'vue'
+import { onClickOutside, useStorage } from '@vueuse/core'
 import CardBack from './CardBack.vue'
 import CardBand from './CardBand.vue'
 import DiscardPile from './DiscardPile.vue'
@@ -9,8 +9,11 @@ import QuestionZone from './QuestionZone.vue'
 import ThreatDial from './ThreatDial.vue'
 import type { CardView, ChoiceView, PlayerView, ScoreView, QuestionView } from '../types'
 import { useDebug } from '../composables/useDebug'
+import { cardDrag } from '../types'
+import { moveHandCard, reconcileHandOrder } from '../handOrder'
 
-const { player, choices, flipping, heroes = [] } = defineProps<{
+const { gameId, player, choices, flipping, heroes = [] } = defineProps<{
+  gameId: string
   player: PlayerView
   /** On a phone the heroes sit here, by the deck, as the play area has no room for them. */
   heroes?: CardView[]
@@ -26,6 +29,53 @@ const { player, choices, flipping, heroes = [] } = defineProps<{
 const emit = defineEmits<{ choose: [index: number] }>()
 const { active: debugging, send } = useDebug()
 const threatIcon = { '--icon': "url('/images/icons/game/threat.svg')" }
+
+const order = useStorage<string[]>(`hand-order:${gameId}:${player.playerId}`, [])
+watch(() => player.hand.map(card => card.id), ids => {
+  order.value = reconcileHandOrder(order.value, ids)
+}, { immediate: true, flush: 'sync' })
+const handCards = computed(() => {
+  const cards = new Map(player.hand.map(card => [card.id, card]))
+  return order.value.flatMap(id => cards.get(id) ? [cards.get(id)!] : [])
+})
+const dragged = ref<string | null>(null)
+let dragMidpoints: number[] = []
+const handDragStart = (event: DragEvent) => {
+  const id = event.dataTransfer?.getData(cardDrag)
+  dragged.value = id && order.value.includes(id) ? id : null
+  // Fixed slot positions prevent the moving cards' animation from shifting the target.
+  const slots = [...(event.currentTarget as HTMLElement).children] as HTMLElement[]
+  dragMidpoints = slots.map((slot, i) => {
+    const left = slot.getBoundingClientRect().left
+    const right = slots[i + 1]?.getBoundingClientRect().left ?? slot.getBoundingClientRect().right
+    return (left + right) / 2
+  })
+}
+const handDragOver = (event: DragEvent) => {
+  if (!dragged.value) return
+  event.preventDefault()
+  event.stopPropagation()
+  if (event.dataTransfer) event.dataTransfer.dropEffect = 'move'
+  const slot = dragMidpoints.findIndex(midpoint => event.clientX < midpoint)
+  const index = slot < 0 ? order.value.length - 1 : slot
+  const others = order.value.filter(id => id !== dragged.value)
+  const next = moveHandCard(order.value, dragged.value, others[index] ?? null)
+  if (next.some((id, i) => id !== order.value[i])) order.value = next
+}
+const handDrop = (event: DragEvent) => {
+  if (!dragged.value) return
+  event.preventDefault()
+  event.stopPropagation()
+  dragged.value = null
+}
+const moveWithKey = (event: KeyboardEvent, id: string) => {
+  if (!event.altKey || !['ArrowLeft', 'ArrowRight'].includes(event.key)) return
+  event.preventDefault()
+  const index = order.value.indexOf(id)
+  const nextIndex = index + (event.key === 'ArrowLeft' ? -1 : 1)
+  if (nextIndex < 0 || nextIndex >= order.value.length) return
+  order.value = moveHandCard(order.value, id, order.value[event.key === 'ArrowLeft' ? nextIndex : nextIndex + 1] ?? null)
+}
 
 // Pinned to the foot of a small screen, the hand peeks out until tapped, as in Arkham.
 const handOpen = ref(false)
@@ -61,16 +111,23 @@ onClickOutside(useTemplateRef('hand'), () => (handOpen.value = false))
 
     <CardBand v-if="heroes.length" class="heroes" :cards="heroes" :choices="choices" :flipping="flipping" @choose="emit('choose', $event)" />
 
-    <div ref="hand" class="hand" :class="{ open: handOpen }" :style="{ '--count': player.hand.length }" @click="handOpen = true">
+    <div ref="hand" class="hand" :class="{ open: handOpen, reordering: dragged !== null }" :style="{ '--count': player.hand.length }" :title="$t('game.reorderHand')" @click="handOpen = true"
+      @dragstart="handDragStart" @dragover="handDragOver" @drop="handDrop" @dragend="dragged = null">
+      <TransitionGroup name="hand">
       <GameCard
-        v-for="card in player.hand"
+        v-for="card in handCards"
         :key="card.id"
         :card="card"
         :choices="choices"
         :flipping="flipping.has(card.id)"
         draggable
+        reorderable
+        tabindex="0"
+        :class="{ 'hand-dragging': dragged === card.id }"
+        @keydown="moveWithKey($event, card.id)"
         @choose="emit('choose', $event)"
       />
+      </TransitionGroup>
     </div>
 
     <div class="threat-box">
@@ -133,7 +190,11 @@ onClickOutside(useTemplateRef('hand'), () => (handOpen.value = false))
   );
 }
 .hand > * { transition: margin 0.2s ease, translate 0.15s ease; }
-.hand > :hover { z-index: 10; translate: 0 -8%; }
+.hand:not(.reordering) > :hover { z-index: 10; translate: 0 -8%; }
+.hand.reordering > * { translate: none; }
+.hand > .hand-move { transition: transform 0.15s ease, margin 0.2s ease, translate 0.15s ease; }
+.hand > .hand-dragging { opacity: 0.5; }
+.hand > :focus-visible { outline: 2px solid var(--count-text); outline-offset: 3px; }
 /* level with the deck and discard, not their count pills: a pill's height and the stack's gap */
 .player .hand { margin-bottom: calc(0.75rem + 8px + 5px); }
 /* docked under the board instead (see Game.vue) */

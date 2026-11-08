@@ -108,6 +108,29 @@ const turnedUp = async (page: Page, ids: string[]) => {
 }
 const handIds = (page: Page) => page.locator('.hand [data-card-id]').evaluateAll((cards) => cards.map((c) => (c as HTMLElement).dataset.cardId!))
 
+test('reorders unplayable hand cards and preserves the order across draws and reloads', async ({ page, game }) => {
+  const before = await handIds(page)
+  expect(before.length).toBeGreaterThan(1)
+  const last = before[before.length - 1]!
+  const data = await page.evaluateHandle(() => new DataTransfer())
+  await page.locator(`.hand [data-card-id="${last}"]`).dispatchEvent('dragstart', { dataTransfer: data })
+  const first = await page.locator('.hand > .card-slot').first().boundingBox()
+  await page.locator('.hand').dispatchEvent('dragover', { dataTransfer: data, clientX: first!.x })
+  await page.locator('.hand').dispatchEvent('drop', { dataTransfer: data })
+  const reordered = [last, ...before.slice(0, -1)]
+  await expect.poll(() => handIds(page)).toEqual(reordered)
+  await game.debug({ tag: 'DrawCards', contents: { player: game.playerId, count: 2 } })
+  await expect.poll(async () => (await handIds(page)).length).toBe(before.length + 2)
+  expect((await handIds(page)).slice(0, before.length)).toEqual(reordered)
+  const drawn = await handIds(page)
+  await page.reload()
+  await expect.poll(() => handIds(page)).toEqual(drawn)
+  const slot = page.locator('.hand > .card-slot').first()
+  await slot.focus()
+  await slot.press('Alt+ArrowRight')
+  await expect.poll(() => handIds(page)).toEqual([drawn[1], drawn[0], ...drawn.slice(2)])
+})
+
 test('drawn cards fly from the deck, turning over on the way', async ({ page, game }) => {
   const before = await handIds(page)
   await game.debug({ tag: 'DrawCards', contents: { player: game.playerId, count: 2 } })
