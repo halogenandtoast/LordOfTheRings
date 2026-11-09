@@ -152,17 +152,18 @@ export const toView = (data: GameData, defs: Record<string, CardDef>, previous: 
 
   const fromEntity = (e: Entity, kind: keyof ServerGame['entities']): CardView => {
     const target = { tag: kindTargets[kind], contents: e.id }
+    const tokens = e.tokens ?? {}
     const d = def(e.cardCode)
     return card(e.cardCode, e.cardId, {
       spheres: [...new Set([...(d.sphere ? [d.sphere] : []), ...gainedIcons(target)])],
       target,
       // villagers are resource tokens on the table
       resources: kind === 'heroes' && pendingResources.has(e.id)
-        ? Math.max(0, (e.tokens.Resource ?? 0) - pendingResources.get(e.id)!)
-        : e.tokens.Resource ?? e.tokens.Villager ?? null,
-      time: e.tokens.TimeCounter ?? null,
-      damage: e.tokens.Damage ?? 0,
-      progress: e.tokens.Progress ?? null,
+        ? Math.max(0, (tokens.Resource ?? 0) - pendingResources.get(e.id)!)
+        : tokens.Resource ?? tokens.Villager ?? null,
+      time: tokens.TimeCounter ?? null,
+      damage: tokens.Damage ?? 0,
+      progress: tokens.Progress ?? null,
       exhausted: e.exhausted ?? false,
       unconscious: e.unconscious ?? false,
       committed: e.committed ?? false,

@@ -26,7 +26,8 @@ export interface Entity {
   id: string
   cardId: string
   cardCode: string
-  tokens: Tokens
+  /** none on a contract */
+  tokens?: Tokens
   placement?: Placement
   owner?: string
   exhausted?: boolean
