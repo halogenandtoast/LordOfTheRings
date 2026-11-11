@@ -4142,11 +4142,13 @@ executable LordOfTheRings-exe
   main-is: Main.hs
   other-modules:
       Auth
+      BugSync
       BugUpload
       CardDb
       Decks
       Epic
       GameLog
+      GitHub
       Model
       Paths_LordOfTheRings
   hs-source-dirs:

@@ -7,9 +7,12 @@
 module Main (main) where
 
 import Auth
+import BugSync (bugSyncLoop, commentBody, issueBody)
 import BugUpload (uploadBugExport)
 import CardDb (CardDb, loadCardDb)
-import Control.Monad.Logger (runStdoutLoggingT)
+import Control.Concurrent (forkIO)
+import Control.Monad (mfilter)
+import Control.Monad.Logger (logErrorN, runStdoutLoggingT)
 import Control.Monad.Random (evalRand, mkStdGen, randomIO)
 import Data.Aeson (Result (..))
 import Data.Aeson.Diff qualified as Diff
@@ -22,6 +25,7 @@ import Database.Persist.Postgresql
 import Decks
 import GameLog
 import Epic qualified
+import GitHub (Comment (..), GitHub, NewIssue (..), addToBoard, createIssue, githubFromEnv, postComment)
 import LordOfTheRings.Epic.Types qualified as EpicTypes
 import LordOfTheRings.Campaign
 import LordOfTheRings.Card (
@@ -57,7 +61,7 @@ import LordOfTheRings.Scenario.Types (GameMode (..), ScenarioAttrs (scenarioCamp
 import Model
 import Network.HTTP.Client (Manager)
 import Network.HTTP.Client.TLS (newTlsManager)
-import Network.HTTP.Types.Status (status400, status401, status409, status500)
+import Network.HTTP.Types.Status (status400, status401, status409, status429, status500, status502, status503)
 import System.Environment (lookupEnv)
 import System.Random.Internal (StdGen (..))
 import System.Random.SplitMix (seedSMGen', unseedSMGen)
@@ -100,6 +104,10 @@ data App = App
   , channels :: TVar (Map LotrGameId (TChan Outgoing))
   , cardDb :: CardDb
   , manager :: Manager
+  , github :: Maybe GitHub
+  -- ^ files bugs for players without GitHub accounts, when LOTR_GITHUB_TOKEN is set
+  , siteUrl :: Text
+  -- ^ where the site is, for the game links in those bugs
   }
 
 mkYesod
@@ -124,6 +132,11 @@ mkYesod
   /games/#LotrGameId/debug DebugR POST
   /games/#LotrGameId/export ExportR GET
   /games/#LotrGameId/file-bug BugR POST
+  /games/#LotrGameId/bug-report BugReportR POST
+  /bugs BugsR GET
+  /bugs/#LotrBugReportId BugDetailR GET
+  /bugs/#LotrBugReportId/seen BugSeenR POST
+  /bugs/#LotrBugReportId/comments BugCommentsR POST
   /spectatable SpectatableR GET
   /stats StatsR GET
   /admin AdminR GET
@@ -267,6 +280,8 @@ data UserView = UserView
   , admin :: Bool
   , beta :: Bool
   , allowSpectatorsByDefault :: Bool
+  , hasGithub :: Maybe Bool
+  -- ^ unset until they are asked, as they first file a bug
   }
   deriving stock Generic
   deriving anyclass ToJSON
@@ -290,6 +305,7 @@ userView userId user =
     user.userAdmin
     user.userBeta
     user.userAllowSpectatorsByDefault
+    user.userHasGithub
 
 data Registration = Registration {username :: Text, email :: Text, password :: Text}
   deriving stock Generic
@@ -319,6 +335,7 @@ postRegisterR = do
           , userAdmin = False
           , userBeta = False
           , userAllowSpectatorsByDefault = False
+          , userHasGithub = Nothing
           , userCreatedAt = now
           }
   userId <- runDB $ insert user
@@ -345,15 +362,24 @@ getWhoAmIR = do
   user <- runDB $ get404 userId
   pure $ toJSON $ userView userId user
 
-newtype Settings = Settings {allowSpectatorsByDefault :: Bool}
-  deriving stock Generic
-  deriving anyclass FromJSON
+-- | The settings sent, each left as it is when left out. A null hasGithub unsets it.
+data Settings = Settings
+  { allowSpectatorsByDefault :: Maybe Bool
+  , hasGithub :: Maybe (Maybe Bool)
+  }
+
+instance FromJSON Settings where
+  parseJSON = withObject "settings" \o -> Settings <$> o .:? "allowSpectatorsByDefault" <*> o .:! "hasGithub"
 
 putSettingsR :: Handler Value
 putSettingsR = do
   userId <- requireUserId
   settings <- requireCheckJsonBody @_ @Settings
-  user <- runDB $ updateGet userId [UserAllowSpectatorsByDefault =. settings.allowSpectatorsByDefault]
+  user <-
+    runDB
+      $ updateGet userId
+      $ [UserAllowSpectatorsByDefault =. v | v <- toList settings.allowSpectatorsByDefault]
+      <> [UserHasGithub =. v | v <- toList settings.hasGithub]
   pure $ toJSON $ userView userId user
 
 -- | Every connected client of a game listens on that game's channel.
@@ -1540,6 +1566,210 @@ postBugR gid = do
     Left err -> sendResponseStatus status500 err
     Right url -> pure $ object ["url" .= url]
 
+data BugFiling = BugFiling {title :: Text, description :: Text, blocking :: Bool}
+  deriving stock Generic
+  deriving anyclass FromJSON
+
+{- | File a bug for a player without a GitHub account: the site's account opens the issue
+on the board, and the report follows it from there. A player may file ten a day.
+-}
+postBugReportR :: LotrGameId -> Handler Value
+postBugReportR gid = do
+  userId <- requireUserId
+  github <- getGithub
+  filing <- requireCheckJsonBody @_ @BugFiling
+  let title = T.strip filing.title
+      description = T.strip filing.description
+  when (null title || length title > 200 || length description > 20000)
+    $ sendResponseStatus status400 (ikey "error.bugReportInvalid")
+  now <- liftIO getCurrentTime
+  recent <- runDB $ Database.Persist.Postgresql.count [LotrBugReportUserId ==. userId, LotrBugReportCreatedAt >. addUTCTime (negate nominalDay) now]
+  when (recent >= 10) $ sendResponseStatus status429 (ikey "error.tooManyBugReports")
+  user <- runDB $ get404 userId
+  (_, exported) <- exportGame gid
+  manager <- getsYesod (.manager)
+  fileUrl <- either (sendResponseStatus status500) pure =<< liftIO (uploadBugExport manager (encode exported))
+  site <- getsYesod (.siteUrl)
+  let gameUrl = site <> "/#/games/" <> toPathPiece gid
+      body = issueBody user.userUsername filing.blocking description gameUrl fileUrl
+      labels = ["bug"] <> ["blocks game" | filing.blocking]
+  issue <- either (sendResponseStatus status502) pure =<< liftIO (createIssue github title body labels)
+  rid <-
+    runDB
+      $ insert
+        LotrBugReport
+          { lotrBugReportUserId = userId
+          , lotrBugReportGameId = Just gid
+          , lotrBugReportTitle = title
+          , lotrBugReportBlocking = filing.blocking
+          , lotrBugReportIssueNumber = issue.number
+          , lotrBugReportIssueUrl = issue.url
+          , lotrBugReportStatus = "filed"
+          , lotrBugReportClearedAt = Nothing
+          , lotrBugReportActivityAt = now
+          , lotrBugReportViewedAt = now
+          , lotrBugReportSyncedAt = Nothing
+          , lotrBugReportCreatedAt = now
+          }
+  -- the issue is filed either way; one the board missed is put on it by hand
+  liftIO (addToBoard github issue.nodeId) >>= either (\err -> logErrorN ("could not put #" <> tshow issue.number <> " on the board: " <> err)) pure
+  pure $ object ["id" .= rid]
+
+getGithub :: Handler GitHub
+getGithub = maybe (sendResponseStatus status503 (ikey "error.bugFilingUnavailable")) pure =<< getsYesod (.github)
+
+-- | One of the signed-in user's bug reports, or 404.
+requireOwnedBug :: LotrBugReportId -> Handler (UserId, LotrBugReport)
+requireOwnedBug rid = do
+  userId <- requireUserId
+  report <- runDB $ get404 rid
+  unless (report.lotrBugReportUserId == userId) notFound
+  pure (userId, report)
+
+data BugSummary = BugSummary
+  { id :: LotrBugReportId
+  , title :: Text
+  , issueNumber :: Int
+  , issueUrl :: Text
+  , status :: Text
+  , blocking :: Bool
+  , cleared :: Bool
+  , unread :: Bool
+  -- ^ a status change or comment since the reporter last looked
+  , tracked :: Bool
+  -- ^ still on the bar: not cleared, or cleared and not yet seen
+  , createdAt :: UTCTime
+  , activityAt :: UTCTime
+  }
+  deriving stock Generic
+  deriving anyclass ToJSON
+
+bugSummary :: Entity LotrBugReport -> BugSummary
+bugSummary (Entity rid r) =
+  BugSummary
+    { id = rid
+    , title = r.lotrBugReportTitle
+    , issueNumber = r.lotrBugReportIssueNumber
+    , issueUrl = r.lotrBugReportIssueUrl
+    , status = r.lotrBugReportStatus
+    , blocking = r.lotrBugReportBlocking
+    , cleared = isJust r.lotrBugReportClearedAt
+    , unread
+    , tracked = isNothing r.lotrBugReportClearedAt || unread
+    , createdAt = r.lotrBugReportCreatedAt
+    , activityAt = r.lotrBugReportActivityAt
+    }
+ where
+  unread = r.lotrBugReportActivityAt > r.lotrBugReportViewedAt
+
+-- | The signed-in user's bug reports, the latest news first.
+getBugsR :: Handler Value
+getBugsR = do
+  userId <- requireUserId
+  reports <- runDB $ selectList [LotrBugReportUserId ==. userId] [Desc LotrBugReportActivityAt]
+  pure $ toJSON $ map bugSummary reports
+
+-- | A comment or a status change, in the order they came.
+data BugEntry = BugEntry
+  { kind :: Text
+  , author :: Maybe Text
+  , mine :: Bool
+  , body :: Maybe Text
+  , status :: Maybe Text
+  , createdAt :: UTCTime
+  }
+  deriving stock Generic
+  deriving anyclass ToJSON
+
+data BugDetail = BugDetail
+  { report :: BugSummary
+  , gameId :: Maybe LotrGameId
+  -- ^ while the game lasts and the reporter can still open it
+  , gameName :: Maybe Text
+  , entries :: [BugEntry]
+  }
+  deriving stock Generic
+  deriving anyclass ToJSON
+
+getBugDetailR :: LotrBugReportId -> Handler Value
+getBugDetailR rid = do
+  (userId, report) <- requireOwnedBug rid
+  user <- runDB $ get404 userId
+  game <- runDB $ for report.lotrBugReportGameId \gid -> do
+    row <- get gid
+    seat <- selectFirst [LotrSeatGameId ==. gid, LotrSeatUserId ==. userId] []
+    pure $ (gid,) <$> mfilter (\g -> g.lotrGameUserId == userId || isJust seat) row
+  comments <- runDB $ selectList [LotrBugCommentReportId ==. rid] [Asc LotrBugCommentCreatedAt]
+  changes <- runDB $ selectList [LotrBugStatusChangeReportId ==. rid] [Asc LotrBugStatusChangeCreatedAt]
+  let comment (Entity _ c) =
+        BugEntry
+          { kind = "comment"
+          , author = Just if isJust c.lotrBugCommentUserId then user.userUsername else c.lotrBugCommentAuthor
+          , mine = c.lotrBugCommentUserId == Just userId
+          , body = Just c.lotrBugCommentBody
+          , status = Nothing
+          , createdAt = c.lotrBugCommentCreatedAt
+          }
+      change (Entity _ c) =
+        BugEntry
+          { kind = "status"
+          , author = Nothing
+          , mine = False
+          , body = Nothing
+          , status = Just c.lotrBugStatusChangeStatus
+          , createdAt = c.lotrBugStatusChangeCreatedAt
+          }
+  pure
+    $ toJSON
+      BugDetail
+        { report = bugSummary (Entity rid report)
+        , gameId = fst <$> join game
+        , gameName = (.lotrGameName) . snd <$> join game
+        , entries = sortOn (.createdAt) (map comment comments <> map change changes)
+        }
+
+-- | The reporter has seen the report as it is now; a cleared one leaves the bar.
+postBugSeenR :: LotrBugReportId -> Handler Value
+postBugSeenR rid = do
+  _ <- requireOwnedBug rid
+  now <- liftIO getCurrentTime
+  runDB $ update rid [LotrBugReportViewedAt =. now]
+  pure $ object []
+
+newtype NewBugComment = NewBugComment {body :: Text}
+  deriving stock Generic
+  deriving anyclass FromJSON
+
+{- | Post a comment for the reporter, headed with their name, from the site's account.
+Fifty a day at most.
+-}
+postBugCommentsR :: LotrBugReportId -> Handler Value
+postBugCommentsR rid = do
+  (userId, report) <- requireOwnedBug rid
+  github <- getGithub
+  said <- requireCheckJsonBody @_ @NewBugComment
+  let body = T.strip said.body
+  when (null body || length body > 10000) $ sendResponseStatus status400 (ikey "error.bugCommentInvalid")
+  now <- liftIO getCurrentTime
+  recent <- runDB $ Database.Persist.Postgresql.count [LotrBugCommentUserId ==. Just userId, LotrBugCommentCreatedAt >. addUTCTime (negate nominalDay) now]
+  when (recent >= 50) $ sendResponseStatus status429 (ikey "error.tooManyBugComments")
+  user <- runDB $ get404 userId
+  posted <-
+    either (sendResponseStatus status502) pure
+      =<< liftIO (postComment github report.lotrBugReportIssueNumber (commentBody userId user.userUsername body))
+  runDB
+    $ void
+    $ insertUnique
+      LotrBugComment
+        { lotrBugCommentReportId = rid
+        , lotrBugCommentGithubId = posted.githubId
+        , lotrBugCommentAuthor = posted.author
+        , lotrBugCommentUserId = Just userId
+        , lotrBugCommentBody = body
+        , lotrBugCommentCreatedAt = posted.createdAt
+        }
+  getBugDetailR rid
+
 -- | Load an exported game as a new game of the signed-in user's.
 postImportR :: Handler Value
 postImportR = do
@@ -2065,4 +2295,7 @@ main = do
   cardDb <-
     loadCardDb cardsPath >>= either (\err -> error $ "could not load " <> cardsPath <> ": " <> err) pure
   manager <- newTlsManager
-  warp port App {pool, jwtSecret, channels, cardDb, manager}
+  github <- githubFromEnv manager
+  for_ github \gh -> forkIO (bugSyncLoop gh pool)
+  siteUrl <- maybe "https://lordoftherings.app" pack <$> lookupEnv "LOTR_SITE_URL"
+  warp port App {pool, jwtSecret, channels, cardDb, manager, github, siteUrl}

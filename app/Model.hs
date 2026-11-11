@@ -36,6 +36,9 @@ User sql=users
   beta Bool default=false
   -- | what "allow spectators" starts as when making a game
   allowSpectatorsByDefault Bool default=false
+  -- | whether they file bugs on GitHub themselves or have the site file them; unset
+  -- until they are asked, as they first file one
+  hasGithub Bool Maybe
   createdAt UTCTime
   UniqueUsername username
   UniqueEmail email
@@ -235,5 +238,51 @@ LotrDeckSlot sql=lotr_deck_slots
   sourceCode Text
   cardCode Text Maybe
   quantity Int
+  deriving Show
+
+-- | A bug the site filed on GitHub for someone without an account, followed until they
+-- have seen it cleared. The board's sweep (see "BugSync") keeps it up to date.
+LotrBugReport sql=lotr_bug_reports
+  Id UUID default=gen_random_uuid()
+  userId UserId OnDeleteCascade
+  -- | the game the bug was filed from, while it lasts
+  gameId LotrGameId Maybe OnDeleteSetNull
+  title Text
+  -- | the reporter's game cannot go on until it is fixed
+  blocking Bool
+  issueNumber Int
+  issueUrl Text
+  -- | "filed" until the first sweep, then "board:<column>", or "closed:<reason>"
+  status Text
+  -- | when the issue was closed; reopening it takes this away
+  clearedAt UTCTime Maybe
+  -- | the latest status change or comment the reporter has yet to see, if after viewedAt
+  activityAt UTCTime
+  viewedAt UTCTime
+  -- | the issue's updatedAt as of the last time its comments were read
+  syncedAt UTCTime Maybe
+  createdAt UTCTime
+  UniqueBugIssue issueNumber
+  deriving Show
+
+-- | A comment on a bug report's issue. One posted from the site for the reporter names
+-- them, though the site's GitHub account posted it.
+LotrBugComment sql=lotr_bug_comments
+  reportId LotrBugReportId OnDeleteCascade
+  githubId Int
+  -- | the GitHub account that posted it
+  author Text
+  -- | the reporter, when they posted it from the site
+  userId UserId Maybe OnDeleteSetNull
+  body Text
+  createdAt UTCTime
+  UniqueBugComment githubId
+  deriving Show
+
+-- | Each status a bug report's issue has moved to, as the sweep saw it.
+LotrBugStatusChange sql=lotr_bug_status_changes
+  reportId LotrBugReportId OnDeleteCascade
+  status Text
+  createdAt UTCTime
   deriving Show
 |]
