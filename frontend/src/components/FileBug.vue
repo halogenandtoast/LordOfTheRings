@@ -183,7 +183,7 @@ const submit = async () => {
   box-shadow: 0 8px 24px var(--shadow);
 }
 h2 { margin: 0; color: var(--title); font-size: 1.1rem; }
-h3 { margin: 0 0 4px; color: var(--title); font-size: 0.95rem; }
+h3 { margin: 0 0 4px; color: var(--title); font-family: var(--font-body); font-size: 0.95rem; }
 p { margin: 0; color: var(--text-muted); font-size: 0.875rem; }
 .question { color: var(--text); }
 .ways { display: grid; gap: 10px; grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr)); }

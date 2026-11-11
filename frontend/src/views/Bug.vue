@@ -121,7 +121,7 @@ const when = (at: string) => new Date(at).toLocaleString()
   gap: 12px;
 }
 .back { color: var(--accent-bright); font-size: 0.875rem; text-decoration: none; }
-.title { margin: 0; color: var(--title); font-size: 1.4rem; overflow-wrap: anywhere; }
+.title { margin: 0; color: var(--title); font-family: var(--font-body); font-size: 1.4rem; overflow-wrap: anywhere; }
 .panel {
   display: grid;
   gap: 8px;

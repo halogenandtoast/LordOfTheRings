@@ -47,7 +47,7 @@ const status = (bug: BugSummary) => statusKey(bug.status)
 .bugs .page-title { margin: 0; }
 .empty { margin: 0; color: var(--text-muted); }
 .group { display: grid; gap: 8px; }
-h3 { margin: 0; color: var(--title); font-size: 1rem; }
+h3 { margin: 0; color: var(--title); font-family: var(--font-body); font-size: 1rem; }
 .bug {
   display: grid;
   gap: 4px;
