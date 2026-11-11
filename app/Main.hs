@@ -948,6 +948,7 @@ deal gid row players' = do
     liftIO . startGame scenario (gameMode row.lotrGameEasyMode row.lotrGameNightmare row.lotrGameHardMode) players =<< liftIO randomIO
   now <- liftIO getCurrentTime
   (row', entries) <- runDB do
+    void $ lockGame gid
     deleteWhere [LotrStepGameId ==. gid]
     clearLog gid
     void $ storeLog gid (-1) now said
@@ -1129,7 +1130,7 @@ postDebugR :: LotrGameId -> Handler ()
 postDebugR gid = do
   row <- requireOwnedGame gid
   msg <- requireCheckJsonBody @_ @Message
-  leavingPublicScoring gid row True
+  runDB $ leavingPublicScoring gid row True
   advance gid row \_ -> pure $ runDebug msg
 
 -- | Epic writers serialize on the aggregate before reading any group state.
@@ -1138,6 +1139,17 @@ lockEpicForGame gid = do
   membership <- getBy $ UniqueEpicGame gid
   for_ membership $ \(Entity _ member) -> void $ Epic.lockEvent member.lotrEpicGroupEventId
   pure membership
+
+{- | Hold the game's row until the transaction ends, so an answer, an undo and a deal
+write one after another. Without it an undo working from a read taken before an answer
+committed left that answer's step behind, past the game's step (#53).
+-}
+lockGame :: MonadIO m => LotrGameId -> ReaderT SqlBackend m LotrGame
+lockGame gid = do
+  rows <- rawSql "SELECT ?? FROM lotr_games WHERE id = ? FOR UPDATE" [toPersistValue gid]
+  case rows of
+    [Entity _ row] -> pure row
+    _ -> liftIO $ throwIO $ userError "Game no longer exists"
 
 -- | Play a stored game on from where it stands, keeping the move as an undoable step.
 advance :: LotrGameId -> LotrGame -> (Game -> Handler (GameT Game)) -> Handler ()
@@ -1196,6 +1208,10 @@ advanceOrdinary gid row prepare = do
   now <- liftIO getCurrentTime
   let step = row.lotrGameStep + 1
   (row', stored) <- runDB do
+    -- the game was played on from row; if anything wrote it since, this answer is stale
+    locked <- lockGame gid
+    when (locked.lotrGameStep /= row.lotrGameStep || locked.lotrGameUpdatedAt /= row.lotrGameUpdatedAt)
+      $ lift $ sendResponseStatus status409 ("stale answer" :: Text)
     stored <- storeLog gid row.lotrGameStep now . reverse =<< readIORef said
     insert_
       LotrStep
@@ -1226,14 +1242,13 @@ advanceOrdinary gid row prepare = do
 everyone's statistics: unless the request says @?confirm@, refuse it so the players are
 warned first. Once out, the deal stays out and nothing asks again.
 -}
-leavingPublicScoring :: LotrGameId -> LotrGame -> Bool -> Handler ()
+leavingPublicScoring :: LotrGameId -> LotrGame -> Bool -> ReaderT SqlBackend Handler ()
 leavingPublicScoring gid row disqualifies = when (row.lotrGameCountsPublicly && disqualifies) do
-  confirmed <- isJust <$> lookupGetParam "confirm"
-  unless confirmed $ sendResponseStatus status409 ("leaves public scoring" :: Text)
-  runDB do
-    update gid [LotrGameCountsPublicly =. False]
-    selectFirst [LotrPlayGameId ==. Just gid] [Desc LotrPlayStartedAt] >>= traverse_ \(Entity pid _) ->
-      update pid [LotrPlayPublic =. False]
+  confirmed <- lift $ isJust <$> lookupGetParam "confirm"
+  unless confirmed $ lift $ sendResponseStatus status409 ("leaves public scoring" :: Text)
+  update gid [LotrGameCountsPublicly =. False]
+  selectFirst [LotrPlayGameId ==. Just gid] [Desc LotrPlayStartedAt] >>= traverse_ \(Entity pid _) ->
+    update pid [LotrPlayPublic =. False]
 
 -- | Count a deal of the game as a play, with the decks it was dealt.
 recordStart :: MonadIO m => LotrGameId -> LotrGame -> NonEmpty DeckList -> UTCTime -> ReaderT SqlBackend m ()
@@ -1426,8 +1441,8 @@ postEpicUndo gid = do
 postOrdinaryUndo :: LotrGameId -> Handler ()
 postOrdinaryUndo gid = do
   row <- requirePlayableGame gid
-  locked <- campaignGameLocked gid row
-  when locked $ sendResponseStatus status409 (ikey "error.campaignGameLocked")
+  campaignLocked <- campaignGameLocked gid row
+  when campaignLocked $ sendResponseStatus status409 (ikey "error.campaignGameLocked")
   stepParam <- (readMaybe . unpack =<<) <$> lookupGetParam "step"
   target <-
     lookupGetParam "to" <&> \case
@@ -1435,20 +1450,22 @@ postOrdinaryUndo gid = do
       Just "round" -> StartOfRound
       Just "step" | Just n <- stepParam -> ToStep n
       _ -> LastAnswer
-  steps <- runDB $ selectList [LotrStepGameId ==. gid] [Desc LotrStepStep]
-  let undone = take (stepsToUndo target (map entityVal steps)) steps
-  for_ (lastMay undone) \(Entity _ oldest) -> do
-    previous <- foldM undoStep row.lotrGameCurrentData undone
-    g <- decodeOrFail "game" previous
-    now <- liftIO getCurrentTime
-    let step = row.lotrGameStep - length undone
-    leavingPublicScoring gid row (step < row.lotrGameRevealedStep)
-    (row', entries) <- runDB do
+  -- read and written under the game's lock, so no answer commits between the two
+  undone <- runDB do
+    locked <- lockGame gid
+    steps <- selectList [LotrStepGameId ==. gid] [Desc LotrStepStep]
+    let undone = take (stepsToUndo target (map entityVal steps)) steps
+    for (lastMay undone) \(Entity _ oldest) -> do
+      previous <- lift $ foldM undoStep locked.lotrGameCurrentData undone
+      g <- lift $ decodeOrFail "game" previous
+      now <- liftIO getCurrentTime
+      let step = locked.lotrGameStep - length undone
+      leavingPublicScoring gid locked (step < locked.lotrGameRevealedStep)
       deleteWhere [LotrStepId <-. map entityKey undone]
       trimLog gid step
       recordOutcome gid g now
-      (,)
-        <$> updateGet
+      row' <-
+        updateGet
           gid
           [ LotrGameCurrentData =. previous
           , LotrGameCurrentQueue =. oldest.lotrStepQueue
@@ -1456,8 +1473,8 @@ postOrdinaryUndo gid = do
           , LotrGameStep =. step
           , LotrGameUpdatedAt =. now
           ]
-        <*> logTail gid
-    broadcastAnimated False gid row' (Just g) (Just entries)
+      (row',g,) <$> logTail gid
+  for_ undone \(row', g, entries) -> broadcastAnimated False gid row' (Just g) (Just entries)
  where
   undoStep current (Entity _ step) = do
     patch <- decodeOrFail "undo patch" step.lotrStepPatchDown
