@@ -17,8 +17,13 @@
 # db_trusted_ips = ["203.0.113.4"]
 
 # Extra env for the backend. Bug uploads need an access key for the
-# lord-of-the-rings-bugs IAM user.
+# lord-of-the-rings-bugs IAM user. Filing bugs for players without a GitHub
+# account needs LOTR_GITHUB_TOKEN: a classic personal access token with the
+# public_repo and project scopes, whose account opens their issues, posts
+# their comments and reads project 3 each sweep. BUG_SYNC_SECONDS sets how
+# often the board is swept (120 if left out).
 # app_secrets = {
 #   AWS_ACCESS_KEY_ID     = "..."
 #   AWS_SECRET_ACCESS_KEY = "..."
+#   LOTR_GITHUB_TOKEN     = "ghp_..."
 # }
