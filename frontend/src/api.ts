@@ -111,6 +111,62 @@ export const exportGame = async (id: string) => {
 export const fileBug = (id: string) =>
   apiFetch(`/api/games/${id}/file-bug`, { method: 'POST' }).then((r) => json<{ url: string }>(r))
 
+/**
+ * A bug the site filed on GitHub for someone without an account. Its status is
+ * `filed` until the server's sweep first finds it, then `board:<column>` while open,
+ * or `closed:<COMPLETED|NOT_PLANNED|DUPLICATE>`.
+ */
+export interface BugSummary {
+  id: string
+  title: string
+  issueNumber: number
+  issueUrl: string
+  status: string
+  blocking: boolean
+  cleared: boolean
+  /** a status change or comment since the reporter last looked */
+  unread: boolean
+  /** still on the bar: not cleared, or cleared and not yet seen */
+  tracked: boolean
+  createdAt: string
+  activityAt: string
+}
+
+export interface BugEntry {
+  kind: 'comment' | 'status'
+  author: string | null
+  mine: boolean
+  body: string | null
+  status: string | null
+  createdAt: string
+}
+
+export interface BugDetail {
+  report: BugSummary
+  /** while the game lasts and the reporter can still open it */
+  gameId: string | null
+  gameName: string | null
+  entries: BugEntry[]
+}
+
+/** Have the site file a bug on GitHub, for someone without an account. */
+export const fileBugReport = (gameId: string, report: { title: string; description: string; blocking: boolean }) =>
+  apiFetch(`/api/games/${gameId}/bug-report`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(report),
+  }).then((r) => json<{ id: string }>(r))
+
+export const fetchBugs = () => apiFetch('/api/bugs').then((r) => json<BugSummary[]>(r))
+export const fetchBug = (id: string) => apiFetch(`/api/bugs/${id}`).then((r) => json<BugDetail>(r))
+export const markBugSeen = (id: string) => apiFetch(`/api/bugs/${id}/seen`, { method: 'POST' }).then((r) => json<unknown>(r))
+export const commentOnBug = (id: string, body: string) =>
+  apiFetch(`/api/bugs/${id}/comments`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ body }),
+  }).then((r) => json<BugDetail>(r))
+
 /** Load an exported game file as a new game. */
 export const importGame = async (file: File) =>
   apiFetch('/api/import', {

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
 import { currentUser, signOut } from '../auth'
+import { bugNews, trackedBugs } from '../bugs'
 import GameMenu from './GameMenu.vue'
 
 const router = useRouter()
@@ -21,6 +22,10 @@ const leave = async () => {
       <RouterLink to="/watch" class="nav-link">{{ $t('nav.watch') }}</RouterLink>
       <RouterLink to="/stats" class="nav-link">{{ $t('nav.stats') }}</RouterLink>
       <RouterLink to="/about" class="nav-link">{{ $t('nav.about') }}</RouterLink>
+      <RouterLink v-if="currentUser && trackedBugs.length" to="/bugs" class="nav-link">
+        {{ $t('nav.bugs') }}
+        <span v-if="bugNews" class="news" :title="$t('bugs.news')" :aria-label="$t('bugs.news')">!</span>
+      </RouterLink>
       <RouterLink v-if="currentUser?.admin" to="/admin" class="nav-link">{{ $t('nav.admin') }}</RouterLink>
     </nav>
     <div class="user-links">
@@ -73,6 +78,19 @@ const leave = async () => {
   white-space: nowrap;
 }
 .nav-link:hover { color: var(--accent); }
+.news {
+  display: inline-grid;
+  place-items: center;
+  width: 1.1rem;
+  height: 1.1rem;
+  margin-left: 5px;
+  border-radius: 50%;
+  background: var(--danger);
+  color: var(--cream);
+  font-size: 0.75rem;
+  font-weight: 700;
+  line-height: 1;
+}
 .nav-link.router-link-active { color: var(--accent); }
 .nav-link.router-link-active::after {
   content: '';
