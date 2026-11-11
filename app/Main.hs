@@ -1151,6 +1151,13 @@ lockGame gid = do
     [Entity _ row] -> pure row
     _ -> liftIO $ throwIO $ userError "Game no longer exists"
 
+{- | Steps numbered past the game's own are left from a history since written over: their
+patches no longer apply to the game, and the next answer's step would collide with them.
+Games stuck that way before 'lockGame' (#53) come right on their next answer or undo.
+-}
+dropStepsPast :: MonadIO m => LotrGameId -> LotrGame -> ReaderT SqlBackend m ()
+dropStepsPast gid row = deleteWhere [LotrStepGameId ==. gid, LotrStepStep >. row.lotrGameStep]
+
 -- | Play a stored game on from where it stands, keeping the move as an undoable step.
 advance :: LotrGameId -> LotrGame -> (Game -> Handler (GameT Game)) -> Handler ()
 advance gid row prepare = do
@@ -1212,6 +1219,7 @@ advanceOrdinary gid row prepare = do
     locked <- lockGame gid
     when (locked.lotrGameStep /= row.lotrGameStep || locked.lotrGameUpdatedAt /= row.lotrGameUpdatedAt)
       $ lift $ sendResponseStatus status409 ("stale answer" :: Text)
+    dropStepsPast gid locked
     stored <- storeLog gid row.lotrGameStep now . reverse =<< readIORef said
     insert_
       LotrStep
@@ -1453,6 +1461,7 @@ postOrdinaryUndo gid = do
   -- read and written under the game's lock, so no answer commits between the two
   undone <- runDB do
     locked <- lockGame gid
+    dropStepsPast gid locked
     steps <- selectList [LotrStepGameId ==. gid] [Desc LotrStepStep]
     let undone = take (stepsToUndo target (map entityVal steps)) steps
     for (lastMay undone) \(Entity _ oldest) -> do
