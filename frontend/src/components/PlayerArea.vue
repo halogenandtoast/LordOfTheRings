@@ -111,7 +111,7 @@ onClickOutside(useTemplateRef('hand'), () => (handOpen.value = false))
 
     <CardBand v-if="heroes.length" class="heroes" :cards="heroes" :choices="choices" :flipping="flipping" @choose="emit('choose', $event)" />
 
-    <div ref="hand" class="hand" :class="{ open: handOpen, reordering: dragged !== null }" :style="{ '--count': player.hand.length }" :title="$t('game.reorderHand')" @click="handOpen = true"
+    <div ref="hand" class="hand" :class="{ open: handOpen, reordering: dragged !== null }" :style="{ '--count': player.hand.length }" @click="handOpen = true"
       @dragstart="handDragStart" @dragover="handDragOver" @drop="handDrop" @dragend="dragged = null">
       <!-- Only animate reordering. A departing card must leave immediately so its
            view-transition name can move to another zone without being duplicated. -->
