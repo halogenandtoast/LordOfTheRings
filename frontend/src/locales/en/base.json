@@ -14,6 +14,7 @@
     "decks": "Decks",
     "watch": "Watch",
     "stats": "Statistics",
+    "bugs": "Bugs",
     "admin": "Admin",
     "about": "About"
   },
@@ -142,7 +143,45 @@
       "plain": "Plain",
       "playmat": "Playmat",
       "felt": "Felt"
-    }
+    },
+    "github": "GitHub account",
+    "githubHint": "With a GitHub account, a bug you file opens on GitHub in your name, and you follow it there. Without one, the site files it for you and you follow it here, under Bugs.",
+    "githubChoices": {
+      "unset": "Ask me when I file a bug",
+      "yes": "I have a GitHub account",
+      "no": "I don't have a GitHub account"
+    },
+    "githubFailed": "Could not save this. Try again."
+  },
+  "bugs": {
+    "title": "Bugs",
+    "none": "You haven't filed any bugs from the site.",
+    "following": "Following",
+    "earlier": "Earlier",
+    "news": "Something new",
+    "filed": "Filed",
+    "column": "{column}",
+    "closed": {
+      "COMPLETED": "Fixed",
+      "NOT_PLANNED": "Closed: not planned",
+      "DUPLICATE": "Closed: a duplicate"
+    },
+    "status": "Status",
+    "blocking": "Blocks your game",
+    "wasBlocking": "Blocked your game",
+    "filedOn": "Filed {date}",
+    "movedTo": "Moved to {status}",
+    "toGame": "Go to the game: {name}",
+    "gameGone": "The game this was filed from is gone.",
+    "onGithub": "Issue #{number} on GitHub",
+    "you": "You",
+    "reply": "Add a comment",
+    "replyPlaceholder": "More about the bug, or an answer to a question",
+    "replyPublic": "Comments are posted to the public GitHub issue under your username.",
+    "send": "Comment",
+    "sending": "Posting…",
+    "replyFailed": "Could not post the comment. Try again.",
+    "loadFailed": "Could not load this bug."
   },
   "stats": {
     "title": "Statistics",

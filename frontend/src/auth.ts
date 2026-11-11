@@ -7,6 +7,8 @@ export interface User {
   admin: boolean
   beta: boolean
   allowSpectatorsByDefault: boolean
+  /** files bugs on GitHub themselves, or has the site file them; null until asked */
+  hasGithub: boolean | null
 }
 
 interface Session {
@@ -60,8 +62,8 @@ export const signUp = (username: string, email: string, password: string) =>
 
 export const signOut = () => save(null)
 
-/** Save the user's settings, keeping the stored user in step. */
-export const updateSettings = async (settings: { allowSpectatorsByDefault: boolean }) => {
+/** Save the settings given, keeping the stored user in step; the rest stay as they are. */
+export const updateSettings = async (settings: { allowSpectatorsByDefault?: boolean; hasGithub?: boolean | null }) => {
   const response = await fetch('/api/settings', {
     method: 'PUT',
     headers: { ...authHeaders(), 'Content-Type': 'application/json' },

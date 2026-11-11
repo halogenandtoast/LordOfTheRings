@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { currentUser, updateSettings } from '../auth'
 import { loadLocaleMessages, normalizeLocale, supportedLocales } from '../locales/messages'
 import { table, tables } from '../table'
 
@@ -21,6 +22,21 @@ const updateLanguage = async () => {
   locale.value = chosen
   localStorage.setItem('language', chosen)
   document.documentElement.lang = chosen
+}
+
+// how bugs are filed: on GitHub by the player, or by the site for them; unset until asked
+const githubChoice = (value: boolean | null | undefined) => (value === true ? 'yes' : value === false ? 'no' : 'unset')
+const github = ref(githubChoice(currentUser.value?.hasGithub))
+watch(() => currentUser.value?.hasGithub, (value) => (github.value = githubChoice(value)))
+const githubFailed = ref(false)
+const updateGithub = async () => {
+  githubFailed.value = false
+  try {
+    await updateSettings({ hasGithub: github.value === 'yes' ? true : github.value === 'no' ? false : null })
+  } catch {
+    githubFailed.value = true
+    github.value = githubChoice(currentUser.value?.hasGithub)
+  }
 }
 </script>
 
@@ -45,6 +61,18 @@ const updateLanguage = async () => {
           </select>
         </label>
         <p class="hint">{{ $t('settings.tableHint') }}</p>
+      </section>
+      <section v-if="currentUser" class="panel">
+        <label>
+          {{ $t('settings.github') }}
+          <select v-model="github" @change="updateGithub">
+            <option value="unset">{{ $t('settings.githubChoices.unset') }}</option>
+            <option value="yes">{{ $t('settings.githubChoices.yes') }}</option>
+            <option value="no">{{ $t('settings.githubChoices.no') }}</option>
+          </select>
+        </label>
+        <p class="hint">{{ $t('settings.githubHint') }}</p>
+        <p v-if="githubFailed" class="hint failed">{{ $t('settings.githubFailed') }}</p>
       </section>
     </div>
   </div>
@@ -79,4 +107,5 @@ select {
 }
 select:focus { outline: 0; border-color: var(--accent); }
 .hint { margin: 0; font-size: 0.8rem; color: var(--text-muted); }
+.failed { color: var(--danger); }
 </style>
