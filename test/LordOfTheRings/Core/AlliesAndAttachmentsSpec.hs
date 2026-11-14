@@ -80,6 +80,7 @@ spec = do
       passActions pid
       _ <- setEncounterDeck [Locations.oldForestRoad]
       run $ BeginPhase QuestPhase
+      passActions pid
       chooseTarget pid guide
       chooseLabel "$label.doneCommitting" pid
       chooseAbilityOf pid guide
@@ -91,6 +92,7 @@ spec = do
       lid <- stageLocation Locations.forestGate
       _ <- setEncounterDeck [Locations.oldForestRoad]
       run $ BeginPhase QuestPhase
+      passActions pid
       chooseTarget pid tracker
       chooseLabel "$label.doneCommitting" pid
       chooseAbilityOf pid tracker

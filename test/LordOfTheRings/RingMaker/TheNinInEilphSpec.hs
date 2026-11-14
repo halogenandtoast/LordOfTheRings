@@ -160,6 +160,7 @@ spec = describe "The Nîn-in-Eilph" do
     _ <- putCardIntoHand pid Allies.guardOfTheCitadel
     hand <- length . (.hand) <$> getPlayer pid
     run $ BeginPhase QuestPhase
+    passActions pid
     chooseTarget pid =<< getHeroWithCode "01007"
     length . (.hand) <$> getPlayer pid `shouldReturn` hand - 1
     chooseTarget pid =<< getHeroWithCode "01012"

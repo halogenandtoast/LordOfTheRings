@@ -114,6 +114,8 @@ spec = describe "Annúminas Defend the City" do
     putGame $ current & phaseL .~ QuestPhase
     _ <- setEncounterDeck $ replicate 4 Locations.oldForestRoad
     run $ BeginPhase QuestPhase
+    passActions one
+    passActions two
     chooseLabel "$label.doneCommitting" one
     length <$> getEncounterDeck `shouldReturn` 4
     chooseLabel "$label.doneCommitting" two

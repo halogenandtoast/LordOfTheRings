@@ -286,6 +286,9 @@ spec = describe "Breaking of the Fellowship" do
       t2 <- threatOf other
       threat1 <- getStagingThreat
       run $ BeginPhase QuestPhase
+      -- every player may act before anyone commits
+      passActions lead
+      passActions other
       -- the first player commits, alone, and stages a card of his own
       getQuestion other `shouldReturn` Nothing
       chooseLabel "$label.doneCommitting" lead

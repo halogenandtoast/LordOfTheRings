@@ -16,6 +16,8 @@ import TestImport
 
 commitHeroes :: PlayerId -> [CardCode] -> GameT ()
 commitHeroes pid codes = do
+  -- pass the action window before committing
+  passActions pid
   for_ codes $ getHeroWithCode >=> chooseTarget pid
   whenJustM (getQuestion pid) $ \q ->
     when (notNull [() | Label "$label.doneCommitting" _ <- questionChoices q]) $ chooseLabel "$label.doneCommitting" pid
@@ -37,6 +39,7 @@ spec = describe "Quest phase" do
   it "asks the player which characters to commit" . gameTest $ \pid -> do
     flipFirstQuest pid
     run $ BeginPhase QuestPhase
+    passActions pid
     Just question <- getQuestion pid
     length [() | TargetLabel {} <- questionChoices question] `shouldBe` 3
 
@@ -44,6 +47,7 @@ spec = describe "Quest phase" do
     flipFirstQuest pid
     _ <- setEncounterDeck [Locations.forestGate]
     run $ BeginPhase QuestPhase
+    passActions pid
     aragorn <- getHeroWithCode "01001"
     theodred <- getHeroWithCode "01002"
     chooseTarget pid aragorn

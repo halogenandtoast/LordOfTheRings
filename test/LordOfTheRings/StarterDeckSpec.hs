@@ -197,6 +197,23 @@ spec = describe "Starter deck" do
       length <$> allies `shouldReturn` 0
       handCodes pid >>= (`shouldSatisfy` elem "01013")
 
+    it "puts an ally into play after the quest phase begins, in time to commit it" . starterTest $ \pid -> do
+      flipFirstQuest pid
+      gandalfCard <- putCardIntoHand pid Allies.gandalf
+      card <- putCardIntoHand pid Events.sneakAttack
+      aragorn <- getHeroWithCode aragornCode
+      run $ PlaceTokens GameSource (toTarget aragorn) Resource 1
+      run $ BeginPhase QuestPhase
+      chooseTarget pid card
+      chooseTarget pid gandalfCard
+      -- pass on Gandalf's response, then on the rest of the window
+      whenJustM (getQuestion pid) \q ->
+        when (notNull [() | Label "$label.pass" _ <- questionChoices q]) $ chooseLabel "$label.pass" pid
+      passActions pid
+      gandalf <- fromJustNote "Gandalf not in play" . find ((== "01073") . toCardCode) <$> allies
+      Just question <- getQuestion pid
+      [t | TargetLabel t _ <- questionChoices question] `shouldSatisfy` elem (toTarget gandalf)
+
   describe "Valiant Sacrifice" do
     it "draws 2 cards after an ally leaves play" . starterTest $ \pid -> do
       guard' <- allyInPlay pid Allies.guardOfTheCitadel

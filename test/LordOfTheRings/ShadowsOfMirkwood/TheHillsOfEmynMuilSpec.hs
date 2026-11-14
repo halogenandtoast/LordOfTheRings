@@ -92,6 +92,7 @@ spec = describe "The Hills of Emyn Muil" do
     _ <- setEncounterDeck [Locations.theHighlands, Locations.theHighlands]
     run $ BeginPhase QuestPhase
     chooseTarget pid card
+    passActions pid
     chooseLabel "$label.doneCommitting" pid
     getsGame (length . (.entities.locations)) `shouldReturn` 1
 

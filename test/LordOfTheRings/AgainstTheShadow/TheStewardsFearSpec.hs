@@ -233,6 +233,7 @@ spec = describe "The Steward's Fear" do
 
   it "ends the quest phase without resolving the quest with False Lead" . fearTest $ \pid -> do
     run $ BeginPhase QuestPhase
+    passActions pid
     chooseLabel "$label.doneCommitting" pid
     _ <- setEncounterDeck [Treacheries.falseLeadTheStewardsFear, Locations.marketSquare]
     threat <- (.threat) <$> getPlayer pid

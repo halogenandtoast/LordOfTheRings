@@ -2086,7 +2086,10 @@ runGameMessage msg g = case msg of
     -- a stage with the Sailing keyword has the first player make a Sailing test before
     -- characters commit (Dream-chaser rules)
     let sailing = [SailingTest | any (\q -> not (isSideQuest q) && Sailing `member` cdKeywords (toCardDef q)) g.entities.quests]
-    unless skipped $ pushAll $ sailing <> chooseQuest <> map CommitCharacters order <> [CheckWindows [mkAfter AllPlayersCommittedToQuest], Staging] <> map ActionWindow everyone <> [QuestResolution]
+    -- the players may act once the phase has begun and before anyone commits, as Sneak
+    -- Attack's ally that then quests (Rules Reference framework: 3.1, action window, 3.2)
+    let beforeCommitting = map OptionalActionWindow everyone
+    unless skipped $ pushAll $ sailing <> chooseQuest <> beforeCommitting <> map CommitCharacters order <> [CheckWindows [mkAfter AllPlayersCommittedToQuest], Staging] <> map ActionWindow everyone <> [QuestResolution]
     pure g
   BeginPhase TravelPhase -> do
     -- the players' actions come first, as Thrór's Map's, then the lead may travel

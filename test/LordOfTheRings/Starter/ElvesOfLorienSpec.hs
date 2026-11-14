@@ -181,6 +181,7 @@ spec = describe "Elves of Lórien" do
     it "cannot quest, and allies entering play do not exhaust to quest that round" . elvesTest $ \pid -> do
       archer <- allyInPlay pid Allies.greenwoodArcher
       run $ BeginPhase QuestPhase
+      passActions pid
       galadriel <- hero galadrielCode
       Just question <- getQuestion pid
       [() | TargetLabel t _ <- questionChoices question, t == galadriel] `shouldBe` []
@@ -221,6 +222,7 @@ spec = describe "Elves of Lórien" do
       chooseTarget pid haldir
       passResponses pid
       run $ BeginPhase QuestPhase
+      passActions pid
       chooseTarget pid haldir
       isExhausted haldir `shouldReturn` False
 
@@ -395,6 +397,7 @@ spec = describe "Elves of Lórien" do
       _ <- putAttachmentOn pid Attachments.wingfoot haldir
       _ <- setEncounterDeck [Enemies.forestSpider]
       run $ BeginPhase QuestPhase
+      passActions pid
       chooseTarget pid haldir
       chooseLabel "$label.doneCommitting" pid
       chooseAbility pid
