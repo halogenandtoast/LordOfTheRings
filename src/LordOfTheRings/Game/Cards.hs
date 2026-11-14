@@ -50,7 +50,6 @@ import LordOfTheRings.Classes.HasQueue (
   push,
   runQueueT,
  )
-import LordOfTheRings.Criteria (Criterion (..))
 import LordOfTheRings.Effect (
   Effect (Effect, effectModifiers, effectTarget),
   EffectDuration (
@@ -736,20 +735,6 @@ handResponsesAllowed pid windows continue = do
         pure $ guard ok $> targetLabel (CardIdTarget pc.id) [UseHandAction pid pc.id, continue]
       _ -> pure Nothing
     EncounterCard _ -> pure Nothing
-
-{- | Whether the card is an event the player can play in the quest phase before
-characters are committed.
--}
-playsBeforeCommitting :: PlayerId -> Card -> Bool
-playsBeforeCommitting pid = \case
-  PlayerCard pc | Just e <- lookupEvent (toCardCode pc) pc.id pid -> before (toAttrs e).eventCriteria
-  _ -> False
- where
-  before = \case
-    BeforeCommitting -> True
-    BeforeStaging -> True
-    Criteria cs -> any before cs
-    _ -> False
 
 {- | Cards in a player's discard pile that respond to the windows from there: allies like
 Ered Luin Miner, put into play unless their card says otherwise, as Starla is played,

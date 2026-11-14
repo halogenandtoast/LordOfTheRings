@@ -277,7 +277,6 @@ import LordOfTheRings.Helpers.Window (
   damageableHeroes,
   exhaustableCharacters,
   exhaustableHeroes,
-  getActionAbilities,
   getWindowAbilities,
   payCost,
   playerCardController,
@@ -652,7 +651,6 @@ import LordOfTheRings.Message (
     PlayAtNoCost,
     PlayAttachment,
     PlayAttachmentOn,
-    PlayCard,
     PlayEvent,
     BeginLocationAttack,
     EndLocationAttack,
@@ -1004,7 +1002,6 @@ import LordOfTheRings.Placement (
   placementController,
  )
 import LordOfTheRings.Player.Runner (
-  canPlay,
   deckL,
   discardL,
   discardableHand,
@@ -1200,7 +1197,6 @@ import LordOfTheRings.Game.Cards (
   objectiveAllyController,
   playAttachment,
   playPlayedAttachment,
-  playsBeforeCommitting,
   printedFor,
   refreshing,
   returnToEncounterDeck,
@@ -3156,12 +3152,8 @@ runGameMessage msg g = case msg of
             $ map toTarget heroes
             <> map toTarget allies
     quests <- getsGame (map toTarget . toList . entitiesQuests . gameEntities)
-    -- a character's action may be worth more than its willpower, as Faramir's, so the
-    -- player's actions are offered alongside committing it
-    actions <- getActionAbilities pid
     mustCommitAll <- elem MustCommitAll <$> getModifiers GameTarget
     mustCommit <- filterM (fmap (elem MustCommitToQuest) . getModifiers) characters
-    early <- filterM (\c -> andM [pure $ playsBeforeCommitting pid c, canPlay player c]) player.hand
     -- a player commits their characters at once, so responses to committing, as Aragorn's
     -- and Théodred's, wait until they are done and are then taken in any order
     -- asked even with no one left to commit, so the player moves on to staging
@@ -3170,8 +3162,6 @@ runGameMessage msg g = case msg of
       $ [ targetLabel c (toll <> [CommitToQuest c, CommitCharacters pid])
         | c <- characters
         ]
-      <> [AbilityLabel pid ab [] [CommitCharacters pid] | ab <- actions]
-      <> [targetLabel (CardIdTarget c.id) [PlayCard pid c.id, CommitCharacters pid] | c <- early]
       <> [ Label (ikey "label.doneCommitting") [CheckWindows [mkAfter $ CommittedToQuest c | c <- committed] | notNull committed]
          | not mustCommitAll || null characters
          , -- a character that must commit, as A Fell Dread's hero, is committed first
