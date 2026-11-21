@@ -114,6 +114,7 @@ spec = describe "Journey Up the Anduin" do
     it "has stage 1B gain a resource from questing and spend it to add an Evil Creature" . anduinTest $ \pid -> do
       q <- flipped Quests.travelingNorth
       [wargs] <- setEvilCreatures [Enemies.wargs]
+      run $ PlaceProgressOnQuest 1
       run $ CheckWindows [mkAfter PlacedProgressFromQuesting]
       questResources `shouldReturn` 1
       run $ CheckWindows [mkAfter $ PhaseBegins EncounterPhase]
@@ -125,6 +126,14 @@ spec = describe "Journey Up the Anduin" do
       enemyCodes `shouldReturn` [toCardCode Enemies.wargs]
       getModifiers q >>= (`shouldSatisfy` elem CannotBeDefeated)
       offersAbilityOf pid q `shouldReturn` False
+
+    it "has stage 1B gain no resource when the active location takes all the progress from questing" . anduinTest $ \_ -> do
+      _ <- flipped Quests.travelingNorth
+      lid <- stageLocation Locations.woodedRiverbank
+      run $ PlaceLocation lid ActiveLocation
+      run $ PlaceProgressOnQuest 1
+      run $ CheckWindows [mkAfter PlacedProgressFromQuesting]
+      questResources `shouldReturn` 0
 
     it "has stage 2A add Woodmen Village to the staging area" . anduinTest $ \pid -> do
       setSetAside [Locations.woodmenVillage]

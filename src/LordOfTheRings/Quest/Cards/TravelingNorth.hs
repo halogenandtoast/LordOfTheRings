@@ -22,9 +22,14 @@ instance HasModifiersFor TravelingNorth where
 -- | Forced: After placing progress here from questing successfully, place 1 resource here.
 -- Forced: At the beginning of the encounter phase, remove 1 resource from this stage.
 -- Then, add the top card of the Evil Creatures deck to the staging area.
+--
+-- Only progress from questing that lands on this stage counts: none is placed here when
+-- the active location takes all of it.
 instance HasAbilities TravelingNorth where
   getAbilities (TravelingNorth a) =
-    [mkAbility a 1 $ forced $ PlacedProgressFromQuestingWindow After | a.flipped]
+    [ restricted a 1 (TargetHasModifier (toTarget a) ProgressFromQuestingThisPhase) $ forced $ PlacedProgressFromQuestingWindow After
+    | a.flipped
+    ]
       <> [mkAbility a 2 $ forced $ PhaseBeginsWindow After EncounterPhase | a.flipped, countTokens Resource a.questTokens > 0]
 
 {- | Setup: Set Woodmen Village and The Old Ford aside, out of play. Create the Evil
