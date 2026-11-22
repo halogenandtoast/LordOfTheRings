@@ -74,6 +74,14 @@ export const toView = (data: GameData, defs: Record<string, CardDef>, previous: 
     target?.tag === 'AllyTarget' ? game.leftPlay?.[target.contents ?? '']
       : target?.tag === 'LocationTarget' ? game.leftPlayLocations?.[target.contents ?? ''] : undefined
 
+  // a card attached to a quest, location or character no longer in play
+  const hostGone = (e: Entity): boolean => {
+    if (e.placement?.tag !== 'AttachedTo') return false
+    const host = e.placement.contents as Target
+    const kind = targetKinds[host.tag]
+    return kind !== undefined && !entities[kind]?.[host.contents ?? '']
+  }
+
   const targetCardId = (target: Target | undefined): string | null => {
     if (!target?.contents) return null
     if (target.tag === 'CardIdTarget') return target.contents
@@ -389,7 +397,9 @@ export const toView = (data: GameData, defs: Record<string, CardDef>, previous: 
             ? entities[targetKinds[sourceCard.tag]]?.[sourceCard.contents ?? ''] : undefined
           const tooltip = sourceEntity?.cardCode === '02095' && [1, 2].includes(ui.ability?.abilityIndex ?? 0)
             ? ikey(`label.boromir.action${ui.ability!.abilityIndex}`) : undefined
-          const departed = sourceEntity ? undefined : departedEntity(sourceCard)
+          // so is a card whose host has left play, as The Long Defeat answering its side
+          // quest's defeat: the board shows attachments only on their hosts
+          const departed = sourceEntity ? (hostGone(sourceEntity) ? sourceEntity : undefined) : departedEntity(sourceCard)
           const seen = Object.values(game.players).some((p) => [...(p.hand ?? []), ...p.discard].some((c) => c.id === cardId))
           if (departed && !seen) return { index, label, targetId: null, action: label, card: card(departed.cardCode, departed.cardId) }
           return { index, label, targetId: cardId, action: label, tooltip }
